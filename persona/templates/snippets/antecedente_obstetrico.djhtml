@@ -1,0 +1,33 @@
+<hgroup>
+  <h3>Antecedentes Gineco-Obstétricos</h3>
+</hgroup>
+<table class="data">
+  <tr>
+    <td class="data-label">Menarca</td>
+    <td class="patient-data">{{ antecedente.menarca }}</td>
+    <td class="data-label">Último Periodo</td>
+    <td class="patient-data">{{ antecedente.ultimo_periodo }}</td>
+  </tr>
+  <tr>
+    <td class="data-label">Displasia</td>
+    <td class="patient-data">{{ antecedente.displasia }}</td>
+    <td class="data-label">Otros</td>
+    <td class="patient-data">{{ antecedente.dysplasia }}</td>
+  </tr>
+</table>
+</section>
+<section class="grid_6">
+<table class="data">
+  <tr>
+    <td class="data-label">G.</td>
+    <td class="patient-data">{{ antecedente.g }}</td>
+    <td class="data-label">P.</td>
+    <td class="patient-data">{{ antecedente.p }}</td>
+  </tr>
+  <tr>
+    <td class="data-label">A.</td>
+    <td class="patient-data">{{ antecedente.a }}</td>
+    <td class="data-label">C.</td>
+    <td class="patient-data">{{ antecedente.c }}</td>
+  </tr>
+</table>

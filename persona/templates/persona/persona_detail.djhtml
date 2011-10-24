@@ -4,5 +4,10 @@
 {% include "snippets/persona.djhtml" with persona=persona %}
 {% include "snippets/fisico.djhtml" with fisico=persona.fisico %}
 {% include "snippets/estilo_vida.djhtml" with estilo_vida=persona.estilo_vida %}
+{% include "snippets/antecedente.djhtml" with antecedente=persona.antecedente %}
+{% include "snippets/antecedente_familiar.djhtml" with antecedente=persona.antecedente_familiar %}
+{% if persona.sexo = 'F' %}
+{% include "snippets/antecedente_obstetrico.djhtml" with antecedente=persona.antecedente_obstetrico %}
+{% endif %}
 
 {% endblock %}

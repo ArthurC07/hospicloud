@@ -1,0 +1,13 @@
+<hgroup><h4>Antecedentes Familiares</h4></hgroup>
+<table class="data">
+  <tr>
+    <td class="data-label">Carcinogénicos</td>
+    <td class="patient-data">{{ antecedente.carcinogenico }}</td>
+    <td class="data-label">Cardiovasculares</td>
+    <td class="patient-data">{{ antecedente.cardiovascular }}</td>
+    <td class="data-label">Endocrinológicos</td>
+    <td class="patient-data">{{ antecedente.endocrinologico }}</td>
+    <td class="data-label">Respiratorios</td>
+    <td class="patient-data">{{ antecedente.respiratorio }}</td>
+  </tr>
+</table>

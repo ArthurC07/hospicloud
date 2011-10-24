@@ -1,0 +1,41 @@
+<hgroup><h4>Antecedentes Patol&oacute;gicos</h4></hgroup>
+<table class="data">
+  <tr>
+    <td class="data-label">Cardiopatías</td>
+    <td class="patient-data">{{ antecedente.cardiopathy }}</td>
+    <td class="data-label">Hipertensión Arterial</td>
+    <td class="patient-data">{{ antecedente.hipertension }}</td>
+    <td class="data-label">Diabetes Mellitus</td>
+    <td class="patient-data">{{ antecedente.diabetes }}</td>
+    <td class="data-label">Hepatitis</td>
+    <td class="patient-data">{{ antecedente.hepatitis }}</td>
+  </tr>
+  <tr>
+    <td class="data-label">Rinitis</td>
+    <td class="patient-data">{{ antecedente.rinitis }}</td>
+    <td class="data-label">Tuberculosis</td>
+    <td class="patient-data">{{ antecedente.tuberculosis }}</td>
+    <td class="data-label">Artritis</td>
+    <td class="patient-data">{{ antecedente.artritis }}</td>
+    <td class="data-label">Asma</td>
+    <td class="patient-data">{{ antecedente.asma }}</td>
+  </tr>
+  <tr>
+    <td class="data-label">Colitis</td>
+    <td class="patient-data">{{ antecedente.colitis }}</td>
+    <td class="data-label">Gastritis</td>
+    <td class="patient-data">{{ antecedente.gastritis }}</td>
+    <td class="data-label">Sinusitis</td>
+    <td class="patient-data">{{ antecedente.sinusitis }}</td>
+    <td class="data-label">Migraña</td>
+    <td class="patient-data">{{ antecedente.migrana }}</td>
+  </tr>
+  <tr>
+    <td class="data-label">Hipertrigliceridemia</td>
+    <td class="patient-data">{{ antecedente.hipertrigliceridemia }}</td>
+    <td class="data-label">Colelitiasis</td>
+    <td class="patient-data">{{ antecedente.colelitiasis }}</td>
+    <td class="data-label">Alergias</td>
+    <td class="patient-data" colspan="3">{{ antecedente.alergies }}</td>
+  </tr>
+</table>

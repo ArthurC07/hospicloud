@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+"""
+Modelos básicos necesarios para recabar la información personal de una
+:class:`Persona` en la aplicación, permitiendo centralizar las funciones que
+se utilizarán a lo largo de todo el sistema
+"""
 from datetime import date
 from django.db import models
-import re
 from django.db.models import permalink
+import re
 
 class Pais(models.Model):
     
@@ -59,7 +64,8 @@ class Persona(models.Model):
     
     __expresion__ = re.compile(r'\d{4}-\d{4}-\d{5}')
     
-    tipo_identificacion = models.CharField(max_length=1, choices=TIPOS_IDENTIDAD)
+    tipo_identificacion = models.CharField(max_length=1,
+                                           choices=TIPOS_IDENTIDAD)
     identificacion = models.CharField(max_length=20, blank=True, unique=True)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
@@ -92,6 +98,8 @@ class Persona(models.Model):
     @permalink
     def get_absolute_url(self):
         
+        """Obtiene la URL absoluta"""
+        
         return 'persona-view-id', [self.id]
     
     def nombre_completo(self):
@@ -102,13 +110,19 @@ class Persona(models.Model):
     
     def get_estado_civil(self):
         
+        """Muestra el estado civil"""
+        
         return self.__estado_civil__[self.estado_civil]
     
     def get_genero(self):
         
+        """Muestra el genero"""
+        
         return self.__genero__[self.sexo]
     
     def get_tipo_identidad(self):
+        
+        """Muestra el tipo de identificación"""
         
         return self.__tipo_identidad__[self.tipo_identificacion]
     
@@ -139,11 +153,32 @@ class Fisico(models.Model):
     
     """Describe el estado fisico de una :class:`Persona`"""
     
+    TIPOS_SANGRE = GENEROS = (
+        ('A', u'A'),
+        ('B', u'B'),
+        ('AB', u'AB'),
+        ('O', u'O'),
+    )
+    
+    FACTOR_RH = (
+        ('+', u'+'),
+        ('-', u'-'),
+    )
+    
     persona = models.OneToOneField(Persona, primary_key=True)
     peso = models.DecimalField(decimal_places=2, max_digits=4, null=True)
     altura = models.DecimalField(decimal_places=2, max_digits=4, null=True)
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
+    factor_rh = models.CharField(max_length=1, blank=True)
+    tipo_de_sangre = models.CharField(max_length=2, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return self.persona.get_absolute_url()
 
 class EstiloVida(models.Model):
     
@@ -171,3 +206,93 @@ class EstiloVida(models.Model):
     consume_drogas = models.NullBooleanField(null=True)
     drogas = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return self.persona.get_absolute_url()
+
+class Antecedente(models.Model):
+    
+    """Describe la situación of a :class:`Paciente` when he/she first arrives at
+    the clinic
+    """
+    
+    persona = models.OneToOneField(Persona)
+    
+    complete = models.NullBooleanField(null=True, blank=True)
+    reaction = models.NullBooleanField(null=True, blank=True)
+    
+    cardiopatia = models.NullBooleanField(null=True, blank=True)
+    hipertension = models.NullBooleanField(null=True, blank=True)
+    diabetes = models.NullBooleanField(null=True, blank=True)
+    hepatitis = models.NullBooleanField(null=True, blank=True)
+    rinitis = models.NullBooleanField(null=True, blank=True)
+    tuberculosis = models.NullBooleanField(null=True, blank=True)
+    artritis = models.NullBooleanField(null=True, blank=True)
+    asma = models.NullBooleanField(null=True, blank=True)
+    colitis = models.NullBooleanField(null=True, blank=True)
+    gastritis = models.NullBooleanField(null=True, blank=True)
+    sinusitis = models.NullBooleanField(null=True, blank=True)
+    hipertrigliceridemia = models.NullBooleanField(null=True, blank=True)
+    colelitiasis = models.NullBooleanField(null=True, blank=True)
+    migrana = models.NullBooleanField(null=True, blank=True)
+    alergias = models.CharField(max_length=200)
+    
+    congenital = models.CharField(max_length=200, blank=True)
+    
+    general = models.CharField(max_length=200, blank=True)
+    nutricional = models.CharField(max_length=200, blank=True)
+    
+    otros = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return self.persona.get_absolute_url()
+
+class AntecedenteFamiliar(models.Model):
+    
+    """Registra los antecedentes familiares de una :class:`Persona`"""
+    
+    persona = models.OneToOneField(Persona)
+    
+    carcinogenico = models.NullBooleanField(null=True, blank=True)
+    cardiovascular = models.NullBooleanField(null=True, blank=True)
+    endocrinologico = models.NullBooleanField(null=True, blank=True)
+    respiratorio = models.NullBooleanField(null=True, blank=True)
+    otros = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return self.persona.get_absolute_url()
+
+class AntecedenteObstetrico(models.Model):
+    
+    """Registra los antecedentes obstetricos de una :class:`Persona`"""
+    
+    persona = models.OneToOneField(Persona)
+    
+    menarca = models.DateField(default=date.today)
+    ultimo_periodo = models.DateField(null=True, blank=True)
+    displasia = models.NullBooleanField(null=True, blank=True)
+    # what the hell does these means?
+    g = models.CharField(max_length=200, blank=True)
+    p = models.CharField(max_length=200, blank=True)
+    a = models.CharField(max_length=200, blank=True)
+    c = models.CharField(max_length=200, blank=True)
+    otros = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return self.persona.get_absolute_url()
