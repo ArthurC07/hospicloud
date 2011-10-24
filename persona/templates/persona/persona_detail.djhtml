@@ -1,0 +1,8 @@
+{% extends 'base.djhtml' %}
+{% block content %}
+
+{% include "snippets/persona.djhtml" with persona=persona %}
+{% include "snippets/fisico.djhtml" with fisico=persona.fisico %}
+{% include "snippets/estilo_vida.djhtml" with estilo_vida=persona.estilo_vida %}
+
+{% endblock %}

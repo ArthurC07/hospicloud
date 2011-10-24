@@ -1,0 +1,20 @@
+<table class="data">
+  <tbody>
+    <tr>
+      <td class="data-label">Estatura:</td>
+      <td class="patient-data">{{ fisico.estatura }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Peso:</td>
+      <td class="patient-data">{{ fisico.peso }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Color de Ojos:</td>
+      <td class="patient-data">{{ fisico.color_de_ojo }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Color de Cabello:</td>
+      <td class="patient-data">{{ fisico.color_de_cabello }}</td>
+    </tr>
+  </tbody>
+</table>

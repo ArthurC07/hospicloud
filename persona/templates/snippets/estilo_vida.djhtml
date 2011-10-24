@@ -1,0 +1,60 @@
+<table class="data">
+  <tbody>
+    <tr>
+      <td class="data-label">Consume Tabaco:</td>
+      <td class="patient-data">{{ estilo_vida.consume_tabaco }}</td>
+    </tr>
+    {% if estilo_vida.consume_tabaco %}
+    <tr>
+      <td class="data-label">Inicio del Consumo de Tabaco:</td>
+      <td class="patient-data">{{ estilo_vida.inicio_consumo_tabaco }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Número de Cigarrillos Diarios:</td>
+      <td class="patient-data">{{ estilo_vida.consumo_diario_tabaco }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td colspan="2">Alcohol</td>
+    </tr>
+    <tr>
+      <td class="data-label">Vino:</td>
+      <td class="patient-data">{{ estilo_vida.vino }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Cerveza:</td>
+      <td class="patient-data">{{ estilo_vida.cerveza }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Licores</td>
+      <td class="patient-data">{{ estilo_vida.licor }}</td>
+    </tr>
+    <tr>
+      <td colspan="2">Nutrición:</td>
+    </tr>
+    <tr>
+      <td class="data-label">Tipo de Dieta</td>
+      <td class="patient-data">{{ estilo_vida.dieta }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Cuantitativamente</td>
+      <td class="patient-data">{{ estilo_vida.cantidad }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Comidas:</td>
+      <td class="patient-data">{{ estilo_vida.numero_comidas }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Tipos de Comida</td>
+      <td class="patient-data">{{ estilo_vida.tipo_de_comidas }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Consume Drogas</td>
+      <td class="patient-data">{{ estilo_vida.consume_drogas }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Drogas</td>
+      <td class="patient-data">{{ estilo_vida.drogas }}</td>
+    </tr>
+  </tbody>
+</table>

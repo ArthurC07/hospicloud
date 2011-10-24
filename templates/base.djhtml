@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  {% load static %}
+  {% get_static_prefix as STATIC_PREFIX %}
+  <script type="text/javascript" src="{{ STATIC_PREFIX }}js/modernizr.js" ></script>
+  <!--[if lt IE 9]>
+  <script
+  src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js">IE7_PNG_SUFFIX=".png";</script>
+  <![endif]-->
+  <link rel="stylesheet" href="{{ STATIC_PREFIX }}css/reset.css" />
+  <link rel="stylesheet" href="{{ STATIC_PREFIX }}css/grid.css" />
+  <link rel="stylesheet" href="{{ STATIC_PREFIX }}css/form.css" />
+  <link rel="stylesheet" href="{{ STATIC_PREFIX }}css/style.css" />
+  <link rel="stylesheet" href="{{ STATIC_PREFIX }}css/navigation.css" />
+  <link rel="stylesheet" href="{{ STATIC_PREFIX }}css/jquery-ui.css" />
+  <link rel="stylesheet" href="{{ STATIC_PREFIX }}css/colorbox.css" />
+  <!-- <link rel='stylesheet'
+  href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' /> -->
+  <title>HospiNet :: {% block pagetitle %}{% endblock %}</title>
+  <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.js" ></script>
+  <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery-ui.js" ></script>
+  <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery-ui-timepicker.js" ></script>
+  <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.colorbox.js" ></script>
+  <script type="text/javascript" src="{{ STATIC_PREFIX }}js/hospinet.js" ></script>
+  {% block header %}{% endblock %}
+</head>
+<body class="container_12">
+  <!--[if lt IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative; margin-left:auto; margin-right: auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0012_spanish_LATAM.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." /></a></div><![endif]-->
+  <header class="container_12 clearfix">
+    <nav class="user horizontal container_12">
+      <ul>
+        {% if user.is_authenticated %}
+        Bienvenido, {{ user }}
+        <li><a href="{% url logout %}">Cerrar Sesi&oacute;n</a></li>
+        {% else %}
+        <li><a href="{% url login %}">Iniciar Sesi&oacute;n</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+  <div id="content" class="container_12 content clearfix">
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+        {{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+  <footer class="container_12 clearfix">
+    <section class="grid_12 copyright">Copyright &copy; Know How 2011</section>
+  </footer>
+  <!--<script src="http://cdn.wibiya.com/Toolbars/dir_0935/Toolbar_935666/Loader_935666.js" type="text/javascript"></script><noscript><a href="http://www.wibiya.com/">Web Toolbar by Wibiya</a></noscript> -->
+  </body>
+</body>
+</html>
