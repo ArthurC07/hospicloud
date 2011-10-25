@@ -1,17 +1,19 @@
 <table class="data">
 	<tr>
-		<td>{{ persona.get_tipo_identificacion }}</td>
+		<td>{{ persona.get_tipo_identificacion_display }}</td>
 		<td>{{ persona.identificacion }}</td>
 		<td>Nombre</td>
 		<td>{{ persona.nombre }}</td>
 		<td>Apellidos</td>
 		<td>{{ persona.apellido }}</td>
+		<td>Sexo</td>
+		<td>{{ persona.get_sexo_display }}</td>
 	</tr>
 	<tr>
 		<td>Nacimiento</td>
 		<td>{{ persona.nacimiento|date:"d/m/Y" }}</td>
 		<td>Estado Civil</td>
-		<td>{{ persona.get_estado_civil }}</td>
+		<td>{{ persona.get_estado_civil_display }}</td>
 		<td>Profesión</td>
 		<td>{{ persona.profesion }}</td>
 	</tr>

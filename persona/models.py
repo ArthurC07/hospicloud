@@ -29,37 +29,17 @@ class Persona(models.Model):
         ('F', u'Femenino'),
     )
     
-    __genero__ = dict(
-        M=u'Masculino',
-        F=u'Femenino',
-    )
-    
     ESTADOS_CIVILES = (
         ('S', u'Soltero/a'),
         ('D', u'Divorciado/a'),
         ('C', u'Casado/a'),
         ('U', u'Union Libre')
     )
-    
-    __estado_civil__ = dict(
-        S=u'Soltero/a',
-        D=u'Divorciado/a',
-        C=u'Casado/a',
-        U=u'Union Libre',
-    )
-    
     TIPOS_IDENTIDAD = (
         ("T", u"Tarjeta de Identidad"),
         ("P", u"Pasaporte"),
         ("L", u"Licencia"),
         ("N", u"Ninguno"),
-    )
-    
-    __tipo_identidad__ = dict(
-        T=u"Tarjeta de Identidad",
-        P=u"Pasaporte",
-        L=u"Licencia",
-        N=u"Ninguno",
     )
     
     __expresion__ = re.compile(r'\d{4}-\d{4}-\d{5}')
@@ -107,24 +87,6 @@ class Persona(models.Model):
         """Obtiene el nombre completo de la :class:`Persona`"""
         
         return u'{0} {1}'.format(self.nombre, self.apellido)
-    
-    def get_estado_civil(self):
-        
-        """Muestra el estado civil"""
-        
-        return self.__estado_civil__[self.estado_civil]
-    
-    def get_genero(self):
-        
-        """Muestra el genero"""
-        
-        return self.__genero__[self.sexo]
-    
-    def get_tipo_identidad(self):
-        
-        """Muestra el tipo de identificación"""
-        
-        return self.__tipo_identidad__[self.tipo_identificacion]
     
     def obtener_edad(self):
         
