@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from persona.models import Persona, Fisico, EstiloVida, Antecedente,\
-    AntecedenteFamiliar, AntecedenteObstetrico
+from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
+    AntecedenteFamiliar, AntecedenteObstetrico)
 from django import forms
 
 class PersonaForm(forms.ModelForm):
