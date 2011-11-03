@@ -2,24 +2,30 @@
 from django.conf.urls.defaults import patterns, url
 from persona.views import (PersonaDetailView, PersonaCreateView,
     PersonaUpdateView, EstiloVidaUpdateView, AntecedenteUpdateView,
-    AntecedenteFamiliarUpdateView, AntecedenteObstetricoUpdateView)
-
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+    AntecedenteFamiliarUpdateView, AntecedenteObstetricoUpdateView,
+    PersonaIndexView, FisicoUpdateView)
 
 urlpatterns = patterns('',
+    
+    url(r'^$',
+        PersonaIndexView.as_view(),
+        name='persona-index'),
+    
     url(r'^(?P<pk>\d+)$',
         PersonaDetailView.as_view(),
         name='persona-view-id'),
     
-    url(r'^nuevo$',
+    url(r'^agregar$',
         PersonaCreateView.as_view(),
         name='persona-create'),
     
     url(r'^(?P<pk>\d+)/editar$',
         PersonaUpdateView.as_view(),
         name='persona-editar'),
+    
+    url(r'^(?P<pk>\d+)/fisico/editar$',
+        FisicoUpdateView.as_view(),
+        name='persona-fisico-editar'),
     
     url(r'^(?P<pk>\d+)/estilovida/editar$',
         EstiloVidaUpdateView.as_view(),

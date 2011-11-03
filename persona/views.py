@@ -4,13 +4,19 @@ Contiene diversas vistas que permiten la presentación y manipulación de datos
 en la aplicación.
 """
 from django.http import HttpResponseRedirect
-from django.views.generic import CreateView, DetailView, UpdateView
-from mixins import LoginRequiredView
+from django.views.generic import CreateView, DetailView, UpdateView, ListView
+from library.protected import LoginRequiredView
 from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
     AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm,
     AntecedenteQuirurgicoForm)
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
+
+class PersonaIndexView(ListView, LoginRequiredView):
+    
+    context_object_name = 'personas'
+    model = Persona
+    template_name = 'persona/index.djhtml'
 
 class PersonaDetailView(DetailView, LoginRequiredView):
     

@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView
-from mixins.protected import LoginRequiredView
+from library.protected import LoginRequiredView
 from persona.models import Persona
 from django.views.generic.base import TemplateView
 

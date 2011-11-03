@@ -15,5 +15,5 @@ urlpatterns = patterns('',
     
     url(r'^$', IndexView.as_view(), name='home'),
     url(r'^persona/', include('hospinet.persona.urls')),
-    url(r'^persona/', include('hospinet.users.urls')),
+    url(r'^accounts/', include('hospinet.users.urls')),
 )

@@ -33,6 +33,12 @@
       <ul>
         {% if user.is_authenticated %}
         Bienvenido, {{ user }}
+        {% load menubuilder %}{% menu menu-principal %}
+        {% for item in menuitems %}
+        <li>
+          <a href="{{ item.url }}" title="{{ item.title|escape }}"{% if item.current %} class='current'{% endif %}>{{ item.title }}</a>
+        </li>
+        {% endfor %}
         <li><a href="{% url logout %}">Cerrar Sesi&oacute;n</a></li>
         {% else %}
         <li><a href="{% url login %}">Iniciar Sesi&oacute;n</a></li>

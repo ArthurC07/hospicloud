@@ -6,8 +6,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login',
+    url(r'^login/$', 'django.contrib.auth.views.login',
         {'template_name': 'registration/login.djhtml'}, name='login'),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',
+    url(r'^logout/$', 'django.contrib.auth.views.logout',
         name='logout'),
 )

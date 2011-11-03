@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
-from clinique.views import (ExamenDetailView, ExamenCreateView,
+from laboratory.views import (ExamenDetailView, ExamenCreateView,
     ExamenUpdateView, ImagenCreateView)
-
-# Uncomment the next two lines to enable the admin:
-from django.contrib import admin
-admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)$',

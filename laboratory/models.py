@@ -22,7 +22,7 @@ class Imagen(models.Model):
     imagen = models.ImageField(upload_to="examenes")
     descripcion = models.CharField(max_lenght=255, blank=True)
 
-class Adjuntos(models.Model):
+class Adjunto(models.Model):
     
     """Permite agregar otro tipo de archivos adjuntos a un :class:`Examen`"""
     

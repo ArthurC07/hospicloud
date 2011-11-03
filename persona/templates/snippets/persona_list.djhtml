@@ -1,0 +1,24 @@
+<table>
+  <thead>
+    <tr>
+      <th>Identificaci&oacute;n</th>
+      <th>Apellidos</th>
+      <th>Nombre</th>
+      <th>Edad</th>
+      <th>Sexo</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for persona in personas%}
+    <tr>
+      <td>{{ persona.identificacion }}</td>
+      <td>{{ persona.apellido }}</td>
+      <td>{{ persona.nombre }}</td>
+      <td>{{ persona.obtener_edad }}</td>
+      <td>{{ persona.get_sexo_display }}</td>
+      <td><a href="{% url persona-view-id persona.id %}">Ver</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
