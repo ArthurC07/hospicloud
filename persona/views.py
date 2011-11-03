@@ -6,10 +6,11 @@ en la aplicación.
 from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, DetailView, UpdateView
 from mixins import LoginRequiredView
-from persona.forms import PersonaForm, FisicoForm, EstiloVidaForm,\
-    AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm
-from persona.models import Persona, Fisico, EstiloVida, Antecedente,\
-    AntecedenteFamiliar, AntecedenteObstetrico
+from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
+    AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm,
+    AntecedenteQuirurgicoForm)
+from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
+    AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
 
 class PersonaDetailView(DetailView, LoginRequiredView):
     
@@ -100,3 +101,15 @@ class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredView):
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
     template_name = 'persona/antecedente_obstetrico_update.djhtml'
+
+class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredView):
+    
+    model = AntecedenteQuirurgico
+    form_class = AntecedenteQuirurgicoForm
+    template_name = 'persona/antecedente_quirurgico_create.djhtml'
+
+class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredView):
+    
+    model = AntecedenteQuirurgico
+    form_class = AntecedenteQuirurgicoForm
+    template_name = 'persona/antecedente_quirurgico_update.djhtml'

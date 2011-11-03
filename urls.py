@@ -12,9 +12,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'registration/login.djhtml'}, name='login'),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', name='logout'),
     
     url(r'^$', IndexView.as_view(), name='home'),
     url(r'^persona/', include('hospinet.persona.urls')),
+    url(r'^persona/', include('hospinet.users.urls')),
 )

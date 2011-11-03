@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from clinique.models import Examen, Imagen
+from laboratory.models import Examen, Imagen
 
 class ExamenForm(forms.ModelForm):
     

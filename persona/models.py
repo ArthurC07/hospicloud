@@ -71,7 +71,10 @@ class Persona(models.Model):
     def validar_identidad(identidad):
         
         """Permite validar la identidad ingresada antes de asignarla a una
-        :class:`Persona`"""
+        :class:`Persona`
+        
+        :param identidad: Número de identidad a validar
+        """
         
         return Persona.__expresion__.match(identidad)
     
@@ -115,7 +118,7 @@ class Fisico(models.Model):
     
     """Describe el estado fisico de una :class:`Persona`"""
     
-    TIPOS_SANGRE = GENEROS = (
+    TIPOS_SANGRE = (
         ('A', u'A'),
         ('B', u'B'),
         ('AB', u'AB'),
@@ -251,6 +254,21 @@ class AntecedenteObstetrico(models.Model):
     a = models.CharField(max_length=200, blank=True)
     c = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return self.persona.get_absolute_url()
+
+class AntecedenteQuirurgico(models.Model):
+    
+    """Registra los antecendentes quirurgicos de una :class:`Persona`"""
+    
+    persona = models.ForeignKey(Persona)
+    procedimiento = models.CharField(max_length=200, blank=True)
+    fecha = models.CharField(max_length=200, blank=True)
     
     @permalink
     def get_absolute_url(self):

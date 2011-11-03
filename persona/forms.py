@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
-    AntecedenteFamiliar, AntecedenteObstetrico)
+    AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
 from django import forms
 
 class PersonaForm(forms.ModelForm):
@@ -59,3 +59,9 @@ class AntecedenteObstetricoForm(forms.ModelForm):
     class Meta:
         
         model = AntecedenteObstetrico
+
+class AntecedenteQuirurgicoForm(forms.ModelForm):
+    
+    class Meta:
+        
+        model = AntecedenteQuirurgico

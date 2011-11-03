@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from persona.models import Persona
 from datetime import datetime
+from persona.models import Persona
 
-class Examen(models.Model):
+class Visitante(models.Model):
+    
+    ESTADOS = (
+        ('E', u'Esperando'),
+        ('C', u'Consulta'),
+        ('A', u'Atendido'),
+    )
+    
+    nombre = models.CharField(max_length=200)
+    estado = models.CharField(max_lenght=255, blank=True, choices=ESTADOS)
+    llegada = models.DateTimeField(default=datetime.now)
+    programacion = models.DateTimeField(default=datetime.now)
+
+class Cuenta(models.Model):
     
     persona = models.ForeignKey(Persona)
-    nombre = models.CharField(max_length=200, blank=True)
-    resultado = models.CharField(max_length=200, blank=True)
-    diagnostico = models.CharField(max_lenght=255, blank=True)
-    fecha = models.DateTimeField(default=datetime.now)
-
-class Imagen(models.Model):
-    
-    examen = models.ForeignKey(Examen)
-    imagen = models.ImageField(upload_to="examenes")
