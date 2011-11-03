@@ -1,20 +1,23 @@
 <table class="data">
+	<caption>Caracter&iacute;sticas F&iacute;sicas</caption>
   <tbody>
     <tr>
       <td class="data-label">Estatura:</td>
-      <td class="patient-data">{{ fisico.estatura }}</td>
-    </tr>
-    <tr>
+      <td class="patient-data">{{ fisico.altura }}</td>
       <td class="data-label">Peso:</td>
       <td class="patient-data">{{ fisico.peso }}</td>
     </tr>
     <tr>
       <td class="data-label">Color de Ojos:</td>
-      <td class="patient-data">{{ fisico.color_de_ojo }}</td>
-    </tr>
-    <tr>
+      <td class="patient-data">{{ fisico.color_de_ojos }}</td>
       <td class="data-label">Color de Cabello:</td>
       <td class="patient-data">{{ fisico.color_de_cabello }}</td>
+    </tr>
+    <tr>
+      <td class="data-label">Tipo de Sangre:</td>
+      <td class="patient-data">{{ fisico.get_tipo_de_sangre_display }}</td>
+      <td class="data-label">Factor RH:</td>
+      <td class="patient-data">{{ fisico.get_factor_rh_display }}</td>
     </tr>
   </tbody>
 </table>

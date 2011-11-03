@@ -67,6 +67,10 @@ class Persona(models.Model):
     fax = models.CharField(max_length=200, blank=True)
     fotografia = models.ImageField(upload_to='persona/foto', blank=True)
     
+    def __unicode__(self):
+        
+        return self.nombre_completo()
+    
     @staticmethod
     def validar_identidad(identidad):
         
@@ -131,19 +135,19 @@ class Fisico(models.Model):
     )
     
     persona = models.OneToOneField(Persona, primary_key=True)
-    peso = models.DecimalField(decimal_places=2, max_digits=4, null=True)
-    altura = models.DecimalField(decimal_places=2, max_digits=4, null=True)
+    peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
-    factor_rh = models.CharField(max_length=1, blank=True)
-    tipo_de_sangre = models.CharField(max_length=2, blank=True)
+    factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
+    tipo_de_sangre = models.CharField(max_length=2, blank=True, choices=TIPOS_SANGRE)
     
     @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return self.persona.get_absolute_url()
+        return 'persona-view-id', [self.persona.id]
 
 class EstiloVida(models.Model):
     
@@ -151,16 +155,17 @@ class EstiloVida(models.Model):
     
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='estilo_vida')
-    consume_tabaco = models.NullBooleanField(null=True, blank=True)
+    consume_tabaco = models.BooleanField(default=False, blank=True)
     inicio_consumo_tabaco = models.CharField(max_length=30, blank=True)
+    tipo_de_tabaco = models.CharField(max_length=30, blank=True)
     consumo_diario_tabaco = models.IntegerField(null=True)
     
-    consume_alcohol = models.NullBooleanField(null=True)
-    vino = models.NullBooleanField(null=True)
-    cerveza = models.NullBooleanField(null=True)
-    licor = models.NullBooleanField(null=True)
+    # consume_alcohol = models.BooleanField(default=False, blank=True)
+    vino = models.BooleanField(default=False, blank=True)
+    cerveza = models.BooleanField(default=False, blank=True)
+    licor = models.BooleanField(default=False, blank=True)
     
-    cafe = models.NullBooleanField(null=True)
+    cafe = models.BooleanField(default=False, blank=True)
     cantidad_cafe = models.CharField(max_length=200, blank=True)
     
     dieta = models.CharField(max_length=200, blank=True)
@@ -168,7 +173,7 @@ class EstiloVida(models.Model):
     numero_comidas = models.IntegerField(null=True)
     tipo_de_comidas = models.CharField(max_length=200, blank=True)
     
-    consume_drogas = models.NullBooleanField(null=True)
+    consume_drogas = models.BooleanField(default=False, blank=True)
     drogas = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
     
@@ -177,7 +182,7 @@ class EstiloVida(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return self.persona.get_absolute_url()
+        return 'persona-view-id', [self.persona.id]
 
 class Antecedente(models.Model):
     
@@ -185,26 +190,26 @@ class Antecedente(models.Model):
     the clinic
     """
     
-    persona = models.OneToOneField(Persona)
+    persona = models.OneToOneField(Persona, primary_key=True)
     
-    complete = models.NullBooleanField(null=True, blank=True)
-    reaction = models.NullBooleanField(null=True, blank=True)
+    # complete = models.BooleanField(default=False, blank=True)
+    # reaction = models.BooleanField(default=False, blank=True)
     
-    cardiopatia = models.NullBooleanField(null=True, blank=True)
-    hipertension = models.NullBooleanField(null=True, blank=True)
-    diabetes = models.NullBooleanField(null=True, blank=True)
-    hepatitis = models.NullBooleanField(null=True, blank=True)
-    rinitis = models.NullBooleanField(null=True, blank=True)
-    tuberculosis = models.NullBooleanField(null=True, blank=True)
-    artritis = models.NullBooleanField(null=True, blank=True)
-    asma = models.NullBooleanField(null=True, blank=True)
-    colitis = models.NullBooleanField(null=True, blank=True)
-    gastritis = models.NullBooleanField(null=True, blank=True)
-    sinusitis = models.NullBooleanField(null=True, blank=True)
-    hipertrigliceridemia = models.NullBooleanField(null=True, blank=True)
-    colelitiasis = models.NullBooleanField(null=True, blank=True)
-    migrana = models.NullBooleanField(null=True, blank=True)
-    alergias = models.CharField(max_length=200)
+    cardiopatia = models.BooleanField(default=False, blank=True)
+    hipertension = models.BooleanField(default=False, blank=True)
+    diabetes = models.BooleanField(default=False, blank=True)
+    hepatitis = models.BooleanField(default=False, blank=True)
+    rinitis = models.BooleanField(default=False, blank=True)
+    tuberculosis = models.BooleanField(default=False, blank=True)
+    artritis = models.BooleanField(default=False, blank=True)
+    asma = models.BooleanField(default=False, blank=True)
+    colitis = models.BooleanField(default=False, blank=True)
+    gastritis = models.BooleanField(default=False, blank=True)
+    sinusitis = models.BooleanField(default=False, blank=True)
+    hipertrigliceridemia = models.BooleanField(default=False, blank=True)
+    colelitiasis = models.BooleanField(default=False, blank=True)
+    migrana = models.BooleanField(default=False, blank=True)
+    alergias = models.CharField(max_length=200, blank=True)
     
     congenital = models.CharField(max_length=200, blank=True)
     
@@ -218,18 +223,18 @@ class Antecedente(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return self.persona.get_absolute_url()
+        return 'persona-view-id', [self.persona.id]
 
 class AntecedenteFamiliar(models.Model):
     
     """Registra los antecedentes familiares de una :class:`Persona`"""
     
-    persona = models.OneToOneField(Persona)
+    persona = models.OneToOneField(Persona, primary_key=True)
     
-    carcinogenico = models.NullBooleanField(null=True, blank=True)
-    cardiovascular = models.NullBooleanField(null=True, blank=True)
-    endocrinologico = models.NullBooleanField(null=True, blank=True)
-    respiratorio = models.NullBooleanField(null=True, blank=True)
+    carcinogenico = models.BooleanField(default=False, blank=True)
+    cardiovascular = models.BooleanField(default=False, blank=True)
+    endocrinologico = models.BooleanField(default=False, blank=True)
+    respiratorio = models.BooleanField(default=False, blank=True)
     otros = models.CharField(max_length=200, blank=True)
     
     @permalink
@@ -237,17 +242,17 @@ class AntecedenteFamiliar(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return self.persona.get_absolute_url()
+        return 'persona-view-id', [self.persona.id]
 
 class AntecedenteObstetrico(models.Model):
     
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
     
-    persona = models.OneToOneField(Persona)
+    persona = models.OneToOneField(Persona, primary_key=True)
     
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)
-    displasia = models.NullBooleanField(null=True, blank=True)
+    displasia = models.BooleanField(default=False, blank=True)
     # what the hell does these means?
     g = models.CharField(max_length=200, blank=True)
     p = models.CharField(max_length=200, blank=True)
@@ -260,13 +265,13 @@ class AntecedenteObstetrico(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return self.persona.get_absolute_url()
+        return 'persona-view-id', [self.persona.id]
 
 class AntecedenteQuirurgico(models.Model):
     
     """Registra los antecendentes quirurgicos de una :class:`Persona`"""
     
-    persona = models.ForeignKey(Persona)
+    persona = models.ForeignKey(Persona, primary_key=True)
     procedimiento = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
     
@@ -275,4 +280,4 @@ class AntecedenteQuirurgico(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return self.persona.get_absolute_url()
+        return 'persona-view-id', [self.persona.id]

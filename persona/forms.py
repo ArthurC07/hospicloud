@@ -35,33 +35,57 @@ class FisicoForm(forms.ModelForm):
     class Meta:
         
         model = Fisico
+    
+    persona = forms.ModelChoiceField(label="",
+                                  queryset=Persona.objects.all(),
+                                  widget=forms.HiddenInput())
 
 class EstiloVidaForm(forms.ModelForm):
     
     class Meta:
         
         model = EstiloVida
+    
+    persona = forms.ModelChoiceField(label="",
+                                  queryset=Persona.objects.all(),
+                                  widget=forms.HiddenInput())
 
 class AntecedenteForm(forms.ModelForm):
     
     class Meta:
         
         model = Antecedente
+    
+    persona = forms.ModelChoiceField(label="",
+                                  queryset=Persona.objects.all(),
+                                  widget=forms.HiddenInput())
 
 class AntecedenteFamiliarForm(forms.ModelForm):
     
     class Meta:
         
         model = AntecedenteFamiliar
+    
+    persona = forms.ModelChoiceField(label="",
+                                  queryset=Persona.objects.all(),
+                                  widget=forms.HiddenInput())
 
 class AntecedenteObstetricoForm(forms.ModelForm):
     
     class Meta:
         
         model = AntecedenteObstetrico
+    
+    persona = forms.ModelChoiceField(label="",
+                                  queryset=Persona.objects.all(),
+                                  widget=forms.HiddenInput())
 
 class AntecedenteQuirurgicoForm(forms.ModelForm):
     
     class Meta:
         
         model = AntecedenteQuirurgico
+    
+    persona = forms.ModelChoiceField(label="",
+                                  queryset=Persona.objects.all(),
+                                  widget=forms.HiddenInput())

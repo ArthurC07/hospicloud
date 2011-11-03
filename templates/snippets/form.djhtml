@@ -1,4 +1,11 @@
+{% load fieldtags %}
 {% for field in form %}
     {{ field.errors }}
-    {{ field.label_tag }} {{ field }}
+    {% if field|widget_type != 'CheckboxInput' and not field.is_hidden %}
+    {{ field.label_tag }}
+    {% endif %}
+    {{ field }}
+    {% if field|widget_type == 'CheckboxInput' and not field.is_hidden %}
+    {{ field.label_tag }}
+    {% endif %}
 {% endfor %}

@@ -4,6 +4,7 @@ from django.conf.urls.defaults import patterns, include, url
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 from views import IndexView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -17,3 +18,5 @@ urlpatterns = patterns('',
     url(r'^persona/', include('hospinet.persona.urls')),
     url(r'^accounts/', include('hospinet.users.urls')),
 )
+
+urlpatterns += staticfiles_urlpatterns()

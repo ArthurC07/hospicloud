@@ -1,7 +1,6 @@
 {% extends 'base.djhtml' %}
 {% block content %}
-
-<nav class="toolbox">
+<nav class="toolbox grid_12">
   <ul>
     {% load menubuilder %}{% submenu menu-persona %}
     {% for item in submenu_items %}
@@ -11,25 +10,26 @@
     {% endfor %}
   </ul>
 </nav>
-
-{% include "snippets/persona.djhtml" with persona=persona %}
-<a href="{% url persona-editar persona.id %}" class="button">Editar Datos</a>
-
-{% include "snippets/fisico.djhtml" with fisico=persona.fisico %}
-<a href="{% url persona-fisico-editar persona.id %}" class="button">Editar F&iacute;sico</a>
-
-{% include "snippets/estilo_vida.djhtml" with estilo_vida=persona.estilo_vida %}
-<a href="{% url persona-estilovida-editar persona.id %}" class="button">Editar Estilo de Vida</a>
-
-{% include "snippets/antecedente.djhtml" with antecedente=persona.antecedente %}
-<a href="{% url persona-antecedente-editar persona.id %}" class="button">Editar Antecedentes Cl&iacute;nicos</a>
-
-{% include "snippets/antecedente_familiar.djhtml" with antecedente=persona.antecedente_familiar %}
-<a href="{% url persona-antecedente-familiar-editar persona.id %}" class="button">Editar Antecedentes Familiares</a>
-
-{% if persona.sexo = 'F' %}
-{% include "snippets/antecedente_obstetrico.djhtml" with antecedente=persona.antecedente_obstetrico %}
-<a href="{% url persona-antecedente-obstetrico-editar persona.id %}" class="button">Editar Antecedentes Obstetricos</a>
-{% endif %}
-
+<div id="informacion" class="grid_12">
+  <div class="info">
+    {% include "snippets/persona.djhtml" with persona=persona %} <a href="{% url persona-editar persona.id %}" class="button">Editar Datos</a>
+  </div>
+  <div class="info">
+    {% include "snippets/fisico.djhtml" with fisico=persona.fisico %} <a href="{% url persona-fisico-editar persona.id %}" class="button">Editar F&iacute;sico</a>
+  </div>
+  <div class="info">
+    {% include "snippets/estilo_vida.djhtml" with estilo_vida=persona.estilo_vida %} <a href="{% url persona-estilovida-editar persona.id %}" class="button">Editar Estilo de Vida</a>
+  </div>
+  <div class="info">
+    {% include "snippets/antecedente.djhtml" with antecedente=persona.antecedente %} <a href="{% url persona-antecedente-editar persona.id %}" class="button">Editar Antecedentes Cl&iacute;nicos</a>
+  </div>
+  <div class="info">
+    {% include "snippets/antecedente_familiar.djhtml" with antecedente=persona.antecedente_familiar %} <a href="{% url persona-antecedente-familiar-editar persona.id %}" class="button">Editar Antecedentes Familiares</a>
+  </div>
+  <div class="info">
+    {% if persona.sexo = 'F' %}
+    {% include "snippets/antecedente_obstetrico.djhtml" with antecedente=persona.antecedente_obstetrico %} <a href="{% url persona-antecedente-obstetrico-editar persona.id %}" class="button">Editar Antecedentes Obstetricos</a>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

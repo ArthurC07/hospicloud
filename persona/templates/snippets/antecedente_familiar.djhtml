@@ -1,13 +1,13 @@
-<hgroup><h4>Antecedentes Familiares</h4></hgroup>
 <table class="data">
+  <caption>Antecedentes Familiares</caption>
   <tr>
     <td class="data-label">Carcinogénicos</td>
-    <td class="patient-data">{{ antecedente.carcinogenico }}</td>
+    <td class="patient-data">{{ antecedente.carcinogenico|yesno:"Sí,No" }}</td>
     <td class="data-label">Cardiovasculares</td>
-    <td class="patient-data">{{ antecedente.cardiovascular }}</td>
+    <td class="patient-data">{{ antecedente.cardiovascular|yesno:"Sí,No" }}</td>
     <td class="data-label">Endocrinológicos</td>
-    <td class="patient-data">{{ antecedente.endocrinologico }}</td>
+    <td class="patient-data">{{ antecedente.endocrinologico|yesno:"Sí,No" }}</td>
     <td class="data-label">Respiratorios</td>
-    <td class="patient-data">{{ antecedente.respiratorio }}</td>
+    <td class="patient-data">{{ antecedente.respiratorio|yesno:"Sí,No" }}</td>
   </tr>
 </table>
