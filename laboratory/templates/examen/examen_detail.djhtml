@@ -1,0 +1,7 @@
+{% extends "base.djhtml" %}
+{% block content %}<div id="examen">
+  <hgroup>
+    <h1>{{ examen.nombre }} de {{ examen.persona }}</h1>
+  </hgroup>
+  {% include "snippets/examen.djhtml" with examen=examen %}
+</div>{% endblock %}

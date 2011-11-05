@@ -124,8 +124,13 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'persona',
+    'laboratory',
     'users',
-    'menu',
+    # Third party apps go here
+    'treemenus',
+    'sorl.thumbnail',
+    'django_countries',
+    
 )
 
 # A sample logging configuration. The only tangible logging
@@ -156,3 +161,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 AUTH_PROFILE_MODULE = 'users.Profile'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache',
+    }
+}

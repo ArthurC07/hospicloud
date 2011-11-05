@@ -1,6 +1,3 @@
-<hgroup>
-  <h3>{{ persona.nombre_completo }}</h3>
-</hgroup>
 <table>
   <caption>Datos Personales</caption>
   <tr>

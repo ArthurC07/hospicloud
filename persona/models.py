@@ -8,17 +8,8 @@ from datetime import date
 from django.db import models
 from django.db.models import permalink
 import re
-
-class Pais(models.Model):
-    
-    """Representa los varios paises dentro de la aplicación"""
-    
-    nombre = models.CharField(max_length=200)
-    order = models.IntegerField()
-    
-    def __unicode__(self):
-        
-        return self.nombre
+from sorl.thumbnail import ImageField #@UnresolvedImport
+from django_countries import CountryField #@UnresolvedImport
 
 class Persona(models.Model):
     
@@ -51,7 +42,6 @@ class Persona(models.Model):
     apellido = models.CharField(max_length=50)
     sexo = models.CharField(max_length=1, choices=GENEROS)
     nacimiento = models.DateField(default=date.today)
-    nacionalidad = models.ForeignKey('Pais')
     estado_civil = models.CharField(max_length=1, choices=ESTADOS_CIVILES)
     profesion = models.CharField(max_length=200, blank=True)
     telefono = models.CharField(max_length=200, blank=True)
@@ -65,7 +55,8 @@ class Persona(models.Model):
     antiguedad = models.CharField(max_length=200, blank=True)
     cargo = models.CharField(max_length=200, blank=True)
     fax = models.CharField(max_length=200, blank=True)
-    fotografia = models.ImageField(upload_to='persona/foto', blank=True)
+    fotografia = ImageField(upload_to='persona/foto', blank=True)
+    nacionalidad = CountryField()
     
     def __unicode__(self):
         
@@ -140,7 +131,8 @@ class Fisico(models.Model):
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
-    tipo_de_sangre = models.CharField(max_length=2, blank=True, choices=TIPOS_SANGRE)
+    tipo_de_sangre = models.CharField(max_length=2, blank=True,
+                                      choices=TIPOS_SANGRE)
     
     @permalink
     def get_absolute_url(self):
@@ -186,8 +178,8 @@ class EstiloVida(models.Model):
 
 class Antecedente(models.Model):
     
-    """Describe la situación of a :class:`Paciente` when he/she first arrives at
-    the clinic
+    """Describe el historial clínico de una :class:`Persona` al llegar a
+    consulta por primera vez
     """
     
     persona = models.OneToOneField(Persona, primary_key=True)

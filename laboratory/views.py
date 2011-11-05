@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from laboratory.forms import ExamenForm, ImagenForm
-from laboratory.models import Examen, Imagen
+from laboratory.forms import ExamenForm, ImagenForm, AdjuntoForm
+from laboratory.models import Examen, Imagen, Adjunto
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView, CreateView
+from django.views.generic import (DetailView, UpdateView, CreateView,
+                                  TemplateView)
 from library.protected import LoginRequiredView
 from persona.models import Persona
-from django.views.generic.base import TemplateView
 
 class ExamenIndexView(TemplateView):
     
@@ -20,6 +19,12 @@ class ExamenDetailView(DetailView, LoginRequiredView):
     context_object_name = 'examen'
     model = Examen
     template_name = 'examen/examen_detail.djhtml'
+
+class ExamenPersonaListView(DetailView, LoginRequiredView):
+    
+    context_object_name = 'persona'
+    model = Persona
+    template_name = 'examen/examen_paciente_detail.djhtml'
 
 class ExamenUpdateView(UpdateView, LoginRequiredView):
     
@@ -37,14 +42,20 @@ class ExamenCreateView(CreateView, LoginRequiredView):
     form_class = ExamenForm
     template_name = 'examen/examen_create.djhtml'
     
+    def get_form_kwargs(self):
+        
+        kwargs = super(ExamenCreateView, self).get_form_kwargs()
+        kwargs.update({ 'initial':{'persona':self.persona.id}})
+        return kwargs
+    
     def dispatch(self, *args, **kwargs):
         
         self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
         return super(ExamenCreateView, self).dispatch(*args, **kwargs)
     
-    def form_valid(self):
+    def form_valid(self, form):
         
-        self.object = self.form.save(commit=False)
+        self.object = form.save(commit=False)
         self.object.persona = self.persona
         self.object.save()
         
@@ -63,9 +74,42 @@ class ImagenCreateView(CreateView, LoginRequiredView):
         self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
         return super(ExamenCreateView, self).dispatch(*args, **kwargs)
     
-    def form_valid(self):
+    def get_form_kwargs(self):
         
-        self.object = self.form.save(commit=False)
+        kwargs = super(ImagenCreateView, self).get_form_kwargs()
+        kwargs.update({ 'initial':{'examen':self.examen.id}})
+        return kwargs
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.examen = self.examen
+        self.object.save()
+        
+        return HttpResponseRedirect(self.get_success_url())
+
+class AdjuntoCreateView(CreateView, LoginRequiredView):
+    
+    """Permite crear :class:`Adjunto`s a un :class:`Examen`"""
+    
+    model = Adjunto
+    form_class = AdjuntoForm
+    template_name = "examen/adjunto_create.djhtml"
+    
+    def dispatch(self, *args, **kwargs):
+        
+        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
+        return super(ExamenCreateView, self).dispatch(*args, **kwargs)
+    
+    def get_form_kwargs(self):
+        
+        kwargs = super(AdjuntoCreateView, self).get_form_kwargs()
+        kwargs.update({ 'initial':{'examen':self.examen.id}})
+        return kwargs
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
         self.object.examen = self.examen
         self.object.save()
         

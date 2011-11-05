@@ -1,16 +1,13 @@
-{% extends 'base.djhtml' %}
+{% extends 'base.djhtml' %}{% load thumbnail %}
 {% block content %}
 <nav class="toolbox grid_12">
-  <ul>
-    {% load menubuilder %}{% submenu menu-persona %}
-    {% for item in submenu_items %}
-    <li>
-      <a href="{{ item.url }}" title="{{ item.title|escape }}"{% if item.current %} class='current'{% endif %}>{{ item.title }}</a>
-    </li>
-    {% endfor %}
-  </ul>
+  {% load tree_menu_tags %}{% show_menu "persona" %}
 </nav>
 <div id="informacion" class="grid_12">
+  <hgroup>
+    <h1>{{ persona.nombre_completo }}</h1>
+  </hgroup>
+  {% thumbnail persona.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
   <div class="info">
     {% include "snippets/persona.djhtml" with persona=persona %} <a href="{% url persona-editar persona.id %}" class="button">Editar Datos</a>
   </div>
@@ -27,9 +24,9 @@
     {% include "snippets/antecedente_familiar.djhtml" with antecedente=persona.antecedente_familiar %} <a href="{% url persona-antecedente-familiar-editar persona.id %}" class="button">Editar Antecedentes Familiares</a>
   </div>
   <div class="info">
-    {% if persona.sexo = 'F' %}
+    {% ifequal persona.sexo 'F' %}
     {% include "snippets/antecedente_obstetrico.djhtml" with antecedente=persona.antecedente_obstetrico %} <a href="{% url persona-antecedente-obstetrico-editar persona.id %}" class="button">Editar Antecedentes Obstetricos</a>
-    {% endif %}
+    {% endifequal %}
   </div>
 </div>
 {% endblock %}

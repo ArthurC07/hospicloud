@@ -5,6 +5,7 @@ from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from views import IndexView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf import settings
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -16,7 +17,14 @@ urlpatterns = patterns('',
     
     url(r'^$', IndexView.as_view(), name='home'),
     url(r'^persona/', include('hospinet.persona.urls')),
+    url(r'^examen/', include('hospinet.laboratory.urls')),
     url(r'^accounts/', include('hospinet.users.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.MEDIA_ROOT,
+        }),
+   )
