@@ -28,9 +28,9 @@ urlpatterns = patterns('',
     
     url(r'^(?P<examen>\d+)/imagen/adjuntar$',
         ImagenCreateView.as_view(),
-        name='examen-imagen-adjuntar'),
+        name='examen-adjuntar-imagen'),
     
     url(r'^(?P<examen>\d+)/archivo/adjuntar$',
         AdjuntoCreateView.as_view(),
-        name='examen-archivo-adjuntar'),
+        name='examen-adjuntar-archivo'),
 )

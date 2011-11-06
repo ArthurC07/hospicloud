@@ -72,7 +72,7 @@ class ImagenCreateView(CreateView, LoginRequiredView):
     def dispatch(self, *args, **kwargs):
         
         self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
-        return super(ExamenCreateView, self).dispatch(*args, **kwargs)
+        return super(ImagenCreateView, self).dispatch(*args, **kwargs)
     
     def get_form_kwargs(self):
         
@@ -99,7 +99,7 @@ class AdjuntoCreateView(CreateView, LoginRequiredView):
     def dispatch(self, *args, **kwargs):
         
         self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
-        return super(ExamenCreateView, self).dispatch(*args, **kwargs)
+        return super(AdjuntoCreateView, self).dispatch(*args, **kwargs)
     
     def get_form_kwargs(self):
         

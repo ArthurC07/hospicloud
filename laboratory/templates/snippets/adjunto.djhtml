@@ -1,0 +1,4 @@
+<div class="adjunto">
+  <a class="button" href="{{ adjunto.archivo.url }}">Descargar</a>
+  <p>{{ adjunto.descripcion }}</p>
+</div>

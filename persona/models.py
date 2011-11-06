@@ -55,7 +55,7 @@ class Persona(models.Model):
     antiguedad = models.CharField(max_length=200, blank=True)
     cargo = models.CharField(max_length=200, blank=True)
     fax = models.CharField(max_length=200, blank=True)
-    fotografia = ImageField(upload_to='persona/foto', blank=True)
+    fotografia = ImageField(upload_to='persona/foto//%Y/%m/%d', blank=True)
     nacionalidad = CountryField()
     
     def __unicode__(self):
