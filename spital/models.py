@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
 from django.db import models
-from library import code128
+from library import code128, image_to_content
 from persona.models import Persona
-import os
+from sorl.thumbnail import ImageField
 
 class Admision(models.Model):
     
@@ -30,7 +29,7 @@ class Admision(models.Model):
     doctor = models.CharField(max_length=200, blank=True)
     # especialidad = ReferenceField(Especialidad)
     
-    tipo_habitacion = models.CharField(max_length=200, blank=True)
+    tipo_de_habitacion = models.CharField(max_length=200, blank=True)
     habitacion = models.CharField(max_length=200, blank=True)
     arancel = models.CharField(max_length=200, blank=True)
     
@@ -54,6 +53,7 @@ class Admision(models.Model):
     de enfermeria"""
     pago = models.DateTimeField(null=True, blank=True)
     fecha_alta = models.DateTimeField(null=True, blank=True)
+    codigo = ImageField(upload_to="admision/codigo/%Y%/%m/%d",blank=True)
     
     def crear_code128(self):
         
@@ -62,21 +62,15 @@ class Admision(models.Model):
         """
         
         codigo = code128.Code128(str(self.id))
-        sto = FileSystemStorage()
-        filename = os.path.join(sto.location, 'codigos', str(self.id) + '.png')
-        
-        if os.path.exists(filename):
-            os.remove(filename)
-        
-        imagen = codigo.render()
-        imagen.save(filename)
+        imagen = image_to_content(codigo.render())
+        self.codigo.save('{0}.jpg'.format(self.id), imagen)
 
 class SignoVital(models.Model):
     
     """Registra los signos vitales de una :class:`Persona` durante una
     :class:`Admision` en el  Hospital"""
     
-    admision = models.ManyToOneRel(Admision)
+    admision = models.ManyToOneRel(Admision, related_name='signos_vitales')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     pulso = models.IntegerField()
     temperatura = models.DecimalField(decimal_places=2, max_digits=4, null=True)
@@ -92,7 +86,7 @@ class Evolucion(models.Model):
     """Registra la evolución de la :class:`Persona durante una
     :class:`Admision`"""
     
-    admision = models.ManyToOneRel(Admision)
+    admision = models.ManyToOneRel(Admision, related_name='evolucion')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     nota = models.CharField(max_length=200, blank=True)
 
@@ -100,7 +94,7 @@ class Cargo(models.Model):
     
     """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
     
-    admision = models.ManyToOneRel(Admision)
+    admision = models.ManyToOneRel(Admision, related_name='cargos')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     cargo = models.CharField(max_length=200)
     inicio = models.DateTimeField(default=datetime.now)
@@ -110,7 +104,7 @@ class OrdenMedica(models.Model):
     
     """Registra las indicaciones a seguir por el personal de enfermeria"""
     
-    admision = models.ManyToOneRel(Admision)
+    admision = models.ManyToOneRel(Admision, related_name='ordenes_medicas')
     orden = models.CharField(max_length=200, blank=True)
     doctor = models.CharField(max_length=200, blank=True)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
@@ -119,7 +113,7 @@ class Ingesta(models.Model):
     
     """Registra las ingestas que una :class:`Persona`"""
     
-    admision = models.ManyToOneRel(Admision)
+    admision = models.ManyToOneRel(Admision, related_name='ingestas')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     ingerido = models.CharField(max_length=200, blank=True)
     cantidad = models.IntegerField()
@@ -130,7 +124,7 @@ class Excreta(models.Model):
     """Registra las excresiones de una :class:`Persona` durante una
     :class:`Admision`"""
     
-    admision = models.ManyToOneRel(Admision)
+    admision = models.ManyToOneRel(Admision, related_name='excretas')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     medio = models.CharField(max_length=200, blank=True)
     cantidad = models.CharField(max_length=200, blank=True)
@@ -142,7 +136,7 @@ class NotaEnfermeria(models.Model):
     
     """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
     
-    admision = models.ManyToOneRel(Admision)
+    admision = models.ManyToOneRel(Admision, related_name='notas_enfermeria')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     nota = models.CharField(max_length=200, blank=True)
 
@@ -151,7 +145,7 @@ class Glucometria(models.Model):
     """Registra las fluctuaciones en los niveles de Glucosa en la sangre de una
     :class:`Persona` durante una :class`Admision`"""
     
-    admision = models.ManyToOneRel(Admision)
+    admision = models.ManyToOneRel(Admision, related_name='glucometrias')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     control = models.CharField(max_length=200, blank=True)
     tipo = models.CharField(max_length=200, blank=True)

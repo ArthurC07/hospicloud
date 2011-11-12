@@ -9,8 +9,6 @@ unneeded function calls and updating the string formating
 import gdcm
 import numpy
 from PIL import Image, ImageOps #@UnresolvedImport
-import cStringIO
-from django.core.files.base import ContentFile
 
 def gdcm_to_numpy(image):
     
@@ -47,7 +45,7 @@ def extraer_imagen(filename):
     """Extrae la imagen de un archivo DICOM
     
     :param filename: Lugar absoluto del archivo
-    :returns:        un :class:`ContentFile` que puede ser utilizado en django
+    :returns:        un :class:`Image` de PIL
     """
     
     reader = gdcm.ImageReader()
@@ -65,7 +63,4 @@ def extraer_imagen(filename):
                              'raw', 'L', 0, 1)
     ## cutoff removes background noise and spikes
     image = ImageOps.autocontrast(image, cutoff=.1)
-    temporal = cStringIO.StringIO()
-    image.save(temporal, 'jpeg')
-    temporal.seek(0)
-    return ContentFile(temporal.read())
+    return image

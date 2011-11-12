@@ -130,7 +130,8 @@ INSTALLED_APPS = (
     'treemenus',
     'sorl.thumbnail',
     'django_countries',
-    
+    'haystack',
+    'tastypie',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -167,4 +168,13 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'cache',
     }
+}
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(PROJECT_PATH,'whoosh_index'),
+        'INCLUDE_SPELLING': True,
+        'BATCH_SIZE': 100,
+    },
 }

@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.conf.urls.defaults import patterns, include, url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from views import IndexView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-from views import IndexView
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.conf import settings
+from tastypie.api import Api
 admin.autodiscover()
+from persona.api import PersonaResource
+
+v1_api = Api(api_name='v1')
+v1_api.register(PersonaResource())
 
 urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
@@ -19,6 +24,8 @@ urlpatterns = patterns('',
     url(r'^persona/', include('hospinet.persona.urls')),
     url(r'^examen/', include('hospinet.laboratory.urls')),
     url(r'^accounts/', include('hospinet.users.urls')),
+    url(r'^busqueda/', include('haystack.urls')),
+    url(r'^api/', include(v1_api.urls)),
 )
 
 urlpatterns += staticfiles_urlpatterns()

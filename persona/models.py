@@ -9,7 +9,7 @@ from django.db import models
 from django.db.models import permalink
 import re
 from sorl.thumbnail import ImageField #@UnresolvedImport
-from django_countries import CountryField #@UnresolvedImport
+from django_countries import CountryField
 
 class Persona(models.Model):
     
@@ -36,13 +36,13 @@ class Persona(models.Model):
     __expresion__ = re.compile(r'\d{4}-\d{4}-\d{5}')
     
     tipo_identificacion = models.CharField(max_length=1,
-                                           choices=TIPOS_IDENTIDAD)
+                                           choices=TIPOS_IDENTIDAD, blank=True)
     identificacion = models.CharField(max_length=20, blank=True, unique=True)
-    nombre = models.CharField(max_length=50)
-    apellido = models.CharField(max_length=50)
-    sexo = models.CharField(max_length=1, choices=GENEROS)
+    nombre = models.CharField(max_length=50, blank=True)
+    apellido = models.CharField(max_length=50, blank=True)
+    sexo = models.CharField(max_length=1, choices=GENEROS, blank=True)
     nacimiento = models.DateField(default=date.today)
-    estado_civil = models.CharField(max_length=1, choices=ESTADOS_CIVILES)
+    estado_civil = models.CharField(max_length=1, choices=ESTADOS_CIVILES, blank=True)
     profesion = models.CharField(max_length=200, blank=True)
     telefono = models.CharField(max_length=200, blank=True)
     ci = models.CharField(max_length=200, blank=True)
@@ -56,11 +56,7 @@ class Persona(models.Model):
     cargo = models.CharField(max_length=200, blank=True)
     fax = models.CharField(max_length=200, blank=True)
     fotografia = ImageField(upload_to='persona/foto//%Y/%m/%d', blank=True)
-    nacionalidad = CountryField()
-    
-    def __unicode__(self):
-        
-        return self.nombre_completo()
+    nacionalidad = CountryField(blank=True)
     
     @staticmethod
     def validar_identidad(identidad):

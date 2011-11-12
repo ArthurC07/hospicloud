@@ -2,3 +2,5 @@
 .pydevproject
 .settings
 .project
+whoosh_index
+media

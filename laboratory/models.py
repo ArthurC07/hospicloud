@@ -2,7 +2,7 @@
 from datetime import datetime
 from django.db import models
 from django.db.models import permalink
-from library import dicom
+from library import dicom, image_to_content
 from persona.models import Persona
 from sorl.thumbnail import ImageField #@UnresolvedImport
 import os
@@ -71,7 +71,7 @@ class Dicom(models.Model):
     
     def extraer_imagen(self):
         
-        imagen_dicom = dicom.extraer_imagen(self.archivo.name)
+        imagen_dicom = image_to_content(dicom.extraer_imagen(self.archivo.name))
         imagen = Imagen(examen=self.examen, descripcion=self.descripcion)
         archivo = os.path.splitext(os.path.basename(self.archivo.name))[0]
         imagen.imagen.save("{0}.jpg".format(archivo), imagen_dicom)
