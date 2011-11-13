@@ -1,0 +1,28 @@
+{% extends "base.djhtml" %}
+{% block header %}
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/spital.js"></script>
+<script type="text/javascript">
+  $(document).ready(function()
+  {
+    data_source = new Spital("{% url home %}");
+    var resultados = $('#resultados');
+    $('#persona-form').submit(function() { return false; });
+    $('#persona-buscar').click(function()
+    {
+      resultados.empty();
+      data_source.search_person($('#persona-search').val(), resultados);
+      return false;
+    });
+  });
+</script>
+{% endblock %}
+{% block content %}
+<div id="persona-form">
+  <div>
+    <label>Nombre o identidad:</label>
+    <input id="persona-search" />
+    <button id="persona-buscar">Buscar</button>
+  </div>
+</div>
+<div id="resultados"></div>
+{% endblock %}

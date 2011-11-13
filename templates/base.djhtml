@@ -18,8 +18,8 @@
   <!-- <link rel='stylesheet'
   href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' /> -->
   <title>HospiNet :: {% block pagetitle %}{% endblock %}</title>
-  <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.js" ></script>
-  <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery-ui.js" ></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js" ></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" ></script>
   <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery-ui-timepicker.js" ></script>
   <script type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.colorbox.js" ></script>
   {% block header %}{% endblock %}

@@ -10,7 +10,7 @@ from tastypie.api import Api
 admin.autodiscover()
 from persona.api import PersonaResource
 
-v1_api = Api(api_name='v1')
+v1_api = Api(api_name='mobile')
 v1_api.register(PersonaResource())
 
 urlpatterns = patterns('',
@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     url(r'^persona/', include('hospinet.persona.urls')),
     url(r'^examen/', include('hospinet.laboratory.urls')),
     url(r'^accounts/', include('hospinet.users.urls')),
+    url(r'^admision/', include('hospinet.spital.urls')),
     url(r'^busqueda/', include('haystack.urls')),
     url(r'^api/', include(v1_api.urls)),
 )

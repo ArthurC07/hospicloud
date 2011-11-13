@@ -1,0 +1,24 @@
+<table>
+  <thead>
+    <tr>
+      <th>Identificaci&oacute;n</th>
+      <th>Nombre</th>
+      <th>Edad</th>
+      <th>Sexo</th>
+      <th>Hora de Ingreso</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for admision in admisiones%}
+    <tr>
+      <td>{{ admision.persona.identificacion }}</td>
+      <td>{{ admision.persona.nombre_completo }}</td>
+      <td>{{ persona.obtener_edad }}</td>
+      <td>{{ persona.get_sexo_display }}</td>
+      <td>{{ admision.momento|date:"d/m/Y H%:M%" }}</td>
+      <td><a href="{% url persona-view-id persona.id %}">Ver</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

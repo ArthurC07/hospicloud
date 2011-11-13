@@ -1,0 +1,10 @@
+{% extends "base.djhtml" %}
+{% block content %}
+<nav class="toolbox">
+  <ul>
+    <li><a href="{% url admision-iniciar %}">Admitir Paciente</a></li>
+  </ul>
+</nav>
+{% include "snippets/admision_list.djhtml" with admisiones=admisiones %}
+{% endblock %}
+ 
