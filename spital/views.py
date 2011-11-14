@@ -188,6 +188,17 @@ class AutorizarView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡Admision Autorizada!')
         return reverse('admision-view-id', args=[admision.id])
 
+class PagarView(RedirectView, LoginRequiredView):
+    
+    url = '/admision/hospitalizar'
+    
+    def get_redirect_url(self, **kwargs):
+        
+        admision = get_object_or_404(Admision, pk=kwargs['pk'])
+        admision.pagar()
+        messages.info(self.request, u'¡Registrado el pago de la Admision!')
+        return reverse('admision-view-id', args=[admision.id])
+
 class HospitalizarView(RedirectView, LoginRequiredView):
     
     url = '/admision/hospitalizar'

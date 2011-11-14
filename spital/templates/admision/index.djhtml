@@ -19,6 +19,7 @@ STATIC_PREFIX }}js/excanvas.js"></script><![endif]-->
     </li>
   </ul>
 </nav>
+<div id="admision" class="grid_12">
 <hgroup class="top title">
 	<h1>Admisiones</h1>
 </hgroup>
@@ -30,4 +31,5 @@ STATIC_PREFIX }}js/excanvas.js"></script><![endif]-->
   </article>
 </div>
 {% include "snippets/admision_list.djhtml" with admisiones=admisiones %}
+</div>
 {% endblock %} 

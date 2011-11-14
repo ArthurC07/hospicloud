@@ -5,6 +5,7 @@
   	<li><a href="{% url persona-create %}">Agregar Paciente</a></li>
   </ul>
 </nav>
-{% include "snippets/persona_list.djhtml" with personas=personas %}
+<div id="personas" class="grid_12">
+  {% include "snippets/persona_list.djhtml" with personas=personas %}
+</div>
 {% endblock %}
- 

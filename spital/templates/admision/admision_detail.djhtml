@@ -4,6 +4,7 @@
   <ul class="grid_12 information">
     <li><a href="{% url admision-autorizacion admision.id %}">Autorizaci&oacute;n</a></li>
     <li><a href="{% url admision-hospitalizar admision.id %}">Hospitalizar</a></li>
+    <li><a href="{% url admision-pagar admision.id %}">Marcar como Pagada</a></li>
     <li><a href="{% url admision-referencias admision.id %}">Referencias</a></li>
     <li><a href="{% url admision-fiadores admision.id %}">Fiadores</a></li>
     <li><a href="{% url admision-index %}">Regresar a Admisiones</a></li>

@@ -12,4 +12,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', end
 	-moz-box-shadow: 0 0 5px #888;
 -webkit-box-shadow: 0 0 5px#888;
 box-shadow: 0 0 5px #888;
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px; 
 }
