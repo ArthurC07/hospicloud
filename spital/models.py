@@ -2,7 +2,9 @@
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import models
-from library import code128, image_to_content
+from django.db.models import permalink
+from django_extensions.db.fields import UUIDField
+from library import code128, image_to_content, pyqrcode
 from persona.models import Persona
 from sorl.thumbnail import ImageField #@UnresolvedImport
 
@@ -20,7 +22,29 @@ class Admision(models.Model):
         ('C', 'Alta'),
     )
     
-    momento = models.DateTimeField(default=datetime.now)
+    ARANCELES = (
+               ('C', u"CEMESA"),
+               ('E', u"Empleado"),
+               ('M', u"Mediprocesos"),
+               ('J', u"Ejecutivo"),
+               ('X', u"Extranjero"),
+    )
+    
+    PAGOS = (
+             ('EF', u"Efectivo"),
+             ('CK', u"Cheque"),
+             ('CO', u"Empresa"),
+             ("OC", u"Orden de Compra"),
+             ('TC', u"Tarjeta Crédito"),
+             ('TB', u"Transferencia Bancaria"),
+    )
+    
+    ASEGURADORA = (
+             ("PA","Particular"),
+             ("PR", "Privado"),
+    )
+    
+    momento = models.DateTimeField(default=datetime.now, null=True, blank=True)
     paciente = models.ForeignKey(Persona, related_name='admisiones')
     fiadores = models.ManyToManyField(Persona, related_name='fianzas')
     referencias = models.ManyToManyField(Persona, related_name='referencias')
@@ -31,39 +55,66 @@ class Admision(models.Model):
     
     tipo_de_habitacion = models.CharField(max_length=200, blank=True)
     habitacion = models.CharField(max_length=200, blank=True)
-    arancel = models.CharField(max_length=200, blank=True)
+    arancel = models.CharField(max_length=200, blank=True, choices=ARANCELES)
     
-    pago = models.CharField(max_length=200, blank=True)
+    pago = models.CharField(max_length=200, blank=True, choices=PAGOS)
     
     poliza = models.CharField(max_length=200, blank=True)
     certificado = models.CharField(max_length=200, blank=True)
-    aseguradora = models.CharField(max_length=200, blank=True)
+    aseguradora = models.CharField(max_length=200, blank=True,
+                                   choices=ASEGURADORA)
     deposito = models.CharField(max_length=200, blank=True)
     
     observaciones = models.CharField(max_length=200, blank=True)
     admitio = models.ForeignKey(User)
-    admision = models.DateTimeField(null=True, blank=True)
+    admision = models.DateTimeField(default=datetime.now,null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue ingresada en
     admisiones"""
-    autorizacion = models.DateTimeField(null=True, blank=True)
+    autorizacion = models.DateTimeField(default=datetime.now,null=True, blank=True)
     hospitalizacion = models.DateTimeField(null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue internada"""
     ingreso = models.DateTimeField(null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue enviada al area
     de enfermeria"""
-    pago = models.DateTimeField(null=True, blank=True)
-    fecha_alta = models.DateTimeField(null=True, blank=True)
-    codigo = ImageField(upload_to="admision/codigo/%Y%/%m/%d",blank=True)
+    fecha_pago = models.DateTimeField(default=datetime.now,null=True, blank=True)
+    fecha_alta = models.DateTimeField(default=datetime.now,null=True, blank=True)
+    uuid = UUIDField(version=4)
+    codigo = ImageField(upload_to="admision/codigo/%Y/%m/%d", blank=True)
+    qr = ImageField(upload_to="admision/codigo/%Y/%m/%d/qr", blank=True)
+    estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
     
-    def crear_code128(self):
+    def generar_codigo(self):
         
         """
         Crea un codigo de barras del tipo Code 128 para una :class:`Admision`
         """
         
-        codigo = code128.Code128(str(self.id))
+        codigo = code128.Code128(str(self.uuid))
         imagen = image_to_content(codigo.render())
-        self.codigo.save('{0}.jpg'.format(self.id), imagen)
+        self.codigo.save('{0}.jpg'.format(self.uuid), imagen)
+    
+    def generar_qr(self):
+        
+        """
+        Crea un codigo de barras del tipo Code 128 para una :class:`Admision`
+        """
+        
+        imagen = image_to_content(pyqrcode.MakeQRImage(self.uuid))
+        self.qr.save('{0}.jpg'.format(self.uuid), imagen)
+    
+    def autorizar(self):
+        
+        if self.autorizacion == self.momento:
+            self.autorizacion = datetime.now()
+        self.estado = 'B'
+        self.save()
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'admision-view-id', [self.id]
 
 class SignoVital(models.Model):
     

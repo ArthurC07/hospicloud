@@ -12,12 +12,12 @@
   <tbody>
     {% for admision in admisiones%}
     <tr>
-      <td>{{ admision.persona.identificacion }}</td>
-      <td>{{ admision.persona.nombre_completo }}</td>
-      <td>{{ persona.obtener_edad }}</td>
-      <td>{{ persona.get_sexo_display }}</td>
-      <td>{{ admision.momento|date:"d/m/Y H%:M%" }}</td>
-      <td><a href="{% url persona-view-id persona.id %}">Ver</a></td>
+      <td>{{ admision.paciente.identificacion }}</td>
+      <td>{{ admision.paciente.nombre_completo }}</td>
+      <td>{{ admision.paciente.obtener_edad }}</td>
+      <td>{{ admision.paciente.get_sexo_display }}</td>
+      <td>{{ admision.momento|date:"d/m/Y H:i" }}</td>
+      <td><a href="{% url admision-view-id admision.id %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

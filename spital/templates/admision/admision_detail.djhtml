@@ -1,0 +1,23 @@
+{% extends 'base.djhtml' %}{% load thumbnail %}
+{% block content %}
+<nav class="toolbox grid_12">
+  <ul class="grid_12 information">
+    <li><a href="{% url admision-autorizacion admision.id %}">Autorizaci&oacute;n</a></li>
+    <li><a href="{% url admision-referencias admision.id %}">Referencias</a></li>
+    <li><a href="{% url admision-fiadores admision.id %}">Fiadores</a></li>
+    <li><a href="{% url admision-index %}">Regresar a Admisiones</a></li>
+  </ul>
+</nav>
+<div id="informacion" class="grid_12">
+  <hgroup>
+    <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
+  </hgroup>
+  <p>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</p>
+  {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
+  <div class="info">
+    {% include "snippets/persona.djhtml" with persona=admision.paciente %} <a href="{% url persona-editar admision.paciente.id %}" class="button">Editar Datos del Paciente</a>
+  </div>
+  <img src="{{ admision.codigo.url }}" width="{{ im.width }}" height="{{ im.height }}">
+  <img src="{{ admision.qr.url }}" width="{{ im.width }}" height="{{ im.height }}">
+</div>
+{% endblock %}

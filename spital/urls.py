@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
 from spital.views import (AdmisionIndexView, PersonaAdmisionCreateView,
-    AdmisionCreateView, IngresarView, AdmisionDetailView)
+    AdmisionCreateView, IngresarView, AdmisionDetailView, AutorizarView,
+    FiadorAgregarView, ReferenciaAgregarView, PersonaFiadorCreateView,
+    PersonaReferenciaCreateView)
 
 urlpatterns = patterns('',
     
@@ -12,6 +14,42 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)$',
         AdmisionDetailView.as_view(),
         name='admision-view-id'),
+    
+    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
+        AdmisionDetailView.as_view(),
+        name='admision-view-slug'),
+    
+    url(r'^(?P<pk>\d+)/autorizacion$',
+        AdmisionDetailView.as_view(template_name="admision/autorizacion.djhtml"),
+        name='admision-autorizacion'),
+    
+    url(r'^(?P<pk>\d+)/fiadores$',
+        AdmisionDetailView.as_view(template_name="admision/admision_fiadores.djhtml"),
+        name='admision-fiadores'),
+    
+    url(r'^(?P<admision>\d+)/fiadores/agregar$',
+        PersonaFiadorCreateView.as_view(),
+        name='admision-fiador'),
+    
+    url(r'^(?P<admision>\d+)/fiadores/agregar/(?P<persona>\d+)$',
+        FiadorAgregarView.as_view(),
+        name='admision-fiador-agregar'),
+    
+    url(r'^(?P<pk>\d+)/referencias$',
+        AdmisionDetailView.as_view(template_name="admision/admision_referencias.djhtml"),
+        name='admision-referencias'),
+    
+    url(r'^(?P<admision>\d+)/referencias/agregar$',
+        PersonaReferenciaCreateView.as_view(),
+        name='admision-referencia'),
+    
+    url(r'^(?P<admision>\d+)/referencias/agregar/(?P<persona>\d+)$',
+        ReferenciaAgregarView.as_view(),
+        name='admision-referencia-agregar'),
+    
+    url(r'^(?P<pk>\d+)/autorizar$',
+        AutorizarView.as_view(),
+        name='admision-autorizar'),
     
     url(r'^ingresar$',
         IngresarView.as_view(),

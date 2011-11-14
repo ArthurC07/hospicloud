@@ -9,7 +9,7 @@
     $('#persona-form').submit(function()
     {
       resultados.empty();
-      data_source.search_person($('#persona-search').val(), resultados);
+      data_source.referencias($('#persona-search').val(), resultados, {{ admision.id }});
       return false;
     });
   });
@@ -18,7 +18,7 @@
 {% block content %}
 <form id="persona-form">
   <div>
-    <h1>Buscar una Paciente</h1>
+    <h1>Buscar una Persona</h1>
     <label>Nombre o Identidad:</label>
     <input id="persona-search" />
     <input type="submit" value="Buscar" />
@@ -26,9 +26,9 @@
 </form>
 <div id="resultados"></div>
 <form enctype="multipart/form-data" class="styled" method="post">
-  {% csrf_token %} <h1>Ingresar una nuevo Paciente</h1>
+  {% csrf_token %} <h1>Ingresar una nuevo Fiador</h1>
   <div id="messages"></div>
-  {% include "snippets/form.djhtml" with form=persona_form %}
+  {% include "snippets/form.djhtml" with form=form %}
   <p>
     <input type="submit" value="Guardar" />
   </p>
