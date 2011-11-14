@@ -2,7 +2,7 @@
 from datetime import datetime
 from django.db import models
 from django.db.models import permalink
-from library import dicom, image_to_content
+from library import image_to_content#, dicom
 from persona.models import Persona
 from sorl.thumbnail import ImageField #@UnresolvedImport
 import os

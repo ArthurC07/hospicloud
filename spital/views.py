@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -15,8 +16,26 @@ from django.contrib import messages
 class AdmisionIndexView(ListView, LoginRequiredView):
     
     context_object_name = 'admisiones'
-    model = Admision
+    queryset = Admision.objects.filter(~Q(estado='H')&~Q(estado='C')&~Q(estado='I'))
     template_name = 'admision/index.djhtml'
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(AdmisionIndexView, self).get_context_data(**kwargs)
+        
+        admisiones = self.queryset.all()
+        
+        if self.queryset.count() == 0:
+            context['promedio'] = 0
+        else:
+            context['promedio'] = sum(a.tiempo_ahora()
+                           for a in admisiones) / self.queryset.count()
+        
+        context['puntos'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
+                                          admisiones[n].tiempo_ahora())
+                      for n in range(self.queryset.count()))
+        
+        return context
 
 class IngresarView(TemplateView):
     
@@ -47,7 +66,7 @@ class PersonaFiadorCreateView(PersonaCreateView):
     
     def get_context_data(self, **kwargs):
         
-        context = super(PersonaFiadorCreateView, self).get_context_data()
+        context = super(PersonaFiadorCreateView, self).get_context_data(**kwargs)
         context['admision'] = self.admision
         context['form'] = PersonaForm()
         return context
@@ -166,4 +185,16 @@ class AutorizarView(RedirectView, LoginRequiredView):
         
         admision = get_object_or_404(Admision, pk=kwargs['pk'])
         admision.autorizar()
+        messages.info(self.request, u'¡Admision Autorizada!')
+        return reverse('admision-view-id', args=[admision.id])
+
+class HospitalizarView(RedirectView, LoginRequiredView):
+    
+    url = '/admision/hospitalizar'
+    
+    def get_redirect_url(self, **kwargs):
+        
+        admision = get_object_or_404(Admision, pk=kwargs['pk'])
+        admision.autorizar()
+        messages.info(self.request, u'¡Admision Enviada a Enfermeria!')
         return reverse('admision-view-id', args=[admision.id])

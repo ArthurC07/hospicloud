@@ -3,7 +3,7 @@ from django.conf.urls.defaults import patterns, url
 from spital.views import (AdmisionIndexView, PersonaAdmisionCreateView,
     AdmisionCreateView, IngresarView, AdmisionDetailView, AutorizarView,
     FiadorAgregarView, ReferenciaAgregarView, PersonaFiadorCreateView,
-    PersonaReferenciaCreateView)
+    PersonaReferenciaCreateView, HospitalizarView)
 
 urlpatterns = patterns('',
     
@@ -50,6 +50,10 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/autorizar$',
         AutorizarView.as_view(),
         name='admision-autorizar'),
+    
+    url(r'^(?P<pk>\d+)/hospitalizar$',
+        HospitalizarView.as_view(),
+        name='admision-hospitalizar'),
     
     url(r'^ingresar$',
         IngresarView.as_view(),
