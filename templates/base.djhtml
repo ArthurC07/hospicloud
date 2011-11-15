@@ -25,19 +25,21 @@
 <body>
   <!--[if lt IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative; margin-left:auto; margin-right: auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0012_spanish_LATAM.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." /></a></div><![endif]-->
   <header>
-    <nav class="user horizontal">
-      <ul><li>{% if user.is_authenticated %}Bienvenido, {{ user }}
+    <nav id="top" class="user horizontal gradient">
+        {% load tree_menu_tags %}{% show_menu "root" %}
+      <ul id="user-menu"><li><a href="#">{% if user.is_authenticated %}{{ user }}</a>
         <ul>
-          <li><a href="{% url logout %}">Salir</a>
+          <li><a href="{% url logout %}">Salir</a></li>
         </ul>
         {% else %}<a href="{% url login %}">Iniciar Sesi&oacute;n</a>{% endif %}</li></ul>
-        {% load tree_menu_tags %}{% show_menu "root" %}
     </nav>
-  </header>
-  <div id="content" class="container_12 content clearfix">{% if messages %}
-    <ul class="messages">
-      {% for message in messages %}<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{ message }}</li>{% endfor %}
-    </ul>{% endif %}
+  </header>{% if messages %}
+  <div id="system-message" class="container_12">
+    <ul class="messages grid_12">
+      {% for message in messages %}<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>{% endfor %}
+    </ul>
+  </div>{% endif %}
+  <div id="content" class="container_12 content clearfix">
     {% block content %}{% endblock %}
   </div>
   <footer class="container_12 clearfix">

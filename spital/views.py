@@ -180,6 +180,7 @@ class AdmisionDetailView(DetailView, LoginRequiredView):
 class AutorizarView(RedirectView, LoginRequiredView):
     
     url = '/admision/autorizar'
+    permanent = False
     
     def get_redirect_url(self, **kwargs):
         
@@ -191,6 +192,7 @@ class AutorizarView(RedirectView, LoginRequiredView):
 class PagarView(RedirectView, LoginRequiredView):
     
     url = '/admision/hospitalizar'
+    permanent = False
     
     def get_redirect_url(self, **kwargs):
         
@@ -202,10 +204,12 @@ class PagarView(RedirectView, LoginRequiredView):
 class HospitalizarView(RedirectView, LoginRequiredView):
     
     url = '/admision/hospitalizar'
+    permanent = False
+    
     
     def get_redirect_url(self, **kwargs):
         
         admision = get_object_or_404(Admision, pk=kwargs['pk'])
-        admision.autorizar()
+        admision.hospitalizar()
         messages.info(self.request, u'¡Admision Enviada a Enfermeria!')
         return reverse('admision-view-id', args=[admision.id])

@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^examen/', include('hospinet.laboratory.urls')),
     url(r'^accounts/', include('hospinet.users.urls')),
     url(r'^admision/', include('hospinet.spital.urls')),
+    url(r'^enfermeria/', include('hospinet.nightingale.urls')),
     url(r'^busqueda/', include('haystack.urls')),
     url(r'^api/', include(v1_api.urls)),
 )

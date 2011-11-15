@@ -1,0 +1,15 @@
+{% load static %}
+<aside class="grid_3" id="enfermeria-paciente-menu">
+  <nav>
+    <ul>
+      <li class="clearfix"><a href="{% url nightingale-view-id admision.id %}"><img src="{{ STATIC_PREFIX }}images/home.png" />Paciente</a></li>
+      <li class="clearfix"><a href="{% url enfermeria-cargos admision.id %}"><img src="{{ STATIC_PREFIX }}images/cargos.png" />Cargos</a></li>
+      <li class="clearfix"><a href="{% url enfermeria-signos admision.id %}"><img src="{{ STATIC_PREFIX }}images/signos.png" />Signos Vitales</a></li>
+      <li class="clearfix"><a href="{% url enfermeria-ordenes admision.id %}"><img src="{{ STATIC_PREFIX }}images/ordenes.png" />Ordenes M&eacute;dicas</a></li>
+      <li class="clearfix"><a href="{% url enfermeria-evolucion admision.id %}"><img src="{{ STATIC_PREFIX }}images/evolucion.png" />Evoluci&oacute;n</a></li>
+      <li class="clearfix"><a href="{% url enfermeria-ingestas-excretas admision.id %}"><img src="{{ STATIC_PREFIX }}images/tubo.png" />Ingestas y Excretas</a></li>
+      <li class="clearfix"><a href="{% url enfermeria-glucometria admision.id %}"><img src="{{ STATIC_PREFIX }}images/cardio.png" />Glucometr&iacute;a</a></li>
+      <li class="clearfix"><a href="{% url enfermeria-notas admision.id %}"><img src="{{ STATIC_PREFIX }}images/notas.png" />Notas de Enfermer&iacute;a</a></li>
+    </ul>
+  </nav>
+</aside>

@@ -17,7 +17,7 @@
       <td>{{ admision.paciente.obtener_edad }}</td>
       <td>{{ admision.paciente.get_sexo_display }}</td>
       <td>{{ admision.momento|date:"d/m/Y H:i" }}</td>
-      <td><a href="{% url admision-view-id admision.id %}">Ver</a></td>
+      <td><a href="{% url nightingale-view-id admision.id %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

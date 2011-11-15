@@ -1,4 +1,4 @@
-<table>
+<table class="data">
   <caption>Datos Personales</caption>
   <tr>
     <td>{{ persona.get_tipo_identificacion_display }}</td>

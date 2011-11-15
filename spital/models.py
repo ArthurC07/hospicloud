@@ -104,22 +104,29 @@ class Admision(models.Model):
     
     def autorizar(self):
         
-        if self.autorizacion == self.momento:
+        if self.autorizacion <= self.momento:
             self.autorizacion = datetime.now()
             self.estado = 'B'
             self.save()
     
     def pagar(self):
         
-        if self.fecha_pago == self.momento:
+        if self.fecha_pago <= self.momento:
             self.fecha_pago = datetime.now()
             self.save()
     
     def hospitalizar(self):
         
-        if self.hospitalizacion == self.momento:
+        if self.hospitalizacion <= self.momento:
             self.hospitalizacion = datetime.now()
             self.estado = 'H'
+            self.save()
+            
+    def ingresar(self):
+        
+        if self.ingreso <= self.momento:
+            self.ingreso = datetime.now()
+            self.estado = 'I'
             self.save()
     
     def tiempo_autorizacion(self):

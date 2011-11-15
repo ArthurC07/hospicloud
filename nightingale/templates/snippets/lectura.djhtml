@@ -1,0 +1,4 @@
+<ul>
+    <li>Frecuencia de Lectura de Signos Vitales: {{ lectura.signos_vitales }} minutos</li>
+    <li>Frecuencia de Glucometria: {{ lectura.glucometria }} minutos</li>
+</ul>

@@ -127,6 +127,7 @@ INSTALLED_APPS = (
     'spital',
     'laboratory',
     'users',
+    'nightingale',
     # Third party apps go here
     'treemenus',
     'sorl.thumbnail',

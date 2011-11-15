@@ -101,11 +101,15 @@ class Sumario(models.Model):
     condicion = models.CharField(max_length=200, blank=True)
     recomendaciones = models.CharField(max_length=200, blank=True)
 
+Admision.sumario = property(lambda a: Sumario.objects.get_or_create(admision=a)[0])
+
 class FrecuenciaLectura(models.Model):
     
     """Indica cada cuanto se debe tomar una :class:`Glucometria` y una lectura
     de :class:`SignosVitales`"""
     
     admision = models.OneToOneField(Admision)
-    glucometria = models.IntegerField()
-    signos_vitales = models.IntegerField()
+    glucometria = models.IntegerField(default=0,blank=True)
+    signos_vitales = models.IntegerField(default=0,blank=True)
+
+Admision.frecuencia_lectura = property(lambda a: FrecuenciaLectura.objects.get_or_create(admision=a)[0])
