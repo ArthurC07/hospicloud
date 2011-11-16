@@ -15,6 +15,10 @@ urlpatterns = patterns('',
         PersonaDetailView.as_view(),
         name='persona-view-id'),
     
+    url(r'^(?P<pk>\d+)/estilovida$',
+        PersonaDetailView.as_view(template_name='persona/estilo_detail.djhtml'),
+        name='persona-estilo'),
+    
     url(r'^agregar$',
         PersonaCreateView.as_view(),
         name='persona-create'),

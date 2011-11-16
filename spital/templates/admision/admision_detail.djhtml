@@ -1,4 +1,4 @@
-{% extends 'base.djhtml' %}{% load thumbnail %}
+{% extends 'base.djhtml' %}
 {% block content %}
 <nav class="toolbox grid_12">
   <ul class="grid_12 information">
@@ -15,7 +15,7 @@
   </hgroup>
   <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
   <span>{{ admision.get_estado_display }}</span>
-  {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
+  {% include "snippets/persona_fotografia.djhtml" with persona=admision.paciente %} 
   <div class="info">
     {% include "snippets/persona.djhtml" with persona=admision.paciente %} <a href="{% url persona-editar admision.paciente.id %}" class="button">Editar Datos del Paciente</a>
   </div>

@@ -1,0 +1,20 @@
+<table class="data">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Paciente</th>
+      <th>Examen</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for examen in examenes%}
+    <tr>
+      <td>{{ examen.fecha }}</td>
+      <td>{{ examen.persona.nombre_completo }}</td>
+      <td>{{ examen.nombre }}</td>
+      <td><a href="{% url examen-view-id examen.id %}">Ver</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

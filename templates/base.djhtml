@@ -33,6 +33,7 @@
         </ul>
         {% else %}<a href="{% url login %}">Iniciar Sesi&oacute;n</a>{% endif %}</li></ul>
     </nav>
+    {% block heading %}{% endblock %}
   </header>{% if messages %}
   <div id="system-message" class="container_12">
     <ul class="messages grid_12">

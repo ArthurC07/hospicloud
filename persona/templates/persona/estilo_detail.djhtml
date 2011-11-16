@@ -1,0 +1,17 @@
+{% extends 'base.djhtml' %}
+{% block content %}
+{% include "snippets/persona_aside.djhtml" with persona=persona %}
+<div id="informacion" class="grid_9">
+  <hgroup>
+    <h1>
+        {{ persona.nombre_completo }}
+        {% include "snippets/persona_fotografia.djhtml" with persona=persona %}
+    </h1>
+  </hgroup>
+  <br />
+  <br />
+  <div class="info">
+    {% include "snippets/estilo_vida.djhtml" with estilo_vida=persona.estilo_vida %} <a href="{% url persona-estilovida-editar persona.id %}" class="button">Editar Estilo de Vida</a>
+  </div>
+</div>
+{% endblock %}

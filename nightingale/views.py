@@ -27,11 +27,11 @@ class NightingaleIndexView(ListView, LoginRequiredView):
         if self.queryset.count() == 0:
             context['promedio'] = 0
         else:
-            context['promedio'] = sum(a.tiempo_ahora()
+            context['promedio'] = sum(a.tiempo_hospitalizacion()
                            for a in admisiones) / self.queryset.count()
         
         context['puntos'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
-                                          admisiones[n].tiempo_ahora())
+                                          admisiones[n].tiempo_hospitalizacion())
                       for n in range(self.queryset.count()))
         
         return context
@@ -60,16 +60,13 @@ class SignosDetailView(DetailView, LoginRequiredView):
     def get_context_data(self, **kwargs):
         
         context = super(SignosDetailView, self).get_context_data(**kwargs)
-        
-        if self.queryset.count() == 0:
+        signos = self.object.signos_vitales
+        if self.object.signos_vitales.count() == 0:
             context['temp_promedio'] = 0
         else:
-            signos = self.object.signos_vitales
-            context['promedio'] = sum(s.temperatura for s in signos) / signos.count()
+            context['temp_promedio'] = self.object.temperatura_promedio
         
-        context['temperatura'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
-                                          signos.all()[n].temperatura)
-                      for n in range(signos.count()))
+        context['temperatura'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].temperatura) for n in range(signos.count()))
         
         return context
 

@@ -117,14 +117,14 @@ class Admision(models.Model):
     
     def hospitalizar(self):
         
-        if self.hospitalizacion <= self.momento:
+        if self.hospitalizacion == None or self.hospitalizacion <= self.momento:
             self.hospitalizacion = datetime.now()
             self.estado = 'H'
             self.save()
             
     def ingresar(self):
         
-        if self.ingreso <= self.momento:
+        if self.ingreso == None or self.ingreso <= self.momento:
             self.ingreso = datetime.now()
             self.estado = 'I'
             self.save()
@@ -151,13 +151,25 @@ class Admision(models.Model):
         
         return (self.admision - self.momento).seconds / 60
     
+    def tiempo_hospitalizacion(self):
+        
+        """Calcula el tiempo que se tarda una :class:`Persona` para ser ingresada
+        en el :class:`Hospital`"""
+        
+        if self.ingreso == None or self.ingreso <= self.hospitalizacion:
+            
+            return (datetime.now() - self.hospitalizacion).total_seconds() / 60
+        
+        return (self.ingreso - self.hospitalizacion).total_seconds() / 60
+    
     def tiempo_ahora(self):
         
         ahora = datetime.now()
         if self.momento >= ahora:
             
             return 0
-        return (ahora - self.momento).seconds / 60
+        
+        return (ahora - self.momento).total_seconds() / 60
     
     @permalink
     def get_absolute_url(self):

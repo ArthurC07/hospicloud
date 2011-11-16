@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from views import IndexView
+from views import IndexView, CustomSearchView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('hospinet.users.urls')),
     url(r'^admision/', include('hospinet.spital.urls')),
     url(r'^enfermeria/', include('hospinet.nightingale.urls')),
-    url(r'^busqueda/', include('haystack.urls')),
+    url(r'^busqueda/', CustomSearchView(), name='haystack_search'),
     url(r'^api/', include(v1_api.urls)),
 )
 

@@ -20,6 +20,10 @@ class SignoVital(models.Model):
                                                 null=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)
 
+Admision.temperatura_promedio = property(lambda a:
+                                 sum(s.temperatura for s in a.signos_vitales)
+                                 / a.signosvitales.count())
+
 class Evolucion(models.Model):
     
     """Registra la evolución de la :class:`Persona durante una

@@ -2,7 +2,7 @@
 from django.conf.urls.defaults import patterns, url
 from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     IngresarView, CargoCreateView, EvolucionCreateView, GlucometriaCreateView,
-    IngestaCreateView, NotaCreateView, SignoVitalCreateView)
+    IngestaCreateView, NotaCreateView, SignoVitalCreateView, SignosDetailView)
 
 urlpatterns = patterns('',
     
@@ -17,6 +17,10 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)$',
         NightingaleDetailView.as_view(),
         name='nightingale-view-id'),
+    
+    url(r'^(?P<pk>\d+)/signos/grafico$',
+        SignosDetailView.as_view(),
+        name='nightingale-signos-grafico'),
     
     url(r'^(?P<pk>\d+)/cargos$',
         NightingaleDetailView.as_view(template_name='enfermeria/cargos.djhtml'),

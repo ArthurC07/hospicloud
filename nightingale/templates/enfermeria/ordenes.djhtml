@@ -1,7 +1,7 @@
 {% extends 'base.djhtml' %}
 {% block content %}
 <div class="content clearfix">
-  {% include "enfermeria/aside.djhtml" with admision=admision %}
+  {% include "snippets/aside.djhtml" with admision=admision %}
   <section id="ordenes-medicas" class="grid_9">
     <hgroup>
       <h1>Ordenes M&eacute;dicas de {{ admision.paciente.full_name }} en {{ admision.habitacion }}</h1>

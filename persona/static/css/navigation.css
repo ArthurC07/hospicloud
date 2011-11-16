@@ -100,7 +100,7 @@ nav ul a:hover { background-color: rgba(255, 255, 255, 0.2); -moz-border-radius:
   float: right;
 }
 /* Enfermeria Navigation Styles */
-#enfermeria-paciente-menu nav {
+#enfermeria-paciente-menu nav, .toolbox nav {
   background-color: #000066;
   border-radius: 20px;
   color: white;
@@ -129,9 +129,9 @@ nav ul a:hover { background-color: rgba(255, 255, 255, 0.2); -moz-border-radius:
   behavior: url(PIE.htc);
   margin: 10px 0;
 }
-#enfermeria-paciente-menu ul { margin: 0; }
-#enfermeria-paciente-menu ul li { list-style: none; width 100%; }
-#enfermeria-paciente-menu a {
+#enfermeria-paciente-menu ul, .toolbox ul { margin: 0; }
+#enfermeria-paciente-menu ul li, .toolbox ul li { list-style: none; width 100%; }
+#enfermeria-paciente-menu a, .toolbox a {
   padding: 5px;
   color: white;
   width: 100%;
@@ -147,7 +147,7 @@ nav ul a:hover { background-color: rgba(255, 255, 255, 0.2); -moz-border-radius:
   transition-duration: 0.5s;
   behavior: url(PIE.htc);
 }
-#enfermeria-paciente-menu a:hover {
+#enfermeria-paciente-menu a:hover, .toolbox a:hover {
   -webkit-transform: scale(1.2);
   -moz-transform: scale(1.2);
   -o-transform: scale(1.2);
@@ -156,5 +156,5 @@ nav ul a:hover { background-color: rgba(255, 255, 255, 0.2); -moz-border-radius:
   -o-transition-duration: 0.2s;
   behavior: url(PIE.htc);
 }
-#enfermeria-paciente-menu a span { margin-top: 15px; padding-top: 15px; }
-#enfermeria-paciente-menu img { vertical-align: middle; }
+#enfermeria-paciente-menu a span, .toolbox a span { margin-top: 15px; padding-top: 15px; }
+#enfermeria-paciente-menu img, .toolbox img { vertical-align: middle; }

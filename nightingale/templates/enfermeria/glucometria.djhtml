@@ -1,9 +1,9 @@
 {% extends 'base.djhtml' %}
 {% block content %}
 <div class="content clearfix">
-  {% include "enfermeria/aside.djhtml" with admision=admision %}
+  {% include "snippets/aside.djhtml" with admision=admision %}
   <section id="glucosuria" class="grid_9">
-    <h2>Control de Glucometr&iacute;a de {{ admision.paciente.full_name }}</h2>
+    <h2>Control de Glucometr&iacute;a de {{ admision.paciente.nombre_completo }}</h2>
     <p>Frecuencia de Lectura: {{ admision.lectura.glucometria }} minutos</p>
     <table class="data">
       <thead>
@@ -28,3 +28,4 @@
   </section>
     <a href="{% url enfermeria-glucometria-agregar admision.paciente.id %}" class="button">Agregar Glucometr&iacute;a</a>
 </div>
+{% endblock %}

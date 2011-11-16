@@ -1,0 +1,11 @@
+<aside class="grid_3 toolbox">
+  <nav>
+    {% load tree_menu_tags %}{% show_menu "persona" %}
+  </nav>
+  <nav>
+  	<ul>
+  		<li><a href="{% url persona-estilo persona.id %}">Estilo de Vida</a></li>
+  		<li><a>Antecedentes</a></li>
+  	</ul>
+  </nav>
+</aside>

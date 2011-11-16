@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from haystack import indexes
-from persona.models import Persona
+from laboratory.models import Examen
 
-class PersonaIndex(indexes.SearchIndex, indexes.Indexable):
+class ExamenIndex(indexes.SearchIndex, indexes.Indexable):
     
     text = indexes.CharField(document=True, use_template=True)
     
     def get_model(self):
         
-        return Persona
+        return Examen

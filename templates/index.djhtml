@@ -1,1 +1,19 @@
 {% extends "base.djhtml" %}
+{% block heading %}
+<div class="container_12">
+<img src="{{ STATIC_PREFIX }}images/head.png" /></a>
+</div>
+{% endblock %}
+{% block content %}
+<br />
+<div class="container_12 clearfix">
+<a class="grid_4" href="{% url persona-index %}"><img src="{{ STATIC_PREFIX }}images/pacientes.png" /></a>
+<a class="grid_4" href="{% url admision-index %}"><img src="{{ STATIC_PREFIX }}images/admisiones.png" /></a>
+<a class="grid_4" href="{% url examen-index %}"><img src="{{ STATIC_PREFIX }}images/laboratorio.png" /></a>
+</div>
+<div class="container_12 clearfix">
+<a class="grid_4" href="{% url nightingale-index %}"><img src="{{ STATIC_PREFIX }}images/enfermeria.png" /></a>
+<a class="grid_4" href="{% url persona-index %}"><img src="{{ STATIC_PREFIX }}images/reportes.png" /></a>
+<a class="grid_4" href="{% url persona-index %}"><img src="{{ STATIC_PREFIX }}images/pacientes.png" /></a>
+</div>
+{% endblock %}

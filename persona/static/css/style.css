@@ -18,3 +18,5 @@ html { background: white url(../images/cruzfondo.jpg) fixed no-repeat center; }
   -moz-border-radius: 1em;
   border-radius: 1em;
 }
+img.alinear-derecha { float:right; margin: 0 0 15px 15px; }
+img.fotografia { padding: 5px; border: 1px solid #aaa; }

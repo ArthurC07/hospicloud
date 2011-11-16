@@ -1,0 +1,14 @@
+{% extends "base.djhtml" %}
+{% block content %}
+<aside class="toolbox grid_3">
+	<nav>
+		<ul><a href="{% url haystack_search %}">Buscar</a></ul>
+	</nav>
+</aside>
+<div id="personas" class="grid_9">
+	<hgroup>
+		<h1>Examenes</h1>
+	</hgroup>
+  {% include "snippets/examen_list.djhtml" with examenes=examenes %}
+</div>
+{% endblock %}

@@ -3,14 +3,15 @@ from laboratory.forms import ExamenForm, ImagenForm, AdjuntoForm
 from laboratory.models import Examen, Imagen, Adjunto
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import (DetailView, UpdateView, CreateView,
-                                  TemplateView)
+from django.views.generic import (DetailView, UpdateView, CreateView, ListView)
 from library.protected import LoginRequiredView
 from persona.models import Persona
 
-class ExamenIndexView(TemplateView):
+class ExamenIndexView(ListView):
     
     template_name = 'examen/index.djhtml'
+    queryset = Examen.objects.all().order_by('-fecha')[:5]
+    context_object_name = 'examenes'
 
 class ExamenDetailView(DetailView, LoginRequiredView):
     
