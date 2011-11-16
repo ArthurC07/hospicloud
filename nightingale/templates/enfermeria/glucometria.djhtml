@@ -1,0 +1,30 @@
+{% extends 'base.djhtml' %}
+{% block content %}
+<div class="content clearfix">
+  {% include "enfermeria/aside.djhtml" with admision=admision %}
+  <section id="glucosuria" class="grid_9">
+    <h2>Control de Glucometr&iacute;a de {{ admision.paciente.full_name }}</h2>
+    <p>Frecuencia de Lectura: {{ admision.lectura.glucometria }} minutos</p>
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Tipo Lectura</th>
+          <th>Control</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for glucosuria in admision.glucosurias %}
+        <tr>
+          <td>{{ glucosuria.fecha_y_hora }}</td>
+          <td>{{ glucosuria.tipo }}</td>
+          <td>{{ glucosuria.control }}</td>
+          <td>{{ glucosuria.observacion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+    <a href="{% url enfermeria-glucometria-agregar admision.paciente.id %}" class="button">Agregar Glucometr&iacute;a</a>
+</div>

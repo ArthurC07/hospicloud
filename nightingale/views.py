@@ -5,8 +5,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, UpdateView, DetailView, CreateView
 from library.protected import LoginRequiredView
-from nightingale.forms import IngresarForm, CargoForm
-from nightingale.models import Cargo
+from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm, 
+    GlucometriaForm, IngestaForm, ExcretaForm, NotaEnfermeriaForm,
+    OrdenMedicaForm, SignoVitalForm)
+from nightingale.models import (Cargo, Evolucion, Glucometria, Ingesta, Excreta,
+    NotaEnfermeria, OrdenMedica, SignoVital)
 from spital.models import Admision
 
 class NightingaleIndexView(ListView, LoginRequiredView):
@@ -49,6 +52,26 @@ class NightingaleDetailView(DetailView, LoginRequiredView):
     model = Admision
     template_name = 'enfermeria/nightingale_detail.djhtml'
 
+class SignosDetailView(DetailView, LoginRequiredView):
+    
+    model = Admision
+    template_name = 'enfermeria/signos_grafico.djhtml'
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(SignosDetailView, self).get_context_data(**kwargs)
+        
+        if self.queryset.count() == 0:
+            context['temp_promedio'] = 0
+        else:
+            signos = self.object.signos_vitales
+            context['promedio'] = sum(s.temperatura for s in signos) / signos.count()
+        
+        context['temperatura'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
+                                          signos.all()[n].temperatura)
+                      for n in range(signos.count()))
+        
+        return context
 
 class BaseCreateView(CreateView, LoginRequiredView):
     
@@ -87,3 +110,59 @@ class CargoCreateView(BaseCreateView):
     model = Cargo
     form_class = CargoForm
     template_name = 'enfermeria/cargo_create.djhtml'
+
+class EvolucionCreateView(BaseCreateView):
+    
+    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    
+    model = Evolucion
+    form_class = EvolucionForm
+    template_name = 'enfermeria/evolucion_create.djhtml'
+
+class GlucometriaCreateView(BaseCreateView):
+    
+    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    
+    model = Glucometria
+    form_class = GlucometriaForm
+    template_name = 'enfermeria/glucometria_create.djhtml'
+
+class IngestaCreateView(BaseCreateView):
+    
+    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    
+    model = Ingesta
+    form_class = IngestaForm
+    template_name = 'enfermeria/ingesta_create.djhtml'
+
+class ExcretaCreateView(BaseCreateView):
+    
+    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    
+    model = Excreta
+    form_class = ExcretaForm
+    template_name = 'enfermeria/excreta_create.djhtml'
+
+class NotaCreateView(BaseCreateView):
+    
+    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    
+    model = NotaEnfermeria
+    form_class = NotaEnfermeriaForm
+    template_name = 'enfermeria/nota_create.djhtml'
+
+class OrdenCreateView(BaseCreateView):
+    
+    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    
+    model = OrdenMedica
+    form_class = OrdenMedicaForm
+    template_name = 'enfermeria/orden_create.djhtml'
+
+class SignoVitalCreateView(BaseCreateView):
+    
+    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    
+    model = SignoVital
+    form_class = SignoVitalForm
+    template_name = 'enfermeria/signo_create.djhtml'

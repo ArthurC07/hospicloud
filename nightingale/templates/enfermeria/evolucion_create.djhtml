@@ -1,0 +1,10 @@
+{% extends 'base.djhtml' %}
+{% block content %}
+<form  class="styled" method="post">
+  {% csrf_token %} <h1>Actualizar la evoluci&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
+  <div id="messages"></div>{% include "snippets/form.djhtml" with form=form %}
+  <p>
+    <input type="submit" value="Agregar" />
+  </p>
+</form>
+{% endblock %}

@@ -63,9 +63,15 @@ class Excreta(models.Model):
     """Registra las excresiones de una :class:`Persona` durante una
     :class:`Admision`"""
     
+    MEDIOS = (
+        ("S", u"Succión"),
+        ("O","Orina"),
+        ("V","Vomito"),
+    )
+    
     admision = models.ForeignKey(Admision, related_name='excretas')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
-    medio = models.CharField(max_length=200, blank=True)
+    medio = models.CharField(max_length=2, blank=True, choices=MEDIOS)
     cantidad = models.CharField(max_length=200, blank=True)
     descripcion = models.CharField(max_length=200, blank=True)
     otro = models.CharField(max_length=200, blank=True)
@@ -84,10 +90,16 @@ class Glucometria(models.Model):
     """Registra las fluctuaciones en los niveles de Glucosa en la sangre de una
     :class:`Persona` durante una :class`Admision`"""
     
+    TIPOS = (
+        ("I","Insulina"),
+        ("GI","Glicemia"),
+        ("GU","Glucosuria"),
+    )
+    
     admision = models.ForeignKey(Admision, related_name='glucometrias')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     control = models.CharField(max_length=200, blank=True)
-    tipo = models.CharField(max_length=200, blank=True)
+    tipo = models.CharField(max_length=2, blank=True, choices=TIPOS)
     observacion = models.CharField(max_length=200, blank=True)
 
 class Sumario(models.Model):
