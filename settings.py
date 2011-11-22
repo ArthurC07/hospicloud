@@ -5,7 +5,9 @@ PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-
+#LOGIN_URL = '/hospinet/accounts/login'
+#LOGOUT_URL = '/hospinet/accounts/logout'
+#LOGIN_REDIRECT_URL = '/clinicard/clinic/patient'
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )

@@ -1,10 +1,10 @@
 {% extends "base.djhtml" %}
 {% block header %}
-<script type="text/javascript" src="{{ STATIC_PREFIX }}js/spital.js"></script>
+<script type="text/javascript" src="{{ STATIC_PREFIX }}js/laboratory.js"></script>
 <script type="text/javascript">
   $(document).ready(function()
   {
-    data_source = new Spital("{% url home %}");
+    data_source = new Laboratory("{% url home %}");
     var resultados = $('#resultados');
     $('#persona-form').submit(function()
     {
@@ -25,7 +25,7 @@
   </div>
 </form>
 <div id="resultados"></div>
-<form enctype="multipart/form-data" action="{% url admision-ingresar-persona %}" class="styled" method="post">
+<form enctype="multipart/form-data" action="{% url examen-persona-nuevo %}" class="styled" method="post">
   {% csrf_token %} <h1>Ingresar una nuevo Paciente</h1>
   <div id="messages"></div>
   {% include "snippets/form.djhtml" with form=persona_form %}

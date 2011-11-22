@@ -1,17 +1,39 @@
 # -*- coding: utf-8 -*-
-from laboratory.forms import ExamenForm, ImagenForm, AdjuntoForm
-from laboratory.models import Examen, Imagen, Adjunto
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import (DetailView, UpdateView, CreateView, ListView)
+from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
+                                  TemplateView)
+from laboratory.forms import ExamenForm, ImagenForm, AdjuntoForm
+from laboratory.models import Examen, Imagen, Adjunto
 from library.protected import LoginRequiredView
+from persona.forms import PersonaForm
 from persona.models import Persona
+from persona.views import PersonaCreateView
 
 class ExamenIndexView(ListView):
     
     template_name = 'examen/index.djhtml'
     queryset = Examen.objects.all().order_by('-fecha')[:5]
     context_object_name = 'examenes'
+
+class PersonaExamenCreateView(PersonaCreateView):
+    
+    template_name = 'persona/persona_nuevo.djhtml'
+    
+    def get_success_url(self):
+        
+        return reverse('examen-agregar', args=[self.object.id])
+
+class ExamenPreCreateView(TemplateView):
+    
+    template_name = 'examen/examen_agregar.djhtml'
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(ExamenPreCreateView, self).get_context_data()
+        context['persona_form'] = PersonaForm()
+        return context
 
 class ExamenDetailView(DetailView, LoginRequiredView):
     

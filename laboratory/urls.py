@@ -2,13 +2,22 @@
 from django.conf.urls.defaults import patterns, url
 from laboratory.views import (ExamenDetailView, ExamenCreateView,
     ExamenUpdateView, ImagenCreateView, AdjuntoCreateView,
-    ExamenPersonaListView, ExamenIndexView)
+    ExamenPersonaListView, ExamenIndexView, PersonaExamenCreateView,
+    ExamenPreCreateView)
 
 urlpatterns = patterns('',
     
     url(r'^$',
         ExamenIndexView.as_view(),
         name='examen-index'),
+    
+    url(r'^nuevo$',
+        ExamenPreCreateView.as_view(),
+        name='examen-nuevo'),
+    
+    url(r'^/persona/nuevo$',
+        PersonaExamenCreateView.as_view(),
+        name='examen-persona-nuevo'),
     
     url(r'^(?P<pk>\d+)$',
         ExamenDetailView.as_view(),
