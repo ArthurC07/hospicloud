@@ -6,10 +6,10 @@
   {% if query %} <h3>Resultados</h3>
   {% for result in page.object_list %}
   <p>
-    {% ifequal result.moodel_name 'persona' %}
+    {% ifequal result.model_name 'persona' %}
     <a href="{{ result.object.get_absolute_url }}">{{ result.object.identificacion }}</a>{{ result.object.nombre_completo }}
     {% endifequal %}
-    {% ifequal result.moodel_name 'examen' %}
+    {% ifequal result.model_name 'examen' %}
     <a href="{{ result.object.get_absolute_url }}">{{ result.object.nombre }}</a>{{ result.object.persona.nombre_completo }}
     {% endifequal %}
   </p>

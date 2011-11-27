@@ -10,20 +10,20 @@ import gdcm
 import numpy
 from PIL import Image, ImageOps #@UnresolvedImport
 
+_gdcm_np = {
+        gdcm.PixelFormat.UINT8  :numpy.int8,
+        gdcm.PixelFormat.INT8   :numpy.uint8,
+        gdcm.PixelFormat.UINT16 :numpy.uint16,
+        gdcm.PixelFormat.INT16  :numpy.int16,
+        gdcm.PixelFormat.UINT32 :numpy.uint32,
+        gdcm.PixelFormat.INT32  :numpy.int32,
+        gdcm.PixelFormat.FLOAT32:numpy.float32,
+        gdcm.PixelFormat.FLOAT64:numpy.float64
+}
+
 def gdcm_to_numpy(image):
     
     """Converts a GDCM image to a numpy array."""
-    
-    _gdcm_np = {
-            gdcm.PixelFormat.UINT8  :numpy.int8,
-            gdcm.PixelFormat.INT8   :numpy.uint8,
-            gdcm.PixelFormat.UINT16 :numpy.uint16,
-            gdcm.PixelFormat.INT16  :numpy.int16,
-            gdcm.PixelFormat.UINT32 :numpy.uint32,
-            gdcm.PixelFormat.INT32  :numpy.int32,
-            gdcm.PixelFormat.FLOAT32:numpy.float32,
-            gdcm.PixelFormat.FLOAT64:numpy.float64
-    }
     
     p_format = image.GetPixelFormat().GetScalarType()
     assert p_format in _gdcm_np, "Unsupported array type {0}".format(p_format)

@@ -1,15 +1,17 @@
 {% extends 'base.djhtml' %}
 {% block content %}
-<nav class="toolbox grid_12">
+<aside class="toolbox grid_3">
+<nav>
   {% load tree_menu_tags %}{% show_menu "persona" %}
 </nav>
-<div id="informacion" class="grid_12">
+</aside>
+<div id="examenes" class="grid_9">
   <hgroup>
     <h1>{{ persona.nombre_completo }}</h1>
   </hgroup>
-  {% for examen in persona.examenes %}<div class="examen">
+  {% for examen in persona.examenes.all %}<article class="examen">
     <hgroup><h2>{{ examen.nombre }}</h2></hgroup>
   {% include "snippets/examen.djhtml" with examen=examen %}
-  </div>{% endfor %}
+  </article>{% endfor %}
 </div>
 {% endblock %}

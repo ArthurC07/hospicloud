@@ -5,31 +5,33 @@ STATIC_PREFIX }}js/excanvas.js"></script><![endif]-->
 <script language="javascript" type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.jqplot.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX }}css/jquery.jqplot.css" />
 <script type="text/javascript">
-  $(document).ready(function()
-  {
-    $.jqplot('grafico', [[{{ puntos }} ]]);
-  });
+	$(document).ready(function()
+    {
+        $.jqplot('grafico', [[ {{ puntos }} ]]);
+	});
 </script>
 {% endblock %}
 {% block content %}
-<nav class="toolbox">
-  <ul>
-    <li>
-      <a href="{% url admision-iniciar %}">Admitir Paciente</a>
-    </li>
-  </ul>
-</nav>
+<aside class="toolbox">
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url admision-iniciar %}">Admitir Paciente</a>
+      </li>
+    </ul>
+  </nav>
+</aside>
 <div id="admision" class="grid_12">
-<hgroup class="top title">
-	<h1>Admisiones</h1>
-</hgroup>
-<div id="estadisticas" class="bloque-superior">
-  <article id="tiempo-espera">
-  	<h2>Tiempo de Espera</h2>
-    <div id="grafico"></div>
-    <h3>Promedio: {{ promedio }} minutos</h3>
-  </article>
-</div>
-{% include "snippets/admision_list.djhtml" with admisiones=admisiones %}
+  <hgroup class="top title">
+    <h1>Admisiones</h1>
+  </hgroup>
+  <div id="estadisticas" class="bloque-superior">
+    <article id="tiempo-espera">
+      <h2>Tiempo de Espera</h2>
+      <div id="grafico"></div>
+      <h3>Promedio: {{ promedio }} minutos</h3>
+    </article>
+  </div>
+  {% include "snippets/admision_list.djhtml" with admisiones=admisiones %}
 </div>
 {% endblock %} 

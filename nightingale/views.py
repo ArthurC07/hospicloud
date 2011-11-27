@@ -11,6 +11,7 @@ from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
 from nightingale.models import (Cargo, Evolucion, Glucometria, Ingesta, Excreta,
     NotaEnfermeria, OrdenMedica, SignoVital)
 from spital.models import Admision
+from django.contrib import messages
 
 class NightingaleIndexView(ListView, LoginRequiredView):
     
@@ -97,6 +98,8 @@ class BaseCreateView(CreateView, LoginRequiredView):
         self.object = form.save(commit=False)
         self.object.admision = self.admision
         self.object.save()
+        
+        messages.info(self.request, u"Hospitalización Actualizada")
         
         return HttpResponseRedirect(self.get_success_url())
 

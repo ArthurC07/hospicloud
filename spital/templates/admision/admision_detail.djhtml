@@ -1,6 +1,7 @@
 {% extends 'base.djhtml' %}
 {% block content %}
-<nav class="toolbox grid_12">
+<aside class="toolbox grid_3">
+<nav>
   <ul class="grid_12 information">
     <li><a href="{% url admision-autorizacion admision.id %}">Autorizaci&oacute;n</a></li>
     <li><a href="{% url admision-hospitalizar admision.id %}">Hospitalizar</a></li>
@@ -9,7 +10,8 @@
     <li><a href="{% url admision-fiadores admision.id %}">Fiadores</a></li>
   </ul>
 </nav>
-<div id="informacion" class="grid_12">
+</aside>
+<section id="admision" class="informacion grid_9">
   <hgroup>
     <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
   </hgroup>
@@ -24,5 +26,5 @@
   </div>
   <img src="{{ admision.codigo.url }}" width="{{ im.width }}" height="{{ im.height }}">
   <img src="{{ admision.qr.url }}" width="{{ im.width }}" height="{{ im.height }}">
-</div>
+</section>
 {% endblock %}

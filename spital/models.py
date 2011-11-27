@@ -82,6 +82,7 @@ class Admision(models.Model):
     codigo = ImageField(upload_to="admision/codigo/%Y/%m/%d", blank=True)
     qr = ImageField(upload_to="admision/codigo/%Y/%m/%d/qr", blank=True)
     estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
+    tiempo = models.IntegerField(default=0, blank=True)
     
     def generar_codigo(self):
         
@@ -170,6 +171,14 @@ class Admision(models.Model):
             return 0
         
         return (ahora - self.momento).total_seconds() / 60
+    
+    def actualizar_tiempo(self):
+        
+        self.tiempo = self.fecha_alta - self.ingreso
+    
+    def save(self, *args, **kwargs):
+        self.actualizar_tiempo()
+        super(Admision, self).save(*args, **kwargs)
     
     @permalink
     def get_absolute_url(self):

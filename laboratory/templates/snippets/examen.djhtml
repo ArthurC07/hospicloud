@@ -1,5 +1,5 @@
-  <div class="info">
+  <section class="info">
     <p>Fecha {{ examen.fecha|date:"d/m/Y" }}</p>
     <p>Resultado: <em>{{ examen.resultado }}</em></p>
     <p>Diagn&oacute;stico: <em>{{ examen.diagnostico }}</em></p>
-  </div>
+  </section>

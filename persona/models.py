@@ -7,9 +7,9 @@ se utilizarán a lo largo de todo el sistema
 from datetime import date
 from django.db import models
 from django.db.models import permalink
-import re
+from library import OrderedCountryField
 from sorl.thumbnail import ImageField #@UnresolvedImport
-from django_countries import CountryField
+import re
 
 class Persona(models.Model):
     
@@ -56,7 +56,7 @@ class Persona(models.Model):
     cargo = models.CharField(max_length=200, blank=True)
     fax = models.CharField(max_length=200, blank=True)
     fotografia = ImageField(upload_to='persona/foto//%Y/%m/%d', blank=True)
-    nacionalidad = CountryField(blank=True)
+    nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
     
     @staticmethod
     def validar_identidad(identidad):

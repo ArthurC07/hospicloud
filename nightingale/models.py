@@ -2,7 +2,7 @@
 from django.db import models
 from spital.models import Admision
 from datetime import datetime
-# Create your models here.
+from django.db.models import permalink
 
 class SignoVital(models.Model):
     
@@ -19,6 +19,13 @@ class SignoVital(models.Model):
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=4,
                                                 null=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 Admision.temperatura_promedio = property(lambda a:
                                  sum(s.temperatura for s in a.signos_vitales)
@@ -32,6 +39,13 @@ class Evolucion(models.Model):
     admision = models.ForeignKey(Admision, related_name='evolucion')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     nota = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 class Cargo(models.Model):
     
@@ -42,6 +56,13 @@ class Cargo(models.Model):
     cargo = models.CharField(max_length=200)
     inicio = models.DateTimeField(default=datetime.now)
     fin = models.DateTimeField(default=datetime.now)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 class OrdenMedica(models.Model):
     
@@ -51,6 +72,13 @@ class OrdenMedica(models.Model):
     orden = models.CharField(max_length=200, blank=True)
     doctor = models.CharField(max_length=200, blank=True)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 class Ingesta(models.Model):
     
@@ -61,6 +89,13 @@ class Ingesta(models.Model):
     ingerido = models.CharField(max_length=200, blank=True)
     cantidad = models.IntegerField()
     liquido = models.NullBooleanField(blank=True, null=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 class Excreta(models.Model):
     
@@ -80,6 +115,13 @@ class Excreta(models.Model):
     descripcion = models.CharField(max_length=200, blank=True)
     otro = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 class NotaEnfermeria(models.Model):
     
@@ -88,6 +130,13 @@ class NotaEnfermeria(models.Model):
     admision = models.ForeignKey(Admision, related_name='notas_enfermeria')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     nota = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 class Glucometria(models.Model):
     
@@ -105,6 +154,13 @@ class Glucometria(models.Model):
     control = models.CharField(max_length=200, blank=True)
     tipo = models.CharField(max_length=2, blank=True, choices=TIPOS)
     observacion = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 class Sumario(models.Model):
     
@@ -116,6 +172,13 @@ class Sumario(models.Model):
     procedimiento_efectuado = models.CharField(max_length=200, blank=True)
     condicion = models.CharField(max_length=200, blank=True)
     recomendaciones = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 Admision.sumario = property(lambda a: Sumario.objects.get_or_create(admision=a)[0])
 
@@ -127,5 +190,12 @@ class FrecuenciaLectura(models.Model):
     admision = models.OneToOneField(Admision)
     glucometria = models.IntegerField(default=0,blank=True)
     signos_vitales = models.IntegerField(default=0,blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-view-id', [self.admision.id]
 
 Admision.frecuencia_lectura = property(lambda a: FrecuenciaLectura.objects.get_or_create(admision=a)[0])

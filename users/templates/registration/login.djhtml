@@ -25,6 +25,7 @@
         {% csrf_token %}
         {{ form.username.label_tag }}
         {{ form.username }}
+        <br />
         {{ form.password.label_tag }}
         {{ form.password }}
         <input type="submit" value="Iniciar Sesión" />

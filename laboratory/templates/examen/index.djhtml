@@ -1,17 +1,21 @@
 {% extends "base.djhtml" %}
 {% block content %}
 <aside class="toolbox grid_3">
-	<nav>
-		<ul>
-		  <li><a href="{% url haystack_search %}"><img src="{{ STATIC_PREFIX }}images/busqueda.png" /> Buscar</a></li>
-      <li class="clearfix"><a href="{% url persona-create %}"><img src="{{ STATIC_PREFIX }}images/agregar.png" /> Agregar Examen</a></li>
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url haystack_search %}"><img src="{{ STATIC_PREFIX }}images/busqueda.png" /> Buscar</a>
+      </li>
+      <li class="clearfix">
+        <a href="{% url persona-create %}"><img src="{{ STATIC_PREFIX }}images/agregar.png" /> Agregar Examen</a>
+      </li>
     </ul>
-	</nav>
+  </nav>
 </aside>
 <div id="personas" class="grid_9">
-	<hgroup>
-		<h1>Examenes</h1>
-	</hgroup>
+  <hgroup>
+    <h1>Examenes</h1>
+  </hgroup>
   {% include "snippets/examen_list.djhtml" with examenes=examenes %}
 </div>
 {% endblock %}
