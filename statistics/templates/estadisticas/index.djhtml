@@ -1,0 +1,27 @@
+{% extends "base.djhtml" %}
+{% block header %}
+{% endblock %}
+{% block content %}
+<aside class="toolbox grid_3">
+  <nav>
+    <ul>
+      <li>
+      	<a href="{% url admision-index %}">Admisiones</a>
+        <a href="{% url admision-iniciar %}">Admitir Paciente</a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+<div id="estadisticas" class="grid_9">
+  <hgroup class="top title">
+    <h1>Estad&iacute;sticas de Admisiones</h1>
+  </hgroup>
+  <form class="styled" method="get" action="{% url admision-estadisticas-adulto %}">
+  <h1>Atenci&oacute;n M&eacute;dica Adulta</h1>
+  {% include "snippets/form.djhtml" with form=formulario_anual %}
+  <p>
+    <input type="submit" value="Guardar" />
+  </p>
+</form>
+</div>
+{% endblock %}

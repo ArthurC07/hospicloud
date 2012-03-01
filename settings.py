@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'django_countries',
     'haystack',
     'tastypie',
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging

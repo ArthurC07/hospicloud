@@ -1,0 +1,19 @@
+{% extends 'base.djhtml' %}
+{% block content %}
+<div class="content clearfix">
+  {% include "enfermeria/admision_aside.djhtml" with admision=admision %}
+  <h2 class="warning">Llenar este formulario significa que el paciente
+    ser&aacute; dado de alta y que el sistema lo colocar&aacute; en modo de
+    solo lectura para evitar que se editen los datos posteriormente</h2>
+  <form class="clearfix grid_9" method="post">
+    {% csrf_token %}
+    <div>
+      <h2>Datos para el Alta</h2>
+      {% include "form_snippet.djhtml" with form=form %}
+      <p>
+        <input type="submit" value="Agregar" />
+      </p>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -2,6 +2,7 @@
 from django import forms
 from spital.models import Admision
 from persona.models import Persona
+from django.utils.translation.trans_null import _
 
 class AdmisionForm(forms.ModelForm):
     

@@ -7,7 +7,7 @@ se utilizarán a lo largo de todo el sistema
 from datetime import date
 from django.db import models
 from django.db.models import permalink
-from library import OrderedCountryField
+from persona.fields import OrderedCountryField
 from sorl.thumbnail import ImageField #@UnresolvedImport
 import re
 

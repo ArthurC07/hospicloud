@@ -83,6 +83,7 @@ class Admision(models.Model):
     qr = ImageField(upload_to="admision/codigo/%Y/%m/%d/qr", blank=True)
     estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
     tiempo = models.IntegerField(default=0, blank=True)
+    neonato = models.NullBooleanField(blank=True, null=True)
     
     def generar_codigo(self):
         
@@ -97,7 +98,7 @@ class Admision(models.Model):
     def generar_qr(self):
         
         """
-        Crea un codigo de barras del tipo Code 128 para una :class:`Admision`
+        Crea un codigo QR para una :class:`Admision`
         """
         
         imagen = image_to_content(pyqrcode.MakeQRImage(self.uuid))

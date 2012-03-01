@@ -206,7 +206,6 @@ class HospitalizarView(RedirectView, LoginRequiredView):
     url = '/admision/hospitalizar'
     permanent = False
     
-    
     def get_redirect_url(self, **kwargs):
         
         admision = get_object_or_404(Admision, pk=kwargs['pk'])

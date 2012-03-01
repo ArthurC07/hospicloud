@@ -12,16 +12,19 @@ STATIC_PREFIX }}js/excanvas.js"></script><![endif]-->
 </script>
 {% endblock %}
 {% block content %}
-<aside class="toolbox">
+<aside class="toolbox grid_3">
   <nav>
     <ul>
       <li>
         <a href="{% url admision-iniciar %}">Admitir Paciente</a>
       </li>
+      <li>
+        <a href="{% url admision-estadisticas %}">Estad&iacute;sticas</a>
+      </li>
     </ul>
   </nav>
 </aside>
-<div id="admision" class="grid_12">
+<div id="admision" class="grid_9">
   <hgroup class="top title">
     <h1>Admisiones</h1>
   </hgroup>
