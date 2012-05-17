@@ -13,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for ingesta in admision.ingestas %}
+        {% for ingesta in admision.ingestas.all %}
         <tr>
           <td>{{ ingesta.fecha_hora }}</td>
           <td>{{ signos.liquidos }}</td>

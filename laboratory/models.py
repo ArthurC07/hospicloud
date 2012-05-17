@@ -5,6 +5,7 @@ from django.db.models import permalink
 from library import image_to_content, dicom
 from persona.models import Persona
 from sorl.thumbnail import ImageField #@UnresolvedImport
+from django_extensions.db.fields import UUIDField
 import os
 
 class Examen(models.Model):
@@ -67,6 +68,7 @@ class Dicom(models.Model):
     descripcion = models.CharField(max_length=255, blank=True)
     convertido = models.BooleanField(default=False)
     imagen = models.ImageField(upload_to='examen/dicom/imagen/%Y/%m%/%d', blank=True)
+    uuid = UUIDField(version=4)
     
     def extraer_imagen(self):
         

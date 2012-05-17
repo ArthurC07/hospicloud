@@ -1,0 +1,21 @@
+{% extends "base.djhtml" %}
+<aside class="grid_3 toolbox">
+  <nav>
+    <ul>
+      <li>
+        <a class="grid_3" href="{% url consultorio-agregar %}"><img src="{{ STATIC_PREFIX }}images/agregar.png" /></a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+<section id="consultorios">
+  <hgroup>
+    <h1>Mis Consultarios</h1>
+  </hgroup>
+  {% for consultorio in user.profile.consultorios %}
+    <section class="grid_3">
+      <a href="{% url consultorio-view consultorio.id %}">{{ consultorio.nombre }}</a>
+    </section>
+  {% endfor %}
+</section>
+{% endblock %}

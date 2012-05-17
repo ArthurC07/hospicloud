@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for nota in admision.notas_enfermeria %}
+        {% for nota in admision.notas_enfermeria.all %}
         <tr>
           <th>{{ nota.momento }}</th>
           <th>{{ nota.nota }}</th>

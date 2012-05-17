@@ -4,8 +4,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
                                   TemplateView)
-from laboratory.forms import ExamenForm, ImagenForm, AdjuntoForm
-from laboratory.models import Examen, Imagen, Adjunto
+from laboratory.forms import ExamenForm, ImagenForm, AdjuntoForm, DicomForm
+from laboratory.models import Examen, Imagen, Adjunto, Dicom
 from library.protected import LoginRequiredView
 from persona.forms import PersonaForm
 from persona.models import Persona
@@ -84,23 +84,17 @@ class ExamenCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class ImagenCreateView(CreateView, LoginRequiredView):
-    
-    """Permite crear :class:`Imagen`es a un :class:`Examen`"""
-    
-    model = Imagen
-    form_class = ImagenForm
-    template_name = "examen/imagen_create.djhtml"
+class ExamenDocBaseCreateView(CreateView, LoginRequiredView):
     
     def dispatch(self, *args, **kwargs):
         
         self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
-        return super(ImagenCreateView, self).dispatch(*args, **kwargs)
+        return super(ExamenDocBaseCreateView, self).dispatch(*args, **kwargs)
     
     def get_form_kwargs(self):
         
-        kwargs = super(ImagenCreateView, self).get_form_kwargs()
-        kwargs.update({ 'initial':{'examen':self.examen.id}})
+        kwargs = super(ExamenDocBaseCreateView, self).get_form_kwargs()
+        kwargs.update({ 'initial' : { 'examen' : self.examen.id } })
         return kwargs
     
     def form_valid(self, form):
@@ -111,29 +105,41 @@ class ImagenCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class AdjuntoCreateView(CreateView, LoginRequiredView):
+class ImagenCreateView(ExamenDocBaseCreateView):
+    
+    """Permite crear :class:`Imagen`es a un :class:`Examen`"""
+    
+    model = Imagen
+    form_class = ImagenForm
+    template_name = "examen/imagen_create.djhtml"
+
+class AdjuntoCreateView(ExamenDocBaseCreateView):
     
     """Permite crear :class:`Adjunto`s a un :class:`Examen`"""
     
     model = Adjunto
     form_class = AdjuntoForm
     template_name = "examen/adjunto_create.djhtml"
+
+class DicomCreateView(ExamenDocBaseCreateView):
     
-    def dispatch(self, *args, **kwargs):
-        
-        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
-        return super(AdjuntoCreateView, self).dispatch(*args, **kwargs)
+    """Permite agregar un archivo :class:`Dicom` a un examen"""
     
-    def get_form_kwargs(self):
-        
-        kwargs = super(AdjuntoCreateView, self).get_form_kwargs()
-        kwargs.update({ 'initial':{'examen':self.examen.id}})
-        return kwargs
+    model = Dicom
+    form_class = DicomForm
+    template_name = "examen/dicom_create.djhtml"
     
     def form_valid(self, form):
         
         self.object = form.save(commit=False)
         self.object.examen = self.examen
         self.object.save()
+        self.object.extraer_imagen()
         
         return HttpResponseRedirect(self.get_success_url())
+
+class DicomDetailView(DetailView, LoginRequiredView):
+    
+    context_object_name = 'dicom'
+    model = Dicom
+    template_name = "examen/dicom_detail.djhtml"

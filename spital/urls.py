@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from spital.views import (AdmisionIndexView, PersonaAdmisionCreateView,
     AdmisionCreateView, IngresarView, AdmisionDetailView, AutorizarView,
     FiadorAgregarView, ReferenciaAgregarView, PersonaFiadorCreateView,
-    PersonaReferenciaCreateView, HospitalizarView, PagarView, AtencionAdulto,
-    Estadisticas)
+    PersonaReferenciaCreateView, HospitalizarView, PagarView)
 
 urlpatterns = patterns('',
     
@@ -67,14 +66,6 @@ urlpatterns = patterns('',
     url(r'^persona/ingresar$',
         PersonaAdmisionCreateView.as_view(),
         name='admision-ingresar-persona'),
-    
-    url(r'^estadisticas$',
-        Estadisticas.as_view(),
-        name='admision-estadisticas'),
-    
-    url(r'^estadisticas/adulto$',
-        AtencionAdulto.as_view(),
-        name='admision-estadisticas-adulto'),
     
     url(r'^persona/(?P<persona>\d+)$',
         AdmisionCreateView.as_view(),

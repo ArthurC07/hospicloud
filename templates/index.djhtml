@@ -13,7 +13,7 @@
 </div>
 <div class="container_12 clearfix">
 <a class="grid_4" href="{% url nightingale-index %}"><img src="{{ STATIC_PREFIX }}images/enfermeria.png" /></a>
-<a class="grid_4" href="{% url persona-index %}"><img src="{{ STATIC_PREFIX }}images/reportes.png" /></a>
+<a class="grid_4" href="{% url estadisticas %}"><img src="{{ STATIC_PREFIX }}images/reportes.png" /></a>
 <a class="grid_4" href="{% url persona-index %}"><img src="{{ STATIC_PREFIX }}images/pacientes.png" /></a>
 </div>
 {% endblock %}

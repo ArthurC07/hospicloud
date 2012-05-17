@@ -8,10 +8,12 @@ from django.views.generic import (CreateView, ListView, TemplateView,
 from library.protected import LoginRequiredView
 from persona.models import Persona
 from persona.views import PersonaCreateView
-from spital.forms import AdmisionForm
+from spital.forms import AdmisionForm, ReporteAnualForm
 from spital.models import Admision
 from persona.forms import PersonaForm
 from django.contrib import messages
+import calendar
+from datetime import datetime
 
 class AdmisionIndexView(ListView, LoginRequiredView):
     
@@ -205,6 +207,7 @@ class HospitalizarView(RedirectView, LoginRequiredView):
     
     url = '/admision/hospitalizar'
     permanent = False
+    
     
     def get_redirect_url(self, **kwargs):
         

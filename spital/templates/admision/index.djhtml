@@ -18,9 +18,6 @@ STATIC_PREFIX }}js/excanvas.js"></script><![endif]-->
       <li>
         <a href="{% url admision-iniciar %}">Admitir Paciente</a>
       </li>
-      <li>
-        <a href="{% url admision-estadisticas %}">Estad&iacute;sticas</a>
-      </li>
     </ul>
   </nav>
 </aside>

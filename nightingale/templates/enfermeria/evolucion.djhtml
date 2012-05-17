@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for evolucion in admision.evoluciones %}
+        {% for evolucion in admision.evoluciones.all %}
         <tr>
           <th>{{ evolucion.momento|date:"d/m/Y P" }}</th>
           <th>{{ evolucion.nota }}</th>

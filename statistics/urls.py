@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns, url
-from statistics.views import (AtencionAdulto, Estadisticas, AtencionInfantil)
+from django.conf.urls import patterns, url
+from statistics.views import (AtencionAdulto, Estadisticas, AtencionInfantil,
+    Productividad, IngresosHospitalarios)
 
 urlpatterns = patterns('',
     
@@ -15,4 +16,12 @@ urlpatterns = patterns('',
     url(r'^estadisticas/infantil$',
         AtencionInfantil.as_view(),
         name='estadisticas-admision-infantil'),
+    
+    url(r'^estadisticas/productividad$',
+        Productividad.as_view(),
+        name='estadisticas-productividad'),
+    
+    url(r'^estadisticas/ingresos$',
+        IngresosHospitalarios.as_view(),
+        name='estadisticas-ingresos-hospitalarios'),
 )

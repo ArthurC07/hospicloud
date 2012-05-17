@@ -1,6 +1,6 @@
 # Create your views here.
 from django.views.generic.base import TemplateView
-from statistics.forms import ReporteAnualForm
+from statistics.forms import ReporteAnualForm, ReporteMensualForm
 import calendar
 from django.shortcuts import redirect
 from datetime import datetime
@@ -28,8 +28,7 @@ class Atencion(object):
             mes = dict_mes[pareja[0]]
             context['meses'][mes] = pareja[1]
         
-        context['puntos'] = ','.join('[{0}, {1}]'.format(p[0], p[1]) for 
-            p in parejas)
+        return ','.join('[{0}, {1}]'.format(p[0], p[1]) for p in parejas)
 
 class AtencionAdulto(TemplateView, Atencion):
     
@@ -48,7 +47,7 @@ class AtencionAdulto(TemplateView, Atencion):
                                 momento__year=anio,
                                 paciente__nacimiento__lte=edad_min)
         
-        self.calcular_meses(context, admisiones)
+        context['puntos'] = self.calcular_meses(context, admisiones)
         
         return context
 
@@ -60,16 +59,16 @@ class AtencionInfantil(TemplateView, Atencion):
         
         context = super(AtencionInfantil, self).get_context_data(**kwargs)
         form = ReporteAnualForm(self.request.GET)
-        anio = form.cleaned_data['anio']
         if not form.is_valid():
             redirect('admision-estadisticas')
+        anio = form.cleaned_data['anio']
         # obtener la fecha de nacimiento mínima
         edad_min = datetime(anio - 18, 12, 31)
         admisiones = Admision.objects.filter(
                                 momento__year=anio,
                                 paciente__nacimiento__gte=edad_min)
         
-        self.calcular_meses(context, admisiones)
+        context['puntos'] = self.calcular_meses(context, admisiones)
         
         return context
 
@@ -80,23 +79,24 @@ class Productividad(TemplateView):
     def get_context_data(self, **kwargs):
         
         context = super(Productividad, self).get_context_data(**kwargs)
-        form = ReporteAnualForm(self.request.GET)
+        form = ReporteMensualForm(self.request.GET)
         if not form.is_valid():
             redirect('admision-estadisticas')
         anio = form.cleaned_data['anio']
         mes = form.cleaned_data['mes']
         # obtener la fecha de nacimiento máxima
         edad_min = datetime(anio - 18, 12, 31)
+        
         context['adultos_m'] = Admision.objects.filter(
                                 momento__year=anio,
                                 momento__month=mes,
                                 paciente__nacimiento__lte=edad_min,
-                                sexo='M').count()
+                                paciente__sexo='M').count()
         context['adultos_f'] = Admision.objects.filter(
                                 momento__year=anio,
                                 momento__month=mes,
                                 paciente__nacimiento__lte=edad_min,
-                                sexo='F').count()
+                                paciente__sexo='F').count()
         context['adultos'] = Admision.objects.filter(
                                 momento__year=anio,
                                 momento__month=mes,
@@ -111,7 +111,7 @@ class Productividad(TemplateView):
                                 momento__year=anio,
                                 momento__month=mes,
                                 paciente__nacimiento__gte=edad_min,
-                                sexo='F').count()
+                                paciente__sexo='F').count()
         context['adultos'] = Admision.objects.filter(
                                 momento__year=anio,
                                 momento__month=mes,
@@ -126,7 +126,7 @@ class Productividad(TemplateView):
                                 momento__year=anio,
                                 momento__month=mes,
                                 neonato=True,
-                                sexo='F').count()
+                                paciente__sexo='F').count()
         
         context['neonatos'] = Admision.objects.filter(
                                 momento__year=anio,
@@ -146,15 +146,15 @@ class IngresosHospitalarios(TemplateView, Atencion):
     
     def get_context_data(self, **kwargs):
         
-        context = super(AtencionInfantil, self).get_context_data(**kwargs)
+        context = super(IngresosHospitalarios, self).get_context_data(**kwargs)
         form = ReporteAnualForm(self.request.GET)
-        anio = form.cleaned_data['anio']
         if not form.is_valid():
             redirect('admision-estadisticas')
+        anio = form.cleaned_data['anio']
         # obtener la fecha de nacimiento mínima
         admisiones = Admision.objects.filter(
                                 momento__year=anio)
         
-        self.calcular_meses(context, admisiones)
+        context['puntos'] = self.calcular_meses(context, admisiones)
         
         return context

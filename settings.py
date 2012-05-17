@@ -7,7 +7,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 #LOGIN_URL = '/hospinet/accounts/login'
 #LOGOUT_URL = '/hospinet/accounts/logout'
-#LOGIN_REDIRECT_URL = '/clinicard/clinic/patient'
+#LOGIN_REDIRECT_URL = '/hospinet/'
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     'haystack',
     'tastypie',
     'south',
+    'private_files',
 )
 
 # A sample logging configuration. The only tangible logging

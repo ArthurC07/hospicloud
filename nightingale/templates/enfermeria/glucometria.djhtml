@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for glucosuria in admision.glucosurias %}
+        {% for glucosuria in admision.glucosurias.all %}
         <tr>
           <td>{{ glucosuria.fecha_y_hora }}</td>
           <td>{{ glucosuria.tipo }}</td>

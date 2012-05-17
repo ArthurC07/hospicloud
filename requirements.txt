@@ -1,7 +1,9 @@
-django>=1.3.1
+django>=1.4
 django_countries
 django-treemenus
 sorl.thumbnail
-python-xapian
+python-whoosh
 haystack
 django-tastypie
+django-private-files
+django-extensions

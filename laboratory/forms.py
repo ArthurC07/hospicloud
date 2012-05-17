@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from laboratory.models import Examen, Imagen, Adjunto
+from laboratory.models import Examen, Imagen, Adjunto, Dicom
 from persona.models import Persona
 
 class ExamenForm(forms.ModelForm):
@@ -38,3 +38,15 @@ class AdjuntoForm(forms.ModelForm):
     examen = forms.ModelChoiceField(label="",
                                   queryset=Examen.objects.all(),
                                   widget=forms.HiddenInput())
+
+class DicomForm(forms.ModelForm):
+    
+    class Meta:
+        
+        model = Dicom
+        fields = ('archivo', 'descripcion')
+    
+    examen = forms.ModelChoiceField(label="",
+                                  queryset=Examen.objects.all(),
+                                  widget=forms.HiddenInput())
+    

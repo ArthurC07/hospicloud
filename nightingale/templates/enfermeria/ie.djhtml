@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for ingesta in admision.ingestas %}
+        {% for ingesta in admision.ingestas.all %}
         <tr>
           <td>{{ ingesta.fecha_hora }}</td>
           <td>{{ ingesta.ingerido }}</td>
@@ -40,7 +40,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for excretas in admision.signosVitales %}
+        {% for excretas in admision.excretas.all %}
         <tr>
           <td>{{ excretas.fecha_hora }}</td>
           <td>{{ excretas.medio }}</td>

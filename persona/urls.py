@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from persona.views import (PersonaDetailView, PersonaCreateView,
     PersonaUpdateView, EstiloVidaUpdateView, AntecedenteUpdateView,
     AntecedenteFamiliarUpdateView, AntecedenteObstetricoUpdateView,

@@ -4,3 +4,5 @@
 .project
 whoosh_index
 media
+./persona/fixtures
+./build

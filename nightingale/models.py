@@ -13,7 +13,8 @@ class SignoVital(models.Model):
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     pulso = models.IntegerField()
     temperatura = models.DecimalField(decimal_places=2, max_digits=4, null=True)
-    presion = models.DecimalField(decimal_places=2, max_digits=4, null=True)
+    presion_sistolica = models.DecimalField(decimal_places=2, max_digits=4, null=True)
+    presion_diastolica = models.DecimalField(decimal_places=2, max_digits=4, null=True)
     respiracion = models.DecimalField(decimal_places=2, max_digits=4, null=True)
     observacion = models.DecimalField(decimal_places=2, max_digits=4, null=True)
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=4,
@@ -29,6 +30,18 @@ class SignoVital(models.Model):
 
 Admision.temperatura_promedio = property(lambda a:
                                  sum(s.temperatura for s in a.signos_vitales)
+                                 / a.signosvitales.count())
+
+Admision.pulso_promedio = property(lambda a:
+                                 sum(s.pulso for s in a.signos_vitales)
+                                 / a.signosvitales.count())
+
+Admision.presion_sistolica_promedio = property(lambda a:
+                                 sum(s.presion_sistolica for s in a.signos_vitales)
+                                 / a.signosvitales.count())
+
+Admision.presion_diastolica_promedio = property(lambda a:
+                                 sum(s.presion_diastolica for s in a.signos_vitales)
                                  / a.signosvitales.count())
 
 class Evolucion(models.Model):

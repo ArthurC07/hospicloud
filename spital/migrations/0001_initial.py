@@ -8,15 +8,53 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Deleting model 'Admision'
-        db.create_table('spital_admision')
+        # Adding model 'Admision'
+        db.create_table('spital_admision', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('momento', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, null=True, blank=True)),
+            ('paciente', self.gf('django.db.models.fields.related.ForeignKey')(related_name='admisiones', to=orm['persona.Persona'])),
+            ('diagnostico', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('doctor', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('tipo_de_habitacion', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('habitacion', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('arancel', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('pago', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('poliza', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('certificado', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('aseguradora', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('deposito', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('observaciones', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
+            ('admitio', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('admision', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, null=True, blank=True)),
+            ('autorizacion', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, null=True, blank=True)),
+            ('hospitalizacion', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('ingreso', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('fecha_pago', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, null=True, blank=True)),
+            ('fecha_alta', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, null=True, blank=True)),
+            ('uuid', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
+            ('codigo', self.gf('sorl.thumbnail.fields.ImageField')(max_length=100, blank=True)),
+            ('qr', self.gf('sorl.thumbnail.fields.ImageField')(max_length=100, blank=True)),
+            ('estado', self.gf('django.db.models.fields.CharField')(max_length=1, blank=True)),
+        ))
+        db.send_create_signal('spital', ['Admision'])
 
-        # Removing M2M table for field fiadores on 'Admision'
-        db.create_table('spital_admision_fiadores')
+        # Adding M2M table for field fiadores on 'Admision'
+        db.create_table('spital_admision_fiadores', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('admision', models.ForeignKey(orm['spital.admision'], null=False)),
+            ('persona', models.ForeignKey(orm['persona.persona'], null=False))
+        ))
+        db.create_unique('spital_admision_fiadores', ['admision_id', 'persona_id'])
 
-        # Removing M2M table for field referencias on 'Admision'
-        db.create_table('spital_admision_referencias')
-    
+        # Adding M2M table for field referencias on 'Admision'
+        db.create_table('spital_admision_referencias', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('admision', models.ForeignKey(orm['spital.admision'], null=False)),
+            ('persona', models.ForeignKey(orm['persona.persona'], null=False))
+        ))
+        db.create_unique('spital_admision_referencias', ['admision_id', 'persona_id'])
+
+
     def backwards(self, orm):
         
         # Deleting model 'Admision'
@@ -27,7 +65,8 @@ class Migration(SchemaMigration):
 
         # Removing M2M table for field referencias on 'Admision'
         db.delete_table('spital_admision_referencias')
-    
+
+
     models = {
         'auth.group': {
             'Meta': {'object_name': 'Group'},

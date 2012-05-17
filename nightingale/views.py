@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, UpdateView, DetailView, CreateView
 from library.protected import LoginRequiredView
-from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm, 
+from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
     GlucometriaForm, IngestaForm, ExcretaForm, NotaEnfermeriaForm,
     OrdenMedicaForm, SignoVitalForm)
 from nightingale.models import (Cargo, Evolucion, Glucometria, Ingesta, Excreta,
@@ -67,13 +67,31 @@ class SignosDetailView(DetailView, LoginRequiredView):
         else:
             context['temp_promedio'] = self.object.temperatura_promedio
         
+        if self.object.signos_vitales.count() == 0:
+            context['pulso_promedio'] = 0
+        else:
+            context['pulso_promedio'] = self.object.pulso_promedio
+        
+        if self.object.signos_vitales.count() == 0:
+            context['presion_diastolica_promedio'] = 0
+        else:
+            context['presion_diastolica_promedio'] = self.object.presion_diastolica_promedio
+        
+        if self.object.signos_vitales.count() == 0:
+            context['presion_sistolica_promedio'] = 0
+        else:
+            context['presion_sistolica_promedio'] = self.object.presion_diastolica_promedio
+        
+        context['pulso'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].pulso) for n in range(signos.count()))
         context['temperatura'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].temperatura) for n in range(signos.count()))
+        context['presion_sistolica'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].presion_sistolica) for n in range(signos.count()))
+        context['presion_diatolica'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].presion_diatolica) for n in range(signos.count()))
         
         return context
 
 class BaseCreateView(CreateView, LoginRequiredView):
     
-    """Permite crear llenar el formulario de una clase que requiera
+    """Permite llenar el formulario de una clase que requiera
     :class:`Admision`es de manera previa - DRY"""
     
     def get_context_data(self, **kwargs):

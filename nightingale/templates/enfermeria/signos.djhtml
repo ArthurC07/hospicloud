@@ -20,12 +20,12 @@
         </tr>
       </thead>
       <tbody>
-        {% for signos in admision.signosVitales %}
+        {% for signos in admision.signos_vitales.all %}
         <tr>
           <td>{{ signos.momento }}</td>
           <td>{{ signos.pulso }}</td>
           <td>{{ signos.temperatura }}</td>
-          <td>{{ signos.presion }}</td>
+          <td>{{ signos.presion_sistolica / signos.presion_diastolica }}</td>
           <td>{{ signos.respiracion }}</td>
           <td>{{ signos.saturacion_de_oxigeno }}</td>
           <td>{{ signos.presion_arterial_media }}</td>

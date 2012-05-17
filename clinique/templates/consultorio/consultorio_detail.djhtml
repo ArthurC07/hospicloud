@@ -1,0 +1,42 @@
+{% extends "base.djhtml" %}
+{% block content %}
+<aside class="grid_3 toolbox">
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url consultorio-view %}">Mis Consultorios</a>
+      </li>
+      <li>
+        <a href="{% url consultorio-pacientes consultorio.id %}">Mis Pacientes</a>
+      </li>
+      <li>
+        <a href="{% url consultorio-citas consultorio.id %}">Mostrar Citas</a>
+      </li>
+      <li>
+        <a href="{% url consultorio-espera consultorio.id %}">Sala de Espera</a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+<article id="examen" class="grid_9">
+  <hgroup>
+    <h1>{{ examen.nombre }} de {{ examen.persona }}</h1>
+  </hgroup>
+  {% include "snippets/examen.djhtml" with examen=examen %}
+  <div id="imagenes">
+    {% for imagen in examen.imagenes.all %}
+    {% include "snippets/imagen.djhtml" with imagen=imagen %}
+    {% endfor %}
+  </div>
+  <div id="adjuntos">
+    {% for adjunto in examen.adjuntos.all %}
+    {% include "snippets/adjunto.djhtml" with adjunto=adjunto %}
+    {% endfor %}
+  </div>
+  <div id="dicoms">
+    {% for dicom in examen.dicoms.all %}
+    {% include "snippets/dicom.djhtml" with dicom=dicom %}
+    {% endfor %}
+  </div>
+</article>
+{% endblock %}

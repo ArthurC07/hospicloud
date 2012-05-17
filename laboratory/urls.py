@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from laboratory.views import (ExamenDetailView, ExamenCreateView,
     ExamenUpdateView, ImagenCreateView, AdjuntoCreateView,
     ExamenPersonaListView, ExamenIndexView, PersonaExamenCreateView,
-    ExamenPreCreateView)
+    ExamenPreCreateView, DicomDetailView, DicomCreateView)
 
 urlpatterns = patterns('',
     
@@ -42,4 +42,12 @@ urlpatterns = patterns('',
     url(r'^(?P<examen>\d+)/archivo/adjuntar$',
         AdjuntoCreateView.as_view(),
         name='examen-adjuntar-archivo'),
+    
+    url(r'^(?P<examen>\d+)/dicom/adjuntar$',
+        DicomCreateView.as_view(),
+        name='examen-adjuntar-dicom'),
+    
+    url(r'^/dicom/(?P<pk>\d+)$',
+        DicomDetailView.as_view(),
+        name='dicom-view'),
 )

@@ -6,7 +6,9 @@
 <script type="text/javascript">
   $(document).ready(function()
   {
+	$.jqplot('pulso', [[{{ pulso }} ]]);
     $.jqplot('temperatura', [[{{ temperatura }} ]]);
+	$.jqplot('presion', [[{{ presion_sistolica }} ], [{{ presion_diastolica }} ]], { series : [ {label:"Sistólica"}, {label:"Diastólica"} ]});
   });
 </script>
 {% endblock %}
@@ -16,11 +18,21 @@
 	<hgroup class="top title">
 	  <h1>Gr&aacute;fica de Lecturas de {{ admision.paciente.nombre_completo }}</h1>
 	</hgroup>
-	<div id="estadisticas" class="bloque-superior">
-	  <article id="tiempo-espera">
+	<div id="signos_vitales" class="bloque-superior">
+	  <article id="temperatura">
 	    <h2>Temperatura</h2>
 	    <div id="temperatura"></div>
 	    <h3>Promedio: {{ temp_promedio }} grados</h3>
+	  </article>
+	  <article id="presion">
+	    <h2>Presi&oacute;n</h2>
+	    <div id="presion"></div>
+	    <h3>Promedio: {{ presion_sistolica_promedio }} / {{ presion_diastolica_promedio }}</h3>
+	  </article>
+	  <article id="pulso">
+	    <h2>Pulso</h2>
+	    <div id="temperatura"></div>
+	    <h3>Promedio: {{ pulso_promedio }}</h3>
 	  </article>
 	</div>
 </div>
