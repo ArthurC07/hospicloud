@@ -16,7 +16,3 @@ class AdmisionForm(forms.ModelForm):
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
-
-class ReporteAnualForm(forms.Form):
-    
-    anio = forms.IntegerField(label=_(u'Año'))

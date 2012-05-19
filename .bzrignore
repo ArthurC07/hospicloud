@@ -6,3 +6,4 @@ whoosh_index
 media
 ./persona/fixtures
 ./build
+./static

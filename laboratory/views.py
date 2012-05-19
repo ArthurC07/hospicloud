@@ -42,6 +42,7 @@ class ExamenDetailView(DetailView, LoginRequiredView):
     context_object_name = 'examen'
     model = Examen
     template_name = 'examen/examen_detail.djhtml'
+    slug_field = 'uuid'
 
 class ExamenPersonaListView(DetailView, LoginRequiredView):
     
@@ -143,3 +144,4 @@ class DicomDetailView(DetailView, LoginRequiredView):
     context_object_name = 'dicom'
     model = Dicom
     template_name = "examen/dicom_detail.djhtml"
+    slug_field = 'uuid'

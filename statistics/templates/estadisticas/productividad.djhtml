@@ -1,4 +1,5 @@
 {% extends "base.djhtml" %}
+{% load staticfiles %}
 {% block content %}
 <div id="admision" class="grid_9">
   <hgroup class="top title">

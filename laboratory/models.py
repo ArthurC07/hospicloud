@@ -2,10 +2,12 @@
 from datetime import datetime
 from django.db import models
 from django.db.models import permalink
+from django_extensions.db.fields import UUIDField
 from library import image_to_content, dicom
 from persona.models import Persona
+from private_files.models.fields import PrivateFileField #@UnresolvedImport
 from sorl.thumbnail import ImageField #@UnresolvedImport
-from django_extensions.db.fields import UUIDField
+from south.modelsinspector import add_introspection_rules
 import os
 
 class Examen(models.Model):
@@ -19,13 +21,14 @@ class Examen(models.Model):
     resultado = models.CharField(max_length=200, blank=True)
     diagnostico = models.CharField(max_length=255, blank=True)
     fecha = models.DateTimeField(default=datetime.now)
+    uuid = UUIDField(version=4)
     
     @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'examen-view-id', [self.id]
+        return 'examen-view-id', [self.uuid]
 
 class Imagen(models.Model):
     
@@ -41,7 +44,7 @@ class Imagen(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return 'examen-view-id', [self.examen.id]
+        return 'examen-view-id', [self.examen.uuid]
 
 class Adjunto(models.Model):
     
@@ -57,21 +60,55 @@ class Adjunto(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return 'examen-view-id', [self.examen.id]
+        return 'examen-view-id', [self.examen.uuid]
 
 class Dicom(models.Model):
     
     """Permite agregar archivos DICOM a un :class:`Examen`, incluye funciones
-    de utilidad para convertir en :class:`Imagen`
+    de utilidad para extraer :class:`Imagen` a partir de los datos incrustados
+    dentro del archivo
     """
-    archivo = models.FileField(upload_to='examen/dicom/%Y/%m/%d')
+    examen = models.ForeignKey(Examen, on_delete=models.CASCADE,
+                               related_name='dicoms')
+    archivo = PrivateFileField(upload_to='examen/dicom/%Y/%m/%d',
+                               attachment=False)
     descripcion = models.CharField(max_length=255, blank=True)
     convertido = models.BooleanField(default=False)
-    imagen = models.ImageField(upload_to='examen/dicom/imagen/%Y/%m%/%d', blank=True)
+    imagen = PrivateFileField(upload_to='examen/dicom/imagen/%Y/%m%/%d',
+                              blank=True, attachment=False)
     uuid = UUIDField(version=4)
     
     def extraer_imagen(self):
         
-        imagen_dicom = image_to_content(dicom.extraer_imagen(self.archivo.name))
+        """Permite extraer una :class:`Imagen` que se encuentra incrustada en
+        los datos del archivo :class:`Dicom` adjunto.
+        """
+        try:
+            absolute = os.path.abspath(self.archivo.file.name)
+            datos = dicom.extraer_imagen(str(absolute))
+        except IOError as error:
+            print(error.message)
+        
+        imagen_dicom = image_to_content(datos)
         archivo = os.path.splitext(os.path.basename(self.archivo.name))[0]
+        self.convertido = True
         self.imagen.save("{0}.jpg".format(archivo), imagen_dicom)
+        self.save()
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'examen-view-id', [self.examen.uuid]
+
+add_introspection_rules([
+    (
+        [PrivateFileField], # Class(es) these apply to
+        [],         # Positional arguments (not used)
+        {           # Keyword argument
+            #"ordered": ["ordered", {}],
+            #"sort": ["sort", {}],
+        },
+    ),
+], ["^private_files\.models\.fields\.PrivateFileField"])

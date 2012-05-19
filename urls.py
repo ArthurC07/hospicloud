@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^enfermeria/', include('hospinet.nightingale.urls')),
     url(r'^busqueda/', CustomSearchView(), name='haystack_search'),
     url(r'^api/', include(v1_api.urls)),
+    url(r'^private_files/', include('private_files.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

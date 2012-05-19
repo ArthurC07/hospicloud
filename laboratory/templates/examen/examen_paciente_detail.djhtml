@@ -1,4 +1,8 @@
 {% extends 'base.djhtml' %}
+{% load staticfiles %}
+{% block header %}
+<link rel="stylesheet" href="{% static "css/examen.css" %}" />
+{% endblock %}
 {% block content %}
 <aside class="toolbox grid_3">
 <nav>
@@ -10,8 +14,14 @@
     <h1>{{ persona.nombre_completo }}</h1>
   </hgroup>
   {% for examen in persona.examenes.all %}<article class="examen">
-    <hgroup><h2>{{ examen.nombre }}</h2></hgroup>
+    <section class="main">
+      <hgroup><h2>{{ examen.nombre }}</h2></hgroup>
   {% include "snippets/examen.djhtml" with examen=examen %}
+    </section>
+    <aside class="links">
+      <a class="button" href="{% url examen-view-id examen.uuid %}">Mostrar</a>
+    </aside>
+    <div class="clear"></div>
   </article>{% endfor %}
 </div>
 {% endblock %}

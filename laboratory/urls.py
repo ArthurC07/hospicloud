@@ -15,15 +15,15 @@ urlpatterns = patterns('',
         ExamenPreCreateView.as_view(),
         name='examen-nuevo'),
     
-    url(r'^/persona/nuevo$',
+    url(r'^persona/nuevo$',
         PersonaExamenCreateView.as_view(),
         name='examen-persona-nuevo'),
     
-    url(r'^(?P<pk>\d+)$',
+    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
         ExamenDetailView.as_view(),
         name='examen-view-id'),
     
-    url(r'^(?P<pk>\d+)/lista$',
+    url(r'^persona/(?P<pk>\d+)/lista$',
         ExamenPersonaListView.as_view(),
         name='examen-persona-lista'),
     
@@ -47,7 +47,7 @@ urlpatterns = patterns('',
         DicomCreateView.as_view(),
         name='examen-adjuntar-dicom'),
     
-    url(r'^/dicom/(?P<pk>\d+)$',
+    url(r'^dicom/(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
         DicomDetailView.as_view(),
         name='dicom-view'),
 )

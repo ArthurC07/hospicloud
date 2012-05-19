@@ -1,10 +1,11 @@
 {% extends "base.djhtml" %}
+{% load staticfiles %}
 {% block header %}
-<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{{ STATIC_PREFIX }}js/excanvas.js"></script><![endif]-->
-<script language="javascript" type="text/javascript" src="{{ STATIC_PREFIX }}js/jquery.jqplot.js"></script>
-<script language="javascript" type="text/javascript" src="{{ STATIC_PREFIX }}js/jqplot.canvasTextRenderer.min.js"></script>
-<script language="javascript" type="text/javascript" src="{{ STATIC_PREFIX }}js/jqplot.canvasAxisLabelRenderer.min.js"></script>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_PREFIX }}css/jquery.jqplot.css" />
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static "js/excanvas.js" %}"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="{% static "js/jquery.jqplot.js" %}"></script>
+<script language="javascript" type="text/javascript" src="{% static "js/jqplot.canvasTextRenderer.min.js" %}"></script>
+<script language="javascript" type="text/javascript" src="{% static "js/jqplot.canvasAxisLabelRenderer.min.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "css/jquery.jqplot.css" %}" />
 <script type="text/javascript">
   $(document).ready(function()
   {

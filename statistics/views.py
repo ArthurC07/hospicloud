@@ -1,4 +1,4 @@
-# Create your views here.
+# -*- coding: utf-8 -*-
 from django.views.generic.base import TemplateView
 from statistics.forms import ReporteAnualForm, ReporteMensualForm
 import calendar

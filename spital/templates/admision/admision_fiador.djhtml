@@ -1,6 +1,7 @@
 {% extends "base.djhtml" %}
+{% load staticfiles %}
 {% block header %}
-<script type="text/javascript" src="{{ STATIC_PREFIX }}js/spital.js"></script>
+<script type="text/javascript" src="{% static "js/spital.js" %}"></script>
 <script type="text/javascript">
   $(document).ready(function()
   {

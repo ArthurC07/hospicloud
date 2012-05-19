@@ -1,4 +1,5 @@
-{% extends 'base.djhtml' %}{% load thumbnail %}
+{% extends 'base.djhtml' %}
+{% load staticfiles %}{% load thumbnail %}
 {% block content %}
 {% include "snippets/persona_aside.djhtml" with persona=persona %}
 <div id="informacion" class="grid_9">

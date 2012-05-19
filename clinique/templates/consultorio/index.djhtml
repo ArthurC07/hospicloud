@@ -3,7 +3,7 @@
   <nav>
     <ul>
       <li>
-        <a class="grid_3" href="{% url consultorio-agregar %}"><img src="{{ STATIC_PREFIX }}images/agregar.png" /></a>
+        <a class="grid_3" href="{% url consultorio-agregar %}"><img src="{% static images/agregar.png %}" /></a>
       </li>
     </ul>
   </nav>

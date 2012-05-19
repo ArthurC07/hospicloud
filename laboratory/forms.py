@@ -44,7 +44,7 @@ class DicomForm(forms.ModelForm):
     class Meta:
         
         model = Dicom
-        fields = ('archivo', 'descripcion')
+        fields = ('descripcion', 'archivo')
     
     examen = forms.ModelChoiceField(label="",
                                   queryset=Examen.objects.all(),
