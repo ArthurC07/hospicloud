@@ -74,7 +74,7 @@ class Dicom(models.Model):
                                attachment=False)
     descripcion = models.CharField(max_length=255, blank=True)
     convertido = models.BooleanField(default=False)
-    imagen = PrivateFileField(upload_to='examen/dicom/imagen/%Y/%m%/%d',
+    imagen = PrivateFileField(upload_to='examen/dicom/imagen/%Y/%m/%d',
                               blank=True, attachment=False)
     uuid = UUIDField(version=4)
     

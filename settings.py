@@ -130,6 +130,7 @@ INSTALLED_APPS = (
     'laboratory',
     'users',
     'nightingale',
+    'clinique',
     # Third party apps go here
     'treemenus',
     'sorl.thumbnail',
@@ -184,4 +185,6 @@ HAYSTACK_CONNECTIONS = {
         'BATCH_SIZE': 100,
     },
 }
+# Additional Settings
 FILE_PROTECTION_METHOD = 'basic'
+AUTH_PROFILE_MODULE = 'users.Profile'

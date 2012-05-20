@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
+from clinique.models import Paciente, Cita, Transaccion, Consultorio
 from django import forms
-from clinique.models import Paciente, Visitante, Cita, Transaccion, Consultorio
+from users.models import Profile
+
+class ConsultorioForm(forms.ModelForm):
+    
+    class Meta:
+        
+        model = Consultorio
+        fields = ('nombre', )
+    
+    doctor = forms.ModelChoiceField(label="",
+                                  queryset=Profile.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
 
 class PacienteForm(forms.ModelForm):
     
@@ -8,7 +20,9 @@ class PacienteForm(forms.ModelForm):
         
         model = Paciente
     
-    consultorio = forms.ModelChoiceField(queryset=Consultorio.objects.all())
+    consultorio = forms.ModelChoiceField(label="",
+                                  queryset=Consultorio.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
     
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -16,27 +30,6 @@ class PacienteForm(forms.ModelForm):
 
         if user:
             self.fields['consultorio'].queryset = user.profile.consultorios.all()
-
-class VisitanteForm(forms.ModelForm):
-    
-    class Meta:
-        
-        model = Visitante
-    
-    llegada = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
-    programacion = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
-    
-    consultorio = forms.ModelChoiceField(label="",
-                                  queryset=Consultorio.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
 class CitaForm(forms.ModelForm):
 

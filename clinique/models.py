@@ -3,42 +3,45 @@ from datetime import datetime
 from django.db import models
 from persona.models import Persona
 from users.models import Profile
-from django.contrib.auth.models import User
+from django.db.models import permalink
+from django_extensions.db.fields import UUIDField
 
 class Consultorio(models.Model):
     
-    doctor = models.ManyToManyField(Profile, related_name='consultorios')
-    nombre = models.CharField(max_length=1, blank=True)
-    secretaria = models.ForeignKey(User, blank=True, null=True, related_name='consultorios')
+    nombre = models.CharField(max_length=255, blank=True)
+    secretaria = models.ForeignKey(Profile, blank=True, null=True, related_name='secretariados')
+    doctor = models.ForeignKey(Profile, blank=True, null=True, related_name='consultorios')
+    uuid = UUIDField(version=4)
     
     def balance(self):
         
         return sum(p.saldo() for p in self.pacientes)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'consultorio-view', [self.uuid]
+
+Profile.balance = property(lambda u: sum(c.balance() for c in u.consultorios))
 
 class Paciente(models.Model):
     
     persona = models.ForeignKey(Persona, related_name='consultorios')
     consultorio = models.ForeignKey(Consultorio, related_name='pacientes')
+    uuid = UUIDField(version=4)
     
     def saldo(self):
         
         return sum(t.monto for t in self.transacciones)
+    
+    @permalink
+    def get_absolute_url(self):
+    
+        return 'consultorio-paciente', [self.uuid]
 
 Persona.saldo = property(lambda p: sum(c.saldo() for c in p.consultorios))
-
-class Visitante(models.Model):
-    
-    ESTADOS = (
-        ('E', u'Esperando'),
-        ('C', u'Consulta'),
-        ('A', u'Atendido'),
-    )
-    
-    consultorio = models.ForeignKey(Consultorio, related_name='visitantes')
-    nombre = models.CharField(max_length=200)
-    estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
-    llegada = models.DateTimeField(default=datetime.now)
-    programacion = models.DateTimeField(default=datetime.now)
 
 class Transaccion(models.Model):
     
@@ -50,11 +53,17 @@ class Transaccion(models.Model):
     paciente = models.ForeignKey(Paciente, related_name='transacciones')
     concepto = models.CharField(max_length=1, blank=True)
     tipo = models.IntegerField(choices=TIPO)
-    monto = models.DecimalField()
+    monto = models.DecimalField(decimal_places=2, max_digits=12)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
 
 class Cita(models.Model):
     
     consultorio = models.ForeignKey(Consultorio, related_name='citas')
-    persona = models.CharField(max_length=255, blank=True)
+    nombre = models.CharField(max_length=200)
     fecha_y_hora = models.DateTimeField(default=datetime.now())
+
+class Esperador(models.Model):
+    
+    consultorio = models.ForeignKey(Consultorio, related_name='esperadores')
+    paciente = models.ForeignKey(Paciente, related_name='esperas')
+    atendido = models.BooleanField(default=False)
