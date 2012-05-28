@@ -33,8 +33,11 @@ class Paciente(models.Model):
     uuid = UUIDField(version=4)
     
     def saldo(self):
+
+        creditos =  sum(t.monto for t in self.transacciones if t.tipo == 1)
+        debitos =  sum(t.monto for t in self.transacciones if t.tipo == 2)
         
-        return sum(t.monto for t in self.transacciones)
+        return creditos - debitos
     
     @permalink
     def get_absolute_url(self):
