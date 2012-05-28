@@ -18,3 +18,4 @@
 <a class="grid_4" href="{%url consultorio-index %}"><img src="{% static "images/pacientes.png" %}" /></a>
 </div>
 {% endblock %}
+

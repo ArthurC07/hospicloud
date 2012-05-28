@@ -189,3 +189,4 @@ HAYSTACK_CONNECTIONS = {
 # Additional Settings
 FILE_PROTECTION_METHOD = 'basic'
 AUTH_PROFILE_MODULE = 'users.Profile'
+
