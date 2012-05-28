@@ -53,7 +53,7 @@ class PersonaAdmisionCreateView(PersonaCreateView):
     
     def get_success_url(self):
         
-        return reverse('admision-iniciar', args=[self.object.id])
+        return reverse('admision-persona-agregar', args=[self.object.id])
 
 class PersonaFiadorCreateView(PersonaCreateView):
     

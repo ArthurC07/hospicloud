@@ -39,9 +39,11 @@ class Admision(models.Model):
              ('TB', u"Transferencia Bancaria"),
     )
     
-    ASEGURADORA = (
+    TIPOS_INGRESOS = (
              ("PA","Particular"),
-             ("PR", "Privado"),
+             ("SN", "Aseguradora Nacional"),
+             ("SI", "Aseguradora Internacional"),
+             ("PS", "Presupuesto"),
     )
     
     momento = models.DateTimeField(default=datetime.now, null=True, blank=True)
@@ -61,8 +63,7 @@ class Admision(models.Model):
     
     poliza = models.CharField(max_length=200, blank=True)
     certificado = models.CharField(max_length=200, blank=True)
-    aseguradora = models.CharField(max_length=200, blank=True,
-                                   choices=ASEGURADORA)
+    aseguradora = models.CharField(max_length=200, blank=True)
     deposito = models.CharField(max_length=200, blank=True)
     
     observaciones = models.CharField(max_length=200, blank=True)
@@ -84,6 +85,7 @@ class Admision(models.Model):
     estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
     tiempo = models.IntegerField(default=0, blank=True)
     neonato = models.NullBooleanField(blank=True, null=True)
+    tipo_de_ingreso = models.CharField(max_length=200, blank=True, null=True, choices=TIPOS_INGRESOS)
     
     def generar_codigo(self):
         
@@ -174,8 +176,10 @@ class Admision(models.Model):
         return (ahora - self.momento).total_seconds() / 60
     
     def actualizar_tiempo(self):
-        
-        self.tiempo = self.fecha_alta - self.ingreso
+        if not self.fecha_alta == None:
+            self.tiempo = self.fecha_alta - self.ingreso
+        else:
+            self.tiempo = datetime.now() - self.ingreso
     
     def save(self, *args, **kwargs):
         self.actualizar_tiempo()

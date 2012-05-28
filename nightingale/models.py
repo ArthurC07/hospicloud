@@ -12,12 +12,12 @@ class SignoVital(models.Model):
     admision = models.ForeignKey(Admision, related_name='signos_vitales')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     pulso = models.IntegerField()
-    temperatura = models.DecimalField(decimal_places=2, max_digits=4, null=True)
-    presion_sistolica = models.DecimalField(decimal_places=2, max_digits=4, null=True)
-    presion_diastolica = models.DecimalField(decimal_places=2, max_digits=4, null=True)
-    respiracion = models.DecimalField(decimal_places=2, max_digits=4, null=True)
-    observacion = models.DecimalField(decimal_places=2, max_digits=4, null=True)
-    saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=4,
+    temperatura = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    presion_sistolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    presion_diastolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    respiracion = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    observacion = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)
     
@@ -29,20 +29,20 @@ class SignoVital(models.Model):
         return 'nightingale-view-id', [self.admision.id]
 
 Admision.temperatura_promedio = property(lambda a:
-                                 sum(s.temperatura for s in a.signos_vitales)
-                                 / a.signosvitales.count())
+                                 sum(s.temperatura for s in a.signos_vitales.all())
+                                 / a.signos_vitales.count())
 
 Admision.pulso_promedio = property(lambda a:
-                                 sum(s.pulso for s in a.signos_vitales)
-                                 / a.signosvitales.count())
+                                 sum(s.pulso for s in a.signos_vitales.all())
+                                 / a.signos_vitales.count())
 
 Admision.presion_sistolica_promedio = property(lambda a:
-                                 sum(s.presion_sistolica for s in a.signos_vitales)
-                                 / a.signosvitales.count())
+                                 sum(s.presion_sistolica for s in a.signos_vitales.all())
+                                 / a.signos_vitales.count())
 
 Admision.presion_diastolica_promedio = property(lambda a:
-                                 sum(s.presion_diastolica for s in a.signos_vitales)
-                                 / a.signosvitales.count())
+                                 sum(s.presion_diastolica for s in a.signos_vitales.all())
+                                 / a.signos_vitales.count())
 
 class Evolucion(models.Model):
     
@@ -143,6 +143,7 @@ class NotaEnfermeria(models.Model):
     admision = models.ForeignKey(Admision, related_name='notas_enfermeria')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     nota = models.CharField(max_length=200, blank=True)
+    #enfermera = models.ForeignKey(User, related_name='notas_enfermeria')
     
     @permalink
     def get_absolute_url(self):
@@ -212,3 +213,9 @@ class FrecuenciaLectura(models.Model):
         return 'nightingale-view-id', [self.admision.id]
 
 Admision.frecuencia_lectura = property(lambda a: FrecuenciaLectura.objects.get_or_create(admision=a)[0])
+
+class Medicamento(models.Model):
+    
+    admision = models.ForeignKey(Admision, related_name='medicamentos')
+    medicamento = models.CharField(max_length=200, blank=True, null=True)
+    hora = models.TimeField(default=datetime.now)

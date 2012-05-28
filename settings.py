@@ -5,9 +5,9 @@ PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-#LOGIN_URL = '/hospinet/accounts/login'
-#LOGOUT_URL = '/hospinet/accounts/logout'
-#LOGIN_REDIRECT_URL = '/hospinet/'
+LOGIN_URL = '/hospinet/accounts/login'
+LOGOUT_URL = '/hospinet/accounts/logout'
+LOGIN_REDIRECT_URL = '/hospinet/'
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_extensions',
     'persona',
     'spital',
     'laboratory',

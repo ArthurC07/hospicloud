@@ -4,7 +4,7 @@
   {% include "snippets/aside.djhtml" with admision=admision %}
   <section id="evolucion" class="grid_9">
     <hgroup>
-      <h1>Evoluci&oacute;n de {{ admision.paciente.full_name }} en {{ admision.habitacion }}</h1>
+      <h1>Evoluci&oacute;n de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
     <table class="data">
       <thead>

@@ -80,12 +80,12 @@ class SignosDetailView(DetailView, LoginRequiredView):
         if self.object.signos_vitales.count() == 0:
             context['presion_sistolica_promedio'] = 0
         else:
-            context['presion_sistolica_promedio'] = self.object.presion_diastolica_promedio
+            context['presion_sistolica_promedio'] = self.object.presion_sistolica_promedio
         
         context['pulso'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].pulso) for n in range(signos.count()))
         context['temperatura'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].temperatura) for n in range(signos.count()))
         context['presion_sistolica'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].presion_sistolica) for n in range(signos.count()))
-        context['presion_diatolica'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].presion_diatolica) for n in range(signos.count()))
+        context['presion_diastolica'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].presion_diastolica) for n in range(signos.count()))
         
         return context
 
@@ -93,7 +93,8 @@ class BaseCreateView(CreateView, LoginRequiredView):
     
     """Permite llenar el formulario de una clase que requiera
     :class:`Admision`es de manera previa - DRY"""
-    
+#    model = Admision
+#    form_class = IngresarForm
     def get_context_data(self, **kwargs):
         
         context = super(BaseCreateView, self).get_context_data(**kwargs)
