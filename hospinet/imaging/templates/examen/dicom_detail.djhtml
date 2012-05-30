@@ -7,10 +7,10 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.19/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
   <link rel="stylesheet" href="{% static "css/dicom.css" %}" />
-  <script type="text/javascript" src="{% static "js/gl-matrix.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/glpainter.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/shaders.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/canvaspainter.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/gl-matrix/gl-matrix.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/glpainter.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/shaders.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/canvaspainter.js" %}"></script>
 
   <!-- External jsdicom-lib -->
   <script type="text/javascript" src="{% static "js/jsdicom-lib/dcmdict.js" %}"></script>
@@ -19,15 +19,15 @@
   <script type="text/javascript" src="{% static "js/jsdicom-lib/dicomparser.js" %}"></script>
   <script type="text/javascript" src="{% static "js/jsdicom-lib/transfersyntax.js" %}"></script>
   
-  <script type="text/javascript" src="{% static "js/GLU.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/cluts/plain.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/cluts/rainbow.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/cluts/blackbody.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/app.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/tools.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/utilities.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/dcmseries.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/presentation.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/GLU.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/cluts/plain.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/cluts/rainbow.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/cluts/blackbody.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/app.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/tools.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/utilities.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/dcmseries.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jsdicom/js/presentation.js" %}"></script>
   <script type="text/javascript">
       var app = new DcmApp('view-area');
 

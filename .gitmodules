@@ -1,0 +1,9 @@
+[submodule "hospinet/imaging/static/js/jsdicom"]
+	path = hospinet/imaging/static/js/jsdicom
+	url = git://github.com/Infogosoft/jsdicom.git
+[submodule "hospinet/imaging/static/js/jsdicom-lib"]
+	path = hospinet/imaging/static/js/jsdicom-lib
+	url = git://github.com/Infogosoft/jsdicom-lib.git
+[submodule "hospinet/imaging/static/js/gl-matrix"]
+	path = hospinet/imaging/static/js/gl-matrix
+	url = git://github.com/toji/gl-matrix.git
