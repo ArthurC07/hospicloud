@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from laboratory.models import Examen, Imagen, Adjunto, Dicom
+from imaging.models import Examen, Imagen, Adjunto, Dicom
 from persona.models import Persona
 
 class ExamenForm(forms.ModelForm):

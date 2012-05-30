@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from laboratory.models import Examen, Imagen, Adjunto, Dicom
+from imaging.models import Examen, Imagen, Adjunto, Dicom
 
 admin.site.register(Examen)
 admin.site.register(Imagen)

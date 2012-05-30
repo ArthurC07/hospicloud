@@ -4,7 +4,8 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{a15c49ac-e2c2-480b-b2a3-7abefbe66a11}</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
+    <ProjectHome>
+    </ProjectHome>
     <ProjectTypeGuids>{5F0BE9CA-D677-4A4D-8806-6076C0FAAD37};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <StartupFile>manage.py</StartupFile>
     <SearchPath>
@@ -12,8 +13,8 @@
     <WorkingDirectory>.</WorkingDirectory>
     <LaunchProvider>Django launcher</LaunchProvider>
     <OutputPath>.</OutputPath>
-    <Name>Hospinet</Name>
-    <RootNamespace>Hospinet</RootNamespace>
+    <Name>hospinet</Name>
+    <RootNamespace>hospinet</RootNamespace>
     <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -36,20 +37,20 @@
     <Compile Include="clinique\urls.py" />
     <Compile Include="clinique\views.py" />
     <Compile Include="clinique\__init__.py" />
-    <Compile Include="laboratory\admin.py" />
-    <Compile Include="laboratory\forms.py" />
-    <Compile Include="laboratory\migrations\0001_initial.py" />
-    <Compile Include="laboratory\migrations\0002_auto__add_field_dicom_examen.py" />
-    <Compile Include="laboratory\migrations\0003_auto__del_field_dicom_examen__add_field_dicom_uuid__chg_field_dicom_ar.py" />
-    <Compile Include="laboratory\migrations\0004_auto__add_field_dicom_examen.py" />
-    <Compile Include="laboratory\migrations\0005_auto__add_field_examen_uuid.py" />
-    <Compile Include="laboratory\migrations\__init__.py" />
-    <Compile Include="laboratory\models.py" />
-    <Compile Include="laboratory\search_indexes.py" />
-    <Compile Include="laboratory\tests.py" />
-    <Compile Include="laboratory\urls.py" />
-    <Compile Include="laboratory\views.py" />
-    <Compile Include="laboratory\__init__.py" />
+    <Compile Include="imaging\admin.py" />
+    <Compile Include="imaging\forms.py" />
+    <Compile Include="imaging\migrations\0001_initial.py" />
+    <Compile Include="imaging\migrations\0002_auto__add_field_dicom_examen.py" />
+    <Compile Include="imaging\migrations\0003_auto__del_field_dicom_examen__add_field_dicom_uuid__chg_field_dicom_ar.py" />
+    <Compile Include="imaging\migrations\0004_auto__add_field_dicom_examen.py" />
+    <Compile Include="imaging\migrations\0005_auto__add_field_examen_uuid.py" />
+    <Compile Include="imaging\migrations\__init__.py" />
+    <Compile Include="imaging\models.py" />
+    <Compile Include="imaging\search_indexes.py" />
+    <Compile Include="imaging\tests.py" />
+    <Compile Include="imaging\urls.py" />
+    <Compile Include="imaging\views.py" />
+    <Compile Include="imaging\__init__.py" />
     <Compile Include="library\code128.py" />
     <Compile Include="library\dicom.py" />
     <Compile Include="library\protected.py" />
@@ -118,7 +119,6 @@
     <Compile Include="urls.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".bzrignore" />
     <Content Include="clinique\static\js\consultorio.js" />
     <Content Include="clinique\templates\consultorio\consultorio_create.djhtml" />
     <Content Include="clinique\templates\consultorio\consultorio_detail.djhtml" />
@@ -126,45 +126,45 @@
     <Content Include="clinique\templates\consultorio\paciente_agregar.djhtml" />
     <Content Include="clinique\templates\consultorio\paciente_detail.djhtml" />
     <Content Include="clinique\templates\consultorio\secretaria_create.djhtml" />
-    <Content Include="laboratory\static\css\dicom.css" />
-    <Content Include="laboratory\static\css\examen.css" />
-    <Content Include="laboratory\static\js\app.js" />
-    <Content Include="laboratory\static\js\canvaspainter.js" />
-    <Content Include="laboratory\static\js\cluts\blackbody.js" />
-    <Content Include="laboratory\static\js\cluts\plain.js" />
-    <Content Include="laboratory\static\js\cluts\rainbow.js" />
-    <Content Include="laboratory\static\js\dcmseries.js" />
-    <Content Include="laboratory\static\js\dicommodel.js" />
-    <Content Include="laboratory\static\js\gl-matrix.js" />
-    <Content Include="laboratory\static\js\glpainter.js" />
-    <Content Include="laboratory\static\js\GLU.js" />
-    <Content Include="laboratory\static\js\jsdicom-lib\binutils.js" />
-    <Content Include="laboratory\static\js\jsdicom-lib\dcmdict.js" />
-    <Content Include="laboratory\static\js\jsdicom-lib\dcmfile.js" />
-    <Content Include="laboratory\static\js\jsdicom-lib\dicomparser.js" />
-    <Content Include="laboratory\static\js\jsdicom-lib\transfersyntax.js" />
-    <Content Include="laboratory\static\js\laboratory.js" />
-    <Content Include="laboratory\static\js\presentation.js" />
-    <Content Include="laboratory\static\js\shaders.js" />
-    <Content Include="laboratory\static\js\tools.js" />
-    <Content Include="laboratory\static\js\touch.min.js" />
-    <Content Include="laboratory\static\js\utilities.js" />
-    <Content Include="laboratory\static\js\webgl.js" />
-    <Content Include="laboratory\templates\examen\adjunto_create.djhtml" />
-    <Content Include="laboratory\templates\examen\dicom_create.djhtml" />
-    <Content Include="laboratory\templates\examen\dicom_detail.djhtml" />
-    <Content Include="laboratory\templates\examen\examen_agregar.djhtml" />
-    <Content Include="laboratory\templates\examen\examen_create.djhtml" />
-    <Content Include="laboratory\templates\examen\examen_detail.djhtml" />
-    <Content Include="laboratory\templates\examen\examen_paciente_detail.djhtml" />
-    <Content Include="laboratory\templates\examen\imagen_create.djhtml" />
-    <Content Include="laboratory\templates\examen\index.djhtml" />
-    <Content Include="laboratory\templates\search\indexes\laboratory\examen_text.txt" />
-    <Content Include="laboratory\templates\snippets\adjunto.djhtml" />
-    <Content Include="laboratory\templates\snippets\dicom.djhtml" />
-    <Content Include="laboratory\templates\snippets\examen.djhtml" />
-    <Content Include="laboratory\templates\snippets\examen_list.djhtml" />
-    <Content Include="laboratory\templates\snippets\imagen.djhtml" />
+    <Content Include="imaging\static\css\dicom.css" />
+    <Content Include="imaging\static\css\examen.css" />
+    <Content Include="imaging\static\js\app.js" />
+    <Content Include="imaging\static\js\canvaspainter.js" />
+    <Content Include="imaging\static\js\cluts\blackbody.js" />
+    <Content Include="imaging\static\js\cluts\plain.js" />
+    <Content Include="imaging\static\js\cluts\rainbow.js" />
+    <Content Include="imaging\static\js\dcmseries.js" />
+    <Content Include="imaging\static\js\dicommodel.js" />
+    <Content Include="imaging\static\js\gl-matrix.js" />
+    <Content Include="imaging\static\js\glpainter.js" />
+    <Content Include="imaging\static\js\GLU.js" />
+    <Content Include="imaging\static\js\jsdicom-lib\binutils.js" />
+    <Content Include="imaging\static\js\jsdicom-lib\dcmdict.js" />
+    <Content Include="imaging\static\js\jsdicom-lib\dcmfile.js" />
+    <Content Include="imaging\static\js\jsdicom-lib\dicomparser.js" />
+    <Content Include="imaging\static\js\jsdicom-lib\transfersyntax.js" />
+    <Content Include="imaging\static\js\imaging.js" />
+    <Content Include="imaging\static\js\presentation.js" />
+    <Content Include="imaging\static\js\shaders.js" />
+    <Content Include="imaging\static\js\tools.js" />
+    <Content Include="imaging\static\js\touch.min.js" />
+    <Content Include="imaging\static\js\utilities.js" />
+    <Content Include="imaging\static\js\webgl.js" />
+    <Content Include="imaging\templates\examen\adjunto_create.djhtml" />
+    <Content Include="imaging\templates\examen\dicom_create.djhtml" />
+    <Content Include="imaging\templates\examen\dicom_detail.djhtml" />
+    <Content Include="imaging\templates\examen\examen_agregar.djhtml" />
+    <Content Include="imaging\templates\examen\examen_create.djhtml" />
+    <Content Include="imaging\templates\examen\examen_detail.djhtml" />
+    <Content Include="imaging\templates\examen\examen_paciente_detail.djhtml" />
+    <Content Include="imaging\templates\examen\imagen_create.djhtml" />
+    <Content Include="imaging\templates\examen\index.djhtml" />
+    <Content Include="imaging\templates\search\indexes\laboratory\examen_text.txt" />
+    <Content Include="imaging\templates\snippets\adjunto.djhtml" />
+    <Content Include="imaging\templates\snippets\dicom.djhtml" />
+    <Content Include="imaging\templates\snippets\examen.djhtml" />
+    <Content Include="imaging\templates\snippets\examen_list.djhtml" />
+    <Content Include="imaging\templates\snippets\imagen.djhtml" />
     <Content Include="library\courB08.pbm" />
     <Content Include="library\courB08.pil" />
     <Content Include="nightingale\templates\enfermeria\cargos.djhtml" />
@@ -338,19 +338,19 @@
     <Folder Include="clinique\templates\" />
     <Folder Include="clinique\templates\consultorio\" />
     <Folder Include="clinique\templates\snippets\" />
-    <Folder Include="laboratory\" />
-    <Folder Include="laboratory\migrations\" />
-    <Folder Include="laboratory\static\js\" />
-    <Folder Include="laboratory\static\js\jsdicom-lib\" />
-    <Folder Include="laboratory\static\js\cluts\" />
-    <Folder Include="laboratory\static\css\" />
-    <Folder Include="laboratory\templates\" />
-    <Folder Include="laboratory\static\" />
-    <Folder Include="laboratory\templates\examen\" />
-    <Folder Include="laboratory\templates\search\" />
-    <Folder Include="laboratory\templates\search\indexes\" />
-    <Folder Include="laboratory\templates\search\indexes\laboratory\" />
-    <Folder Include="laboratory\templates\snippets\" />
+    <Folder Include="imaging" />
+    <Folder Include="imaging\migrations" />
+    <Folder Include="imaging\static\js" />
+    <Folder Include="imaging\static\js\jsdicom-lib" />
+    <Folder Include="imaging\static\js\cluts" />
+    <Folder Include="imaging\static\css" />
+    <Folder Include="imaging\templates" />
+    <Folder Include="imaging\static" />
+    <Folder Include="imaging\templates\examen" />
+    <Folder Include="imaging\templates\search" />
+    <Folder Include="imaging\templates\search\indexes" />
+    <Folder Include="imaging\templates\search\indexes\laboratory" />
+    <Folder Include="imaging\templates\snippets" />
     <Folder Include="library" />
     <Folder Include="nightingale" />
     <Folder Include="nightingale\migrations\" />

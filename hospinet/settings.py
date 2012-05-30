@@ -128,7 +128,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'persona',
     'spital',
-    'laboratory',
+    'imaging',
     'users',
     'nightingale',
     'clinique',

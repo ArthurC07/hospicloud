@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
-from laboratory.views import (ExamenDetailView, ExamenCreateView,
+from imaging.views import (ExamenDetailView, ExamenCreateView,
     ExamenUpdateView, ImagenCreateView, AdjuntoCreateView,
     ExamenPersonaListView, ExamenIndexView, PersonaExamenCreateView,
     ExamenPreCreateView, DicomDetailView, DicomCreateView)

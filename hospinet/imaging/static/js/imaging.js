@@ -12,7 +12,7 @@ Laboratory.prototype.search_person = function(query, target)
     {
       var article = $('<article />');
       var link = $('<a />');
-      link.attr('href', url + 'examen/' + persona.id + '/agregar');
+      link.attr('href', url + 'imaging/' + persona.id + '/agregar');
       link.html('Ingresar');
       article.append('<h1>' + persona.nombre + ' ' + persona.apellido + '</h1>');
       article.append(link);
