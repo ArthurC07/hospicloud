@@ -152,21 +152,14 @@ class NotaEnfermeria(models.Model):
         
         return 'nightingale-view-id', [self.admision.id]
 
-class Glucometria(models.Model):
+class Glicemia(models.Model):
     
     """Registra las fluctuaciones en los niveles de Glucosa en la sangre de una
     :class:`Persona` durante una :class`Admision`"""
     
-    TIPOS = (
-        ("I","Insulina"),
-        ("GI","Glicemia"),
-        ("GU","Glucosuria"),
-    )
-    
-    admision = models.ForeignKey(Admision, related_name='glucometrias')
+    admision = models.ForeignKey(Admision, related_name='glicemias')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     control = models.CharField(max_length=200, blank=True)
-    tipo = models.CharField(max_length=2, blank=True, choices=TIPOS)
     observacion = models.CharField(max_length=200, blank=True)
     
     @permalink
@@ -174,7 +167,39 @@ class Glucometria(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return 'nightingale-glucometria-id', [self.admision.id]
+
+class Glucosuria(models.Model):
+
+    """Registra la expulsión de Glucosa mediante la orina"""
+
+    admision = models.ForeignKey(Admision, related_name='glucosurias')
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    control = models.CharField(max_length=200, blank=True)
+    observacion = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-glucometria-id', [self.admision.id]
+
+class Insulina(models.Model):
+
+    """Registra la expulsión de Glucosa mediante la orina"""
+
+    admision = models.ForeignKey(Admision, related_name='insulina')
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    control = models.CharField(max_length=200, blank=True)
+    observacion = models.CharField(max_length=200, blank=True)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'nightingale-glucometria-id', [self.admision.id]
 
 class Sumario(models.Model):
     

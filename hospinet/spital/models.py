@@ -135,8 +135,8 @@ class Admision(models.Model):
     
     def tiempo_autorizacion(self):
         
-        """Calcula el tiempo que se tarda una :class:`Persona` para ser admitida
-        en el :class:`Hospital`"""
+        """Calcula el tiempo que se tarda una :class:`Persona` para ser
+        admitida en el :class:`Hospital`"""
         
         if self.autorizacion <= self.momento:
             
@@ -146,8 +146,8 @@ class Admision(models.Model):
     
     def tiempo_admisiones(self):
         
-        """Calcula el tiempo que se tarda una :class:`Persona` para ser admitida
-        en el :class:`Hospital`"""
+        """Calcula el tiempo que se tarda una :class:`Persona` para ser
+        admitida en el :class:`Hospital`"""
         
         if self.admision <= self.momento:
             
@@ -157,8 +157,8 @@ class Admision(models.Model):
     
     def tiempo_hospitalizacion(self):
         
-        """Calcula el tiempo que se tarda una :class:`Persona` para ser ingresada
-        en el :class:`Hospital`"""
+        """Calcula el tiempo que se tarda una :class:`Persona` para ser
+        ingresada en el :class:`Hospital`"""
         
         if self.ingreso == None or self.ingreso <= self.hospitalizacion:
             
@@ -176,6 +176,10 @@ class Admision(models.Model):
         return (ahora - self.momento).total_seconds() / 60
     
     def actualizar_tiempo(self):
+
+        if self.ingreso == None:
+            return
+
         if not self.fecha_alta == None:
             self.tiempo = self.fecha_alta - self.ingreso
         else:

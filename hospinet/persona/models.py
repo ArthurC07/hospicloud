@@ -37,7 +37,7 @@ class Persona(models.Model):
     
     tipo_identificacion = models.CharField(max_length=1,
                                            choices=TIPOS_IDENTIDAD, blank=True)
-    identificacion = models.CharField(max_length=20, blank=True, unique=True)
+    identificacion = models.CharField(max_length=20, blank=True, unique=False)
     nombre = models.CharField(max_length=50, blank=True)
     apellido = models.CharField(max_length=50, blank=True)
     sexo = models.CharField(max_length=1, choices=GENEROS, blank=True)

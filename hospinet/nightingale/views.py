@@ -6,18 +6,22 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, UpdateView, DetailView, CreateView
 from library.protected import LoginRequiredView
 from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
-    GlucometriaForm, IngestaForm, ExcretaForm, NotaEnfermeriaForm,
-    OrdenMedicaForm, SignoVitalForm)
-from nightingale.models import (Cargo, Evolucion, Glucometria, Ingesta, Excreta,
-    NotaEnfermeria, OrdenMedica, SignoVital)
+    GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
+    NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm)
+from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
+                                Glucosuria, Ingesta, Excreta, NotaEnfermeria,
+                                OrdenMedica, SignoVital)
 from spital.models import Admision
 from django.contrib import messages
 
 class NightingaleIndexView(ListView, LoginRequiredView):
     
+    """Permite ingresar al lobby de Admisiones que estan siendo atendidas en
+    una institucion hospitalaria"""
+
     queryset = Admision.objects.filter(Q(estado='H'))
     context_object_name = 'admitidos'
-    template_name = 'enfermeria/index.djhtml'
+    template_name = 'enfermeria/index.html'
     
     def get_context_data(self, **kwargs):
         
@@ -32,13 +36,15 @@ class NightingaleIndexView(ListView, LoginRequiredView):
                            for a in admisiones) / self.queryset.count()
         
         context['puntos'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
-                                          admisiones[n].tiempo_hospitalizacion())
+                                       admisiones[n].tiempo_hospitalizacion())
                       for n in range(self.queryset.count()))
         
         return context
 
 class IngresarView(UpdateView, LoginRequiredView):
     
+    """Permite actualizar los datos de ingreso en la central de enfermeria"""
+
     model = Admision
     form_class = IngresarForm
     template_name = 'enfermeria/ingresar.djhtml'
@@ -50,15 +56,24 @@ class IngresarView(UpdateView, LoginRequiredView):
 
 class NightingaleDetailView(DetailView, LoginRequiredView):
     
+    """Permite ver los datos de una :class:`Admision` desde la interfaz de
+    enfermeria"""
+
     model = Admision
     template_name = 'enfermeria/nightingale_detail.djhtml'
 
 class SignosDetailView(DetailView, LoginRequiredView):
     
+    """Muestra los datos sobre los signos vitales de una :class:`Persona` en
+    en una :class:`Admision`"""
+    
     model = Admision
     template_name = 'enfermeria/signos_grafico.djhtml'
     
     def get_context_data(self, **kwargs):
+
+        """Formatea los datos para ser utilizado las graficas de signos
+        vitales"""
         
         context = super(SignosDetailView, self).get_context_data(**kwargs)
         signos = self.object.signos_vitales
@@ -93,8 +108,7 @@ class BaseCreateView(CreateView, LoginRequiredView):
     
     """Permite llenar el formulario de una clase que requiera
     :class:`Admision`es de manera previa - DRY"""
-#    model = Admision
-#    form_class = IngresarForm
+
     def get_context_data(self, **kwargs):
         
         context = super(BaseCreateView, self).get_context_data(**kwargs)
@@ -124,28 +138,47 @@ class BaseCreateView(CreateView, LoginRequiredView):
 
 class CargoCreateView(BaseCreateView):
     
-    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    """Permite crear un :class:`Cargo` a una :class:`Admision`"""
     
     model = Cargo
     form_class = CargoForm
-    template_name = 'enfermeria/cargo_create.djhtml'
+    template_name = 'enfermeria/cargo_create.html'
 
 class EvolucionCreateView(BaseCreateView):
     
-    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    """Permite crear un :class:`Evolucion` a una :class:`Admision`"""
     
     model = Evolucion
     form_class = EvolucionForm
     template_name = 'enfermeria/evolucion_create.djhtml'
 
-class GlucometriaCreateView(BaseCreateView):
+class GlicemiaCreateView(BaseCreateView):
     
-    """Permite crear un :class:`Examen` a una :class:`Persona`"""
+    """Permite registrar un :class:`Glicemia` efectuada a una
+    :class:`Persona` durante una :class:`Admision`"""
     
-    model = Glucometria
-    form_class = GlucometriaForm
-    template_name = 'enfermeria/glucometria_create.djhtml'
+    model = Glicemia
+    form_class = GlicemiaForm
+    template_name = 'enfermeria/glicemia_create.html'
+    
+class InsulinaCreateView(BaseCreateView):
+    
+    """Permite crear un dosis de :class:`Insulina` suministrada a una
+    :class:`Persona` durante :class:`Admision`"""
+    
+    model = Insulina
+    form_class = InsulinaForm
+    template_name = 'enfermeria/insulina_create.html'
 
+class GlucosuriaCreateView(BaseCreateView):
+    
+    """Permite registrar un :class:`Glucosuria` de una :class:`Persona`
+    durante una :class:`Admision`"""
+    
+    model = Glucosuria
+    form_class = GlucosuriaForm
+    template_name = 'enfermeria/glucosuria_create.html'
+    
 class IngestaCreateView(BaseCreateView):
     
     """Permite crear un :class:`Examen` a una :class:`Persona`"""

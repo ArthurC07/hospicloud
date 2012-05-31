@@ -2,10 +2,11 @@
 {% block content %}
 <div class="content clearfix">
   {% include "snippets/aside.djhtml" with admision=admision %}
-  <section id="glucosuria" class="grid_9">
+  <section id="glicemia" class="grid_9">
     <h2>Control de Glucometr&iacute;a de {{ admision.paciente.nombre_completo }}</h2>
     <p>Frecuencia de Lectura: {{ admision.lectura.glucometria }} minutos</p>
     <table class="data">
+      <caption>Glicemias</caption>
       <thead>
         <tr>
           <th>Fecha y Hora</th>
@@ -15,17 +16,56 @@
         </tr>
       </thead>
       <tbody>
-        {% for glucosuria in admision.glucosurias.all %}
+        {% for glucosuria in admision.glicemias.all %}
         <tr>
-          <td>{{ glucosuria.fecha_y_hora }}</td>
-          <td>{{ glucosuria.tipo }}</td>
-          <td>{{ glucosuria.control }}</td>
-          <td>{{ glucosuria.observacion }}</td>
+          <td>{{ glicemia.fecha_y_hora }}</td>
+          <td>{{ glicemia.control }}</td>
+          <td>{{ glicemia.observacion }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+    <a href="{% url enfermeria-glicemia-agregar admision.paciente.id %}" class="button">Agregar Glicemia</a>
+    <table class="data">
+      <caption>Administración de Insulina</caption>
+      <thead>
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Control</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for glucosuria in admision.insulina.all %}
+        <tr>
+          <td>{{ insulina.fecha_y_hora }}</td>
+          <td>{{ insulina.control }}</td>
+          <td>{{ insulina.observacion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{% url enfermeria-insulina-agregar admision.paciente.id %}" class="button">Registrar Insulina</a>
+    <table class="data">
+      <caption>Registros de Glucosuria</caption>
+      <thead>
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Control</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for glucosuria in admision.glucosuria.all %}
+        <tr>
+          <td>{{ insulina.fecha_y_hora }}</td>
+          <td>{{ insulina.control }}</td>
+          <td>{{ insulina.observacion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{% url enfermeria-glucosuria-agregar admision.paciente.id %}" class="button">Registrar Glucosuria</a>
   </section>
-    <a href="{% url enfermeria-glucometria-agregar admision.paciente.id %}" class="button">Agregar Glucometr&iacute;a</a>
 </div>
 {% endblock %}

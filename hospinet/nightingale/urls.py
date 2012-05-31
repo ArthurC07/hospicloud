@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
-    IngresarView, CargoCreateView, EvolucionCreateView, GlucometriaCreateView,
-    IngestaCreateView, NotaCreateView, SignoVitalCreateView, SignosDetailView,
-    ExcretaCreateView)
+    IngresarView, CargoCreateView, EvolucionCreateView, GlicemiaCreateView,
+    InsulinaCreateView, GlucosuriaCreateView, IngestaCreateView,
+    NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView)
 
 urlpatterns = patterns('',
     
@@ -71,9 +71,17 @@ urlpatterns = patterns('',
         NightingaleDetailView.as_view(template_name='enfermeria/glucometria.djhtml'),
         name='enfermeria-glucometria'),
     
-    url(r'^(?P<admision>\d+)/glucometria/agregar$',
-        GlucometriaCreateView.as_view(),
-        name='enfermeria-glucometria-agregar'),
+    url(r'^(?P<admision>\d+)/glicemia/agregar$',
+        GlicemiaCreateView.as_view(),
+        name='enfermeria-glicemia-agregar'),
+    
+    url(r'^(?P<admision>\d+)/insulina/agregar$',
+        InsulinaCreateView.as_view(),
+        name='enfermeria-insulina-agregar'),
+    
+    url(r'^(?P<admision>\d+)/glucosuria/agregar$',
+        GlucosuriaCreateView.as_view(),
+        name='enfermeria-glucosuria-agregar'),
     
     url(r'^(?P<pk>\d+)/notas$',
         NightingaleDetailView.as_view(template_name='enfermeria/notas.djhtml'),
