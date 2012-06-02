@@ -114,12 +114,18 @@ class Admision(models.Model):
             self.save()
     
     def pagar(self):
+
+        """Registra el momento en el que se efectua el pago de una
+        :class:`Admision`"""
         
         if self.fecha_pago <= self.momento:
             self.fecha_pago = datetime.now()
             self.save()
     
     def hospitalizar(self):
+
+        """Permite que registrar el momento en que una :class:`Admision` ha
+        sido enviada a enfermeria para ingresar al hospital"""
         
         if self.hospitalizacion == None or self.hospitalizacion <= self.momento:
             self.hospitalizacion = datetime.now()

@@ -15,6 +15,8 @@ from django.contrib import messages
 
 class AdmisionIndexView(ListView, LoginRequiredView):
     
+    """Muestra la pagina principal de el Centro de :class:`Admisiones`"""
+
     context_object_name = 'admisiones'
     queryset = Admision.objects.filter(~Q(estado='H')&~Q(estado='C')&~Q(estado='I'))
     template_name = 'admision/index.html'
@@ -39,6 +41,10 @@ class AdmisionIndexView(ListView, LoginRequiredView):
 
 class IngresarView(TemplateView):
     
+    """Muestra una interfaz para agregar una :class:`Admision` ya sea agregando
+    una :class:`Persona` nueva o admitiendo una que ya se encuentra en el
+    sistema"""
+
     template_name = 'admision/ingresar.html'
     
     def get_context_data(self, **kwargs):
@@ -49,6 +55,8 @@ class IngresarView(TemplateView):
 
 class PersonaAdmisionCreateView(PersonaCreateView):
     
+    """Permite admitir una :class:`Persona` preexistente"""
+
     template_name = 'admision/persona_create.html'
     
     def get_success_url(self):
@@ -57,6 +65,9 @@ class PersonaAdmisionCreateView(PersonaCreateView):
 
 class PersonaFiadorCreateView(PersonaCreateView):
     
+    """Permite ingresar una :class:`Persona` al sistema que servira como
+    :class:`Fiador` a una :class:`Admision`"""
+
     template_name = 'admision/admision_fiador.html'
     
     def dispatch(self, *args, **kwargs):
@@ -82,6 +93,9 @@ class PersonaFiadorCreateView(PersonaCreateView):
 
 class PersonaReferenciaCreateView(PersonaCreateView):
     
+    """Permite agregar una :class:`Persona` como referencia a una
+    :class:`Admision`"""
+
     template_name = 'admision/admision_referencia.html'
     
     def dispatch(self, *args, **kwargs):
@@ -131,6 +145,9 @@ class FiadorAgregarView(RedirectView):
 
 class AdmisionCreateView(CreateView, LoginRequiredView):
     
+    """Crea una :class:`Admision` para una :class:`Persona` ya existente en el
+    sistema"""
+
     model = Admision
     form_class = AdmisionForm
     template_name = 'admision/admision_create.html'
@@ -157,6 +174,8 @@ class AdmisionCreateView(CreateView, LoginRequiredView):
 
 class AdmisionDetailView(DetailView, LoginRequiredView):
     
+    """Permite mostrar los datos de una :class:`Admision`"""
+
     context_object_name = 'admision'
     model = Admision
     template_name = 'admision/admision_detail.html'
