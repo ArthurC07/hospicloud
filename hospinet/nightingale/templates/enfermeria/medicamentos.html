@@ -3,30 +3,24 @@
 <div class="content">
   {% include "enfermeria/admision_aside.html" with admision=admision %}
   <section id="medicamentos" class="grid_9">
-    <h1>Medicamentos de {{ admision.paciente.full_name }} en {{ admision.habitacion }}</h1>
-    {% for medicamento in admision.medicamentos.all %}
-    <article>
-        <table>
-            <caption>{{ medicamento.nombre }}</caption>
-            <thead>
-                <th>Administrar</th>
-                <th>Control</th>
-                <th>Suministrada</th>
-            </thead>
-            <tbody>
-                {% for dosis in medicamento.dosis.all %}
-                <td>{{ dosis.momento }}</td>
-                <td>{{ dosis.medicamento.control }}</td>
-                {% if dosis.suministrada %}
-                <td>{{ dosis.suministrada }}</td>
-                {% else %}
-                <td><a href="{% url enfermeria-dosis-suministrar dosis.id %}" class="button">Suministrar</a></td>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-    </article>
-    {% endfor %}
+    <h1>{{ admision.paciente.full_name }} en {{ admision.habitacion }}</h1>
+    <table class="data">
+      <caption>Medicamentos</caption>
+      <thead>
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Ingerido</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ingesta in admision.ingestas.all %}
+        <tr>
+          <td>{{ ingesta.fecha_hora }}</td>
+          <td>{{ signos.liquidos }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
     <a href="{% url enfermeria-medicamento-agregar admision.paciente.id %}" class="button">Agregar Medicamento</a>
   </section>
 </div>
