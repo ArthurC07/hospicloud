@@ -22,4 +22,4 @@ post_save.connect(create_user_profile, sender=User)
 
 class Hospital(models.Model):
 
-    nombre = models.CharField()
+    nombre = models.CharField(max_length=200)

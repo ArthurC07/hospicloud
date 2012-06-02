@@ -7,10 +7,10 @@ from django.views.generic import ListView, UpdateView, DetailView, CreateView
 from library.protected import LoginRequiredView
 from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
     GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
-    NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm)
+    NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm, MedicamentoForm)
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
-                                OrdenMedica, SignoVital)
+                                OrdenMedica, SignoVital, Medicamento, Dosis)
 from spital.models import Admision
 from django.contrib import messages
 
@@ -130,6 +130,7 @@ class BaseCreateView(CreateView, LoginRequiredView):
         
         self.object = form.save(commit=False)
         self.object.admision = self.admision
+        self.usuario = self.request.user
         self.object.save()
         
         messages.info(self.request, u"Hospitalización Actualizada")
@@ -218,3 +219,36 @@ class SignoVitalCreateView(BaseCreateView):
     model = SignoVital
     form_class = SignoVitalForm
     template_name = 'enfermeria/signo_create.html'
+
+class MedicamentoCreateView(BaseCreateView):
+
+    """Permite preescribir un :class:`Medicamento` a una :class:`Admision`"""
+
+    model = Medicamento
+    form_class = MedicamentoForm
+    template_name = 'enfermeria/medicamento_create.html'
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.admision = self.admision
+        self.usuario = self.request.user
+        self.object.save()
+        self.object.crear_dosis()
+        
+        messages.info(self.request, u"Medicamento preescrito exitósamente")
+        
+        return HttpResponseRedirect(self.get_success_url())
+
+class DosisSuministrarView(RedirectView, LoginRequiredView):
+     
+    permanent = False
+    
+    def get_redirect_url(self, **kwargs):
+        
+        dosis = get_object_or_404(Dosis, pk=kwargs['pk'])
+        dosis.suministrada = True
+        dosis.usuario = self.request.user
+        dosis.save()
+        messages.info(self.request, u'¡Dosis registrada como suministrada!')
+        return reverse('nightingale-view-id', args=[dosis.medicamento.admision.id])
