@@ -1,4 +1,4 @@
-{% extends "base.djhtml" %}
+{% extends "base.html" %}
 {% load staticfiles %}
 {% block header %}
 <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static "js/excanvas.js" %}"></script><![endif]-->
@@ -26,10 +26,10 @@
   </article>
 </div>
 <h2>Pacientes Hospitalizados</h2>
-{% include "snippets/enfermeria_list.djhtml" with admisiones=hospitalizados %}
+{% include "snippets/enfermeria_list.html" with admisiones=hospitalizados %}
 <h3>Total de Pacientes Hospitalizados: {{ hospitalizados.count }}</h3>
 <h2>Pacientes en Espera de Ingreso</h2>
-{% include "snippets/admitidos_list.djhtml" with admisiones=admitidos %}
+{% include "snippets/admitidos_list.html" with admisiones=admitidos %}
 <h3>Total de Pacientes en Espera: {{ admitidos.count }}</h3>
 </div>
 {% endblock %}

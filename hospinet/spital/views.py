@@ -17,7 +17,7 @@ class AdmisionIndexView(ListView, LoginRequiredView):
     
     context_object_name = 'admisiones'
     queryset = Admision.objects.filter(~Q(estado='H')&~Q(estado='C')&~Q(estado='I'))
-    template_name = 'admision/index.djhtml'
+    template_name = 'admision/index.html'
     
     def get_context_data(self, **kwargs):
         
@@ -39,7 +39,7 @@ class AdmisionIndexView(ListView, LoginRequiredView):
 
 class IngresarView(TemplateView):
     
-    template_name = 'admision/ingresar.djhtml'
+    template_name = 'admision/ingresar.html'
     
     def get_context_data(self, **kwargs):
         
@@ -49,7 +49,7 @@ class IngresarView(TemplateView):
 
 class PersonaAdmisionCreateView(PersonaCreateView):
     
-    template_name = 'admision/persona_create.djhtml'
+    template_name = 'admision/persona_create.html'
     
     def get_success_url(self):
         
@@ -57,7 +57,7 @@ class PersonaAdmisionCreateView(PersonaCreateView):
 
 class PersonaFiadorCreateView(PersonaCreateView):
     
-    template_name = 'admision/admision_fiador.djhtml'
+    template_name = 'admision/admision_fiador.html'
     
     def dispatch(self, *args, **kwargs):
         
@@ -82,7 +82,7 @@ class PersonaFiadorCreateView(PersonaCreateView):
 
 class PersonaReferenciaCreateView(PersonaCreateView):
     
-    template_name = 'admision/admision_referencia.djhtml'
+    template_name = 'admision/admision_referencia.html'
     
     def dispatch(self, *args, **kwargs):
         
@@ -133,7 +133,7 @@ class AdmisionCreateView(CreateView, LoginRequiredView):
     
     model = Admision
     form_class = AdmisionForm
-    template_name = 'admision/admision_create.djhtml'
+    template_name = 'admision/admision_create.html'
     
     def get_form_kwargs(self):
         
@@ -159,7 +159,7 @@ class AdmisionDetailView(DetailView, LoginRequiredView):
     
     context_object_name = 'admision'
     model = Admision
-    template_name = 'admision/admision_detail.djhtml'
+    template_name = 'admision/admision_detail.html'
     slug_field = 'uuid'
     
     def get_object(self):

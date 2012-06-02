@@ -16,7 +16,7 @@ class PersonaIndexView(ListView, LoginRequiredView):
     
     context_object_name = 'personas'
     model = Persona
-    template_name = 'persona/index.djhtml'
+    template_name = 'persona/index.html'
 
 class PersonaDetailView(DetailView, LoginRequiredView):
     
@@ -24,14 +24,14 @@ class PersonaDetailView(DetailView, LoginRequiredView):
     
     context_object_name = 'persona'
     model = Persona
-    template_name = 'persona/persona_detail.djhtml'
+    template_name = 'persona/persona_detail.html'
 
 class PersonaCreateView(CreateView, LoginRequiredView):
     
     """Permite ingresar :class:`Persona`s a la aplicación""" 
     
     form_class = PersonaForm
-    template_name = 'persona/nuevo.djhtml'
+    template_name = 'persona/nuevo.html'
     
     def form_valid(self, form):
         
@@ -68,7 +68,7 @@ class PersonaUpdateView(UpdateView, LoginRequiredView):
     
     model = Persona
     form_class = PersonaForm
-    template_name = 'persona/persona_update.djhtml'
+    template_name = 'persona/persona_update.html'
 
 class FisicoUpdateView(UpdateView, LoginRequiredView):
     
@@ -78,7 +78,7 @@ class FisicoUpdateView(UpdateView, LoginRequiredView):
     
     model = Fisico
     form_class = FisicoForm
-    template_name = 'persona/fisico_update.djhtml'
+    template_name = 'persona/fisico_update.html'
 
 class EstiloVidaUpdateView(UpdateView, LoginRequiredView):
     
@@ -88,34 +88,34 @@ class EstiloVidaUpdateView(UpdateView, LoginRequiredView):
     
     model = EstiloVida
     form_class = EstiloVidaForm
-    template_name = 'persona/estilo_vida_update.djhtml'
+    template_name = 'persona/estilo_vida_update.html'
 
 class AntecedenteUpdateView(UpdateView, LoginRequiredView):
     
     model = Antecedente
     form_class = AntecedenteForm
-    template_name = 'persona/antecedente_update.djhtml'
+    template_name = 'persona/antecedente_update.html'
 
 class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredView):
     
     model = AntecedenteFamiliar
     form_class = AntecedenteFamiliarForm
-    template_name = 'persona/antecedente_familiar_update.djhtml'
+    template_name = 'persona/antecedente_familiar_update.html'
 
 class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredView):
     
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
-    template_name = 'persona/antecedente_obstetrico_update.djhtml'
+    template_name = 'persona/antecedente_obstetrico_update.html'
 
 class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredView):
     
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
-    template_name = 'persona/antecedente_quirurgico_create.djhtml'
+    template_name = 'persona/antecedente_quirurgico_create.html'
 
 class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredView):
     
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
-    template_name = 'persona/antecedente_quirurgico_update.djhtml'
+    template_name = 'persona/antecedente_quirurgico_update.html'

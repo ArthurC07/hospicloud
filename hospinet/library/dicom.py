@@ -23,11 +23,8 @@ def gdcm_to_numpy(image):
     """Converts a GDCM image to a numpy array.
     """
     pf = image.GetPixelFormat().GetScalarType()
-    print 'pf', pf
-    print image.GetPixelFormat().GetScalarTypeAsString()
     assert pf in _gdcm_np, "Unsupported array type {0}".format(pf)
     d = image.GetDimension(0), image.GetDimension(1)
-    print 'Image Size: %d x %d' % (d[0], d[1])
     dtype = _gdcm_np[pf]
     gdcm_array = image.GetBuffer()
     result = numpy.frombuffer(gdcm_array, dtype=dtype)

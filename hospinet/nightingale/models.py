@@ -3,6 +3,7 @@ from django.db import models
 from spital.models import Admision
 from datetime import datetime
 from django.db.models import permalink
+from django.contrib.auth.models import User
 
 class SignoVital(models.Model):
     
@@ -20,6 +21,7 @@ class SignoVital(models.Model):
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)
+    enfermera = models.ForeignKey(User, related_name='signos_vitales')
     
     @permalink
     def get_absolute_url(self):
@@ -27,6 +29,15 @@ class SignoVital(models.Model):
         """Obtiene la URL absoluta"""
         
         return 'nightingale-view-id', [self.admision.id]
+    
+    def save(self, *args, **kwargs):
+
+        """Permite guardar los datos mientras calcula algunos campos
+        automaticamente"""
+
+        self.presion_arterial_media = self.presion_diastolica + float(1) / float(3) * (self.presion_sistolica -self.presion_diastolica)
+
+        super(SignoVital, self).save(*args, **kwargs)
 
 Admision.temperatura_promedio = property(lambda a:
                                  sum(s.temperatura for s in a.signos_vitales.all())
@@ -49,9 +60,10 @@ class Evolucion(models.Model):
     """Registra la evolución de la :class:`Persona durante una
     :class:`Admision`"""
     
-    admision = models.ForeignKey(Admision, related_name='evolucion')
+    admision = models.ForeignKey(Admision, related_name='evoluciones')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     nota = models.CharField(max_length=200, blank=True)
+    enfermera = models.ForeignKey(User, related_name='evoluciones')
     
     @permalink
     def get_absolute_url(self):
@@ -69,6 +81,7 @@ class Cargo(models.Model):
     cargo = models.CharField(max_length=200)
     inicio = models.DateTimeField(default=datetime.now)
     fin = models.DateTimeField(default=datetime.now)
+    enfermera = models.ForeignKey(User, related_name='cargos')
     
     @permalink
     def get_absolute_url(self):
@@ -85,6 +98,7 @@ class OrdenMedica(models.Model):
     orden = models.CharField(max_length=200, blank=True)
     doctor = models.CharField(max_length=200, blank=True)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
+    enfermera = models.ForeignKey(User, related_name='ordenes_medicas')
     
     @permalink
     def get_absolute_url(self):
@@ -102,6 +116,7 @@ class Ingesta(models.Model):
     ingerido = models.CharField(max_length=200, blank=True)
     cantidad = models.IntegerField()
     liquido = models.NullBooleanField(blank=True, null=True)
+    enfermera = models.ForeignKey(User, related_name='ingestas')
     
     @permalink
     def get_absolute_url(self):
@@ -128,6 +143,7 @@ class Excreta(models.Model):
     descripcion = models.CharField(max_length=200, blank=True)
     otro = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
+    enfermera = models.ForeignKey(User, related_name='excretas')
     
     @permalink
     def get_absolute_url(self):
@@ -142,8 +158,8 @@ class NotaEnfermeria(models.Model):
     
     admision = models.ForeignKey(Admision, related_name='notas_enfermeria')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
-    nota = models.CharField(max_length=200, blank=True)
-    #enfermera = models.ForeignKey(User, related_name='notas_enfermeria')
+    nota = models.TextField(blank=True)
+    enfermera = models.ForeignKey(User, related_name='notas_enfermeria')
     
     @permalink
     def get_absolute_url(self):
@@ -161,6 +177,7 @@ class Glicemia(models.Model):
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.CharField(max_length=200, blank=True)
+    enfermera = models.ForeignKey(User, related_name='glicemias')
     
     @permalink
     def get_absolute_url(self):
@@ -176,7 +193,8 @@ class Glucosuria(models.Model):
     admision = models.ForeignKey(Admision, related_name='glucosurias')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     control = models.CharField(max_length=200, blank=True)
-    observacion = models.CharField(max_length=200, blank=True)
+    observacion = models.TextField(blank=True)
+    enfermera = models.ForeignKey(User, related_name='glucosurias')
     
     @permalink
     def get_absolute_url(self):
@@ -193,6 +211,7 @@ class Insulina(models.Model):
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.CharField(max_length=200, blank=True)
+    enfermera = models.ForeignKey(User, related_name='insulinas')
     
     @permalink
     def get_absolute_url(self):
@@ -207,10 +226,11 @@ class Sumario(models.Model):
     de una :class:`Admision`"""
     
     admision = models.OneToOneField(Admision)
-    diagnostico = models.CharField(max_length=200, blank=True)
-    procedimiento_efectuado = models.CharField(max_length=200, blank=True)
-    condicion = models.CharField(max_length=200, blank=True)
-    recomendaciones = models.CharField(max_length=200, blank=True)
+    diagnostico = models.TextField(blank=True)
+    procedimiento_efectuado = models.TextField(blank=True)
+    condicion = models.TextField(blank=True)
+    recomendaciones = models.TextField(blank=True)
+    doctor = models.ForeignKey(User, related_name='sumarios')
     
     @permalink
     def get_absolute_url(self):
@@ -241,6 +261,28 @@ Admision.frecuencia_lectura = property(lambda a: FrecuenciaLectura.objects.get_o
 
 class Medicamento(models.Model):
     
+    """Permite A un :class:`User` recetar una droga que debera ser administrada
+    a una :class:`Persona` durante una :class:`Admision`.
+    
+    Esta droga puede administrarse a intervalos determinados por el doctor,
+    dichos intervalos son medidos en horas.
+
+    """
+
     admision = models.ForeignKey(Admision, related_name='medicamentos')
     medicamento = models.CharField(max_length=200, blank=True, null=True)
-    hora = models.TimeField(default=datetime.now)
+    inicio = models.DateTimeField(default=datetime.now)
+    intervalo = models.IntegerField()
+    dias = models.IntegerField()
+    doctor = models.ForeignKey(User, related_name='medicamentos')
+
+class Dosis(models.Model):
+
+    """Permite llevar un control sobre los momentos en los que se debe
+    administrar un :class:`Medicamento` y saber quien los ha administrado a la
+    :class:`Persona`"""
+
+    medicamento = models.ForeignKey(Medicamento, related_name='dosis')
+    momento = models.DateField(default=datetime.now)
+    suministrada = models.NullBooleanField(default=False)
+    enfermera = models.ForeignKey(User, related_name='dosis')

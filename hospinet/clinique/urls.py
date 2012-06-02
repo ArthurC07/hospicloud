@@ -18,15 +18,15 @@ urlpatterns = patterns('',
         name='consultorio-view'),
     
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/citas$',
-        ConsultorioDetailView.as_view(template_name='consultorio/citas.djhtml'),
+        ConsultorioDetailView.as_view(template_name='consultorio/citas.html'),
         name='consultorio-citas'),
     
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/pacientes$',
-        ConsultorioDetailView.as_view(template_name='consultorio/pacientes_detail.djhtml'),
+        ConsultorioDetailView.as_view(template_name='consultorio/pacientes_detail.html'),
         name='consultorio-pacientes'),
     
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/espera$',
-        ConsultorioDetailView.as_view(template_name='consultorio/espera.djhtml'),
+        ConsultorioDetailView.as_view(template_name='consultorio/espera.html'),
         name='consultorio-espera'),
     
     url(r'^(?P<consultorio>\d+)/secretaria/agregar$',

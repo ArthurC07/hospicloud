@@ -1,0 +1,51 @@
+<table class="data">
+  <caption>Datos Personales</caption>
+  <tr>
+    <td>{{ persona.get_tipo_identificacion_display }}</td>
+    <td>{{ persona.identificacion }}</td>
+    <td>Sexo</td>
+    <td>{{ persona.get_sexo_display }}</td>
+    <td>Edad</td>
+    <td>{{ persona.obtener_edad }} a&ntilde;os</td>
+  </tr>
+  <tr>
+    <td>Nacimiento</td>
+    <td>{{ persona.nacimiento|date:"d/m/Y" }}</td>
+    <td>Estado Civil</td>
+    <td>{{ persona.get_estado_civil_display }}</td>
+    <td>Profesión</td>
+    <td>{{ persona.profesion }}</td>
+  </tr>
+  <tr>
+    <td>Telefono</td>
+    <td>{{ persona.telefono }}</td>
+    <td>C. I.</td>
+    <td>{{ persona.ci }}</td>
+    <td>Celular</td>
+    <td>{{ persona.celular }}</td>
+  </tr>
+  <tr>
+    <td>Direcci&oacute;n</td>
+    <td>{{ persona.direccion }}</td>
+    <td>Trabajo</td>
+    <td>{{ persona.trabajo }}</td>
+    <td>Antiguedad</td>
+    <td>{{ persona.antiguedad }}</td>
+  </tr>
+  <tr>
+    <td>Cargo</td>
+    <td>{{ persona.cargo }}</td>
+    <td>Telefono Trabajo</td>
+    <td>{{ persona.tel_trabajo }}</td>
+    <td>Fax</td>
+    <td>{{ persona.fax }}</td>
+  </tr>
+  <tr>
+    <td>Placa del Vehiculo</td>
+    <td>{{ persona.placa }}</td>
+    <td>Marca del Vehiculo</td>
+    <td>{{ persona.marca }}</td>
+    <td>A&ntilde;o del Vehiculo</td>
+    <td>{{ persona.anio }}</td>
+  </tr>
+</table>

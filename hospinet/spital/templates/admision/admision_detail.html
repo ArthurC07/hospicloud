@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<aside class="toolbox grid_3">
+<nav>
+  <ul class="grid_12 information">
+    <li><a href="{% url admision-autorizacion admision.id %}">Autorizaci&oacute;n</a></li>
+    <li><a href="{% url admision-hospitalizar admision.id %}">Hospitalizar</a></li>
+    <li><a href="{% url admision-pagar admision.id %}">Marcar como Pagada</a></li>
+    <li><a href="{% url admision-referencias admision.id %}">Referencias</a></li>
+    <li><a href="{% url admision-fiadores admision.id %}">Fiadores</a></li>
+  </ul>
+</nav>
+</aside>
+<section id="admision" class="informacion grid_9">
+  <hgroup>
+    <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
+  </hgroup>
+  <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
+  <span>{{ admision.get_estado_display }}</span>
+  {% include "snippets/persona_fotografia.html" with persona=admision.paciente %} 
+  <div class="info">
+    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url persona-editar admision.paciente.id %}" class="button">Editar Datos del Paciente</a>
+  </div>
+  <div class="info">
+    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url persona-fisico-editar admision.paciente.id %}" class="button">Editar F&iacute;sico</a>
+  </div>
+  <img src="{{ admision.codigo.url }}" width="{{ im.width }}" height="{{ im.height }}">
+  <img src="{{ admision.qr.url }}" width="{{ im.width }}" height="{{ im.height }}">
+</section>
+{% endblock %}

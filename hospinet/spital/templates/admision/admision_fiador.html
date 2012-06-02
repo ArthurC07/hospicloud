@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block header %}
+<script type="text/javascript" src="{% static "js/spital.js" %}"></script>
+<script type="text/javascript">
+  $(document).ready(function()
+  {
+    data_source = new Spital("{% url home %}");
+    var resultados = $('#resultados');
+    $('#persona-form').submit(function()
+    {
+      resultados.empty();
+      data_source.fiadores($('#persona-search').val(), resultados, {{ admision.id }});
+      return false;
+    });
+  });
+</script>
+{% endblock %}
+{% block content %}
+<form id="persona-form">
+  <div>
+    <h1>Buscar una Persona</h1>
+    <label>Nombre o Identidad:</label>
+    <input id="persona-search" />
+    <input type="submit" value="Buscar" />
+  </div>
+</form>
+<div id="resultados"></div>
+<form enctype="multipart/form-data" class="styled" method="post">
+  {% csrf_token %} <h1>Ingresar una nuevo Fiador</h1>
+  <div id="messages"></div>
+  {% include "snippets/form.html" with form=form %}
+  <p>
+    <input type="submit" value="Guardar" />
+  </p>
+</form>
+{% endblock %}

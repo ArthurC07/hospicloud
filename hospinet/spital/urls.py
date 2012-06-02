@@ -20,11 +20,11 @@ urlpatterns = patterns('',
         name='admision-view-slug'),
     
     url(r'^(?P<pk>\d+)/autorizacion$',
-        AdmisionDetailView.as_view(template_name="admision/autorizacion.djhtml"),
+        AdmisionDetailView.as_view(template_name="admision/autorizacion.html"),
         name='admision-autorizacion'),
     
     url(r'^(?P<pk>\d+)/fiadores$',
-        AdmisionDetailView.as_view(template_name="admision/admision_fiadores.djhtml"),
+        AdmisionDetailView.as_view(template_name="admision/admision_fiadores.html"),
         name='admision-fiadores'),
     
     url(r'^(?P<admision>\d+)/fiadores/agregar$',
@@ -36,7 +36,7 @@ urlpatterns = patterns('',
         name='admision-fiador-agregar'),
     
     url(r'^(?P<pk>\d+)/referencias$',
-        AdmisionDetailView.as_view(template_name="admision/admision_referencias.djhtml"),
+        AdmisionDetailView.as_view(template_name="admision/admision_referencias.html"),
         name='admision-referencias'),
     
     url(r'^(?P<admision>\d+)/referencias/agregar$',

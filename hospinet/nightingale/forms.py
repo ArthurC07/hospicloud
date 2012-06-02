@@ -52,9 +52,9 @@ class EvolucionForm(forms.ModelForm):
         
         model = Evolucion
     
-#    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-#                                       input_format=('%d/%m/%Y %H:%M',),
-#                                       required=False)
+    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
+                                input_formats=('%d/%m/%Y %H:%M',),
+                                required=False)
     nota = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
     admision = forms.ModelChoiceField(label="",
                                   queryset=Admision.objects.all(),
@@ -165,7 +165,11 @@ class SignoVitalForm(forms.ModelForm):
     class Meta:
         
         model = SignoVital
+        exclude = ("presion_arterial_media",)
     
+    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
+                                input_formats=('%d/%m/%Y %H:%M',),
+                                required=False)
     admision = forms.ModelChoiceField(label="",
                                   queryset=Admision.objects.all(),
                                   widget=forms.HiddenInput(), required=False)

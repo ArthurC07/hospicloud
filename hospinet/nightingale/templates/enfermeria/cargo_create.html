@@ -1,8 +1,8 @@
-{% extends 'base.djhtml' %}
+{% extends 'base.html' %}
 {% block content %}
 <form  class="styled" method="post">
   {% csrf_token %} <h1>Agregar un cargo a {{ admision.paciente.nombre_completo }}</h1>
-  <div id="messages"></div>{% include "snippets/form.djhtml" with form=form %}
+  <div id="messages"></div>{% include "snippets/form.html" with form=form %}
   <p>
     <input type="submit" value="Agregar" />
   </p>

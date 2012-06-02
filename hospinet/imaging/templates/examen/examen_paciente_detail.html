@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block header %}
+<link rel="stylesheet" href="{% static "css/examen.css" %}" />
+{% endblock %}
+{% block content %}
+<aside class="toolbox grid_3">
+<nav>
+  {% load tree_menu_tags %}{% show_menu "persona" %}
+</nav>
+</aside>
+<div id="examenes" class="grid_9">
+  <hgroup>
+    <h1>{{ persona.nombre_completo }}</h1>
+  </hgroup>
+  {% for examen in persona.examenes.all %}<article class="examen">
+    <section class="main">
+      <hgroup><h2>{{ examen.nombre }}</h2></hgroup>
+  {% include "snippets/examen.html" with examen=examen %}
+    </section>
+    <aside class="links">
+      <a class="button" href="{% url examen-view-id examen.uuid %}">Mostrar</a>
+    </aside>
+    <div class="clear"></div>
+  </article>{% endfor %}
+</div>
+{% endblock %}

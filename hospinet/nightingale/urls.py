@@ -24,7 +24,7 @@ urlpatterns = patterns('',
         name='nightingale-signos-grafico'),
     
     url(r'^(?P<pk>\d+)/cargos$',
-        NightingaleDetailView.as_view(template_name='enfermeria/cargos.djhtml'),
+        NightingaleDetailView.as_view(template_name='enfermeria/cargos.html'),
         name='enfermeria-cargos'),
     
     url(r'^(?P<admision>\d+)/cargo/agregar$',
@@ -32,7 +32,7 @@ urlpatterns = patterns('',
         name='enfermeria-cargo-agregar'),
     
     url(r'^(?P<pk>\d+)/signos$',
-        NightingaleDetailView.as_view(template_name='enfermeria/signos.djhtml'),
+        NightingaleDetailView.as_view(template_name='enfermeria/signos.html'),
         name='enfermeria-signos'),
     
     url(r'^(?P<admision>\d+)/signo/agregar$',
@@ -40,7 +40,7 @@ urlpatterns = patterns('',
         name='enfermeria-signo-agregar'),
     
     url(r'^(?P<pk>\d+)/ordenes$',
-        NightingaleDetailView.as_view(template_name='enfermeria/ordenes.djhtml'),
+        NightingaleDetailView.as_view(template_name='enfermeria/ordenes.html'),
         name='enfermeria-ordenes'),
     
     url(r'^(?P<admision>\d+)/orden/agregar$',
@@ -48,7 +48,7 @@ urlpatterns = patterns('',
         name='enfermeria-orden-agregar'),
     
     url(r'^(?P<pk>\d+)/evolucion$',
-        NightingaleDetailView.as_view(template_name='enfermeria/evolucion.djhtml'),
+        NightingaleDetailView.as_view(template_name='enfermeria/evolucion.html'),
         name='enfermeria-evolucion'),
     
     url(r'^(?P<admision>\d+)/evolucion/agregar$',
@@ -56,7 +56,7 @@ urlpatterns = patterns('',
         name='enfermeria-evolucion-agregar'),
     
     url(r'^(?P<pk>\d+)/ie$',
-        NightingaleDetailView.as_view(template_name='enfermeria/ie.djhtml'),
+        NightingaleDetailView.as_view(template_name='enfermeria/ie.html'),
         name='enfermeria-ingestas-excretas'),
     
     url(r'^(?P<admision>\d+)/ingesta/agregar$',
@@ -68,7 +68,7 @@ urlpatterns = patterns('',
         name='enfermeria-excreta-agregar'),
     
     url(r'^(?P<pk>\d+)/glucometria$',
-        NightingaleDetailView.as_view(template_name='enfermeria/glucometria.djhtml'),
+        NightingaleDetailView.as_view(template_name='enfermeria/glucometria.html'),
         name='enfermeria-glucometria'),
     
     url(r'^(?P<admision>\d+)/glicemia/agregar$',
@@ -84,7 +84,7 @@ urlpatterns = patterns('',
         name='enfermeria-glucosuria-agregar'),
     
     url(r'^(?P<pk>\d+)/notas$',
-        NightingaleDetailView.as_view(template_name='enfermeria/notas.djhtml'),
+        NightingaleDetailView.as_view(template_name='enfermeria/notas.html'),
         name='enfermeria-notas'),
     
     url(r'^(?P<admision>\d+)/nota/agregar$',

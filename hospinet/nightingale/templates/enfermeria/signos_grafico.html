@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block header %}
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static "js/excanvas.js" %}"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="{% static "js/jquery.jqplot.js" %}"></script>
+<script language="javascript" type="text/javascript" src="{% static "js/jqplot.canvasTextRenderer.min.js" %}"></script>
+<script language="javascript" type="text/javascript" src="{% static "js/jqplot.canvasAxisLabelRenderer.min.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "css/jquery.jqplot.css" %}" />
+<script type="text/javascript">
+  $(document).ready(function()
+  {
+	$.jqplot('pulso', [[{{ pulso }} ]]);
+        $.jqplot('temperatura', [[{{ temperatura }} ]]);
+	$.jqplot('presion', [[{{ presion_sistolica }} ], [{{ presion_diastolica }} ]], { series : [ {label:"Sistólica"}, {label:"Diastólica"} ]});
+  });
+</script>
+{% endblock %}
+{% block content %}
+{% include "snippets/aside.html" with admision=admision %}
+<div id="admision" class="grid_9">
+	<hgroup class="top title">
+	  <h1>Gr&aacute;fica de Lecturas de {{ admision.paciente.nombre_completo }}</h1>
+	</hgroup>
+	<div id="signos_vitales" class="bloque-superior">
+	  <article id="temperatura">
+	    <h2>Temperatura</h2>
+	    <div id="temperatura"></div>
+	    <h3>Promedio: {{ temp_promedio }} grados</h3>
+	  </article>
+	  <article id="presion">
+	    <h2>Presi&oacute;n</h2>
+	    <div id="presion"></div>
+	    <h3>Promedio: {{ presion_sistolica_promedio }} / {{ presion_diastolica_promedio }}</h3>
+	  </article>
+	  <article id="pulso">
+	    <h2>Pulso</h2>
+	    <div id="temperatura"></div>
+	    <h3>Promedio: {{ pulso_promedio }}</h3>
+	  </article>
+	</div>
+</div>
+{% endblock %}

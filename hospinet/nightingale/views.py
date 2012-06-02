@@ -47,7 +47,7 @@ class IngresarView(UpdateView, LoginRequiredView):
 
     model = Admision
     form_class = IngresarForm
-    template_name = 'enfermeria/ingresar.djhtml'
+    template_name = 'enfermeria/ingresar.html'
     
     def get_success_url(self):
         
@@ -60,7 +60,7 @@ class NightingaleDetailView(DetailView, LoginRequiredView):
     enfermeria"""
 
     model = Admision
-    template_name = 'enfermeria/nightingale_detail.djhtml'
+    template_name = 'enfermeria/nightingale_detail.html'
 
 class SignosDetailView(DetailView, LoginRequiredView):
     
@@ -68,7 +68,7 @@ class SignosDetailView(DetailView, LoginRequiredView):
     en una :class:`Admision`"""
     
     model = Admision
-    template_name = 'enfermeria/signos_grafico.djhtml'
+    template_name = 'enfermeria/signos_grafico.html'
     
     def get_context_data(self, **kwargs):
 
@@ -150,7 +150,7 @@ class EvolucionCreateView(BaseCreateView):
     
     model = Evolucion
     form_class = EvolucionForm
-    template_name = 'enfermeria/evolucion_create.djhtml'
+    template_name = 'enfermeria/evolucion_create.html'
 
 class GlicemiaCreateView(BaseCreateView):
     
@@ -185,7 +185,7 @@ class IngestaCreateView(BaseCreateView):
     
     model = Ingesta
     form_class = IngestaForm
-    template_name = 'enfermeria/ingesta_create.djhtml'
+    template_name = 'enfermeria/ingesta_create.html'
 
 class ExcretaCreateView(BaseCreateView):
     
@@ -193,7 +193,7 @@ class ExcretaCreateView(BaseCreateView):
     
     model = Excreta
     form_class = ExcretaForm
-    template_name = 'enfermeria/excreta_create.djhtml'
+    template_name = 'enfermeria/excreta_create.html'
 
 class NotaCreateView(BaseCreateView):
     
@@ -201,7 +201,7 @@ class NotaCreateView(BaseCreateView):
     
     model = NotaEnfermeria
     form_class = NotaEnfermeriaForm
-    template_name = 'enfermeria/nota_create.djhtml'
+    template_name = 'enfermeria/nota_create.html'
 
 class OrdenCreateView(BaseCreateView):
     
@@ -209,7 +209,7 @@ class OrdenCreateView(BaseCreateView):
     
     model = OrdenMedica
     form_class = OrdenMedicaForm
-    template_name = 'enfermeria/orden_create.djhtml'
+    template_name = 'enfermeria/orden_create.html'
 
 class SignoVitalCreateView(BaseCreateView):
     
@@ -217,4 +217,4 @@ class SignoVitalCreateView(BaseCreateView):
     
     model = SignoVital
     form_class = SignoVitalForm
-    template_name = 'enfermeria/signo_create.djhtml'
+    template_name = 'enfermeria/signo_create.html'

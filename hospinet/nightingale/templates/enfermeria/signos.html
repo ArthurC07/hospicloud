@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content clearfix">
+  {% include "snippets/aside.html" with admision=admision %}
+  <section id="signos-vitales" class="grid_9">
+    <h2>Signos Vitales de {{ admision.paciente.nombre_completo }}</h2>
+    <p>Frecuencia de Lectura: {{ admision.lectura.signos_vitales }} minutos</p>
+    <a href="{% url nightingale-signos-grafico admision.paciente.id %}" class="button">Mostrar Gr&aacute;fico</a>
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Pulso</th>
+          <th>Temperatura</th>
+          <th>Presi&oacute;n</th>
+          <th>Respiraci&oacute;n</th>
+          <th>SATO2</th>
+          <th>PAM</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for signos in admision.signos_vitales.all %}
+        <tr>
+          <td>{{ signos.momento }}</td>
+          <td>{{ signos.pulso }}</td>
+          <td>{{ signos.temperatura }}</td>
+          <td>{{ signos.presion_sistolica }} / {{ signos.presion_diastolica }}</td>
+          <td>{{ signos.respiracion }}</td>
+          <td>{{ signos.saturacion_de_oxigeno }}</td>
+          <td>{{ signos.presion_arterial_media }}</td>
+          <td>{{ signos.observacion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{% url enfermeria-signo-agregar admision.paciente.id %}" class="button">Agregar Lectura</a>
+  </section>
+</div>
+{% endblock %}

@@ -5,7 +5,7 @@ from library.protected import LoginRequiredView
 
 class IndexView(TemplateView):
     
-    template_name = 'index.djhtml'
+    template_name = 'index.html'
 
 class CustomSearchView(SearchView, LoginRequiredView):
     

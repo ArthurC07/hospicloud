@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+<aside class="toolbox grid_3">
+<nav>
+  <ul>
+  	<li class="clearfix"><a href="{% url persona-create %}"><img src="{% static "images/agregar.png" %}" /> Agregar Paciente</a></li>
+  </ul>
+</nav>
+</aside>
+<div id="personas" class="grid_9">
+	<hgroup>
+		<h1>Pacientes y Personas</h1>
+	</hgroup>
+	<h2>Ultimos Ingresos</h2>
+  {% include "snippets/persona_list.html" with personas=personas %}
+</div>
+{% endblock %}

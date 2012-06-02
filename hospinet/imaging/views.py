@@ -13,13 +13,13 @@ from persona.views import PersonaCreateView
 
 class ExamenIndexView(ListView):
     
-    template_name = 'examen/index.djhtml'
+    template_name = 'examen/index.html'
     queryset = Examen.objects.all().order_by('-fecha')[:5]
     context_object_name = 'examenes'
 
 class PersonaExamenCreateView(PersonaCreateView):
     
-    template_name = 'persona/persona_nuevo.djhtml'
+    template_name = 'persona/persona_nuevo.html'
     
     def get_success_url(self):
         
@@ -27,7 +27,7 @@ class PersonaExamenCreateView(PersonaCreateView):
 
 class ExamenPreCreateView(TemplateView):
     
-    template_name = 'examen/examen_agregar.djhtml'
+    template_name = 'examen/examen_agregar.html'
     
     def get_context_data(self, **kwargs):
         
@@ -41,14 +41,14 @@ class ExamenDetailView(DetailView, LoginRequiredView):
     
     context_object_name = 'examen'
     model = Examen
-    template_name = 'examen/examen_detail.djhtml'
+    template_name = 'examen/examen_detail.html'
     slug_field = 'uuid'
 
 class ExamenPersonaListView(DetailView, LoginRequiredView):
     
     context_object_name = 'persona'
     model = Persona
-    template_name = 'examen/examen_paciente_detail.djhtml'
+    template_name = 'examen/examen_paciente_detail.html'
 
 class ExamenUpdateView(UpdateView, LoginRequiredView):
     
@@ -56,7 +56,7 @@ class ExamenUpdateView(UpdateView, LoginRequiredView):
     
     model = Examen
     form_class = ExamenForm
-    template_name = 'examen/examen_update.djhtml'
+    template_name = 'examen/examen_update.html'
 
 class ExamenCreateView(CreateView, LoginRequiredView):
     
@@ -64,7 +64,7 @@ class ExamenCreateView(CreateView, LoginRequiredView):
     
     model = Examen
     form_class = ExamenForm
-    template_name = 'examen/examen_create.djhtml'
+    template_name = 'examen/examen_create.html'
     
     def get_form_kwargs(self):
         
@@ -112,7 +112,7 @@ class ImagenCreateView(ExamenDocBaseCreateView):
     
     model = Imagen
     form_class = ImagenForm
-    template_name = "examen/imagen_create.djhtml"
+    template_name = "examen/imagen_create.html"
 
 class AdjuntoCreateView(ExamenDocBaseCreateView):
     
@@ -120,7 +120,7 @@ class AdjuntoCreateView(ExamenDocBaseCreateView):
     
     model = Adjunto
     form_class = AdjuntoForm
-    template_name = "examen/adjunto_create.djhtml"
+    template_name = "examen/adjunto_create.html"
 
 class DicomCreateView(ExamenDocBaseCreateView):
     
@@ -128,7 +128,7 @@ class DicomCreateView(ExamenDocBaseCreateView):
     
     model = Dicom
     form_class = DicomForm
-    template_name = "examen/dicom_create.djhtml"
+    template_name = "examen/dicom_create.html"
     
     def form_valid(self, form):
         
@@ -143,5 +143,5 @@ class DicomDetailView(DetailView, LoginRequiredView):
     
     context_object_name = 'dicom'
     model = Dicom
-    template_name = "examen/dicom_detail.djhtml"
+    template_name = "examen/dicom_detail.html"
     slug_field = 'uuid'

@@ -7,7 +7,7 @@ from django.contrib import admin
 
 urlpatterns = patterns('',
     url(r'^login/$', 'django.contrib.auth.views.login',
-        {'template_name': 'registration/login.djhtml'}, name='login'),
+        {'template_name': 'registration/login.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         name='logout'),
 )

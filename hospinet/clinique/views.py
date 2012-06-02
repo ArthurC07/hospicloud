@@ -16,7 +16,7 @@ from django.views.generic.base import RedirectView
 
 class ConsultorioIndex(TemplateView):
     
-    template_name = "consultorio/index.djhtml"
+    template_name = "consultorio/index.html"
 
 class ConsultorioCreateView(CreateView, LoginRequiredView):
     
@@ -25,7 +25,7 @@ class ConsultorioCreateView(CreateView, LoginRequiredView):
     
     model = Consultorio
     form_class = ConsultorioForm
-    template_name = "consultorio/consultorio_create.djhtml"
+    template_name = "consultorio/consultorio_create.html"
     
     def form_valid(self, form):
         
@@ -43,7 +43,7 @@ class ConsultorioDetailView(DetailView, LoginRequiredView):
     el estado de las cuentas, mostrar la sala de espera
     """
     
-    template_name = 'consultorio/consultorio_detail.djhtml'
+    template_name = 'consultorio/consultorio_detail.html'
     model = Consultorio
     context_object_name = 'consultorio'
     slug_field = 'uuid'
@@ -85,7 +85,7 @@ class SecretariaCreateView(BaseCreateView):
     
     model = User
     form_class = UserCreationForm
-    template_name = 'consultorio/secretaria_create.djhtml'
+    template_name = 'consultorio/secretaria_create.html'
     
     def form_valid(self, form):
         
@@ -104,7 +104,7 @@ class SecretariaCreateView(BaseCreateView):
 
 class PersonaPacienteCreateView(PersonaCreateView):
     
-    template_name = 'persona/persona_nuevo.djhtml'
+    template_name = 'persona/persona_nuevo.html'
     
     def get_success_url(self):
         
@@ -112,7 +112,7 @@ class PersonaPacienteCreateView(PersonaCreateView):
 
 class PacientePreCreateView(TemplateView):
     
-    template_name = 'consultorio/paciente_agregar.djhtml'
+    template_name = 'consultorio/paciente_agregar.html'
     
     def dispatch(self, *args, **kwargs):
         
@@ -128,7 +128,7 @@ class PacientePreCreateView(TemplateView):
 
 class PersonaConsultorioCreateView(PersonaCreateView):
     
-    template_name = 'persona/persona_nuevo.djhtml'
+    template_name = 'persona/persona_nuevo.html'
     
     def dispatch(self, *args, **kwargs):
         
@@ -146,7 +146,7 @@ class PacienteCreateView(RedirectView):
     
     model = Paciente
     form_class = PacienteForm
-    template_name = "consultorio/paciente_create.djhtml"
+    template_name = "consultorio/paciente_create.html"
     
     def dispatch(self, *args, **kwargs):
         
@@ -170,7 +170,7 @@ class PacienteDetailView(DetailView, LoginRequiredView):
     :class:`Persona` que tenga como paciente"""
     
     model = Paciente
-    template_name = 'consultorio/paciente_detail.djhtml'
+    template_name = 'consultorio/paciente_detail.html'
     context_object_name = 'paciente'
     slug_field = 'uuid'
 
@@ -181,7 +181,7 @@ class TransaccionCreateView(BaseCreateView):
     
     model = Transaccion
     form_class = TransaccionForm
-    template_name = 'consultorio/transaccion.djhtml'
+    template_name = 'consultorio/transaccion.html'
     
     def dispatch(self, *args, **kwargs):
         
@@ -209,4 +209,4 @@ class AgregarCitaCreateView(BaseCreateView):
     
     model = Cita
     form_class = CitaForm
-    template_name = "consultorio/paciente_create.djhtml"
+    template_name = "consultorio/paciente_create.html"

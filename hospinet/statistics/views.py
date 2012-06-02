@@ -8,7 +8,7 @@ from nightingale.models import Admision
 
 class Estadisticas(TemplateView):
     
-    template_name = 'estadisticas/index.djhtml'
+    template_name = 'estadisticas/index.html'
     
     def get_context_data(self, **kwargs):
         
@@ -32,7 +32,7 @@ class Atencion(object):
 
 class AtencionAdulto(TemplateView, Atencion):
     
-    template_name = 'estadisticas/atencion_adulto.djhtml'
+    template_name = 'estadisticas/atencion_adulto.html'
     
     def get_context_data(self, **kwargs):
         
@@ -53,7 +53,7 @@ class AtencionAdulto(TemplateView, Atencion):
 
 class AtencionInfantil(TemplateView, Atencion):
     
-    template_name = 'estadisticas/atencion_infantil.djhtml'
+    template_name = 'estadisticas/atencion_infantil.html'
     
     def get_context_data(self, **kwargs):
         
@@ -74,7 +74,7 @@ class AtencionInfantil(TemplateView, Atencion):
 
 class Productividad(TemplateView):
     
-    template_name = 'estadisticas/productividad.djhtml'
+    template_name = 'estadisticas/productividad.html'
     
     def get_context_data(self, **kwargs):
         
@@ -142,7 +142,7 @@ class Productividad(TemplateView):
 
 class IngresosHospitalarios(TemplateView, Atencion):
     
-    template_name = 'estadisticas/ingresos_hospitalarios.djhtml'
+    template_name = 'estadisticas/ingresos_hospitalarios.html'
     
     def get_context_data(self, **kwargs):
         
