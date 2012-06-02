@@ -3,7 +3,7 @@ from django import forms
 from spital.models import Admision
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
-                                OrdenMedica, SignoVital)
+                                OrdenMedica, SignoVital, Medicamento)
 
 class DateTimeWidget(forms.DateTimeInput):
   class Media:
@@ -29,6 +29,7 @@ class CargoForm(forms.ModelForm):
     class Meta:
         
         model = Cargo
+        exclude = ("usuario",)
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -51,6 +52,7 @@ class EvolucionForm(forms.ModelForm):
     class Meta:
         
         model = Evolucion
+        exclude = ("usuario",)
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -65,6 +67,7 @@ class GlicemiaForm(forms.ModelForm):
     class Meta:
         
         model = Glicemia
+        exclude = ("usuario",)
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -81,6 +84,7 @@ class InsulinaForm(forms.ModelForm):
     class Meta:
         
         model = Insulina
+        exclude = ("usuario",)
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -97,6 +101,7 @@ class GlucosuriaForm(forms.ModelForm):
     class Meta:
         
         model = Glucosuria
+        exclude = ("usuario",)
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -113,6 +118,7 @@ class IngestaForm(forms.ModelForm):
     class Meta:
         
         model = Ingesta
+        exclude = ("usuario",)
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -123,6 +129,7 @@ class ExcretaForm(forms.ModelForm):
     class Meta:
         
         model = Excreta
+        exclude = ("usuario",)
     
     fecha_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -136,6 +143,7 @@ class NotaEnfermeriaForm(forms.ModelForm):
     class Meta:
         
         model = NotaEnfermeria
+        exclude = ("usuario",)
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -151,7 +159,8 @@ class OrdenMedicaForm(forms.ModelForm):
     class Meta:
         
        model = OrdenMedica
-    
+       exclude = ('usuario',)
+
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
                                 required=False)
@@ -165,7 +174,7 @@ class SignoVitalForm(forms.ModelForm):
     class Meta:
         
         model = SignoVital
-        exclude = ("presion_arterial_media",)
+        exclude = ("presion_arterial_media", 'usuario')
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -173,3 +182,16 @@ class SignoVitalForm(forms.ModelForm):
     admision = forms.ModelChoiceField(label="",
                                   queryset=Admision.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
+
+class MedicamentoForm(forms.ModelForm):
+
+    """Permite Agregar o modificar los datos de un :class:`Medicamento`"""
+
+    class Meta:
+
+        model = Medicamento
+        exclude = ('usuario',)
+    
+    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
+                                input_formats=('%d/%m/%Y %H:%M',),
+                                required=False)

@@ -3,7 +3,8 @@ from django.conf.urls import patterns, url
 from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     IngresarView, CargoCreateView, EvolucionCreateView, GlicemiaCreateView,
     InsulinaCreateView, GlucosuriaCreateView, IngestaCreateView,
-    NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView)
+    NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView, 
+    MedicamentoCreateView, DosisSuministrarView)
 
 urlpatterns = patterns('',
     
@@ -90,4 +91,12 @@ urlpatterns = patterns('',
     url(r'^(?P<admision>\d+)/nota/agregar$',
         NotaCreateView.as_view(),
         name='enfermeria-nota-agregar'),
+    
+    url(r'^(?P<admision>\d+)/medicamento/agregar$',
+        MedicamentoCreateView.as_view(),
+        name='enfermeria-medicamento-agregar'),
+    
+    url(r'^dosis/(?P<pk>\d+)/suministrar$',
+        DosisSuministrarView.as_view(),
+        name='enfermeria-dosis-suministrar'),
 )
