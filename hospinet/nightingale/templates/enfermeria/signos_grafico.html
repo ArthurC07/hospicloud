@@ -9,34 +9,50 @@
 <script type="text/javascript">
   $(document).ready(function()
   {
-	$.jqplot('pulso', [[{{ pulso }} ]]);
-        $.jqplot('temperatura', [[{{ temperatura }} ]]);
-	$.jqplot('presion', [[{{ presion_sistolica }} ], [{{ presion_diastolica }} ]], { series : [ {label:"Sistólica"}, {label:"Diastólica"} ]});
+    $.jqplot('pulso', [[{{ pulso }}]],
+             {
+                title:'Pulso',
+                legend:{ show:true }, 
+             });
+    $.jqplot('temperatura', [[{{ temperatura }}]],
+             {
+                title:'Temperatura',
+                legend:{ show:true },
+             });
+    $.jqplot('presion', [[{{ presion_sistolica }}], [{{ presion_diastolica }}]],
+             {
+                title:'Presión',
+                legend:{ show:true }, 
+                series:[
+                        {label:"Sistólica"},
+                        {label:"Diastólica"}
+                ]
+             });
   });
 </script>
 {% endblock %}
 {% block content %}
 {% include "snippets/aside.html" with admision=admision %}
 <div id="admision" class="grid_9">
-	<hgroup class="top title">
-	  <h1>Gr&aacute;fica de Lecturas de {{ admision.paciente.nombre_completo }}</h1>
-	</hgroup>
-	<div id="signos_vitales" class="bloque-superior">
-	  <article id="temperatura">
-	    <h2>Temperatura</h2>
-	    <div id="temperatura"></div>
-	    <h3>Promedio: {{ temp_promedio }} grados</h3>
-	  </article>
-	  <article id="presion">
-	    <h2>Presi&oacute;n</h2>
-	    <div id="presion"></div>
-	    <h3>Promedio: {{ presion_sistolica_promedio }} / {{ presion_diastolica_promedio }}</h3>
-	  </article>
-	  <article id="pulso">
-	    <h2>Pulso</h2>
-	    <div id="temperatura"></div>
-	    <h3>Promedio: {{ pulso_promedio }}</h3>
-	  </article>
-	</div>
+    <hgroup class="top title">
+      <h1>Gr&aacute;fica de Lecturas de {{ admision.paciente.nombre_completo }}</h1>
+    </hgroup>
+    <div id="signos_vitales" class="bloque-superior">
+      <article id="temperatura">
+        <h2>Temperatura</h2>
+        <div id="temperatura" class="grafica"></div>
+        <h3>Promedio: {{ temp_promedio }} grados</h3>
+      </article>
+      <article id="presion">
+        <h2>Presi&oacute;n</h2>
+        <div id="presion" class="grafica"></div>
+        <h3>Promedio: {{ presion_sistolica_promedio }} / {{ presion_diastolica_promedio }}</h3>
+      </article>
+      <article id="pulso">
+        <h2>Pulso</h2>
+        <div id="temperatura" class="grafica"></div>
+        <h3>Promedio: {{ pulso_promedio }}</h3>
+      </article>
+    </div>
 </div>
 {% endblock %}

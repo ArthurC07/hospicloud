@@ -48,8 +48,10 @@ class Admision(models.Model):
     
     momento = models.DateTimeField(default=datetime.now, null=True, blank=True)
     paciente = models.ForeignKey(Persona, related_name='admisiones')
-    fiadores = models.ManyToManyField(Persona, related_name='fianzas')
-    referencias = models.ManyToManyField(Persona, related_name='referencias')
+    fiadores = models.ManyToManyField(Persona, related_name='fianzas',
+                                      null=True, blank=True)
+    referencias = models.ManyToManyField(Persona, related_name='referencias',
+                                         null=True, blank=True)
     
     diagnostico = models.CharField(max_length=200, blank=True)
     doctor = models.CharField(max_length=200, blank=True)

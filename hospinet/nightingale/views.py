@@ -62,6 +62,7 @@ class NightingaleDetailView(DetailView, LoginRequiredView):
 
     model = Admision
     template_name = 'enfermeria/nightingale_detail.html'
+    slug_field = 'uuid'
 
 class SignosDetailView(DetailView, LoginRequiredView):
     
@@ -74,7 +75,11 @@ class SignosDetailView(DetailView, LoginRequiredView):
     def get_context_data(self, **kwargs):
 
         """Formatea los datos para ser utilizado las graficas de signos
-        vitales"""
+        vitales
+        
+        Actualmente se generan gráficas separadas para Pulso y Temperatura; la
+        Presión Sistólica y Diastólica comparten una misma gráfica
+        """
         
         context = super(SignosDetailView, self).get_context_data(**kwargs)
         signos = self.object.signos_vitales
@@ -118,17 +123,27 @@ class BaseCreateView(CreateView, LoginRequiredView):
     
     def get_form_kwargs(self):
         
+        """Agrega la :class:`Admision` obtenida como el valor a utilizar en el
+        formulario que será llenado posteriormente"""
+
         kwargs = super(BaseCreateView, self).get_form_kwargs()
         kwargs.update({ 'initial':{'admision':self.admision.id}})
         return kwargs
     
     def dispatch(self, *args, **kwargs):
         
+        """Obtiene la :class:`Admision` que se entrego como argumento en la
+        url"""
+
         self.admision = get_object_or_404(Admision, pk=kwargs['admision'])
         return super(BaseCreateView, self).dispatch(*args, **kwargs)
     
     def form_valid(self, form):
         
+        """Guarda el objeto generado espeficando la :class:`Admision` obtenida
+        de los argumentos y el :class:`User` que esta utilizando la aplicación
+        """
+
         self.object = form.save(commit=False)
         self.object.admision = self.admision
         self.usuario = self.request.user
@@ -243,7 +258,7 @@ class MedicamentoCreateView(BaseCreateView):
 
 class DosisSuministrarView(RedirectView, LoginRequiredView):
 
-    """Permite marcar una dosis como ya suministrada"""
+    """Permite marcar una :class:`Dosis` como ya suministrada"""
      
     permanent = False
     
