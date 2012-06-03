@@ -18,6 +18,8 @@ class Estadisticas(TemplateView):
 
 class Atencion(object):
     
+    """Permite calcular los puntos de ploteo para mostrar en un informe"""
+
     def calcular_meses(self, context, admisiones):
         
         dict_mes = dict((k,v) for k,v in enumerate(calendar.month_abbr))

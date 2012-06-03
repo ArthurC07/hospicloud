@@ -187,9 +187,9 @@ class Admision(models.Model):
             return
 
         if not self.fecha_alta == None:
-            self.tiempo = self.fecha_alta - self.ingreso
+            self.tiempo = (self.fecha_alta - self.ingreso).total_seconds() / 60
         else:
-            self.tiempo = datetime.now() - self.ingreso
+            self.tiempo = (datetime.now() - self.ingreso).total_seconds() / 60
     
     def save(self, *args, **kwargs):
         self.actualizar_tiempo()

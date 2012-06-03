@@ -4,8 +4,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
                                   TemplateView)
-from laboratory.forms import ExamenForm, ImagenForm, AdjuntoForm, DicomForm
-from laboratory.models import Examen, Imagen, Adjunto, Dicom
+from imaging.forms import ExamenForm, ImagenForm, AdjuntoForm, DicomForm
+from imaging.models import Examen, Imagen, Adjunto, Dicom, Remision
 from library.protected import LoginRequiredView
 from persona.forms import PersonaForm
 from persona.models import Persona
@@ -87,6 +87,8 @@ class ExamenCreateView(CreateView, LoginRequiredView):
 
 class ExamenDocBaseCreateView(CreateView, LoginRequiredView):
     
+    """Permite crear objetos que pertenecen a un :class:`Examen`"""
+
     def dispatch(self, *args, **kwargs):
         
         self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
@@ -145,3 +147,9 @@ class DicomDetailView(DetailView, LoginRequiredView):
     model = Dicom
     template_name = "examen/dicom_detail.html"
     slug_field = 'uuid'
+
+class RemisionCreateView(CreateView, LoginRequiredView):
+
+    """Permite recetar un :class:`Examen` a una :class:`Persona"""
+
+    model = Remision

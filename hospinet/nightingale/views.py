@@ -3,7 +3,8 @@ from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, UpdateView, DetailView, CreateView
+from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
+                                  RedirectView)
 from library.protected import LoginRequiredView
 from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
     GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
@@ -241,6 +242,8 @@ class MedicamentoCreateView(BaseCreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 class DosisSuministrarView(RedirectView, LoginRequiredView):
+
+    """Permite marcar una dosis como ya suministrada"""
      
     permanent = False
     

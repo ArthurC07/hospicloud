@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from haystack import indexes
-from laboratory.models import Examen
+from imaging.models import Examen
 
 class ExamenIndex(indexes.SearchIndex, indexes.Indexable):
     

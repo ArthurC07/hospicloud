@@ -1,14 +1,28 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, date
 from django.db import models
 from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
+from django.contrib.auth.models import User
 from library import image_to_content, dicom
 from persona.models import Persona
 from private_files.models.fields import PrivateFileField #@UnresolvedImport
 from sorl.thumbnail import ImageField #@UnresolvedImport
 from south.modelsinspector import add_introspection_rules
 import os
+
+class Remision(models.Model):
+
+    """Permite que se planifique un :class:`Examen` antes de
+    efectuarlo"""
+    
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                   related_name='Remisiones')
+    persona = models.ForeignKey(Persona, on_delete=models.CASCADE,
+                                related_name="remisiones")
+    fecha = models.DateField(default=date.today)
+    examen = models.CharField(max_length=200)
+    efectuado = models.NullBooleanField(default=False)
 
 class Examen(models.Model):
     
@@ -19,7 +33,7 @@ class Examen(models.Model):
                                 related_name="examenes")
     nombre = models.CharField(max_length=200, blank=True)
     resultado = models.CharField(max_length=200, blank=True)
-    diagnostico = models.CharField(max_length=255, blank=True)
+    diagnostico = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(default=datetime.now)
     uuid = UUIDField(version=4)
     

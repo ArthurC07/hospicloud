@@ -292,14 +292,14 @@
     <Content Include="templates\snippets\form.html" />
     <Content Include="templates\treemenus\menu.html" />
     <Content Include="templates\treemenus\menu_item.html" />
-    <Content Include="users\templates\registration\logged_out.djhtml" />
-    <Content Include="users\templates\registration\login.djhtml" />
-    <Content Include="users\templates\registration\password_change_form.djhtml" />
-    <Content Include="users\templates\registration\password_reset_complete.djhtml" />
-    <Content Include="users\templates\registration\password_reset_confirm.djhtml" />
-    <Content Include="users\templates\registration\password_reset_done.djhtml" />
-    <Content Include="users\templates\registration\password_reset_email.djhtml" />
-    <Content Include="users\templates\registration\password_reset_form.djhtml" />
+    <Content Include="users\templates\registration\logged_out.html" />
+    <Content Include="users\templates\registration\login.html" />
+    <Content Include="users\templates\registration\password_change_form.html" />
+    <Content Include="users\templates\registration\password_reset_complete.html" />
+    <Content Include="users\templates\registration\password_reset_confirm.html" />
+    <Content Include="users\templates\registration\password_reset_done.html" />
+    <Content Include="users\templates\registration\password_reset_email.html" />
+    <Content Include="users\templates\registration\password_reset_form.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="clinique\" />
@@ -417,3 +417,4 @@
     </VisualStudio>
   </ProjectExtensions>
 </Project>
+

@@ -7,3 +7,5 @@ haystack
 django-tastypie
 django-private-files
 django-extensions
+south
+gdcm
