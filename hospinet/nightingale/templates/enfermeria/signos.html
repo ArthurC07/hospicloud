@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load l10n %}
 {% block content %}
 <div class="content clearfix">
   {% include "snippets/aside.html" with admision=admision %}
@@ -19,6 +20,7 @@
           <th>Observaciones</th>
         </tr>
       </thead>
+      {% localize off %}
       <tbody>
         {% for signos in admision.signos_vitales.all %}
         <tr>
@@ -33,6 +35,7 @@
         </tr>
         {% endfor %}
       </tbody>
+      {% endlocalize %}
     </table>
     <a href="{% url enfermeria-signo-agregar admision.paciente.id %}" class="button">Agregar Lectura</a>
   </section>
