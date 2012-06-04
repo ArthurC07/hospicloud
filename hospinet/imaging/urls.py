@@ -3,13 +3,27 @@ from django.conf.urls import patterns, url
 from imaging.views import (ExamenDetailView, ExamenCreateView,
     ExamenUpdateView, ImagenCreateView, AdjuntoCreateView,
     ExamenPersonaListView, ExamenIndexView, PersonaExamenCreateView,
-    ExamenPreCreateView, DicomDetailView, DicomCreateView)
+    ExamenPreCreateView, DicomDetailView, DicomCreateView,
+    EstudioProgramadoListView, EstudioProgramadoCreateView,
+    EstudioProgramadoEfectuarView)
 
 urlpatterns = patterns('',
     
     url(r'^$',
-        ExamenIndexView.as_view(),
+        EstudioProgramadoListView.as_view(),
         name='examen-index'),
+    
+    url(r'^(?P<persona>\d+)/programar$',
+        EstudioProgramadoCreateView.as_view(),
+        name='examen-programar'),
+    
+    url(r'^estudio/(?P<pk>\d+)/efectuar$',
+        EstudioProgramadoEfectuarView.as_view(),
+        name='examen-efectuar'),
+    
+    url(r'^examenes$',
+        ExamenIndexView.as_view(),
+        name='examen-list'),
     
     url(r'^nuevo$',
         ExamenPreCreateView.as_view(),

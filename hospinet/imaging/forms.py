@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from imaging.models import Examen, Imagen, Adjunto, Dicom, Remision
+from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
 from persona.models import Persona
 
 class ExamenForm(forms.ModelForm):
@@ -55,13 +55,13 @@ class DicomForm(forms.ModelForm):
                                   queryset=Examen.objects.all(),
                                   widget=forms.HiddenInput())
 
-class RemisionForm(forms.ModelForm):
+class EstudioProgramadoForm(forms.ModelForm):
     
     """"Permite mostrar los formularios para crear una :class:`Remision`"""
 
     class Meta:
         
-        model = Remision
+        model = EstudioProgramado
         exclude = ('efectuado', 'usuario',)
     
     persona = forms.ModelChoiceField(label="",

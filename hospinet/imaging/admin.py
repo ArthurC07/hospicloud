@@ -6,5 +6,4 @@ admin.site.register(Examen)
 admin.site.register(Imagen)
 admin.site.register(Adjunto)
 admin.site.register(Dicom)
-admin.site.register(Remision)
-
+admin.site.register(EstudioProgramado)

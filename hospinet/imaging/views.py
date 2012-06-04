@@ -3,13 +3,15 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
-                                  TemplateView)
-from imaging.forms import ExamenForm, ImagenForm, AdjuntoForm, DicomForm
-from imaging.models import Examen, Imagen, Adjunto, Dicom, Remision
+                                  TemplateView, RedirectView)
+from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
+                           EstudioProgramadoForm)
+from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
 from library.protected import LoginRequiredView
 from persona.forms import PersonaForm
 from persona.models import Persona
 from persona.views import PersonaCreateView
+from django.contrib import messages
 
 class ExamenIndexView(ListView):
     
@@ -143,13 +145,67 @@ class DicomCreateView(ExamenDocBaseCreateView):
 
 class DicomDetailView(DetailView, LoginRequiredView):
     
+    """Muestra el visor DICOM básico en el navegador del usuario"""
+
     context_object_name = 'dicom'
     model = Dicom
     template_name = "examen/dicom_detail.html"
     slug_field = 'uuid'
 
-class RemisionCreateView(CreateView, LoginRequiredView):
+class EstudioProgramadoCreateView(CreateView, LoginRequiredView):
 
     """Permite recetar un :class:`Examen` a una :class:`Persona"""
+    
+    model = EstudioProgramado
+    form_class = EstudioProgramadoForm
+    template_name = 'examen/estudio_programado_create.html'
+    
+    def get_form_kwargs(self):
+        
+        kwargs = super(EstudioProgramadoCreateView, self).get_form_kwargs()
+        kwargs.update({ 'initial':{'persona':self.persona.id}})
+        return kwargs
+    
+    def dispatch(self, *args, **kwargs):
+        
+        self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
+        return super(EstudioProgramadoCreateView, self).dispatch(*args, **kwargs)
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.persona = self.persona
+        self.object.save()
+        
+        return HttpResponseRedirect(self.get_success_url())
 
-    model = Remision
+class EstudioProgramadoListView(ListView, LoginRequiredView):
+
+    """Permite mostrar una lista de :class:`Estudios`es que aún no han sido
+    llevados a cabo"""
+    
+    template_name = 'examen/estudio_programado_list.html'
+    paginate_by = 25
+    context_object_name = 'estudios_programados'
+    
+    def get_queryset(self):
+        
+        """Filtra los resultados para mostrar solo los estudios no realizados"""
+        
+        return EstudioProgramado.objects.filter(efectuado=False)
+
+class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredView):
+    
+    """Permite marcar un :class:`EstudioProgramado` como ya efectuado y
+    muestra el formulario para crear un nuevo :class:`Examen` a la
+    :class:`Persona`"""
+     
+    permanent = False
+    
+    def get_redirect_url(self, **kwargs):
+        
+        estudio = get_object_or_404(EstudioProgramado, pk=kwargs['pk'])
+        estudio.efectuado = True
+        dosis.save()
+        messages.info(self.request, u'¡El estudio ha sido marcado como efectuado!')
+        return reverse('examen-agregar', args=[estudio.persona.id])

@@ -11,15 +11,15 @@ from sorl.thumbnail import ImageField #@UnresolvedImport
 from south.modelsinspector import add_introspection_rules
 import os
 
-class Remision(models.Model):
+class EstudioProgramado(models.Model):
 
     """Permite que se planifique un :class:`Examen` antes de
     efectuarlo"""
     
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='Remisiones')
+                                   related_name='estudios_programados')
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE,
-                                related_name="remisiones")
+                                related_name="estudios_progamados")
     fecha = models.DateField(default=date.today)
     examen = models.CharField(max_length=200)
     efectuado = models.NullBooleanField(default=False)
@@ -36,6 +36,8 @@ class Examen(models.Model):
     diagnostico = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(default=datetime.now)
     uuid = UUIDField(version=4)
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                   related_name='estudios_realizados')
     
     @permalink
     def get_absolute_url(self):
