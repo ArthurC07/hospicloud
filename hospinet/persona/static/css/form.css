@@ -1,6 +1,6 @@
 form {
   font-family: 'Yanone Kaffeesatz', arial, sans-serif;
-  padding: 10px 40px 20px 40px;
+  padding: 10 40 20 40;
   margin-top: 25px;
   margin-left: auto;
   margin-right: auto
@@ -11,7 +11,7 @@ form ul { margin: 0; }
 form ul li { list-style: none; }
 .red, .error_list { color: red; }
 form select { min-width: 12em; }
-form label { min-width: 200px; display: inline-block; }
+form label { min-width: 200; display: inline-block; }
 .inline { display: inline; }
 form h2 { margin: 5px 0; }
 form input, form textarea {
@@ -21,9 +21,9 @@ form input, form textarea {
   font-size: 14px;
   color: #555;
   border: 1px #ddd solid;
-  -webkit-box-shadow: 0px 0px 4px #aaa;
-  -moz-box-shadow: 0px 0px 4px #aaa;
-  box-shadow: 0px 0px 4px #aaa;
+  -webkit-box-shadow: 0 0 4px #aaa;
+  -moz-box-shadow: 0 0 4px #aaa;
+  box-shadow: 0 0 4px #aaa;
   /* -- CSS3 Transition - define what the transition will be applied to (i.e. the background) -- */
   -webkit-transition: background 0.3s linear;
   -moz-transition: background 0.3s linear;
@@ -33,7 +33,7 @@ form input, form textarea {
 /* Make default buttons use the same style */
 form input[type=submit] {
   text-transform: capitalize;
-  margin-top: 10px;
+  margin-top: 10;
   color: white;
   background: -moz-linear-gradient(top, #33e848 0%, #2aa930);
   background: -webkit-gradient(linear, left top, left bottom,from(#33e848), to(#2aa930));
@@ -47,16 +47,16 @@ form input[type=submit] {
   border-radius: 13px;
   border: 1px solid #2b7530;
   -moz-box-shadow:
-    0px 1px 1px rgba(000,000,000,0.2),
-    inset 0px 1px 0px rgba(255,255,255,0.5);
+    0 1px 1px rgba(000,000,000,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.5);
   -webkit-box-shadow:
-    0px 1px 1px rgba(000,000,000,0.2),
-    inset 0px 1px 0px rgba(255,255,255,0.5);
+    0 1px 1px rgba(000,000,000,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.5);
   text-shadow:
-    0px 1px 0px rgba(000,000,000,0.3),
-    0px 0px 0px rgba(255,255,255,0);
+    0 1px 0 rgba(000,000,000,0.3),
+    0 0 0 rgba(255,255,255,0);
   behavior: url(PIE.htc);
-  width: 220px;
+  width: 220;
 }
 .button {
   text-decoration: none;
@@ -77,65 +77,36 @@ form input[type=submit] {
   border-radius: 13px;
   border: 1px solid #2b7530;
   -moz-box-shadow:
-    0px 1px 1px rgba(000,000,000,0.2),
-    inset 0px 1px 0px rgba(255,255,255,0.5);
+    0 1px 1px rgba(000,000,000,0.2),
+    inset 0 1 0 rgba(255,255,255,0.5);
   -webkit-box-shadow:
-    0px 1px 1px rgba(000,000,000,0.2),
-    inset 0px 1px 0px rgba(255,255,255,0.5);
+    0 1px 1px rgba(000,000,000,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.5);
   text-shadow:
-    0px 1px 0px rgba(000,000,000,0.3),
-    0px 0px 0px rgba(255,255,255,0);
+    0 1px 0 rgba(000,000,000,0.3),
+    0 0 0 rgba(255,255,255,0);
 }
 form input[type=submit]:hover, .button:hover {
-  -webkit-box-shadow: 0px 0px 20px #555;
-  -moz-box-shadow:  0px 0px 20px #aaa;
-  box-shadow: 0px 0px 20px #555;
+  -webkit-box-shadow: 0 0 20 #555;
+  -moz-box-shadow:  0 0 20 #aaa;
+  box-shadow: 0 0 20 #555;
   cursor: pointer;
 }
-form input[type=checkbox] { width: 1em; margin-left: 50px; }
-#tareas-pendientes form {
-  border: 0;
-  padding: 5px;
-  margin-top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  background: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
-#tareas-pendientes form input, form textarea {
+form input[type=checkbox] { width: 1em; margin-left: 50; }
+form textarea {
   padding: 8px;
   margin: 0;
   background: white;
   font-size: 14px;
   color: #555;
   border: 1px #ddd solid;
-  -webkit-box-shadow: 0px 0px 4px #aaa;
-  -moz-box-shadow: 0px 0px 4px #aaa;
-  box-shadow: 0px 0px 4px #aaa;
+  -webkit-box-shadow: 0 0 4px #aaa;
+  -moz-box-shadow: 0 0 4px #aaa;
+  box-shadow: 0 0 4px #aaa;
   /* -- CSS3 Transition - define what the transition will be applied to (i.e. the background) -- */
   -webkit-transition: background 0.3s linear;
   -moz-transition: background 0.3s linear;
   transition: background 0.3s linear;
-}
-#tareas-pendientes form input[type=submit] {
-  color: #eee;
-  text-transform: capitalize;
-  margin-top: 10px;
-  background-color: #18a5cc;
-  border: none;
-  -webkit-transition: -webkit-box-shadow 0.3s linear;
-  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#18a5cc), to(#0a85a8));
-  background: -webkit-linear-gradient(25% 75% 90deg,#0a85a8, #18a5cc);
-  background: -moz-linear-gradient(25% 75% 90deg,#0a85a8, #18a5cc);
-  background: -o-linear-gradient(25% 75% 90deg,#0a85a8, #18a5cc);
-  background: -ms-linear-gradient(25% 75% 90deg,#0a85a8, #18a5cc);
-  -pie-background: linear-gradient(25% 75% 90deg,#0a85a8, #18a5cc);
-  background: linear-gradient(25% 75% 90deg,#0a85a8, #18a5cc);
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
 }
 
 .errorlist { color: red; }

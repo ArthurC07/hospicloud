@@ -7,7 +7,7 @@
     <p>Frecuencia de Lectura: {{ admision.lectura.glucometria }} minutos</p>
     <table class="data">
       <caption>Glicemias</caption>
-      <thead>
+      <thead class="gradient">
         <tr>
           <th>Fecha y Hora</th>
           <th>Tipo Lectura</th>
@@ -28,7 +28,7 @@
     <a href="{% url enfermeria-glicemia-agregar admision.paciente.id %}" class="button">Agregar Glicemia</a>
     <table class="data">
       <caption>Administración de Insulina</caption>
-      <thead>
+      <thead class="gradient">
         <tr>
           <th>Fecha y Hora</th>
           <th>Control</th>
@@ -48,7 +48,7 @@
     <a href="{% url enfermeria-insulina-agregar admision.paciente.id %}" class="button">Registrar Insulina</a>
     <table class="data">
       <caption>Registros de Glucosuria</caption>
-      <thead>
+      <thead class="gradient">
         <tr>
           <th>Fecha y Hora</th>
           <th>Control</th>
