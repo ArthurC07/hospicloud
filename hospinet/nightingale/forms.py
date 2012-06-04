@@ -6,19 +6,27 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
                                 OrdenMedica, SignoVital, Medicamento)
 
 class DateTimeWidget(forms.DateTimeInput):
-  class Media:
-    js = ('js/jquery-ui-timepicker.js',)
-  def __init__(self, attrs=None):
-    if attrs is not None:
-      self.attrs = attrs.copy()
-    else:
-      self.attrs = {'class': 'datetimepicker'}
+    
+    """Permite mostrar un input preparado para fecha y hora utilizando
+    JQuery UI DateTimePicker"""
 
-    if not 'format' in self.attrs:
-        self.attrs['format'] = '%d/%m/%Y %H:%M'
+    class Media:
+        js = ('js/jquery-ui-timepicker.js',)
+
+    def __init__(self, attrs=None):
+        if attrs is not None:
+            self.attrs = attrs.copy()
+        else:
+            self.attrs = {'class': 'datetimepicker'}
+
+        if not 'format' in self.attrs:
+            self.attrs['format'] = '%d/%m/%Y %H:%M'
 
 class IngresarForm(forms.ModelForm):
     
+    """Muestra un formulario que permite ingresar a una :class:`Persona`
+    al :class:`Hospital`"""
+
     class Meta:
         
         model = Admision
@@ -26,6 +34,9 @@ class IngresarForm(forms.ModelForm):
 
 class CargoForm(forms.ModelForm):
     
+    """Muestra un formulario que permite agregar :class:`Cargo`s a una
+    :class:`Persona` durante una :class:`Admision`"""
+
     class Meta:
         
         model = Cargo
@@ -49,6 +60,9 @@ class CargoForm(forms.ModelForm):
 
 class EvolucionForm(forms.ModelForm):
     
+    """Muestra un formulario que permite agregar :class:`Evolucion`es a una
+    :class:`Persona` durante una :class:`Admision`"""
+    
     class Meta:
         
         model = Evolucion
@@ -64,6 +78,9 @@ class EvolucionForm(forms.ModelForm):
 
 class GlicemiaForm(forms.ModelForm):
     
+    """Muestra un formulario que permite agregar una lectura de
+    :class:`Glicemia` a una :class:`Persona` durante una :class:`Admision`"""
+
     class Meta:
         
         model = Glicemia
@@ -80,6 +97,9 @@ class GlicemiaForm(forms.ModelForm):
                                   widget=forms.HiddenInput(), required=False)
     
 class InsulinaForm(forms.ModelForm):
+    
+    """Muestra un formulario que permite registrar una administración de
+    :class:`Insulina` a una :class:`Persona` durante una :class:`Admision`"""
     
     class Meta:
         
@@ -98,6 +118,9 @@ class InsulinaForm(forms.ModelForm):
 
 class GlucosuriaForm(forms.ModelForm):
     
+    """Muestra un formulario que permite registrar :class:`Glucosuria`s a una
+    :class:`Persona` durante una :class:`Admision`"""
+
     class Meta:
         
         model = Glucosuria
@@ -115,6 +138,9 @@ class GlucosuriaForm(forms.ModelForm):
 
 class IngestaForm(forms.ModelForm):
     
+    """Muestra un formulario que permite registrar :class:`Ingesta`s a una
+    :class:`Persona` durante una :class:`Admision`"""
+    
     class Meta:
         
         model = Ingesta
@@ -125,6 +151,9 @@ class IngestaForm(forms.ModelForm):
                                 required=False)
 
 class ExcretaForm(forms.ModelForm):
+    
+    """Muestra un formulario que permite agregar :class:`Excreta`s a una
+    :class:`Persona` durante una :class:`Admision`"""
     
     class Meta:
         
@@ -139,6 +168,9 @@ class ExcretaForm(forms.ModelForm):
                                   widget=forms.HiddenInput(), required=False)
 
 class NotaEnfermeriaForm(forms.ModelForm):
+    
+    """Muestra un formulario que permite agregar :class:`Cargo`s a una
+    :class:`Persona` durante una :class:`Admision`"""
     
     class Meta:
         
@@ -156,6 +188,9 @@ class NotaEnfermeriaForm(forms.ModelForm):
 
 class OrdenMedicaForm(forms.ModelForm):
     
+    """Muestra un formulario que permite agregar :class:`OrdenMedica`s a una
+    :class:`Persona` durante una :class:`Admision`"""
+    
     class Meta:
         
        model = OrdenMedica
@@ -170,6 +205,10 @@ class OrdenMedicaForm(forms.ModelForm):
                                   widget=forms.HiddenInput(), required=False)
 
 class SignoVitalForm(forms.ModelForm):
+
+    """Muestra un formulario que permite registrar lectura de
+    :class:`SignoVital`es a una :class:`Persona` durante una
+    :class:`Admision`"""
     
     class Meta:
         

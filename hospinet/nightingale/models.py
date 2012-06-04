@@ -120,6 +120,7 @@ class Ingesta(models.Model):
     ingerido = models.CharField(max_length=200, blank=True)
     cantidad = models.IntegerField()
     liquido = models.NullBooleanField(blank=True, null=True)
+    via = models.CharField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='ingestas')
     

@@ -97,4 +97,3 @@ class Esperador(models.Model):
     consultorio = models.ForeignKey(Consultorio, related_name='esperadores')
     paciente = models.ForeignKey(Paciente, related_name='esperas')
     atendido = models.BooleanField(default=False)
-

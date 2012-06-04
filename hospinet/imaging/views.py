@@ -15,12 +15,18 @@ from django.contrib import messages
 
 class ExamenIndexView(ListView):
     
+    """Muestra un listado de los ultimos 5 :class:`Examen`es que se han
+    ingresado al sistema"""
+
     template_name = 'examen/index.html'
     queryset = Examen.objects.all().order_by('-fecha')[:5]
     context_object_name = 'examenes'
 
 class PersonaExamenCreateView(PersonaCreateView):
     
+    """Permite agregar una :class:`Persona` para efectuarle un
+    :class:`Examen`"""
+
     template_name = 'persona/persona_nuevo.html'
     
     def get_success_url(self):
@@ -29,6 +35,10 @@ class PersonaExamenCreateView(PersonaCreateView):
 
 class ExamenPreCreateView(TemplateView):
     
+    """Permite mostrar una interfaz donde decidir si agregar una nueva
+    :class:`Persona` o agregar el :class:`Examen a una ya ingresada previamente
+    """
+
     template_name = 'examen/examen_agregar.html'
     
     def get_context_data(self, **kwargs):
@@ -48,6 +58,8 @@ class ExamenDetailView(DetailView, LoginRequiredView):
 
 class ExamenPersonaListView(DetailView, LoginRequiredView):
     
+    """Muestra los :class:`Examen`es realizados a una :class:`Persona`"""
+
     context_object_name = 'persona'
     model = Persona
     template_name = 'examen/examen_paciente_detail.html'

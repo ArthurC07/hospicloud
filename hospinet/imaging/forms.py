@@ -36,6 +36,9 @@ class ImagenForm(forms.ModelForm):
 
 class AdjuntoForm(forms.ModelForm):
     
+    """Muestra el formulario para agregar archivos :class:`Adjunto`s a un
+    :class:`Examen`"""
+
     class Meta:
         
         model = Adjunto
@@ -46,6 +49,9 @@ class AdjuntoForm(forms.ModelForm):
 
 class DicomForm(forms.ModelForm):
     
+    """Muestra el formulario para agregar un archivo :class:`Dicom` a un
+    :class:`Examen`"""
+
     class Meta:
         
         model = Dicom
