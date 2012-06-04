@@ -92,7 +92,7 @@ urlpatterns = patterns('',
         NotaCreateView.as_view(),
         name='enfermeria-nota-agregar'),
     
-    url(r'^(?P<pk>\d+)/notas$',
+    url(r'^(?P<pk>\d+)/medicamentos$',
         NightingaleDetailView.as_view(template_name='enfermeria/medicamentos.html'),
         name='enfermeria-medicamentos'),
 

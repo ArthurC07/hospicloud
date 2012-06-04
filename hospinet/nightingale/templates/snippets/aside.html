@@ -13,4 +13,7 @@
       <li class="clearfix"><a href="{% url enfermeria-notas admision.id %}"><img src="{% static "images/notas.png" %}" />Notas de Enfermer&iacute;a</a></li>
     </ul>
   </nav>
+  <nav>
+    {% load tree_menu_tags %}{% show_menu "enfermeria-persona" %}
+  </nav>
 </aside>
