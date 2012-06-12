@@ -12,6 +12,9 @@ class Profile(models.Model):
     suscriptor = models.ForeignKey(User, blank=True, null=True,
                                    related_name='dependientes')
 
+    def __unicode__(self):
+        return self.user.username
+
 User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
 
 def create_user_profile(sender, instance, created, **kwargs):

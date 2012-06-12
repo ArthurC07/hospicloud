@@ -106,7 +106,7 @@ class HistoriaClinicaForm(forms.ModelForm):
 
     class Meta:
 
-        model = Historiaclinica
+        model = HistoriaClinica
 
     fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
                                             attrs={'class': 'datetimepicker' },
@@ -124,7 +124,7 @@ class OptometriaForm(forms.ModelForm):
 
     class Meta:
 
-        model = Historiaclinica
+        model = Optometria
 
     fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
                                             attrs={'class': 'datetimepicker' },

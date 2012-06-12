@@ -5,7 +5,6 @@ from clinique.models import (Consultorio, Paciente, Transaccion, Cita,
 
 admin.site.register(Consultorio)
 admin.site.register(Paciente)
-admin.site.register(EstiloVida)
 admin.site.register(Transaccion)
 admin.site.register(Cita)
 admin.site.register(Esperador)

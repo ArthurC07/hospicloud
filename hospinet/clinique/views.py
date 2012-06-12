@@ -96,6 +96,7 @@ class SecretariaCreateView(BaseCreateView):
         perfil_doctor = self.consultorio.doctor
         self.object.profile.suscripcion = perfil_doctor.suscripcion
         self.object.profile.suscriptor = perfil_doctor.user
+        self.consultorio.save()
         self.object.save()
         
         return HttpResponseRedirect(self.get_success_url())
@@ -215,7 +216,7 @@ class AgregarCitaCreateView(BaseCreateView):
 class ConsultorioPacientes(ListView, LoginRequiredView):
 
     model = Paciente
-    template = 'consultorio/pacientes_list.html'
+    template_name = 'consultorio/pacientes_list.html'
     
     def dispatch(self, *args, **kwargs):
         
@@ -228,7 +229,7 @@ class EsperaPacientes(ListView, LoginRequiredView):
     la Sala de Espera del :class:`Consultorio`"""
 
     model = Esperador
-    template = 'consultorio/espera_list.html'
+    template_name = 'consultorio/espera_list.html'
     context_object_name = 'pacientes'
     
     def dispatch(self, *args, **kwargs):
@@ -249,10 +250,9 @@ class EsperadorAgregarView(RedirectView, LoginRequiredView):
     
     def get_redirect_url(self, **kwargs):
         
-        consultorio = get_object_or_404(Consultorio, pk=kwargs['consultorio'])
         paciente  = get_object_or_404(Paciente, pk=kwargs['paciente'])
         esperador = Esperador()
-        esperador.consultorio = consultorio
+        esperador.consultorio = paciente.consultorio
         esperador.paciente = paciente
         esperador.save()
         messages.info(self.request, u'¡Se agrego al paciente a la sala de espera!')
@@ -300,7 +300,7 @@ class ConsultaCreateView(PacienteBasecreateView):
     template_name = 'consultorio/consulta_form.html'
 
 class ConsultaDetailview(DetailView, LoginRequiredView):
-
+    
     model = Consulta
     template_name = 'consultorio/consulta_detail.html'
     context_object_name = 'consulta'

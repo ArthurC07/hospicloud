@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
-from clinique.views import (ConsultorioDetailView, ConsultorioIndex,
+from clinique.views import (ConsultorioIndex, ConsultorioDetailView,
     PacienteCreateView, PacientePreCreateView, ConsultorioCreateView,
     SecretariaCreateView, PersonaConsultorioCreateView, PacienteDetailView,
     EsperaPacientes, EsperadorAgregarView, EsperadorAtendido, RecetaCreateView,
@@ -24,7 +24,7 @@ urlpatterns = patterns('',
         ConsultorioDetailView.as_view(template_name='consultorio/citas.html'),
         name='consultorio-citas'),
     
-    url(r'^(?P<consultorio>\d+)/pacientes$',
+    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/pacientes$',
         ConsultorioDetailView.as_view(template_name='consultorio/pacientes_detail.html'),
         name='consultorio-pacientes'),
     
@@ -72,7 +72,7 @@ urlpatterns = patterns('',
         PacientePreCreateView.as_view(),
         name='consultorio-cita-nueva'),
     
-    url(r'^(?P<consultorio>\d+)/(?P<persona>\d+)/esperador/nuevo$',
+    url(r'^(?P<persona>\d+)/esperador/nuevo$',
         EsperadorAgregarView.as_view(),
         name='consultorio-esperador-nuevo'),
     
