@@ -2,7 +2,10 @@
 from django.conf.urls import patterns, url
 from clinique.views import (ConsultorioDetailView, ConsultorioIndex,
     PacienteCreateView, PacientePreCreateView, ConsultorioCreateView,
-    SecretariaCreateView, PersonaConsultorioCreateView, PacienteDetailView)
+    SecretariaCreateView, PersonaConsultorioCreateView, PacienteDetailView,
+    EsperaPacientes, EsperadorAgregarView, EsperadorAtendido, RecetaCreateView,
+    RecetaDetailView, ConsultaCreateView, ConsultaDetailView,
+    OptometriaCreateView, OptometriaDetailView, HistoriaClinicaCreateView)
 
 urlpatterns = patterns('',
      url(r'^$',
@@ -21,12 +24,12 @@ urlpatterns = patterns('',
         ConsultorioDetailView.as_view(template_name='consultorio/citas.html'),
         name='consultorio-citas'),
     
-    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/pacientes$',
+    url(r'^(?P<consultorio>\d+)/pacientes$',
         ConsultorioDetailView.as_view(template_name='consultorio/pacientes_detail.html'),
         name='consultorio-pacientes'),
     
-    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/espera$',
-        ConsultorioDetailView.as_view(template_name='consultorio/espera.html'),
+    url(r'^(?P<consultorio>\d+)/espera$',
+        EsperaPacientes.as_view(),
         name='consultorio-espera'),
     
     url(r'^(?P<consultorio>\d+)/secretaria/agregar$',
@@ -36,6 +39,22 @@ urlpatterns = patterns('',
     url(r'^paciente/(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
         PacienteDetailView.as_view(),
         name='consultorio-paciente'),
+    
+    url(r'^optometrias/(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
+        PacienteDetailView.as_view(template_name='consultorio/optometrias.html'),
+        name='consultorio-paciente-optometrias'),
+    
+    url(r'^consultas/(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
+        PacienteDetailView.as_view(template_name='consultorio/consultas.html'),
+        name='consultorio-paciente-consultas'),
+    
+    url(r'^historia/(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
+        PacienteDetailView.as_view(template_name='consultorio/historia.html'),
+        name='consultorio-paciente-historia'),
+    
+    url(r'^recetas/(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
+        PacienteDetailView.as_view(template_name='consultorio/recetas.html'),
+        name='consultorio-paciente-recetas'),
     
     url(r'^(?P<consultorio>\d+)/paciente/nuevo$',
         PacientePreCreateView.as_view(),
@@ -53,8 +72,39 @@ urlpatterns = patterns('',
         PacientePreCreateView.as_view(),
         name='consultorio-cita-nueva'),
     
-    url(r'^(?P<consultorio>\d+)/esperador/nuevo$',
-        PacientePreCreateView.as_view(),
+    url(r'^(?P<consultorio>\d+)/(?P<persona>\d+)/esperador/nuevo$',
+        EsperadorAgregarView.as_view(),
         name='consultorio-esperador-nuevo'),
-	
+    
+    url(r'^paciente/(?P<pk>\d+)/atender$',
+        EsperadorAtendido.as_view(),
+        name='consultorio-esperador-atender'),
+    
+    url(r'^(?P<paciente>\d+)/consulta/nueva$',
+        ConsultaCreateView.as_view(),
+        name='consultorio-consulta-nueva'),
+    
+    url(r'^receta/(?P<pk>\d+)$',
+        ConsultorioDetailView.as_view(),
+        name='consultorio-consulta-view'),
+    
+    url(r'^(?P<paciente>\d+)/historia/nueva$',
+        HistoriaClinicaCreateView.as_view(),
+        name='consultorio-historia-nueva'),
+    
+    url(r'^(?P<paciente>\d+)/receta/nueva$',
+        RecetaCreateView.as_view(),
+        name='consultorio-receta-nueva'),
+    
+    url(r'^receta/(?P<pk>\d+)$',
+        RecetaDetailView.as_view(),
+        name='consultorio-receta-view'),
+    
+    url(r'^(?P<paciente>\d+)/optometria/nueva$',
+        OptometriaCreateView.as_view(),
+        name='consultorio-optometria-nueva'),
+    
+    url(r'^optometria/(?P<pk>\d+)$',
+        RecetaDetailView.as_view(),
+        name='consultorio-optometria-view'),
 )

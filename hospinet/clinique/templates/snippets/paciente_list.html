@@ -1,0 +1,24 @@
+<table class="data">
+  <thead class="gradient">
+    <tr>
+      <th>Identificaci&oacute;n</th>
+      <th>Apellidos</th>
+      <th>Nombre</th>
+      <th>Edad</th>
+      <th>Sexo</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for paciente in pacientes %}
+    <tr>
+      <td>{{ paciente.persona.identificacion }}</td>
+      <td>{{ paciente.persona.apellido }}</td>
+      <td>{{ paciente.persona.nombre }}</td>
+      <td>{{ paciente.persona.obtener_edad }}</td>
+      <td>{{ paciente.persona.get_sexo_display }}</td>
+      <td><a href="{% url consultorio-paciente paciente.uuid %}">Ver</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

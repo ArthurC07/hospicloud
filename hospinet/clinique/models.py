@@ -97,3 +97,54 @@ class Esperador(models.Model):
     consultorio = models.ForeignKey(Consultorio, related_name='esperadores')
     paciente = models.ForeignKey(Paciente, related_name='esperas')
     atendido = models.BooleanField(default=False)
+
+class Consulta(models.Model):
+
+    """"Permite al doctor especificar las razones de la visita de un
+    :class:`Paciente`"""
+
+    paciente = models.ForeignKey(Paciente, related_name='consultas')
+    razon_de_la_visita = models.TextField(blank=True)
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
+
+class Receta(models.Model):
+
+    """Describe los medicamentos que un paciente recomienda a un :class:`Paciente`
+    luego de una :class:`Consulta`"""
+
+    paciente = models.ForeignKey(Paciente, related_name='recetas')
+    medicamentos = models.TextField(blank=True, null=True)
+    notas_adicionales = models.TextField(blank=True, null=True)
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
+
+class HistoriaClinica(models.Model):
+
+    """Permite ingresar entradas a la Historia Clinica de un
+    :class:`Paciente`"""
+
+    consulta = models.ForeignKey(Consulta, related_name='historias_clinicas')
+    nota = models.TextField(blank=True)
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    agudeza_visual_ojo_derecho = models.IntegerField(default=0)
+    agudeza_visual_ojo_izquierdo = models.IntegerField(default=0)
+
+class Optometria(models.Model):
+
+    """Representa los resultados de un examen visual efectuado a un :class:`Paciente`"""
+
+    paciente = models.ForeignKey(Paciente, related_name='optometrias')
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    esfera_ojo_derecho = models.IntegerField(default=0) 
+    esfera_ojo_izquierdo = models.IntegerField(default=0)
+    cilindro_ojo_derecho = models.IntegerField(default=0)
+    cilindro_ojo_izquierdo = models.IntegerField(default=0)
+    eje_ojo_derecho = models.IntegerField(default=0)
+    eje_ojo_izquierdo = models.IntegerField(default=0)
+    prisma_ojo_derecho = models.IntegerField(default=0)
+    prisma_ojo_izquierdo = models.IntegerField(default=0)
+    adicion_ojo_derecho = models.IntegerField(default=0)
+    adicion_ojo_izquierdo = models.IntegerField(default=0)
+    d_p_ojo_derecho = models.IntegerField(default=0)
+    d_p_ojo_izquierdo = models.IntegerField(default=0)
+    altura_ojo_derecho = models.IntegerField(default=0)
+    altura_ojo_izquierdo = models.IntegerField(default=0)

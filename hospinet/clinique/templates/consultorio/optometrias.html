@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block content %}
+{% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
+<div id="informacion" class="grid_9">
+  <h1>Optometrias de {{ paciente.persona.nombre_completo }}</h1>
+  <table class="data">
+      <thead class="gradient">
+       	<tr>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for optometria in paciente.optometrias.all %}
+        <tr>
+          <td>{{ consulta.fecha_y_hora|date:"d/m/Y H:i" }}</td>
+          <td>
+            <a href="{% url consultorio-optometria-view optometria.id %}">Ver</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

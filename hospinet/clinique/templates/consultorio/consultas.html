@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block content %}
+{% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
+<div id="informacion" class="grid_9">
+  <h1>Consultas de {{ paciente.persona.nombre_completo }}</h1>
+  <table class="data">
+      <thead class="gradient">
+       	<tr>
+          <th>Fecha</th>
+          <th>Razon de la Visita</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for consulta in paciente.consultas.all %}
+        <tr>
+          <td>{{ consulta.fecha_y_hora|date:"d/m/Y H:i" }}</td>
+          <td>{{ consulta.razon }}</td>
+          <td>
+            <a href="{% url consultorio-consulta-view consulta.id %}">Ver</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

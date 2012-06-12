@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block content %}
+{% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
+<div id="informacion" class="grid_9">
+  {% include "snippets/paciente_list.html" with pacientes=consultorio.pacientes.all %}
+</div>
+{% endblock %}

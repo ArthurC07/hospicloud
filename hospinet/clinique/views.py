@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from clinique.forms import( PacienteForm, TransaccionForm, CitaForm,
-    ConsultorioForm)
-from clinique.models import Consultorio, Paciente, Transaccion, Cita
+from clinique.forms import (PacienteForm, TransaccionForm, CitaForm,
+    ConsultorioForm, ConsultaForm, RecetaForm, HistoriaClinicaForm,
+    OptometriaForm)
+from clinique.models import (Consultorio, Paciente, Transaccion, Cita,
+    Esperador, Consulta, Receta, HistoriaClinica, Optometria)
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, DetailView, CreateView
+from django.views.generic import TemplateView, DetailView, CreateView, ListView
 from library.protected import LoginRequiredView
 from persona.forms import PersonaForm
 from persona.models import Persona
@@ -185,7 +187,7 @@ class TransaccionCreateView(BaseCreateView):
     
     def dispatch(self, *args, **kwargs):
         
-        self.persona = get_object_or_404(Paciente, pk=kwargs['paciente'])
+        self.paciente = get_object_or_404(Paciente, pk=kwargs['paciente'])
         return super(TransaccionCreateView, self).dispatch(*args, **kwargs)
     
     def get_form_kwargs(self):
@@ -197,8 +199,7 @@ class TransaccionCreateView(BaseCreateView):
     def form_valid(self, form):
         
         self.object = form.save(commit=False)
-        self.object.persona = self.persona
-        self.object.consultorio = self.consultorio
+        self.object.persona = self.paciente
         self.object.save()
         
         return HttpResponseRedirect(self.get_success_url())
@@ -210,3 +211,126 @@ class AgregarCitaCreateView(BaseCreateView):
     model = Cita
     form_class = CitaForm
     template_name = "consultorio/paciente_create.html"
+
+class ConsultorioPacientes(ListView, LoginRequiredView):
+
+    model = Paciente
+    template = 'consultorio/pacientes_list.html'
+    
+    def dispatch(self, *args, **kwargs):
+        
+        self.consultorio = get_object_or_404(Consultorio, pk=kwargs['paciente'])
+        return super(ConsultorioPacientes, self).dispatch(*args, **kwargs)
+
+class EsperaPacientes(ListView, LoginRequiredView):
+
+    """Muestra la lista de :class:`Paciente` que se encuentran actualmente en
+    la Sala de Espera del :class:`Consultorio`"""
+
+    model = Esperador
+    template = 'consultorio/espera_list.html'
+    context_object_name = 'pacientes'
+    
+    def dispatch(self, *args, **kwargs):
+        
+        self.consultorio = get_object_or_404(Consultorio, pk=kwargs['consultorio'])
+        return super(ConsultorioPacientes, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+
+        return Esperador.objects.filter(consultorio=self.Consultorio, atendido=False)
+
+class EsperadorAgregarView(RedirectView, LoginRequiredView):
+    
+    """Permite agregar un :class:`Paciente` a la sala de espera del consultorio en
+    el cual se esta trabajando actualmente"""
+    
+    permanent = False
+    
+    def get_redirect_url(self, **kwargs):
+        
+        consultorio = get_object_or_404(Consultorio, pk=kwargs['consultorio'])
+        paciente  = get_object_or_404(Paciente, pk=kwargs['paciente'])
+        esperador = Esperador()
+        esperador.consultorio = consultorio
+        esperador.paciente = paciente
+        esperador.save()
+        messages.info(self.request, u'¡Se agrego al paciente a la sala de espera!')
+        return reverse('consultorio-view', args=[consultorio.uuid])
+
+class EsperadorAtendido(RedirectView, LoginRequiredView):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+
+        esperador = get_object_or_404(Esperador, pk=kwargs['esperador'])
+        esperador.atendido = True
+        esperador.save()
+        messages.info(self.request, u'¡Se marco al Paciente como atendido!')
+        return reverse('consultorio-view', args=[esperador.consultorio.uuid])
+
+class PacienteBasecreateView(CreateView, LoginRequiredView):
+
+    def dispatch(self, *args, **kwargs):
+        
+        self.paciente = get_object_or_404(Paciente, pk=kwargs['paciente'])
+        return super(ConsultaCreateView, self).dispatch(*args, **kwargs)
+    
+    def get_form_kwargs(self):
+        
+        kwargs = super(ConsultaCreateView, self).get_form_kwargs()
+        kwargs.update({'initial' : {'paciente' : self.paciente.id}})
+        return kwargs
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.persona = self.paciente
+        self.object.save()
+        
+        return HttpResponseRedirect(self.get_success_url())
+
+class ConsultaCreateView(PacienteBasecreateView):
+    
+    """Permite agregar una :class:`Consulta` a un :class:`Paciente`"""
+
+    model = Consulta
+    form_class = ConsultaForm
+    template_name = 'consultorio/consulta_form.html'
+
+class ConsultaDetailview(DetailView, LoginRequiredView):
+
+    model = Consulta
+    template_name = 'consultorio/consulta_detail.html'
+    context_object_name = 'consulta'
+
+class RecetaCreateView(PacienteBasecreateView):
+
+    model = Receta
+    form_class = RecetaForm
+    template_name = 'consultorio/receta_create.html'
+
+class RecetaDetailView(DetailView, LoginRequiredView):
+
+    model = Receta
+    template_name = 'consultorio/receta_detail.html'
+    context_object_name = 'receta'
+
+class OptometriaCreateView(PacienteBasecreateView):
+
+    model = Optometria
+    form_class = OptometriaForm
+    template_name = 'consultorio/optometria_create.html'
+
+class OptometriaDetailView(DetailView, LoginRequiredView):
+
+    model = Optometria
+    template_name = 'consultorio/optometria_detail.html'
+    context_object_name = 'Optometria'
+
+class HistoriaClinicaCreateView(PacienteBasecreateView):
+
+    model = HistoriaClinica
+    form_class = HistoriaClinicaForm
+    template_name = 'Consultorio/historia_clinica_create.html'
