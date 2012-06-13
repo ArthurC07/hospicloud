@@ -26,11 +26,15 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="clinique\admin.py" />
     <Compile Include="clinique\forms.py" />
     <Compile Include="clinique\migrations\0001_initial.py" />
     <Compile Include="clinique\migrations\0002_auto__chg_field_consultorio_nombre.py" />
     <Compile Include="clinique\migrations\0003_auto__add_field_consultorio_uuid.py" />
     <Compile Include="clinique\migrations\0004_auto__add_field_paciente_uuid.py" />
+    <Compile Include="clinique\migrations\0005_auto__add_historiaclinica__add_optometria__add_receta__add_consulta.py" />
+    <Compile Include="clinique\migrations\0006_auto__del_field_historiaclinica_consulta__add_field_historiaclinica_pa.py" />
+    <Compile Include="clinique\migrations\0007_auto__add_field_optometria_notas.py" />
     <Compile Include="clinique\migrations\__init__.py" />
     <Compile Include="clinique\models.py" />
     <Compile Include="clinique\tests.py" />
@@ -120,12 +124,27 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="clinique\static\js\consultorio.js" />
+    <Content Include="clinique\templates\consultorio\consultas.html" />
+    <Content Include="clinique\templates\consultorio\consulta_detail.html" />
+    <Content Include="clinique\templates\consultorio\consulta_form.html" />
     <Content Include="clinique\templates\consultorio\consultorio_create.html" />
     <Content Include="clinique\templates\consultorio\consultorio_detail.html" />
+    <Content Include="clinique\templates\consultorio\espera_list.html" />
+    <Content Include="clinique\templates\consultorio\historia_clinica_create.html" />
     <Content Include="clinique\templates\consultorio\index.html" />
+    <Content Include="clinique\templates\consultorio\optometrias.html" />
+    <Content Include="clinique\templates\consultorio\optometria_create.html" />
+    <Content Include="clinique\templates\consultorio\optometria_detail.html" />
     <Content Include="clinique\templates\consultorio\paciente_agregar.html" />
     <Content Include="clinique\templates\consultorio\paciente_detail.html" />
+    <Content Include="clinique\templates\consultorio\paciente_list.html" />
+    <Content Include="clinique\templates\consultorio\recetas.html" />
+    <Content Include="clinique\templates\consultorio\receta_create.html" />
     <Content Include="clinique\templates\consultorio\secretaria_create.html" />
+    <Content Include="clinique\templates\search\indexes\paciente_text.txt" />
+    <Content Include="clinique\templates\snippets\consultorio_aside.html" />
+    <Content Include="clinique\templates\snippets\paciente_aside.html" />
+    <Content Include="clinique\templates\snippets\paciente_list.html" />
     <Content Include="imaging\static\css\dicom.css" />
     <Content Include="imaging\static\css\examen.css" />
     <Content Include="imaging\templates\examen\adjunto_create.html" />
@@ -310,6 +329,9 @@
     <Folder Include="clinique\static\js\" />
     <Folder Include="clinique\templates\" />
     <Folder Include="clinique\templates\consultorio\" />
+    <Folder Include="clinique\templates\search\" />
+    <Folder Include="clinique\templates\search\indexes\" />
+    <Folder Include="clinique\templates\search\indexes\consultorio\" />
     <Folder Include="clinique\templates\snippets\" />
     <Folder Include="imaging" />
     <Folder Include="imaging\migrations" />
@@ -351,6 +373,8 @@
     <Folder Include="persona\templates\search\" />
     <Folder Include="persona\templates\persona\" />
     <Folder Include="persona\templatetags\" />
+    <Folder Include="search\" />
+    <Folder Include="search\indexes\" />
     <Folder Include="spital" />
     <Folder Include="spital\migrations\" />
     <Folder Include="spital\templates\" />
