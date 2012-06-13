@@ -1,6 +1,6 @@
 form {
   font-family: 'Yanone Kaffeesatz', arial, sans-serif;
-  padding: 10 40 20 40;
+  padding: 10px 40px 20px 40px;
   margin-top: 25px;
   margin-left: auto;
   margin-right: auto
@@ -11,7 +11,7 @@ form ul { margin: 0; }
 form ul li { list-style: none; }
 .red, .error_list { color: red; }
 form select { min-width: 12em; }
-form label { min-width: 200; display: inline-block; }
+form label { min-width: 200px; display: inline-block; }
 .inline { display: inline; }
 form h2 { margin: 5px 0; }
 form input, form textarea {

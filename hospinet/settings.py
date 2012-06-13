@@ -17,7 +17,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'santalucia',                      # Or path to database file if using sqlite3.
+        'NAME': 'asura',                      # Or path to database file if using sqlite3.
         'USER': 'asura',                      # Not used with sqlite3.
         'PASSWORD': '$a1ntcro$$',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.

@@ -4,6 +4,7 @@ from spital.models import Admision
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
                                 OrdenMedica, SignoVital, Medicamento)
+from django.contrib.auth.models import User
 
 class DateTimeWidget(forms.DateTimeInput):
     
@@ -21,6 +22,19 @@ class DateTimeWidget(forms.DateTimeInput):
 
         if not 'format' in self.attrs:
             self.attrs['format'] = '%d/%m/%Y %H:%M'
+class BaseForm(forms.ModelForm):
+
+    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
+                                input_formats=('%d/%m/%Y %H:%M',),
+                                required=False)
+    
+    admision = forms.ModelChoiceField(label="",
+                                  queryset=Admision.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
 
 class IngresarForm(forms.ModelForm):
     
@@ -32,7 +46,7 @@ class IngresarForm(forms.ModelForm):
         model = Admision
         fields = ('habitacion',)
 
-class CargoForm(forms.ModelForm):
+class CargoForm(BaseForm):
     
     """Muestra un formulario que permite agregar :class:`Cargo`s a una
     :class:`Persona` durante una :class:`Admision`"""
@@ -40,11 +54,6 @@ class CargoForm(forms.ModelForm):
     class Meta:
         
         model = Cargo
-        exclude = ("usuario",)
-    
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
     
     inicio = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
@@ -53,12 +62,8 @@ class CargoForm(forms.ModelForm):
     fin = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
                                 required=False)
-    
-    admision = forms.ModelChoiceField(label="",
-                                  queryset=Admision.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class EvolucionForm(forms.ModelForm):
+class EvolucionForm(BaseForm):
     
     """Muestra un formulario que permite agregar :class:`Evolucion`es a una
     :class:`Persona` durante una :class:`Admision`"""
@@ -66,17 +71,10 @@ class EvolucionForm(forms.ModelForm):
     class Meta:
         
         model = Evolucion
-        exclude = ("usuario",)
-    
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
-    nota = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
-    admision = forms.ModelChoiceField(label="",
-                                  queryset=Admision.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class GlicemiaForm(forms.ModelForm):
+    nota = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
+
+class GlicemiaForm(BaseForm):
     
     """Muestra un formulario que permite agregar una lectura de
     :class:`Glicemia` a una :class:`Persona` durante una :class:`Admision`"""
@@ -84,19 +82,11 @@ class GlicemiaForm(forms.ModelForm):
     class Meta:
         
         model = Glicemia
-        exclude = ("usuario",)
-    
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
     
     observacion = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
     control = forms.CharField(widget=forms.TextInput)
-    admision = forms.ModelChoiceField(label="",
-                                  queryset=Admision.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
     
-class InsulinaForm(forms.ModelForm):
+class InsulinaForm(BaseForm):
     
     """Muestra un formulario que permite registrar una administración de
     :class:`Insulina` a una :class:`Persona` durante una :class:`Admision`"""
@@ -104,19 +94,10 @@ class InsulinaForm(forms.ModelForm):
     class Meta:
         
         model = Insulina
-        exclude = ("usuario",)
     
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
-    
-    observacion = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
     control = forms.CharField(widget=forms.TextInput)
-    admision = forms.ModelChoiceField(label="",
-                                  queryset=Admision.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class GlucosuriaForm(forms.ModelForm):
+class GlucosuriaForm(BaseForm):
     
     """Muestra un formulario que permite registrar :class:`Glucosuria`s a una
     :class:`Persona` durante una :class:`Admision`"""
@@ -124,19 +105,11 @@ class GlucosuriaForm(forms.ModelForm):
     class Meta:
         
         model = Glucosuria
-        exclude = ("usuario",)
-    
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
     
     observacion = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
     control = forms.CharField(widget=forms.TextInput)
-    admision = forms.ModelChoiceField(label="",
-                                  queryset=Admision.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class IngestaForm(forms.ModelForm):
+class IngestaForm(BaseForm):
     
     """Muestra un formulario que permite registrar :class:`Ingesta`s a una
     :class:`Persona` durante una :class:`Admision`"""
@@ -145,12 +118,8 @@ class IngestaForm(forms.ModelForm):
         
         model = Ingesta
         exclude = ("usuario",)
-    
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
 
-class ExcretaForm(forms.ModelForm):
+class ExcretaForm(BaseForm):
     
     """Muestra un formulario que permite agregar :class:`Excreta`s a una
     :class:`Persona` durante una :class:`Admision`"""
@@ -158,16 +127,8 @@ class ExcretaForm(forms.ModelForm):
     class Meta:
         
         model = Excreta
-        exclude = ("usuario",)
-    
-    fecha_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
-    admision = forms.ModelChoiceField(label="",
-                                  queryset=Admision.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class NotaEnfermeriaForm(forms.ModelForm):
+class NotaEnfermeriaForm(BaseForm):
     
     """Muestra un formulario que permite agregar :class:`Cargo`s a una
     :class:`Persona` durante una :class:`Admision`"""
@@ -186,7 +147,7 @@ class NotaEnfermeriaForm(forms.ModelForm):
                                   queryset=Admision.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class OrdenMedicaForm(forms.ModelForm):
+class OrdenMedicaForm(BaseForm):
     
     """Muestra un formulario que permite agregar :class:`OrdenMedica`s a una
     :class:`Persona` durante una :class:`Admision`"""
@@ -194,17 +155,9 @@ class OrdenMedicaForm(forms.ModelForm):
     class Meta:
         
        model = OrdenMedica
-       exclude = ('usuario',)
-
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
     orden = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
-    admision = forms.ModelChoiceField(label="",
-                                  queryset=Admision.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class SignoVitalForm(forms.ModelForm):
+class SignoVitalForm(BaseForm):
 
     """Muestra un formulario que permite registrar lectura de
     :class:`SignoVital`es a una :class:`Persona` durante una
@@ -213,24 +166,16 @@ class SignoVitalForm(forms.ModelForm):
     class Meta:
         
         model = SignoVital
-        exclude = ("presion_arterial_media", 'usuario')
+        exclude = ("presion_arterial_media")
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
                                 input_formats=('%d/%m/%Y %H:%M',),
                                 required=False)
-    admision = forms.ModelChoiceField(label="",
-                                  queryset=Admision.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class MedicamentoForm(forms.ModelForm):
+class MedicamentoForm(BaseForm):
 
     """Permite Agregar o modificar los datos de un :class:`Medicamento`"""
 
     class Meta:
 
         model = Medicamento
-        exclude = ('usuario',)
-    
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
