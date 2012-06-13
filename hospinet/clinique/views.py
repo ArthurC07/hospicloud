@@ -15,6 +15,7 @@ from persona.views import PersonaCreateView
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.base import RedirectView
+from django.contrib import messages
 
 class ConsultorioIndex(TemplateView):
     
@@ -235,11 +236,12 @@ class EsperaPacientes(ListView, LoginRequiredView):
     def dispatch(self, *args, **kwargs):
         
         self.consultorio = get_object_or_404(Consultorio, pk=kwargs['consultorio'])
-        return super(ConsultorioPacientes, self).dispatch(*args, **kwargs)
+        return super(EsperaPacientes, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
-
-        return Esperador.objects.filter(consultorio=self.Consultorio, atendido=False)
+        
+        self.consultorio = get_object_or_404(Consultorio, pk=self.kwargs['consultorio'])
+        return Esperador.objects.filter(consultorio=self.consultorio, atendido=False)
 
 class EsperadorAgregarView(RedirectView, LoginRequiredView):
     
@@ -256,7 +258,7 @@ class EsperadorAgregarView(RedirectView, LoginRequiredView):
         esperador.paciente = paciente
         esperador.save()
         messages.info(self.request, u'¡Se agrego al paciente a la sala de espera!')
-        return reverse('consultorio-view', args=[consultorio.uuid])
+        return reverse('consultorio-view', args=[esperador.consultorio.uuid])
 
 class EsperadorAtendido(RedirectView, LoginRequiredView):
 
@@ -275,11 +277,11 @@ class PacienteBasecreateView(CreateView, LoginRequiredView):
     def dispatch(self, *args, **kwargs):
         
         self.paciente = get_object_or_404(Paciente, pk=kwargs['paciente'])
-        return super(ConsultaCreateView, self).dispatch(*args, **kwargs)
+        return super(PacienteBasecreateView, self).dispatch(*args, **kwargs)
     
     def get_form_kwargs(self):
         
-        kwargs = super(ConsultaCreateView, self).get_form_kwargs()
+        kwargs = super(PacienteBasecreateView, self).get_form_kwargs()
         kwargs.update({'initial' : {'paciente' : self.paciente.id}})
         return kwargs
     
@@ -327,7 +329,7 @@ class OptometriaDetailView(DetailView, LoginRequiredView):
 
     model = Optometria
     template_name = 'consultorio/optometria_detail.html'
-    context_object_name = 'Optometria'
+    context_object_name = 'optometria'
 
 class HistoriaClinicaCreateView(PacienteBasecreateView):
 

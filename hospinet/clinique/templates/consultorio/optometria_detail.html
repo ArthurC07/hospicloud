@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
-{% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
-<div id="informacion" class="grid_9">
+<div id="informacion" class="grid_12">
   <h1>Optometria de {{ optometria.paciente.persona.nombre_completo }}</h1>
   <table class="data">
       <thead class="gradient">
        	<tr>
-          <th^&nbsp;</th>
+          <th>&nbsp;</th>
           <th>Esfera</th>
           <th>Cilindro</th>
           <th>Eje</th>

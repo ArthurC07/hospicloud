@@ -5,9 +5,9 @@ PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-LOGIN_URL = '/hospinet/accounts/login'
-LOGOUT_URL = '/hospinet/accounts/logout'
-LOGIN_REDIRECT_URL = '/hospinet/'
+LOGIN_URL = '/santalucia/accounts/login'
+LOGOUT_URL = '/santalucia/accounts/logout'
+LOGIN_REDIRECT_URL = '/santalucia/'
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -17,7 +17,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'asura',                      # Or path to database file if using sqlite3.
+        'NAME': 'santalucia',                      # Or path to database file if using sqlite3.
         'USER': 'asura',                      # Not used with sqlite3.
         'PASSWORD': '$a1ntcro$$',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -55,7 +55,7 @@ MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/media/'
+MEDIA_URL = '/santalucia/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -65,12 +65,12 @@ STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = '/santalucia/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+ADMIN_MEDIA_PREFIX = '/santalucia/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (

@@ -106,6 +106,10 @@ class Consulta(models.Model):
     paciente = models.ForeignKey(Paciente, related_name='consultas')
     razon_de_la_visita = models.TextField(blank=True)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
+    
+    def get_absolute_url(self):
+        
+        return 'consultorio-paciente', self.paciente.uuid
 
 class Receta(models.Model):
 
@@ -116,17 +120,25 @@ class Receta(models.Model):
     medicamentos = models.TextField(blank=True, null=True)
     notas_adicionales = models.TextField(blank=True, null=True)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
+    
+    def get_absolute_url(self):
+        
+        return 'consultorio-receta-view', self.id
 
 class HistoriaClinica(models.Model):
 
     """Permite ingresar entradas a la Historia Clinica de un
     :class:`Paciente`"""
 
-    consulta = models.ForeignKey(Consulta, related_name='historias_clinicas')
+    paciente = models.ForeignKey(Paciente, related_name='historias_clinicas', null=True)
     nota = models.TextField(blank=True)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     agudeza_visual_ojo_derecho = models.IntegerField(default=0)
     agudeza_visual_ojo_izquierdo = models.IntegerField(default=0)
+    
+    def get_absolute_url(self):
+        
+        return 'consultorio-paciente', self.paciente.uuid
 
 class Optometria(models.Model):
 
@@ -134,17 +146,22 @@ class Optometria(models.Model):
 
     paciente = models.ForeignKey(Paciente, related_name='optometrias')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
-    esfera_ojo_derecho = models.IntegerField(default=0) 
-    esfera_ojo_izquierdo = models.IntegerField(default=0)
-    cilindro_ojo_derecho = models.IntegerField(default=0)
-    cilindro_ojo_izquierdo = models.IntegerField(default=0)
-    eje_ojo_derecho = models.IntegerField(default=0)
-    eje_ojo_izquierdo = models.IntegerField(default=0)
-    prisma_ojo_derecho = models.IntegerField(default=0)
-    prisma_ojo_izquierdo = models.IntegerField(default=0)
-    adicion_ojo_derecho = models.IntegerField(default=0)
-    adicion_ojo_izquierdo = models.IntegerField(default=0)
-    d_p_ojo_derecho = models.IntegerField(default=0)
-    d_p_ojo_izquierdo = models.IntegerField(default=0)
-    altura_ojo_derecho = models.IntegerField(default=0)
-    altura_ojo_izquierdo = models.IntegerField(default=0)
+    esfera_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2) 
+    esfera_ojo_izquierdo = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    cilindro_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    cilindro_ojo_izquierdo = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    eje_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    eje_ojo_izquierdo = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    prisma_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    prisma_ojo_izquierdo = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    adicion_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    adicion_ojo_izquierdo = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    d_p_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    d_p_ojo_izquierdo = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    altura_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    altura_ojo_izquierdo = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    notas = models.TextField(blank=True, null=True)
+    
+    def get_absolute_url(self):
+        
+        return 'consultorio-optometria-view', self.id

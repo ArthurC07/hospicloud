@@ -123,3 +123,4 @@ form textarea {
 .errorlist li { display: inline-block; }
 textarea.big { width: 100%; }
 td .button { padding: 2px; }
+form table input[type=text] { width: 3em; }

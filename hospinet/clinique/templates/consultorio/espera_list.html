@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
-{% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
+
 <div id="informacion" class="grid_9">
   <table class="data">
       <thead class="gradient">
@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for e in consultorio.pacientes.all %}
+        {% for e in pacientes.all %}
         <tr>
           <td>{{ e.paciente.persona.identificacion }}</td>
           <td>{{ e.paciente.persona.apellido }}</td>
@@ -23,7 +23,7 @@
           <td>{{ e.paciente.persona.obtener_edad }}</td>
           <td>{{ e.paciente.persona.get_sexo_display }}</td>
           <td>
-            <a href="{% url consultorio-paciente paciente.uuid %}">Ver</a>
+            <a href="{% url consultorio-paciente e.paciente.uuid %}">Ver</a>
           	<a href="{% url consultorio-esperador-atender e.id %}">Atender</a>
           </td>
         </tr>

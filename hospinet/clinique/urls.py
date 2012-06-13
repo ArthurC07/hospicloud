@@ -4,7 +4,7 @@ from clinique.views import (ConsultorioIndex, ConsultorioDetailView,
     PacienteCreateView, PacientePreCreateView, ConsultorioCreateView,
     SecretariaCreateView, PersonaConsultorioCreateView, PacienteDetailView,
     EsperaPacientes, EsperadorAgregarView, EsperadorAtendido, RecetaCreateView,
-    RecetaDetailView, ConsultaCreateView, ConsultaDetailView,
+    RecetaDetailView, ConsultaCreateView,
     OptometriaCreateView, OptometriaDetailView, HistoriaClinicaCreateView)
 
 urlpatterns = patterns('',
@@ -25,7 +25,7 @@ urlpatterns = patterns('',
         name='consultorio-citas'),
     
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/pacientes$',
-        ConsultorioDetailView.as_view(template_name='consultorio/pacientes_detail.html'),
+        ConsultorioDetailView.as_view(template_name='consultorio/paciente_list.html'),
         name='consultorio-pacientes'),
     
     url(r'^(?P<consultorio>\d+)/espera$',
@@ -72,11 +72,11 @@ urlpatterns = patterns('',
         PacientePreCreateView.as_view(),
         name='consultorio-cita-nueva'),
     
-    url(r'^(?P<persona>\d+)/esperador/nuevo$',
+    url(r'^(?P<paciente>\d+)/esperador/nuevo$',
         EsperadorAgregarView.as_view(),
         name='consultorio-esperador-nuevo'),
     
-    url(r'^paciente/(?P<pk>\d+)/atender$',
+    url(r'^paciente/(?P<esperador>\d+)/atender$',
         EsperadorAtendido.as_view(),
         name='consultorio-esperador-atender'),
     
@@ -105,6 +105,6 @@ urlpatterns = patterns('',
         name='consultorio-optometria-nueva'),
     
     url(r'^optometria/(?P<pk>\d+)$',
-        RecetaDetailView.as_view(),
+        OptometriaDetailView.as_view(),
         name='consultorio-optometria-view'),
 )
