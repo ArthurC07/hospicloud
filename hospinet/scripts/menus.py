@@ -21,6 +21,10 @@ def run():
     treemenus_menu_2.name = u'persona'
     treemenus_menu_2.save()
 
+    treemenus_menu_3 = Menu()
+    treemenus_menu_3.name = u'enfermeria'
+    treemenus_menu_3.save()
+
     from treemenus.models import MenuItem
 
     treemenus_menuitem_1 = MenuItem()

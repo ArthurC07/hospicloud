@@ -22,11 +22,13 @@ class DateTimeWidget(forms.DateTimeInput):
 
         if not 'format' in self.attrs:
             self.attrs['format'] = '%d/%m/%Y %H:%M'
+
 class BaseForm(forms.ModelForm):
 
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
+    """Formulario base para los distintos ingresos de información de parte de
+    los diversos modelos de enfermeria"""
+
+    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(), required=False)
     
     admision = forms.ModelChoiceField(label="",
                                   queryset=Admision.objects.all(),
@@ -136,11 +138,6 @@ class NotaEnfermeriaForm(BaseForm):
     class Meta:
         
         model = NotaEnfermeria
-        exclude = ("usuario",)
-    
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
     
     nota = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
     admision = forms.ModelChoiceField(label="",
@@ -167,10 +164,6 @@ class SignoVitalForm(BaseForm):
         
         model = SignoVital
         exclude = ("presion_arterial_media")
-    
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
 
 class MedicamentoForm(BaseForm):
 
