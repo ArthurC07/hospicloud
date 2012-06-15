@@ -129,7 +129,7 @@ class OptometriaForm(forms.ModelForm):
                                   queryset=Paciente.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class PagoCreateView(forms.ModelForm):
+class PagoForm(forms.ModelForm):
 
     class Meta:
 
