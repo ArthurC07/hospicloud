@@ -4,7 +4,7 @@ from clinique.views import (ConsultorioIndex, ConsultorioDetailView,
     PacienteCreateView, PacientePreCreateView, ConsultorioCreateView,
     SecretariaCreateView, PersonaConsultorioCreateView, PacienteDetailView,
     EsperaPacientes, EsperadorAgregarView, EsperadorAtendido, RecetaCreateView,
-    RecetaDetailView, ConsultaCreateView,
+    RecetaDetailView, ConsultaCreateView, PagoCreateView, PagoDiarioDetailView,
     OptometriaCreateView, OptometriaDetailView, HistoriaClinicaCreateView)
 
 urlpatterns = patterns('',
@@ -27,6 +27,10 @@ urlpatterns = patterns('',
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/pacientes$',
         ConsultorioDetailView.as_view(template_name='consultorio/paciente_list.html'),
         name='consultorio-pacientes'),
+    
+    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/pacientes$',
+        PagoDiarioDetailView.as_view(template_name='consultorio/pago_diario.html'),
+        name='consultorio-pago-diario'),
     
     url(r'^(?P<consultorio>\d+)/espera$',
         EsperaPacientes.as_view(),
@@ -56,6 +60,10 @@ urlpatterns = patterns('',
         PacienteDetailView.as_view(template_name='consultorio/recetas.html'),
         name='consultorio-paciente-recetas'),
     
+    url(r'^recetas/(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
+        PacienteDetailView.as_view(template_name='consultorio/paciente_pagos.html'),
+        name='consultorio-paciente-pagos'),
+    
     url(r'^(?P<consultorio>\d+)/paciente/nuevo$',
         PacientePreCreateView.as_view(),
         name='consultorio-paciente-nuevo'),
@@ -63,8 +71,8 @@ urlpatterns = patterns('',
     url(r'^(?P<consultorio>\d+)/persona/nueva$',
         PersonaConsultorioCreateView.as_view(),
         name='consultorio-persona-nueva'),
-	
-	url(r'^(?P<consultorio>\d+)/paciente/(?P<persona>\d+)/agregar$',
+    
+    url(r'^(?P<consultorio>\d+)/paciente/(?P<persona>\d+)/agregar$',
         PacienteCreateView.as_view(),
         name='consultorio-paciente-agregar'),
     
@@ -103,6 +111,10 @@ urlpatterns = patterns('',
     url(r'^(?P<paciente>\d+)/optometria/nueva$',
         OptometriaCreateView.as_view(),
         name='consultorio-optometria-nueva'),
+    
+    url(r'^(?P<paciente>\d+)/pago/nuevo$',
+        PagoCreateView.as_view(),
+        name='consultorio-pago-nuevo'),
     
     url(r'^optometria/(?P<pk>\d+)$',
         OptometriaDetailView.as_view(),

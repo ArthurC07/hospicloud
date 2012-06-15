@@ -11,17 +11,17 @@
   <title>HospiNet :: Iniciar Sesi&oacute;n</title>
 </head>
 <body>
-  {% if form.errors %}
-  <p>
-    Su nombre de usuario y contrase&ntilde;a no coinciden. Por favor intente
-    otra vez.
-  </p>
-  {% endif %}
   <div id="contenedor" class="container_12 content clearfix">
     <form method="post" action="{% url login %}">
       <hgroup>
         <h2>Iniciar Sesi&oacute;n</h2>
       </hgroup>
+      {% if form.errors %}
+      <p>
+        Su nombre de usuario y contrase&ntilde;a no coinciden. Por favor intente
+        otra vez.
+      </p>
+      {% endif %}
       <fieldset id="user-details">
         {% csrf_token %}
         {{ form.username.label_tag }}

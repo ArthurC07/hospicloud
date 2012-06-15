@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from clinique.forms import (PacienteForm, TransaccionForm, CitaForm,
-    ConsultorioForm, ConsultaForm, RecetaForm, HistoriaClinicaForm,
-    OptometriaForm)
-from clinique.models import (Consultorio, Paciente, Transaccion, Cita,
+    ConsultorioForm, ConsultaForm, RecetaForm, HistoriaClinicaForm, PagoForm,
+    OptometriaForm, DiaForm)
+from clinique.models import (Consultorio, Paciente, Transaccion, Cita, Pago,
     Esperador, Consulta, Receta, HistoriaClinica, Optometria)
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, DetailView, CreateView, ListView
+from django.views.generic import (TemplateView, DetailView, CreateView,
+                                  ListView, UpdateView)
 from library.protected import LoginRequiredView
 from persona.forms import PersonaForm
 from persona.models import Persona
@@ -50,6 +51,12 @@ class ConsultorioDetailView(DetailView, LoginRequiredView):
     model = Consultorio
     context_object_name = 'consultorio'
     slug_field = 'uuid'
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
+        context['formulario_diario'] = ReporteAnualForm()
+        return context
 
 class BaseCreateView(CreateView, LoginRequiredView):
     
@@ -178,6 +185,12 @@ class PacienteDetailView(DetailView, LoginRequiredView):
     context_object_name = 'paciente'
     slug_field = 'uuid'
 
+class PacienteUpdateView(UpdateView, LoginRequiredView):
+    
+    model = Paciente
+    form_class = PacienteForm
+    template_name = "consultorio/paciente_update.html"
+
 class TransaccionCreateView(BaseCreateView):
     
     """Permite agregar una :class:`Transaccion` entre un :class:`Consultorio`
@@ -274,6 +287,9 @@ class EsperadorAtendido(RedirectView, LoginRequiredView):
 
 class PacienteBasecreateView(CreateView, LoginRequiredView):
 
+    """"Permite crear un formulario base para ingresar diversos tipos de datos
+    relacionados con un :class:`Paciente`"""
+
     def dispatch(self, *args, **kwargs):
         
         self.paciente = get_object_or_404(Paciente, pk=kwargs['paciente'])
@@ -303,6 +319,9 @@ class ConsultaCreateView(PacienteBasecreateView):
 
 class ConsultaDetailview(DetailView, LoginRequiredView):
     
+    """Permite que el doctor pueda agregar los resultados de la
+    :class:`Consulta` a un :class:`Paciente`"""
+
     model = Consulta
     template_name = 'consultorio/consulta_detail.html'
     context_object_name = 'consulta'
@@ -321,11 +340,17 @@ class RecetaDetailView(DetailView, LoginRequiredView):
 
 class OptometriaCreateView(PacienteBasecreateView):
 
+    """Permite a un medico agregar una :class:`Optometria` al
+    :class:`Paciente`"""
+
     model = Optometria
     form_class = OptometriaForm
     template_name = 'consultorio/optometria_create.html'
 
 class OptometriaDetailView(DetailView, LoginRequiredView):
+
+    """Permite mostrar los valores ingresados en una :class:`Optometria`
+    ingresada por el medico"""
 
     model = Optometria
     template_name = 'consultorio/optometria_detail.html'
@@ -333,6 +358,35 @@ class OptometriaDetailView(DetailView, LoginRequiredView):
 
 class HistoriaClinicaCreateView(PacienteBasecreateView):
 
+    """"Permite agregar entradas a la :class:`HistoriaClinica`  de un
+    :class:`Paciente`"""
+
     model = HistoriaClinica
     form_class = HistoriaClinicaForm
-    template_name = 'Consultorio/historia_clinica_create.html'
+    template_name = 'consultorio/historia_clinica_create.html'
+
+class PagoCreateView(PacienteBasecreateView):
+
+    """Permite crear nuevos :class:`Pago`s a un :class:`Paciente`"""
+
+    model = Pago
+    form_class = PagoForm
+    template_name = 'consultorio/pago_create.html'
+
+class PagoDiarioDetailView(ConsultorioDetailView):
+
+    template_name = 'consultorio/pago_diario.html'
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(PagosDiariosDetailView, self).get_context_data(**kwargs)
+        form = DiaForm(self.request.GET)
+        if not form.is_valid():
+            redirect(reverse(['consultorio-view', self.uuid]))
+        dia = form.cleaned_data['dia']
+        # obtener la fecha de nacimiento mínima
+        context['pagos']= Pagos.objects.filter(
+                                fecha_y_hora__date=dia,
+                                consultorio=self.context['consultorio'])
+        
+        return context

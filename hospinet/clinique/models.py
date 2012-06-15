@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+try:
+    from django.utils import timezone as datetime
+except:
+    from datetime import datetime
 from django.db import models
 from persona.models import Persona
 from users.models import Profile
@@ -44,6 +47,7 @@ class Paciente(models.Model):
     persona = models.ForeignKey(Persona, related_name='consultorios')
     consultorio = models.ForeignKey(Consultorio, related_name='pacientes')
     uuid = UUIDField(version=4)
+    primera_visita = models.DateTimeField(default=datetime.now)
     
     def saldo(self):
         
@@ -142,7 +146,8 @@ class HistoriaClinica(models.Model):
 
 class Optometria(models.Model):
 
-    """Representa los resultados de un examen visual efectuado a un :class:`Paciente`"""
+    """Representa los resultados de un examen visual efectuado a un
+    :class:`Paciente`"""
 
     paciente = models.ForeignKey(Paciente, related_name='optometrias')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
@@ -165,3 +170,17 @@ class Optometria(models.Model):
     def get_absolute_url(self):
         
         return 'consultorio-optometria-view', self.id
+
+class Pago(models.Model):
+
+    """Registra los cobros que se han efectuado a los :class:`Paciente`
+    luego de una consulta"""
+
+    paciente = models.ForeignKey(Paciente, related_name='pagos')
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    monto = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    concepto = models.CharField(max_length=255, blank=True)
+    
+    def get_absolute_url(self):
+        
+        return 'consultorio-view', [self.paciente.consultorio.uuid]
