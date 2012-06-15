@@ -137,7 +137,9 @@
     <Content Include="clinique\templates\consultorio\paciente_agregar.html" />
     <Content Include="clinique\templates\consultorio\paciente_detail.html" />
     <Content Include="clinique\templates\consultorio\paciente_list.html" />
+    <Content Include="clinique\templates\consultorio\paciente_update.html" />
     <Content Include="clinique\templates\consultorio\recetas.html" />
+    <Content Include="clinique\templates\consultorio\pago_create.html" />
     <Content Include="clinique\templates\consultorio\receta_create.html" />
     <Content Include="clinique\templates\consultorio\secretaria_create.html" />
     <Content Include="clinique\templates\search\indexes\consultorio\paciente_text.txt" />
