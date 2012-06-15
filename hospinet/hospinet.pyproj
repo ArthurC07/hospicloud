@@ -40,6 +40,7 @@
     <Compile Include="clinique\migrations\0007_auto__add_field_optometria_notas.py" />
     <Compile Include="clinique\migrations\__init__.py" />
     <Compile Include="clinique\models.py" />
+    <Compile Include="clinique\search_indexes.py" />
     <Compile Include="clinique\tests.py" />
     <Compile Include="clinique\urls.py" />
     <Compile Include="clinique\views.py" />
@@ -136,13 +137,14 @@
     <Content Include="clinique\templates\consultorio\optometria_detail.html" />
     <Content Include="clinique\templates\consultorio\paciente_agregar.html" />
     <Content Include="clinique\templates\consultorio\paciente_detail.html" />
+    <Content Include="clinique\templates\consultorio\pago_diario.html" />
     <Content Include="clinique\templates\consultorio\paciente_list.html" />
     <Content Include="clinique\templates\consultorio\paciente_update.html" />
     <Content Include="clinique\templates\consultorio\recetas.html" />
     <Content Include="clinique\templates\consultorio\pago_create.html" />
     <Content Include="clinique\templates\consultorio\receta_create.html" />
     <Content Include="clinique\templates\consultorio\secretaria_create.html" />
-    <Content Include="clinique\templates\search\indexes\consultorio\paciente_text.txt" />
+    <Content Include="clinique\templates\search\indexes\clinique\paciente_text.txt" />
     <Content Include="clinique\templates\snippets\consultorio_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_list.html" />

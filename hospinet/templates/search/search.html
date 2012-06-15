@@ -7,10 +7,13 @@
   {% for result in page.object_list %}
   <p>
     {% ifequal result.model_name 'persona' %}
-    <a href="{{ result.object.get_absolute_url }}">{{ result.object.identificacion }}</a>{{ result.object.nombre_completo }}
+    <a href="{{ result.object.get_absolute_url }}">{{ result.object.identificacion }} {{ result.object.nombre_completo }}</a>
     {% endifequal %}
     {% ifequal result.model_name 'examen' %}
-    <a href="{{ result.object.get_absolute_url }}">{{ result.object.nombre }}</a>{{ result.object.persona.nombre_completo }}
+    <a href="{{ result.object.get_absolute_url }}">{{ result.object.nombre }}</a> {{ result.object.persona.nombre_completo }}
+    {% endifequal %}
+    {% ifequal result.model_name 'paciente' %}
+    <a href="{{ result.object.get_absolute_url }}">{{ result.object.persona.identificacion }} {{ result.object.persona.nombre_completo }}</a>
     {% endifequal %}
   </p>
   {% empty %}
