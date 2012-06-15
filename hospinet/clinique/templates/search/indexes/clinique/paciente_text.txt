@@ -1,2 +1,2 @@
-{{ object.persona.identificacion }}
-{{ object.persona.nombre_completo }}
+{{ object.identificacion }}
+{{ object.nombre_completo }}

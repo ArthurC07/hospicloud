@@ -48,6 +48,14 @@ class Paciente(models.Model):
     consultorio = models.ForeignKey(Consultorio, related_name='pacientes')
     uuid = UUIDField(version=4)
     primera_visita = models.DateTimeField(default=datetime.now)
+
+    def identificacion():
+
+        return self.persona.identificacion
+
+    def nombre(self):
+
+        return self.persona.nombre_completo()
     
     def saldo(self):
         
