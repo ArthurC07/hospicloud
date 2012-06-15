@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block content %}
+{% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
+<div id="informacion" class="grid_9">
+  <table class="data">
+  <thead class="gradient">
+    <tr>
+      <th>Fecha y Hora</th>
+      <th>Nombre</th>
+      <th>Concepto</th>
+      <th>Monto</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pago in pagos.all %}
+    <tr>
+      <td>{{ pago.fecha_y_hora|date:"d/m/Y H:i" }}</td>
+      <td>{{ pago.paciente.persona.nombre_completo }}</td>
+      <td>{{ pago.concepto }}</td>
+      <td>{{ pago.monto }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+{% endblock %}
