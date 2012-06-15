@@ -28,7 +28,7 @@ urlpatterns = patterns('',
         ConsultorioDetailView.as_view(template_name='consultorio/paciente_list.html'),
         name='consultorio-pacientes'),
     
-    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/pacientes$',
+    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/pagos$',
         PagoDiarioDetailView.as_view(template_name='consultorio/pago_diario.html'),
         name='consultorio-pago-diario'),
     

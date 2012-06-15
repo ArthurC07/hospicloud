@@ -55,7 +55,7 @@ class ConsultorioDetailView(DetailView, LoginRequiredView):
     def get_context_data(self, **kwargs):
         
         context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
-        context['formulario_diario'] = ReporteAnualForm()
+        context['formulario_diario'] = DiaForm()
         return context
 
 class BaseCreateView(CreateView, LoginRequiredView):
@@ -379,14 +379,16 @@ class PagoDiarioDetailView(ConsultorioDetailView):
     
     def get_context_data(self, **kwargs):
         
-        context = super(PagosDiariosDetailView, self).get_context_data(**kwargs)
+        context = super(PagoDiarioDetailView, self).get_context_data(**kwargs)
         form = DiaForm(self.request.GET)
         if not form.is_valid():
             redirect(reverse(['consultorio-view', self.uuid]))
         dia = form.cleaned_data['dia']
         # obtener la fecha de nacimiento mínima
-        context['pagos']= Pagos.objects.filter(
-                                fecha_y_hora__date=dia,
-                                consultorio=self.context['consultorio'])
+        context['pagos']= Pago.objects.filter(
+                                fecha_y_hora__year=dia.year,
+                                fecha_y_hora__month=dia.month,
+                                fecha_y_hora__day=dia.day,
+                                paciente__consultorio=context['consultorio'])
         
         return context
