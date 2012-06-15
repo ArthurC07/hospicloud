@@ -26,7 +26,7 @@
         {% endfor %}
       </tbody>
     </table>
-    <a href="{% url enfermeria-ingesta-agregar admision.paciente.id %}" class="button">Agregar Ingesta</a>
+    <a href="{% url enfermeria-ingesta-agregar admision.id %}" class="button">Agregar Ingesta</a>
   </article>
   <article id="excretas" class="grid_9">
     <table class="data">
@@ -50,7 +50,7 @@
         {% endfor %}
       </tbody>
     </table>
-    <a href="{% url enfermeria-excreta-agregar admision.paciente.id %}" class="button">Agregar Ingesta</a>
+    <a href="{% url enfermeria-excreta-agregar admision.id %}" class="button">Agregar Ingesta</a>
   </article>
 </section>
 </div>

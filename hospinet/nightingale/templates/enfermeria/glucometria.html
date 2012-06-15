@@ -25,7 +25,7 @@
         {% endfor %}
       </tbody>
     </table>
-    <a href="{% url enfermeria-glicemia-agregar admision.paciente.id %}" class="button">Agregar Glicemia</a>
+    <a href="{% url enfermeria-glicemia-agregar admision.id %}" class="button">Agregar Glicemia</a>
     <table class="data">
       <caption>Administración de Insulina</caption>
       <thead class="gradient">
@@ -45,7 +45,7 @@
         {% endfor %}
       </tbody>
     </table>
-    <a href="{% url enfermeria-insulina-agregar admision.paciente.id %}" class="button">Registrar Insulina</a>
+    <a href="{% url enfermeria-insulina-agregar admision.id %}" class="button">Registrar Insulina</a>
     <table class="data">
       <caption>Registros de Glucosuria</caption>
       <thead class="gradient">
