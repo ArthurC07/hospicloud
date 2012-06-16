@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load l10n %}
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
 {% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
 <div id="informacion" class="grid_9">
+  <h1>Pagos del {{ dia|date:"d/m/Y" }}</h1>
   <table class="data">
   <thead class="gradient">
     <tr>
@@ -22,6 +24,14 @@
     </tr>
     {% endfor %}
   </tbody>
+      {% localize off %}
+  <tfoot class="gradient">
+    <tr>
+      <th>Total:</th>
+      <th>{{ total }}</th>
+    </tr>
+  </tfoot>
+      {% endlocalize %}
 </table>
 
 </div>

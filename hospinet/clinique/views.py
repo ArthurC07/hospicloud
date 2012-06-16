@@ -375,6 +375,9 @@ class PagoCreateView(PacienteBasecreateView):
 
 class PagoDiarioDetailView(ConsultorioDetailView):
 
+    """Muestra una lista con los :class:`Pago`s que han sido ingresados durante
+    una determinada fecha, reportando el monto total de los mismos"""
+
     template_name = 'consultorio/pago_diario.html'
     
     def get_context_data(self, **kwargs):
@@ -385,10 +388,13 @@ class PagoDiarioDetailView(ConsultorioDetailView):
             redirect(reverse(['consultorio-view', self.uuid]))
         dia = form.cleaned_data['dia']
         # obtener la fecha de nacimiento mínima
-        context['pagos']= Pago.objects.filter(
+        pagos = Pago.objects.filter(
                                 fecha_y_hora__year=dia.year,
                                 fecha_y_hora__month=dia.month,
                                 fecha_y_hora__day=dia.day,
                                 paciente__consultorio=context['consultorio'])
-        
+        context['dia'] = dia
+        context['pagos'] = pagos
+        context['total'] = sum(p.monto for o in pagos.all())
+
         return context
