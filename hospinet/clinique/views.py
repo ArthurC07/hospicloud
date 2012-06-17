@@ -304,7 +304,7 @@ class PacienteBasecreateView(CreateView, LoginRequiredView):
     def form_valid(self, form):
         
         self.object = form.save(commit=False)
-        self.object.persona = self.paciente
+        self.object.paciente = self.paciente
         self.object.save()
         
         return HttpResponseRedirect(self.get_success_url())

@@ -102,6 +102,7 @@ class OptometriaForm(DateForm):
     class Meta:
 
         model = Optometria
+    
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Paciente.objects.all(),
                                   widget=forms.HiddenInput(), required=False)

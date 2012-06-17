@@ -27,7 +27,7 @@
     </table>
     <a href="{% url enfermeria-glicemia-agregar admision.id %}" class="button">Agregar Glicemia</a>
     <table class="data">
-      <caption>Administración de Insulina</caption>
+      <caption>Administraci&oacute;n de Insulina</caption>
       <thead class="gradient">
         <tr>
           <th>Fecha y Hora</th>
@@ -65,7 +65,7 @@
         {% endfor %}
       </tbody>
     </table>
-    <a href="{% url enfermeria-glucosuria-agregar admision.paciente.id %}" class="button">Registrar Glucosuria</a>
+    <a href="{% url enfermeria-glucosuria-agregar admision.id %}" class="button">Registrar Glucosuria</a>
   </section>
 </div>
 {% endblock %}

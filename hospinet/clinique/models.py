@@ -123,7 +123,7 @@ class Consulta(models.Model):
     
     def get_absolute_url(self):
         
-        return 'consultorio-paciente', self.paciente.uuid
+        return 'consultorio-paciente', [self.paciente.uuid]
 
 class Receta(models.Model):
 
@@ -137,7 +137,7 @@ class Receta(models.Model):
     
     def get_absolute_url(self):
         
-        return 'consultorio-receta-view', self.id
+        return 'consultorio-receta-view', [self.id]
 
 class HistoriaClinica(models.Model):
 
@@ -152,7 +152,7 @@ class HistoriaClinica(models.Model):
     
     def get_absolute_url(self):
         
-        return 'consultorio-paciente', self.paciente.uuid
+        return 'consultorio-paciente', [self.paciente.uuid]
 
 class Optometria(models.Model):
 
@@ -179,7 +179,7 @@ class Optometria(models.Model):
     
     def get_absolute_url(self):
         
-        return 'consultorio-optometria-view', self.id
+        return 'consultorio-optometria-view', [self.id]
 
 class Pago(models.Model):
 
