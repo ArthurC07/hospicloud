@@ -3,9 +3,19 @@ from clinique.models import (Paciente, Cita, Transaccion, Consultorio, Pago,
                              Consulta, Receta, HistoriaClinica, Optometria)
 from django import forms
 from users.models import Profile
+from persona.forms import DateTimeWidget
 
+class DateForm(forms.ModelForm):
+
+    """Formulario base para los distintos ingresos de información que requieren
+    una fecha y hora"""
+
+    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(), required=False)
+    
 class ConsultorioForm(forms.ModelForm):
     
+    """Permite editar los datos  de un :class:`Consultorio`"""
+
     class Meta:
         
         model = Consultorio
@@ -17,6 +27,8 @@ class ConsultorioForm(forms.ModelForm):
 
 class PacienteForm(forms.ModelForm):
     
+    """Permite editar los datos de un :class:`Paciente`"""
+
     class Meta:
         
         model = Paciente
@@ -25,121 +37,80 @@ class PacienteForm(forms.ModelForm):
                                   queryset=Consultorio.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class CitaForm(forms.ModelForm):
+class CitaForm(DateForm):
+
+    """Permite editar los datos de una :class:`Cita`"""
 
     class Meta:
         
         model = Cita
     
-    fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
-    
     consultorio = forms.ModelChoiceField(label="",
                                   queryset=Consultorio.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class TransaccionForm(forms.ModelForm):
+class TransaccionForm(DateForm):
     
     class Meta:
         
         model = Transaccion
     
-    fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
-    
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Paciente.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class ConsultaForm(forms.ModelForm):
+class ConsultaForm(DateForm):
 
     """Crea un formulario para agregar una :class:`Consulta`"""
 
     class Meta:
 
         model = Consulta
-    
-    fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
 
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Paciente.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class RecetaForm(forms.ModelForm):
+class RecetaForm(DateForm):
 
     """Crea un formulario para agregar una :class:`Receta`"""
 
     class Meta:
 
         model = Receta
-
-    fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
     
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Paciente.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class HistoriaClinicaForm(forms.ModelForm):
+class HistoriaClinicaForm(DateForm):
 
     """Crea un formulario para agregar una :class:`Historiaclinica`"""
 
     class Meta:
 
         model = HistoriaClinica
-
-    fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
     
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Paciente.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class OptometriaForm(forms.ModelForm):
+class OptometriaForm(DateForm):
 
     """Crea un formulario para agregar una :class:`Optometria`"""
 
     class Meta:
 
         model = Optometria
-
-    fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
-    
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Paciente.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class PagoForm(forms.ModelForm):
+class PagoForm(DateForm):
 
     class Meta:
 
         model = Pago
-
-    fecha_y_hora = forms.DateTimeField(widget=forms.DateTimeInput(
-                                            attrs={'class': 'datetimepicker' },
-                                            format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
     
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Paciente.objects.all(),

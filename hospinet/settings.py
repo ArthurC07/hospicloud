@@ -126,7 +126,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'django_extensions',
+    # internal apps
     'persona',
     'spital',
     'imaging',
@@ -134,11 +134,13 @@ INSTALLED_APPS = (
     'nightingale',
     'clinique',
     # Third party apps go here
+    'django_extensions',
     'treemenus',
     'sorl.thumbnail',
     'django_countries',
     'haystack',
     'tastypie',
+    'actstream',
     'south',
     'private_files',
 )
@@ -191,3 +193,23 @@ HAYSTACK_CONNECTIONS = {
 FILE_PROTECTION_METHOD = 'basic'
 AUTH_PROFILE_MODULE = 'users.Profile'
 
+ACTSTREAM_ACTION_MODELS = (
+    'auth.user',
+    'auth.group',
+    'nightingale.SignoVital',
+    'nightingale.Evolución',
+    'nightingale.Cargo',
+    'nightingale.OrdenMedica',
+    'nightingale.Ingesta',
+    'nightingale.Excreta',
+    'nightingale.NotaEnfermeria',
+    'nightingale.Glicemia',
+    'nightingale.Glucosuria',
+    'nightingale.Insulina',
+    'nightingale.Sumario',
+    'nightingale.Medicamento',
+    'nightingale.Dosis',
+    'spital.Admision',
+    'comments.comment')
+
+ACTSTREAM_MANAGER = 'actstream.managers.ActionManager'

@@ -3,6 +3,23 @@ from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
 from django import forms
 
+class DateTimeWidget(forms.DateTimeInput):
+    
+    """Permite mostrar un input preparado para fecha y hora utilizando
+    JQuery UI DateTimePicker"""
+
+    class Media:
+        js = ('js/jquery-ui-timepicker.js',)
+
+    def __init__(self, attrs=None):
+        if attrs is not None:
+            self.attrs = attrs.copy()
+        else:
+            self.attrs = {'class': 'datetimepicker'}
+
+        if not 'format' in self.attrs:
+            self.attrs['format'] = '%d/%m/%Y %H:%M'
+
 class PersonaForm(forms.ModelForm):
     
     """Permite mostrar una interfaz para capturar los datos de una

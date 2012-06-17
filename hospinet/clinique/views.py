@@ -395,6 +395,6 @@ class PagoDiarioDetailView(ConsultorioDetailView):
                                 paciente__consultorio=context['consultorio'])
         context['dia'] = dia
         context['pagos'] = pagos
-        context['total'] = sum(p.monto for o in pagos.all())
+        context['total'] = sum(p.monto for p in pagos.all())
 
         return context

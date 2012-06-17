@@ -118,6 +118,8 @@ class Consulta(models.Model):
     paciente = models.ForeignKey(Paciente, related_name='consultas')
     razon_de_la_visita = models.TextField(blank=True)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
+    agudeza_visual_ojo_derecho = models.IntegerField(default=0)
+    agudeza_visual_ojo_izquierdo = models.IntegerField(default=0)
     
     def get_absolute_url(self):
         
@@ -183,10 +185,18 @@ class Pago(models.Model):
 
     """Registra los cobros que se han efectuado a los :class:`Paciente`
     luego de una consulta"""
+    
+    FORMAS_DE_PAGO = (
+        ('E', u'Efectivo'),
+        ('T', u'Tarjeta de Crédito'),
+        ('C', u'Cheque'),
+    )
 
     paciente = models.ForeignKey(Paciente, related_name='pagos')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     monto = models.DecimalField(default=0, max_digits=5, decimal_places=2)
+    forma_de_pago = models.CharField(max_length=1, choices=FORMAS_DE_PAGO,
+                                     blank=True)
     concepto = models.CharField(max_length=255, blank=True)
     
     def get_absolute_url(self):

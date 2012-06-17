@@ -14,6 +14,7 @@
       <th>Monto</th>
     </tr>
   </thead>
+  {% localize off %}
   <tbody>
     {% for pago in pagos.all %}
     <tr>
@@ -24,14 +25,13 @@
     </tr>
     {% endfor %}
   </tbody>
-      {% localize off %}
   <tfoot class="gradient">
     <tr>
       <th>Total:</th>
       <th>{{ total }}</th>
     </tr>
   </tfoot>
-      {% endlocalize %}
+  {% endlocalize %}
 </table>
 
 </div>

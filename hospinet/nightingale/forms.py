@@ -5,23 +5,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
                                 OrdenMedica, SignoVital, Medicamento)
 from django.contrib.auth.models import User
-
-class DateTimeWidget(forms.DateTimeInput):
-    
-    """Permite mostrar un input preparado para fecha y hora utilizando
-    JQuery UI DateTimePicker"""
-
-    class Media:
-        js = ('js/jquery-ui-timepicker.js',)
-
-    def __init__(self, attrs=None):
-        if attrs is not None:
-            self.attrs = attrs.copy()
-        else:
-            self.attrs = {'class': 'datetimepicker'}
-
-        if not 'format' in self.attrs:
-            self.attrs['format'] = '%d/%m/%Y %H:%M'
+from persona.forms import DateTimeWidget
 
 class BaseForm(forms.ModelForm):
 

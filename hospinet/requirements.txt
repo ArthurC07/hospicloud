@@ -3,9 +3,10 @@ django_countries
 django-treemenus
 sorl.thumbnail
 python-whoosh
-haystack
+haystack>=2.0.0-beta
 django-tastypie
 django-private-files
 django-extensions
 south
-gdcm
+python-gdcm
+django-activity-stream
