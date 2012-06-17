@@ -2,6 +2,7 @@
 method="post">
   {% csrf_token %} <h1>Agregar una Optometria</h1>
   <div id="messages"></div>
+    {{ form.paciente }}
     <div>
     <table class="data">
       <thead class="gradient">
