@@ -3,7 +3,7 @@
 {% include "snippets/aside.html" %}
 <div class="content">
   <section id="medicamentos" class="grid_9">
-    <h1>Medicamentos de {{ admision.paciente.full_name }} en {{ admision.habitacion }}</h1>
+    <h1>Medicamentos de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     {% for medicamento in admision.medicamentos.all %}
     <article>
         <table>

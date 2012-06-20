@@ -280,13 +280,20 @@ class Medicamento(models.Model):
     
     Esta droga puede administrarse a intervalos determinados por el doctor,
     dichos intervalos son medidos en horas.
-
     """
+
+    INTERVALOS = (
+        (1, u"Una vez al día"),
+        (2, u"Dos veces al día"),
+        (2, u"Tres veces al día"),
+        (2, u"Cuatro veces al día"),
+        (2, u"Seis veces al día"),
+    )
 
     admision = models.ForeignKey(Admision, related_name='medicamentos')
     nombre = models.CharField(max_length=200, blank=True, null=True)
     inicio = models.DateTimeField(default=datetime.now)
-    intervalo = models.IntegerField(blank=True, null=True)
+    intervalo = models.IntegerField(blank=True, null=True, choices=INTERVALOS)
     dias = models.IntegerField(blank=True, null=True)
     control = models.CharField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
@@ -298,18 +305,7 @@ class Medicamento(models.Model):
         :class:`Medicamento` que serán suministradas a la :class:`Persona`
         durante la :class:`Admision`"""
 
-        diaria = 24 / self.intervalo
-        total = diaria * self.dias
-        momento = self.inicio
-        horas = timedelta(hours=self.intervalo)
-
-        for n in range(total):
-
-            dosis = Dosis()
-            dosis.medicamento = self
-            dosis.momento = momento
-            momento += horas
-            dosis.save()
+        pass
 
 class Dosis(models.Model):
 
@@ -319,7 +315,7 @@ class Dosis(models.Model):
 
     medicamento = models.ForeignKey(Medicamento, related_name='dosis',
                                    on_delete=models.CASCADE)
-    momento = models.DateField(default=datetime.now)
+    fecha_y_hora = models.DateField(default=datetime.now)
     suministrada = models.NullBooleanField(default=False)
     usuario = models.ForeignKey(User, blank=True, null=True, related_name='dosis')
 

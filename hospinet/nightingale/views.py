@@ -55,8 +55,11 @@ class IngresarView(UpdateView, LoginRequiredView):
         
         self.object.ingresar()
         return reverse('nightingale-view-id', args=[self.object.id])
+
 class NotaUpdateView(UpdateView, LoginRequiredView):
     
+    """Permite editar una :class:`NotaEnfermeria` en caso de ser necesario"""
+
     model = NotaEnfermeria
     form_class = NotaEnfermeriaForm
     template_name = 'enfermeria/nota_create.html'
@@ -270,9 +273,13 @@ class DosisSuministrarView(RedirectView, LoginRequiredView):
     
     def get_redirect_url(self, **kwargs):
         
+        """Obtiene la :class:`Dosis` desde la base de datos, la marca como
+        suministrada, estampa la hora y el :class:`User` que la suministro"""
+
         dosis = get_object_or_404(Dosis, pk=kwargs['pk'])
         dosis.suministrada = True
         dosis.usuario = self.request.user
+        dosis.fecha_y_hora = datetime.now()
         dosis.save()
         messages.info(self.request, u'¡Dosis registrada como suministrada!')
         return reverse('nightingale-view-id', args=[dosis.medicamento.admision.id])
