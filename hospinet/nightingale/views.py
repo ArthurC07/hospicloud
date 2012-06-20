@@ -14,6 +14,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
                                 OrdenMedica, SignoVital, Medicamento, Dosis)
 from spital.models import Admision
 from django.contrib import messages
+from datetime import datetime
 
 class NightingaleIndexView(ListView, LoginRequiredView):
     
@@ -54,6 +55,11 @@ class IngresarView(UpdateView, LoginRequiredView):
         
         self.object.ingresar()
         return reverse('nightingale-view-id', args=[self.object.id])
+class NotaUpdateView(UpdateView, LoginRequiredView):
+    
+    model = NotaEnfermeria
+    form_class = NotaEnfermeriaForm
+    template_name = 'enfermeria/nota_create.html'
 
 class NightingaleDetailView(DetailView, LoginRequiredView):
     
@@ -127,7 +133,7 @@ class BaseCreateView(CreateView, LoginRequiredView):
         formulario que será llenado posteriormente"""
 
         kwargs = super(BaseCreateView, self).get_form_kwargs()
-        kwargs.update({ 'initial':{'admision':self.admision.id}})
+        kwargs.update({ 'initial':{'admision':self.admision.id, 'fecha_y_hora': datetime.now(), 'usuario':self.request.user.id}})
         return kwargs
     
     def dispatch(self, *args, **kwargs):

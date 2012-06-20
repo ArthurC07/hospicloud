@@ -12,6 +12,7 @@ class DateTimeWidget(forms.DateTimeInput):
         js = ('js/jquery-ui-timepicker.js',)
 
     def __init__(self, attrs=None):
+        super(DateTimeWidget, self).__init__(attrs)
         if attrs is not None:
             self.attrs = attrs.copy()
         else:

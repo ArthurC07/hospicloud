@@ -11,13 +11,15 @@
         <tr>
           <th>Fecha y Hora</th>
           <th>Descripci&oacute;n</th>
-        </tr>
+          <th>Acciones</th>
+    </tr>
       </thead>
       <tbody>
         {% for nota in admision.notas_enfermeria.all %}
         <tr>
-          <th>{{ nota.momento }}</th>
-          <th>{{ nota.nota }}</th>
+          <td>{{ nota.fecha_y_hora }}</th>
+          <td>{{ nota.nota }}</th>
+          <td><a href="{% url enfermeria-nota-editar nota.id %}">Editar</a></th>
         </tr>
         {% endfor %}
       </tbody>

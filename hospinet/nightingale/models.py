@@ -38,7 +38,7 @@ class SignoVital(models.Model):
         """Permite guardar los datos mientras calcula algunos campos
         automaticamente"""
 
-        self.presion_arterial_media = self.presion_diastolica + float(1) / float(3) * (self.presion_sistolica -self.presion_diastolica)
+        self.presion_arterial_media = float(self.presion_diastolica) + float(1) / float(3) * float(self.presion_sistolica -self.presion_diastolica)
 
         super(SignoVital, self).save(*args, **kwargs)
 
@@ -82,7 +82,7 @@ class Cargo(models.Model):
     
     admision = models.ForeignKey(Admision, related_name='cargos')
     fecha_y_hora = models.DateTimeField(default=datetime.now)
-    cargo = models.CharField(max_length=200)
+    cargo = models.TextField(max_length=200)
     inicio = models.DateTimeField(default=datetime.now)
     fin = models.DateTimeField(default=datetime.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
@@ -101,7 +101,7 @@ class OrdenMedica(models.Model):
     
     admision = models.ForeignKey(Admision, related_name='ordenes_medicas')
     orden = models.CharField(max_length=200, blank=True)
-    doctor = models.CharField(max_length=200, blank=True)
+#    doctor = models.CharField(max_length=200, blank=True)
     fecha_y_hora = models.DateTimeField(default=datetime.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='ordenes_medicas')

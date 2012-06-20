@@ -18,7 +18,7 @@
         {% for orden in admision.ordenes_medicas.all %}
         <tr>
           <th>{{ orden.fecha_y_hora }}</th>
-          <th>{{ orden.doctor }}</th>
+          <th>{{ orden.usuario.username }}</th>
           <th>{{ orden.orden }}</th>
         </tr>
         {% endfor %}

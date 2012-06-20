@@ -209,6 +209,7 @@ ACTSTREAM_ACTION_MODELS = (
     'nightingale.Sumario',
     'nightingale.Medicamento',
     'nightingale.Dosis',
+    'nightingale.Evolucion',
     'spital.Admision',
     'comments.comment')
 
