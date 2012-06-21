@@ -6,24 +6,7 @@
     <hgroup>
       <h1>Ordenes M&eacute;dicas de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
-    <table class="data">
-      <thead class="gradient">
-        <tr>
-          <th>Fecha y Hora</th>
-          <th>Doctor</th>
-          <th>Descripci&oacute;n</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for orden in admision.ordenes_medicas.all %}
-        <tr>
-          <th>{{ orden.fecha_y_hora }}</th>
-          <th>{{ orden.usuario.username }}</th>
-          <th>{{ orden.orden }}</th>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    {% include "snippets/orden_table.html" %}
     <a href="{% url enfermeria-orden-agregar admision.id %}" class="button">Agregar Orden M&eacute;dica</a>
   </section>
 </div>

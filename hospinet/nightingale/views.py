@@ -67,7 +67,13 @@ class NotaUpdateView(UpdateView, LoginRequiredView):
 class NightingaleDetailView(DetailView, LoginRequiredView):
     
     """Permite ver los datos de una :class:`Admision` desde la interfaz de
-    enfermeria"""
+    enfermeria
+    
+    Esta vista se utiliza en conjunto con varias plantillas que permite mostrar
+    una diversidad de datos como ser resumenes, :class:`NotaEnfermeria`s,
+    :class:`SignoVital`es, :class:`OrdenMedica`s, y todos los demas datos que
+    se relacionan con una :class:`Admision` de manera directa.
+    """
 
     model = Admision
     template_name = 'enfermeria/nightingale_detail.html'
@@ -91,7 +97,7 @@ class SignosDetailView(DetailView, LoginRequiredView):
         """
         
         context = super(SignosDetailView, self).get_context_data(**kwargs)
-        signos = self.object.signos_vitales
+        signos = self.object.signos_vitales.extra(order_by=['fecha_y_hora']).all()
 
         context['min'] = self.object.hospitalizacion.strftime('%Y-%m-%d %H:%M')
 
@@ -105,15 +111,39 @@ class SignosDetailView(DetailView, LoginRequiredView):
             context['pulso_promedio'] = self.object.pulso_promedio
             context['presion_diastolica_promedio'] = self.object.presion_diastolica_promedio
             context['presion_sistolica_promedio'] = self.object.presion_sistolica_promedio
-            inicio = self.object.signos_vitales.extra(order_by=['fecha_y_hora']).all()[0].fecha_y_hora - timedelta(minutes=5)
+            inicio = signos[0].fecha_y_hora - timedelta(minutes=5)
             context['min'] = inicio.strftime('%Y-%m-%d %H:%M')
         
-        context['pulso'] = u','.join("['{0}', {1}]".format(s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.pulso) for s in signos.all())
-        context['temperatura'] = "['{0}', 37.00], ".format(context['min']) + u','.join("['{0}', {1}]".format(s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.temperatura) for s in signos.extra(order_by=['fecha_y_hora']).all())
-        context['presion_sistolica'] = u','.join("['{0}', {1}]".format(s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.presion_sistolica) for s in signos.all())
-        context['presion_diastolica'] = u','.join("['{0}', {1}]".format(s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.presion_diastolica) for s in signos.all())
+        context['pulso'] = u','.join("['{0}', {1}]".format(
+                            s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.pulso)
+                        for s in signos)
+        context['temperatura'] = "['{0}', 37.00], ".format(context['min']) + \
+                                 u','.join("['{0}', {1}]".format(
+                                   s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
+                                   s.temperatura)
+                        for s in signos)
+
+        context['presion_sistolica'] = u','.join("['{0}', {1}]".format(
+                                     s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
+                                     s.presion_sistolica)
+                        for s in signos)
+
+        context['presion_diastolica'] = u','.join("['{0}', {1}]".format(
+                                     s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
+                                     s.presion_diastolica)
+                        for s in signos)
 
         return context
+
+class ResumenDetailView(NightingaleDetailView, SignosDetailView):
+    
+    """Muestra la información de una :class:`Admision` de forma totalmente
+    consolidada, para evitar grandes saltos de navegación.
+    """
+
+    model = Admision
+    template_name='enfermeria/resumen.html'
+    slug_field = 'uuid'
 
 class BaseCreateView(CreateView, LoginRequiredView):
     
@@ -132,7 +162,9 @@ class BaseCreateView(CreateView, LoginRequiredView):
         formulario que será llenado posteriormente"""
 
         kwargs = super(BaseCreateView, self).get_form_kwargs()
-        kwargs.update({ 'initial':{'admision':self.admision.id, 'fecha_y_hora': datetime.now(), 'usuario':self.request.user.id}})
+        kwargs.update({'initial':{'admision':self.admision.id,
+                                  'fecha_y_hora': datetime.now(),
+                                  'usuario':self.request.user.id}})
         return kwargs
     
     def dispatch(self, *args, **kwargs):

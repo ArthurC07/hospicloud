@@ -7,36 +7,7 @@
     <h2>Signos Vitales de {{ admision.paciente.nombre_completo }}</h2>
     <p>Frecuencia de Lectura: {{ admision.lectura.signos_vitales }} minutos</p>
     <a href="{% url nightingale-signos-grafico admision.id %}" class="button">Mostrar Gr&aacute;fico</a>
-    <table class="data">
-      <thead class="gradient">
-        <tr>
-          <th>Fecha y Hora</th>
-          <th>Pulso</th>
-          <th>Temperatura</th>
-          <th>Presi&oacute;n</th>
-          <th>Respiraci&oacute;n</th>
-          <th>SATO2</th>
-          <th>PAM</th>
-          <th>Observaciones</th>
-        </tr>
-      </thead>
-      {% localize off %}
-      <tbody>
-        {% for signos in admision.signos_vitales.all %}
-        <tr>
-          <td>{{ signos.momento }}</td>
-          <td>{{ signos.pulso }}</td>
-          <td>{{ signos.temperatura }}</td>
-          <td>{{ signos.presion_sistolica }} / {{ signos.presion_diastolica }}</td>
-          <td>{{ signos.respiracion }}</td>
-          <td>{{ signos.saturacion_de_oxigeno }}</td>
-          <td>{{ signos.presion_arterial_media|floatformat:2 }}</td>
-          <td>{{ signos.observacion }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-      {% endlocalize %}
-    </table>
+    {% include "snippets/signo_table.html" %}
     <a href="{% url enfermeria-signo-agregar admision.id %}" class="button">Agregar Lectura</a>
   </section>
 </div>

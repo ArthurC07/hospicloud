@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load l10n %}
+{% block header %}
+{% include "snippets/signos_js.html" %}
+{% endblock %}
+{% block content %}
+<div class="content clearfix">
+{% include "snippets/aside.html" with admision=admision %}
+<div id="informacion" class="grid_9">
+  <hgroup>
+    <h1>Hospitalizaci&oacute;n de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
+  </hgroup>
+  <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
+  <span>{{ admision.get_estado_display }}</span>
+  {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
+  <div class="info">
+    {% include "snippets/lectura.html" with lectura=admision.frecuencia_lectura %} <a href="{% url persona-fisico-editar admision.paciente.id %}" class="button">Editar Frecuencia de Lectura</a>
+  </div>
+  <div class="info">
+    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url persona-editar admision.paciente.id %}" class="button">Editar Datos del Paciente</a>
+  </div>
+  <div class="info">
+    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url persona-fisico-editar admision.paciente.id %}" class="button">Editar F&iacute;sico</a>
+  </div>
+<section id="signos-vitales">
+    <h2>Signos Vitales</h2>
+    <div id="signos_vitales" class="bloque-superior">
+      <article id="temperatura-article">
+        <section>
+            <div id="temperatura" class="grafica"></div>
+        </section>
+        <p>&nbsp;</p>
+        <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
+      </article>
+      <article id="presion-article">
+        <div id="presion" class="grafica"></div>
+        <p>&nbsp;</p>
+        <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }} / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
+      </article>
+      <article id="pulso-article">  
+        <div id="pulso" class="grafica"></div>
+        <p>&nbsp;</p>
+        <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
+      </article>
+    </div>
+    {% include "snippets/signo_table.html" %}
+  </section>
+<section id="ingestas-excretas">
+    <hgroup>
+      <h2>Ingestas y Excretas</h2>
+    </hgroup>
+  <article id="ingestas">
+    {% include "snippets/ingesta_table.html" %}
+  </article>
+  <article id="excretas">
+    {% include "snippets/excreta_table.html" %}
+  </article>
+</section>
+<section id="evolucion">
+    <hgroup>
+      <h1>Evoluci&oacute;n</h1>
+    </hgroup>
+    {% include "snippets/evolucion_table.html" %}
+  </section>
+<section id="glicemia">
+    <hgroup>
+      <h2>Glucometr&iacute;a</h2>
+    </hgroup>
+    {% include "snippets/glicemia_table.html" %}
+    {% include "snippets/insulina_table.html" %}
+    {% include "snippets/glucosuria_table.html" %}
+  </section>
+  <section id="ordenes-medicas">
+    <hgroup>
+      <h2>Ordenes M&eacute;dicas</h2>
+    </hgroup>
+    {% include "snippets/orden_table.html" %}
+  </section>
+  <section id="enfermeria">
+    <hgroup>
+      <h2>Notas de Enfermer&iacute;a</h2>
+    </hgroup>
+    {% include "snippets/nota_table.html" with editable=False%}
+  </section>
+  <section id="cargos">
+    <hgroup>
+     <h2>Cargos</h2>
+    </hgroup>
+    {% include "snippets/cargo_table.html" %}
+  </section>
+</div>
+{% endblock %}

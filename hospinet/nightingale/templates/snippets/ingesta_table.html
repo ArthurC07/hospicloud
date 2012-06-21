@@ -1,0 +1,28 @@
+    <table class="data">
+      <caption>Ingestas</caption>
+      <thead class="gradient">
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Ingerido</th>
+          <th>Cantidad</th>
+          <th>V&iacute;a</th>
+          <th>L&iacute;quido</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if admision.ingestas.count == 0%}
+        <tr>
+          <td colspan="5">No hay ingestas registradas</td>
+        </tr>
+        {% endif%}
+        {% for ingesta in admision.ingestas.all %}
+        <tr>
+          <td>{{ ingesta.fecha_y_hora }}</td>
+          <td>{{ ingesta.ingerido }}</td>
+          <td>{{ ingesta.cantidad }}</td>
+          <th>{{ ingesta.via }}</th>
+          <td>{{ ingesta.liquido|yesno:"Sí,No" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>

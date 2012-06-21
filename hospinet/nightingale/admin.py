@@ -2,7 +2,7 @@
 from django.contrib import admin
 from nightingale.models import (SignoVital, Evolucion, Cargo, OrdenMedica,
     Ingesta, Excreta, Glucosuria, Glicemia, Insulina, Sumario, Medicamento,
-    FrecuenciaLectura)
+    FrecuenciaLectura, NotaEnfermeria)
 
 admin.site.register(SignoVital)
 admin.site.register(Evolucion)
@@ -16,4 +16,4 @@ admin.site.register(Glucosuria)
 admin.site.register(Sumario)
 admin.site.register(FrecuenciaLectura)
 admin.site.register(Medicamento)
-
+admin.site.register(NotaEnfermeria)

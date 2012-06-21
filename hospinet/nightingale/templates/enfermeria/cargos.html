@@ -6,26 +6,7 @@
     <hgroup>
       <h1>Cargos Efectuados a {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
-    <table class="data">
-      <thead class="gradient">
-        <tr>
-          <th>Fecha y Hora</th>
-          <th>Inicio</th>
-          <th>Cargo</th>
-          <th>Fin</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for cargo in admision.cargos.all %}
-        <tr>
-          <td>{{ cargo.fecha_y_hora|date:"d/m/Y P" }}</td>
-          <td>{{ cargo.inicio|date:"d/m/Y P" }}</td>
-          <td>{{ cargo.cargo }}</td>
-          <td>{{ cargo.fin|date:"d/m/Y P" }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    {% include "snippets/cargo_table.html" %}
     <a href="{% url enfermeria-cargo-agregar admision.id %}" class="button">Agregar Cargo</a>
   </section>
 </div>

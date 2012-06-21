@@ -1,0 +1,29 @@
+    <table class="data">
+      <thead class="gradient">
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Autor</th>
+          <th>Descripci&oacute;n</th>
+          {% if editable %}
+          <th>Acciones</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% if admision.notas_enfermeria.count == 0%}
+        <tr>
+          <td colspan="5">No hay notas de enfermer&iacute;a registradas</td>
+        </tr>
+        {% endif%}
+        {% for nota in admision.notas_enfermeria.all %}
+        <tr>
+          <td>{{ nota.fecha_y_hora }}</th>
+          <td>{{ nota.usuario.username }}</th>
+          <td>{{ nota.nota }}</th>
+          {% if editable %}
+          <td><a href="{% url enfermeria-nota-editar nota.id %}">Editar</a></th>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>

@@ -4,28 +4,9 @@
   {% include "snippets/aside.html" with admision=admision %}
   <section id="evolucion" class="grid_9">
     <hgroup>
-      <h1>Notas de Enfermeria para {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
+      <h1>Notas de Enfermer&iacute;a para {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
-    <table class="data">
-      <thead class="gradient">
-        <tr>
-          <th>Fecha y Hora</th>
-          <th>Autor</th>
-          <th>Descripci&oacute;n</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for nota in admision.notas_enfermeria.all %}
-        <tr>
-          <td>{{ nota.fecha_y_hora }}</th>
-          <td>{{ nota.usuario.username }}</th>
-          <td>{{ nota.nota }}</th>
-          <td><a href="{% url enfermeria-nota-editar nota.id %}">Editar</a></th>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    {% include "snippets/nota_table.html" with editable=True%}
     <a href="{% url enfermeria-nota-agregar admision.id %}" class="button">Agregar Nota</a>
   </section>
 </div>

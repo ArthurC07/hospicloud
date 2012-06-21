@@ -1,0 +1,24 @@
+    <table class="data">
+      <caption>Glicemias</caption>
+      <thead class="gradient">
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Control</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if admision.glicemias.count == 0%}
+        <tr>
+          <td colspan="3">No hay glicemias registradas</td>
+        </tr>
+        {% endif%}
+        {% for glicemia in admision.glicemias.all %}
+        <tr>
+          <td>{{ glicemia.fecha_y_hora }}</td>
+          <td>{{ glicemia.control }}</td>
+          <td>{{ glicemia.observacion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>

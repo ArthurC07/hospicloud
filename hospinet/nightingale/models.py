@@ -19,7 +19,7 @@ class SignoVital(models.Model):
     presion_sistolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
     presion_diastolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
     respiracion = models.DecimalField(decimal_places=2, max_digits=8, null=True)
-    observacion = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    observacion = models.TextField(blank=True, null=True)
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)

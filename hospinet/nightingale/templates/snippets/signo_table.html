@@ -1,0 +1,36 @@
+{% load l10n %}
+    <table class="data">
+      <thead class="gradient">
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Pulso</th>
+          <th>Temperatura</th>
+          <th>Presi&oacute;n</th>
+          <th>Respiraci&oacute;n</th>
+          <th>SATO2</th>
+          <th>PAM</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if admision.signos_vitales.count == 0%}
+        <tr>
+          <td colspan="3">No hay signos vitales registrados</td>
+        </tr>
+        {% endif%}
+        {% for signos in admision.signos_vitales.all %}
+        <tr>
+          <td>{{ signos.fecha_y_hora }}</td>
+          {% localize off %}
+          <td>{{ signos.pulso }}</td>
+          <td>{{ signos.temperatura }}</td>
+          <td>{{ signos.presion_sistolica }} / {{ signos.presion_diastolica }}</td>
+          <td>{{ signos.respiracion }}</td>
+          <td>{{ signos.saturacion_de_oxigeno }}</td>
+          <td>{{ signos.presion_arterial_media|floatformat:2 }}</td>
+          <td>{{ signos.observacion }}</td>
+          {% endlocalize %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>

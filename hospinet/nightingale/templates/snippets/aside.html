@@ -3,6 +3,7 @@
   <nav>
     <ul>
       <li class="clearfix"><a href="{% url nightingale-view-id admision.id %}"><img src="{% static "images/home.png" %}" />Paciente</a></li>
+      <li class="clearfix"><a href="{% url nightingale-resume admision.uuid %}"><img src="{% static "images/home.png" %}" />Resumen</a></li>
       <li class="clearfix"><a href="{% url enfermeria-cargos admision.id %}"><img src="{% static "images/cargos.png" %}" />Cargos</a></li>
       <li class="clearfix"><a href="{% url enfermeria-signos admision.id %}"><img src="{% static "images/signos.png" %}" />Signos Vitales</a></li>
       <li class="clearfix"><a href="{% url enfermeria-ordenes admision.id %}"><img src="{% static "images/ordenes.png" %}" />Ordenes M&eacute;dicas</a></li>

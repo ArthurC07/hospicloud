@@ -1,0 +1,22 @@
+<table class="data">
+  <thead class="gradient">
+    <tr>
+        <th>Fecha y Hora</th>
+        <th>Autor</th>
+        <th>Descripci&oacute;n</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if admision.evoluciones.count == 0%}
+    <tr>
+        <td colspan="3">No hay evoluciones registradas</td>
+    </tr>
+    {% endif%}
+    {% for evolucion in admision.evoluciones.all %}
+    <tr>
+        <th>{{ evolucion.fecha_y_hora|date:"d/m/Y P" }}</th>
+        <th>{{ evolucion.nota }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

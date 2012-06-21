@@ -1,0 +1,23 @@
+    <table class="data">
+      <thead class="gradient">
+        <tr>
+          <th>Fecha y Hora</th>
+          <th>Doctor</th>
+          <th>Descripci&oacute;n</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if admision.ordenes_medicas.count == 0%}
+        <tr>
+          <td colspan="3">No hay ordenes m&eacute;dicas registradas</td>
+        </tr>
+        {% endif%}
+        {% for orden in admision.ordenes_medicas.all %}
+        <tr>
+          <th>{{ orden.fecha_y_hora }}</th>
+          <th>{{ orden.usuario.username }}</th>
+          <th>{{ orden.orden }}</th>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>

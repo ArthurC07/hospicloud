@@ -4,7 +4,7 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     IngresarView, CargoCreateView, EvolucionCreateView, GlicemiaCreateView,
     InsulinaCreateView, GlucosuriaCreateView, IngestaCreateView, OrdenCreateView,
     NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView, 
-    MedicamentoCreateView, DosisSuministrarView, NotaUpdateView)
+    MedicamentoCreateView, DosisSuministrarView, NotaUpdateView, ResumenDetailView)
 
 urlpatterns = patterns('',
     
@@ -19,6 +19,10 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)$',
         NightingaleDetailView.as_view(),
         name='nightingale-view-id'),
+    
+    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/resumen$',
+        ResumenDetailView.as_view(),
+        name='nightingale-resume'),
     
     url(r'^(?P<pk>\d+)/signos/grafico$',
         SignosDetailView.as_view(),
