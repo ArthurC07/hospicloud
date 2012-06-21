@@ -30,7 +30,7 @@
           <td>{{ signos.presion_sistolica }} / {{ signos.presion_diastolica }}</td>
           <td>{{ signos.respiracion }}</td>
           <td>{{ signos.saturacion_de_oxigeno }}</td>
-          <td>{{ signos.presion_arterial_media }}</td>
+          <td>{{ signos.presion_arterial_media|floatformat:2 }}</td>
           <td>{{ signos.observacion }}</td>
         </tr>
         {% endfor %}

@@ -1,24 +1,43 @@
-<table class="data">
-  <thead class="gradient">
-    <tr>
-      <th>Identificaci&oacute;n</th>
-      <th>Apellidos</th>
-      <th>Nombre</th>
-      <th>Edad</th>
-      <th>Sexo</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for persona in personas%}
-    <tr>
-      <td>{{ persona.identificacion }}</td>
-      <td>{{ persona.apellido }}</td>
-      <td>{{ persona.nombre }}</td>
-      <td>{{ persona.obtener_edad }}</td>
-      <td>{{ persona.get_sexo_display }}</td>
-      <td><a href="{% url persona-view-id persona.id %}">Ver</a></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% if personas %}
+    <table class="data">
+      <thead class="gradient">
+        <tr>
+          <th>Identificaci&oacute;n</th>
+          <th>Apellidos</th>
+          <th>Nombre</th>
+          <th>Edad</th>
+          <th>Sexo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for persona in personas %}
+        <tr>
+          <td>{{ persona.identificacion }}</td>
+          <td>{{ persona.apellido }}</td>
+          <td>{{ persona.nombre }}</td>
+          <td>{{ persona.obtener_edad }}</td>
+          <td>{{ persona.get_sexo_display }}</td>
+          <td><a href="{% url persona-view-id persona.id %}">Ver</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if is_paginated %}
+    <div class="pagination">
+        <span class="page-links">
+            {% if page_obj.has_previous %}
+                <a href="/cars?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="page-current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+            {% if page_obj.has_next %}
+                <a href="/cars?page={{ page_obj.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+{% else %}
+    <p>No se han encontrado Pacientes</p>
+{% endif %}

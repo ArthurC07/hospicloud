@@ -17,6 +17,7 @@ class PersonaIndexView(ListView, LoginRequiredView):
     context_object_name = 'personas'
     model = Persona
     template_name = 'persona/index.html'
+    paginate_by = 10
 
 class PersonaDetailView(DetailView, LoginRequiredView):
     

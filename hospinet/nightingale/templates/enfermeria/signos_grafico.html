@@ -5,28 +5,81 @@
 <script language="javascript" type="text/javascript" src="{% static "js/jquery.jqplot.js" %}"></script>
 <script language="javascript" type="text/javascript" src="{% static "js/jqplot.canvasTextRenderer.min.js" %}"></script>
 <script language="javascript" type="text/javascript" src="{% static "js/jqplot.canvasAxisLabelRenderer.min.js" %}"></script>
+<script type="text/javascript" language="javascript" src="{% static "js/jqplot.dateAxisRenderer.min.js" %}"></script>
+<script type="text/javascript" src="{% static "js/jqplot.canvasAxisTickRenderer.min.js" %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "css/jquery.jqplot.css" %}" />
 <script type="text/javascript">
   $(document).ready(function()
   {
-    $.jqplot('pulso', [[{{ pulso }}]],
+    var line2 = [
+        ['2011-12-06 00:50', 68],['2011-12-06 00:55', 27],
+        ['2011-12-06 01:00', 12],['2011-12-06 01:05', 81],
+        ['2011-12-06 01:10', 40],['2011-12-06 01:15', 93],
+        ['2011-12-06 01:20', 34],['2011-12-06 01:25', 24],
+        ['2011-12-06 01:30', 37],['2011-12-06 01:35', 80]];
+    $.jqplot('pulso', [[{{ pulso|safe  }}]],
              {
                 title:'Pulso',
-                legend:{ show:true }, 
+                axes: {
+                        xaxis: {
+                            renderer: $.jqplot.DateAxisRenderer,
+                            tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                            min: "{{ min }}",
+                            tickOptions: {
+                                formatString: '%Y-%m-%d %H:%M',
+                                angle: -60
+                            }
+                        },
+                        yaxis: {
+                            min: 20,
+                            max: 100,
+                            tickInterval: 20
+                        }
+                    }
              });
-    $.jqplot('temperatura', [[{{ temperatura }}]],
+    $.jqplot('temperatura', [[{{ temperatura|safe  }}]],
              {
                 title:'Temperatura',
-                legend:{ show:true },
+                axes: {
+                        xaxis: {
+                            renderer: $.jqplot.DateAxisRenderer,
+                            tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                            min: "{{ min }}",
+                            tickOptions: {
+                                formatString: '%Y-%m-%d %H:%M',
+                                angle: -60
+                            }
+                        },
+                        yaxis: {
+                            min: 35,
+                            max: 45,
+                            tickInterval: 0.5
+                        }
+                    }
              });
-    $.jqplot('presion', [[{{ presion_sistolica }}], [{{ presion_diastolica }}]],
+    $.jqplot('presion', [[{{ presion_sistolica|safe  }}], [{{ presion_diastolica|safe }}]],
              {
                 title:'Presión',
-                legend:{ show:true }, 
+                legend:{ show:true },
                 series:[
                         {label:"Sistólica"},
                         {label:"Diastólica"}
-                ]
+                ],
+                axes: {
+                        xaxis: {
+                            renderer: $.jqplot.DateAxisRenderer,
+                            tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                            min: "{{ min }}",
+                            tickOptions: {
+                                formatString: '%Y-%m-%d %H:%M',
+                                angle: -60
+                            }
+                        },
+                        yaxis: {
+                            min: 30,
+                            tickInterval: 10
+                        }
+                    }
              });
   });
 </script>
@@ -38,20 +91,22 @@
       <h1>Gr&aacute;fica de Lecturas de {{ admision.paciente.nombre_completo }}</h1>
     </hgroup>
     <div id="signos_vitales" class="bloque-superior">
-      <article id="temperatura">
-        <h2>Temperatura</h2>
-        <div id="temperatura" class="grafica"></div>
-        <h3>Promedio: {{ temp_promedio }} grados</h3>
+      <article id="temperatura-article">
+        <section>
+            <div id="temperatura" class="grafica"></div>
+        </section>
+        <p>&nbsp;</p>
+        <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
       </article>
-      <article id="presion">
-        <h2>Presi&oacute;n</h2>
+      <article id="presion-article">
         <div id="presion" class="grafica"></div>
-        <h3>Promedio: {{ presion_sistolica_promedio }} / {{ presion_diastolica_promedio }}</h3>
+        <p>&nbsp;</p>
+        <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }} / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
       </article>
-      <article id="pulso">
-        <h2>Pulso</h2>
-        <div id="temperatura" class="grafica"></div>
-        <h3>Promedio: {{ pulso_promedio }}</h3>
+      <article id="pulso-article">  
+        <div id="pulso" class="grafica"></div>
+        <p>&nbsp;</p>
+        <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
       </article>
     </div>
 </div>

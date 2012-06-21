@@ -14,7 +14,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
                                 OrdenMedica, SignoVital, Medicamento, Dosis)
 from spital.models import Admision
 from django.contrib import messages
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class NightingaleIndexView(ListView, LoginRequiredView):
     
@@ -92,31 +92,27 @@ class SignosDetailView(DetailView, LoginRequiredView):
         
         context = super(SignosDetailView, self).get_context_data(**kwargs)
         signos = self.object.signos_vitales
+
+        context['min'] = self.object.hospitalizacion.strftime('%Y-%m-%d %H:%M')
+
         if self.object.signos_vitales.count() == 0:
             context['temp_promedio'] = 0
-        else:
-            context['temp_promedio'] = self.object.temperatura_promedio
-        
-        if self.object.signos_vitales.count() == 0:
             context['pulso_promedio'] = 0
-        else:
-            context['pulso_promedio'] = self.object.pulso_promedio
-        
-        if self.object.signos_vitales.count() == 0:
             context['presion_diastolica_promedio'] = 0
-        else:
-            context['presion_diastolica_promedio'] = self.object.presion_diastolica_promedio
-        
-        if self.object.signos_vitales.count() == 0:
             context['presion_sistolica_promedio'] = 0
         else:
+            context['temp_promedio'] = self.object.temperatura_promedio
+            context['pulso_promedio'] = self.object.pulso_promedio
+            context['presion_diastolica_promedio'] = self.object.presion_diastolica_promedio
             context['presion_sistolica_promedio'] = self.object.presion_sistolica_promedio
+            inicio = self.object.signos_vitales.extra(order_by=['fecha_y_hora']).all()[0].fecha_y_hora - timedelta(minutes=5)
+            context['min'] = inicio.strftime('%Y-%m-%d %H:%M')
         
-        context['pulso'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].pulso) for n in range(signos.count()))
-        context['temperatura'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].temperatura) for n in range(signos.count()))
-        context['presion_sistolica'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].presion_sistolica) for n in range(signos.count()))
-        context['presion_diastolica'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1, signos.all()[n].presion_diastolica) for n in range(signos.count()))
-        
+        context['pulso'] = u','.join("['{0}', {1}]".format(s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.pulso) for s in signos.all())
+        context['temperatura'] = "['{0}', 37.00], ".format(context['min']) + u','.join("['{0}', {1}]".format(s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.temperatura) for s in signos.extra(order_by=['fecha_y_hora']).all())
+        context['presion_sistolica'] = u','.join("['{0}', {1}]".format(s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.presion_sistolica) for s in signos.all())
+        context['presion_diastolica'] = u','.join("['{0}', {1}]".format(s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.presion_diastolica) for s in signos.all())
+
         return context
 
 class BaseCreateView(CreateView, LoginRequiredView):
