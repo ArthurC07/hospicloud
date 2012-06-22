@@ -285,27 +285,34 @@ class Medicamento(models.Model):
     INTERVALOS = (
         (1, u"Una vez al día"),
         (2, u"Dos veces al día"),
-        (2, u"Tres veces al día"),
-        (2, u"Cuatro veces al día"),
-        (2, u"Seis veces al día"),
+        (3, u"Tres veces al día"),
+        (4, u"Cuatro veces al día"),
+        (6, u"Seis veces al día"),
+    )
+
+    ESTADOS = (
+        (1, u"Activo"),
+        (2, u"Suspendido"),
+        (3, u"Terminado"),
     )
 
     admision = models.ForeignKey(Admision, related_name='medicamentos')
     nombre = models.CharField(max_length=200, blank=True, null=True)
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
     inicio = models.DateTimeField(default=datetime.now)
     intervalo = models.IntegerField(blank=True, null=True, choices=INTERVALOS)
     dias = models.IntegerField(blank=True, null=True)
     control = models.CharField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='medicamentos')
-
-    def crear_dosis(self):
-
-        """Permite generar el total de :class:`Dosis` de este
-        :class:`Medicamento` que serán suministradas a la :class:`Persona`
-        durante la :class:`Admision`"""
-
-        pass
+    estado = models.IntegerField(blank=True, null=True, choices=ESTADOS, default=1)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'enfermeria-medicamentos', [self.admision.id]
 
 class Dosis(models.Model):
 
@@ -313,11 +320,28 @@ class Dosis(models.Model):
     administrar un :class:`Medicamento` y saber quien los ha administrado a la
     :class:`Persona`"""
 
+    ESTADOS = (
+        (1, u"Pendiente"),
+        (2, u"Rechazada"),
+        (3, u"Administrada"),
+    )
+
     medicamento = models.ForeignKey(Medicamento, related_name='dosis',
                                    on_delete=models.CASCADE)
-    fecha_y_hora = models.DateField(default=datetime.now)
-    suministrada = models.NullBooleanField(default=False)
+    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    estado = models.IntegerField(blank=True, null=True, choices=ESTADOS, default=1)
+    recomendacion = models.CharField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True, related_name='dosis')
+    administrador = models.ForeignKey(User, blank=True, null=True,
+                                      related_name='dosis_administradas',
+                                      on_delete=models.CASCADE)
+    
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return 'enfermeria-medicamentos', [self.admision.id]
 
 def action_register_handler(sender, instance, created, **kwargs):
     action.send(instance, verb='fue guardado')

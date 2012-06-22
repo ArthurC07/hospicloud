@@ -4,29 +4,15 @@
 <div class="content">
   <section id="medicamentos" class="grid_9">
     <h1>Medicamentos de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
+    {% if admision.medicamentos.count == 0 %}
+      <p>No hay medicamentos indicados</p>
+    {% endif %}
     {% for medicamento in admision.medicamentos.all %}
-    <article>
-        <table>
-            <caption>{{ medicamento.nombre }}</caption>
-            <thead class="gradient">
-                <th>Administrar</th>
-                <th>Control</th>
-                <th>Suministrada</th>
-            </thead>
-            <tbody>
-                {% for dosis in medicamento.dosis.all %}
-                <td>{{ dosis.momento }}</td>
-                <td>{{ dosis.medicamento.control }}</td>
-                {% if dosis.suministrada %}
-                <td>{{ dosis.suministrada }}</td>
-                {% else %}
-                <td><a href="{% url enfermeria-dosis-suministrar dosis.id %}" class="button">Suministrar</a></td>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-    </article>
+      {% include "snippets/medicamento.html" with editable=1 %}
+      <a href="{% url enfermeria-medicamento-suspender medicamento.id 2 %}" class="button">Suspender {{ medicamento.nombre }}</a>
+      <a href="{% url enfermeria-medicamento-suspender medicamento.id 3 %}" class="button">Terminar {{ medicamento.nombre }}</a>
     {% endfor %}
+    <div class="clearfix">&nbsp;</div>
     <a href="{% url enfermeria-medicamento-agregar admision.id %}" class="button">Agregar Medicamento</a>
   </section>
 </div>

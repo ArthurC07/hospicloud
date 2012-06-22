@@ -63,7 +63,7 @@
     </hgroup>
     {% include "snippets/evolucion_table.html" %}
   </section>
-<section id="glicemia">
+  <section id="glicemia">
     <hgroup>
       <h2>Glucometr&iacute;a</h2>
     </hgroup>
@@ -77,11 +77,22 @@
     </hgroup>
     {% include "snippets/orden_table.html" %}
   </section>
+  <section id="medicamentos">
+    <hgroup>
+      <h2>Medicamentos</h2>
+        </hgroup>
+      {% if admision.medicamentos.count == 0 %}
+        <p>No hay medicamentos indicados</p>
+      {% endif %}
+      {% for medicamento in admision.medicamentos.all %}
+        {% include "snippets/medicamento.html" with editable=0 %}
+      {% endfor %}
+  </section>
   <section id="enfermeria">
     <hgroup>
       <h2>Notas de Enfermer&iacute;a</h2>
     </hgroup>
-    {% include "snippets/nota_table.html" with editable=False%}
+    {% include "snippets/nota_table.html" with editable=0 %}
   </section>
   <section id="cargos">
     <hgroup>

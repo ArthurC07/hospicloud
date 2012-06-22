@@ -4,7 +4,7 @@
           <th>Fecha y Hora</th>
           <th>Autor</th>
           <th>Descripci&oacute;n</th>
-          {% if editable %}
+          {% if editable == 1 %}
           <th>Acciones</th>
           {% endif %}
         </tr>
@@ -20,7 +20,7 @@
           <td>{{ nota.fecha_y_hora }}</th>
           <td>{{ nota.usuario.username }}</th>
           <td>{{ nota.nota }}</th>
-          {% if editable %}
+          {% if editable == 1%}
           <td><a href="{% url enfermeria-nota-editar nota.id %}">Editar</a></th>
           {% endif %}
         </tr>

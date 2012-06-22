@@ -93,11 +93,19 @@ class EstiloVidaUpdateView(UpdateView, LoginRequiredView):
 
 class AntecedenteUpdateView(UpdateView, LoginRequiredView):
     
+    """
+    Permite actualizar los datos del :class:`Antecedente` de una :class:`Persona`
+    """
+    
     model = Antecedente
     form_class = AntecedenteForm
     template_name = 'persona/antecedente_update.html'
 
 class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredView):
+    
+    """
+    Permite actualizar los datos del :class:`AntecedenteFamiliar` de una :class:`Persona`
+    """
     
     model = AntecedenteFamiliar
     form_class = AntecedenteFamiliarForm
@@ -105,17 +113,29 @@ class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredView):
 
 class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredView):
     
+    """
+    Permite actualizar los datos del :class:`AntecedenteObstetrico` de una :class:`Persona`
+    """
+    
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
     template_name = 'persona/antecedente_obstetrico_update.html'
 
 class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredView):
     
+    """
+    Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una :class:`Persona`
+    """
+    
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
     template_name = 'persona/antecedente_quirurgico_create.html'
 
 class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredView):
+    
+    """
+    Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una :class:`Persona`
+    """
     
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm

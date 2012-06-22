@@ -48,62 +48,58 @@ class PersonaForm(forms.ModelForm):
         
         return cleaned_data
 
-class FisicoForm(forms.ModelForm):
+class BasePersonaForm(forms.ModelForm):
     
-    class Meta:
-        
-        model = Fisico
-    
+    """Permite editar la información que depende de una :class:`Persona`"""
+
     persona = forms.ModelChoiceField(label="",
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput())
 
-class EstiloVidaForm(forms.ModelForm):
+class FisicoForm(BasePersonaForm):
+    
+    """Permite editar :class:`Fisico`"""
+
+    class Meta:
+        
+        model = Fisico
+
+class EstiloVidaForm(BasePersonaForm):
+    
+    """Permite editar :class:`EstiloVida`"""
     
     class Meta:
         
         model = EstiloVida
-    
-    persona = forms.ModelChoiceField(label="",
-                                  queryset=Persona.objects.all(),
-                                  widget=forms.HiddenInput())
 
-class AntecedenteForm(forms.ModelForm):
+class AntecedenteForm(BasePersonaForm):
+    
+    """Permite editar :class:`Antecedente`"""
     
     class Meta:
         
         model = Antecedente
-    
-    persona = forms.ModelChoiceField(label="",
-                                  queryset=Persona.objects.all(),
-                                  widget=forms.HiddenInput())
 
-class AntecedenteFamiliarForm(forms.ModelForm):
+class AntecedenteFamiliarForm(BasePersonaForm):
+    
+    """Permite editar :class:`AntecedenteFamiliar`"""
     
     class Meta:
         
         model = AntecedenteFamiliar
-    
-    persona = forms.ModelChoiceField(label="",
-                                  queryset=Persona.objects.all(),
-                                  widget=forms.HiddenInput())
 
-class AntecedenteObstetricoForm(forms.ModelForm):
+class AntecedenteObstetricoForm(BasePersonaForm):
+    
+    """Permite editar :class:`AntecedenteObstetrico`"""
     
     class Meta:
         
         model = AntecedenteObstetrico
-    
-    persona = forms.ModelChoiceField(label="",
-                                  queryset=Persona.objects.all(),
-                                  widget=forms.HiddenInput())
 
-class AntecedenteQuirurgicoForm(forms.ModelForm):
+class AntecedenteQuirurgicoForm(BasePersonaForm):
+    
+    """Permite editar :class:`AntecedenteQuirurgico`"""
     
     class Meta:
         
         model = AntecedenteQuirurgico
-    
-    persona = forms.ModelChoiceField(label="",
-                                  queryset=Persona.objects.all(),
-                                  widget=forms.HiddenInput())

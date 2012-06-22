@@ -132,6 +132,7 @@
     <Content Include="clinique\templates\consultorio\espera_list.html" />
     <Content Include="clinique\templates\consultorio\historia_clinica_create.html" />
     <Content Include="clinique\templates\consultorio\index.html" />
+    <Content Include="clinique\templates\consultorio\persona_nuevo.html" />
     <Content Include="clinique\templates\consultorio\optometrias.html" />
     <Content Include="clinique\templates\consultorio\optometria_create.html" />
     <Content Include="clinique\templates\consultorio\optometria_detail.html" />
@@ -176,6 +177,7 @@
     <Content Include="nightingale\templates\enfermeria\excreta_create.html" />
     <Content Include="nightingale\templates\enfermeria\glucometria.html" />
     <Content Include="nightingale\templates\enfermeria\glicemia_create.html" />
+    <Content Include="nightingale\templates\enfermeria\resumen.html" />
     <Content Include="nightingale\templates\enfermeria\insulina_create.html" />
     <Content Include="nightingale\templates\enfermeria\glucosuria_create.html" />
     <Content Include="nightingale\templates\enfermeria\ie.html" />
@@ -195,7 +197,18 @@
     <Content Include="nightingale\templates\snippets\admitidos_list.html" />
     <Content Include="nightingale\templates\snippets\aside.html" />
     <Content Include="nightingale\templates\snippets\enfermeria_list.html" />
+    <Content Include="nightingale\templates\snippets\cargo_table.html" />
+    <Content Include="nightingale\templates\snippets\excreta_table.html" />
+    <Content Include="nightingale\templates\snippets\ingesta_table.html" />
+    <Content Include="nightingale\templates\snippets\orden_table.html" />
+    <Content Include="nightingale\templates\snippets\signo_table.html" />
+    <Content Include="nightingale\templates\snippets\nota_table.html" />
+    <Content Include="nightingale\templates\snippets\glucosuria_table.html" />
+    <Content Include="nightingale\templates\snippets\insulina_table.html" />
+    <Content Include="nightingale\templates\snippets\glicemia_table.html" />
+    <Content Include="nightingale\templates\snippets\evolucion_table.html" />
     <Content Include="nightingale\templates\snippets\lectura.html" />
+    <Content Include="nightingale\templates\snippets\signos_js.html" />
     <Content Include="persona\fixtures\persona.json" />
     <Content Include="persona\static\css\colorbox.css" />
     <Content Include="persona\static\css\form.css" />
@@ -334,6 +347,7 @@
     <Folder Include="clinique\templates\consultorio\" />
     <Folder Include="clinique\templates\search\" />
     <Folder Include="clinique\templates\search\indexes\" />
+    <Folder Include="clinique\templates\search\indexes\clinique\" />
     <Folder Include="clinique\templates\search\indexes\consultorio\" />
     <Folder Include="clinique\templates\snippets\" />
     <Folder Include="imaging" />

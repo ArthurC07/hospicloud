@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from spital.models import Admision
-from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
+from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
                                 OrdenMedica, SignoVital, Medicamento)
 from django.contrib.auth.models import User
@@ -156,3 +156,25 @@ class MedicamentoForm(BaseForm):
     class Meta:
 
         model = Medicamento
+
+    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False)
+
+class DosisForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Dosis
+    
+    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(), required=False)
+    
+    medicamento = forms.ModelChoiceField(label="",
+                                  queryset=Medicamento.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    
+    administrador = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)

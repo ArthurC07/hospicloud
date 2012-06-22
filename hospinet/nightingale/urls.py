@@ -4,7 +4,8 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     IngresarView, CargoCreateView, EvolucionCreateView, GlicemiaCreateView,
     InsulinaCreateView, GlucosuriaCreateView, IngestaCreateView, OrdenCreateView,
     NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView, 
-    MedicamentoCreateView, DosisSuministrarView, NotaUpdateView, ResumenDetailView)
+    MedicamentoCreateView, DosisSuministrarView, NotaUpdateView,
+    ResumenDetailView, DosisCreateView, MedicamentoSuspenderView)
 
 urlpatterns = patterns('',
     
@@ -106,8 +107,16 @@ urlpatterns = patterns('',
     url(r'^(?P<admision>\d+)/medicamento/agregar$',
         MedicamentoCreateView.as_view(),
         name='enfermeria-medicamento-agregar'),
+
+    url(r'^medicamento/(?P<pk>\d+)/(?P<estado>\d+)/suspender$',
+        MedicamentoSuspenderView.as_view(),
+        name='enfermeria-medicamento-suspender'),
     
-    url(r'^dosis/(?P<pk>\d+)/suministrar$',
+    url(r'^(?P<medicamento>\d+)/dosis/agregar$',
+        DosisCreateView.as_view(),
+        name='enfermeria-dosis-agregar'),
+
+    url(r'^dosis/(?P<pk>\d+)/(?P<estado>\d+)/suministrar$',
         DosisSuministrarView.as_view(),
         name='enfermeria-dosis-suministrar'),
 )
