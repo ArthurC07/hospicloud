@@ -177,6 +177,7 @@
     <Content Include="nightingale\templates\enfermeria\excreta_create.html" />
     <Content Include="nightingale\templates\enfermeria\glucometria.html" />
     <Content Include="nightingale\templates\enfermeria\glicemia_create.html" />
+    <Content Include="nightingale\templates\enfermeria\medicamento_create.html" />
     <Content Include="nightingale\templates\enfermeria\resumen.html" />
     <Content Include="nightingale\templates\enfermeria\insulina_create.html" />
     <Content Include="nightingale\templates\enfermeria\glucosuria_create.html" />
@@ -200,6 +201,7 @@
     <Content Include="nightingale\templates\snippets\cargo_table.html" />
     <Content Include="nightingale\templates\snippets\excreta_table.html" />
     <Content Include="nightingale\templates\snippets\ingesta_table.html" />
+    <Content Include="nightingale\templates\snippets\medicamento.html" />
     <Content Include="nightingale\templates\snippets\orden_table.html" />
     <Content Include="nightingale\templates\snippets\signo_table.html" />
     <Content Include="nightingale\templates\snippets\nota_table.html" />

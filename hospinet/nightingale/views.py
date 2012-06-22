@@ -9,13 +9,14 @@ from library.protected import LoginRequiredView
 from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
     GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
     NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm, MedicamentoForm,
-    DosisForm)
+    DosisForm, DevolucionForm)
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
-                                Glucosuria, Ingesta, Excreta, NotaEnfermeria,
-                                OrdenMedica, SignoVital, Medicamento, Dosis)
+    Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital,
+    Medicamento, Dosis, Devolucion)
 from spital.models import Admision
 from django.contrib import messages
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 
 class NightingaleIndexView(ListView, LoginRequiredView):
     
@@ -166,7 +167,7 @@ class BaseCreateView(CreateView, LoginRequiredView):
 
         kwargs = super(BaseCreateView, self).get_form_kwargs()
         kwargs.update({'initial':{'admision':self.admision.id,
-                                  'fecha_y_hora': datetime.now(),
+                                  'fecha_y_hora': timezone.now(),
                                   'usuario':self.request.user.id}})
         return kwargs
     
@@ -291,8 +292,8 @@ class MedicamentoCreateView(BaseCreateView):
 
         kwargs = super(BaseCreateView, self).get_form_kwargs()
         kwargs.update({'initial':{'admision':self.admision.id,
-                                  'fecha_y_hora': datetime.now(),
-                                  'inicio': datetime.now(),
+                                  'fecha_y_hora': timezone.now(),
+                                  'inicio': timezone.now(),
                                   'usuario':self.request.user.id}})
         return kwargs
 
@@ -323,7 +324,7 @@ class DosisCreateView(CreateView, LoginRequiredView):
 
         kwargs = super(DosisCreateView, self).get_form_kwargs()
         kwargs.update({'initial':{'medicamento':self.admision.id,
-                                  'fecha_y_hora': datetime.now(),
+                                  'fecha_y_hora': timezone.now(),
                                   'usuario':self.request.user.id,
                                   'administrador':self.request.user.id}})
         return kwargs
@@ -366,7 +367,7 @@ class DosisSuministrarView(RedirectView, LoginRequiredView):
         dosis = get_object_or_404(Dosis, pk=kwargs['pk'])
         dosis.estado = kwargs['estado']
         dosis.usuario = self.request.user
-        dosis.fecha_y_hora = datetime.now()
+        dosis.fecha_y_hora = timezone.now()
         dosis.save()
         messages.info(self.request, u'¡Dosis registrada como suministrada!')
         return reverse('nightingale-view-id', args=[dosis.medicamento.admision.id])
@@ -386,3 +387,9 @@ class MedicamentoSuspenderView(RedirectView, LoginRequiredView):
         mediamento.estado = kwargs['estado']
         medicamento.save()
         return reverse('nightingale-view-id', args=[dosis.medicamento.admision.id])
+
+class DevolucionCreateView(BaseCreateView):
+
+    model = Devolucion
+    form_class = DevolucionForm
+    template_name = 'enfermeria/devolucion_create.html'

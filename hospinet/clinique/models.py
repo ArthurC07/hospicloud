@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-try:
-    from django.utils import timezone as datetime
-except:
-    from datetime import datetime
+from django.utils import timezone
 from django.db import models
 from persona.models import Persona
 from users.models import Profile
@@ -47,7 +44,7 @@ class Paciente(models.Model):
     persona = models.ForeignKey(Persona, related_name='consultorios')
     consultorio = models.ForeignKey(Consultorio, related_name='pacientes')
     uuid = UUIDField(version=4)
-    primera_visita = models.DateTimeField(default=datetime.now)
+    primera_visita = models.DateTimeField(default=timezone.now)
 
     def identificacion():
 
@@ -90,7 +87,7 @@ class Transaccion(models.Model):
     concepto = models.CharField(max_length=1, blank=True)
     tipo = models.IntegerField(choices=TIPO)
     monto = models.DecimalField(decimal_places=2, max_digits=12)
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
 
 class Cita(models.Model):
     
@@ -99,7 +96,7 @@ class Cita(models.Model):
     
     consultorio = models.ForeignKey(Consultorio, related_name='citas')
     nombre = models.CharField(max_length=200)
-    fecha_y_hora = models.DateTimeField(default=datetime.now())
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
 
 class Esperador(models.Model):
     
@@ -117,7 +114,7 @@ class Consulta(models.Model):
 
     paciente = models.ForeignKey(Paciente, related_name='consultas')
     razon_de_la_visita = models.TextField(blank=True)
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     agudeza_visual_ojo_derecho = models.IntegerField(default=0)
     agudeza_visual_ojo_izquierdo = models.IntegerField(default=0)
     
@@ -133,7 +130,7 @@ class Receta(models.Model):
     paciente = models.ForeignKey(Paciente, related_name='recetas')
     medicamentos = models.TextField(blank=True, null=True)
     notas_adicionales = models.TextField(blank=True, null=True)
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     
     def get_absolute_url(self):
         
@@ -146,7 +143,7 @@ class HistoriaClinica(models.Model):
 
     paciente = models.ForeignKey(Paciente, related_name='historias_clinicas', null=True)
     nota = models.TextField(blank=True)
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     agudeza_visual_ojo_derecho = models.IntegerField(default=0)
     agudeza_visual_ojo_izquierdo = models.IntegerField(default=0)
     
@@ -160,7 +157,7 @@ class Optometria(models.Model):
     :class:`Paciente`"""
 
     paciente = models.ForeignKey(Paciente, related_name='optometrias')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     esfera_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2) 
     esfera_ojo_izquierdo = models.DecimalField(default=0, max_digits=5, decimal_places=2)
     cilindro_ojo_derecho = models.DecimalField(default=0, max_digits=5, decimal_places=2)
@@ -193,7 +190,7 @@ class Pago(models.Model):
     )
 
     paciente = models.ForeignKey(Paciente, related_name='pagos')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     monto = models.DecimalField(default=0, max_digits=5, decimal_places=2)
     forma_de_pago = models.CharField(max_length=1, choices=FORMAS_DE_PAGO,
                                      blank=True)

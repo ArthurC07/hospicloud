@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from spital.models import Admision
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 from django.db.models import permalink
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -13,7 +14,7 @@ class SignoVital(models.Model):
     :class:`Admision` en el  Hospital"""
     
     admision = models.ForeignKey(Admision, related_name='signos_vitales')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     pulso = models.IntegerField()
     temperatura = models.DecimalField(decimal_places=2, max_digits=8, null=True)
     presion_sistolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
@@ -64,7 +65,7 @@ class Evolucion(models.Model):
     :class:`Admision`"""
     
     admision = models.ForeignKey(Admision, related_name='evoluciones')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     nota = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='evoluciones')
@@ -81,10 +82,10 @@ class Cargo(models.Model):
     """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
     
     admision = models.ForeignKey(Admision, related_name='cargos')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     cargo = models.TextField(max_length=200)
-    inicio = models.DateTimeField(default=datetime.now)
-    fin = models.DateTimeField(default=datetime.now)
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='cargos')
     
@@ -102,7 +103,7 @@ class OrdenMedica(models.Model):
     admision = models.ForeignKey(Admision, related_name='ordenes_medicas')
     orden = models.CharField(max_length=200, blank=True)
 #    doctor = models.CharField(max_length=200, blank=True)
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='ordenes_medicas')
     
@@ -118,7 +119,7 @@ class Ingesta(models.Model):
     """Registra las ingestas que una :class:`Persona`"""
     
     admision = models.ForeignKey(Admision, related_name='ingestas')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     ingerido = models.CharField(max_length=200, blank=True)
     cantidad = models.IntegerField()
     liquido = models.NullBooleanField(blank=True, null=True)
@@ -145,7 +146,7 @@ class Excreta(models.Model):
     )
     
     admision = models.ForeignKey(Admision, related_name='excretas')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     medio = models.CharField(max_length=2, blank=True, choices=MEDIOS)
     cantidad = models.CharField(max_length=200, blank=True)
     descripcion = models.CharField(max_length=200, blank=True)
@@ -166,7 +167,7 @@ class NotaEnfermeria(models.Model):
     """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
     
     admision = models.ForeignKey(Admision, related_name='notas_enfermeria')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     nota = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='notas_enfermeria')
@@ -184,7 +185,7 @@ class Glicemia(models.Model):
     :class:`Persona` durante una :class`Admision`"""
     
     admision = models.ForeignKey(Admision, related_name='glicemias')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
@@ -202,7 +203,7 @@ class Glucosuria(models.Model):
     """Registra la expulsión de Glucosa mediante la orina"""
 
     admision = models.ForeignKey(Admision, related_name='glucosurias')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
@@ -220,7 +221,7 @@ class Insulina(models.Model):
     """Registra la expulsión de Glucosa mediante la orina"""
 
     admision = models.ForeignKey(Admision, related_name='insulina')
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
@@ -298,8 +299,8 @@ class Medicamento(models.Model):
 
     admision = models.ForeignKey(Admision, related_name='medicamentos')
     nombre = models.CharField(max_length=200, blank=True, null=True)
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
-    inicio = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
+    inicio = models.DateTimeField(default=timezone.now)
     intervalo = models.IntegerField(blank=True, null=True, choices=INTERVALOS)
     dias = models.IntegerField(blank=True, null=True)
     control = models.CharField(max_length=200, blank=True, null=True)
@@ -328,7 +329,7 @@ class Dosis(models.Model):
 
     medicamento = models.ForeignKey(Medicamento, related_name='dosis',
                                    on_delete=models.CASCADE)
-    fecha_y_hora = models.DateTimeField(default=datetime.now)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
     estado = models.IntegerField(blank=True, null=True, choices=ESTADOS, default=1)
     recomendacion = models.CharField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True, related_name='dosis')
@@ -342,6 +343,16 @@ class Dosis(models.Model):
         """Obtiene la URL absoluta"""
         
         return 'enfermeria-medicamentos', [self.admision.id]
+
+class Devolucion(models.Model):
+
+    """Representa todos aquellos materiales que han sido devueltos"""
+
+    admision = models.ForeignKey(Admision, related_name='devoluciones')
+    nombre = models.CharField(max_length=200, blank=True, null=True)
+    fecha_y_hora = models.DateTimeField(default=timezone.now)
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                   related_name='devoluciones')
 
 def action_register_handler(sender, instance, created, **kwargs):
     action.send(instance, verb='fue guardado')

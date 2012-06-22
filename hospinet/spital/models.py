@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import permalink
@@ -46,7 +46,7 @@ class Admision(models.Model):
              ("PS", "Presupuesto"),
     )
     
-    momento = models.DateTimeField(default=datetime.now, null=True, blank=True)
+    momento = models.DateTimeField(default=timezone.now, null=True, blank=True)
     paciente = models.ForeignKey(Persona, related_name='admisiones')
     fiadores = models.ManyToManyField(Persona, related_name='fianzas',
                                       null=True, blank=True)
@@ -70,17 +70,17 @@ class Admision(models.Model):
     
     observaciones = models.CharField(max_length=200, blank=True)
     admitio = models.ForeignKey(User)
-    admision = models.DateTimeField(default=datetime.now,null=True, blank=True)
+    admision = models.DateTimeField(default=timezone.now,null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue ingresada en
     admisiones"""
-    autorizacion = models.DateTimeField(default=datetime.now,null=True, blank=True)
+    autorizacion = models.DateTimeField(default=timezone.now,null=True, blank=True)
     hospitalizacion = models.DateTimeField(null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue internada"""
     ingreso = models.DateTimeField(null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue enviada al area
     de enfermeria"""
-    fecha_pago = models.DateTimeField(default=datetime.now,null=True, blank=True)
-    fecha_alta = models.DateTimeField(default=datetime.now,null=True, blank=True)
+    fecha_pago = models.DateTimeField(default=timezone.now,null=True, blank=True)
+    fecha_alta = models.DateTimeField(default=timezone.now,null=True, blank=True)
     uuid = UUIDField(version=4)
     codigo = ImageField(upload_to="admision/codigo/%Y/%m/%d", blank=True)
     qr = ImageField(upload_to="admision/codigo/%Y/%m/%d/qr", blank=True)
@@ -111,7 +111,7 @@ class Admision(models.Model):
     def autorizar(self):
         
         if self.autorizacion <= self.momento:
-            self.autorizacion = datetime.now()
+            self.autorizacion = timezone.now()
             self.estado = 'B'
             self.save()
     
@@ -121,7 +121,7 @@ class Admision(models.Model):
         :class:`Admision`"""
         
         if self.fecha_pago <= self.momento:
-            self.fecha_pago = datetime.now()
+            self.fecha_pago = timezone.now()
             self.save()
     
     def hospitalizar(self):
@@ -130,14 +130,14 @@ class Admision(models.Model):
         sido enviada a enfermeria para ingresar al hospital"""
         
         if self.hospitalizacion == None or self.hospitalizacion <= self.momento:
-            self.hospitalizacion = datetime.now()
+            self.hospitalizacion = timezone.now()
             self.estado = 'H'
             self.save()
             
     def ingresar(self):
         
         if self.ingreso == None or self.ingreso <= self.momento:
-            self.ingreso = datetime.now()
+            self.ingreso = timezone.now()
             self.estado = 'I'
             self.save()
     
@@ -170,13 +170,13 @@ class Admision(models.Model):
         
         if self.ingreso == None or self.ingreso <= self.hospitalizacion:
             
-            return (datetime.now() - self.hospitalizacion).total_seconds() / 60
+            return (timezone.now() - self.hospitalizacion).total_seconds() / 60
         
         return (self.ingreso - self.hospitalizacion).total_seconds() / 60
     
     def tiempo_ahora(self):
         
-        ahora = datetime.now()
+        ahora = timezone.now()
         if self.momento >= ahora:
             
             return 0
@@ -191,7 +191,7 @@ class Admision(models.Model):
         if not self.fecha_alta == None:
             self.tiempo = (self.fecha_alta - self.ingreso).total_seconds() / 60
         else:
-            self.tiempo = (datetime.now() - self.ingreso).total_seconds() / 60
+            self.tiempo = (timezone.now() - self.ingreso).total_seconds() / 60
     
     def save(self, *args, **kwargs):
         self.actualizar_tiempo()

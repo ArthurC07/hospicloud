@@ -3,7 +3,7 @@ from django import forms
 from spital.models import Admision
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
-                                OrdenMedica, SignoVital, Medicamento)
+                                OrdenMedica, SignoVital, Medicamento, Devolucion)
 from django.contrib.auth.models import User
 from persona.forms import DateTimeWidget
 
@@ -136,6 +136,7 @@ class OrdenMedicaForm(BaseForm):
     class Meta:
         
        model = OrdenMedica
+
     orden = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
 
 class SignoVitalForm(BaseForm):
@@ -178,3 +179,11 @@ class DosisForm(forms.ModelForm):
     administrador = forms.ModelChoiceField(label="",
                                   queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
+
+class DevolucionForm(BaseForm):
+
+    """Permite editar los datos de una :class:`Devolucion`"""
+
+    class Meta:
+         
+        model = Devolucion

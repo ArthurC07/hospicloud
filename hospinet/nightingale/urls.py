@@ -5,7 +5,8 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     InsulinaCreateView, GlucosuriaCreateView, IngestaCreateView, OrdenCreateView,
     NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView, 
     MedicamentoCreateView, DosisSuministrarView, NotaUpdateView,
-    ResumenDetailView, DosisCreateView, MedicamentoSuspenderView)
+    ResumenDetailView, DosisCreateView, MedicamentoSuspenderView,
+    DevolucionCreateView)
 
 urlpatterns = patterns('',
     
@@ -24,6 +25,10 @@ urlpatterns = patterns('',
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/resumen$',
         ResumenDetailView.as_view(),
         name='nightingale-resume'),
+    
+    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/devoluciones$',
+        NightingaleDetailView.as_view(template_name='enfermeria/devoluciones.html'),
+        name='nightingale-devoluciones'),
     
     url(r'^(?P<pk>\d+)/signos/grafico$',
         SignosDetailView.as_view(),
@@ -91,6 +96,10 @@ urlpatterns = patterns('',
     url(r'^(?P<admision>\d+)/glucosuria/agregar$',
         GlucosuriaCreateView.as_view(),
         name='enfermeria-glucosuria-agregar'),
+    
+    url(r'^(?P<admision>\d+)/devolucion/agregar$',
+        DevolucionCreateView.as_view(),
+        name='enfermeria-devolucion-agregar'),
     
     url(r'^(?P<pk>\d+)/notas$',
         NightingaleDetailView.as_view(template_name='enfermeria/notas.html'),

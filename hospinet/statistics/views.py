@@ -3,7 +3,7 @@ from django.views.generic.base import TemplateView
 from statistics.forms import ReporteAnualForm, ReporteMensualForm
 import calendar
 from django.shortcuts import redirect
-from datetime import datetime
+from datetime import date
 from nightingale.models import Admision
 
 class Estadisticas(TemplateView):
@@ -44,7 +44,7 @@ class AtencionAdulto(TemplateView, Atencion):
             redirect('admision-estadisticas')
         anio = form.cleaned_data['anio']
         # obtener la fecha de nacimiento máxima
-        edad_min = datetime(anio - 18, 12, 31)
+        edad_min = date(anio - 18, 12, 31)
         admisiones = Admision.objects.filter(
                                 momento__year=anio,
                                 paciente__nacimiento__lte=edad_min)
@@ -65,7 +65,7 @@ class AtencionInfantil(TemplateView, Atencion):
             redirect('admision-estadisticas')
         anio = form.cleaned_data['anio']
         # obtener la fecha de nacimiento mínima
-        edad_min = datetime(anio - 18, 12, 31)
+        edad_min = date(anio - 18, 12, 31)
         admisiones = Admision.objects.filter(
                                 momento__year=anio,
                                 paciente__nacimiento__gte=edad_min)
@@ -87,7 +87,7 @@ class Productividad(TemplateView):
         anio = form.cleaned_data['anio']
         mes = form.cleaned_data['mes']
         # obtener la fecha de nacimiento máxima
-        edad_min = datetime(anio - 18, 12, 31)
+        edad_min = date(anio - 18, 12, 31)
         
         context['adultos_m'] = Admision.objects.filter(
                                 momento__year=anio,
