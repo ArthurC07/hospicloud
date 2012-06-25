@@ -132,7 +132,7 @@ class Ingesta(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return 'enfermeria-ingestas-excretas', [self.admision.id]
 
 class Excreta(models.Model):
     
@@ -160,7 +160,7 @@ class Excreta(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return 'enfermeria-ingestas-excretas', [self.admision.id]
 
 class NotaEnfermeria(models.Model):
     
@@ -171,13 +171,14 @@ class NotaEnfermeria(models.Model):
     nota = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='notas_enfermeria')
+    cerrada = models.BooleanField(default=False)
     
     @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return 'enfermeria-notas', [self.admision.id]
 
 class Glicemia(models.Model):
     

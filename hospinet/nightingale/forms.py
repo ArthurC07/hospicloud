@@ -122,6 +122,7 @@ class NotaEnfermeriaForm(BaseForm):
     class Meta:
         
         model = NotaEnfermeria
+        exclude = ('cerrada', )
     
     nota = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
     admision = forms.ModelChoiceField(label="",

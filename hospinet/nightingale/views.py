@@ -66,6 +66,22 @@ class NotaUpdateView(UpdateView, LoginRequiredView):
     form_class = NotaEnfermeriaForm
     template_name = 'enfermeria/nota_create.html'
 
+class NotaCerrarView(RedirectView, LoginRequiredView):
+
+    """Permite cambiar el estado de un :class:`NotaEnfermeria`"""
+     
+    permanent = False
+    
+    def get_redirect_url(self, **kwargs):
+        
+        """Obtiene la :class:`NotaEnfermeria` desde la base de datos, y la
+        marca como cerrada."""
+
+        nota = get_object_or_404(NotaEnfermeria, pk=kwargs['pk'])
+        nota.cerrada = True
+        nota.save()
+        return reverse('enfermeria-notas', args=[nota.admision.id])
+
 class NightingaleDetailView(DetailView, LoginRequiredView):
     
     """Permite ver los datos de una :class:`Admision` desde la interfaz de
@@ -386,7 +402,7 @@ class MedicamentoSuspenderView(RedirectView, LoginRequiredView):
         medicamento = get_object_or_404(Medicamento, pk=kwargs['pk'])
         mediamento.estado = kwargs['estado']
         medicamento.save()
-        return reverse('nightingale-view-id', args=[dosis.medicamento.admision.id])
+        return reverse('nightingale-view-id', args=[medicamento.admision.id])
 
 class DevolucionCreateView(BaseCreateView):
 

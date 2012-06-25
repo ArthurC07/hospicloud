@@ -21,7 +21,12 @@
           <td>{{ nota.usuario.username }}</th>
           <td>{{ nota.nota }}</th>
           {% if editable == 1%}
-          <td><a href="{% url enfermeria-nota-editar nota.id %}">Editar</a></th>
+          <td>
+            {% if not nota.cerrada and nota.usuario == user %}
+            <a href="{% url enfermeria-nota-editar nota.id %}">Editar</a>
+            <a href="{% url enfermeria-nota-cerrar nota.id %}">Cerrar</a>
+            {% endif %}
+          </th>
           {% endif %}
         </tr>
         {% endfor %}
