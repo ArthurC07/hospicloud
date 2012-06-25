@@ -29,7 +29,6 @@ class Turno(object):
 
             return u"turno-c"
 
-
 class SignoVital(models.Model, Turno):
     
     """Registra los signos vitales de una :class:`Persona` durante una

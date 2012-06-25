@@ -15,7 +15,7 @@
         </tr>
         {% endif%}
         {% for excretas in admision.excretas.all %}
-        <tr>
+        <tr class="{{ excreta.get_turno }}">
           <td>{{ excretas.fecha_hora }}</td>
           <td>{{ excretas.medio }}</td>
           <td>{{ excretas.cantidad }}</td>

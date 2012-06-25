@@ -16,7 +16,7 @@
         </tr>
         {% endif%}
         {% for ingesta in admision.ingestas.all %}
-        <tr>
+        <tr class="{{ ingesta.get_turno }}">
           <td>{{ ingesta.fecha_y_hora }}</td>
           <td>{{ ingesta.ingerido }}</td>
           <td>{{ ingesta.cantidad }}</td>

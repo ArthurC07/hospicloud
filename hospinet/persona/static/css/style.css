@@ -27,3 +27,17 @@ footer { text-align: center; padding-top: 1em; }
 .turno-a { background: white; }
 .turno-b { background: rgba(50, 223, 69, 0.25); }
 .turno-c { background: rgba(255, 115, 115, 0.5); }
+.medicamento 
+{
+    border: 1px solid #046dd6;
+    -moz-box-shadow:
+        0 1px 3px rgba(000,000,000,0.5),
+        inset 0 0 1px rgba(255,255,255,0.5);
+    -webkit-box-shadow:
+        0 1px 3px rgba(000,000,000,0.5),
+        inset 0 0 1px rgba(255,255,255,0.5);
+    box-shadow:
+        0 1px 3px rgba(000,000,000,0.5),
+        inset 0 0 1px rgba(255,255,255,0.5);
+    padding: 0 10px 0 10px;
+}
