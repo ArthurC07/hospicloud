@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content clearfix">
+  {% include "snippets/aside.html" with admision=admision %}
+  <section id="evolucion" class="grid_9">
+    <hgroup>
+      <h1>Devoluciones de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
+    </hgroup>
+    {% include "snippets/devolucion_table.html" %}
+    <a href="{% url enfermeria-devolucion-agregar admision.id %}" class="button">Agregar Devoluci&oacute;n</a>
+  </section>
+</div>
+{% endblock %}

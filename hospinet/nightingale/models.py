@@ -349,7 +349,7 @@ class Devolucion(models.Model):
     """Representa todos aquellos materiales que han sido devueltos"""
 
     admision = models.ForeignKey(Admision, related_name='devoluciones')
-    nombre = models.CharField(max_length=200, blank=True, null=True)
+    descripcion = models.TextField(max_length=200, blank=True, null=True)
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='devoluciones')

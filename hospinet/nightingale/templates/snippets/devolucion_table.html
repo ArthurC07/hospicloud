@@ -1,0 +1,21 @@
+<table class="data">
+  <thead class="gradient">
+    <tr>
+        <th>Fecha y Hora</th>
+        <th>Descripci&oacute;n</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if admision.devoluciones.count == 0%}
+    <tr>
+        <td colspan="3">No hay devoluciones registradas</td>
+    </tr>
+    {% endif%}
+    {% for devolucion in admision.devoluciones.all %}
+    <tr>
+        <th>{{ devolucion.fecha_y_hora|date:"d/m/Y P" }}</th>
+        <th>{{ devolucion.descripcion }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

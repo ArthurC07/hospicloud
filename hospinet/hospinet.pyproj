@@ -172,7 +172,9 @@
     <Content Include="library\courB08.pil" />
     <Content Include="nightingale\templates\enfermeria\cargos.html" />
     <Content Include="nightingale\templates\enfermeria\cargo_create.html" />
+    <Content Include="nightingale\templates\enfermeria\devoluciones.html" />
     <Content Include="nightingale\templates\enfermeria\evolucion.html" />
+    <Content Include="nightingale\templates\enfermeria\devolucion_create.html" />
     <Content Include="nightingale\templates\enfermeria\evolucion_create.html" />
     <Content Include="nightingale\templates\enfermeria\excreta_create.html" />
     <Content Include="nightingale\templates\enfermeria\glucometria.html" />
@@ -199,6 +201,7 @@
     <Content Include="nightingale\templates\snippets\aside.html" />
     <Content Include="nightingale\templates\snippets\enfermeria_list.html" />
     <Content Include="nightingale\templates\snippets\cargo_table.html" />
+    <Content Include="nightingale\templates\snippets\devolucion_table.html" />
     <Content Include="nightingale\templates\snippets\excreta_table.html" />
     <Content Include="nightingale\templates\snippets\ingesta_table.html" />
     <Content Include="nightingale\templates\snippets\medicamento.html" />

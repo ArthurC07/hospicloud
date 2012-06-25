@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/devoluciones$',
         NightingaleDetailView.as_view(template_name='enfermeria/devoluciones.html'),
-        name='nightingale-devoluciones'),
+        name='enfermeria-devoluciones'),
     
     url(r'^(?P<pk>\d+)/signos/grafico$',
         SignosDetailView.as_view(),
