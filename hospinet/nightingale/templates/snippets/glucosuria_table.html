@@ -14,7 +14,7 @@
         </tr>
         {% endif%}
         {% for glucosuria in admision.glucosuria.all %}
-        <tr>
+        <tr class="{{ glucosuria.get_turno }}">
           <td>{{ glucosuria.fecha_y_hora }}</td>
           <td>{{ glucosuria.control }}</td>
           <td>{{ glucosuria.observacion }}</td>

@@ -19,7 +19,7 @@
         </tr>
         {% endif%}
         {% for signos in admision.signos_vitales.all %}
-        <tr>
+        <tr class="{{ signos.get_turno }}">
           <td>{{ signos.fecha_y_hora }}</td>
           {% localize off %}
           <td>{{ signos.pulso }}</td>

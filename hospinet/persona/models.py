@@ -69,6 +69,12 @@ class Persona(models.Model):
         
         return Persona.__expresion__.match(identidad)
     
+    def __unicode__(self):
+
+        """Muestra el nombre completo de la persona"""
+
+        return self.nombre_completo()
+
     @permalink
     def get_absolute_url(self):
         

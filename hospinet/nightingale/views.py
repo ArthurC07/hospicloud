@@ -15,7 +15,6 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
     Medicamento, Dosis, Devolucion)
 from spital.models import Admision
 from django.contrib import messages
-from datetime import timedelta
 from django.utils import timezone
 
 class NightingaleIndexView(ListView, LoginRequiredView):
@@ -129,7 +128,7 @@ class SignosDetailView(DetailView, LoginRequiredView):
             context['pulso_promedio'] = self.object.pulso_promedio
             context['presion_diastolica_promedio'] = self.object.presion_diastolica_promedio
             context['presion_sistolica_promedio'] = self.object.presion_sistolica_promedio
-            inicio = signos[0].fecha_y_hora - timedelta(minutes=5)
+            inicio = signos[0].fecha_y_hora - timezone.timedelta(minutes=5)
             context['min'] = inicio.strftime('%Y-%m-%d %H:%M')
         
         context['pulso'] = u','.join("['{0}', {1}]".format(

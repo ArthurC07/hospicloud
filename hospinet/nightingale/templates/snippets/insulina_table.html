@@ -14,7 +14,7 @@
         </tr>
         {% endif%}
         {% for insulina in admision.insulina.all %}
-        <tr>
+        <tr class="{{ insulina.get_turno }}">
           <td>{{ insulina.fecha_y_hora }}</td>
           <td>{{ insulina.control }}</td>
           <td>{{ insulina.observacion }}</td>

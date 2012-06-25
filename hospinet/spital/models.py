@@ -203,3 +203,7 @@ class Admision(models.Model):
         """Obtiene la URL absoluta"""
         
         return 'admision-view-id', [self.id]
+    
+    def __unicode__(self):
+
+        return u"{0} en {1}".format(self.paciente.nombre_completo(), self.habitacion)

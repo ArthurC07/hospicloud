@@ -12,7 +12,7 @@
     </tr>
     {% endif%}
     {% for devolucion in admision.devoluciones.all %}
-    <tr>
+    <tr class="{{ devolucion.get_turno }}">
         <th>{{ devolucion.fecha_y_hora|date:"d/m/Y P" }}</th>
         <th>{{ devolucion.descripcion }}</th>
     </tr>

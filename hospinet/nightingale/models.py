@@ -1,14 +1,35 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from spital.models import Admision
-from datetime import timedelta
+from datetime import time
 from django.utils import timezone
 from django.db.models import permalink
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from actstream import action
 
-class SignoVital(models.Model):
+class Turno(object):
+
+    def get_turno(self):
+
+        hora = timezone.localtime(self.fecha_y_hora.time())
+        a_inicio = time(13, tzinfo=hora.tzinfo)
+        b_inicio = time(21, tzinfo=hora.tzinfo)
+        c_inicio = time(3, tzinfo=hora.tzinfo)
+
+        if hora > a_inicio and hora < b_inicio:
+
+            return u"turno-a"
+
+        if hora > b_inicio or hora < c_inicio:
+
+            return u"turno-b"
+
+        if hora > c_inicio and hora < a_inicio:
+
+            return u"turno-c"
+
+class SignoVital(models.Model, Turno):
     
     """Registra los signos vitales de una :class:`Persona` durante una
     :class:`Admision` en el  Hospital"""
@@ -77,7 +98,7 @@ class Evolucion(models.Model):
         
         return 'nightingale-view-id', [self.admision.id]
 
-class Cargo(models.Model):
+class Cargo(models.Model, Turno):
     
     """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
     
@@ -114,7 +135,7 @@ class OrdenMedica(models.Model):
         
         return 'nightingale-view-id', [self.admision.id]
 
-class Ingesta(models.Model):
+class Ingesta(models.Model, Turno):
     
     """Registra las ingestas que una :class:`Persona`"""
     
@@ -134,7 +155,7 @@ class Ingesta(models.Model):
         
         return 'enfermeria-ingestas-excretas', [self.admision.id]
 
-class Excreta(models.Model):
+class Excreta(models.Model, Turno):
     
     """Registra las excresiones de una :class:`Persona` durante una
     :class:`Admision`"""
@@ -162,7 +183,7 @@ class Excreta(models.Model):
         
         return 'enfermeria-ingestas-excretas', [self.admision.id]
 
-class NotaEnfermeria(models.Model):
+class NotaEnfermeria(models.Model, Turno):
     
     """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
     
@@ -180,7 +201,7 @@ class NotaEnfermeria(models.Model):
         
         return 'enfermeria-notas', [self.admision.id]
 
-class Glicemia(models.Model):
+class Glicemia(models.Model, Turno):
     
     """Registra las fluctuaciones en los niveles de Glucosa en la sangre de una
     :class:`Persona` durante una :class`Admision`"""
@@ -199,7 +220,7 @@ class Glicemia(models.Model):
         
         return 'nightingale-glucometria-id', [self.admision.id]
 
-class Glucosuria(models.Model):
+class Glucosuria(models.Model, Turno):
 
     """Registra la expulsión de Glucosa mediante la orina"""
 
@@ -217,7 +238,7 @@ class Glucosuria(models.Model):
         
         return 'nightingale-glucometria-id', [self.admision.id]
 
-class Insulina(models.Model):
+class Insulina(models.Model, Turno):
 
     """Registra la expulsión de Glucosa mediante la orina"""
 
@@ -316,7 +337,7 @@ class Medicamento(models.Model):
         
         return 'enfermeria-medicamentos', [self.admision.id]
 
-class Dosis(models.Model):
+class Dosis(models.Model, Turno):
 
     """Permite llevar un control sobre los momentos en los que se debe
     administrar un :class:`Medicamento` y saber quien los ha administrado a la
@@ -345,7 +366,7 @@ class Dosis(models.Model):
         
         return 'enfermeria-medicamentos', [self.admision.id]
 
-class Devolucion(models.Model):
+class Devolucion(models.Model, Turno):
 
     """Representa todos aquellos materiales que han sido devueltos"""
 

@@ -25,7 +25,7 @@
 <body>
   <!--[if lt IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative; margin-left:auto; margin-right: auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0012_spanish_LATAM.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." /></a></div><![endif]-->
   <header>
-    <nav id="top" class="user horizontal gradient">
+    <nav id="top" class="user horizontal gradient">{% load tz %}
       {% load tree_menu_tags %}{% show_menu "root" %}
       <ul id="user-menu"><li><a href="#">{% if user.is_authenticated %}{{ user }}</a>
         <ul>

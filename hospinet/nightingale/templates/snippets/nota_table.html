@@ -16,17 +16,17 @@
         </tr>
         {% endif%}
         {% for nota in admision.notas_enfermeria.all %}
-        <tr>
-          <td>{{ nota.fecha_y_hora }}</th>
-          <td>{{ nota.usuario.username }}</th>
-          <td>{{ nota.nota }}</th>
+        <tr class="{{ nota.get_turno }}">
+          <td>{{ nota.fecha_y_hora }}</td>
+          <td>{{ nota.usuario.username }}</td>
+          <td>{{ nota.nota }}</td>
           {% if editable == 1%}
           <td>
             {% if not nota.cerrada and nota.usuario == user %}
             <a href="{% url enfermeria-nota-editar nota.id %}">Editar</a>
             <a href="{% url enfermeria-nota-cerrar nota.id %}">Cerrar</a>
             {% endif %}
-          </th>
+          </td>
           {% endif %}
         </tr>
         {% endfor %}

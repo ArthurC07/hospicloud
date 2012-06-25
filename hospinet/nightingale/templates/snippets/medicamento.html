@@ -23,7 +23,7 @@
       </tr>
       {% endif %}
       {% for dosis in medicamento.dosis.all%}
-      <tr class="{{ dosis.get_estado_display }}">
+      <tr class="{{ dosis.get_turno }}">
         <th>{{ dosis.get_estado_display }}</th>
         <th>{{ dosis.recomendacion }}</th>
         <th>{{ dosis.fecha_y_hora }}</th>

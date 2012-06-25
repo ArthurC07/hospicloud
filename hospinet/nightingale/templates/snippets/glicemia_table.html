@@ -14,7 +14,7 @@
         </tr>
         {% endif%}
         {% for glicemia in admision.glicemias.all %}
-        <tr>
+        <tr class="{{ glicemia.get_turno }}">
           <td>{{ glicemia.fecha_y_hora }}</td>
           <td>{{ glicemia.control }}</td>
           <td>{{ glicemia.observacion }}</td>

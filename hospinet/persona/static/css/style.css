@@ -24,3 +24,6 @@ img.fotografia { padding: 5px; border: 1px solid #aaa; }
 footer { text-align: center; padding-top: 1em; }
 #resultados { padding: 0 40px; }
 .grafica { height: 500px; }
+.turno-a { background: white; }
+.turno-b { background: rgba(50, 223, 69, 0.25); }
+.turno-c { background: rgba(255, 115, 115, 0.5); }
