@@ -13,19 +13,19 @@ class Turno(object):
     def get_turno(self):
 
         hora = timezone.localtime(self.fecha_y_hora.time())
-        a_inicio = time(13, tzinfo=hora.tzinfo)
-        b_inicio = time(21, tzinfo=hora.tzinfo)
-        c_inicio = time(3, tzinfo=hora.tzinfo)
-
+        a_inicio = time(7, tzinfo=hora.tzinfo)
+        b_inicio = time(15, tzinfo=hora.tzinfo)
+        c_inicio = time(21, tzinfo=hora.tzinfo)
+        print hora, a_inicio, b_inicio, c_inicio
         if hora > a_inicio and hora < b_inicio:
 
             return u"turno-a"
 
-        if hora > b_inicio or hora < c_inicio:
+        if hora > b_inicio and hora < c_inicio:
 
             return u"turno-b"
 
-        if hora > c_inicio and hora < a_inicio:
+        if hora > c_inicio or hora < a_inicio:
 
             return u"turno-c"
 
