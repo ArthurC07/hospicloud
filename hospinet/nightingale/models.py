@@ -364,7 +364,7 @@ class Dosis(models.Model, Turno):
         
         """Obtiene la URL absoluta"""
         
-        return 'enfermeria-medicamentos', [self.admision.id]
+        return 'enfermeria-medicamentos', [self.medicamento.admision.id]
 
 class Devolucion(models.Model, Turno):
 

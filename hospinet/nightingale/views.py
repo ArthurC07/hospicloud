@@ -338,7 +338,7 @@ class DosisCreateView(CreateView, LoginRequiredView):
         formulario que será llenado posteriormente"""
 
         kwargs = super(DosisCreateView, self).get_form_kwargs()
-        kwargs.update({'initial':{'medicamento':self.admision.id,
+        kwargs.update({'initial':{'medicamento':self.medicamento.id,
                                   'fecha_y_hora': timezone.now(),
                                   'usuario':self.request.user.id,
                                   'administrador':self.request.user.id}})
@@ -349,7 +349,7 @@ class DosisCreateView(CreateView, LoginRequiredView):
         """Obtiene la :class:`Admision` que se entrego como argumento en la
         url"""
 
-        self.admision = get_object_or_404(Medicamento, pk=kwargs['medicamento'])
+        self.medicamento = get_object_or_404(Medicamento, pk=kwargs['medicamento'])
         return super(DosisCreateView, self).dispatch(*args, **kwargs)
     
     def form_valid(self, form):

@@ -1,7 +1,7 @@
 <article class="medicamento">
   <hgroup>
     <h2>{{ medicamento.nombre }} {{ medicamento.control }}</h2>
-    <h3>Iniciado el {{ medicamento.inicio }} {{ medicamento.intervalo }} por {{ medicamento.dias }} d&iacute;as</h3>
+    <h3>Iniciado el {{ medicamento.inicio }} {{ medicamento.get_intervalo_display }} por {{ medicamento.dias }} d&iacute;as</h3>
     <h3>Recetado por {{ medicamento.usuario.username }} el {{ medicamento.fecha_y_hora }}</h3>
   </hgroup>
   <table class="data">
