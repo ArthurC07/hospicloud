@@ -17,23 +17,14 @@
 <aside class="toolbox grid_3">
   <nav>
     <ul>
-      <li>
-        <a href="{% url admision-iniciar %}">Admitir Paciente</a>
-      </li>
+      
     </ul>
   </nav>
 </aside>
 <div id="admision" class="grid_9">
   <hgroup class="top title">
-    <h1>Admisiones</h1>
+    <h1>Gesti&oacute;n de Habitaciones</h1>
   </hgroup>
-  <div id="estadisticas" class="bloque-superior">
-    <article id="tiempo-espera">
-      <h2>Tiempo de Espera</h2>
-      <div id="grafico"></div>
-      <h3>Promedio: {{ promedio }} minutos</h3>
-    </article>
-  </div>
-  {% include "snippets/admision_list.html" with admisiones=admisiones %}
+  {% include "snippets/habitacion_list.html" with habitaciones=habitaciones %}
 </div>
-{% endblock %} 
+{% endblock %}

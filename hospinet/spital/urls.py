@@ -3,7 +3,9 @@ from django.conf.urls import patterns, url
 from spital.views import (AdmisionIndexView, PersonaAdmisionCreateView,
     AdmisionCreateView, IngresarView, AdmisionDetailView, AutorizarView,
     FiadorAgregarView, ReferenciaAgregarView, PersonaFiadorCreateView,
-    PersonaReferenciaCreateView, HospitalizarView, PagarView)
+    PersonaReferenciaCreateView, HospitalizarView, PagarView,
+    HabitacionCreateView, HabitacionDetailView, HabitacionUpdateView,
+    HabitacionListView)
 
 urlpatterns = patterns('',
     
@@ -70,4 +72,20 @@ urlpatterns = patterns('',
     url(r'^persona/(?P<persona>\d+)$',
         AdmisionCreateView.as_view(),
         name='admision-persona-agregar'),
+    
+    url(r'^habitacion$',
+        HabitacionListView.as_view(),
+        name='habitaciones'),
+
+    url(r'^habitacion/agregar$',
+        HabitacionCreateView.as_view(),
+        name='habitacion-agregar'),
+    
+    url(r'^habitacion/(?P<pk>\d+)$',
+        HabitacionDetailView.as_view(),
+        name='habitacion-view'),
+    
+    url(r'^habitacion/(?P<pk>\d+)/editar$',
+        HabitacionUpdateView.as_view(),
+        name='habitacion-view'),
 )

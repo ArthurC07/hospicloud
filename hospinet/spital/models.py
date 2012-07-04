@@ -6,12 +6,50 @@ from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
 from library import code128, image_to_content, pyqrcode
 from persona.models import Persona
-from sorl.thumbnail import ImageField #@UnresolvedImport
+from sorl.thumbnail import ImageField
+
+class Habitacion(models.Model):
+    
+    """Permite llevar control acerca de las :class:`Habitacion`es que se
+    encuentran en el hospital para asignar adecuadamente las mismas a cada
+    :class:`Admision`"""
+
+    TIPOS = (
+        ('N', 'Normal'),
+        ('S', 'Suite'),
+        ('U', 'U.C.I.'),
+    )
+
+    ESTADOS = (
+        ('D', 'Disponible'),
+        ('O', 'Ocupada'),
+        ('M', 'Mantenimiento'),
+    )
+
+    numero = models.IntegerField()
+    tipo = models.CharField(max_length=1, blank=True, choices=TIPOS)
+    estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
+    
+    def __unicode__(self):
+
+        return u'{0} {1}'.format(self.get_tipo_display(), self.numero)
+
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta de la :class:`Habitacion`"""
+        
+        return 'habitacion-view', [self.id]
 
 class Admision(models.Model):
     
-    """Permite registrar el Ingreso y estadia de una :class:`Persona` en el
+    """Permite registrar el Ingreso y estadía de una :class:`Persona` en el
     Hospital.
+
+    Durante cada :class:`Admision se registran los diversos procedmientos que
+    efectuan la :class:`Persona` durante su estadía en el hospital, ya sean
+    procedimientos quirúrgicos, examenes de laboratorio, controles de
+    enfermería, diversos cargos y otra información adecuada
     """
     
     ESTADOS = (
@@ -55,10 +93,10 @@ class Admision(models.Model):
     
     diagnostico = models.CharField(max_length=200, blank=True)
     doctor = models.CharField(max_length=200, blank=True)
-    # especialidad = ReferenceField(Especialidad)
     
     tipo_de_habitacion = models.CharField(max_length=200, blank=True)
-    habitacion = models.CharField(max_length=200, blank=True)
+    habitacion = models.ForeignKey(Habitacion, related_name='admisiones',
+                                   null=True, blank=True)
     arancel = models.CharField(max_length=200, blank=True, choices=ARANCELES)
     
     pago = models.CharField(max_length=200, blank=True, choices=PAGOS)
@@ -105,7 +143,8 @@ class Admision(models.Model):
         Crea un codigo QR para una :class:`Admision`
         """
         
-        imagen = image_to_content(pyqrcode.MakeQRImage(self.uuid))
+        codigo = u'{0} {1}'.format(self.uuid, self.__unicode__())
+        imagen = image_to_content(pyqrcode.MakeQRImage(codigo))
         self.qr.save('{0}.jpg'.format(self.uuid), imagen)
     
     def autorizar(self):
@@ -176,6 +215,9 @@ class Admision(models.Model):
     
     def tiempo_ahora(self):
         
+        """Permite mostrar el tiempo que ha transcurrido desde que se agrego
+        la :class:`Admision` al sistema"""
+
         ahora = timezone.now()
         if self.momento >= ahora:
             
@@ -185,13 +227,16 @@ class Admision(models.Model):
     
     def actualizar_tiempo(self):
 
+        """Actualiza el tiempo transcurrido desde el ingreso hasta el momento
+        en que se dio de alta"""
+
         if self.ingreso == None:
             return
 
         if not self.fecha_alta == None:
             self.tiempo = (self.fecha_alta - self.ingreso).total_seconds() / 60
         else:
-            self.tiempo = (timezone.now() - self.ingreso).total_seconds() / 60
+            self.tiempo = self.tiempo_ahora()
     
     def save(self, *args, **kwargs):
         self.actualizar_tiempo()

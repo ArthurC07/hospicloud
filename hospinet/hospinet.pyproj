@@ -312,6 +312,7 @@
     <Content Include="spital\static\images\signos.png" />
     <Content Include="spital\static\images\tubo.png" />
     <Content Include="spital\static\js\spital.js" />
+    <Content Include="spital\templates\admision\habitacion_create.html" />
     <Content Include="spital\templates\admision\admision_create.html" />
     <Content Include="spital\templates\admision\admision_detail.html" />
     <Content Include="spital\templates\admision\admision_fiador.html" />

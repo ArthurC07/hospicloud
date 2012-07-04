@@ -57,6 +57,7 @@ class Persona(models.Model):
     fax = models.CharField(max_length=200, blank=True)
     fotografia = ImageField(upload_to='persona/foto//%Y/%m/%d', blank=True)
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
+    codigo = models.CharField(max_length=200, blank=True)
     
     @staticmethod
     def validar_identidad(identidad):

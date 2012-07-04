@@ -1,7 +1,8 @@
 <table class="data">
   <thead class="gradient">
     <tr>
-      <th>Identificaci&oacute;n</th>
+      <th>C&oacute;digo</th>
+      <th>Habitaci&oacute;n</th>
       <th>Nombre</th>
       <th>Edad</th>
       <th>Sexo</th>
@@ -12,7 +13,8 @@
   <tbody>
     {% for admision in admisiones%}
     <tr>
-      <td>{{ admision.paciente.identificacion }}</td>
+      <td>{{ admision.paciente.codigo }}</td>
+      <td>{{ admision.habitacion.get_tipo_display }} {{ admision.habitacion.numero }}</td>
       <td>{{ admision.paciente.nombre_completo }}</td>
       <td>{{ admision.paciente.obtener_edad }}</td>
       <td>{{ admision.paciente.get_sexo_display }}</td>
