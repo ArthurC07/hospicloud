@@ -5,7 +5,7 @@ from imaging.views import (ExamenDetailView, ExamenCreateView,
     ExamenPersonaListView, ExamenIndexView, PersonaExamenCreateView,
     ExamenPreCreateView, DicomDetailView, DicomCreateView,
     EstudioProgramadoListView, EstudioProgramadoCreateView,
-    EstudioProgramadoEfectuarView)
+    EstudioProgramadoEfectuarView, NotificarExamen)
 
 urlpatterns = patterns('',
     
@@ -13,6 +13,10 @@ urlpatterns = patterns('',
         EstudioProgramadoListView.as_view(),
         name='examen-index'),
     
+    url(r'^^(?P<pk>\d+)$',
+        NotificarExamen.as_view(),
+        name='examen-notificar'),
+
     url(r'^(?P<persona>\d+)/programar$',
         EstudioProgramadoCreateView.as_view(),
         name='examen-programar'),

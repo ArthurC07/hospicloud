@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
                                   TemplateView, RedirectView)
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
-                           EstudioProgramadoForm)
+                           EstudioProgramadoForm, EmailForm)
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
 from library.protected import LoginRequiredView
 from persona.forms import PersonaForm
@@ -15,11 +15,11 @@ from django.contrib import messages
 
 class ExamenIndexView(ListView):
     
-    """Muestra un listado de los ultimos 5 :class:`Examen`es que se han
+    """Muestra un listado de los ultimos 20 :class:`Examen`es que se han
     ingresado al sistema"""
 
     template_name = 'examen/index.html'
-    queryset = Examen.objects.all().order_by('-fecha')[:5]
+    queryset = Examen.objects.all().order_by('-fecha')[:20]
     context_object_name = 'examenes'
 
 class PersonaExamenCreateView(PersonaCreateView):
@@ -163,6 +163,31 @@ class DicomDetailView(DetailView, LoginRequiredView):
     model = Dicom
     template_name = "examen/dicom_detail.html"
     slug_field = 'uuid'
+
+class NotificarExamenView(FormView, LoginRequiredView):
+
+    """Notifica a los interesados de que el :class:`Examen` se encuentra
+    disponible"""
+
+    template_name = 'email.html'
+    form_class = EmailForm
+    
+    def get_form_kwargs(self):
+        
+        kwargs = super(NotificarExamenView, self).get_form_kwargs()
+        kwargs.update({ 'initial':{'examen':self.examen.id}})
+        return kwargs
+
+    def dispatch(self, *args, **kwargs):
+        
+        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
+        return super(NotificarExamenView, self).dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+
+        form.send_email()
+
+        return super(ContactView, self).form_valid(form)
 
 class EstudioProgramadoCreateView(CreateView, LoginRequiredView):
 

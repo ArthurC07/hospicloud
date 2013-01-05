@@ -2,6 +2,7 @@
 from django import forms
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
 from persona.models import Persona
+from templated_email import send_templated_email
 
 class ExamenForm(forms.ModelForm):
     
@@ -73,3 +74,23 @@ class EstudioProgramadoForm(forms.ModelForm):
     persona = forms.ModelChoiceField(label="",
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
+
+class EmailForm(forms.Form):
+
+    """Permite mostrar un formulario para enviar notificaciones a diversos
+    correos"""
+
+    email = forms.CharField()
+    examen = forms.IntegerField()
+
+    def send_email(self):
+
+        examen = Examen.objects.get(self.examen)
+        get_templated_mail(
+                           template_name='examen',
+                           from_email='hospinet@casahospitalaria.com',
+                           to=[self.cleaned_data['email']],
+                           context={
+                                    'examen':examen
+                           }
+        )

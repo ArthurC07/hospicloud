@@ -10,3 +10,4 @@ django-extensions
 south
 python-gdcm
 django-activity-stream
+django-templated-email

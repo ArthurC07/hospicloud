@@ -1,0 +1,9 @@
+{% block subject %}Examen Disponible en Hospinet {% endblock %}
+{% block plain %}
+Hola!
+
+¡Hay un examen pendiente de revision en Hospinet!
+
+Para verlo, ve a {{ url examen.get_absolute_url }}
+
+{% endblock %}
