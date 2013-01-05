@@ -5,7 +5,7 @@
 <div id="informacion" class="grid_9">
   <hgroup>
     <h1>
-    	{{ paciente.persona.nombre_completo }}
+    	{{ paciente.id }} - {{ paciente.persona.nombre_completo }}
         {% include "snippets/persona_fotografia.html" with persona=paciente.persona %}
     </h1>
   </hgroup>
