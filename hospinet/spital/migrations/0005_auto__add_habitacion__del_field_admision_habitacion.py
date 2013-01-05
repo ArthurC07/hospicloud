@@ -17,27 +17,19 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('spital', ['Habitacion'])
 
-
-        # Renaming column for 'Admision.habitacion' to match new field type.
-        db.rename_column('spital_admision', 'habitacion', 'habitacion_id')
-        # Changing field 'Admision.habitacion'
-        db.alter_column('spital_admision', 'habitacion_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['spital.Habitacion']))
-        # Adding index on 'Admision', fields ['habitacion']
-        db.create_index('spital_admision', ['habitacion_id'])
+        # Deleting field 'Admision.habitacion'
+        db.delete_column('spital_admision', 'habitacion')
 
 
     def backwards(self, orm):
-        # Removing index on 'Admision', fields ['habitacion']
-        db.delete_index('spital_admision', ['habitacion_id'])
-
         # Deleting model 'Habitacion'
         db.delete_table('spital_habitacion')
 
+        # Adding field 'Admision.habitacion'
+        db.add_column('spital_admision', 'habitacion',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
 
-        # Renaming column for 'Admision.habitacion' to match new field type.
-        db.rename_column('spital_admision', 'habitacion_id', 'habitacion')
-        # Changing field 'Admision.habitacion'
-        db.alter_column('spital_admision', 'habitacion', self.gf('django.db.models.fields.CharField')(default='', max_length=200))
 
     models = {
         'actstream.action': {
@@ -132,7 +124,6 @@ class Migration(SchemaMigration):
             'fecha_alta': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'null': 'True', 'blank': 'True'}),
             'fecha_pago': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'null': 'True', 'blank': 'True'}),
             'fiadores': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'fianzas'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['persona.Persona']"}),
-            'habitacion': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'admisiones'", 'null': 'True', 'to': "orm['spital.Habitacion']"}),
             'hospitalizacion': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'ingreso': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
