@@ -13,7 +13,7 @@ urlpatterns = patterns('',
         EstudioProgramadoListView.as_view(),
         name='examen-index'),
     
-    url(r'^^(?P<pk>\d+)$',
+    url(r'^(?P<pk>\d+)$',
         NotificarExamen.as_view(),
         name='examen-notificar'),
 
