@@ -16,4 +16,10 @@
         <li><a href="{% url consultorio-pago-nuevo paciente.id %}">Agregar un Pago</a></li>
   	</ul>
   </nav>
+  <nav>
+  	<ul>
+  		<li><a href="{% url examen-persona-lista paciente.persona.id %}">Mostrar Estudios</a></li>
+  		<li><a href="{% url examen-agregar paciente.persona.id %}">Agregar un Estudio</a></li>
+  	</ul>
+  </nav>
 </aside>
