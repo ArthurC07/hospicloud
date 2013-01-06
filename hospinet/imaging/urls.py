@@ -14,7 +14,7 @@ urlpatterns = patterns('',
         name='examen-index'),
     
     url(r'^(?P<pk>\d+)$',
-        NotificarExamen.as_view(),
+        NotificarExamenView.as_view(),
         name='examen-notificar'),
 
     url(r'^(?P<persona>\d+)/programar$',
