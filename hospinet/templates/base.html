@@ -29,9 +29,9 @@
       {% load tree_menu_tags %}{% show_menu "root" %}
       <ul id="user-menu"><li><a href="#">{% if user.is_authenticated %}{{ user }}</a>
         <ul>
-          <li><a href="{% url logout %}">Salir</a></li>
+          <li><a href="{% url userena_signout %}">Salir</a></li>
         </ul>
-        {% else %}<a href="{% url login %}">Iniciar Sesi&oacute;n</a>{% endif %}</li></ul>
+        {% else %}<a href="{% url userena_signin %}">Iniciar Sesi&oacute;n</a>{% endif %}</li></ul>
     </nav>
     {% block heading %}{% endblock %}
   </header>

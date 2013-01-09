@@ -18,9 +18,9 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'asura',                      # Or path to database file if using sqlite3.
-        'USER': 'asura',                      # Not used with sqlite3.
-        'PASSWORD': '$a1ntcro$$',                  # Not used with sqlite3.
+        'NAME': 'hospinet',                      # Or path to database file if using sqlite3.
+        'USER': 'hospinet',                      # Not used with sqlite3.
+        'PASSWORD': 'hospinet',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -145,6 +145,9 @@ INSTALLED_APPS = (
     'actstream',
     'south',
     'private_files',
+    'userena',
+    'guardian',
+    'easy_thumbnails',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -176,6 +179,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 AUTH_PROFILE_MODULE = 'users.Profile'
 
+AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
@@ -193,7 +202,8 @@ HAYSTACK_CONNECTIONS = {
 }
 # Additional Settings
 FILE_PROTECTION_METHOD = 'basic'
-AUTH_PROFILE_MODULE = 'users.Profile'
+ANONYMOUS_USER_ID = -1
+AUTH_PROFILE_MODULE = 'users.UserProfile'
 
 ACTSTREAM_ACTION_MODELS = (
     'auth.user',

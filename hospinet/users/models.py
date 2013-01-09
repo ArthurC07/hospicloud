@@ -3,8 +3,9 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
+from userena.models import UserenaBaseProfile
 
-class Profile(models.Model):
+class UserProfile(UserenaBaseProfile):
     
     user = models.OneToOneField(User, primary_key=True)
     suscripcion = models.DateField(default=datetime.now)
@@ -15,11 +16,11 @@ class Profile(models.Model):
     def __unicode__(self):
         return self.user.username
 
-User.profile = property(lambda u: Profile.objects.get_or_create(user=u)[0])
+User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user=instance)
+        UserProfile.objects.create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)
 

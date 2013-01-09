@@ -11,9 +11,10 @@ class Migration(SchemaMigration):
         # Adding model 'Consultorio'
         db.create_table('clinique_consultorio', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('nombre', self.gf('django.db.models.fields.CharField')(max_length=1, blank=True)),
-            ('secretaria', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='secretariados', null=True, to=orm['users.Profile'])),
-            ('doctor', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='consultorios', null=True, to=orm['users.Profile'])),
+            ('nombre', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
+            ('secretaria', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='secretariados', null=True, to=orm['auth.User'])),
+            ('doctor', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='consultorios', null=True, to=orm['auth.User'])),
+            ('uuid', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
         ))
         db.send_create_signal('clinique', ['Consultorio'])
 
@@ -22,6 +23,8 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('persona', self.gf('django.db.models.fields.related.ForeignKey')(related_name='consultorios', to=orm['persona.Persona'])),
             ('consultorio', self.gf('django.db.models.fields.related.ForeignKey')(related_name='pacientes', to=orm['clinique.Consultorio'])),
+            ('uuid', self.gf('django.db.models.fields.CharField')(max_length=36, blank=True)),
+            ('primera_visita', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
         ))
         db.send_create_signal('clinique', ['Paciente'])
 
@@ -41,7 +44,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('consultorio', self.gf('django.db.models.fields.related.ForeignKey')(related_name='citas', to=orm['clinique.Consultorio'])),
             ('nombre', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('fecha_y_hora', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2012, 5, 20, 0, 0))),
+            ('fecha_y_hora', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
         ))
         db.send_create_signal('clinique', ['Cita'])
 
@@ -53,6 +56,72 @@ class Migration(SchemaMigration):
             ('atendido', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal('clinique', ['Esperador'])
+
+        # Adding model 'Consulta'
+        db.create_table('clinique_consulta', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('paciente', self.gf('django.db.models.fields.related.ForeignKey')(related_name='consultas', to=orm['clinique.Paciente'])),
+            ('razon_de_la_visita', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('fecha_y_hora', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('agudeza_visual_ojo_derecho', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('agudeza_visual_ojo_izquierdo', self.gf('django.db.models.fields.IntegerField')(default=0)),
+        ))
+        db.send_create_signal('clinique', ['Consulta'])
+
+        # Adding model 'Receta'
+        db.create_table('clinique_receta', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('paciente', self.gf('django.db.models.fields.related.ForeignKey')(related_name='recetas', to=orm['clinique.Paciente'])),
+            ('medicamentos', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('notas_adicionales', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('fecha_y_hora', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+        ))
+        db.send_create_signal('clinique', ['Receta'])
+
+        # Adding model 'HistoriaClinica'
+        db.create_table('clinique_historiaclinica', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('paciente', self.gf('django.db.models.fields.related.ForeignKey')(related_name='historias_clinicas', null=True, to=orm['clinique.Paciente'])),
+            ('nota', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('fecha_y_hora', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('agudeza_visual_ojo_derecho', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('agudeza_visual_ojo_izquierdo', self.gf('django.db.models.fields.IntegerField')(default=0)),
+        ))
+        db.send_create_signal('clinique', ['HistoriaClinica'])
+
+        # Adding model 'Optometria'
+        db.create_table('clinique_optometria', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('paciente', self.gf('django.db.models.fields.related.ForeignKey')(related_name='optometrias', to=orm['clinique.Paciente'])),
+            ('fecha_y_hora', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('esfera_ojo_derecho', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('esfera_ojo_izquierdo', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('cilindro_ojo_derecho', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('cilindro_ojo_izquierdo', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('eje_ojo_derecho', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('eje_ojo_izquierdo', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('prisma_ojo_derecho', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('prisma_ojo_izquierdo', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('adicion_ojo_derecho', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('adicion_ojo_izquierdo', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('d_p_ojo_derecho', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('d_p_ojo_izquierdo', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('altura_ojo_derecho', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('altura_ojo_izquierdo', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('notas', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+        ))
+        db.send_create_signal('clinique', ['Optometria'])
+
+        # Adding model 'Pago'
+        db.create_table('clinique_pago', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('paciente', self.gf('django.db.models.fields.related.ForeignKey')(related_name='pagos', to=orm['clinique.Paciente'])),
+            ('fecha_y_hora', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('monto', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=5, decimal_places=2)),
+            ('forma_de_pago', self.gf('django.db.models.fields.CharField')(max_length=1, blank=True)),
+            ('concepto', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
+        ))
+        db.send_create_signal('clinique', ['Pago'])
 
 
     def backwards(self, orm):
@@ -71,8 +140,37 @@ class Migration(SchemaMigration):
         # Deleting model 'Esperador'
         db.delete_table('clinique_esperador')
 
+        # Deleting model 'Consulta'
+        db.delete_table('clinique_consulta')
+
+        # Deleting model 'Receta'
+        db.delete_table('clinique_receta')
+
+        # Deleting model 'HistoriaClinica'
+        db.delete_table('clinique_historiaclinica')
+
+        # Deleting model 'Optometria'
+        db.delete_table('clinique_optometria')
+
+        # Deleting model 'Pago'
+        db.delete_table('clinique_pago')
+
 
     models = {
+        'actstream.action': {
+            'Meta': {'ordering': "('-timestamp',)", 'object_name': 'Action'},
+            'action_object_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'action_object'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
+            'action_object_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'actor_content_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actor'", 'to': "orm['contenttypes.ContentType']"}),
+            'actor_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'target_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'target'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
+            'target_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'timestamp': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'verb': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
         'auth.group': {
             'Meta': {'object_name': 'Group'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -105,16 +203,26 @@ class Migration(SchemaMigration):
         'clinique.cita': {
             'Meta': {'object_name': 'Cita'},
             'consultorio': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'citas'", 'to': "orm['clinique.Consultorio']"}),
-            'fecha_y_hora': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2012, 5, 20, 0, 0)'}),
+            'fecha_y_hora': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'nombre': ('django.db.models.fields.CharField', [], {'max_length': '200'})
         },
+        'clinique.consulta': {
+            'Meta': {'object_name': 'Consulta'},
+            'agudeza_visual_ojo_derecho': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'agudeza_visual_ojo_izquierdo': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'fecha_y_hora': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'paciente': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'consultas'", 'to': "orm['clinique.Paciente']"}),
+            'razon_de_la_visita': ('django.db.models.fields.TextField', [], {'blank': 'True'})
+        },
         'clinique.consultorio': {
             'Meta': {'object_name': 'Consultorio'},
-            'doctor': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'consultorios'", 'null': 'True', 'to': "orm['users.Profile']"}),
+            'doctor': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'consultorios'", 'null': 'True', 'to': "orm['auth.User']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'}),
-            'secretaria': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'secretariados'", 'null': 'True', 'to': "orm['users.Profile']"})
+            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'secretaria': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'secretariados'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'uuid': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'})
         },
         'clinique.esperador': {
             'Meta': {'object_name': 'Esperador'},
@@ -123,11 +231,60 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'paciente': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'esperas'", 'to': "orm['clinique.Paciente']"})
         },
+        'clinique.historiaclinica': {
+            'Meta': {'object_name': 'HistoriaClinica'},
+            'agudeza_visual_ojo_derecho': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'agudeza_visual_ojo_izquierdo': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'fecha_y_hora': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'nota': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'paciente': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'historias_clinicas'", 'null': 'True', 'to': "orm['clinique.Paciente']"})
+        },
+        'clinique.optometria': {
+            'Meta': {'object_name': 'Optometria'},
+            'adicion_ojo_derecho': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'adicion_ojo_izquierdo': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'altura_ojo_derecho': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'altura_ojo_izquierdo': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'cilindro_ojo_derecho': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'cilindro_ojo_izquierdo': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'd_p_ojo_derecho': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'd_p_ojo_izquierdo': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'eje_ojo_derecho': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'eje_ojo_izquierdo': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'esfera_ojo_derecho': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'esfera_ojo_izquierdo': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'fecha_y_hora': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'notas': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'paciente': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'optometrias'", 'to': "orm['clinique.Paciente']"}),
+            'prisma_ojo_derecho': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'prisma_ojo_izquierdo': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'})
+        },
         'clinique.paciente': {
             'Meta': {'object_name': 'Paciente'},
             'consultorio': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'pacientes'", 'to': "orm['clinique.Consultorio']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'persona': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'consultorios'", 'to': "orm['persona.Persona']"})
+            'persona': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'consultorios'", 'to': "orm['persona.Persona']"}),
+            'primera_visita': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'uuid': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'})
+        },
+        'clinique.pago': {
+            'Meta': {'object_name': 'Pago'},
+            'concepto': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'fecha_y_hora': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'forma_de_pago': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'monto': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '5', 'decimal_places': '2'}),
+            'paciente': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'pagos'", 'to': "orm['clinique.Paciente']"})
+        },
+        'clinique.receta': {
+            'Meta': {'object_name': 'Receta'},
+            'fecha_y_hora': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'medicamentos': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'notas_adicionales': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'paciente': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'recetas'", 'to': "orm['clinique.Paciente']"})
         },
         'clinique.transaccion': {
             'Meta': {'object_name': 'Transaccion'},
@@ -153,6 +310,7 @@ class Migration(SchemaMigration):
             'celular': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'centro_trabajo': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'ci': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'codigo': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'direccion_trabajo': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'domicilio': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'email': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
@@ -160,7 +318,7 @@ class Migration(SchemaMigration):
             'fax': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'fotografia': ('sorl.thumbnail.fields.ImageField', [], {'max_length': '100', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'identificacion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '20', 'blank': 'True'}),
+            'identificacion': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'nacimiento': ('django.db.models.fields.DateField', [], {'default': 'datetime.date.today'}),
             'nacionalidad': ('persona.fields.OrderedCountryField', [], {'max_length': '2', 'blank': 'True'}),
             'nombre': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
@@ -169,12 +327,6 @@ class Migration(SchemaMigration):
             'tel_trabajo': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'telefono': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'tipo_identificacion': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'})
-        },
-        'users.profile': {
-            'Meta': {'object_name': 'Profile'},
-            'doctor': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'suscripcion': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime.now'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True', 'primary_key': 'True'})
         }
     }
 

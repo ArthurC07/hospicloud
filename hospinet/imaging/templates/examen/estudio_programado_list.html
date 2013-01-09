@@ -37,5 +37,9 @@
         {% endfor %}
       </tbody>
     </table>
+    <hgroup>
+    <h1>&Uacute;ltimos Examenes Efectuados</h1>
+    </hgroup>
+    {% include "snippets/examen_list.html" with examenes=examenes %}
 </div>
 {% endblock %}

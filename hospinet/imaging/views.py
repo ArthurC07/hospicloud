@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
-                                  TemplateView, RedirectView)
+                                  TemplateView, RedirectView, FormView)
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
                            EstudioProgramadoForm, EmailForm)
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
@@ -55,6 +55,14 @@ class ExamenDetailView(DetailView, LoginRequiredView):
     model = Examen
     template_name = 'examen/examen_detail.html'
     slug_field = 'uuid'
+
+class ExamenUpdateView(UpdateView, LoginRequiredView):
+
+    """Permite editar los datos de un :class:`Examen`"""
+    
+    model = Examen
+    form_class = ExamenForm
+    template_name = 'examen/examen_update.html'
 
 class ExamenPersonaListView(DetailView, LoginRequiredView):
     
@@ -205,11 +213,16 @@ class EstudioProgramadoCreateView(CreateView, LoginRequiredView):
     
     def dispatch(self, *args, **kwargs):
         
+        """Agrega la persona como parametro del Estudio a programar"""
+
         self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
         return super(EstudioProgramadoCreateView, self).dispatch(*args, **kwargs)
     
     def form_valid(self, form):
         
+        """Asocia el estudio a realizar con la persona que se incluye en
+        los parametros"""
+
         self.object = form.save(commit=False)
         self.object.persona = self.persona
         self.object.save()
@@ -231,6 +244,14 @@ class EstudioProgramadoListView(ListView, LoginRequiredView):
         
         return EstudioProgramado.objects.filter(efectuado=False)
 
+    def get_context_data(self, **kwargs):
+
+        """Agrega los ultimos :class:`Examen`es efectuados a la vista"""
+        
+        context = super(EstudioProgramadoListView, self).get_context_data(**kwargs)
+        context['examenes'] = Examen.objects.all().order_by('-fecha')[:20]
+        return context
+
 class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredView):
     
     """Permite marcar un :class:`EstudioProgramado` como ya efectuado y
@@ -242,7 +263,6 @@ class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredView):
     def get_redirect_url(self, **kwargs):
         
         estudio = get_object_or_404(EstudioProgramado, pk=kwargs['pk'])
-        estudio.efectuado = True
-        dosis.save()
+        examen = estudio.efectuar()
         messages.info(self.request, u'¡El estudio ha sido marcado como efectuado!')
-        return reverse('examen-agregar', args=[estudio.persona.id])
+        return reverse('examen-edit', args=[estudio.persona.id])

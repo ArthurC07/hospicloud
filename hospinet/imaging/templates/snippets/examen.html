@@ -1,5 +1,4 @@
   <section class="info">
     <p>Fecha {{ examen.fecha|date:"d/m/Y" }}</p>
-    <p>Resultado: <em>{{ examen.resultado }}</em></p>
-    <p>Diagn&oacute;stico: <em>{{ examen.diagnostico }}</em></p>
+    <p>Estudio Efectuado: {{ examen.tipo_de_examen.nombre }}</p>
   </section>
