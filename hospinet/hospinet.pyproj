@@ -34,14 +34,6 @@
   <ItemGroup>
     <Compile Include="clinique\admin.py" />
     <Compile Include="clinique\forms.py" />
-    <Compile Include="clinique\migrations\0001_initial.py" />
-    <Compile Include="clinique\migrations\0002_auto__chg_field_consultorio_nombre.py" />
-    <Compile Include="clinique\migrations\0003_auto__add_field_consultorio_uuid.py" />
-    <Compile Include="clinique\migrations\0004_auto__add_field_paciente_uuid.py" />
-    <Compile Include="clinique\migrations\0005_auto__add_historiaclinica__add_optometria__add_receta__add_consulta.py" />
-    <Compile Include="clinique\migrations\0006_auto__del_field_historiaclinica_consulta__add_field_historiaclinica_pa.py" />
-    <Compile Include="clinique\migrations\0007_auto__add_field_optometria_notas.py" />
-    <Compile Include="clinique\migrations\__init__.py" />
     <Compile Include="clinique\models.py" />
     <Compile Include="clinique\search_indexes.py" />
     <Compile Include="clinique\tests.py" />
@@ -110,10 +102,6 @@
     <Compile Include="statistics\__init__.py" />
     <Compile Include="scripts\__init__.py" />
     <Compile Include="users\admin.py" />
-    <Compile Include="users\migrations\0001_initial.py" />
-    <Compile Include="users\migrations\0002_auto__del_field_profile_id__add_field_profile_secretaria__add_field_pr.py" />
-    <Compile Include="users\migrations\0003_auto__del_field_profile_secretaria__add_field_profile_suscriptor.py" />
-    <Compile Include="users\migrations\__init__.py" />
     <Compile Include="users\models.py" />
     <Compile Include="users\tests.py" />
     <Compile Include="users\urls.py" />
@@ -154,6 +142,7 @@
     <Content Include="clinique\templates\snippets\paciente_list.html" />
     <Content Include="imaging\static\css\dicom.css" />
     <Content Include="imaging\static\css\examen.css" />
+    <Content Include="imaging\static\js\imaging.js" />
     <Content Include="imaging\templates\examen\adjunto_create.html" />
     <Content Include="imaging\templates\examen\dicom_create.html" />
     <Content Include="imaging\templates\examen\dicom_detail.html" />
@@ -165,6 +154,7 @@
     <Content Include="imaging\templates\examen\imagen_create.html" />
     <Content Include="imaging\templates\examen\estudio_programado_list.html" />
     <Content Include="imaging\templates\examen\index.html" />
+    <Content Include="imaging\templates\examen\examen_update.html" />
     <Content Include="imaging\templates\search\indexes\laboratory\examen_text.txt" />
     <Content Include="imaging\templates\snippets\adjunto.html" />
     <Content Include="imaging\templates\snippets\dicom.html" />
@@ -350,7 +340,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="clinique\" />
-    <Folder Include="clinique\migrations\" />
     <Folder Include="clinique\static\" />
     <Folder Include="clinique\static\js\" />
     <Folder Include="clinique\templates\" />
@@ -362,6 +351,7 @@
     <Folder Include="clinique\templates\snippets\" />
     <Folder Include="imaging" />
     <Folder Include="imaging\static\css" />
+    <Folder Include="imaging\static\js" />
     <Folder Include="imaging\templates" />
     <Folder Include="imaging\static" />
     <Folder Include="imaging\templates\examen" />
@@ -423,7 +413,6 @@
     <Folder Include="templates\search\" />
     <Folder Include="templates\snippets\" />
     <Folder Include="users" />
-    <Folder Include="users\migrations\" />
     <Folder Include="users\templates\" />
     <Folder Include="users\templates\registration\" />
   </ItemGroup>

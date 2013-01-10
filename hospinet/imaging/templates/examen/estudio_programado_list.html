@@ -8,7 +8,7 @@
         <a href="{% url haystack_search %}"><img src="{% static "images/busqueda.png" %}" /> Buscar</a>
       </li>
       <li class="clearfix">
-        <a href="{% url persona-create %}"><img src="{% static "images/agregar.png" %}" /> Agregar Examen</a>
+        <a href="{% url examen-persona-nuevo %}"><img src="{% static "images/agregar.png" %}" /> Nuevo Paciente</a>
       </li>
     </ul>
   </nav>
@@ -31,7 +31,7 @@
         <tr>
           <td>{{ estudio.fecha }}</td>
           <td>{{ estudio.persona.nombre_completo }}</td>
-          <td>{{ estudio.examen }}</td>
+          <td>{{ estudio.tipo_de_examen.nombre }}</td>
           <td><a href="{% url examen-efectuar estudio.id %}">Efectuar</a></td>
         </tr>
         {% endfor %}

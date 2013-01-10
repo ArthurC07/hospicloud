@@ -56,14 +56,6 @@ class ExamenDetailView(DetailView, LoginRequiredView):
     template_name = 'examen/examen_detail.html'
     slug_field = 'uuid'
 
-class ExamenUpdateView(UpdateView, LoginRequiredView):
-
-    """Permite editar los datos de un :class:`Examen`"""
-    
-    model = Examen
-    form_class = ExamenForm
-    template_name = 'examen/examen_update.html'
-
 class ExamenPersonaListView(DetailView, LoginRequiredView):
     
     """Muestra los :class:`Examen`es realizados a una :class:`Persona`"""
@@ -265,4 +257,18 @@ class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredView):
         estudio = get_object_or_404(EstudioProgramado, pk=kwargs['pk'])
         examen = estudio.efectuar()
         messages.info(self.request, u'¡El estudio ha sido marcado como efectuado!')
-        return reverse('examen-edit', args=[estudio.persona.id])
+        return reverse('examen-edit', args=[examen.id])
+
+class EstudioPreCreateView(TemplateView):
+    
+    """Permite mostrar una interfaz donde decidir si agregar una nueva
+    :class:`Persona` o agregar el :class:`Examen a una ya ingresada previamente
+    """
+
+    template_name = 'examen/examen_agregar.html'
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(EstudioPreCreateView, self).get_context_data()
+        context['persona_form'] = PersonaForm()
+        return context
