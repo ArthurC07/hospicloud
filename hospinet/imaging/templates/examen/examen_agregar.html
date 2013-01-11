@@ -26,7 +26,7 @@
   </div>
 </form>
 <div id="resultados"></div>
-<form enctype="multipart/form-data" action="{% url persona-nuevo %}" class="styled" method="post">
+<form enctype="multipart/form-data" action="{% url examen-persona-nuevo %}" class="styled" method="post">
   {% csrf_token %} <h1>Ingresar una nuevo Paciente</h1>
   <div id="messages"></div>
   {% include "snippets/form.html" with form=persona_form %}

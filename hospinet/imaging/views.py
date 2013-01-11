@@ -13,12 +13,12 @@ from persona.models import Persona
 from persona.views import PersonaCreateView
 from django.contrib import messages
 
-class ExamenIndexView(ListView):
+class ExamenListView(ListView):
     
     """Muestra un listado de los ultimos 20 :class:`Examen`es que se han
     ingresado al sistema"""
 
-    template_name = 'examen/index.html'
+    template_name = 'examen/examen_list.html'
     queryset = Examen.objects.all().order_by('-fecha')[:20]
     context_object_name = 'examenes'
 
@@ -27,7 +27,7 @@ class PersonaExamenCreateView(PersonaCreateView):
     """Permite agregar una :class:`Persona` para efectuarle un
     :class:`Examen`"""
 
-    template_name = 'persona/persona_nuevo.html'
+    template_name = 'persona/nuevo.html'
     
     def get_success_url(self):
         
@@ -110,11 +110,16 @@ class ExamenDocBaseCreateView(CreateView, LoginRequiredView):
     
     def get_form_kwargs(self):
         
+        """Busca el :class:`Examen` correspondiente y lo agrega a los
+        argumentos del formulario"""
+
         kwargs = super(ExamenDocBaseCreateView, self).get_form_kwargs()
         kwargs.update({ 'initial' : { 'examen' : self.examen.id } })
         return kwargs
     
     def form_valid(self, form):
+
+        """Agrega el :class:`Examen` al objeto"""
         
         self.object = form.save(commit=False)
         self.object.examen = self.examen
@@ -185,9 +190,28 @@ class NotificarExamenView(FormView, LoginRequiredView):
 
     def form_valid(self, form):
 
+        """Efectua el envio de correos utilizando el de envio del formulario"""
+
         form.send_email()
 
         return super(ContactView, self).form_valid(form)
+
+class PersonaEstudioCreateView(PersonaCreateView):
+    
+    """Permite agregar una :class:`Persona` para efectuarle un
+    :class:`Examen`"""
+
+    template_name = 'persona/nuevo.html'
+    
+    def get_success_url(self):
+        
+        return reverse('examen-programar', args=[self.object.id])
+
+class EstudioProgramadoDetailView(DetailView, LoginRequiredView):
+
+    context_object_name = 'estudio'
+    model = EstudioProgramado
+    template_name = 'examen/estudio_detail.html'
 
 class EstudioProgramadoCreateView(CreateView, LoginRequiredView):
 
@@ -256,6 +280,7 @@ class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredView):
         
         estudio = get_object_or_404(EstudioProgramado, pk=kwargs['pk'])
         examen = estudio.efectuar()
+        examen.save()
         messages.info(self.request, u'¡El estudio ha sido marcado como efectuado!')
         return reverse('examen-edit', args=[examen.id])
 

@@ -18,6 +18,12 @@ class TipoExamen(models.Model):
 
     nombre = models.CharField(max_length=200)
 
+    def __unicode__(self):
+
+        """Devuelve una representación en texto del objeto"""
+
+        return self.nombre
+
 class EstudioProgramado(models.Model):
 
     """Permite que se planifique un :class:`Examen` antes de
@@ -38,7 +44,7 @@ class EstudioProgramado(models.Model):
         
         """Obtiene la URL absoluta"""
 
-        return 'tipo-examen-view-id', [self.id]
+        return 'estudio-detail-view', [self.id]
 
     def efectuar(self):
 
@@ -49,9 +55,16 @@ class EstudioProgramado(models.Model):
         examen.tipo_de_examen = self.tipo_de_examen
         examen.persona = self.persona
         examen.usuario = self.usuario
+        examen.remitio = self.remitio
         self.efectuado = True
         self.save()
         return examen
+
+    def __unicode__(self):
+
+        """Devuelve una representación en texto del objeto"""
+
+        return u"{0} de {1}, {2}".format(self.tipo_de_examen, self.persona, self.fecha)
 
 class Examen(models.Model):
     
@@ -67,6 +80,7 @@ class Examen(models.Model):
     uuid = UUIDField(version=4)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='estudios_realizados')
+    remitio = models.CharField(max_length=200, null=True)
     
     @permalink
     def get_absolute_url(self):

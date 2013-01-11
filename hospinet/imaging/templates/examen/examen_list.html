@@ -2,7 +2,16 @@
 {% load staticfiles %}
 {% block content %}
 <aside class="toolbox grid_3">
-{% include 'snippets/examen_aside.html' %}
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url haystack_search %}"><img src="{% static "images/busqueda.png" %}" /> Buscar</a>
+      </li>
+      <li class="clearfix">
+        <a href="{% url examen-persona-nuevo %}"><img src="{% static "images/agregar.png" %}" /> Nuevo Paciente</a>
+      </li>
+    </ul>
+  </nav>
 </aside>
 <div id="personas" class="grid_9">
   <hgroup>
@@ -14,7 +23,6 @@
           <th>Fecha</th>
           <th>Paciente</th>
           <th>Examen</th>
-          <th>Remiti&oacute;</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -24,7 +32,6 @@
           <td>{{ estudio.fecha }}</td>
           <td>{{ estudio.persona.nombre_completo }}</td>
           <td>{{ estudio.tipo_de_examen.nombre }}</td>
-          <td>{{ estudio.remitio }}</td>
           <td><a href="{% url examen-efectuar estudio.id %}">Efectuar</a></td>
         </tr>
         {% endfor %}
