@@ -6,9 +6,9 @@ PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 COMPANY = 'hospinet'
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-LOGIN_URL = '/{0}/accounts/login'.format(COMPANY)
-LOGOUT_URL = '/{0}/accounts/logout'.format(COMPANY)
-LOGIN_REDIRECT_URL = '/{0}/'.format(COMPANY)
+LOGIN_URL = '/{0}/accounts/signin/'.format(COMPANY)
+LOGOUT_URL = '/{0}/accounts/signout/'.format(COMPANY)
+LOGIN_REDIRECT_URL = '/{0}/accounts/%(username)s/'.format(COMPANY)
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
