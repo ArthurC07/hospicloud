@@ -2,10 +2,11 @@
 from django.conf.urls import patterns, url
 from imaging.views import (ExamenDetailView, ExamenCreateView,
     ExamenUpdateView, ImagenCreateView, AdjuntoCreateView,
-    ExamenPersonaListView, ExamenIndexView, PersonaExamenCreateView,
+    ExamenPersonaListView, ExamenListView, PersonaExamenCreateView,
     ExamenPreCreateView, DicomDetailView, DicomCreateView,
     EstudioProgramadoListView, EstudioProgramadoCreateView,
-    EstudioProgramadoEfectuarView, NotificarExamenView)
+    EstudioProgramadoEfectuarView, NotificarExamenView,
+    EstudioPreCreateView, PersonaEstudioCreateView, EstudioProgramadoDetailView)
 
 urlpatterns = patterns('',
     
@@ -13,33 +14,41 @@ urlpatterns = patterns('',
         EstudioProgramadoListView.as_view(),
         name='examen-index'),
     
-    url(r'^(?P<pk>\d+)$',
-        NotificarExamenView.as_view(),
+    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/notificar$',
+        ExamenDetailView.as_view(),
         name='examen-notificar'),
 
     url(r'^(?P<persona>\d+)/programar$',
         EstudioProgramadoCreateView.as_view(),
         name='examen-programar'),
+
+    url(r'^estudio/(?P<pk>\d+)$',
+        EstudioProgramadoDetailView.as_view(),
+        name='estudio-detail-view'),
     
     url(r'^estudio/(?P<pk>\d+)/efectuar$',
         EstudioProgramadoEfectuarView.as_view(),
         name='examen-efectuar'),
     
     url(r'^examenes$',
-        ExamenIndexView.as_view(),
+        ExamenListView.as_view(),
         name='examen-list'),
     
     url(r'^nuevo$',
-        ExamenPreCreateView.as_view(),
+        EstudioPreCreateView.as_view(),
         name='examen-nuevo'),
-    
+
     url(r'^persona/nuevo$',
-        PersonaExamenCreateView.as_view(),
+        PersonaEstudioCreateView.as_view(),
         name='examen-persona-nuevo'),
     
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
         ExamenDetailView.as_view(),
         name='examen-view-id'),
+
+    url(r'^(?P<pk>\d+)/editar$',
+        ExamenUpdateView.as_view(),
+        name='examen-edit'),
     
     url(r'^persona/(?P<pk>\d+)/lista$',
         ExamenPersonaListView.as_view(),

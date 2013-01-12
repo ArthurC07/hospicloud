@@ -2,7 +2,7 @@
 from django import forms
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
 from persona.models import Persona
-from templated_email import send_templated_email
+from templated_email import send_templated_mail
 
 class ExamenForm(forms.ModelForm):
     

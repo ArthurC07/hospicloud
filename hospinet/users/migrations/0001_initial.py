@@ -1,29 +1,55 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
-        # Adding model 'Profile'
-        db.create_table('users_profile', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], unique=True)),
+        # Adding model 'UserProfile'
+        db.create_table('users_userprofile', (
+            ('mugshot', self.gf('django.db.models.fields.files.ImageField')(max_length=100, blank=True)),
+            ('privacy', self.gf('django.db.models.fields.CharField')(default='registered', max_length=15)),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True, primary_key=True)),
             ('suscripcion', self.gf('django.db.models.fields.DateField')(default=datetime.datetime.now)),
+            ('doctor', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('suscriptor', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='dependientes', null=True, to=orm['auth.User'])),
         ))
-        db.send_create_signal('users', ['Profile'])
+        db.send_create_signal('users', ['UserProfile'])
+
+        # Adding model 'Hospital'
+        db.create_table('users_hospital', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('nombre', self.gf('django.db.models.fields.CharField')(max_length=200)),
+        ))
+        db.send_create_signal('users', ['Hospital'])
 
 
     def backwards(self, orm):
-        
-        # Deleting model 'Profile'
-        db.delete_table('users_profile')
+        # Deleting model 'UserProfile'
+        db.delete_table('users_userprofile')
+
+        # Deleting model 'Hospital'
+        db.delete_table('users_hospital')
 
 
     models = {
+        'actstream.action': {
+            'Meta': {'ordering': "('-timestamp',)", 'object_name': 'Action'},
+            'action_object_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'action_object'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
+            'action_object_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'actor_content_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actor'", 'to': "orm['contenttypes.ContentType']"}),
+            'actor_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'target_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'target'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
+            'target_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'timestamp': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'verb': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
         'auth.group': {
             'Meta': {'object_name': 'Group'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -60,11 +86,19 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        'users.profile': {
-            'Meta': {'object_name': 'Profile'},
+        'users.hospital': {
+            'Meta': {'object_name': 'Hospital'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '200'})
+        },
+        'users.userprofile': {
+            'Meta': {'object_name': 'UserProfile'},
+            'doctor': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'mugshot': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
+            'privacy': ('django.db.models.fields.CharField', [], {'default': "'registered'", 'max_length': '15'}),
             'suscripcion': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime.now'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'unique': 'True'})
+            'suscriptor': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'dependientes'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True', 'primary_key': 'True'})
         }
     }
 

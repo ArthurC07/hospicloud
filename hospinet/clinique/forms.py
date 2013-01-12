@@ -2,7 +2,7 @@
 from clinique.models import (Paciente, Cita, Transaccion, Consultorio, Pago,
                              Consulta, Receta, HistoriaClinica, Optometria)
 from django import forms
-from users.models import Profile
+from django.contrib.auth.models import User
 from persona.forms import DateTimeWidget
 
 class DateForm(forms.ModelForm):
@@ -22,7 +22,7 @@ class ConsultorioForm(forms.ModelForm):
         fields = ('nombre', )
     
     doctor = forms.ModelChoiceField(label="",
-                                  queryset=Profile.objects.all(),
+                                  queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
 class PacienteForm(forms.ModelForm):

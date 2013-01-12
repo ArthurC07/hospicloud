@@ -1,0 +1,14 @@
+{% load staticfiles %}
+<nav>
+<ul>
+    <li>
+    <a href="{% url examen-index %}"><img src="{% static "images/busqueda.png" %}" /> Inicio Im&aacute;genes</a>
+    </li>
+    <li>
+    <a href="{% url haystack_search %}"><img src="{% static "images/busqueda.png" %}" /> Buscar</a>
+    </li>
+    <li class="clearfix">
+    <a href="{% url examen-nuevo %}"><img src="{% static "images/agregar.png" %}" /> Programar Estudio</a>
+    </li>
+</ul>
+</nav>

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block header %}
+<link rel="stylesheet" href="{% static "css/examen.css" %}" />
+{% endblock %}
+{% block content %}
+<aside class="toolbox grid_3">
+{% include 'snippets/examen_aside.html' %}
+</aside>
+<article id="examen" class="grid_9">
+  <hgroup>
+    <h1>{{ estudio.tipo_de_examen.nombre }} de {{ estudio.persona.nombre_completo }}</h1>
+  </hgroup>
+  {% include "snippets/examen.html" with examen=estudio %}
+<a href="{% url examen-efectuar estudio.id %}" class="button">Efectuar Estudio</a>
+</article>
+{% endblock %}

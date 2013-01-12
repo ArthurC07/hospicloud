@@ -2,9 +2,9 @@
 from django.utils import timezone
 from django.db import models
 from persona.models import Persona
-from users.models import Profile
 from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
+from django.contrib.auth.models import User
 
 class Consultorio(models.Model):
     
@@ -12,9 +12,9 @@ class Consultorio(models.Model):
     atención privada que le ha facilitado a una :class:`Persona`"""
     
     nombre = models.CharField(max_length=255, blank=True)
-    secretaria = models.ForeignKey(Profile, blank=True, null=True,
+    secretaria = models.ForeignKey(User, blank=True, null=True,
                                    related_name='secretariados')
-    doctor = models.ForeignKey(Profile, blank=True, null=True,
+    doctor = models.ForeignKey(User, blank=True, null=True,
                                    related_name='consultorios')
     uuid = UUIDField(version=4)
     
@@ -32,7 +32,7 @@ class Consultorio(models.Model):
         
         return 'consultorio-view', [self.uuid]
 
-Profile.balance = property(lambda u: sum(c.balance() for c in u.consultorios))
+User.balance = property(lambda u: sum(c.balance() for c in u.consultorios))
 
 class Paciente(models.Model):
     

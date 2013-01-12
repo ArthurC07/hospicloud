@@ -11,18 +11,60 @@ from sorl.thumbnail import ImageField #@UnresolvedImport
 from south.modelsinspector import add_introspection_rules
 import os
 
+class TipoExamen(models.Model):
+
+    """Representa los diferentes examenes que se pueden efectuar en
+    la institución"""
+
+    nombre = models.CharField(max_length=200)
+
+    def __unicode__(self):
+
+        """Devuelve una representación en texto del objeto"""
+
+        return self.nombre
+
 class EstudioProgramado(models.Model):
 
     """Permite que se planifique un :class:`Examen` antes de
     efectuarlo"""
-    
+
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='estudios_programados')
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE,
                                 related_name="estudios_progamados")
+    tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
+                                related_name="estudios_progamados")
     fecha = models.DateField(default=date.today)
-    examen = models.CharField(max_length=200)
+    remitio = models.CharField(max_length=200)
     efectuado = models.NullBooleanField(default=False)
+
+    @permalink
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+
+        return 'estudio-detail-view', [self.id]
+
+    def efectuar(self):
+
+        """Marca el :class:`EstudioProgramado` y crea un :class:`Examen` basandose
+        en los datos del primero"""
+
+        examen = Examen()
+        examen.tipo_de_examen = self.tipo_de_examen
+        examen.persona = self.persona
+        examen.usuario = self.usuario
+        examen.remitio = self.remitio
+        self.efectuado = True
+        self.save()
+        return examen
+
+    def __unicode__(self):
+
+        """Devuelve una representación en texto del objeto"""
+
+        return u"{0} de {1}, {2}".format(self.tipo_de_examen, self.persona, self.fecha)
 
 class Examen(models.Model):
     
@@ -31,13 +73,14 @@ class Examen(models.Model):
     
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE,
                                 related_name="examenes")
+    tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
+                                related_name="examenes")
     nombre = models.CharField(max_length=200, blank=True)
-    resultado = models.CharField(max_length=200, blank=True)
-    diagnostico = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(default=datetime.now)
     uuid = UUIDField(version=4)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='estudios_realizados')
+    remitio = models.CharField(max_length=200, null=True)
     
     @permalink
     def get_absolute_url(self):
@@ -84,6 +127,7 @@ class Dicom(models.Model):
     de utilidad para extraer :class:`Imagen` a partir de los datos incrustados
     dentro del archivo
     """
+
     examen = models.ForeignKey(Examen, on_delete=models.CASCADE,
                                related_name='dicoms')
     archivo = PrivateFileField(upload_to='examen/dicom/%Y/%m/%d',
