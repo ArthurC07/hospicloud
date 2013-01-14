@@ -48,6 +48,12 @@
     <Compile Include="imaging\urls.py" />
     <Compile Include="imaging\views.py" />
     <Compile Include="imaging\__init__.py" />
+    <Compile Include="invoice\forms.py" />
+    <Compile Include="invoice\models.py" />
+    <Compile Include="invoice\tests.py" />
+    <Compile Include="invoice\urls.py" />
+    <Compile Include="invoice\views.py" />
+    <Compile Include="invoice\__init__.py" />
     <Compile Include="library\code128.py" />
     <Compile Include="library\dicom.py" />
     <Compile Include="library\protected.py" />
@@ -359,6 +365,8 @@
     <Folder Include="imaging\templates\search\indexes" />
     <Folder Include="imaging\templates\search\indexes\laboratory" />
     <Folder Include="imaging\templates\snippets" />
+    <Folder Include="invoice\" />
+    <Folder Include="invoice\Templates\" />
     <Folder Include="library" />
     <Folder Include="scripts" />
     <Folder Include="nightingale" />
