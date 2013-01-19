@@ -153,6 +153,8 @@ class DicomCreateView(ExamenDocBaseCreateView):
     
     def form_valid(self, form):
         
+        """Agrega y extrae la imagen del archivo DICOM"""
+
         self.object = form.save(commit=False)
         self.object.examen = self.examen
         self.object.save()
@@ -185,6 +187,8 @@ class NotificarExamenView(FormView, LoginRequiredView):
 
     def dispatch(self, *args, **kwargs):
         
+        """Obtiene el examen que se va a enviar"""
+
         self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
         return super(NotificarExamenView, self).dispatch(*args, **kwargs)
 
