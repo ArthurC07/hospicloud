@@ -17,7 +17,7 @@ urlpatterns = patterns('',
         ReciboDetailView.as_view(),
         name='invoice-view-id'),
     
-    url(r'^(?P<pk>\d+)/venta/add$',
+    url(r'^(?P<recibo>\d+)/venta/add$',
         VentaCreateView.as_view(),
         name='venta-add'),
 
