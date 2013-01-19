@@ -120,7 +120,7 @@ class IndexView(TemplateView, LoginRequiredView):
     
     """Muestra las opciones disponibles para la aplicación"""
 
-    template_name = 'recibo/index.html'
+    template_name = 'invoice/index.html'
     
     def get_context_data(self, **kwargs):
         
