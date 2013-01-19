@@ -195,24 +195,6 @@ class AdmisionDetailView(DetailView, LoginRequiredView):
     model = Admision
     template_name = 'admision/admision_detail.html'
     slug_field = 'uuid'
-    
-    def get_object(self):
-        
-        """Actualiza los códigos de barra y QR de la :class:`Admision` para
-        mostrarlos en la interfaz"""
-
-        objeto = super(AdmisionDetailView, self).get_object()
-        
-        if not objeto.codigo:
-            
-            objeto.generar_codigo()
-        
-        if not objeto.qr:
-            
-            objeto.generar_qr()
-        
-        objeto.save()
-        return objeto
 
 class AutorizarView(RedirectView, LoginRequiredView):
     

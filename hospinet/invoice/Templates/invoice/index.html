@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<form  class="styled" action="{% url invoice-periodo %}" method="get">
+  {% csrf_token %} <h1>Mostrar Recibos de un Periodo</h1>
+  <div id="messages"></div>{% include "snippets/form.html" with form=periodoform %}
+  <p>
+    <input type="submit" value="Mostrar" />
+  </p>
+</form>
+{% endblock %}

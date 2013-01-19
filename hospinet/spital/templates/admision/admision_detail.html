@@ -24,7 +24,5 @@
   <div class="info">
     {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url persona-fisico-editar admision.paciente.id %}" class="button">Editar F&iacute;sico</a>
   </div>
-  <img src="{{ admision.codigo.url }}" width="{{ im.width }}" height="{{ im.height }}">
-  <img src="{{ admision.qr.url }}" width="{{ im.width }}" height="{{ im.height }}">
 </section>
 {% endblock %}
