@@ -148,7 +148,7 @@ class ReporteView(TemplateView, LoginRequiredView):
 
         inicio = form.cleaned_data['inicio']
         fin = form.cleaned_data['fin']
-        recibos = Recibo.objects.filter(created_gte=inicio, created_lte=fin)
+        recibos = Recibo.objects.filter(created__gte=inicio, created__lte=fin)
         
         context['recibos'] = recibos
         return context
