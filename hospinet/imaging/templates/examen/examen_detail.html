@@ -24,6 +24,7 @@
   <hgroup>
     <h1>{{ examen.nombre }} de {{ examen.persona.nombre_completo }}</h1>
   </hgroup>
+  <a href="{% url invoice-create examen.persona.id %}" class="button">Crear Recibo</a>
   {% include "snippets/examen.html" with examen=examen %}
   <section id="imagenes">
     {% for imagen in examen.imagenes.all %}

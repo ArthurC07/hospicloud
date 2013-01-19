@@ -1,24 +1,75 @@
 # -*- coding: utf-8 -*-
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
-from django_extensions.models import TimeStampedModel
+from django_extensions.db.models import TimeStampedModel
+from decimal import Decimal
+from persona.models import Persona
 
 class Recibo(TimeStampedModel):
 
     """Permite registrar pagos por productos y servicios"""
 
-    cliente = models.CharField(max_length=255)
+    cliente = models.ForeignKey(Persona, related_name='recibos')
+    cerrado = models.BooleanField(default=False)
+    nulo = models.BooleanField(default=False)
+    cajero = models.ForeignKey(User, related_name='recibos')
+
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('invoice-view-id', args=[self.id])
+
+    def anular(self):
+
+        """Anula el :class:`Recibo` para que no se tome en cuenta en los
+        calculos financieros"""
+
+        self.nulo = True
+        self.save()
+
+    def __unicode__(self):
+
+        if self.nulo:
+            return u'{0} **NULO**'.format(self.cliente.nombre_completo())
+        
+        return self.cliente.nombre_completo()
+
+    def subtotal(self):
+
+        """Calcula el monto antes de impuestos"""
+
+        return sum(v.monto() for v in self.ventas.all())
+
+    def impuesto(self):
+
+        """Calcula los impuestos que se deben pagar por este :class:`Recibo`"""
+
+        return sum(v.tax() for v in self.ventas.all())
+
+    def total(self):
+
+        """Calcula el monto que será mostrado en los cálculos financieros"""
+
+        if self.nulo:
+            return Decimal(0)
+
+        return sum(v.total() for v in self.ventas.all())
 
 class Producto(TimeStampedModel):
 
     """Describe los diversos productos y servicios que son serán vendidos
     por la empresa"""
-
-    cajero = models.ForeignKey(User, related_name='recibos')
+    
     nombre = models.CharField(max_length=255)
-    descripcion = models.TextField()
+    descripcion = models.TextField(blank=True)
     precio = models.DecimalField(decimal_places=2, max_digits=10)
     impuesto = models.DecimalField(decimal_places=2, max_digits=4)
+
+    def __unicode__(self):
+        
+        return self.nombre
 
 class Venta(TimeStampedModel):
 
@@ -26,18 +77,34 @@ class Venta(TimeStampedModel):
     realizar los cobros asociados"""
 
     cantidad = models.IntegerField()
-    descripcion = models.TextField()
+    descripcion = models.TextField(blank=True, null=True)
+    precio = models.DecimalField(blank=True, null=True, max_digits=7,
+                                 decimal_places=2)
+    impuesto = models.DecimalField(blank=True, null=True, max_digits=7,
+                                   decimal_places=2)
     producto = models.ForeignKey(Producto, related_name='ventas')
     recibo = models.ForeignKey(Recibo, related_name='ventas')
+
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('invoice-view-id', args=[self.recibo.id])
 
     def monto(self):
 
         """Obtiene el valor a pagar por esta :class:`Venta`"""
 
-        return self.producto.precio * self.cantidad
+        return self.precio * self.cantidad
 
     def tax(self):
 
         """Obtiene los impuestos a pagar por esta :class:`Venta`"""
 
-        return self.producto.precio * self.cantidad * self.producto.impuesto
+        return self.producto * self.cantidad * self.producto.impuesto
+
+    def total(self):
+
+        """Calcula el valor total de esta :class:`Venta`"""
+
+        return self.tax() + self.monto()

@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     'users',
     'nightingale',
     'clinique',
+    'invoice',
     # Third party apps go here
     'django_extensions',
     'treemenus',
@@ -222,6 +223,7 @@ ACTSTREAM_ACTION_MODELS = (
     'nightingale.Medicamento',
     'nightingale.Dosis',
     'nightingale.Evolucion',
+    'invoide.Recibo',
     'spital.Admision',
     'comments.comment')
 

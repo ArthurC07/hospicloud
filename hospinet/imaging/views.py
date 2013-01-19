@@ -273,7 +273,7 @@ class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredView):
     """Permite marcar un :class:`EstudioProgramado` como ya efectuado y
     muestra el formulario para crear un nuevo :class:`Examen` a la
     :class:`Persona`"""
-     
+    
     permanent = False
     
     def get_redirect_url(self, **kwargs):
