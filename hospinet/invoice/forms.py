@@ -32,7 +32,7 @@ class VentaForm(forms.ModelForm):
     recibo = forms.ModelChoiceField(label="",
                                   queryset=Recibo.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
-    descripcion = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
+    descripcion = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'big' }))
 
 class PeriodoForm(forms.Form):
 
