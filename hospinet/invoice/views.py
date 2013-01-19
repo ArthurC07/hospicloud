@@ -142,7 +142,7 @@ class ReporteView(TemplateView, LoginRequiredView):
         """Agrega el formulario de :class:`Recibo`"""
         
         context = super(ReporteView, self).get_context_data(**kwargs)
-        form = ReporteAnualForm(self.request.GET)
+        form = PeriodoForm(self.request.GET)
         if not form.is_valid():
             redirect('invoice-index')
 
