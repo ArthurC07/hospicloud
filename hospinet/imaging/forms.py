@@ -81,11 +81,15 @@ class EmailForm(forms.Form):
     correos"""
 
     email = forms.CharField()
-    examen = forms.IntegerField()
+    examen = forms.ModelChoiceField(label="",
+                                  queryset=Examen.objects.all(),
+                                  widget=forms.HiddenInput())
 
     def send_email(self):
 
-        examen = Examen.objects.get(self.examen)
+        """Realiza el envio del correo electrónico"""
+
+        examen = self.cleaned_data['examen']
         get_templated_mail(
                            template_name='examen',
                            from_email='hospinet@casahospitalaria.com',

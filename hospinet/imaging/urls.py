@@ -14,8 +14,8 @@ urlpatterns = patterns('',
         EstudioProgramadoListView.as_view(),
         name='examen-index'),
     
-    url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/notificar$',
-        ExamenDetailView.as_view(),
+    url(r'^(?P<pk>\d+)/notificar$',
+        NotificarExamenView.as_view(),
         name='examen-notificar'),
 
     url(r'^(?P<persona>\d+)/programar$',

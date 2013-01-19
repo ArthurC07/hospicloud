@@ -176,7 +176,7 @@ class NotificarExamenView(FormView, LoginRequiredView):
     """Notifica a los interesados de que el :class:`Examen` se encuentra
     disponible"""
 
-    template_name = 'email.html'
+    template_name = 'examen/email.html'
     form_class = EmailForm
     
     def get_form_kwargs(self):
@@ -189,7 +189,7 @@ class NotificarExamenView(FormView, LoginRequiredView):
         
         """Obtiene el examen que se va a enviar"""
 
-        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
+        self.examen = get_object_or_404(Examen, pk=kwargs['pk'])
         return super(NotificarExamenView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
@@ -198,7 +198,15 @@ class NotificarExamenView(FormView, LoginRequiredView):
 
         form.send_email()
 
-        return super(ContactView, self).form_valid(form)
+        return super(NotificarExamenView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+
+        """Agrega los ultimos :class:`Examen`es efectuados a la vista"""
+        
+        context = super(NotificarExamenView, self).get_context_data(**kwargs)
+        context['examen'] = self.examen
+        return context
 
 class PersonaEstudioCreateView(PersonaCreateView):
     
