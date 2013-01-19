@@ -151,6 +151,7 @@
     <Content Include="imaging\templates\examen\adjunto_create.html" />
     <Content Include="imaging\templates\examen\dicom_create.html" />
     <Content Include="imaging\templates\examen\dicom_detail.html" />
+    <Content Include="imaging\templates\examen\email.html" />
     <Content Include="imaging\templates\examen\examen_agregar.html" />
     <Content Include="imaging\templates\examen\estudio_programado_create.html" />
     <Content Include="imaging\templates\examen\examen_create.html" />
@@ -366,8 +367,8 @@
     <Folder Include="imaging\templates\search\indexes\laboratory" />
     <Folder Include="imaging\templates\snippets" />
     <Folder Include="invoice\" />
-    <Folder Include="invoice\Templates\" />
-    <Folder Include="invoice\Templates\invoice\" />
+    <Folder Include="invoice\templates\" />
+    <Folder Include="invoice\templates\invoice\" />
     <Folder Include="library" />
     <Folder Include="scripts" />
     <Folder Include="nightingale" />
