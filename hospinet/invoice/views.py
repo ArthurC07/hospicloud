@@ -4,7 +4,7 @@ from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from invoice.models import Recibo, Producto, Venta
-from invoice.forms import ReciboForm, VentaForm
+from invoice.forms import ReciboForm, VentaForm, PeriodoForm
 from django.contrib.auth.models import User
 from django.views.generic import (CreateView, UpdateView, DeleteView,
     TemplateView, DetailView, ListView, RedirectView)
@@ -146,7 +146,9 @@ class ReporteView(TemplateView, LoginRequiredView):
         if not form.is_valid():
             redirect('invoice-index')
 
-        recibos = Recibo.objects.filter()
+        inicio = form.cleaned_data['inicio']
+        fin = form.cleaned_data['fin']
+        recibos = Recibo.objects.filter(created_gte=inicio, created_lte=fin)
         
         context['recibos'] = recibos
         return context
