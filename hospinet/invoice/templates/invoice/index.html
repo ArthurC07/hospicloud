@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
+<aside class="grid_3 toolbox">
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url invoice-index %}">Inicio Recibo</a>
+      </li>
+      <li>
+        <a href="{% url examen-index %}">Inicio Estudios</a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+<div id="informacion" class="grid_9">
 <form  class="styled" action="{% url invoice-periodo %}" method="get">
   {% csrf_token %} <h1>Mostrar Recibos de un Periodo</h1>
   <div id="messages"></div>{% include "snippets/form.html" with form=periodoform %}
@@ -7,4 +20,5 @@
     <input type="submit" value="Mostrar" />
   </p>
 </form>
+</div>
 {% endblock %}

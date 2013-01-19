@@ -1,5 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
+<aside class="grid_3 toolbox">
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url invoice-index %}">Inicio Recibo</a>
+      </li>
+      <li>
+        <a href="{% url examen-index %}">Inicio Estudios</a>
+      </li>
+    </ul>
+  </nav>
+</aside>
 <div id="informacion" class="grid_9">
   <hgroup>
     <h1>Recibo {{ recibo.id }}</h1>
