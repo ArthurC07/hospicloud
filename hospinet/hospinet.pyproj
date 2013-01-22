@@ -168,6 +168,8 @@
     <Content Include="imaging\templates\snippets\examen_list.html" />
     <Content Include="imaging\templates\snippets\imagen.html" />
     <Content Include="invoice\Templates\invoice\index.html" />
+    <Content Include="invoice\templates\invoice\recibo_list.html" />
+    <Content Include="invoice\Templates\invoice\venta_form.html" />
     <Content Include="invoice\Templates\invoice\recibo_detail.html" />
     <Content Include="invoice\Templates\invoice\recibo_create.html" />
     <Content Include="nightingale\templates\enfermeria\cargos.html" />

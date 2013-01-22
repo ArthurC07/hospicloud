@@ -22,7 +22,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for recibo in recibos %}
+        {% for recibo in recibos.all %}
         <tr>
             <td>{{ recibo.id }}<td>
             <td>{{ recibo.cliente.nombre_completo }}<td>

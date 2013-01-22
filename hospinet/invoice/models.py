@@ -31,6 +31,8 @@ class Recibo(TimeStampedModel):
 
     def __unicode__(self):
 
+        """Crea una representación en texto del :class:`Recibo`"""
+
         if self.nulo:
             return u'{0} **NULO**'.format(self.cliente.nombre_completo())
         
@@ -69,6 +71,8 @@ class Producto(TimeStampedModel):
 
     def __unicode__(self):
         
+        """Crea una representación en texto del producto"""
+
         return self.nombre
 
 class Venta(TimeStampedModel):

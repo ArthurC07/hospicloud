@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboDetailView,
-                           VentaCreateView, ReporteView)
+                           VentaCreateView, ReporteReciboView)
 
 urlpatterns = patterns('',
     
@@ -17,12 +17,16 @@ urlpatterns = patterns('',
         ReciboDetailView.as_view(),
         name='invoice-view-id'),
     
+    url(r'^(?P<pk>\d+)/anular$',
+        ReciboDetailView.as_view(),
+        name='invoice-nullify'),
+    
     url(r'^(?P<recibo>\d+)/venta/add$',
         VentaCreateView.as_view(),
         name='venta-add'),
 
     url(r'^periodo$',
-        ReporteView.as_view(),
+        ReporteReciboView.as_view(),
         name='invoice-periodo'),
 
 )

@@ -11,6 +11,7 @@ from django.views.generic import (CreateView, UpdateView, DeleteView,
 from library.protected import LoginRequiredView
 from django import forms
 from persona.models import Persona
+from datetime import datetime
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredView):
 
@@ -131,24 +132,53 @@ class IndexView(TemplateView, LoginRequiredView):
 
         return context
 
-class ReporteView(TemplateView, LoginRequiredView):
+class ReporteReciboView(TemplateView, LoginRequiredView):
 
-    model = Recibo
-    object_context_name = 'recibos'
+    """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
+    durante el periodo especificado"""
+
     template_name = 'invoice/recibo_list.html'
     
     def get_context_data(self, **kwargs):
         
         """Agrega el formulario de :class:`Recibo`"""
         
-        context = super(ReporteView, self).get_context_data(**kwargs)
+        context = super(ReporteReciboView, self).get_context_data(**kwargs)
         form = PeriodoForm(self.request.GET)
         if not form.is_valid():
             redirect('invoice-index')
 
         inicio = form.cleaned_data['inicio']
         fin = form.cleaned_data['fin']
-        recibos = Recibo.objects.filter(created__gte=inicio, created__lte=fin)
+        inicio = datetime.combine(inicio, datetime.time.min)
+        fin = datetime.combine(fin, datetime.time.max)
+        recibos = Recibo.objects.filter(created__range=(inicio, fin))
+        
+        context['recibos'] = recibos
+        return context
+
+class ReporteProductoView(TemplateView, LoginRequiredView):
+
+    """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
+    los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
+    cuenta el periodo especificado"""
+
+    template_name = 'invoice/recibo_list.html'
+    
+    def get_context_data(self, **kwargs):
+        
+        """Agrega el formulario de :class:`Recibo`"""
+        
+        context = super(ReporteReciboView, self).get_context_data(**kwargs)
+        form = PeriodoForm(self.request.GET)
+        if not form.is_valid():
+            redirect('invoice-index')
+
+        inicio = form.cleaned_data['inicio']
+        fin = form.cleaned_data['fin']
+        inicio = datetime.combine(inicio, datetime.time.min)
+        fin = datetime.combine(fin, datetime.time.max)
+        recibos = Recibo.objects.filter(created__range=(inicio, fin))
         
         context['recibos'] = recibos
         return context
