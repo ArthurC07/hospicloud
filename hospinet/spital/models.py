@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
-from library import image_to_content, pyqrcode
+from library import image_to_content
 from persona.models import Persona
 from sorl.thumbnail import ImageField
 
