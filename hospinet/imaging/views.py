@@ -208,6 +208,10 @@ class NotificarExamenView(FormView, LoginRequiredView):
         context['examen'] = self.examen
         return context
 
+    def get_success_url(self):
+
+        return self.examen.get_absolute_url()
+
 class PersonaEstudioCreateView(PersonaCreateView):
     
     """Permite agregar una :class:`Persona` para efectuarle un

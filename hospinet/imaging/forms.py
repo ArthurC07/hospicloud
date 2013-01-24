@@ -90,11 +90,11 @@ class EmailForm(forms.Form):
         """Realiza el envio del correo electrónico"""
 
         examen = self.cleaned_data['examen']
-        get_templated_mail(
+        send_templated_mail(
                            template_name='examen',
                            from_email='hospinet@casahospitalaria.com',
-                           to=[self.cleaned_data['email']],
+                           recipient_list=[self.cleaned_data['email']],
                            context={
-                                    'examen':examen
+                                    'link_examen':examen
                            }
         )

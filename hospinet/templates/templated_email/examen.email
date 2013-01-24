@@ -2,8 +2,8 @@
 {% block plain %}
 Hola!
 
-¡Hay un examen pendiente de revision en Hospinet!
+Â¡Hay un examen pendiente de revision en Hospinet!
 
-Para verlo, ve a {{ url examen.get_absolute_url }}
+Para verlo, ve a {{ examen.get_absolute_url }}
 
 {% endblock %}
