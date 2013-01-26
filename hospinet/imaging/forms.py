@@ -111,6 +111,6 @@ class EmailForm(forms.Form):
                            from_email='hospinet@casahospitalaria.com',
                            recipient_list=[self.cleaned_data['email']],
                            context={
-                                    'link_examen':examen
+                                    'link_examen' : examen.get_absolute_url()
                            }
         )
