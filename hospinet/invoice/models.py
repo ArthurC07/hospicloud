@@ -64,7 +64,7 @@ class Recibo(TimeStampedModel):
 
         """Calcula los impuestos que se deben pagar por este :class:`Recibo`"""
 
-        return sum(v.tax() for v in self.ventas.all())
+        return Decimal(sum(v.tax() for v in self.ventas.all()))
 
     def total(self):
 

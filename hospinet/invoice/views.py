@@ -29,6 +29,9 @@ from django import forms
 from persona.models import Persona
 from datetime import datetime, time
 from django.utils import timezone
+from collections import defaultdict
+from decimal import Decimal
+import pdb
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredView):
 
@@ -145,7 +148,8 @@ class IndexView(TemplateView, LoginRequiredView):
         """Agrega el formulario de :class:`Recibo`"""
         
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['periodoform'] = PeriodoForm()
+        context['reciboperiodoform'] = PeriodoForm(prefix='recibo')
+        context['productoperiodoform'] = PeriodoForm(prefix='producto')
 
         return context
 
@@ -153,15 +157,18 @@ class ReciboPeriodoView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
 
-        form = PeriodoForm(request.GET)
-        if not form.is_valid():
-            redirect('invoice-index')
+        #pdb.set_trace()
+        if self.form.is_valid():
 
-        inicio = form.cleaned_data['inicio']
-        fin = form.cleaned_data['fin']
-        self.inicio = timezone.make_aware(datetime.combine(inicio, time.min), timezone.get_default_timezone())
-        self.fin = timezone.make_aware(datetime.combine(fin, time.max), timezone.get_default_timezone())
-        self.recibos = Recibo.objects.filter(created__range=(inicio, fin))
+            inicio = self.form.cleaned_data['inicio']
+            fin = self.form.cleaned_data['fin']
+            self.inicio = timezone.make_aware(datetime.combine(inicio, time.min), timezone.get_default_timezone())
+            self.fin = timezone.make_aware(datetime.combine(fin, time.max), timezone.get_default_timezone())
+            self.recibos = Recibo.objects.filter(created__range=(inicio, fin))
+
+        else:
+            
+            return redirect('invoice-index')
 
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
 
@@ -172,6 +179,12 @@ class ReporteReciboView(ReciboPeriodoView, LoginRequiredView):
 
     template_name = 'invoice/recibo_list.html'
     
+    def dispatch(self, request, *args, **kwargs):
+
+        self.form = PeriodoForm(request.GET, prefix='recibo')
+
+        return super(ReporteReciboView, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         
         """Agrega el formulario de :class:`Recibo`"""
@@ -191,11 +204,35 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredView):
     los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
     cuenta el periodo especificado"""
 
-    template_name = 'invoice/recibo_list.html'
+    template_name = 'invoice/producto_list.html'
     
+    def dispatch(self, request, *args, **kwargs):
+
+        self.form = PeriodoForm(request.GET, prefix='producto')
+
+        return super(ReporteProductoView, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         
         """Agrega el formulario de :class:`Recibo`"""
+        
+        context = super(ReporteProductoView, self).get_context_data(**kwargs)
+        
+        context['cantidad'] = 0
+        productos = defaultdict(lambda: defaultdict(Decimal))
+        
+        for recibo in self.recibos.all():
+
+            for venta in recibo.ventas.all():
+
+                productos[venta.producto]['monto'] += venta.monto()
+                productos[venta.producto]['cantidad'] += 1
                 
+                context['cantidad'] += 1
+
         context['recibos'] = self.recibos
+        context['productos'] = productos.items()
+        context['impuesto'] = sum(r.impuesto() for r in self.recibos.all())
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
         return context
