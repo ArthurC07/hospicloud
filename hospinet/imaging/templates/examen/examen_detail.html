@@ -22,7 +22,7 @@
 </aside>
 <article id="examen" class="grid_9">
   <hgroup>
-    <h1>{{ examen.tipo_de_examen.nombre }} de {{ examen.persona.nombre_completo }}</h1>
+    <h1>ID: {{ examen.persona.id }} &bull; {{ examen.tipo_de_examen.nombre }} de {{ examen.persona.nombre_completo }}</h1>
   </hgroup>
   <a href="{% url invoice-create examen.persona.id %}" class="button">Crear Recibo</a>
   <a href="{% url examen-notificar examen.id %}" class="button" >Notificar</a>
