@@ -115,9 +115,7 @@ class Venta(TimeStampedModel):
 
         """Obtiene el valor a pagar por esta :class:`Venta`"""
 
-        print(Decimal(self.precio))
-
-        return self.precio * self.cantidad
+        return Decimal(self.precio * self.cantidad)
 
     def tax(self):
 
