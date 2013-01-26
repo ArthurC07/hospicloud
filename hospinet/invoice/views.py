@@ -27,7 +27,8 @@ from django.views.generic import (CreateView, UpdateView, DeleteView,
 from library.protected import LoginRequiredView
 from django import forms
 from persona.models import Persona
-from datetime import datetime
+from datetime import datetime, time
+from django.utils import timezone
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredView):
 
@@ -148,7 +149,23 @@ class IndexView(TemplateView, LoginRequiredView):
 
         return context
 
-class ReporteReciboView(TemplateView, LoginRequiredView):
+class ReciboPeriodoView(TemplateView):
+
+    def dispatch(self, request, *args, **kwargs):
+
+        form = PeriodoForm(request.GET)
+        if not form.is_valid():
+            redirect('invoice-index')
+
+        inicio = form.cleaned_data['inicio']
+        fin = form.cleaned_data['fin']
+        self.inicio = timezone.make_aware(datetime.combine(inicio, time.min), timezone.get_default_timezone())
+        self.fin = timezone.make_aware(datetime.combine(fin, time.max), timezone.get_default_timezone())
+        self.recibos = Recibo.objects.filter(created__range=(inicio, fin))
+
+        return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
+
+class ReporteReciboView(ReciboPeriodoView, LoginRequiredView):
 
     """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
     durante el periodo especificado"""
@@ -160,20 +177,15 @@ class ReporteReciboView(TemplateView, LoginRequiredView):
         """Agrega el formulario de :class:`Recibo`"""
         
         context = super(ReporteReciboView, self).get_context_data(**kwargs)
-        form = PeriodoForm(self.request.GET)
-        if not form.is_valid():
-            redirect('invoice-index')
-
-        inicio = form.cleaned_data['inicio']
-        fin = form.cleaned_data['fin']
-        inicio = datetime.combine(inicio, datetime.time.min)
-        fin = datetime.combine(fin, datetime.time.max)
-        recibos = Recibo.objects.filter(created__range=(inicio, fin))
         
-        context['recibos'] = recibos
+        context['recibos'] = self.recibos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = sum(r.total() for r in self.recibos.all())
+
         return context
 
-class ReporteProductoView(TemplateView, LoginRequiredView):
+class ReporteProductoView(ReciboPeriodoView, LoginRequiredView):
 
     """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
     los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
@@ -184,17 +196,6 @@ class ReporteProductoView(TemplateView, LoginRequiredView):
     def get_context_data(self, **kwargs):
         
         """Agrega el formulario de :class:`Recibo`"""
-        
-        context = super(ReporteReciboView, self).get_context_data(**kwargs)
-        form = PeriodoForm(self.request.GET)
-        if not form.is_valid():
-            redirect('invoice-index')
-
-        inicio = form.cleaned_data['inicio']
-        fin = form.cleaned_data['fin']
-        inicio = datetime.combine(inicio, datetime.time.min)
-        fin = datetime.combine(fin, datetime.time.max)
-        recibos = Recibo.objects.filter(created__range=(inicio, fin))
-        
-        context['recibos'] = recibos
+                
+        context['recibos'] = self.recibos
         return context

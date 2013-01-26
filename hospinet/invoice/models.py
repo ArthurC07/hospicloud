@@ -73,7 +73,7 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        return sum(v.total() for v in self.ventas.all())
+        return sum(v.total() for v in self.ventas.all()).quantize(Decimal('0.01'))
 
 class Producto(TimeStampedModel):
 
@@ -115,13 +115,15 @@ class Venta(TimeStampedModel):
 
         """Obtiene el valor a pagar por esta :class:`Venta`"""
 
+        print(Decimal(self.precio))
+
         return self.precio * self.cantidad
 
     def tax(self):
 
         """Obtiene los impuestos a pagar por esta :class:`Venta`"""
 
-        return self.producto * self.cantidad * self.producto.impuesto
+        return self.precio * self.cantidad * self.producto.impuesto
 
     def total(self):
 

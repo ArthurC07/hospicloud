@@ -144,6 +144,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    #'django.contrib.humanize',
     #'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -228,6 +229,9 @@ HAYSTACK_CONNECTIONS = {
 FILE_PROTECTION_METHOD = 'basic'
 ANONYMOUS_USER_ID = -1
 AUTH_PROFILE_MODULE = 'users.UserProfile'
+USE_THOUSAND_SEPARATOR = True
+LANGUAGE_CODE = 'es-NI'
+TIME_ZONE = 'America/Tegucigalpa'
 
 ACTSTREAM_ACTION_MODELS = (
     'auth.user',
