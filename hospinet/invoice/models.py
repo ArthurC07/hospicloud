@@ -73,7 +73,7 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        return sum(v.total() for v in self.ventas.all()).quantize(Decimal('0.01'))
+        return Decimal(sum(v.total() for v in self.ventas.all())).quantize(Decimal('0.01'))
 
 class Producto(TimeStampedModel):
 
