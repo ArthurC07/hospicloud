@@ -156,6 +156,7 @@
     <Content Include="imaging\templates\examen\dicom_create.html" />
     <Content Include="imaging\templates\examen\dicom_detail.html" />
     <Content Include="imaging\templates\examen\email.html" />
+    <Content Include="imaging\templates\examen\estudio_detail.html" />
     <Content Include="imaging\templates\examen\examen_agregar.html" />
     <Content Include="imaging\templates\examen\estudio_programado_create.html" />
     <Content Include="imaging\templates\examen\examen_create.html" />
@@ -163,7 +164,6 @@
     <Content Include="imaging\templates\examen\examen_paciente_detail.html" />
     <Content Include="imaging\templates\examen\imagen_create.html" />
     <Content Include="imaging\templates\examen\estudio_programado_list.html" />
-    <Content Include="imaging\templates\examen\index.html" />
     <Content Include="imaging\templates\examen\examen_update.html" />
     <Content Include="imaging\templates\search\indexes\laboratory\examen_text.txt" />
     <Content Include="imaging\templates\snippets\adjunto.html" />
@@ -173,6 +173,7 @@
     <Content Include="imaging\templates\snippets\examen_list.html" />
     <Content Include="imaging\templates\snippets\imagen.html" />
     <Content Include="invoice\Templates\invoice\index.html" />
+    <Content Include="invoice\Templates\invoice\producto_list.html" />
     <Content Include="invoice\templates\invoice\recibo_list.html" />
     <Content Include="invoice\Templates\invoice\venta_form.html" />
     <Content Include="invoice\Templates\invoice\recibo_detail.html" />

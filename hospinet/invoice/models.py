@@ -27,6 +27,7 @@ class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
 
     cliente = models.ForeignKey(Persona, related_name='recibos')
+    remite = models.TextField(blank=True, null=True)
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
     cajero = models.ForeignKey(User, related_name='recibos')
@@ -58,13 +59,22 @@ class Recibo(TimeStampedModel):
 
         """Calcula el monto antes de impuestos"""
 
-        return sum(v.monto() for v in self.ventas.all())
+        subtotal = sum(v.monto() for v in self.ventas.all())
+        return Decimal(subtotal).quantize(Decimal('0.01'))
 
     def impuesto(self):
 
         """Calcula los impuestos que se deben pagar por este :class:`Recibo`"""
 
-        return Decimal(sum(v.tax() for v in self.ventas.all()))
+        tax = sum(v.tax() for v in self.ventas.all())
+        return Decimal(tax).quantize(Decimal('0.01'))
+
+    def descuento(self):
+
+        """Calcula el descuento que se debe restar a este :class:`Recibo`"""
+
+        discount = sum(v.discount() for v in self.ventas.all())
+        return Decimal(discount).quantize(Decimal('0.01'))
 
     def total(self):
 
@@ -73,7 +83,8 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        return Decimal(sum(v.total() for v in self.ventas.all())).quantize(Decimal('0.01'))
+        total = sum(v.total() for v in self.ventas.all())
+        return Decimal(total).quantize(Decimal('0.01'))
 
 class Producto(TimeStampedModel):
 
@@ -102,6 +113,7 @@ class Venta(TimeStampedModel):
                                  decimal_places=2)
     impuesto = models.DecimalField(blank=True, null=True, max_digits=7,
                                    decimal_places=2)
+    descuento = models.IntegerField()
     producto = models.ForeignKey(Producto, related_name='ventas')
     recibo = models.ForeignKey(Recibo, related_name='ventas')
 
@@ -128,3 +140,9 @@ class Venta(TimeStampedModel):
         """Calcula el valor total de esta :class:`Venta`"""
 
         return self.tax() + self.monto()
+
+    def discount(self):
+
+        """Calcula la cantidad que se disminuye de la :class:`Venta`"""
+
+        return self.precio * self.cantidad * self.descuento / Decimal("100")

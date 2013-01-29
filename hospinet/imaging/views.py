@@ -326,6 +326,8 @@ class EstudioPreCreateView(TemplateView):
     
     def get_context_data(self, **kwargs):
         
+        """Agrega el formulario de :class:`Persona` a la vista"""
+
         context = super(EstudioPreCreateView, self).get_context_data()
         context['persona_form'] = PersonaForm()
         return context

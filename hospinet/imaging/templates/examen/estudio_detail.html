@@ -13,5 +13,6 @@
   </hgroup>
   {% include "snippets/examen.html" with examen=estudio %}
 <a href="{% url examen-efectuar estudio.id %}" class="button">Efectuar Estudio</a>
+<a href="{% url invoice-create estudio.persona.id %}" class="button">Crear Recibo</a>
 </article>
 {% endblock %}

@@ -162,8 +162,11 @@ class ReciboPeriodoView(TemplateView):
 
             inicio = self.form.cleaned_data['inicio']
             fin = self.form.cleaned_data['fin']
-            self.inicio = timezone.make_aware(datetime.combine(inicio, time.min), timezone.get_default_timezone())
-            self.fin = timezone.make_aware(datetime.combine(fin, time.max), timezone.get_default_timezone())
+            self.inicio = timezone.make_aware(
+                                    datetime.combine(inicio, time.min),
+                                    timezone.get_default_timezone())
+            self.fin = timezone.make_aware(datetime.combine(fin, time.max),
+                                           timezone.get_default_timezone())
             self.recibos = Recibo.objects.filter(created__range=(inicio, fin))
 
         else:

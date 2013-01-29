@@ -26,6 +26,7 @@
   </hgroup>
   <a href="{% url invoice-create examen.persona.id %}" class="button">Crear Recibo</a>
   <a href="{% url examen-notificar examen.id %}" class="button" >Notificar</a>
+  {% include "snippets/persona.html" with persona=examen.persona %}
   {% include "snippets/examen.html" with examen=examen %}
   <section id="imagenes">
     {% for imagen in examen.imagenes.all %}
