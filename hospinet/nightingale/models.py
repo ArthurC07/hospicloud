@@ -114,13 +114,30 @@ class Evolucion(models.Model):
         
         return 'nightingale-view-id', [self.admision.id]
 
+class Producto(models.Model):
+
+    """Describe los diversos productos y servicios que son serán vendidos
+    por la empresa"""
+    
+    nombre = models.CharField(max_length=255)
+    descripcion = models.TextField(blank=True)
+    precio = models.DecimalField(decimal_places=2, max_digits=10)
+    impuesto = models.DecimalField(decimal_places=2, max_digits=4)
+
+    def __unicode__(self):
+        
+        """Crea una representación en texto del producto"""
+
+        return self.nombre
+
 class Cargo(models.Model, Turno):
     
     """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
     
     admision = models.ForeignKey(Admision, related_name='cargos')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
-    cargo = models.TextField(max_length=200)
+    producto = models.ForeignKey(Producto, blank=True, null=True,
+                                   related_name='cargos')
     inicio = models.DateTimeField(default=timezone.now)
     fin = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
