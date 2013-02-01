@@ -27,5 +27,12 @@
     <input type="submit" value="Mostrar" />
   </p>
 </form>
+<form  class="styled compact" action="{% url invoice-periodo-remite %}" method="get">
+  {% csrf_token %} <h1>Mostrar Referencias de Doctores de un Periodo</h1>
+  <div id="messages"></div>{% include "snippets/form.html" with form=remiteperiodoform %}
+  <p>
+    <input type="submit" value="Mostrar" />
+  </p>
+</form>
 </div>
 {% endblock %}

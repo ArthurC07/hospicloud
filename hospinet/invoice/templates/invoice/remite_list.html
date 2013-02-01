@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<aside class="grid_3 toolbox">
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url invoice-index %}">Inicio Recibo</a>
+      </li>
+      <li>
+        <a href="{% url examen-index %}">Inicio Estudios</a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+<div id="informacion" class="grid_9">
+<h1>Comisiones del {{ inicio }} al {{ fin }}</h1>
+<table class="data">
+    <thead>
+        <tr>
+            <th>Concepto</th>
+            <th>Cantidad</th>
+            <th>Costo Estudio</th>
+            <th>Comisi&oacute;n 7%</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doctor, datos in doctores %}
+        <tr>
+            <td>{{ doctor }}</td>
+            <td>{{ datos.cantidad }}</td>
+            <td>{{ datos.monto }}</td>
+            <td>{{ datos.comision }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="2">Total de Comisiones:</th>
+            <th>{{ cantidad }}</th>
+        </tr>
+    </tfoot>
+</table>
+<table class="data">
+    <thead>
+        <tr>
+            <th>N&uacute;mero</th>
+            <th>Fecha</th>
+            <th>Doctor</th>
+            <th>Total<th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for recibo in recibos.all %}
+        <tr>
+            <td><a href="{% url invoice-view-id recibo.id %}">{{ recibo.id }}</a></td>
+            <td>{{ recibo.created }}</th>
+            <td>{{ recibo.remite }}</td>
+            <td>{{ recibo.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -31,7 +31,6 @@ from datetime import datetime, time
 from django.utils import timezone
 from collections import defaultdict
 from decimal import Decimal
-import pdb
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredView):
 
@@ -150,14 +149,21 @@ class IndexView(TemplateView, LoginRequiredView):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['reciboperiodoform'] = PeriodoForm(prefix='recibo')
         context['productoperiodoform'] = PeriodoForm(prefix='producto')
+        context['remiteperiodoform'] = PeriodoForm(prefix='remite')
 
         return context
 
 class ReciboPeriodoView(TemplateView):
 
+    """Obtiene los :class:`Recibo` de un periodo determinado en base
+    a un formulario que las clases derivadas deben proporcionar como
+    self.form"""
+
     def dispatch(self, request, *args, **kwargs):
 
-        #pdb.set_trace()
+        """Efectua la consulta de los :class:`Recibo` de acuerdo a los
+        datos ingresados en el formulario"""
+
         if self.form.is_valid():
 
             inicio = self.form.cleaned_data['inicio']
@@ -183,6 +189,8 @@ class ReporteReciboView(ReciboPeriodoView, LoginRequiredView):
     template_name = 'invoice/recibo_list.html'
     
     def dispatch(self, request, *args, **kwargs):
+
+        """Agrega el formulario"""
 
         self.form = PeriodoForm(request.GET, prefix='recibo')
 
@@ -210,6 +218,8 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredView):
     template_name = 'invoice/producto_list.html'
     
     def dispatch(self, request, *args, **kwargs):
+        
+        """Agrega el formulario"""
 
         self.form = PeriodoForm(request.GET, prefix='producto')
 
@@ -237,5 +247,43 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredView):
         context['productos'] = productos.items()
         context['impuesto'] = sum(r.impuesto() for r in self.recibos.all())
         context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        return context
+
+class ReciboRemiteView(ReciboPeriodoView, LoginRequiredView):
+    
+    """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
+    los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
+    cuenta el periodo especificado"""
+
+    template_name = 'invoice/remite_list.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+
+        """Agrega el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='remite')
+
+        return super(ReciboRemiteView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        
+        """Agrega el formulario de :class:`Recibo`"""
+        
+        context = super(ReciboRemiteView, self).get_context_data(**kwargs)
+        
+        context['cantidad'] = 0
+        doctores = defaultdict(lambda: defaultdict(Decimal))
+        
+        for recibo in self.recibos.all():
+
+            doctores[recibo.remite]['monto'] += recibo.total()
+            doctores[recibo.remite]['cantidad'] += 1
+            doctores[recibo.remite]['comision'] =+ recibo.total() * Decimal('0.07')
+            context['cantidad'] += recibo.total() * Decimal('0.07')
+
+        context['recibos'] = self.recibos
+        context['inicio'] = self.inicio
+        context['doctores'] = doctores.items()
         context['fin'] = self.fin
         return context
