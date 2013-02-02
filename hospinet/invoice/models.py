@@ -59,12 +59,20 @@ class Recibo(TimeStampedModel):
 
         """Calcula el monto antes de impuestos"""
 
+        if self.nulo:
+
+            return Decimal(0)
+
         subtotal = sum(v.monto() for v in self.ventas.all())
         return Decimal(subtotal).quantize(Decimal('0.01'))
 
     def impuesto(self):
 
         """Calcula los impuestos que se deben pagar por este :class:`Recibo`"""
+        
+        if self.nulo:
+
+            return Decimal(0)
 
         tax = sum(v.tax() for v in self.ventas.all())
         return Decimal(tax).quantize(Decimal('0.01'))
@@ -72,6 +80,10 @@ class Recibo(TimeStampedModel):
     def descuento(self):
 
         """Calcula el descuento que se debe restar a este :class:`Recibo`"""
+        
+        if self.nulo:
+
+            return Decimal(0)
 
         discount = sum(v.discount() for v in self.ventas.all())
         return Decimal(discount).quantize(Decimal('0.01'))
@@ -126,23 +138,39 @@ class Venta(TimeStampedModel):
     def monto(self):
 
         """Obtiene el valor a pagar por esta :class:`Venta`"""
+        
+        if self.recibo.nulo:
 
+            return Decimal(0)
+        
         return Decimal(self.precio * self.cantidad)
 
     def tax(self):
 
         """Obtiene los impuestos a pagar por esta :class:`Venta`"""
+        
+        if self.recibo.nulo:
+
+            return Decimal(0)
 
         return self.precio * self.cantidad * self.producto.impuesto
 
     def total(self):
 
         """Calcula el valor total de esta :class:`Venta`"""
+        
+        if self.recibo.nulo:
+
+            return Decimal(0)
 
         return self.tax() + self.monto()
 
     def discount(self):
 
         """Calcula la cantidad que se disminuye de la :class:`Venta`"""
+
+        if self.recibo.nulo:
+
+            return Decimal(0)
 
         return self.precio * self.cantidad * self.descuento / Decimal("100")
