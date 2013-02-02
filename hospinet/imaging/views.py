@@ -28,6 +28,7 @@ from persona.forms import PersonaForm
 from persona.models import Persona
 from persona.views import PersonaCreateView
 from django.contrib import messages
+from templated_email import send_templated_mail
 
 class ExamenListView(ListView):
     
@@ -212,7 +213,15 @@ class NotificarExamenView(FormView, LoginRequiredView):
 
         """Efectua el envio de correos utilizando el de envio del formulario"""
 
-        form.send_email()
+        examen = form.cleaned_data['examen']
+        context = {'link_examen' : self.request.build_absolute_uri(
+                                             examen.get_absolute_url())}
+        send_templated_mail(
+                           template_name='examen',
+                           from_email='hospinet@casahospitalaria.com',
+                           recipient_list=[form.cleaned_data['email']],
+                           context=context
+        )
 
         return super(NotificarExamenView, self).form_valid(form)
 
@@ -240,6 +249,8 @@ class PersonaEstudioCreateView(PersonaCreateView):
         return reverse('examen-programar', args=[self.object.id])
 
 class EstudioProgramadoDetailView(DetailView, LoginRequiredView):
+
+    """Muestra las acciones disponibles para un :class:`EstudioProgramado`"""
 
     context_object_name = 'estudio'
     model = EstudioProgramado

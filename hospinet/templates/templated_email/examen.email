@@ -4,6 +4,6 @@ Hola!
 
 ¡Hay un examen pendiente de revision en Hospinet!
 
-Para verlo, ve a {{ examen.get_absolute_url }}
+Para verlo, ve a {{ link_examen }}
 
 {% endblock %}

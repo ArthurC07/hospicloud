@@ -16,9 +16,9 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
+from django.http import HttpRequest
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
 from persona.models import Persona
-from templated_email import send_templated_mail
 
 class ExamenForm(forms.ModelForm):
     
@@ -104,13 +104,5 @@ class EmailForm(forms.Form):
     def send_email(self):
 
         """Realiza el envio del correo electrónico"""
-
-        examen = self.cleaned_data['examen']
-        send_templated_mail(
-                           template_name='examen',
-                           from_email='hospinet@casahospitalaria.com',
-                           recipient_list=[self.cleaned_data['email']],
-                           context={
-                                    'link_examen' : examen.get_absolute_url()
-                           }
-        )
+        
+        pass
