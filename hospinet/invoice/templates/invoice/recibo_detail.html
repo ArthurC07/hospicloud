@@ -11,6 +11,13 @@
       </li>
     </ul>
   </nav>
+ <nav>
+    <ul>
+      <li>
+        <a href="{% url invoice-nullify %}">Anular Recibo</a>
+      </li>
+    </ul>
+ </nav>
 </aside>
 <div id="informacion" class="grid_9">
   <hgroup>
@@ -18,7 +25,7 @@
     <h2>{{ recibo.cliente }}</h2>
   </hgroup>
   <span>Fecha: {{ recibo.created|date:"d/m/Y P" }}</span>
-  <table>
+  <table class="data">
     <thead>
       <tr>
         <th>Cantidad</th>
