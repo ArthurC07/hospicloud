@@ -150,6 +150,7 @@ class IndexView(TemplateView, LoginRequiredView):
         context['reciboperiodoform'] = PeriodoForm(prefix='recibo')
         context['productoperiodoform'] = PeriodoForm(prefix='producto')
         context['remiteperiodoform'] = PeriodoForm(prefix='remite')
+        context['radperiodoform'] = PeriodoForm(prefix='rad')
 
         return context
 
@@ -272,15 +273,53 @@ class ReciboRemiteView(ReciboPeriodoView, LoginRequiredView):
         
         context = super(ReciboRemiteView, self).get_context_data(**kwargs)
         
-        context['cantidad'] = 0
+        context['cantidad'] = Decimal('0')
         doctores = defaultdict(lambda: defaultdict(Decimal))
         
         for recibo in self.recibos.all():
 
             doctores[recibo.remite]['monto'] += recibo.total()
             doctores[recibo.remite]['cantidad'] += 1
-            doctores[recibo.remite]['comision'] =+ recibo.total() * Decimal('0.07')
-            context['cantidad'] += recibo.total() * Decimal('0.07')
+            doctores[recibo.remite]['comision'] =+ recibo.comision_doctor()
+            context['cantidad'] += doctores[recibo.remite]['comision']
+
+        context['recibos'] = self.recibos
+        context['inicio'] = self.inicio
+        context['doctores'] = doctores.items()
+        context['fin'] = self.fin
+        return context
+
+class ReciboRadView(ReciboPeriodoView, LoginRequiredView):
+    
+    """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
+    los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
+    cuenta el periodo especificado"""
+
+    template_name = 'invoice/remite_list.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+
+        """Agrega el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='rad')
+
+        return super(ReciboRadView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        
+        """Agrega el formulario de :class:`Recibo`"""
+        
+        context = super(ReciboRadView, self).get_context_data(**kwargs)
+        
+        context['cantidad'] = Decimal('0')
+        doctores = defaultdict(lambda: defaultdict(Decimal))
+        
+        for recibo in self.recibos.all():
+
+            doctores[recibo.radiologo]['monto'] += recibo.total()
+            doctores[recibo.radiologo]['cantidad'] += 1
+            doctores[recibo.radiologo]['comision'] =+ recibo.comision_radiologo()
+            context['cantidad'] += doctores[recibo.remite]['comision']
 
         context['recibos'] = self.recibos
         context['inicio'] = self.inicio

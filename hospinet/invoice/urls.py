@@ -18,7 +18,7 @@
 from django.conf.urls import patterns, url
 from invoice.views import (IndexView, ReciboPersonaCreateView,
      ReciboDetailView, VentaCreateView, ReporteReciboView,
-     ReporteProductoView, ReciboRemiteView)
+     ReporteProductoView, ReciboRemiteView, ReciboRadView)
 
 urlpatterns = patterns('',
     
@@ -53,4 +53,8 @@ urlpatterns = patterns('',
     url(r'^periodo/remite',
         ReciboRemiteView.as_view(),
         name='invoice-periodo-remite'),
+
+    url(r'^periodo/radiologo',
+        ReciboRemiteView.as_view(),
+        name='invoice-periodo-radiologo'),
 )

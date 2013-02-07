@@ -28,6 +28,7 @@ class Recibo(TimeStampedModel):
 
     cliente = models.ForeignKey(Persona, related_name='recibos')
     remite = models.TextField(blank=True, null=True)
+    radiologo = models.TextField(blank=True, null=True)
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
     cajero = models.ForeignKey(User, related_name='recibos')
@@ -98,15 +99,25 @@ class Recibo(TimeStampedModel):
         total = sum(v.total() for v in self.ventas.all())
         return Decimal(total).quantize(Decimal('0.01'))
 
+    def comision_doctor(self):
+
+        return self.total() * Decimal('0.07')
+
+    def comision_radiologo(self):
+
+        return sum(v.radiologo() for v in self.ventas.all())
+
 class Producto(TimeStampedModel):
 
-    """Describe los diversos productos y servicios que son serán vendidos
+    """Describe los diversos productos y servicios que serán vendidos
     por la empresa"""
     
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True)
     precio = models.DecimalField(decimal_places=2, max_digits=10)
     impuesto = models.DecimalField(decimal_places=2, max_digits=4)
+    comision = models.DecimalField(decimal_places=2, max_digits=4,
+                                   default=Decimal("30.00"))
 
     def __unicode__(self):
         
@@ -153,7 +164,7 @@ class Venta(TimeStampedModel):
 
             return Decimal(0)
 
-        return self.precio * self.cantidad * self.producto.impuesto
+        return (self.monto() - self.discount()) * self.producto.impuesto
 
     def total(self):
 
@@ -163,7 +174,7 @@ class Venta(TimeStampedModel):
 
             return Decimal(0)
 
-        return self.tax() + self.monto()
+        return self.tax() + self.monto() - self.discount()
 
     def discount(self):
 
@@ -173,4 +184,8 @@ class Venta(TimeStampedModel):
 
             return Decimal(0)
 
-        return self.precio * self.cantidad * self.descuento / Decimal("100")
+        return self.monto() * self.descuento / Decimal("100")
+
+    def radiologo(self):
+
+        return self.monto() * self.producto.comision / Decimal("30.00")
