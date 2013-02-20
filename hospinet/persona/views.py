@@ -46,6 +46,7 @@ class PersonaCreateView(CreateView, LoginRequiredView):
     
     """Permite ingresar :class:`Persona`s a la aplicación""" 
     
+    model = Persona
     form_class = PersonaForm
     template_name = 'persona/nuevo.html'
     

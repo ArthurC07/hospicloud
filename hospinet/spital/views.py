@@ -86,32 +86,20 @@ class PersonaAdmisionCreateView(PersonaCreateView):
         
         return reverse('admision-persona-agregar', args=[self.object.id])
 
-class GetAdmision(TemplateView):
-    
-    """Permite reutilizar la carga de :class:`Admision`es desde una fuente de
-    datos"""
-    
-    def dispatch(self, *args, **kwargs):
-        
-        """Carga la :class:`Admision` desde la fuente de datos"""
-
-        self.admision = get_object_or_404(Admision, pk=kwargs['admision'])
-        return super(GetAdmision, self).dispatch(*args, **kwargs)
-    
-    def get_context_data(self, **kwargs):
-        
-        context = super(GetAdmision, self).get_context_data(**kwargs)
-        context['admision'] = self.admision
-        context['form'] = PersonaForm()
-        return context
-
-class PersonaFiadorCreateView(PersonaCreateView, GetAdmision):
+class PersonaFiadorCreateView(PersonaCreateView):
     
     """Permite ingresar una :class:`Persona` al sistema que servira como
     :class:`Fiador` a una :class:`Admision`"""
 
     template_name = 'admision/admision_fiador.html'
     
+    def dispatch(self, *args, **kwargs):
+        
+        """Carga la :class:`Admision` desde la fuente de datos"""
+        
+        self.admision = get_object_or_404(Admision, pk=kwargs['admision'])
+        return super(PersonaFiadorCreateView, self).dispatch(*args, **kwargs)
+
     def form_valid(self, form):
         
         self.object = form.save()
@@ -121,12 +109,25 @@ class PersonaFiadorCreateView(PersonaCreateView, GetAdmision):
         
         return HttpResponseRedirect(self.admision.get_absolute_url())
 
-class PersonaReferenciaCreateView(PersonaCreateView, GetAdmision):
+    def get_context_data(self, **kwargs):
+        
+        context = super(PersonaFiadorCreateView, self).get_context_data(**kwargs)
+        context['admision'] = self.admision
+        return context
+
+class PersonaReferenciaCreateView(PersonaCreateView):
     
     """Permite agregar una :class:`Persona` como referencia a una
     :class:`Admision`"""
 
     template_name = 'admision/admision_referencia.html'
+    
+    def dispatch(self, *args, **kwargs):
+        
+        """Carga la :class:`Admision` desde la fuente de datos"""
+        
+        self.admision = get_object_or_404(Admision, pk=kwargs['admision'])
+        return super(PersonaReferenciaCreateView, self).dispatch(*args, **kwargs)
     
     def form_valid(self, form):
         
@@ -136,6 +137,12 @@ class PersonaReferenciaCreateView(PersonaCreateView, GetAdmision):
         messages.info(self.request, u"Agregada Referencia!")
         
         return HttpResponseRedirect(self.admision.get_absolute_url())
+
+    def get_context_data(self, **kwargs):
+        
+        context = super(PersonaReferenciaCreateView, self).get_context_data(**kwargs)
+        context['admision'] = self.admision
+        return context
 
 class ReferenciaAgregarView(RedirectView):
     
