@@ -59,7 +59,7 @@ class AdmisionIndexView(ListView, LoginRequiredView):
         
         return context
 
-class IngresarView(TemplateView):
+class IngresarView(TemplateView, LoginRequiredView):
     
     """Muestra una interfaz para agregar una :class:`Admision` ya sea agregando
     una :class:`Persona` nueva o admitiendo una que ya se encuentra en el
@@ -101,6 +101,9 @@ class PersonaFiadorCreateView(PersonaCreateView):
         return super(PersonaFiadorCreateView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
+
+        """Agrega la :class:`Persona` a la lista de fiadores de la
+        :class:`Admision`"""
         
         self.object = form.save()
         self.admision.fiadores.add(self.object)
@@ -130,6 +133,9 @@ class PersonaReferenciaCreateView(PersonaCreateView):
         return super(PersonaReferenciaCreateView, self).dispatch(*args, **kwargs)
     
     def form_valid(self, form):
+
+        """Agrega la :class:`Persona` a la lista de referencias de la
+        :class:`Admision`"""
         
         self.object = form.save()
         self.admision.referencias.add(self.object)
@@ -144,7 +150,7 @@ class PersonaReferenciaCreateView(PersonaCreateView):
         context['admision'] = self.admision
         return context
 
-class ReferenciaAgregarView(RedirectView):
+class ReferenciaAgregarView(RedirectView, LoginRequiredView):
     
     """Permite agregar una :class:`Persona` como referencia de una
     :class:`Admision`"""
@@ -159,7 +165,7 @@ class ReferenciaAgregarView(RedirectView):
         admision.save()
         return reverse('admision-view-id', args=[admision.id])
 
-class FiadorAgregarView(RedirectView):
+class FiadorAgregarView(RedirectView, LoginRequiredView):
     
     """Permite agregar una :class:`Persona` como fiador de una
     :class:`Admision`"""

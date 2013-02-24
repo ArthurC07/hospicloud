@@ -44,6 +44,12 @@
     <Compile Include="clinique\urls.py" />
     <Compile Include="clinique\views.py" />
     <Compile Include="clinique\__init__.py" />
+    <Compile Include="emergency\forms.py" />
+    <Compile Include="emergency\models.py" />
+    <Compile Include="emergency\tests.py" />
+    <Compile Include="emergency\urls.py" />
+    <Compile Include="emergency\views.py" />
+    <Compile Include="emergency\__init__.py" />
     <Compile Include="imaging\admin.py" />
     <Compile Include="imaging\forms.py" />
     <Compile Include="imaging\models.py" />
@@ -153,9 +159,9 @@
     <Content Include="clinique\templates\snippets\consultorio_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_list.html" />
+    <Content Include="emergency\templates\emergency\emergencia_agregar.html" />
     <Content Include="imaging\static\css\dicom.css" />
     <Content Include="imaging\static\css\examen.css" />
-    <Content Include="imaging\static\js\imaging.js" />
     <Content Include="imaging\templates\examen\adjunto_create.html" />
     <Content Include="imaging\templates\examen\dicom_create.html" />
     <Content Include="imaging\templates\examen\dicom_detail.html" />
@@ -286,6 +292,7 @@
     <Content Include="persona\static\js\jquery.colorbox.js" />
     <Content Include="persona\static\js\jquery.jqplot.js" />
     <Content Include="persona\static\js\modernizr.js" />
+    <Content Include="persona\static\js\persona.js" />
     <Content Include="persona\templates\persona\antecedente_familiar_update.html" />
     <Content Include="persona\templates\persona\antecedente_obstetrico_update.html" />
     <Content Include="persona\templates\persona\antecedente_update.html" />
@@ -370,6 +377,11 @@
     <Folder Include="clinique\templates\search\indexes\clinique\" />
     <Folder Include="clinique\templates\search\indexes\consultorio\" />
     <Folder Include="clinique\templates\snippets\" />
+    <Folder Include="emergency\" />
+    <Folder Include="emergency\static\" />
+    <Folder Include="emergency\static\js\" />
+    <Folder Include="emergency\templates" />
+    <Folder Include="emergency\templates\emergency\" />
     <Folder Include="imaging" />
     <Folder Include="imaging\static\css" />
     <Folder Include="imaging\static\js" />

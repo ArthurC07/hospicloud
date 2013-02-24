@@ -1,9 +1,9 @@
-function Imaging(url)
+function Persona(url)
 {
   this.url = url;
 }
 
-Imaging.prototype.search_person = function (query, target)
+Persona.prototype.search_person = function (query, target)
 {
   url = this.url;
   consultorio = this.consultorio
