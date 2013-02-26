@@ -54,6 +54,13 @@ class Tratamiento(TimeStampedModel):
         
         return reverse('emergency-detail', args=[self.emergencia.id])
 
+class Hallazgo(TimeStampedModel):
+
+    emergencia = models.ForeignKey('Emergencia', related_name='hallazgos')
+    hallazgo = models.TextField()
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                related_name='hallazgos')
+
 class RemisionInterna(TimeStampedModel):
 
     emergencia = models.ForeignKey('Emergencia', related_name='remisiones_internas')

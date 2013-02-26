@@ -44,6 +44,7 @@
     <Compile Include="clinique\urls.py" />
     <Compile Include="clinique\views.py" />
     <Compile Include="clinique\__init__.py" />
+    <Compile Include="emergency\admin.py" />
     <Compile Include="emergency\forms.py" />
     <Compile Include="emergency\models.py" />
     <Compile Include="emergency\tests.py" />
@@ -159,6 +160,13 @@
     <Content Include="clinique\templates\snippets\consultorio_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_list.html" />
+    <Content Include="emergency\templates\emergency\emergencia_detail.html" />
+    <Content Include="emergency\templates\emergency\index.html" />
+    <Content Include="emergency\templates\emergency\remision_interna_create.html" />
+    <Content Include="emergency\templates\emergency\remision_externa_create.html" />
+    <Content Include="emergency\templates\emergency\snippets\emergencia_list.html" />
+    <Content Include="emergency\templates\emergency\tratamiento_create.html" />
+    <Content Include="emergency\templates\emergency\emergencia_create.html" />
     <Content Include="emergency\templates\emergency\emergencia_agregar.html" />
     <Content Include="imaging\static\css\dicom.css" />
     <Content Include="imaging\static\css\examen.css" />
@@ -382,6 +390,7 @@
     <Folder Include="emergency\static\js\" />
     <Folder Include="emergency\templates" />
     <Folder Include="emergency\templates\emergency\" />
+    <Folder Include="emergency\templates\emergency\snippets\" />
     <Folder Include="imaging" />
     <Folder Include="imaging\static\css" />
     <Folder Include="imaging\static\js" />
@@ -393,7 +402,7 @@
     <Folder Include="imaging\templates\search\indexes\laboratory" />
     <Folder Include="imaging\templates\snippets" />
     <Folder Include="inventory\" />
-    <Folder Include="inventory\Templates\" />
+    <Folder Include="inventory\templates" />
     <Folder Include="invoice\" />
     <Folder Include="invoice\templates\" />
     <Folder Include="invoice\templates\invoice\" />

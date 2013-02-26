@@ -17,7 +17,7 @@
 
 from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
-                              Tratamiento)
+                              Tratamiento, Hallazgo)
 from persona.models import Persona
 
 class EmergenciaForm(forms.ModelForm):
@@ -51,6 +51,18 @@ class RemisionExternaForm(forms.ModelForm):
     class Meta:
 
         model = RemisionExterna
+    
+    emergencia = forms.ModelChoiceField(label="",
+                                  queryset=Emergencia.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+
+class HallazgoForm(forms.ModelForm):
+
+    """Formulario para agregar :class:`RemisionExterna`s"""
+
+    class Meta:
+
+        model = Hallazgo
     
     emergencia = forms.ModelChoiceField(label="",
                                   queryset=Emergencia.objects.all(),

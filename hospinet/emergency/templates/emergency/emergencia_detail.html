@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<aside class="toolbox grid_3">
+<nav>
+  <ul>
+    <li class="clearfix"><a href="{% url emergencia-hallazgo-agregar emergencia.id %}">Agregar Hallazgos</a></li>
+    <li class="clearfix"><a href="{% url emergencia-tratamiento-agregar emergencia.id %}">Agregar Tratamiento</a></li>
+    <li class="clearfix"><a href="{% url emergencia-remision-interna-agregar emergencia.id %}">Remitir a un M&eacute;dico</a></li>
+    <li class="clearfix"><a href="{% url emergencia-remision-externa-agregar emergencia.id %}">Remitir otro Centro M&eacute;dico</a></li>
+  </ul>
+</nav>
+</aside>
+<section id="emergencia" class="informacion grid_9">
+  <hgroup>
+    <h1>Emergencia de {{ emergencia.persona.nombre_completo }}</h1>
+  </hgroup>
+  <span>Hora de Registro: {{ emergencia.persona|date:"d/m/Y P" }}</span>
+  {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
+  <div class="info">
+    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url persona-editar admision.paciente.id %}" class="button">Editar Datos del Paciente</a>
+  </div>
+  <div class="info">
+    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url persona-fisico-editar admision.paciente.id %}" class="button">Editar F&iacute;sico</a>
+  </div>
+  {% for hallazgo in emergencia.hallazgos.all %}
+  <article>
+  </article>
+  {% endfor %}
+  {% for tratamiento in emergencia.er_tratamientos.all %}
+  <article>
+    <p>Indicaciones: {{ tratamiento.indicaciones }}</p>
+  </article>
+  {% endfor %}
+  {% for remision_interna in emergencia.er_rinternas.all %}
+  <article>
+    <p>M&eacute;dico: {{ remision_interna.doctor }}</p>
+  </article>
+  {% endfor %}
+  {% for remision_externa in emergencia.er_rexternas.all %}
+  <article>
+    <p>Destino: {{ remision_externa.destino }}</p>
+    <p>Diagn&oacute;stico: {{ remision_externa.diagnostico }}</p>
+    <p>Notas: {{ remision_externa.notas }}</p>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,24 @@
+<table class="data">
+  <thead class="gradient">
+    <tr>
+      <th>C&oacute;digo</th>
+      <th>Nombre</th>
+      <th>Edad</th>
+      <th>Sexo</th>
+      <th>Hora de Ingreso</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for emergencia in emergencias %}
+    <tr>
+      <td>{{ emergencia.persona.identificacion }}</td>
+      <td>{{ emergencia.persona.nombre_completo }}</td>
+      <td>{{ emergencia.persona.obtener_edad }}</td>
+      <td>{{ emergencia.persona.get_sexo_display }}</td>
+      <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
+      <td><a href="{% url emergency-view-id emergencia.id %}">Ver</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

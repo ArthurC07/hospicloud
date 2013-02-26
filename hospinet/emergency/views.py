@@ -27,8 +27,8 @@ from persona.models import Persona
 from persona.views import PersonaCreateView
 from persona.forms import PersonaForm
 from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
-                            RemisionExterna)
-from emergency.forms import (EmergenciaForm, TratamientoForm,
+                            RemisionExterna, Hallazgo)
+from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
                              RemisionInternaForm, RemisionExternaForm)
 from django.contrib import messages
 
@@ -97,7 +97,12 @@ class EmergenciaDetailView(DetailView, LoginRequiredView):
     """Permite mostrar los datos de la :class:`Emergencia`"""
 
     model = Emergencia
-    template_name = 'emergency/emergency_detail'
+    template_name = 'emergency/emergency_detail.html'
+
+class EmergenciaUpdateView(UpdateView, LoginRequiredView):
+
+    model = Emergencia
+    template_name = 'emergency/emergencia_update.html'
 
 class BaseCreateView(CreateView, LoginRequiredView):
     
@@ -142,3 +147,54 @@ class BaseCreateView(CreateView, LoginRequiredView):
         messages.info(self.request, u"Emergencia Actualizada")
         
         return HttpResponseRedirect(self.get_success_url())
+
+class TratamientoCreateView(BaseCreateView):
+
+    """Permite agregar un :class:`Tratamiento` a una :class:`Emergencia`"""
+
+    model = Tratamiento
+    form_class = TratamientoForm
+    template_name = 'emergency/tratamiento_create.html'
+
+class RemisionInternaCreateView(BaseCreateView):
+
+    """Registrar el envio de una :class:`Persona`, que ingreso a consulta,
+    hacia un especialista"""
+
+    model = RemisionInterna
+    form_class = RemisionInternaForm
+    template_name = 'emergency/remision_interna_create.html'
+
+class RemisionInternaCreateView(BaseCreateView):
+
+    """Registrar el envio de una :class:`Persona`, que ingreso a consulta,
+    hacia otro centro médico"""
+
+    model = RemisionExterna
+    form_class = RemisionExternaForm
+    template_name = 'emergency/remision_externa_create.html'
+
+class HallazgoCreateView(BaseCreateView):
+
+    """Registrar los hallazgos de un examen físico a la :class:`Persona`,
+    que ingreso a consulta"""
+
+    model = Hallazgo
+    form_class = HallazgoForm
+    template_name = 'emergency/hallazgo_create.html'
+
+class EmergenciaListView(ListView, LoginRequiredView):
+
+    context_object_name = 'emergencias'
+    template_name = 'emergency/index.html'
+
+    def get_queryset(self):
+
+        """Obtiene las :class:`Emergencia`s atendidas el día de hoy"""
+
+        inicio = timezone.make_aware(
+                                datetime.combine(date.today(), time.min),
+                                timezone.get_default_timezone())
+        fin = timezone.make_aware(datetime.combine(date.today(), time.max),
+                                        timezone.get_default_timezone())
+        return Emergencia.objects.filter(created__range=(inicio, fin))
