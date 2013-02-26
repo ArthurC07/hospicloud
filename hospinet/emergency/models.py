@@ -27,7 +27,7 @@ class Emergencia(TimeStampedModel):
     """Representa una visita de una :class:`Persona` a la consulta de
     emergencia"""
 
-    persona = models.ForeignKey('Persona', related_name='emergencias')
+    persona = models.ForeignKey(Persona, related_name='emergencias')
     hallazgos = models.TextField()
     diagnostico = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
@@ -56,7 +56,7 @@ class Tratamiento(TimeStampedModel):
 
 class Hallazgo(TimeStampedModel):
 
-    emergencia = models.ForeignKey('Emergencia', related_name='hallazgos')
+    emergencia = models.ForeignKey('Emergencia')
     hallazgo = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='hallazgos')
@@ -64,7 +64,7 @@ class Hallazgo(TimeStampedModel):
 class RemisionInterna(TimeStampedModel):
 
     emergencia = models.ForeignKey('Emergencia', related_name='remisiones_internas')
-    doctor = models.CharField(max_lenght=100)
+    doctor = models.CharField(max_length=100)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_rinternas')
 
@@ -76,8 +76,8 @@ class RemisionInterna(TimeStampedModel):
 
 class RemisionExterna(TimeStampedModel):
 
-    emergencia = models.ForeignKey('Emergencia', related_name='tratamientos')
-    destino = models.CharField(max_lenght=100)
+    emergencia = models.ForeignKey('Emergencia', related_name='remisiones_externas')
+    destino = models.CharField(max_length=100)
     diagnostico = models.TextField()
     notas = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,

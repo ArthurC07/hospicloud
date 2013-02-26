@@ -160,6 +160,7 @@ INSTALLED_APPS = (
     'nightingale',
     'clinique',
     'invoice',
+    'emergency',
     # Third party apps go here
     'django_extensions',
     'treemenus',
