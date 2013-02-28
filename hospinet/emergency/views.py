@@ -165,7 +165,7 @@ class RemisionInternaCreateView(BaseCreateView):
     form_class = RemisionInternaForm
     template_name = 'emergency/remision_interna_create.html'
 
-class RemisionInternaCreateView(BaseCreateView):
+class RemisionExternaCreateView(BaseCreateView):
 
     """Registrar el envio de una :class:`Persona`, que ingreso a consulta,
     hacia otro centro médico"""

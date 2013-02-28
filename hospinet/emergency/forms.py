@@ -26,7 +26,7 @@ class EmergenciaForm(forms.ModelForm):
 
     class Meta:
 
-        model = Examen
+        model = Emergencia
     
     persona = forms.ModelChoiceField(label="",
                                   queryset=Persona.objects.all(),

@@ -19,8 +19,8 @@ from django.conf.urls import patterns, url
 from emergency.views import (PersonaEmergenciaCreateView, EmergenciaDetailView,
                              EmergenciaCreateView, RemisionInternaCreateView,
                              TratamientoCreateView, RemisionExternaCreateView,
-                             EmergenciaUpdateView, EmergenciaIndexView,
-                             HallazgoCreateView)
+                             EmergenciaUpdateView, EmergenciaListView,
+                             HallazgoCreateView, EmergenciaPreCreateView)
 
 urlpatterns = patterns('',
     
