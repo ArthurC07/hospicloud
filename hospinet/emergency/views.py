@@ -31,6 +31,8 @@ from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
 from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
                              RemisionInternaForm, RemisionExternaForm)
 from django.contrib import messages
+from datetime import datetime, time, date
+from django.utils import timezone
 
 class EmergenciaPreCreateView(TemplateView, LoginRequiredView):
     

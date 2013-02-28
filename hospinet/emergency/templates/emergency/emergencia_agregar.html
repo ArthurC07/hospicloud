@@ -5,12 +5,12 @@
 <script type="text/javascript">
   $(document).ready(function()
   {
-    data_source = new Persona("{% url home %}");
+    data_source = new Persona("{% url home %}", "{% url emergency-index %}");
     var resultados = $('#resultados');
     $('#persona-form').submit(function()
     {
       resultados.empty();
-      data_source.search_person($('#persona-search').val(), resultados);
+      var personas = data_source.search_person($('#persona-search').val(), resultados);
       return false;
     });
   });

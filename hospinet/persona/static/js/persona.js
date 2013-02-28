@@ -1,12 +1,14 @@
-function Persona(url)
+function Persona(url, target)
 {
-  this.url = url;
+    this.url = url;
+    this.location = target;
 }
 
 Persona.prototype.search_person = function (query, target)
 {
   url = this.url;
-  consultorio = this.consultorio
+  var consultorio = this.consultorio;
+  var destination = this.location;
   $.get(this.url + 'api/mobile/persona/search/?&format=json&q='+query, function(data)
   {
     if(data.objects.length == 0)
@@ -19,7 +21,7 @@ Persona.prototype.search_person = function (query, target)
     {
       var article = $('<article />');
       var link = $('<a />');
-      link.attr('href', url + '/persona/' + persona.id);
+      link.attr('href', destination + 'persona/' + persona.id);
       link.addClass('button');
       link.html('Mostrar Paciente');
       article.append('<h1>' + persona.nombre + ' ' + persona.apellido + '</h1>');
