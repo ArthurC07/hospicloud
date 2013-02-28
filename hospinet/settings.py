@@ -226,6 +226,7 @@ HAYSTACK_CONNECTIONS = {
         'BATCH_SIZE': 100,
     },
 }
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 # Additional Settings
 FILE_PROTECTION_METHOD = 'basic'
 ANONYMOUS_USER_ID = -1
