@@ -37,7 +37,7 @@ class Emergencia(TimeStampedModel):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('emergency-detail', args=[self.id])
+        return reverse('emergency-view-id', args=[self.id])
 
 class Tratamiento(TimeStampedModel):
 

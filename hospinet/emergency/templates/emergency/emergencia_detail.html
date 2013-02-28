@@ -14,13 +14,13 @@
   <hgroup>
     <h1>Emergencia de {{ emergencia.persona.nombre_completo }}</h1>
   </hgroup>
-  <span>Hora de Registro: {{ emergencia.persona|date:"d/m/Y P" }}</span>
+  <span>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</span>
   {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
   <div class="info">
-    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url persona-editar admision.paciente.id %}" class="button">Editar Datos del Paciente</a>
+    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url persona-editar emergencia.persona.id %}" class="button">Editar Datos del Paciente</a>
   </div>
   <div class="info">
-    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url persona-fisico-editar admision.paciente.id %}" class="button">Editar F&iacute;sico</a>
+    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url persona-fisico-editar emergencia.persona.id %}" class="button">Editar F&iacute;sico</a>
   </div>
   {% for hallazgo in emergencia.hallazgos.all %}
   <article>

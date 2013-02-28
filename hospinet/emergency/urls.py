@@ -44,19 +44,19 @@ urlpatterns = patterns('',
         EmergenciaDetailView.as_view(),
         name='emergency-view-id'),
     
-    url(r'^(?P<emergencia>\d+)/tratamiento$/agregar',
+    url(r'^(?P<emergencia>\d+)/tratamiento/agregar$',
         TratamientoCreateView.as_view(),
         name='emergencia-tratamiento-agregar'),
     
-    url(r'^(?P<emergencia>\d+)/hallazgo$/agregar',
+    url(r'^(?P<emergencia>\d+)/hallazgo/agregar$',
         HallazgoCreateView.as_view(),
         name='emergencia-hallazgo-agregar'),
     
-    url(r'^(?P<emergencia>\d+)/remision/interna/agregar',
+    url(r'^(?P<emergencia>\d+)/remision/interna/agregar$',
         RemisionInternaCreateView.as_view(),
         name='emergencia-remision-interna-agregar'),
     
-    url(r'^(?P<emergencia>\d+)/remision/externa/agregar',
+    url(r'^(?P<emergencia>\d+)/remision/externa/agregar$',
         RemisionExternaCreateView.as_view(),
         name='emergencia-remision-externa-agregar'),
 )
