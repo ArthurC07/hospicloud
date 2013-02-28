@@ -19,6 +19,7 @@ from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
                               Tratamiento, Hallazgo)
 from persona.models import Persona
+from django.contrib.auth.models import User
 
 class EmergenciaForm(forms.ModelForm):
 
@@ -30,6 +31,9 @@ class EmergenciaForm(forms.ModelForm):
     
     persona = forms.ModelChoiceField(label="",
                                   queryset=Persona.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
 class RemisionInternaForm(forms.ModelForm):
@@ -43,6 +47,9 @@ class RemisionInternaForm(forms.ModelForm):
     emergencia = forms.ModelChoiceField(label="",
                                   queryset=Emergencia.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
 
 class RemisionExternaForm(forms.ModelForm):
 
@@ -54,6 +61,9 @@ class RemisionExternaForm(forms.ModelForm):
     
     emergencia = forms.ModelChoiceField(label="",
                                   queryset=Emergencia.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
 class HallazgoForm(forms.ModelForm):
@@ -67,6 +77,9 @@ class HallazgoForm(forms.ModelForm):
     emergencia = forms.ModelChoiceField(label="",
                                   queryset=Emergencia.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
 
 class TratamientoForm(forms.ModelForm):
 
@@ -78,4 +91,7 @@ class TratamientoForm(forms.ModelForm):
     
     emergencia = forms.ModelChoiceField(label="",
                                   queryset=Emergencia.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)

@@ -132,7 +132,7 @@ class BaseCreateView(CreateView, LoginRequiredView):
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
 
-        self.admision = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(BaseCreateView, self).dispatch(*args, **kwargs)
     
     def form_valid(self, form):
