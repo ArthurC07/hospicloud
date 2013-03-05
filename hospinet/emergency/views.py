@@ -29,7 +29,8 @@ from persona.forms import PersonaForm
 from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
                             RemisionExterna, Hallazgo, Cobro)
 from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
-                             RemisionInternaForm, RemisionExternaForm)
+                             RemisionInternaForm, RemisionExternaForm,
+                             CobroForm)
 from django.contrib import messages
 from datetime import datetime, time, date
 from django.utils import timezone
