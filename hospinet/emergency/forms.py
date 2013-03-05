@@ -17,7 +17,7 @@
 
 from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
-                              Tratamiento, Hallazgo)
+                              Tratamiento, Hallazgo, Cobro)
 from persona.models import Persona
 from django.contrib.auth.models import User
 
