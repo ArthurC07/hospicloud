@@ -69,7 +69,7 @@ class EmergenciaCreateView(CreateView, LoginRequiredView):
 
     def get_context_data(self, **kwargs):
         
-        context = super(BaseCreateView, self).get_context_data(**kwargs)
+        context = super(EmergenciaCreateView, self).get_context_data(**kwargs)
         context['persona'] = self.persona
         return context
     
