@@ -31,13 +31,17 @@ class Emergencia(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='emergencias')
     historia_enfermedad_actual = models.TextField(blank=True, null=True)
     pulso = models.IntegerField(blank=True, null=True)
-    temperatura = models.DecimalField(decimal_places=2, max_digits=8, null=True)
-    presion_sistolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
-    presion_diastolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
-    respiracion = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    temperatura = models.DecimalField(decimal_places=2, max_digits=8,
+                                      null=True, blank=True)
+    presion_sistolica = models.DecimalField(decimal_places=2, max_digits=8,
+                                            null=True, blank=True)
+    presion_diastolica = models.DecimalField(decimal_places=2, max_digits=8,
+                                             null=True, blank=True)
+    respiracion = models.DecimalField(decimal_places=2, max_digits=8,
+                                      null=True, blank=True)
     observacion = models.TextField(blank=True, null=True)
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
-                                                null=True)
+                                                null=True, blank=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_examenes')

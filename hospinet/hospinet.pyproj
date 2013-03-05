@@ -160,6 +160,7 @@
     <Content Include="clinique\templates\snippets\consultorio_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_list.html" />
+    <Content Include="emergency\templates\emergency\cobro_create.html" />
     <Content Include="emergency\templates\emergency\emergencia_detail.html" />
     <Content Include="emergency\templates\emergency\index.html" />
     <Content Include="emergency\templates\emergency\hallazgo_create.html" />

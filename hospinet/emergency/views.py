@@ -27,7 +27,7 @@ from persona.models import Persona
 from persona.views import PersonaCreateView
 from persona.forms import PersonaForm
 from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
-                            RemisionExterna, Hallazgo)
+                            RemisionExterna, Hallazgo, Cobro)
 from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
                              RemisionInternaForm, RemisionExternaForm)
 from django.contrib import messages
@@ -190,6 +190,15 @@ class HallazgoCreateView(BaseCreateView):
     model = Hallazgo
     form_class = HallazgoForm
     template_name = 'emergency/hallazgo_create.html'
+
+class CobroCreateView(BaseCreateView):
+
+    """Registrar los :class:`Cobro`s efectuados a la :class:`Persona`,
+    que ingreso a consulta"""
+
+    model = Cobro
+    form_class = CobroForm
+    template_name = 'emergency/cobro_create.html'
 
 class EmergenciaListView(ListView, LoginRequiredView):
 

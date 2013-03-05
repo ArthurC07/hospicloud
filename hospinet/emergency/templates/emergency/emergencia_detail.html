@@ -1,10 +1,11 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% block content %}
 <aside class="toolbox grid_3">
 <nav>
   <ul>
     <li class="clearfix"><a href="{% url emergencia-hallazgo-agregar emergencia.id %}">Agregar Hallazgos</a></li>
     <li class="clearfix"><a href="{% url emergencia-tratamiento-agregar emergencia.id %}">Agregar Tratamiento</a></li>
+    <li class="clearfix"><a href="{% url emergencia-cobro-agregar emergencia.id %}">Agregar Cobro</a></li>
     <li class="clearfix"><a href="{% url emergencia-remision-interna-agregar emergencia.id %}">Remitir a un M&eacute;dico</a></li>
     <li class="clearfix"><a href="{% url emergencia-remision-externa-agregar emergencia.id %}">Remitir otro Centro M&eacute;dico</a></li>
   </ul>

@@ -95,3 +95,18 @@ class TratamientoForm(forms.ModelForm):
     usuario = forms.ModelChoiceField(label="",
                                   queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
+
+class CobroForm(forms.ModelForm):
+
+    """Formulario para agregar :class:`Cobro`s"""
+
+    class Meta:
+
+        model = Cobro
+    
+    emergencia = forms.ModelChoiceField(label="",
+                                  queryset=Emergencia.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)

@@ -20,7 +20,8 @@ from emergency.views import (PersonaEmergenciaCreateView, EmergenciaDetailView,
                              EmergenciaCreateView, RemisionInternaCreateView,
                              TratamientoCreateView, RemisionExternaCreateView,
                              EmergenciaUpdateView, EmergenciaListView,
-                             HallazgoCreateView, EmergenciaPreCreateView)
+                             CobroCreateView,  HallazgoCreateView,
+                             EmergenciaPreCreateView)
 
 urlpatterns = patterns('',
     
@@ -55,6 +56,10 @@ urlpatterns = patterns('',
     url(r'^(?P<emergencia>\d+)/remision/interna/agregar$',
         RemisionInternaCreateView.as_view(),
         name='emergencia-remision-interna-agregar'),
+
+    url(r'^(?P<emergencia>\d+)/cobro/agregar$',
+        CobroCreateView.as_view(),
+        name='emergencia-cobro-agregar'),
     
     url(r'^(?P<emergencia>\d+)/remision/externa/agregar$',
         RemisionExternaCreateView.as_view(),
