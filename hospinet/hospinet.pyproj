@@ -162,6 +162,7 @@
     <Content Include="clinique\templates\snippets\paciente_list.html" />
     <Content Include="emergency\templates\emergency\emergencia_detail.html" />
     <Content Include="emergency\templates\emergency\index.html" />
+    <Content Include="emergency\templates\emergency\hallazgo_create.html" />
     <Content Include="emergency\templates\emergency\remision_interna_create.html" />
     <Content Include="emergency\templates\emergency\remision_externa_create.html" />
     <Content Include="emergency\templates\emergency\snippets\emergencia_list.html" />

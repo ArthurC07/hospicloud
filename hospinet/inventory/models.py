@@ -32,7 +32,7 @@ class Localidad(models.Model):
 
 class Inventario(models.Model):
 
-    localidad = models.ForeignKey('localidad', null=True, blank=True,
+    localidad = models.ForeignKey(Localidad, null=True, blank=True,
                                  related_name='inventarios')
 
     def __unicode__(self):
@@ -67,17 +67,15 @@ class Proveedor(models.Model):
 
 class Item(TimeStampedModel):
 
-    plantilla = models.ForeignKey('ItemTemplate', related_name='items')
-    inventario = models.ForeignKey('Inventario', related_name='items')
+    plantilla = models.ForeignKey(ItemTemplate, related_name='items')
+    inventario = models.ForeignKey(Inventario, related_name='items')
 
 class Transferencia(TimeStampedModel):
 
-    origen = models.ForeignKey('Inventario', related_name='salidas')
-    destino = models.ForeignKey('Inventario', related_name='entradas')
-    tipo_de_transaccion = models.CharField(max_length=1, choices=ESTADOS_CIVILES,
-                                           blank=True)
+    origen = models.ForeignKey(Inventario, related_name='salidas')
+    destino = models.ForeignKey(Inventario, related_name='entradas')
     aplicada = models.BooleanField(default=False)
-    item = models.ForeignKey('ItemTemplate', related_name='transferencias')
+    item = models.ForeignKey(ItemTemplate, related_name='transferencias')
     cantidad = models.IntegerField()
 
     def aplicar(self):
@@ -92,8 +90,8 @@ class Transferencia(TimeStampedModel):
 
 class Requisicion(TimeStampedModel):
 
-    inventario = model.ForeignKey('Inventario', related_name='requisiciones')
-    item = models.ForeignKey('ItemTemplate', related_name='transferencias')
+    inventario = models.ForeignKey(Inventario, related_name='requisiciones')
+    item = models.ForeignKey(ItemTemplate, related_name='requisiciones')
     cantidad = models.IntegerField()
     aprobada = models.BooleanField(default=False)
     entregada = models.BooleanField(default=True)

@@ -33,15 +33,21 @@
     {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %} <a href="{% url persona-antecedente-obstetrico-editar emergencia.persona.id %}" class="button">Editar Antecedentes Obstetricos</a>
     {% endifequal %}
   </div>
+  <section id="hallazgos">
+  <h2>Examen F&iacute;sico<h2>
   {% for hallazgo in emergencia.hallazgos.all %}
-  <article>
+  <article class="hallazgo">
   </article>
   {% endfor %}
+  </section>
+  <section id="tratamientos">
+  <h2>Tratamientos<h2>
   {% for tratamiento in emergencia.er_tratamientos.all %}
-  <article>
+  <article class="tratamiento">
     <p>Indicaciones: {{ tratamiento.indicaciones }}</p>
   </article>
   {% endfor %}
+  </section>
   {% for remision_interna in emergencia.er_rinternas.all %}
   <article>
     <p>M&eacute;dico: {{ remision_interna.doctor }}</p>

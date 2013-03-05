@@ -161,6 +161,7 @@ INSTALLED_APPS = (
     'clinique',
     'invoice',
     'emergency',
+    'inventory',
     # Third party apps go here
     'django_extensions',
     'treemenus',

@@ -21,6 +21,7 @@ from django.contrib.auth.models import User
 from django_extensions.db.models import TimeStampedModel
 from decimal import Decimal
 from persona.models import Persona
+from inventory.models import ItemTemplate
 
 class Emergencia(TimeStampedModel):
 
@@ -28,8 +29,16 @@ class Emergencia(TimeStampedModel):
     emergencia"""
 
     persona = models.ForeignKey(Persona, related_name='emergencias')
-    hallazgos = models.TextField()
-    diagnostico = models.TextField()
+    historia_enfermedad_actual = models.TextField(blank=True, null=True)
+    pulso = models.IntegerField(blank=True, null=True)
+    temperatura = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    presion_sistolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    presion_diastolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    respiracion = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    observacion = models.TextField(blank=True, null=True)
+    saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
+                                                null=True)
+    presion_arterial_media = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_examenes')
     
@@ -56,14 +65,14 @@ class Tratamiento(TimeStampedModel):
 
 class Hallazgo(TimeStampedModel):
 
-    emergencia = models.ForeignKey('Emergencia')
+    emergencia = models.ForeignKey(Emergencia)
     hallazgo = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='hallazgos')
 
 class RemisionInterna(TimeStampedModel):
 
-    emergencia = models.ForeignKey('Emergencia', related_name='remisiones_internas')
+    emergencia = models.ForeignKey(Emergencia, related_name='remisiones_internas')
     doctor = models.CharField(max_length=100)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_rinternas')
@@ -76,7 +85,7 @@ class RemisionInterna(TimeStampedModel):
 
 class RemisionExterna(TimeStampedModel):
 
-    emergencia = models.ForeignKey('Emergencia', related_name='remisiones_externas')
+    emergencia = models.ForeignKey(Emergencia, related_name='remisiones_externas')
     destino = models.CharField(max_length=100)
     diagnostico = models.TextField()
     notas = models.TextField()
@@ -88,3 +97,10 @@ class RemisionExterna(TimeStampedModel):
         """Obtiene la URL absoluta"""
         
         return reverse('emergency-detail', args=[self.emergencia.id])
+
+class Cobro(TimeStampedModel):
+
+    """Permite registrar los distintos cargos"""
+
+    emergencia = models.ForeignKey(Emergencia, related_name='cobros')
+    cargo = models.ForeignKey(ItemTemplate, related_name='cobros')

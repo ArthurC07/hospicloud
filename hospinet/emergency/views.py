@@ -56,7 +56,7 @@ class PersonaEmergenciaCreateView(PersonaCreateView, LoginRequiredView):
     
     def get_success_url(self):
         
-        return reverse('emergency-persona-agregar', args=[self.object.id])
+        return reverse('emergency-create', args=[self.object.id])
 
 class EmergenciaCreateView(CreateView, LoginRequiredView):
     
@@ -66,6 +66,12 @@ class EmergenciaCreateView(CreateView, LoginRequiredView):
     model = Emergencia
     form_class = EmergenciaForm
     template_name = 'emergency/emergencia_create.html'
+
+    def get_context_data(self, **kwargs):
+        
+        context = super(BaseCreateView, self).get_context_data(**kwargs)
+        context['persona'] = self.persona
+        return context
     
     def get_form_kwargs(self):
         
