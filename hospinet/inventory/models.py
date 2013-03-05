@@ -48,7 +48,7 @@ class ItemTemplate(TimeStampedModel):
     modelo = models.CharField(max_length=32, null=True, blank=True)
     numero_de_parte = models.CharField(max_length=32, null=True, blank=True)
     notas = models.TextField(null=True, blank=True)
-    suppliers = models.ManyToManyField(Proveedor, null=True, blank=True,
+    suppliers = models.ManyToManyField("Proveedor", null=True, blank=True,
                                        related_name='plantillas')
     
     def get_absolute_url(self):
