@@ -61,5 +61,11 @@
     <p>Notas: {{ remision_externa.notas }}</p>
   </article>
   {% endfor %}
+  {% for cargo in emergencia.cargos.all %}
+  <article>
+    <p>C&oacute;digo: {{ cargo.itemTemplate.codigo.id }}</p>
+    <p>Concepto: {{ cargo.itemTemplate.modelo }}</p>
+  </article>
+  {% endfor %}
 </section>
 {% endblock %}

@@ -19,6 +19,7 @@ from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from emergency.models import Emergencia
 from invoice.models import Recibo, Producto, Venta
 from invoice.forms import ReciboForm, VentaForm, PeriodoForm
 from django.contrib.auth.models import User
@@ -151,6 +152,7 @@ class IndexView(TemplateView, LoginRequiredView):
         context['productoperiodoform'] = PeriodoForm(prefix='producto')
         context['remiteperiodoform'] = PeriodoForm(prefix='remite')
         context['radperiodoform'] = PeriodoForm(prefix='rad')
+        context['emerperiodoform'] = PeriodoForm(prefix='emergencia')
 
         return context
 
@@ -195,7 +197,8 @@ class ReporteReciboView(ReciboPeriodoView, LoginRequiredView):
 
         self.form = PeriodoForm(request.GET, prefix='recibo')
 
-        return super(ReporteReciboView, self).dispatch(request, *args, **kwargs)
+        return super(ReporteReciboView, self).dispatch(request, *args,
+                                                       **kwargs)
 
     def get_context_data(self, **kwargs):
         
@@ -224,7 +227,8 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredView):
 
         self.form = PeriodoForm(request.GET, prefix='producto')
 
-        return super(ReporteProductoView, self).dispatch(request, *args, **kwargs)
+        return super(ReporteProductoView, self).dispatch(request, *args,
+                                                         **kwargs)
 
     def get_context_data(self, **kwargs):
         
@@ -324,5 +328,46 @@ class ReciboRadView(ReciboPeriodoView, LoginRequiredView):
         context['recibos'] = self.recibos
         context['inicio'] = self.inicio
         context['doctores'] = doctores.items()
+        context['fin'] = self.fin
+        return context
+
+class EmergenciaPeriodoView(TemplateView, LoginRequiredView):
+    
+    """Muestra las opciones disponibles para la aplicación"""
+
+    template_name = 'invoice/emergencia_list.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+
+        """Filtra las :class:`Emergencia` de acuerdo a los datos ingresados en
+        el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='emergencia')
+        if self.form.is_valid():
+
+            inicio = self.form.cleaned_data['inicio']
+            fin = self.form.cleaned_data['fin']
+            self.inicio = timezone.make_aware(
+                                    datetime.combine(inicio, time.min),
+                                    timezone.get_default_timezone())
+            self.fin = timezone.make_aware(datetime.combine(fin, time.max),
+                                           timezone.get_default_timezone())
+            self.emergencias = Emergencia.objects.filter(
+                                                 created__range=(inicio, fin))
+
+        else:
+            
+            return redirect('invoice-index')
+
+        return super(EmergenciaPeriodoView, self).dispatch(request, *args,
+                                                           **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        
+        """Permite utilizar las :class:`Emergencia`s en la vista"""
+        
+        context = super(EmergenciaPeriodoView, self).get_context_data(**kwargs)
+        context['emergencias'] = self.emergencias
+        context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context

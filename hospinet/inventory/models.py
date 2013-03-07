@@ -51,6 +51,10 @@ class ItemTemplate(TimeStampedModel):
     suppliers = models.ManyToManyField("Proveedor", null=True, blank=True,
                                        related_name='plantillas')
     
+    def __unicode__(self):
+
+        return self.modelo
+
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<aside class="grid_3 toolbox">
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url home %}">Inicio</a>
+      </li>
+      <li>
+        <a href="{% url invoice-index %}">Inicio Recibo</a>
+      </li>
+      <li>
+        <a href="{% url examen-index %}">Inicio Estudios</a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+<div id="informacion" class="grid_9">
+  <h1>Emergencias del {{ inicio }} al {{ fin }}</h1>
+  {% include "emergency/snippets/emergencia_list.html" with emergencias=emergencias %}
+</div>
+{% endblock %}
