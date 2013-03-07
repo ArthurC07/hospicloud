@@ -5,7 +5,7 @@
   <ul>
     <li class="clearfix"><a href="{% url emergencia-hallazgo-agregar emergencia.id %}">Agregar Hallazgos</a></li>
     <li class="clearfix"><a href="{% url emergencia-tratamiento-agregar emergencia.id %}">Agregar Tratamiento</a></li>
-    <li class="clearfix"><a href="{% url emergencia-cobro-agregar emergencia.id %}">Agregar Cobro</a></li>
+    <li class="clearfix"><a href="{% url emergencia-cobro-agregar emergencia.id %}">Agregar Materiales y Medicamentos</a></li>
     <li class="clearfix"><a href="{% url emergencia-remision-interna-agregar emergencia.id %}">Remitir a un M&eacute;dico</a></li>
     <li class="clearfix"><a href="{% url emergencia-remision-externa-agregar emergencia.id %}">Remitir otro Centro M&eacute;dico</a></li>
   </ul>
@@ -49,23 +49,39 @@
   </article>
   {% endfor %}
   </section>
+  <section id="Remisiones">
   {% for remision_interna in emergencia.er_rinternas.all %}
   <article>
+    <h3>Remisi&oacute;n a Especialista</h3>
     <p>M&eacute;dico: {{ remision_interna.doctor }}</p>
   </article>
   {% endfor %}
   {% for remision_externa in emergencia.er_rexternas.all %}
   <article>
+    <h3>Remisi&oacute;n a otro Centro</h3>
     <p>Destino: {{ remision_externa.destino }}</p>
     <p>Diagn&oacute;stico: {{ remision_externa.diagnostico }}</p>
     <p>Notas: {{ remision_externa.notas }}</p>
   </article>
   {% endfor %}
-  {% for cargo in emergencia.cargos.all %}
-  <article>
-    <p>C&oacute;digo: {{ cargo.itemTemplate.codigo.id }}</p>
-    <p>Concepto: {{ cargo.itemTemplate.modelo }}</p>
-  </article>
-  {% endfor %}
-</section>
+  </section>
+  <section id="cargos">
+  <h3>Materiales y Medicamentos Utilizados</h3>
+    <table class="data">
+      <thead class="gradient">
+        <tr>
+          <th>C&oacute;digo</th>
+          <th>Descripci&oacute;n</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cargo in emergencia.cargos.all %}
+        <tr>
+          <td>{{ cargo.itemTemplate.codigo.id }}</td>
+          <td>{{ cargo.itemTemplate.modelo }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
 {% endblock %}
