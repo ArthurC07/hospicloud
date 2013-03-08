@@ -36,6 +36,8 @@ class Inventario(models.Model):
                                  related_name='inventarios')
 
     def __unicode__(self):
+        if self.localidad == None:
+            return u"None"
 
         return u"Inventario de {0}".format(localidad.nombre)
     
@@ -53,7 +55,7 @@ class ItemTemplate(TimeStampedModel):
     
     def __unicode__(self):
 
-        return self.modelo
+        return self.descripcion
 
     def get_absolute_url(self):
         
