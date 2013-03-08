@@ -27,13 +27,11 @@ class Command(BaseCommand):
 
         for source in args:
 
-            try:
-
-                reader = csv.reader(open(source))
-                for line in reader:
-                    item = ItemTemplate()
-                    item.id = line[0]
-                    item.descripcion = line[1]
-                    item.save()
+            reader = csv.reader(open(source))
+            for line in reader:
+                item = ItemTemplate()
+                item.id = line[0]
+                item.descripcion = line[1]
+                item.save()
 
         return super(Command, self).handle(*args, **options)
