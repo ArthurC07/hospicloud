@@ -46,6 +46,9 @@
     <Compile Include="clinique\__init__.py" />
     <Compile Include="emergency\admin.py" />
     <Compile Include="emergency\forms.py" />
+    <Compile Include="emergency\management\commands\importitems.py" />
+    <Compile Include="emergency\management\commands\__init__.py" />
+    <Compile Include="emergency\management\__init__.py" />
     <Compile Include="emergency\models.py" />
     <Compile Include="emergency\tests.py" />
     <Compile Include="emergency\urls.py" />
@@ -389,6 +392,8 @@
     <Folder Include="clinique\templates\search\indexes\consultorio\" />
     <Folder Include="clinique\templates\snippets\" />
     <Folder Include="emergency\" />
+    <Folder Include="emergency\management\" />
+    <Folder Include="emergency\management\commands\" />
     <Folder Include="emergency\static\" />
     <Folder Include="emergency\static\js\" />
     <Folder Include="emergency\templates" />
