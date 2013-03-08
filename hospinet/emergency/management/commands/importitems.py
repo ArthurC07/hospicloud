@@ -33,5 +33,3 @@ class Command(BaseCommand):
                 item.id = line[0]
                 item.descripcion = line[1]
                 item.save()
-
-        return super(Command, self).handle(*args, **options)
