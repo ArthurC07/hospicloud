@@ -62,6 +62,7 @@
     <Compile Include="imaging\urls.py" />
     <Compile Include="imaging\views.py" />
     <Compile Include="imaging\__init__.py" />
+    <Compile Include="inventory\admin.py" />
     <Compile Include="inventory\models.py" />
     <Compile Include="inventory\tests.py" />
     <Compile Include="inventory\views.py" />
