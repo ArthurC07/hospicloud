@@ -175,6 +175,7 @@ INSTALLED_APPS = (
     'userena',
     'guardian',
     'easy_thumbnails',
+    'queued_search'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -227,7 +228,6 @@ HAYSTACK_CONNECTIONS = {
         'BATCH_SIZE': 100,
     },
 }
-HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 # Additional Settings
 FILE_PROTECTION_METHOD = 'basic'
 ANONYMOUS_USER_ID = -1
@@ -263,3 +263,6 @@ ACTSTREAM_MANAGER = 'actstream.managers.ActionManager'
 #EMAIL_PORT = 587
 #EMAIL_HOST_USER = 'me@gmail.com'
 #EMAIL_HOST_PASSWORD = 'password'
+
+HAYSTACK_SIGNAL_PROCESSOR = 'queued_search.signals.QueuedSignalProcessor'
+QUEUE_BACKEND = 'dummy'
