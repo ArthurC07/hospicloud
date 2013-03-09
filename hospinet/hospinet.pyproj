@@ -289,6 +289,7 @@
     <Content Include="persona\static\css\table.css" />
     <Content Include="persona\static\images\admisiones.png" />
     <Content Include="persona\static\images\cruzfondo.jpg" />
+    <Content Include="persona\static\images\emergencia.png" />
     <Content Include="persona\static\images\enfermeria.png" />
     <Content Include="persona\static\images\face.jpg" />
     <Content Include="persona\static\images\Femenino\body.png" />
