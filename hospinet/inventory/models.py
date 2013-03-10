@@ -52,6 +52,7 @@ class ItemTemplate(TimeStampedModel):
     notas = models.TextField(null=True, blank=True)
     suppliers = models.ManyToManyField("Proveedor", null=True, blank=True,
                                        related_name='plantillas')
+    emergencia = models.BooleanField(default=True)
     
     def __unicode__(self):
 

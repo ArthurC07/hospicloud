@@ -18,6 +18,7 @@
 from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
                               Tratamiento, Hallazgo, Cobro)
+from inventory.models import ItemTemplate
 from persona.models import Persona
 from django.contrib.auth.models import User
 
@@ -106,6 +107,9 @@ class CobroForm(forms.ModelForm):
     
     emergencia = forms.ModelChoiceField(label="",
                                   queryset=Emergencia.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    cargo = forms.ModelChoiceField(label="",
+                                  queryset=ItemTemplate.objects.filter(emergencia=True).all(),
                                   widget=forms.HiddenInput(), required=False)
     usuario = forms.ModelChoiceField(label="",
                                   queryset=User.objects.all(),
