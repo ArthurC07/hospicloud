@@ -21,7 +21,13 @@ from emergency.views import (PersonaEmergenciaCreateView, EmergenciaDetailView,
                              TratamientoCreateView, RemisionExternaCreateView,
                              EmergenciaUpdateView, EmergenciaListView,
                              CobroCreateView,  HallazgoCreateView,
-                             EmergenciaPreCreateView)
+                             EmergenciaPreCreateView,
+                             EmergenciaFisicoUpdateView,
+                             EmergenciaEstiloVidaUpdateView,
+                             EmergenciaAntecedenteUpdateView,
+                             EmergenciaAntecedenteFamiliarUpdateView,
+                             EmergenciaAntecedenteObstetricoUpdateView,
+                             EmergenciaAntecedenteQuirurgicoUpdateView)
 
 urlpatterns = patterns('',
     
@@ -64,4 +70,24 @@ urlpatterns = patterns('',
     url(r'^(?P<emergencia>\d+)/remision/externa/agregar$',
         RemisionExternaCreateView.as_view(),
         name='emergencia-remision-externa-agregar'),
+
+    url(r'^(?P<pk>\d+)/(?P<emergencia>\d+)/fisico/editar$',
+        EmergenciaFisicoUpdateView.as_view(),
+        name='emergencia-fisico-editar'),
+    
+    url(r'^(?P<pk>\d+)/(?P<emergencia>\d+)/antecedente/editar$',
+        EmergenciaAntecedenteUpdateView.as_view(),
+        name='emergencia-antecedente-editar'),
+    
+    url(r'^(?P<pk>\d+)/(?P<emergencia>\d+)/antecedente/familiar/editar$',
+        EmergenciaAntecedenteFamiliarUpdateView.as_view(),
+        name='emergencia-antecedente-familiar-editar'),
+    
+    url(r'^(?P<pk>\d+)/(?P<emergencia>\d+)/antecedente/obstetrico/editar$',
+        EmergenciaAntecedenteObstetricoUpdateView.as_view(),
+        name='emergencia-antecedente-obstetrico-editar'),
+
+    url(r'^(?P<pk>\d+)/(?P<emergencia>\d+)/antecedente/quirurgico/editar$',
+        EmergenciaAntecedenteQuirurgicoUpdateView.as_view(),
+        name='emergencia-antecedente-quirurgico-editar'),
 )

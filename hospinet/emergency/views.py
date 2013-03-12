@@ -24,7 +24,11 @@ from django.views.generic import (CreateView, ListView, TemplateView,
                                   DetailView, RedirectView, UpdateView)
 from library.protected import LoginRequiredView
 from persona.models import Persona
-from persona.views import PersonaCreateView
+from persona.views import (PersonaCreateView, FisicoUpdateView,
+                           EstiloVidaUpdateView, AntecedenteUpdateView,
+                           AntecedenteFamiliarUpdateView, 
+                           AntecedenteObstetricoUpdateView,
+                           AntecedenteQuirurgicoUpdateView)
 from persona.forms import PersonaForm
 from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
                             RemisionExterna, Hallazgo, Cobro)
@@ -216,3 +220,88 @@ class EmergenciaListView(ListView, LoginRequiredView):
         fin = timezone.make_aware(datetime.combine(date.today(), time.max),
                                         timezone.get_default_timezone())
         return Emergencia.objects.filter(created__range=(inicio, fin))
+
+
+class EmergenciaFisicoUpdateView(FisicoUpdateView):
+
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Emergencia` que se entrego como argumento en la
+        url"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
+
+class EmergenciaEstiloVidaUpdateView(EstiloVidaUpdateView):
+
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Emergencia` que se entrego como argumento en la
+        url"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
+
+class EmergenciaAntecedenteUpdateView(AntecedenteUpdateView):
+
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Emergencia` que se entrego como argumento en la
+        url"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
+
+class EmergenciaAntecedenteFamiliarUpdateView(AntecedenteFamiliarUpdateView):
+
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Emergencia` que se entrego como argumento en la
+        url"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
+
+class EmergenciaAntecedenteObstetricoUpdateView(AntecedenteObstetricoUpdateView):
+
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Emergencia` que se entrego como argumento en la
+        url"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
+
+class EmergenciaAntecedenteQuirurgicoUpdateView(AntecedenteQuirurgicoUpdateView):
+
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Emergencia` que se entrego como argumento en la
+        url"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])

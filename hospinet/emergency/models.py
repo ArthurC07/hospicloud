@@ -65,14 +65,20 @@ class Tratamiento(TimeStampedModel):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('emergency-detail', args=[self.emergencia.id])
+        return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class Hallazgo(TimeStampedModel):
 
-    emergencia = models.ForeignKey(Emergencia)
+    emergencia = models.ForeignKey(Emergencia,
+                                related_name='hallazgos')
     hallazgo = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='hallazgos')
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class RemisionInterna(TimeStampedModel):
 
@@ -85,7 +91,7 @@ class RemisionInterna(TimeStampedModel):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('emergency-detail', args=[self.emergencia.id])
+        return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class RemisionExterna(TimeStampedModel):
 
@@ -100,7 +106,7 @@ class RemisionExterna(TimeStampedModel):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('emergency-detail', args=[self.emergencia.id])
+        return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class Cobro(TimeStampedModel):
 
@@ -108,3 +114,9 @@ class Cobro(TimeStampedModel):
 
     emergencia = models.ForeignKey(Emergencia, related_name='cobros')
     cargo = models.ForeignKey(ItemTemplate, related_name='cobros')
+
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])

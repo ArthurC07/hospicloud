@@ -21,28 +21,29 @@
     {% include "snippets/persona.html" with persona=emergencia.persona %} <a href="{% url persona-editar emergencia.persona.id %}" class="button">Editar Datos del Paciente</a>
   </div>
   <div class="info">
-    {% include "snippets/fisico.html" with fisico=emergencia.persona.fisico %} <a href="{% url persona-fisico-editar emergencia.persona.id %}" class="button">Editar F&iacute;sico</a>
+    {% include "snippets/fisico.html" with fisico=emergencia.persona.fisico %} <a href="{% url emergencia-fisico-editar emergencia.persona.id emergencia.id %}" class="button">Editar F&iacute;sico</a>
   </div>
   <div class="info">
-    {% include "snippets/antecedente.html" with antecedente=emergencia.persona.antecedente %} <a href="{% url persona-antecedente-editar emergencia.persona.id %}" class="button">Editar Antecedentes Cl&iacute;nicos</a>
+    {% include "snippets/antecedente.html" with antecedente=emergencia.persona.antecedente %} <a href="{% url emergencia-antecedente-editar emergencia.persona.id emergencia.id %}" class="button">Editar Antecedentes Patol&oacute;gicos Personales</a>
   </div>
   <div class="info">
-    {% include "snippets/antecedente_familiar.html" with antecedente=emergencia.persona.antecedente_familiar %} <a href="{% url persona-antecedente-familiar-editar emergencia.persona.id %}" class="button">Editar Antecedentes Familiares</a>
+    {% include "snippets/antecedente_familiar.html" with antecedente=emergencia.persona.antecedente_familiar %} <a href="{% url emergencia-antecedente-familiar-editar emergencia.persona.id emergencia.id %}" class="button">Editar Antecedentes Familiares</a>
   </div>
   <div class="info">
     {% ifequal persona.sexo 'F' %}
-    {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %} <a href="{% url persona-antecedente-obstetrico-editar emergencia.persona.id %}" class="button">Editar Antecedentes Obstetricos</a>
+    {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %} <a href="{% url emergencia-antecedente-obstetrico-editar emergencia.persona.id emergencia.id %}" class="button">Editar Antecedentes Obstetricos</a>
     {% endifequal %}
   </div>
   <section id="hallazgos">
-  <h2>Examen F&iacute;sico<h2>
+  <h2>Examen F&iacute;sico</h2>
   {% for hallazgo in emergencia.hallazgos.all %}
   <article class="hallazgo">
+    <p>{{ hallazgo.hallazgo }}</p>
   </article>
   {% endfor %}
   </section>
   <section id="tratamientos">
-  <h2>Tratamientos<h2>
+  <h2>Tratamientos</h2>
   {% for tratamiento in emergencia.er_tratamientos.all %}
   <article class="tratamiento">
     <p>Indicaciones: {{ tratamiento.indicaciones }}</p>
@@ -84,4 +85,5 @@
       </tbody>
     </table>
   </section>
+</section>
 {% endblock %}
