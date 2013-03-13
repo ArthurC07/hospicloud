@@ -230,7 +230,7 @@ class EmergenciaFisicoUpdateView(FisicoUpdateView):
         url"""
 
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
-        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+        return super(EmergenciaFisicoUpdateView, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         
@@ -244,7 +244,8 @@ class EmergenciaEstiloVidaUpdateView(EstiloVidaUpdateView):
         url"""
 
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
-        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+        return super(EmergenciaEstiloVidaUpdateView,
+                     self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         
@@ -258,7 +259,7 @@ class EmergenciaAntecedenteUpdateView(AntecedenteUpdateView):
         url"""
 
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
-        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+        return super(EmergenciaAntecedenteUpdateView, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         
@@ -272,7 +273,7 @@ class EmergenciaAntecedenteFamiliarUpdateView(AntecedenteFamiliarUpdateView):
         url"""
 
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
-        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+        return super(EmergenciaAntecedenteFamiliarUpdateView, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         
@@ -286,7 +287,8 @@ class EmergenciaAntecedenteObstetricoUpdateView(AntecedenteObstetricoUpdateView)
         url"""
 
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
-        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+        return super(EmergenciaAntecedenteObstetricoUpdateView,
+                     self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         
@@ -300,7 +302,8 @@ class EmergenciaAntecedenteQuirurgicoUpdateView(AntecedenteQuirurgicoUpdateView)
         url"""
 
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
-        return super(FisicoUpdateView, self).dispatch(*args, **kwargs)
+        return super(EmergenciaAntecedenteQuirurgicoUpdateView,
+                     self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         
