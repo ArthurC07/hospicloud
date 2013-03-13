@@ -110,7 +110,7 @@ class CobroForm(forms.ModelForm):
                                   widget=forms.HiddenInput(), required=False)
     cargo = forms.ModelChoiceField(label="",
                                   queryset=ItemTemplate.objects.filter(emergencia=True).all(),
-                                  widget=forms.HiddenInput(), required=False)
+                                  required=False)
     usuario = forms.ModelChoiceField(label="",
                                   queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
