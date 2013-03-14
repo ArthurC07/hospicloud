@@ -34,8 +34,7 @@ class Emergencia(TimeStampedModel):
     frecuencia_respiratoria = models.IntegerField(blank=True, null=True)
     temperatura = models.DecimalField(decimal_places=2, max_digits=8,
                                       null=True, blank=True)
-    presion = models.DecimalField(decimal_places=2, max_digits=8,
-                                            null=True, blank=True)
+    presion = models.CharField(max_length=100, null=True, blank=True)
     frecuencia_cardiaca = models.DecimalField(decimal_places=2, max_digits=8,
                                              null=True, blank=True)
     respiracion = models.DecimalField(decimal_places=2, max_digits=8,
@@ -44,7 +43,7 @@ class Emergencia(TimeStampedModel):
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                related_name='er_examenes')
+                                related_name='emergencias')
     
     def get_absolute_url(self):
         
@@ -56,7 +55,7 @@ class Tratamiento(TimeStampedModel):
 
     """Registra las indiciaciones que la :class:`Persona` debe seguir"""
 
-    emergencia = models.ForeignKey('Emergencia', related_name='tratamientos')
+    emergencia = models.ForeignKey(Emergencia, related_name='tratamientos')
     indicaciones = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_tratamientos')
