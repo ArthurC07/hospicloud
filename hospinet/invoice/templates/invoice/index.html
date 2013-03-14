@@ -49,7 +49,7 @@
   </p>
 </form>
 <form  class="styled compact" action="{% url invoice-periodo-emergencia %}" method="get">
-  {% csrf_token %} <h1>Mostrar Comisiones del Radiologo de un Periodo</h1>
+  {% csrf_token %} <h1>Mostrar Emergencias de un Periodo</h1>
   <div id="messages"></div>{% include "snippets/form.html" with form=radperiodoform %}
   <p>
     <input type="submit" value="Mostrar" />
