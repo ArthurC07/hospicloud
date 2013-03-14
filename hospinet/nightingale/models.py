@@ -24,6 +24,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from actstream import action
 from inventory.models import ItemTemplate
+from django.core.urlresolvers import reverse
 
 class Turno(object):
 
@@ -65,12 +66,11 @@ class SignoVital(models.Model, Turno):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='signos_vitales')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return reverse('nightingale-view-id', args=[self.admision.id])
     
     def save(self, *args, **kwargs):
 
@@ -108,12 +108,12 @@ class Evolucion(models.Model):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='evoluciones')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return reverse('nightingale-view-id', args=[self.admision.id])
+
 class Cargo(models.Model, Turno):
     
     """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
@@ -127,12 +127,11 @@ class Cargo(models.Model, Turno):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='cargos')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return reverse('nightingale-view-id', args=[self.admision.id])
 
 class OrdenMedica(models.Model):
     
@@ -145,12 +144,11 @@ class OrdenMedica(models.Model):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='ordenes_medicas')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return reverse('nightingale-view-id', args=[self.admision.id])
 
 class Ingesta(models.Model, Turno):
     
@@ -165,12 +163,11 @@ class Ingesta(models.Model, Turno):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='ingestas')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'enfermeria-ingestas-excretas', [self.admision.id]
+        return reverse('enfermeria-ingestas-excretas', args=[self.admision.id])
 
 class Excreta(models.Model, Turno):
     
@@ -193,12 +190,11 @@ class Excreta(models.Model, Turno):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='excretas')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'enfermeria-ingestas-excretas', [self.admision.id]
+        return reverse('enfermeria-ingestas-excretas', args=[self.admision.id])
 
 class NotaEnfermeria(models.Model, Turno):
     
@@ -211,12 +207,11 @@ class NotaEnfermeria(models.Model, Turno):
                                    related_name='notas_enfermeria')
     cerrada = models.BooleanField(default=False)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'enfermeria-notas', [self.admision.id]
+        return reverse('enfermeria-notas', args=[self.admision.id])
 
 class Glicemia(models.Model, Turno):
     
@@ -230,12 +225,11 @@ class Glicemia(models.Model, Turno):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='glicemias')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-glucometria-id', [self.admision.id]
+        return reverse('nightingale-glucometria-id', args=[self.admision.id])
 
 class Glucosuria(models.Model, Turno):
 
@@ -248,12 +242,11 @@ class Glucosuria(models.Model, Turno):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='glucosurias')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-glucometria-id', [self.admision.id]
+        return reverse('nightingale-glucometria-id', args=[self.admision.id])
 
 class Insulina(models.Model, Turno):
 
@@ -266,12 +259,11 @@ class Insulina(models.Model, Turno):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='insulinas')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-glucometria-id', [self.admision.id]
+        return reverse('nightingale-glucometria-id', args=[self.admision.id])
 
 class Sumario(models.Model):
     
@@ -286,12 +278,11 @@ class Sumario(models.Model):
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='sumarios')
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return reverse('nightingale-view-id', args=[self.admision.id])
 
 Admision.sumario = property(lambda a: Sumario.objects.get_or_create(admision=a)[0])
 
@@ -304,12 +295,11 @@ class FrecuenciaLectura(models.Model):
     glucometria = models.IntegerField(default=0,blank=True)
     signos_vitales = models.IntegerField(default=0,blank=True)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'nightingale-view-id', [self.admision.id]
+        return reverse('nightingale-view-id', args=[self.admision.id])
 
 Admision.frecuencia_lectura = property(lambda a: FrecuenciaLectura.objects.get_or_create(admision=a)[0])
 
@@ -347,10 +337,11 @@ class Medicamento(models.Model):
                                    related_name='medicamentos')
     estado = models.IntegerField(blank=True, null=True, choices=ESTADOS, default=1)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
+        
+        return reverse('nightingale-view-id', args=[self.admision.id])
         
         return 'enfermeria-medicamentos', [self.admision.id]
 
@@ -376,10 +367,11 @@ class Dosis(models.Model, Turno):
                                       related_name='dosis_administradas',
                                       on_delete=models.CASCADE)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
+        
+        return reverse('nightingale-view-id', args=[self.admision.id])
         
         return 'enfermeria-medicamentos', [self.medicamento.admision.id]
 

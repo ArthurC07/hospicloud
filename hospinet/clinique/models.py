@@ -18,9 +18,9 @@
 from django.utils import timezone
 from django.db import models
 from persona.models import Persona
-from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 class Consultorio(models.Model):
     
@@ -41,12 +41,11 @@ class Consultorio(models.Model):
         
         return sum(p.saldo() for p in self.pacientes)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'consultorio-view', [self.uuid]
+        return reverse('consultorio-view', args=[self.uuid])
 
 User.balance = property(lambda u: sum(c.balance() for c in u.consultorios))
 
@@ -80,12 +79,11 @@ class Paciente(models.Model):
         
         return creditos - debitos
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la url relacionada con un :class:`Paciente`"""
         
-        return 'consultorio-paciente', [self.uuid]
+        return reverse('consultorio-paciente', args=[self.uuid])
 
 Persona.saldo = property(lambda p: sum(c.saldo() for c in p.consultorios))
 
@@ -150,7 +148,7 @@ class Receta(models.Model):
     
     def get_absolute_url(self):
         
-        return 'consultorio-receta-view', [self.id]
+        return reverse('consultorio-receta-view', args=[self.id])
 
 class HistoriaClinica(models.Model):
 
@@ -165,7 +163,7 @@ class HistoriaClinica(models.Model):
     
     def get_absolute_url(self):
         
-        return 'consultorio-paciente', [self.paciente.uuid]
+        return reverse('consultorio-paciente', args=[self.paciente.uuid])
 
 class Optometria(models.Model):
 
@@ -192,6 +190,8 @@ class Optometria(models.Model):
     
     def get_absolute_url(self):
         
+        return reverse('consultorio-optometria-view', args=[self.id])
+        
         return 'consultorio-optometria-view', [self.id]
 
 class Pago(models.Model):
@@ -214,4 +214,5 @@ class Pago(models.Model):
     
     def get_absolute_url(self):
         
-        return 'consultorio-view', [self.paciente.consultorio.uuid]
+        return reverse('consultorio-view',
+                       args=[self.paciente.consultorio.uuid])

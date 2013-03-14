@@ -20,6 +20,8 @@ from django.db.models.fields import CharField
 from south.modelsinspector import add_introspection_rules
 
 class OrderedCountryField(CountryField):
+
+    """Permite mostrar algunos códigos de país antes que el resto"""
     
     def __init__(self, *args, **kwargs):
         

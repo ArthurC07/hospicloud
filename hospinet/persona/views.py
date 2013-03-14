@@ -99,9 +99,8 @@ class FisicoUpdateView(UpdateView, LoginRequiredView):
 
 class EstiloVidaUpdateView(UpdateView, LoginRequiredView):
     
-    """
-    Permite actualizar los datos del :class:`EstiloVida` de una :class:`Persona`
-    """
+    """Permite actualizar los datos del :class:`EstiloVida` de una
+    :class:`Persona`"""
     
     model = EstiloVida
     form_class = EstiloVidaForm
@@ -109,9 +108,8 @@ class EstiloVidaUpdateView(UpdateView, LoginRequiredView):
 
 class AntecedenteUpdateView(UpdateView, LoginRequiredView):
     
-    """
-    Permite actualizar los datos del :class:`Antecedente` de una :class:`Persona`
-    """
+    """Permite actualizar los datos del :class:`Antecedente` de una
+    :class:`Persona`"""
     
     model = Antecedente
     form_class = AntecedenteForm
@@ -119,9 +117,8 @@ class AntecedenteUpdateView(UpdateView, LoginRequiredView):
 
 class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredView):
     
-    """
-    Permite actualizar los datos del :class:`AntecedenteFamiliar` de una :class:`Persona`
-    """
+    """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
+    :class:`Persona`"""
     
     model = AntecedenteFamiliar
     form_class = AntecedenteFamiliarForm
@@ -129,9 +126,8 @@ class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredView):
 
 class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredView):
     
-    """
-    Permite actualizar los datos del :class:`AntecedenteObstetrico` de una :class:`Persona`
-    """
+    """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
+    :class:`Persona`"""
     
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
@@ -139,9 +135,8 @@ class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredView):
 
 class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredView):
     
-    """
-    Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una :class:`Persona`
-    """
+    """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
+    :class:`Persona`"""
     
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
@@ -149,9 +144,8 @@ class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredView):
 
 class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredView):
     
-    """
-    Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una :class:`Persona`
-    """
+    """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
+    :class:`Persona`"""
     
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm

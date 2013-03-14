@@ -18,11 +18,11 @@
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
 from library import image_to_content
 from persona.models import Persona
 from sorl.thumbnail import ImageField
+from django.core.urlresolvers import reverse
 
 class Habitacion(models.Model):
     
@@ -50,12 +50,11 @@ class Habitacion(models.Model):
 
         return u'{0} {1}'.format(self.get_tipo_display(), self.numero)
 
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta de la :class:`Habitacion`"""
         
-        return 'habitacion-view', [self.id]
+        return reverse('habitacion-view', args=[self.id])
 
 class Admision(models.Model):
     
@@ -236,12 +235,11 @@ class Admision(models.Model):
         self.actualizar_tiempo()
         super(Admision, self).save(*args, **kwargs)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'admision-view-id', [self.id]
+        return reverse('admision-view-id', args=[self.id])
     
     def __unicode__(self):
 

@@ -19,12 +19,12 @@ Modelos básicos necesarios para recabar la información personal de una
 :class:`Persona` en la aplicación, permitiendo centralizar las funciones que
 se utilizarán a lo largo de todo el sistema
 """
+import re
 from datetime import date
 from django.db import models
-from django.db.models import permalink
+from django.core.urlresolvers import reverse
 from persona.fields import OrderedCountryField
 from sorl.thumbnail import ImageField #@UnresolvedImport
-import re
 
 class Persona(models.Model):
     
@@ -90,12 +90,11 @@ class Persona(models.Model):
 
         return self.nombre_completo()
 
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'persona-view-id', [self.id]
+        return reverse('persona-view-id', args=[self.id])
     
     def nombre_completo(self):
         
@@ -151,12 +150,11 @@ class Fisico(models.Model):
     tipo_de_sangre = models.CharField(max_length=2, blank=True,
                                       choices=TIPOS_SANGRE)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'persona-view-id', [self.persona.id]
+        return reverse('persona-view-id', args=[self.persona.id])
 
 class EstiloVida(models.Model):
     
@@ -186,12 +184,11 @@ class EstiloVida(models.Model):
     drogas = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'persona-view-id', [self.persona.id]
+        return reverse('persona-view-id', args=[self.persona.id])
 
 class Antecedente(models.Model):
     
@@ -227,12 +224,11 @@ class Antecedente(models.Model):
     
     otros = models.CharField(max_length=200, blank=True)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'persona-view-id', [self.persona.id]
+        return reverse('persona-view-id', args=[self.persona.id])
 
 class AntecedenteFamiliar(models.Model):
     
@@ -246,12 +242,11 @@ class AntecedenteFamiliar(models.Model):
     respiratorio = models.BooleanField(default=False, blank=True)
     otros = models.CharField(max_length=200, blank=True)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'persona-view-id', [self.persona.id]
+        return reverse('persona-view-id', args=[self.persona.id])
 
 class AntecedenteObstetrico(models.Model):
     
@@ -269,12 +264,11 @@ class AntecedenteObstetrico(models.Model):
     c = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'persona-view-id', [self.persona.id]
+        return reverse('persona-view-id', args=[self.persona.id])
 
 class AntecedenteQuirurgico(models.Model):
     
@@ -284,9 +278,8 @@ class AntecedenteQuirurgico(models.Model):
     procedimiento = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
     
-    @permalink
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return 'persona-view-id', [self.persona.id]
+        return reverse('persona-view-id', args=[self.persona.id])
