@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+#
+# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library. If not, see <http://www.gnu.org/licenses/>.
+
 # Django settings for hospinet project.
 import os
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -169,7 +185,6 @@ INSTALLED_APPS = (
     'django_countries',
     'haystack',
     'tastypie',
-    'actstream',
     'south',
     'private_files',
     'userena',
@@ -235,29 +250,6 @@ AUTH_PROFILE_MODULE = 'users.UserProfile'
 USE_THOUSAND_SEPARATOR = True
 LANGUAGE_CODE = 'es-NI'
 TIME_ZONE = 'America/Tegucigalpa'
-
-ACTSTREAM_ACTION_MODELS = (
-    'auth.user',
-    'auth.group',
-    'nightingale.SignoVital',
-    'nightingale.Evolución',
-    'nightingale.Cargo',
-    'nightingale.OrdenMedica',
-    'nightingale.Ingesta',
-    'nightingale.Excreta',
-    'nightingale.NotaEnfermeria',
-    'nightingale.Glicemia',
-    'nightingale.Glucosuria',
-    'nightingale.Insulina',
-    'nightingale.Sumario',
-    'nightingale.Medicamento',
-    'nightingale.Dosis',
-    'nightingale.Evolucion',
-    'invoide.Recibo',
-    'spital.Admision',
-    'comments.comment')
-
-ACTSTREAM_MANAGER = 'actstream.managers.ActionManager'
 
 #EMAIL_HOST = 'smtp.gmail.com'
 #EMAIL_PORT = 587

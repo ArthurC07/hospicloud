@@ -19,10 +19,7 @@ from django.db import models
 from spital.models import Admision
 from datetime import time
 from django.utils import timezone
-from django.db.models import permalink
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from actstream import action
 from inventory.models import ItemTemplate
 from django.core.urlresolvers import reverse
 
@@ -384,20 +381,3 @@ class Devolucion(models.Model, Turno):
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='devoluciones')
-
-def action_register_handler(sender, instance, created, **kwargs):
-    action.send(instance, verb='fue guardado')
-
-post_save.connect(action_register_handler, sender=SignoVital)
-post_save.connect(action_register_handler, sender=Evolucion)
-post_save.connect(action_register_handler, sender=Cargo)
-post_save.connect(action_register_handler, sender=NotaEnfermeria)
-post_save.connect(action_register_handler, sender=Ingesta)
-post_save.connect(action_register_handler, sender=Excreta)
-post_save.connect(action_register_handler, sender=OrdenMedica)
-post_save.connect(action_register_handler, sender=Glicemia)
-post_save.connect(action_register_handler, sender=Glucosuria)
-post_save.connect(action_register_handler, sender=Insulina)
-post_save.connect(action_register_handler, sender=Sumario)
-post_save.connect(action_register_handler, sender=Medicamento)
-post_save.connect(action_register_handler, sender=Dosis)

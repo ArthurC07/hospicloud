@@ -9,6 +9,6 @@ django-private-files
 django-extensions
 south
 python-gdcm
-django-activity-stream
+django-audit-log
 django-templated-email
 django-userena
