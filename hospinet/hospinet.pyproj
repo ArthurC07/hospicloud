@@ -164,6 +164,7 @@
     <Content Include="clinique\templates\snippets\consultorio_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_list.html" />
+    <Content Include="emergency\templates\emergency\examen_fisico_create.html" />
     <Content Include="emergency\templates\emergency\cobro_create.html" />
     <Content Include="emergency\templates\emergency\emergencia_detail.html" />
     <Content Include="emergency\templates\emergency\index.html" />
@@ -310,12 +311,14 @@
     <Content Include="persona\static\js\modernizr.js" />
     <Content Include="persona\static\js\persona.js" />
     <Content Include="persona\templates\persona\antecedente_familiar_update.html" />
+    <Content Include="persona\templates\persona\antecedente_quirurgico_update.html" />
     <Content Include="persona\templates\persona\antecedente_obstetrico_update.html" />
     <Content Include="persona\templates\persona\antecedente_update.html" />
     <Content Include="persona\templates\persona\estilo_detail.html" />
     <Content Include="persona\templates\persona\estilo_vida_update.html" />
     <Content Include="persona\templates\persona\fisico_update.html" />
     <Content Include="persona\templates\persona\index.html" />
+    <Content Include="persona\templates\persona\antecedente_quirurgico_create.html" />
     <Content Include="persona\templates\persona\nuevo.html" />
     <Content Include="persona\templates\persona\persona_detail.html" />
     <Content Include="persona\templates\persona\persona_update.html" />
@@ -323,6 +326,7 @@
     <Content Include="persona\templates\snippets\antecedente.html" />
     <Content Include="persona\templates\snippets\antecedente_familiar.html" />
     <Content Include="persona\templates\snippets\antecedente_obstetrico.html" />
+    <Content Include="persona\templates\snippets\antecedente_quirurgico.html" />
     <Content Include="persona\templates\snippets\estilo_vida.html" />
     <Content Include="persona\templates\snippets\fisico.html" />
     <Content Include="persona\templates\snippets\persona.html" />
