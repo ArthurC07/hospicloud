@@ -66,6 +66,42 @@ class Tratamiento(TimeStampedModel):
         
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
+class Diagnostico(TimeStampedModel):
+
+    """Registra el resultado que el medico ha encontrado luego de auscultar
+    a la :class:`Persona`"""
+
+    emergencia = models.ForeignKey(Emergencia, related_name='diagnosticos')
+    diagnostico = models.TextField()
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                related_name='er_diagnosticos')
+
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
+
+class ExamenFisico(TimeStampedModel):
+
+    """Registra los análisis que se le efectua a la :class:`Persona`"""
+
+    emergencia = models.ForeignKey(Emergencia,
+                                related_name='examenes_fisicos')
+    orl = models.TextField()
+    cardiopulmonar = models.TextField()
+    gastrointestinal = models.TextField()
+    extremidades = models.TextField()
+    otras = models.TextField()
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                related_name='examenes_fisicos')
+
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
+
 class Hallazgo(TimeStampedModel):
 
     emergencia = models.ForeignKey(Emergencia,
@@ -73,6 +109,7 @@ class Hallazgo(TimeStampedModel):
     hallazgo = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='hallazgos')
+
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""

@@ -4,6 +4,7 @@
 <nav>
   <ul>
     <li class="clearfix"><a href="{% url emergencia-hallazgo-agregar emergencia.id %}">Agregar Hallazgos</a></li>
+    <li class="clearfix"><a href="{% url emergencia-examen-fisico-agregar emergencia.id %}">Agregar Examen F&iacute;sico</a></li>
     <li class="clearfix"><a href="{% url emergencia-tratamiento-agregar emergencia.id %}">Agregar Tratamiento</a></li>
     <li class="clearfix"><a href="{% url emergencia-cobro-agregar emergencia.id %}">Agregar Materiales y Medicamentos</a></li>
     <li class="clearfix"><a href="{% url emergencia-remision-interna-agregar emergencia.id %}">Remitir a un M&eacute;dico</a></li>
@@ -17,23 +18,32 @@
   </hgroup>
   <span>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</span>
   {% include "snippets/persona_fotografia.html" with persona=emergencia.persona %}
-  <div class="info">
+  <section id="personales" class="info">
     {% include "snippets/persona.html" with persona=emergencia.persona %} <a href="{% url persona-editar emergencia.persona.id %}" class="button">Editar Datos del Paciente</a>
-  </div>
-  <div class="info">
-    {% include "snippets/fisico.html" with fisico=emergencia.persona.fisico %} <a href="{% url emergencia-fisico-editar emergencia.persona.id emergencia.id %}" class="button">Editar F&iacute;sico</a>
-  </div>
-  <div class="info">
+  </section>
+  <section id="fisico" class="antecedentes info">
+    {% include "snippets/fisico.html" with fisico=emergencia.persona.fisico %} <a href="{% url emergencia-fisico-editar emergencia.persona.id emergencia.id %}" class="button">Editar Fisiolog&iacute;a</a>
+  </section>
+  <section id="patologico" class="antecedentes info">
     {% include "snippets/antecedente.html" with antecedente=emergencia.persona.antecedente %} <a href="{% url emergencia-antecedente-editar emergencia.persona.id emergencia.id %}" class="button">Editar Antecedentes Patol&oacute;gicos Personales</a>
-  </div>
-  <div class="info">
+  </section>
+  <section id="familiar" class="antecedente info">
     {% include "snippets/antecedente_familiar.html" with antecedente=emergencia.persona.antecedente_familiar %} <a href="{% url emergencia-antecedente-familiar-editar emergencia.persona.id emergencia.id %}" class="button">Editar Antecedentes Familiares</a>
-  </div>
-  <div class="info">
-    {% ifequal persona.sexo 'F' %}
-    {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %} <a href="{% url emergencia-antecedente-obstetrico-editar emergencia.persona.id emergencia.id %}" class="button">Editar Antecedentes Obstetricos</a>
-    {% endifequal %}
-  </div>
+  </section>
+  <section id="quirurgico" class="antecedente info">
+    <hgroup>
+      <h4>Antecedentes Quir&uacutergicos<h4>
+    </hgroup>
+    {% for antecedente in emergencia.persona.antecedentes_quirurgicos.all %}
+    {% include "snippets/antecedente_quirurgico.html" with antecedente=emergencia.persona.antecedente_quirurgico %}
+    {% endfor %}
+    <a href="{% url emergencia-antecedente-quirurgico-agregar emergencia.persona.id emergencia.id %}" class="button">Agregar Antecedentes Quir&uacute;rgico</a>
+  </section>
+  {% ifequal emergencia.persona.sexo 'F' %}
+  <section id="obstetrico" class="antecedente info">
+      {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %} <a href="{% url emergencia-antecedente-obstetrico-editar emergencia.persona.id emergencia.id %}" class="button">Editar Antecedentes Obstetricos</a>
+  </section>
+  {% endifequal %}
   <section id="hallazgos">
   <h2>Examen F&iacute;sico</h2>
   {% for hallazgo in emergencia.hallazgos.all %}
@@ -76,10 +86,10 @@
         </tr>
       </thead>
       <tbody>
-        {% for cargo in emergencia.cargos.all %}
+        {% for cobro in emergencia.cobros.all %}
         <tr>
-          <td>{{ cargo.itemTemplate.codigo.id }}</td>
-          <td>{{ cargo.itemTemplate.modelo }}</td>
+          <td>{{ cobro.cargo.id }}</td>
+          <td>{{ cobro.cargo.descripcion }}</td>
         </tr>
         {% endfor %}
       </tbody>

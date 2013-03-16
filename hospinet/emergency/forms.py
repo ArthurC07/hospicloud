@@ -17,7 +17,7 @@
 
 from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
-                              Tratamiento, Hallazgo, Cobro)
+                              Tratamiento, Hallazgo, Cobro, Diagnostico, ExamenFisico)
 from inventory.models import ItemTemplate
 from persona.models import Persona
 from django.contrib.auth.models import User
@@ -37,79 +37,67 @@ class EmergenciaForm(forms.ModelForm):
                                   queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class RemisionInternaForm(forms.ModelForm):
+class EmergenciaBaseForm(forms.ModelForm):
+    
+    emergencia = forms.ModelChoiceField(label="",
+                                  queryset=Emergencia.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+
+class RemisionInternaForm(EmergenciaBaseForm):
 
     """Formulario para agregar :class:`RemisionInterna`s"""
 
     class Meta:
 
         model = RemisionInterna
-    
-    emergencia = forms.ModelChoiceField(label="",
-                                  queryset=Emergencia.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                  queryset=User.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class RemisionExternaForm(forms.ModelForm):
+class RemisionExternaForm(EmergenciaBaseForm):
 
     """Formulario para agregar :class:`RemisionExterna`s"""
 
     class Meta:
 
         model = RemisionExterna
-    
-    emergencia = forms.ModelChoiceField(label="",
-                                  queryset=Emergencia.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                  queryset=User.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class HallazgoForm(forms.ModelForm):
+class ExamenFisicoForm(EmergenciaBaseForm):
+
+    """Formulario para agregar :class:`ExamenFisico`s"""
+
+    class Meta:
+
+        model = ExamenFisico
+
+class HallazgoForm(EmergenciaBaseForm):
 
     """Formulario para agregar :class:`RemisionExterna`s"""
 
     class Meta:
 
         model = Hallazgo
-    
-    emergencia = forms.ModelChoiceField(label="",
-                                  queryset=Emergencia.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                  queryset=User.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class TratamientoForm(forms.ModelForm):
+class TratamientoForm(EmergenciaBaseForm):
 
     """Formulario para agregar :class:`Tratamiento`s"""
 
     class Meta:
 
         model = Tratamiento
-    
-    emergencia = forms.ModelChoiceField(label="",
-                                  queryset=Emergencia.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                  queryset=User.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class CobroForm(forms.ModelForm):
+class DiagnosticoForm(EmergenciaBaseForm):
+
+    """Formulario para agregar :class:`Tratamiento`s"""
+
+    class Meta:
+
+        model = Tratamiento
+
+class CobroForm(EmergenciaBaseForm):
 
     """Formulario para agregar :class:`Cobro`s"""
 
     class Meta:
 
         model = Cobro
-    
-    emergencia = forms.ModelChoiceField(label="",
-                                  queryset=Emergencia.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-    cargo = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(emergencia=True).all(),
-                                  required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                  queryset=User.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)

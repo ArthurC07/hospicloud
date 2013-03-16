@@ -28,13 +28,15 @@ from persona.views import (PersonaCreateView, FisicoUpdateView,
                            EstiloVidaUpdateView, AntecedenteUpdateView,
                            AntecedenteFamiliarUpdateView, 
                            AntecedenteObstetricoUpdateView,
-                           AntecedenteQuirurgicoUpdateView)
+                           AntecedenteQuirurgicoUpdateView,
+                           AntecedenteQuirurgicoCreateView)
 from persona.forms import PersonaForm
 from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
-                            RemisionExterna, Hallazgo, Cobro)
+                            RemisionExterna, Hallazgo, Cobro, Diagnostico,
+                            ExamenFisico)
 from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
                              RemisionInternaForm, RemisionExternaForm,
-                             CobroForm)
+                             CobroForm, DiagnosticoForm, ExamenFisicoForm)
 from django.contrib import messages
 from datetime import datetime, time, date
 from django.utils import timezone
@@ -187,6 +189,15 @@ class RemisionExternaCreateView(BaseCreateView):
     form_class = RemisionExternaForm
     template_name = 'emergency/remision_externa_create.html'
 
+class ExamenFisicoCreateView(BaseCreateView):
+    
+    """Registrar los :class:`ExamenFisico`s efectuados a la :class:`Persona`,
+    que ingreso a consulta"""
+
+    model = ExamenFisico
+    form_class = ExamenFisicoForm
+    template_name = 'emergency/examen_fisico_create.html'
+
 class HallazgoCreateView(BaseCreateView):
 
     """Registrar los hallazgos de un examen físico a la :class:`Persona`,
@@ -204,6 +215,15 @@ class CobroCreateView(BaseCreateView):
     model = Cobro
     form_class = CobroForm
     template_name = 'emergency/cobro_create.html'
+
+class DiagnosticoCreateView(BaseCreateView):
+
+    """Registrar los :class:`Diagnostico`s efectuados a la :class:`Persona`,
+    que ingreso a consulta"""
+
+    model = Diagnostico
+    form_class = DiagnosticoForm
+    template_name = 'emergency/diagnostico_create.html'
 
 class EmergenciaListView(ListView, LoginRequiredView):
 
@@ -303,6 +323,21 @@ class EmergenciaAntecedenteQuirurgicoUpdateView(AntecedenteQuirurgicoUpdateView)
 
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(EmergenciaAntecedenteQuirurgicoUpdateView,
+                     self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        
+        return reverse('emergency-view-id', args=[self.emergencia.id])
+
+class EmergenciaAntecedenteQuirurgicoCreateView(AntecedenteQuirurgicoCreateView):
+
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Emergencia` que se entrego como argumento en la
+        url"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        return super(EmergenciaAntecedenteQuirurgicoCreateView,
                      self).dispatch(*args, **kwargs)
 
     def get_success_url(self):

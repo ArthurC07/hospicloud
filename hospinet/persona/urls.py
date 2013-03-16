@@ -18,7 +18,8 @@ from django.conf.urls import patterns, url
 from persona.views import (PersonaDetailView, PersonaCreateView,
     PersonaUpdateView, EstiloVidaUpdateView, AntecedenteUpdateView,
     AntecedenteFamiliarUpdateView, AntecedenteObstetricoUpdateView,
-    PersonaIndexView, FisicoUpdateView)
+    PersonaIndexView, FisicoUpdateView, AntecedenteQuirurgicoUpdateView,
+    AntecedenteQuirurgicoCreateView)
 
 urlpatterns = patterns('',
     
@@ -58,6 +59,14 @@ urlpatterns = patterns('',
         AntecedenteFamiliarUpdateView.as_view(),
         name='persona-antecedente-familiar-editar'),
     
+    url(r'^(?P<pk>\d+)/antecedente/quirurgico/editar$',
+        AntecedenteQuirurgicoUpdateView.as_view(),
+        name='persona-antecedente-quirurgico-editar'),
+    
+    url(r'^(?P<pk>\d+)/antecedente/quirurgico/agregar$',
+        AntecedenteQuirurgicoCreateView.as_view(),
+        name='persona-antecedente-quirurgico-agregar'),
+
     url(r'^(?P<pk>\d+)/antecedente/obstetrico/editar$',
         AntecedenteObstetricoUpdateView.as_view(),
         name='persona-antecedente-obstetrico-editar'),

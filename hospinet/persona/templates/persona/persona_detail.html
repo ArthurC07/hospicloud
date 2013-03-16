@@ -24,6 +24,9 @@
     {% include "snippets/antecedente_familiar.html" with antecedente=persona.antecedente_familiar %} <a href="{% url persona-antecedente-familiar-editar persona.id %}" class="button">Editar Antecedentes Familiares</a>
   </div>
   <div class="info">
+    {% include "snippets/antecedente_quirurgico.html" with antecedente=.persona.antecedente_quirurgico %} <a href="{% url antecedente-quirurgico-editar persona.id %}" class="button">Editar Antecedentes Quir&uacute;rgicos</a>
+  </div>
+  <div class="info">
     {% ifequal persona.sexo 'F' %}
     {% include "snippets/antecedente_obstetrico.html" with antecedente=persona.antecedente_obstetrico %} <a href="{% url persona-antecedente-obstetrico-editar persona.id %}" class="button">Editar Antecedentes Obstetricos</a>
     {% endifequal %}

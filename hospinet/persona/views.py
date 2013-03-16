@@ -26,6 +26,7 @@ from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
     AntecedenteQuirurgicoForm)
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
+from django.shortcuts import get_object_or_404
 
 class PersonaIndexView(ListView, LoginRequiredView):
     
@@ -141,6 +142,43 @@ class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredView):
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
     template_name = 'persona/antecedente_quirurgico_create.html'
+
+    def get_context_data(self, **kwargs):
+        
+        context = super(AntecedenteQuirurgicoCreateView, self).get_context_data(**kwargs)
+        context['persona'] = self.persona
+        return context
+
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Persona` que se entrego como argumento en la
+        url"""
+
+        self.persona = get_object_or_404(Persona, pk=kwargs['pk'])
+        return super(AntecedenteQuirurgicoCreateView, self).dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        
+        """Agrega la :class:`Persona` obtenida como el valor a utilizar en el
+        formulario que será llenado posteriormente"""
+
+        kwargs = super(AntecedenteQuirurgicoCreateView, self).get_form_kwargs()
+        kwargs.update({'initial':{'persona':self.persona.id}})
+        return kwargs
+    
+    def form_valid(self, form):
+        
+        """Guarda el objeto generado espeficando la :class:`Admision` obtenida
+        de los argumentos y el :class:`User` que esta utilizando la aplicación
+        """
+
+        self.object = form.save(commit=False)
+        self.object.persona = self.persona
+        self.object.save()
+        
+        messages.info(self.request, u"Agregado Antecedente Quirúrgico")
+        
+        return HttpResponseRedirect(self.get_success_url())
 
 class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredView):
     

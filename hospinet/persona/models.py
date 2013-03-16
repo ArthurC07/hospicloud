@@ -274,7 +274,7 @@ class AntecedenteQuirurgico(models.Model):
     
     """Registra los antecendentes quirurgicos de una :class:`Persona`"""
     
-    persona = models.ForeignKey(Persona, primary_key=True)
+    persona = models.ForeignKey(Persona, primary_key=True, related_name="antecedentes_quirurgicos")
     procedimiento = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
     

@@ -118,3 +118,7 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
     class Meta:
         
         model = AntecedenteQuirurgico
+    
+    fecha = forms.DateTimeField(widget=forms.DateInput(
+                    attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
+                 input_formats=('%d/%m/%Y',))

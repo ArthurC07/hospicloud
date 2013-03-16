@@ -20,14 +20,16 @@ from emergency.views import (PersonaEmergenciaCreateView, EmergenciaDetailView,
                              EmergenciaCreateView, RemisionInternaCreateView,
                              TratamientoCreateView, RemisionExternaCreateView,
                              EmergenciaUpdateView, EmergenciaListView,
-                             CobroCreateView,  HallazgoCreateView,
-                             EmergenciaPreCreateView,
+                             DiagnosticoCreateView, ExamenFisicoCreateView,
+                             CobroCreateView, HallazgoCreateView, 
+                             EmergenciaPreCreateView, DiagnosticoCreateView,
                              EmergenciaFisicoUpdateView,
                              EmergenciaEstiloVidaUpdateView,
                              EmergenciaAntecedenteUpdateView,
                              EmergenciaAntecedenteFamiliarUpdateView,
                              EmergenciaAntecedenteObstetricoUpdateView,
-                             EmergenciaAntecedenteQuirurgicoUpdateView)
+                             EmergenciaAntecedenteQuirurgicoUpdateView,
+                             EmergenciaAntecedenteQuirurgicoCreateView)
 
 urlpatterns = patterns('',
     
@@ -55,9 +57,17 @@ urlpatterns = patterns('',
         TratamientoCreateView.as_view(),
         name='emergencia-tratamiento-agregar'),
     
+    url(r'^(?P<emergencia>\d+)/diagnostico/agregar$',
+        DiagnosticoCreateView.as_view(),
+        name='emergencia-diagnostico-agregar'),
+    
     url(r'^(?P<emergencia>\d+)/hallazgo/agregar$',
         HallazgoCreateView.as_view(),
         name='emergencia-hallazgo-agregar'),
+    
+    url(r'^(?P<emergencia>\d+)/examenfisico/agregar$',
+        ExamenFisicoCreateView.as_view(),
+        name='emergencia-examen-fisico-agregar'),
     
     url(r'^(?P<emergencia>\d+)/remision/interna/agregar$',
         RemisionInternaCreateView.as_view(),
@@ -90,4 +100,8 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/(?P<emergencia>\d+)/antecedente/quirurgico/editar$',
         EmergenciaAntecedenteQuirurgicoUpdateView.as_view(),
         name='emergencia-antecedente-quirurgico-editar'),
+
+    url(r'^(?P<pk>\d+)/(?P<emergencia>\d+)/antecedente/quirurgico/agregar$',
+        EmergenciaAntecedenteQuirurgicoCreateView.as_view(),
+        name='emergencia-antecedente-quirurgico-agregar'),
 )
