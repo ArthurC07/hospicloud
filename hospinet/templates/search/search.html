@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% block content %} <h2>Buscar</h2>
 <form method="get">
   {{ form.as_ul }}
@@ -14,6 +14,9 @@
     {% endifequal %}
     {% ifequal result.model_name 'paciente' %}
     <a href="{{ result.object.get_absolute_url }}">{{ result.object.persona.identificacion }} {{ result.object.persona.nombre_completo }}</a>
+    {% endifequal %}
+    {% ifequal result.model_name 'emergencia' %}
+    <a href="{{ result.object.get_absolute_url }}">{{ result.object.created}}</a> {{ result.object.persona.nombre_completo }}
     {% endifequal %}
   </p>
   {% empty %}
