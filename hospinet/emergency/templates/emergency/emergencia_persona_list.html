@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block content %}
+{% include "snippets/persona_aside.html" with persona=persona %}
+<section id="emergencia" class="informacion grid_9">
+  <hgroup>
+    <h1>Emergencias de {{ persona.nombre_completo }}</h1>
+  </hgroup>
+  {% for emergencia in persona.emergencias.all %}
+    {% include "snippets/emergencia.html" with emergencia=emergencia %}
+  {% endfor %}
+</section>
+{% endblock %}

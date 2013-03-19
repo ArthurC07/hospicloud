@@ -2,7 +2,7 @@
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
 {% include "snippets/persona_aside.html" with persona=persona %}
-<div id="informacion" class="grid_9">
+<section id="informacion" class="grid_9">
   <hgroup>
     <h1>
     	{{ persona.nombre_completo }}
@@ -23,13 +23,19 @@
   <div class="info">
     {% include "snippets/antecedente_familiar.html" with antecedente=persona.antecedente_familiar %} <a href="{% url persona-antecedente-familiar-editar persona.id %}" class="button">Editar Antecedentes Familiares</a>
   </div>
-  <div class="info">
-    {% include "snippets/antecedente_quirurgico.html" with antecedente=.persona.antecedente_quirurgico %} <a href="{% url antecedente-quirurgico-editar persona.id %}" class="button">Editar Antecedentes Quir&uacute;rgicos</a>
-  </div>
+  <section id="quirurgico" class="antecedente info">
+    <hgroup>
+      <h4>Antecedentes Quir&uacutergicos<h4>
+    </hgroup>
+    {% for antecedente in emergencia.persona.antecedentes_quirurgicos.all %}
+    {% include "snippets/antecedente_quirurgico.html" with antecedente=emergencia.persona.antecedente_quirurgico %}
+    {% endfor %}
+    <a href="{% url persona-antecedente-quirurgico-agregar persona.id %}" class="button">Agregar Antecedentes Quir&uacute;rgico</a>
+  </section>
   <div class="info">
     {% ifequal persona.sexo 'F' %}
     {% include "snippets/antecedente_obstetrico.html" with antecedente=persona.antecedente_obstetrico %} <a href="{% url persona-antecedente-obstetrico-editar persona.id %}" class="button">Editar Antecedentes Obstetricos</a>
     {% endifequal %}
   </div>
-</div>
+</section>
 {% endblock %}

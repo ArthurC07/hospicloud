@@ -30,6 +30,7 @@ from emergency.views import (PersonaEmergenciaCreateView, EmergenciaDetailView,
                              EmergenciaAntecedenteObstetricoUpdateView,
                              EmergenciaAntecedenteQuirurgicoUpdateView,
                              EmergenciaAntecedenteQuirurgicoCreateView)
+from persona.views import PersonaDetailView
 
 urlpatterns = patterns('',
     
@@ -44,6 +45,10 @@ urlpatterns = patterns('',
     url(r'^persona/ingresar$',
         PersonaEmergenciaCreateView.as_view(),
         name='emergency-persona-create'),
+
+    url(r'^persona/(?P<pk>\d+)/lista$',
+        PersonaDetailView.as_view(template_name='emergency/emergencia_persona_list.html'),
+        name='emergency-persona-list'),
 
     url(r'^persona/(?P<persona>\d+)$',
         EmergenciaCreateView.as_view(),

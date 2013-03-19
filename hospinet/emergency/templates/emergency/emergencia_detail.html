@@ -45,56 +45,6 @@
       {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %} <a href="{% url emergencia-antecedente-obstetrico-editar emergencia.persona.id emergencia.id %}" class="button">Editar Antecedentes Obstetricos</a>
   </section>
   {% endifequal %}
-  <section id="hallazgos">
-  <h2>Examen F&iacute;sico</h2>
-  {% for hallazgo in emergencia.hallazgos.all %}
-  <article class="hallazgo">
-    <p>{{ hallazgo.hallazgo }}</p>
-  </article>
-  {% endfor %}
-  </section>
-  <section id="tratamientos">
-  <h2>Tratamientos</h2>
-  {% for tratamiento in emergencia.er_tratamientos.all %}
-  <article class="tratamiento">
-    <p>Indicaciones: {{ tratamiento.indicaciones }}</p>
-  </article>
-  {% endfor %}
-  </section>
-  <section id="Remisiones">
-  {% for remision_interna in emergencia.er_rinternas.all %}
-  <article>
-    <h3>Remisi&oacute;n a Especialista</h3>
-    <p>M&eacute;dico: {{ remision_interna.doctor }}</p>
-  </article>
-  {% endfor %}
-  {% for remision_externa in emergencia.er_rexternas.all %}
-  <article>
-    <h3>Remisi&oacute;n a otro Centro</h3>
-    <p>Destino: {{ remision_externa.destino }}</p>
-    <p>Diagn&oacute;stico: {{ remision_externa.diagnostico }}</p>
-    <p>Notas: {{ remision_externa.notas }}</p>
-  </article>
-  {% endfor %}
-  </section>
-  <section id="cargos">
-  <h3>Materiales y Medicamentos Utilizados</h3>
-    <table class="data">
-      <thead class="gradient">
-        <tr>
-          <th>C&oacute;digo</th>
-          <th>Descripci&oacute;n</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for cobro in emergencia.cobros.all %}
-        <tr>
-          <td>{{ cobro.cargo.id }}</td>
-          <td>{{ cobro.cargo.descripcion }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </section>
+  {% include "snippets/emergencia.html" with emergencia=emergencia %}
 </section>
 {% endblock %}

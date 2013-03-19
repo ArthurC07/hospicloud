@@ -50,6 +50,7 @@
     <Compile Include="emergency\management\commands\__init__.py" />
     <Compile Include="emergency\management\__init__.py" />
     <Compile Include="emergency\models.py" />
+    <Compile Include="emergency\search_indexes.py" />
     <Compile Include="emergency\tests.py" />
     <Compile Include="emergency\urls.py" />
     <Compile Include="emergency\views.py" />
@@ -164,6 +165,7 @@
     <Content Include="clinique\templates\snippets\consultorio_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_list.html" />
+    <Content Include="emergency\templates\emergency\emergencia_persona_list.html" />
     <Content Include="emergency\templates\emergency\examen_fisico_create.html" />
     <Content Include="emergency\templates\emergency\cobro_create.html" />
     <Content Include="emergency\templates\emergency\emergencia_detail.html" />
@@ -171,10 +173,12 @@
     <Content Include="emergency\templates\emergency\hallazgo_create.html" />
     <Content Include="emergency\templates\emergency\remision_interna_create.html" />
     <Content Include="emergency\templates\emergency\remision_externa_create.html" />
+    <Content Include="emergency\templates\emergency\snippets\emergencia.html" />
     <Content Include="emergency\templates\emergency\snippets\emergencia_list.html" />
     <Content Include="emergency\templates\emergency\tratamiento_create.html" />
     <Content Include="emergency\templates\emergency\emergencia_create.html" />
     <Content Include="emergency\templates\emergency\emergencia_agregar.html" />
+    <Content Include="emergency\templates\search\indexes\emergency\emergencia_text.txt" />
     <Content Include="imaging\static\css\dicom.css" />
     <Content Include="imaging\static\css\examen.css" />
     <Content Include="imaging\templates\examen\adjunto_create.html" />
@@ -327,6 +331,7 @@
     <Content Include="persona\templates\snippets\antecedente_familiar.html" />
     <Content Include="persona\templates\snippets\antecedente_obstetrico.html" />
     <Content Include="persona\templates\snippets\antecedente_quirurgico.html" />
+    <Content Include="persona\templates\snippets\emergencia.html" />
     <Content Include="persona\templates\snippets\estilo_vida.html" />
     <Content Include="persona\templates\snippets\fisico.html" />
     <Content Include="persona\templates\snippets\persona.html" />
@@ -405,6 +410,9 @@
     <Folder Include="emergency\templates" />
     <Folder Include="emergency\templates\emergency\" />
     <Folder Include="emergency\templates\emergency\snippets\" />
+    <Folder Include="emergency\templates\search\" />
+    <Folder Include="emergency\templates\search\indexes\" />
+    <Folder Include="emergency\templates\search\indexes\emergency" />
     <Folder Include="imaging" />
     <Folder Include="imaging\static\css" />
     <Folder Include="imaging\static\js" />

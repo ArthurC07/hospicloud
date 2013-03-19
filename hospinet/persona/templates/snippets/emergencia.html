@@ -1,0 +1,83 @@
+<article class="emergencia">
+  <p>Consulta efectuada el {{ emergencia.created }}</p>
+  <section id="examenes-fisicos">
+    <hgroup>
+      <h2>Examen F&iacute;sico</h2>
+    </hgroup>
+    {% for examen in emergencia.examenes_fisicos.all %}
+    <article class="examen-fisico">
+        <p>Efectuado el {{ examen.created }}</p>>
+        <ul>
+          <li>ORL: {{ examen.orl }}</li>
+          <li>Cardiopulmonar: {{ examen.cardiopulmonar }}</li>
+          <li>Gastrointestinal: {{ examen.gastrointestinal }}</li>
+          <li>Extremidades: {{ examen.extremidades }}</li>
+          <li>Otras: {{ examen.otras }} </li>
+        </ul>
+    </article>
+    {% endfor %}
+  </section>
+  <section id="diagnosticos">
+    <hgroup>
+      <h2>Diagn&oacute;sticos</h2>
+    </hgroup>
+    {% for diagnostico in emergencia.diagnosticos.all %}
+    <article class="diagnostico">
+      <p>{{ diagnostico.diagnostico }}</p>
+    </article>
+  {% endfor %}
+  </section>
+  <section id="hallazgos">
+  <hgroup>
+    <h3>Hallazgos</h3>
+  </hgroup>
+  {% for hallazgo in emergencia.hallazgos.all %}
+  <article class="hallazgo">
+    <p>{{ hallazgo.hallazgo }}</p>
+  </article>
+  {% endfor %}
+  </section>
+  <section id="tratamientos">
+  <h2>Tratamientos</h2>
+  {% for tratamiento in emergencia.er_tratamientos.all %}
+  <article class="tratamiento">
+    <p>Indicaciones: {{ tratamiento.indicaciones }}</p>
+  </article>
+  {% endfor %}
+  </section>
+  <section id="Remisiones">
+  {% for remision_interna in emergencia.er_rinternas.all %}
+  <article>
+    <h3>Remisi&oacute;n a Especialista</h3>
+    <p>M&eacute;dico: {{ remision_interna.doctor }}</p>
+  </article>
+  {% endfor %}
+  {% for remision_externa in emergencia.er_rexternas.all %}
+  <article>
+    <h3>Remisi&oacute;n a otro Centro</h3>
+    <p>Destino: {{ remision_externa.destino }}</p>
+    <p>Diagn&oacute;stico: {{ remision_externa.diagnostico }}</p>
+    <p>Notas: {{ remision_externa.notas }}</p>
+  </article>
+  {% endfor %}
+  </section>
+  <section id="cargos">
+  <h3>Materiales y Medicamentos Utilizados</h3>
+    <table class="data">
+      <thead class="gradient">
+        <tr>
+          <th>C&oacute;digo</th>
+          <th>Descripci&oacute;n</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cobro in emergencia.cobros.all %}
+        <tr>
+          <td>{{ cobro.cargo.id }}</td>
+          <td>{{ cobro.cargo.descripcion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</article>
