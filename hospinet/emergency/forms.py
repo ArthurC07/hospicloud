@@ -92,7 +92,7 @@ class DiagnosticoForm(EmergenciaBaseForm):
 
     class Meta:
 
-        model = Tratamiento
+        model = Diagnostico
 
 class CobroForm(EmergenciaBaseForm):
 
