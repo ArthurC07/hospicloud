@@ -19,7 +19,7 @@
   {% include "snippets/examen.html" with examen=examen %}
     </section>
     <aside class="links">
-      <a class="button" href="{% url examen-view-id examen.uuid %}">Mostrar</a>
+      <a class="button" href="{% url "examen-view-id" examen.uuid %}">Mostrar</a>
     </aside>
     <div class="clear"></div>
   </article>{% endfor %}

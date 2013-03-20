@@ -12,7 +12,7 @@
     <h1>{{ estudio.tipo_de_examen.nombre }} de {{ estudio.persona.nombre_completo }}</h1>
   </hgroup>
   {% include "snippets/examen.html" with examen=estudio %}
-<a href="{% url examen-efectuar estudio.id %}" class="button">Efectuar Estudio</a>
-<a href="{% url invoice-create estudio.persona.id %}" class="button">Crear Recibo</a>
+<a href="{% url "examen-efectuar" estudio.id %}" class="button">Efectuar Estudio</a>
+<a href="{% url "invoice-create" estudio.persona.id %}" class="button">Crear Recibo</a>
 </article>
 {% endblock %}

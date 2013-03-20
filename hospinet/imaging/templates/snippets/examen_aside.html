@@ -2,16 +2,16 @@
 <nav>
 <ul>
     <li>
-    <a href="{% url examen-index %}"><img src="{% static "images/busqueda.png" %}" /> Inicio Im&aacute;genes</a>
+    <a href="{% url "examen-index" %}"><img src="{% static "images/busqueda.png" %}" /> Inicio Im&aacute;genes</a>
     </li>
     <li>
-    <a href="{% url haystack_search %}"><img src="{% static "images/busqueda.png" %}" /> Buscar</a>
+    <a href="{% url "haystack_search" %}"><img src="{% static "images/busqueda.png" %}" /> Buscar</a>
     </li>
     <li class="clearfix">
-    <a href="{% url examen-nuevo %}"><img src="{% static "images/agregar.png" %}" /> Programar Estudio</a>
+    <a href="{% url "examen-nuevo" %}"><img src="{% static "images/agregar.png" %}" /> Programar Estudio</a>
     </li>
     <li class="clearfix">
-    <a href="{% url invoice-index %}"><img src="{% static "images/agregar.png" %}" /> Caja</a>
+    <a href="{% url "invoice-index" %}"><img src="{% static "images/agregar.png" %}" /> Caja</a>
     </li>
 </ul>
 </nav>

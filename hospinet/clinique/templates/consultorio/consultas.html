@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
 <div id="informacion" class="grid_9">
@@ -17,7 +17,7 @@
           <td>{{ consulta.fecha_y_hora|date:"d/m/Y H:i" }}</td>
           <td>{{ consulta.razon }}</td>
           <td>
-            <a href="{% url consultorio-consulta-view consulta.id %}">Ver</a>
+            <a href="{% url "consultorio-consulta-view" consulta.id %}">Ver</a>
           </td>
         </tr>
       {% endfor %}

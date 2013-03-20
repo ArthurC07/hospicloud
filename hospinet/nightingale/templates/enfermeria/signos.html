@@ -8,7 +8,7 @@
     <p>Frecuencia de Lectura: {{ admision.lectura.signos_vitales }} minutos</p>
     <a href="{% url nightingale-signos-grafico admision.id %}" class="button">Mostrar Gr&aacute;fico</a>
     {% include "snippets/signo_table.html" %}
-    <a href="{% url enfermeria-signo-agregar admision.id %}" class="button">Agregar Lectura</a>
+    <a href="{% url "enfermeria-signo-agregar" admision.id %}" class="button">Agregar Lectura</a>
   </section>
 </div>
 {% endblock %}

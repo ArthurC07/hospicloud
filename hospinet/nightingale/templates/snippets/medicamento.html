@@ -30,8 +30,8 @@
         {% if editable %}
         <th>
         {% if dosis.estado == 1 %}
-          <a href="{% url enfermeria-dosis-suministrar dosis.id 3 %}">Administrar</a>
-          <a href="{% url enfermeria-dosis-suministrar dosis.id 2 %}">Reusar</a>
+          <a href="{% url "enfermeria-dosis-suministrar" dosis.id 3 %}">Administrar</a>
+          <a href="{% url "enfermeria-dosis-suministrar" dosis.id 2 %}">Reusar</a>
         {% endif %}
         </th>
         {% endif %}

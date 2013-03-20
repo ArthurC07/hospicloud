@@ -23,8 +23,8 @@
           {% if editable == 1%}
           <td>
             {% if not nota.cerrada and nota.usuario == user %}
-            <a href="{% url enfermeria-nota-editar nota.id %}">Editar</a>
-            <a href="{% url enfermeria-nota-cerrar nota.id %}">Cerrar</a>
+            <a href="{% url "enfermeria-nota-editar" nota.id %}">Editar</a>
+            <a href="{% url "enfermeria-nota-cerrar" nota.id %}">Cerrar</a>
             {% endif %}
           </td>
           {% endif %}

@@ -13,7 +13,7 @@
       <td>{{ examen.fecha }}</td>
       <td>{{ examen.persona.nombre_completo }}</td>
       <td>{{ examen.nombre }}</td>
-      <td><a href="{% url examen-view-id examen.uuid %}">Ver</a></td>
+      <td><a href="{% url "examen-view-id" examen.uuid %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

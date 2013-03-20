@@ -7,7 +7,7 @@
       <h1>Notas de Enfermer&iacute;a para {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
     {% include "snippets/nota_table.html" with editable=1 %}
-    <a href="{% url enfermeria-nota-agregar admision.id %}" class="button">Agregar Nota</a>
+    <a href="{% url "enfermeria-nota-agregar" admision.id %}" class="button">Agregar Nota</a>
   </section>
 </div>
 {% endblock %}

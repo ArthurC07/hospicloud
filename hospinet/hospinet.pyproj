@@ -169,6 +169,7 @@
     <Content Include="emergency\templates\emergency\examen_fisico_create.html" />
     <Content Include="emergency\templates\emergency\cobro_create.html" />
     <Content Include="emergency\templates\emergency\emergencia_detail.html" />
+    <Content Include="emergency\templates\emergency\diagnostico_create.html" />
     <Content Include="emergency\templates\emergency\index.html" />
     <Content Include="emergency\templates\emergency\hallazgo_create.html" />
     <Content Include="emergency\templates\emergency\remision_interna_create.html" />

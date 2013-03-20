@@ -7,7 +7,7 @@
       <h1>Cargos Efectuados a {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
     {% include "snippets/cargo_table.html" %}
-    <a href="{% url enfermeria-cargo-agregar admision.id %}" class="button">Agregar Cargo</a>
+    <a href="{% url "enfermeria-cargo-agregar" admision.id %}" class="button">Agregar Cargo</a>
   </section>
 </div>
 {% endblock %}

@@ -4,10 +4,10 @@
   <nav>
     <ul>
       <li>
-        <a href="{% url invoice-index %}">Inicio Recibo</a>
+        <a href="{% url "invoice-index" %}">Inicio Recibo</a>
       </li>
       <li>
-        <a href="{% url examen-index %}">Inicio Estudios</a>
+        <a href="{% url "examen-index" %}">Inicio Estudios</a>
       </li>
     </ul>
   </nav>
@@ -52,7 +52,7 @@
     <tbody>
         {% for recibo in recibos.all %}
         <tr>
-            <td><a href="{% url invoice-view-id recibo.id %}">{{ recibo.id }}</a></td>
+            <td><a href="{% url "invoice-view-id" recibo.id %}">{{ recibo.id }}</a></td>
             <td>{{ recibo.created }}</th>
             <td>{{ recibo.radiologo }}</td>
             <td>{{ recibo.total }}</td>

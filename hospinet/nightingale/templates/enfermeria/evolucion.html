@@ -7,7 +7,7 @@
       <h1>Evoluci&oacute;n de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
     {% include "snippets/evolucion_table.html" %}
-    <a href="{% url enfermeria-evolucion-agregar admision.id %}" class="button">Agregar Evoluci&oacute;n</a>
+    <a href="{% url "enfermeria-evolucion-agregar" admision.id %}" class="button">Agregar Evoluci&oacute;n</a>
   </section>
 </div>
 {% endblock %}

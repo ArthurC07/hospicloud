@@ -25,7 +25,7 @@
           <td>{{ estudio.persona.nombre_completo }}</td>
           <td>{{ estudio.tipo_de_examen.nombre }}</td>
           <td>{{ estudio.remitio }}</td>
-          <td><a href="{% url examen-efectuar estudio.id %}">Efectuar</a></td>
+          <td><a href="{% url "examen-efectuar" estudio.id %}">Efectuar</a></td>
         </tr>
         {% endfor %}
       </tbody>

@@ -8,5 +8,5 @@
   </div>
   {% endthumbnail %}
   <h3>{{ dicom.descripcion }}</h3>
-  <a href="{% url dicom-view dicom.uuid %}" class="button">Visor DICOM</a><a href="{{ dicom.archivo.url }}" class="button">Descargar Archivo DICOM</a>
+  <a href="{% url "dicom-view" dicom.uuid %}" class="button">Visor DICOM</a><a href="{{ dicom.archivo.url }}" class="button">Descargar Archivo DICOM</a>
 </article>

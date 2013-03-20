@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />{% load staticfiles %}
+  <meta charset="UTF-8" />{% load staticfiles %}{% load url from future %}
   <script type="text/javascript" src="{% static "js/modernizr.js" %}" ></script>
   <!--[if lt IE 9]><script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js">IE7_PNG_SUFFIX=".png";</script><![endif]-->
   <link rel="stylesheet" href="{% static "css/reset.css" %}" />
@@ -29,9 +29,9 @@
       {% load tree_menu_tags %}{% show_menu "root" %}
       <ul id="user-menu"><li><a href="#">{% if user.is_authenticated %}{{ user }}</a>
         <ul>
-          <li><a href="{% url userena_signout %}">Salir</a></li>
+          <li><a href="{% url "userena_signout" %}">Salir</a></li>
         </ul>
-        {% else %}<a href="{% url userena_signin %}">Iniciar Sesi&oacute;n</a>{% endif %}</li></ul>
+        {% else %}<a href="{% url "userena_signin" %}">Iniciar Sesi&oacute;n</a>{% endif %}</li></ul>
     </nav>
     {% block heading %}{% endblock %}
   </header>

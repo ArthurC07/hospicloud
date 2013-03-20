@@ -7,7 +7,7 @@
       <h1>Ordenes M&eacute;dicas de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
     {% include "snippets/orden_table.html" %}
-    <a href="{% url enfermeria-orden-agregar admision.id %}" class="button">Agregar Orden M&eacute;dica</a>
+    <a href="{% url "enfermeria-orden-agregar" admision.id %}" class="button">Agregar Orden M&eacute;dica</a>
   </section>
 </div>
 {% endblock %}
