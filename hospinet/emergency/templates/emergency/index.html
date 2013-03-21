@@ -1,21 +1,19 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load staticfiles %}
 {% block header %}
 {% endblock %}
 {% block content %}
-<aside class="toolbox grid_3">
-  <nav>
-    <ul>
-      <li>
-        <a href="{% url emergency-ingresar %}">Admitir Paciente</a>
-      </li>
-    </ul>
-  </nav>
+<aside class="span3">
+<nav class="well sidebar-nav">
+  <ul class="nav nav-list">
+    <a href="{% url "emergency-ingresar" %}">Admitir Paciente</a>
+  </ul>
+</nav>
 </aside>
-<div id="admision" class="grid_9">
+<section id="admision" class="span9">
   <hgroup class="top title">
     <h1>Admisi&oacute;n de Emergencias</h1>
   </hgroup>
   {% include "emergency/snippets/emergencia_list.html" with emergencias=emergencias %}
-</div>
+</section>
 {% endblock %} 

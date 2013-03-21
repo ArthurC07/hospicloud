@@ -1,0 +1,12 @@
+   {% for examen in emergencia.examenes_fisicos.all %}
+    <article class="examen-fisico">
+        <p>Efectuado el {{ examen.created }}</p>>
+        <ul>
+          <li>ORL: {{ examen.orl }}</li>
+          <li>Cardiopulmonar: {{ examen.cardiopulmonar }}</li>
+          <li>Gastrointestinal: {{ examen.gastrointestinal }}</li>
+          <li>Extremidades: {{ examen.extremidades }}</li>
+          <li>Otras: {{ examen.otras }} </li>
+        </ul>
+    </article>
+    {% endfor %}

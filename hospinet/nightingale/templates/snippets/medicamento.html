@@ -4,7 +4,7 @@
     <h3>Iniciado el {{ medicamento.inicio }} {{ medicamento.get_intervalo_display }} por {{ medicamento.dias }} d&iacute;as</h3>
     <h3>Recetado por {{ medicamento.usuario.username }} el {{ medicamento.fecha_y_hora }}</h3>
   </hgroup>
-  <table class="data">
+  <table class="table table-striped">
     <caption>Dosificaci&oacute;n</caption>
     <thead class="gradient">
       <tr>
@@ -40,6 +40,6 @@
     </tbody>
   </table>
   {% if editable == 1 %}
-  <a href="{% url enfermeria-dosis-agregar medicamento.id %}"  class="button">Agregar Dosis</a>
+  <a href="{% url enfermeria-dosis-agregar medicamento.id %}"  class="btn btn-primary">Agregar Dosis</a>
   {% endif %}
 </article>

@@ -1,22 +1,3 @@
-<article class="emergencia">
-  <p>Consulta efectuada el {{ emergencia.created }}</p>
-  <section id="examenes-fisicos">
-    <hgroup>
-      <h2>Examen F&iacute;sico</h2>
-    </hgroup>
-    {% for examen in emergencia.examenes_fisicos.all %}
-    <article class="examen-fisico">
-        <p>Efectuado el {{ examen.created }}</p>>
-        <ul>
-          <li>ORL: {{ examen.orl }}</li>
-          <li>Cardiopulmonar: {{ examen.cardiopulmonar }}</li>
-          <li>Gastrointestinal: {{ examen.gastrointestinal }}</li>
-          <li>Extremidades: {{ examen.extremidades }}</li>
-          <li>Otras: {{ examen.otras }} </li>
-        </ul>
-    </article>
-    {% endfor %}
-  </section>
   <section id="diagnosticos">
     <hgroup>
       <h2>Diagn&oacute;sticos</h2>
@@ -62,8 +43,8 @@
   {% endfor %}
   </section>
   <section id="cargos">
-  <h3>Materiales y Medicamentos Utilizados</h3>
-    <table class="data">
+    <table class="table table-striped">
+      <caption>Materiales y Medicamentos Utilizados</caption>
       <thead class="gradient">
         <tr>
           <th>C&oacute;digo</th>
@@ -80,4 +61,3 @@
       </tbody>
     </table>
   </section>
-</article>

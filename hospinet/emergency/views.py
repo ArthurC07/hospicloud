@@ -124,6 +124,8 @@ class BaseCreateView(CreateView, LoginRequiredView):
     """Permite llenar el formulario de una clase que requiera
     :class:`Emergencia`s de manera previa - DRY"""
 
+    template_name = 'emergency/emergencia_child_form.html'
+
     def get_context_data(self, **kwargs):
         
         context = super(BaseCreateView, self).get_context_data(**kwargs)
@@ -169,7 +171,6 @@ class TratamientoCreateView(BaseCreateView):
 
     model = Tratamiento
     form_class = TratamientoForm
-    template_name = 'emergency/tratamiento_create.html'
 
 class RemisionInternaCreateView(BaseCreateView):
 
@@ -178,7 +179,6 @@ class RemisionInternaCreateView(BaseCreateView):
 
     model = RemisionInterna
     form_class = RemisionInternaForm
-    template_name = 'emergency/remision_interna_create.html'
 
 class RemisionExternaCreateView(BaseCreateView):
 
@@ -187,7 +187,6 @@ class RemisionExternaCreateView(BaseCreateView):
 
     model = RemisionExterna
     form_class = RemisionExternaForm
-    template_name = 'emergency/remision_externa_create.html'
 
 class ExamenFisicoCreateView(BaseCreateView):
     
@@ -196,7 +195,6 @@ class ExamenFisicoCreateView(BaseCreateView):
 
     model = ExamenFisico
     form_class = ExamenFisicoForm
-    template_name = 'emergency/examen_fisico_create.html'
 
 class HallazgoCreateView(BaseCreateView):
 
@@ -205,7 +203,6 @@ class HallazgoCreateView(BaseCreateView):
 
     model = Hallazgo
     form_class = HallazgoForm
-    template_name = 'emergency/hallazgo_create.html'
 
 class CobroCreateView(BaseCreateView):
 
@@ -214,7 +211,6 @@ class CobroCreateView(BaseCreateView):
 
     model = Cobro
     form_class = CobroForm
-    template_name = 'emergency/cobro_create.html'
 
 class DiagnosticoCreateView(BaseCreateView):
 
@@ -223,7 +219,6 @@ class DiagnosticoCreateView(BaseCreateView):
 
     model = Diagnostico
     form_class = DiagnosticoForm
-    template_name = 'emergency/diagnostico_create.html'
 
 class EmergenciaListView(ListView, LoginRequiredView):
 

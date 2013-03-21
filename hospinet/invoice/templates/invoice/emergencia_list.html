@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<aside class="grid_3 toolbox">
+<aside class="span3 toolbox">
   <nav>
     <ul>
       <li>
@@ -15,7 +15,7 @@
     </ul>
   </nav>
 </aside>
-<div id="informacion" class="grid_9">
+<div id="informacion" class="span9">
   <h1>Emergencias del {{ inicio }} al {{ fin }}</h1>
   {% include "emergency/snippets/emergencia_list.html" with emergencias=emergencias %}
 </div>

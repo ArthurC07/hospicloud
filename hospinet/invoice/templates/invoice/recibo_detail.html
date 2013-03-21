@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<aside class="grid_3 toolbox">
+<aside class="span3 toolbox">
   <nav>
     <ul>
       <li>
@@ -19,13 +19,13 @@
     </ul>
  </nav>
 </aside>
-<div id="informacion" class="grid_9">
+<div id="informacion" class="span9">
   <hgroup>
     <h1>Recibo {{ recibo.id }}</h1>
     <h2>{{ recibo.cliente }}</h2>
   </hgroup>
   <span>Fecha: {{ recibo.created|date:"d/m/Y P" }}</span>
-  <table class="data">
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>Cantidad</th>

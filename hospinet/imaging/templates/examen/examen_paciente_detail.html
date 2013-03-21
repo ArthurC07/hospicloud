@@ -4,12 +4,12 @@
 <link rel="stylesheet" href="{% static "css/examen.css" %}" />
 {% endblock %}
 {% block content %}
-<aside class="toolbox grid_3">
+<aside class="toolbox span3">
 <nav>
   {% load tree_menu_tags %}{% show_menu "persona" %}
 </nav>
 </aside>
-<div id="examenes" class="grid_9">
+<div id="examenes" class="span9">
   <hgroup>
     <h1>{{ persona.nombre_completo }}</h1>
   </hgroup>
@@ -19,7 +19,7 @@
   {% include "snippets/examen.html" with examen=examen %}
     </section>
     <aside class="links">
-      <a class="button" href="{% url "examen-view-id" examen.uuid %}">Mostrar</a>
+      <a class="btn btn-primary" href="{% url "examen-view-id" examen.uuid %}">Mostrar</a>
     </aside>
     <div class="clear"></div>
   </article>{% endfor %}

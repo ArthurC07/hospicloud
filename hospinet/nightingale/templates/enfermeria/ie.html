@@ -4,13 +4,13 @@
 {% include "snippets/aside.html" with admision=admision %}
 <section id="ingestas-excretas">
   <h1>{{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
-  <article id="ingestas" class="grid_9">
+  <article id="ingestas" class="span9">
     {% include "snippets/ingesta_table.html" %}
-    <a href="{% url "enfermeria-ingesta-agregar" admision.id %}" class="button">Agregar Ingesta</a>
+    <a href="{% url "enfermeria-ingesta-agregar" admision.id %}" class="btn btn-primary">Agregar Ingesta</a>
   </article>
-  <article id="excretas" class="grid_9">
+  <article id="excretas" class="span9">
     {% include "snippets/excreta_table.html" %}
-    <a href="{% url "enfermeria-excreta-agregar" admision.id %}" class="button">Agregar Excreta</a>
+    <a href="{% url "enfermeria-excreta-agregar" admision.id %}" class="btn btn-primary">Agregar Excreta</a>
   </article>
 </section>
 </div>

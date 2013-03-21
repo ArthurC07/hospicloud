@@ -1,55 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />{% load staticfiles %}{% load url from future %}
-  <script type="text/javascript" src="{% static "js/modernizr.js" %}" ></script>
-  <!--[if lt IE 9]><script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js">IE7_PNG_SUFFIX=".png";</script><![endif]-->
-  <link rel="stylesheet" href="{% static "css/reset.css" %}" />
-  <link rel="stylesheet" href="{% static "css/grid.css" %}" />
-  <link rel="stylesheet" href="{% static "css/table.css" %}" />
-  <link rel="stylesheet" href="{% static "css/form.css" %}" />
-  <link rel="stylesheet" href="{% static "css/style.css" %}" />
-  <link rel="stylesheet" href="{% static "css/navigation.css" %}" />
-  <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
-  <link rel="stylesheet" href="{% static "css/colorbox.css" %}" />
-  <!-- <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' /> -->
+  <meta charset="utf-8" />
+  {% load staticfiles %}{% load url from future %}{% load tz %}
   <title>HospiNet :: {% block pagetitle %}{% endblock %}</title>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="{% static "js/jquery-ui-timepicker.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/jquery.colorbox.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/common.js" %}"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
+  <style type="text/css">
+    body {
+      padding-top: 60px;
+      padding-bottom: 40px;
+    }
+    .sidebar-nav {
+      padding: 9px 0;
+    }
+
+    @media (max-width: 980px) {
+      /* Enable use of floated navbar text */
+      .navbar-text.pull-right {
+        float: none;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+    }
+  </style>
+  <link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet">
+
+  <!-- <link rel="stylesheet" href="{% static "css/reset.css" %}" />
+  <link rel="stylesheet" href="{% static "css/style.css" %}" />
+  <link rel="stylesheet" href="{% static "css/grid.css" %}" />
+  <link rel="stylesheet" href="{% static "css/navigation.css" %}" />
+  <link rel="stylesheet" href="{% static "css/colorbox.css" %}" />
+  <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' /> -->
+  <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
   {% block header %}{% endblock %}
-  <!--[if gte IE 9]><style type="text/css"> .gradient, .button { filter: none; } </style><![endif]-->
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="{% static "/js/html5shiv.js" %}"></script>
+    <![endif]-->
+    <!-- Fav and touch icons -->
+  <link rel="shortcut icon" href="{% static "img/favicon.png" %}">
 </head>
 <body>
-  <!--[if lt IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative; margin-left:auto; margin-right: auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0012_spanish_LATAM.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." /></a></div><![endif]-->
   <header>
-    <nav id="top" class="user horizontal gradient">{% load tz %}
-      {% load tree_menu_tags %}{% show_menu "root" %}
-      <ul id="user-menu"><li><a href="#">{% if user.is_authenticated %}{{ user }}</a>
-        <ul>
-          <li><a href="{% url "userena_signout" %}">Salir</a></li>
-        </ul>
-        {% else %}<a href="{% url "userena_signin" %}">Iniciar Sesi&oacute;n</a>{% endif %}</li></ul>
+    <nav id="top" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="{% url "home" %}">Hospinet</a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right">
+              {% if user.is_authenticated %}
+              Logged in as {{ user }} <a href="{% url "userena_signout" %}" class="navbar-link">Cerrar Ses&oacute;n</a>
+              {% else %}
+              <a href="{% url "userena_signin" %}" class="navbar-link>Iniciar Sesi&oacute;n</a>
+              {% endif %}
+            </p>
+            {% load tree_menu_tags %}{% show_menu "root" %}
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
     </nav>
     {% block heading %}{% endblock %}
   </header>
-  {% if messages %}<div id="system-message" class="container_12">
-    <ul class="messages grid_12">
-      {% for message in messages %}<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>{% endfor %}
-    </ul>
-  </div>{% endif %}
   
-  <div id="floater">
-  <div id="content" class="container_12 content clearfix">
+  <div id="content" class="container-fluid">
+
+  {% if messages %}
+    <div id="system-message" class="row-fluid">
+      <ul class="messages span12">
+        {% for message in messages %}<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>{% endfor %}
+      </ul>
+    </div>{% endif %}
+    <div class="row-fluid">
     {% block content %}{% endblock %}
+    </div>
   </div>
-  </div>
-  
-  <footer class="container_12 clearfix">
-    <section class="grid_12 copyright">Copyright &copy; Know How 2011 - 2013</section>
+  <hr>
+  <footer>
+    <p>Copyright &copy; Know How 2011 - 2013</p>
   </footer>
+  
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="{% static "js/bootstrap.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jquery-ui-timepicker.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/jquery.colorbox.js" %}"></script>
+  <script type="text/javascript" src="{% static "js/common.js" %}"></script>
   
 </body>
 </html>

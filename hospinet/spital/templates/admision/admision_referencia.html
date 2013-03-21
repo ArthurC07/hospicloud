@@ -5,7 +5,7 @@
 <script type="text/javascript">
   $(document).ready(function()
   {
-    data_source = new Spital("{% url home %}");
+    data_source = new Spital("{% url "home" %}");
     var resultados = $('#resultados');
     $('#persona-form').submit(function()
     {

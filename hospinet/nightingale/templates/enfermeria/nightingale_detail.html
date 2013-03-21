@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 {% include "snippets/aside.html" %}
-<div id="informacion" class="grid_9">
+<div id="informacion" class="span9">
   <hgroup>
     <h1>Hospitalizaci&oacute;n de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
   </hgroup>
@@ -9,13 +9,13 @@
   <span>{{ admision.get_estado_display }}</span>
   {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
   <div class="info">
-    {% include "snippets/lectura.html" with lectura=admision.frecuencia_lectura %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="button">Editar Frecuencia de Lectura</a>
+    {% include "snippets/lectura.html" with lectura=admision.frecuencia_lectura %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
   </div>
   <div class="info">
-    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url "persona-editar" admision.paciente.id %}" class="button">Editar Datos del Paciente</a>
+    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url "persona-editar" admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
   </div>
   <div class="info">
-    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="button">Editar F&iacute;sico</a>
+    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
   </div>
 </div>
 {% endblock %}

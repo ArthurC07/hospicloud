@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<aside class="grid_3 toolbox">
+<aside class="span3 toolbox">
   <nav>
     <ul>
       <li>
@@ -12,9 +12,9 @@
     </ul>
   </nav>
 </aside>
-<div id="informacion" class="grid_9">
+<div id="informacion" class="span9">
 <h1>Comisiones del Radiologo del {{ inicio }} al {{ fin }}</h1>
-<table class="data">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Concepto</th>
@@ -40,7 +40,7 @@
         </tr>
     </tfoot>
 </table>
-<table class="data">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>N&uacute;mero</th>

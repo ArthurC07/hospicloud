@@ -190,7 +190,8 @@ INSTALLED_APPS = (
     'userena',
     'guardian',
     'easy_thumbnails',
-    'queued_search'
+    'queued_search',
+    'crispy_forms',
 )
 
 # A sample logging configuration. The only tangible logging

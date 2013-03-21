@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{% static "css/examen.css" %}" />
 {% endblock %}
 {% block content %}
-<aside class="grid_3 toolbox">
+<aside class="span3 toolbox">
   {% include 'snippets/examen_aside.html' %}
   <nav>
     <ul>
@@ -20,12 +20,12 @@
     </ul>
   </nav>
 </aside>
-<article id="examen" class="grid_9">
+<article id="examen" class="span9">
   <hgroup>
     <h1>ID: {{ examen.persona.id }} &bull; {{ examen.tipo_de_examen.nombre }} de {{ examen.persona.nombre_completo }}</h1>
   </hgroup>
-  <a href="{% url "invoice-create" examen.persona.id %}" class="button">Crear Recibo</a>
-  <a href="{% url "examen-notificar" examen.id %}" class="button" >Notificar</a>
+  <a href="{% url "invoice-create" examen.persona.id %}" class="btn btn-primary">Crear Recibo</a>
+  <a href="{% url "examen-notificar" examen.id %}" class="btn btn-primary" >Notificar</a>
   {% include "snippets/persona.html" with persona=examen.persona %}
   {% include "snippets/examen.html" with examen=examen %}
   <section id="imagenes">
