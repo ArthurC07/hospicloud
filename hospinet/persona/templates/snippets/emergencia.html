@@ -20,20 +20,20 @@
   </section>
   <section id="tratamientos">
   <h2>Tratamientos</h2>
-  {% for tratamiento in emergencia.er_tratamientos.all %}
+  {% for tratamiento in emergencia.tratamientos.all %}
   <article class="tratamiento">
     <p>Indicaciones: {{ tratamiento.indicaciones }}</p>
   </article>
   {% endfor %}
   </section>
   <section id="Remisiones">
-  {% for remision_interna in emergencia.er_rinternas.all %}
+  {% for remision_interna in emergencia.remisiones_externas.all %}
   <article>
     <h3>Remisi&oacute;n a Especialista</h3>
     <p>M&eacute;dico: {{ remision_interna.doctor }}</p>
   </article>
   {% endfor %}
-  {% for remision_externa in emergencia.er_rexternas.all %}
+  {% for remision_externa in emergencia.remisiones_externas.all %}
   <article>
     <h3>Remisi&oacute;n a otro Centro</h3>
     <p>Destino: {{ remision_externa.destino }}</p>
