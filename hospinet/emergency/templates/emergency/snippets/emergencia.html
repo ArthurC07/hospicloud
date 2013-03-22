@@ -55,7 +55,9 @@
       <tbody>
         {% for cobro in emergencia.cobros.all %}
         <tr>
+          {% autoescape off %}
           <td>{{ cobro.cargo.id }}</td>
+          {% endautoescape %}
           <td>{{ cobro.cargo.descripcion }}</td>
           <td>{{ cobro.cantidad }}</td>
         </tr>
