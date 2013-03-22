@@ -76,9 +76,11 @@
 
   {% if messages %}
     <div id="system-message" class="row-fluid">
-      <ul class="messages span12">
-        {% for message in messages %}<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>{% endfor %}
-      </ul>
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
     </div>{% endif %}
     <div class="row-fluid">
     {% block content %}{% endblock %}
