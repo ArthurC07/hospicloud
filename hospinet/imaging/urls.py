@@ -34,7 +34,7 @@ urlpatterns = patterns('',
         NotificarExamenView.as_view(),
         name='examen-notificar'),
 
-    url(r'^(?P<persona>\d+)/programar$',
+    url(r'^persona/(?P<persona>\d+)$',
         EstudioProgramadoCreateView.as_view(),
         name='examen-programar'),
 

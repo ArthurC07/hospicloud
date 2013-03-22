@@ -150,9 +150,10 @@ class Cobro(TimeStampedModel):
 
     emergencia = models.ForeignKey(Emergencia, related_name='cobros')
     cargo = models.ForeignKey(ItemTemplate, related_name='cobros')
+    cantidad = models.IntegerField(default=1)
 
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('emergency-view-id', args=[self.emergencia.id])
+        return reverse('emergencia-cobro-agregar', args=[self.emergencia.id])
