@@ -28,6 +28,7 @@ from django.views.generic import (CreateView, UpdateView, DeleteView,
 from library.protected import LoginRequiredView
 from django import forms
 from persona.models import Persona
+from imaging.models import Examen
 from datetime import datetime, time
 from django.utils import timezone
 from collections import defaultdict
@@ -63,6 +64,40 @@ class ReciboPersonaCreateView(CreateView, LoginRequiredView):
         
         context = super(ReciboPersonaCreateView, self).get_context_data(**kwargs)
         context['persona'] = self.persona
+        return context
+
+
+class ReciboExamenCreateView(CreateView, LoginRequiredView):
+
+    """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
+    existente en la aplicación"""
+    
+    model = Recibo
+    form_class = ReciboForm
+    template_name = 'invoice/recibo_create.html'
+    
+    def get_form_kwargs(self):
+        
+        """Registra el :class:`User` que esta creando el :class:`Recibo`"""
+        
+        kwargs = super(ReciboExamenCreateView, self).get_form_kwargs()
+        kwargs.update({'initial':{'cajero':self.request.user.id,
+                                  'cliente':self.examen.persona.id, 
+                                  'remite':self.examen.remitio}})
+        return kwargs
+    
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene el :class:`Recibo` que se entrego como argumento en la
+        url"""
+
+        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
+        return super(ReciboExamenCreateView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        
+        context = super(ReciboExamenCreateView, self).get_context_data(**kwargs)
+        context['persona'] = self.examen.persona
         return context
 
 class VentaCreateView(CreateView, LoginRequiredView):

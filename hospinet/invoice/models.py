@@ -27,8 +27,8 @@ class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
 
     cliente = models.ForeignKey(Persona, related_name='recibos')
-    remite = models.TextField(blank=True, null=True)
-    radiologo = models.TextField(blank=True, null=True)
+    remite = models.CharField(max_length=255, blank=True, null=True)
+    radiologo = models.CharField(max_length=255, blank=True, null=True)
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
     cajero = models.ForeignKey(User, related_name='recibos')
@@ -139,6 +139,10 @@ class Venta(TimeStampedModel):
     descuento = models.IntegerField()
     producto = models.ForeignKey(Producto, related_name='ventas')
     recibo = models.ForeignKey(Recibo, related_name='ventas')
+
+    def __unicode__(self):
+
+        return u"{0} a {1}".format(self.producto.nombre, self.recibo.id)
 
     def get_absolute_url(self):
         

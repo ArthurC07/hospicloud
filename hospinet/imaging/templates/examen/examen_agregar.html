@@ -1,21 +1,5 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{% block header %}
-<script type="text/javascript" src="{% static "js/persona.js" %}"></script>
-<script type="text/javascript">
-  $(document).ready(function()
-  {
-    data_source = new Persona("{% url home %}", "{% url examen-index %}");
-    var resultados = $('#resultados');
-    $('#persona-form').submit(function()
-    {
-      resultados.empty();
-      var personas = data_source.search_person($('#persona-search').val(), resultados);
-      return false;
-    });
-  });
-</script>
-{% endblock %}
 {% block content %}
 <form id="persona-form">
   <div>
@@ -26,7 +10,7 @@
   </div>
 </form>
 <div id="resultados"></div>
-<form enctype="multipart/form-data" action="{% url examen-persona-nuevo %}" class="styled" method="post">
+<form enctype="multipart/form-data" action="{% url "examen-persona-nuevo" %}" class="styled" method="post">
   {% csrf_token %} <h1>Ingresar una nuevo Paciente</h1>
   <div id="messages"></div>
   {% include "snippets/form.html" with form=persona_form %}
@@ -34,4 +18,21 @@
     <input type="submit" value="Guardar" />
   </p>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static "js/persona.js" %}"></script>
+<script type="text/javascript">
+  $(document).ready(function()
+  {
+    data_source = new Persona("{% url "home" %}", "{% url "examen-index" %}");
+    var resultados = $('#resultados');
+    $('#persona-form').submit(function()
+    {
+      resultados.empty();
+      var personas = data_source.search_person($('#persona-search').val(), resultados);
+      return false;
+    });
+  });
+</script>
 {% endblock %}

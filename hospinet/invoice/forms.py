@@ -27,6 +27,7 @@ class ReciboForm(forms.ModelForm):
     class Meta:
 
         model = Recibo
+        exclude = ('nulo', 'cerrado')
     
     cajero = forms.ModelChoiceField(label="",
                                   queryset=User.objects.all(),
@@ -48,7 +49,6 @@ class VentaForm(forms.ModelForm):
     recibo = forms.ModelChoiceField(label="",
                                   queryset=Recibo.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
-    descripcion = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'big' }))
 
 class PeriodoForm(forms.Form):
 

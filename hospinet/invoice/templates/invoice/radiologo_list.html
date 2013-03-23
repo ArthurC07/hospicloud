@@ -41,11 +41,13 @@
     </tfoot>
 </table>
 <table class="table table-striped">
+    <caption>Detalle de Recibos Facturados</caption>
     <thead>
         <tr>
             <th>N&uacute;mero</th>
             <th>Fecha</th>
-            <th>Doctor</th>
+            <th>Radiologo</th>
+            <th>Comisi&oacute;n</th>
             <th>Total<th>
         </tr>
     </thead>
@@ -55,6 +57,7 @@
             <td><a href="{% url "invoice-view-id" recibo.id %}">{{ recibo.id }}</a></td>
             <td>{{ recibo.created }}</th>
             <td>{{ recibo.radiologo }}</td>
+            </td>{{ recibo.comision_radiologo }}</td>
             <td>{{ recibo.total }}</td>
         </tr>
         {% endfor %}

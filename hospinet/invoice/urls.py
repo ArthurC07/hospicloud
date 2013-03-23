@@ -19,7 +19,7 @@ from django.conf.urls import patterns, url
 from invoice.views import (IndexView, ReciboPersonaCreateView,
      ReciboDetailView, VentaCreateView, ReporteReciboView,
      ReporteProductoView, ReciboRemiteView, ReciboRadView,
-     EmergenciaPeriodoView)
+     ReciboExamenCreateView)
 
 urlpatterns = patterns('',
     
@@ -30,6 +30,10 @@ urlpatterns = patterns('',
     url(r'^(?P<persona>\d+)/crear',
         ReciboPersonaCreateView.as_view(),
         name='invoice-create'),
+
+    url(r'^examen/(?P<examen>\d+)/crear',
+        ReciboExamenCreateView.as_view(),
+        name='invoice-create-examen'),
     
     url(r'^(?P<pk>\d+)$',
         ReciboDetailView.as_view(),
