@@ -18,7 +18,10 @@
     .sidebar-nav {
       padding: 9px 0;
     }
-
+    .thumbnail a {
+        display: block;
+        text-align: center;
+    }
     @media (max-width: 980px) {
       /* Enable use of floated navbar text */
       .navbar-text.pull-right {
@@ -61,7 +64,7 @@
               {% if user.is_authenticated %}
               Logged in as {{ user }} <a href="{% url "userena_signout" %}" class="navbar-link">Cerrar Ses&oacute;n</a>
               {% else %}
-              <a href="{% url "userena_signin" %}" class="navbar-link>Iniciar Sesi&oacute;n</a>
+              <a href="{% url "userena_signin" %}" class="navbar-link">Iniciar Sesi&oacute;n</a>
               {% endif %}
             </p>
             {% load tree_menu_tags %}{% show_menu "root" %}

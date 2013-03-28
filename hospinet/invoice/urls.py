@@ -19,7 +19,7 @@ from django.conf.urls import patterns, url
 from invoice.views import (IndexView, ReciboPersonaCreateView,
      ReciboDetailView, VentaCreateView, ReporteReciboView,
      ReporteProductoView, ReciboRemiteView, ReciboRadView,
-     ReciboExamenCreateView)
+     EmergenciaPeriodoView, ReciboExamenCreateView)
 
 urlpatterns = patterns('',
     

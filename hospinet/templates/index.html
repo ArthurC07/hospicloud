@@ -1,23 +1,71 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block heading %}
-<div class="container_12">
-<img src="{% static "images/head.png" %}" />
+<div class="row-fluid">
+  <div class="hero span12">
+    <img src="{% static "images/head.jpg" %}" />
+  </div>
 </div>
 {% endblock %}
 {% block content %}
-<br />
-<div class="container_12 clearfix">
-<a class="grid_4" href="{% url "persona-index" %}"><img src="{% static "images/pacientes.png" %}" /></a>
-<a class="grid_4" href="{% url "admision-index" %}"><img src="{% static "images/admisiones.png" %}" /></a>
-<a class="grid_4" href="{% url "examen-index" %}"><img src="{% static "images/laboratorio.png" %}" /></a>
+<div class="row-fluid">
+  <article class="span3">
+  <div class="thumbnail">
+    <div><a href="{% url "persona-index" %}"><img src="{% static "images/pacientes.png" %}" /></a></div>
+    <hr>
+    <a class="btn btn-primary" href="{% url "persona-index" %}">Pacientes</a>
+    </div>
+  </article>
+  <article class="span3">
+  <div class="thumbnail">
+    <div><a href="{% url "admision-index" %}"><img src="{% static "images/admisiones.png" %}" /></a></div>
+    <hr>
+    <a class="btn btn-primary" href="{% url "admision-index" %}">Admisiones</a>
+    </div>
+  </article>
+  <article class="span3">
+  <div class="thumbnail">
+    <div><a href="{% url "examen-index" %}"><img src="{% static "images/imagenes.png" %}" /></a></div>
+    <hr>
+    <a class="btn btn-primary" href="{% url "examen-index" %}">Centro de Im&aacute;genes</a>
+    </div>
+  </article>
+  <article class="span3">
+  <div class="thumbnail">
+    <div><a href="{% url "nightingale-index" %}"><img src="{% static "images/enfermeria.png" %}" /></a></div>
+    <hr>
+    <a class="btn btn-primary" href="{% url "nightingale-index" %}">Enfermer&iacute;a</a>
+    </div>
+  </article>
 </div>
-<div class="container_12 clearfix">
-<a class="grid_4" href="{% url "nightingale-index" %}"><img src="{% static "images/enfermeria.png" %}" /></a>
-<a class="grid_4" href="{% url "emergency-index" %}"><img src="{% static "images/emergencia.png" %}" /></a>
-<a class="grid_4" href="{%url "consultorio-index" %}"><img src="{% static "images/pacientes.png" %}" /></a>
-</div>
-<div class="container_12 clearfix">
-<a class="grid_4" href="{% url "invoice-index" %}"><img src="{% static "images/reportes.png" %}" /></a>
+<div class="row-fluid">
+  <article class="span3">
+    <div class="thumbnail">
+      <div><a class="block" href="{% url "emergency-index" %}"><img src="{% static "images/emergencia.png" %}"></a></div>
+      <hr>
+      <a class="btn btn-primary" href="{% url "emergency-index" %}">Emergencia</a>
+    </div>
+  </article>
+  <article class="span3">
+    <div class="thumbnail">
+      <div><a href="{% url "consultorio-index" %}"><img src="{% static "images/pacientes.png" %}" /></a></div>
+      <hr>
+      <a class="btn btn-primary" href="{% url "consultorio-index" %}">Consultorio</a>
+    </div>
+  </article>
+  <article class="span3">
+    <div class="thumbnail">
+      <div><a href="{% url "invoice-index" %}"><img src="{% static "images/reportes.png" %}" /></div>
+      <hr>
+      <a class="btn btn-primary" href="{% url "invoice-index" %}">Caja</a>
+    </div>
+  </article>
+  <article class="span3">
+    <div class="thumbnail">
+      <div><a href="{% url "invoice-index" %}"><img src="{% static "images/reportes.png" %}" /></a></div>
+      <hr>
+      <a class="btn btn-primary" href="{% url "invoice-index" %}">Caja</a>
+    </div>
+  </article>
 </div>
 {% endblock %}
