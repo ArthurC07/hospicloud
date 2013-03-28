@@ -76,9 +76,7 @@ class Admision(models.Model):
     )
     
     ARANCELES = (
-               ('C', u"CEMESA"),
                ('E', u"Empleado"),
-               ('M', u"Mediprocesos"),
                ('J', u"Ejecutivo"),
                ('X', u"Extranjero"),
     )

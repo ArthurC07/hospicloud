@@ -1,4 +1,4 @@
 {% load tree_menu_tags %}
-<ul class="nav">
+<ul class="nav nav-list">
   {% for menu_item in menu.root_item.children %}{% show_menu_item menu_item %}{% endfor %}
 </ul>

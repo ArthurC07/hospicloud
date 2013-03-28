@@ -12,6 +12,9 @@
     <li><a href="{% url "emergencia-remision-externa-agregar" emergencia.id %}">Remitir otro Centro M&eacute;dico</a></li>
   </ul>
 </nav>
+<nav class="well sidebar-nav">
+  {% include "snippets/persona_menu.html" with persona=emergencia.persona %}
+</nav>
 </aside>
 <section id="emergencia" class="informacion span9">
   <section class="hero-unit">
