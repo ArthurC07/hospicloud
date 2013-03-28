@@ -16,10 +16,10 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, url
-from invoice.views import (IndexView, ReciboPersonaCreateView,
-     ReciboDetailView, VentaCreateView, ReporteReciboView,
-     ReporteProductoView, ReciboRemiteView, ReciboRadView,
-     EmergenciaPeriodoView, ReciboExamenCreateView)
+from invoice.views import (IndexView, ReciboPersonaCreateView, 
+     ReciboDetailView, VentaCreateView, ReporteReciboView, ReporteProductoView,
+     ReciboRemiteView, ReciboRadView, EmergenciaPeriodoView,
+     ReciboExamenCreateView, EmergenciaDiaView)
 
 urlpatterns = patterns('',
     
@@ -66,4 +66,8 @@ urlpatterns = patterns('',
     url(r'^periodo/emergencia',
         EmergenciaPeriodoView.as_view(),
         name='invoice-periodo-emergencia'),
+
+    url(r'^dia/emergencia',
+        EmergenciaDiaView.as_view(),
+        name='invoice-dia-emergencia'),
 )

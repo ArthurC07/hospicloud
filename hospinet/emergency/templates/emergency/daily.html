@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<aside class="span3">
+<nav class="well sidebar-nav">
+  <ul class="nav nav-list">
+    <li><a href="{% url "invoice-index" %}">Regresar a caja</a></li>
+  </ul>
+</nav>
+</aside>
+<section class="span9 lista" id="emergencias">
+  <h1>Emergencias del D&iacute;a de Hoy</h1>
+  {% ifequal emergencias.count 0 %}
+    <p>No hay emergencias atendidas el d&iacute;a de hoy</p>
+  {% endifequal %}
+  {% for emergencia in emergencias %}
+    <article class="emergencia cobros">
+      <hgroup><h1>{{ emergencia.persona.nombre_completo }}</h1></hgroup>
+      <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
+      {% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
+    </article>
+  {% endfor %}
+</section>
+{% endblock %}

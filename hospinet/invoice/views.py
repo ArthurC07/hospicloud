@@ -25,6 +25,7 @@ from invoice.forms import ReciboForm, VentaForm, PeriodoForm
 from django.contrib.auth.models import User
 from django.views.generic import (CreateView, UpdateView, DeleteView,
     TemplateView, DetailView, ListView, RedirectView)
+from emergency.views import EmergenciaListView
 from library.protected import LoginRequiredView
 from django import forms
 from persona.models import Persona
@@ -406,3 +407,10 @@ class EmergenciaPeriodoView(TemplateView, LoginRequiredView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context
+
+class EmergenciaDiaView(EmergenciaListView, LoginRequiredView):
+
+    """Muestra los materiales y medicamentos de las :class:`Emergencia`s que
+    han sido atendidas durante el día"""
+
+    template_name = 'emergency/daily.html'

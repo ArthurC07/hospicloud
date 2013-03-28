@@ -1,16 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-<aside class="span3 toolbox">
-  <nav>
-    <ul>
-      <li>
-        <a href="{% url "invoice-index" %}">Inicio Recibo</a>
-      </li>
-      <li>
-        <a href="{% url "examen-index" %}">Inicio Estudios</a>
-      </li>
-    </ul>
-  </nav>
+<aside class="span3">
+<nav class="well sidebar-nav">
+  <ul class="nav nav-list">
+    <li><a href="{% url "invoice-dia-emergencia" %}">Emergencias de Hoy</a></li>
+  </ul>
+</nav>
 </aside>
 <div id="informacion" class="span9">
 <form  class="styled compact" action="{% url "invoice-periodo-emergencia" %}" method="get">
