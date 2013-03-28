@@ -170,6 +170,7 @@
     <Content Include="emergency\templates\emergency\emergencia_detail.html" />
     <Content Include="emergency\templates\emergency\index.html" />
     <Content Include="emergency\templates\emergency\remision_externa_create.html" />
+    <Content Include="emergency\templates\emergency\snippets\cargos.html" />
     <Content Include="emergency\templates\emergency\snippets\emergencia.html" />
     <Content Include="emergency\templates\emergency\snippets\emergencia_list.html" />
     <Content Include="emergency\templates\emergency\snippets\examen_fisico.html" />
@@ -336,7 +337,6 @@
     <Content Include="persona\templates\snippets\antecedente_familiar.html" />
     <Content Include="persona\templates\snippets\antecedente_obstetrico.html" />
     <Content Include="persona\templates\snippets\antecedente_quirurgico.html" />
-    <Content Include="persona\templates\snippets\emergencia.html" />
     <Content Include="persona\templates\snippets\estilo_vida.html" />
     <Content Include="persona\templates\snippets\fisico.html" />
     <Content Include="persona\templates\snippets\persona.html" />

@@ -48,6 +48,6 @@
       {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %} <a href="{% url "emergencia-antecedente-obstetrico-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
   </section>
   {% endifequal %}
-  {% include "snippets/emergencia.html" with emergencia=emergencia %}
+  {% include "emergency/snippets/emergencia.html" with emergencia=emergencia %}
 </section>
 {% endblock %}

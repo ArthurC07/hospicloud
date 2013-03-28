@@ -1,12 +1,11 @@
-{% load l10n %}  
 <section id="diagnosticos">
-    <hgroup>
-      <h2>Diagn&oacute;sticos</h2>
-    </hgroup>
-    {% for diagnostico in emergencia.diagnosticos.all %}
-    <article class="diagnostico">
-      <p>{{ diagnostico.diagnostico }}</p>
-    </article>
+  <hgroup>
+    <h2>Diagn&oacute;sticos</h2>
+  </hgroup>
+  {% for diagnostico in emergencia.diagnosticos.all %}
+  <article class="diagnostico">
+    <p>{{ diagnostico.diagnostico }}</p>
+  </article>
   {% endfor %}
   </section>
   <section id="hallazgos">
@@ -44,23 +43,5 @@
   {% endfor %}
   </section>
   <section id="cargos">
-    <table class="table table-striped">
-      <caption>Materiales y Medicamentos Utilizados</caption>
-      <thead class="gradient">
-        <tr>
-          <th>C&oacute;digo</th>
-          <th>Descripci&oacute;n</th>
-          <th>Cantidad</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for cobro in emergencia.cobros.all %}
-        <tr>
-          <td>{{ cobro.cargo.id|unlocalize }}</td>
-          <td>{{ cobro.cargo.descripcion }}</td>
-          <td>{{ cobro.cantidad }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+{% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
   </section>

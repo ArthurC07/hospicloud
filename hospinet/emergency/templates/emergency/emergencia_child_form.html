@@ -16,26 +16,7 @@
 <div class="row-fluid">
 <div class="span3"></div>
 <section id="cargos" class="span9">
-<table class="table table-striped">
-    <caption>Materiales y Medicamentos Utilizados</caption>
-    <thead class="gradient">
-    <tr>
-        <th>C&oacute;digo</th>
-        <th>Descripci&oacute;n</th>
-        <th>Cantidad</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for cobro in emergencia.cobros.all %}
-    <tr>
-        {% load l10n %}
-        <td>{{ cobro.cargo.id|unlocalize }}</td>
-        <td>{{ cobro.cargo.descripcion }}</td>
-        <td>{{ cobro.cantidad }}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+{% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
 </section>
 </div>
 {% endblock %}
