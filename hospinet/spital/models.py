@@ -107,7 +107,6 @@ class Admision(models.Model):
     diagnostico = models.CharField(max_length=200, blank=True)
     doctor = models.CharField(max_length=200, blank=True)
     
-    tipo_de_habitacion = models.CharField(max_length=200, blank=True)
     habitacion = models.ForeignKey(Habitacion, related_name='admisiones',
                                    null=True, blank=True)
     arancel = models.CharField(max_length=200, blank=True, choices=ARANCELES)

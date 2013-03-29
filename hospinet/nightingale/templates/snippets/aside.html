@@ -1,21 +1,23 @@
 {% load static %}
-<aside class="span3" id="enfermeria-paciente-menu">
-  <nav>
-    <ul>
-      <li class="clearfix"><a href="{% url "nightingale-view-id" admision.id %}"><img src="{% static "images/home.png" %}" />Paciente</a></li>
-      <li class="clearfix"><a href="{% url "nightingale-resume" admision.uuid %}"><img src="{% static "images/home.png" %}" />Resumen</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-cargos" admision.id %}"><img src="{% static "images/cargos.png" %}" />Cargos</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-signos" admision.id %}"><img src="{% static "images/signos.png" %}" />Signos Vitales</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-ordenes" admision.id %}"><img src="{% static "images/ordenes.png" %}" />Ordenes M&eacute;dicas</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-evolucion" admision.id %}"><img src="{% static "images/evolucion.png" %}" />Evoluci&oacute;n</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-ingestas-excretas" admision.id %}"><img src="{% static "images/tubo.png" %}" />Ingestas y Excretas</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-glucometria" admision.id %}"><img src="{% static "images/cardio.png" %}" />Glucometr&iacute;a</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-medicamentos" admision.id %}"><img src="{% static "images/tubo.png" %}" />Medicamentos</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-notas" admision.id %}"><img src="{% static "images/notas.png" %}" />Notas de Enfermer&iacute;a</a></li>
-      <li class="clearfix"><a href="{% url "enfermeria-devoluciones" admision.uuid %}"><img src="{% static "images/cargos.png" %}" />Devoluciones</a></li>
+<aside class="span3">
+<nav class="well sidebar-nav">
+  <ul class="nav nav-list">
+      <li>
+        <a href="{% url "nightingale-view-id" admision.id %}">Paciente</a>
+      </li>
+      <li><a href="{% url "nightingale-resume" admision.uuid %}">Resumen</a></li>
+      <li><a href="{% url "enfermeria-cargos" admision.id %}">Cargos</a></li>
+      <li><a href="{% url "enfermeria-signos" admision.id %}">Signos Vitales</a></li>
+      <li><a href="{% url "enfermeria-ordenes" admision.id %}">Ordenes M&eacute;dicas</a></li>
+      <li><a href="{% url "enfermeria-evolucion" admision.id %}">Evoluci&oacute;n</a></li>
+      <li><a href="{% url "enfermeria-ingestas-excretas" admision.id %}">Ingestas y Excretas</a></li>
+      <li><a href="{% url "enfermeria-glucometria" admision.id %}">Glucometr&iacute;a</a></li>
+      <li><a href="{% url "enfermeria-medicamentos" admision.id %}">Medicamentos</a></li>
+      <li><a href="{% url "enfermeria-notas" admision.id %}">Notas de Enfermer&iacute;a</a></li>
+      <li><a href="{% url "enfermeria-devoluciones" admision.uuid %}">Devoluciones</a></li>
     </ul>
   </nav>
-  <nav>
-    {% load tree_menu_tags %}{% show_menu "enfermeria" %}
-  </nav>
+<nav class="well sidebar-nav">
+  {% include "snippets/persona_menu.html" with persona=admision.paciente %}
+</nav>
 </aside>

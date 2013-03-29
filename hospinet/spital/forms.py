@@ -27,7 +27,7 @@ class AdmisionForm(forms.ModelForm):
     class Meta:
         
         model = Admision
-        fields = ('paciente', 'diagnostico', 'doctor', 'tipo_de_habitacion',
+        fields = ('paciente', 'diagnostico', 'doctor',
                   'arancel', 'pago', 'poliza', 'certificado', 'aseguradora',
                   'deposito', 'tipo_de_ingreso',)
     

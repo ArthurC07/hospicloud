@@ -165,6 +165,7 @@
     <Content Include="clinique\templates\snippets\consultorio_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_list.html" />
+    <Content Include="emergency\templates\emergency\daily.html" />
     <Content Include="emergency\templates\emergency\emergencia_persona_list.html" />
     <Content Include="emergency\templates\emergency\emergencia_child_form.html" />
     <Content Include="emergency\templates\emergency\emergencia_detail.html" />
@@ -340,6 +341,7 @@
     <Content Include="persona\templates\snippets\estilo_vida.html" />
     <Content Include="persona\templates\snippets\fisico.html" />
     <Content Include="persona\templates\snippets\persona.html" />
+    <Content Include="persona\templates\snippets\persona_menu.html" />
     <Content Include="persona\templates\snippets\persona_aside.html" />
     <Content Include="persona\templates\snippets\persona_fotografia.html" />
     <Content Include="persona\templates\snippets\persona_list.html" />
