@@ -1,0 +1,19 @@
+{% load l10n %}
+<table class="table table-striped">
+    <caption>Diagn&oacute;sticos</caption>
+    <thead class="gradient">
+    <tr>
+        <th>Diagn&oacute;stico</th>
+        <th>Usuario</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for diagnostico in emergencia.diagnosticos.all %}
+    <tr>
+        {% load l10n %}
+        <td>{{ diagnostico.diagnostico }}</td>
+        <td>{{ diagnostico.usuario }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -1,13 +1,5 @@
-<section id="diagnosticos">
-  <hgroup>
-    <h2>Diagn&oacute;sticos</h2>
-  </hgroup>
-  {% for diagnostico in emergencia.diagnosticos.all %}
-  <article class="diagnostico">
-    <p>{{ diagnostico.diagnostico }}</p>
-  </article>
-  {% endfor %}
-  </section>
+{% include "emergency/snippets/examen_fisico.html" with emergencia=emergencia %}
+{% include "emergency/snippets/diagnosticos.html" with emergencia=emergencia %}
   <section id="hallazgos">
   <hgroup>
     <h3>Hallazgos</h3>
