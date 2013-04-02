@@ -22,7 +22,6 @@
     <h1>Emergencia de {{ emergencia.persona.nombre_completo }}</h1>
   </hgroup>
   <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
-  {% include "emergency/snippets/examen_fisico.html" with emergencia=emergencia %}
   </section>
   <section class="tabbable">
     <ul class="nav nav-tabs">
@@ -40,12 +39,7 @@
         <a href="{% url "emergencia-antecedente-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
         {% include "snippets/antecedente_familiar.html" with antecedente=emergencia.persona.antecedente_familiar %}
         <a href="{% url "emergencia-antecedente-familiar-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
-        <hgroup>
-          <h4>Antecedentes Quir&uacute;rgicos</h4>
-        </hgroup>
-        {% for antecedente in emergencia.persona.antecedentes_quirurgicos.all %}
-        {% include "snippets/antecedente_quirurgico.html" with antecedente=emergencia.persona.antecedente_quirurgico %}
-        {% endfor %}
+        {% include "snippets/antecedente_quirurgico.html" with persona=emergencia.persona %}
         <a href="{% url "emergencia-antecedente-quirurgico-agregar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
         {% ifequal emergencia.persona.sexo 'F' %}
         {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %}

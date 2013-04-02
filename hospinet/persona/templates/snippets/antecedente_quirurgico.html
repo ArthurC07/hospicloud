@@ -1,6 +1,18 @@
-<article>
-  <hgroup>
-    <h3>{{ antecedente.procedimiento }}</h3>
-  </hgroup>
-  <p>Realizado el {{ antecedente.fecha }}</p>
-</article>
+{% load l10n %}
+<table class="table table-striped">
+  <caption>Antecedentes Quir&uacute;rgicos</caption>
+  <thead>
+    <tr>
+      <th>Procedimiento</th>
+      <th>Efecuado</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for antecedente in persona.antecedentes_quirurgicos.all %}
+  <tr>
+    <td>{{ antecedente.procedimiento }}</td>
+    <td>{{ antecedente.fecha }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
