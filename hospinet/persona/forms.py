@@ -59,20 +59,6 @@ class PersonaForm(forms.ModelForm):
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Agregar Persona', *self.field_names)
-    
-    def clean(self):
-        
-        """Realiza la validación de la identidad que fue ingresada luego de
-        limpiar los datos de modo que sean seguros para la base de datos"""
-        
-        super(PersonaForm, self).clean()
-        cleaned_data = self.cleaned_data
-        tipo_identidad = cleaned_data.get('tipo_identificacion')
-        iden = cleaned_data.get('identificacion')
-        if tipo_identidad == 'T' and not Persona.validar_identidad(iden):
-            raise forms.ValidationError('La identidad ingresada no es valida')
-        
-        return cleaned_data
 
 class BasePersonaForm(forms.ModelForm):
     

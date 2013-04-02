@@ -258,8 +258,6 @@
     <Content Include="persona\static\css\bootstrap-responsive.css" />
     <Content Include="persona\static\css\bootstrap.css" />
     <Content Include="persona\static\css\colorbox.css" />
-    <Content Include="persona\static\css\form.css" />
-    <Content Include="persona\static\css\grid.css" />
     <Content Include="persona\static\css\images\border.png" />
     <Content Include="persona\static\css\images\controls.png" />
     <Content Include="persona\static\css\images\ie6\borderBottomCenter.png" />
@@ -288,12 +286,6 @@
     <Content Include="persona\static\css\images\ui-icons_ffd27a_256x240.png" />
     <Content Include="persona\static\css\images\ui-icons_ffffff_256x240.png" />
     <Content Include="persona\static\css\jquery-ui.css" />
-    <Content Include="persona\static\css\login.css" />
-    <Content Include="persona\static\css\navigation.css" />
-    <Content Include="persona\static\css\PIE.htc" />
-    <Content Include="persona\static\css\reset.css" />
-    <Content Include="persona\static\css\style.css" />
-    <Content Include="persona\static\css\table.css" />
     <Content Include="persona\static\images\admisiones.png" />
     <Content Include="persona\static\images\cruzfondo.jpg" />
     <Content Include="persona\static\images\emergencia.png" />

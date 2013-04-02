@@ -14,22 +14,22 @@
 </script>
 {% endblock %}
 {% block content %}
-<div id="admision" class="span12">
 <hgroup class="top title">
   <h1>Enfermer&iacute;a</h1>
 </hgroup>
-<div id="estadisticas" class="bloque-superior">
+<div class="row-fluid">
+<section id="estadisticas" class="span4">
   <article id="tiempo-espera">
     <h2>Tiempo en Espera de Ingreso</h2>
     <div id="grafico"></div>
     <h3>Promedio: {{ promedio }} minutos</h3>
   </article>
-</div>
-<h2>Pacientes Hospitalizados</h2>
+</section>
+<section class="span4">
 {% include "snippets/enfermeria_list.html" with admisiones=hospitalizados %}
-<h3>Total de Pacientes Hospitalizados: {{ hospitalizados.count }}</h3>
-<h2>Pacientes en Espera de Ingreso</h2>
+</section>
+<section class="span4">
 {% include "snippets/admitidos_list.html" with admisiones=admitidos %}
-<h3>Total de Pacientes en Espera: {{ admitidos.count }}</h3>
+</section>
 </div>
 {% endblock %}

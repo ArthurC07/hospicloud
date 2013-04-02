@@ -1,7 +1,8 @@
 {% extends 'base.html' %}{% load thumbnail %}
 {% block content %}
-<nav class="toolbox span12">
-  <ul class="span12 information">
+<aside class="span3">
+<nav class="well sidebar-nav">
+  <ul class="nav nav-list">
     <li><a href="{% url "admision-view-id" admision.id %}">Regresar a la Admisi&oacute;n</a></li>
     <li><a href="{% url "admision-autorizacion" admision.id %}">Autorizaci&oacute;n</a></li>
     <li><a href="{% url "admision-referencias" admision.id %}">Referencias</a></li>
@@ -9,7 +10,8 @@
     <li><a href="{% url "admision-index" %}">Regresar a Admisiones</a></li>
   </ul>
 </nav>
-<div id="informacion" class="span12">
+</aside>
+<section class="span9">
   <hgroup>
     <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
   </hgroup>
@@ -24,5 +26,5 @@
     <a href="{% url "persona-editar" fiador.id %}" class="btn btn-primary">Editar Datos</a>
   {% endfor %}
   <a href="{% url "admision-fiador" admision.id %}" class="btn btn-primary">Agregar Fiador</a>
-</div>
+</section>
 {% endblock %}

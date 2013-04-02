@@ -1,22 +1,9 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block header %}
-<script type="text/javascript" src="{% static "js/spital.js" %}"></script>
-<script type="text/javascript">
-  $(document).ready(function()
-  {
-    data_source = new Spital("{% url home %}");
-    var resultados = $('#resultados');
-    $('#persona-form').submit(function()
-    {
-      resultados.empty();
-      data_source.fiadores($('#persona-search').val(), resultados, {{ admision.id }});
-      return false;
-    });
-  });
-</script>
 {% endblock %}
 {% block content %}
+<section class="span9">
 <form id="persona-form">
   <div>
     <h1>Buscar una Persona</h1>
@@ -34,4 +21,21 @@
     <input type="submit" value="Guardar" />
   </p>
 </form>
+</section>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" src="{% static "js/spital.js" %}"></script>
+<script type="text/javascript">
+  $(document).ready(function()
+  {
+    data_source = new Spital("{% url "home" %}");
+    var resultados = $('#resultados');
+    $('#persona-form').submit(function()
+    {
+      resultados.empty();
+      data_source.fiadores($('#persona-search').val(), resultados, {{ admision.id }});
+      return false;
+    });
+  });
+</script>
 {% endblock %}

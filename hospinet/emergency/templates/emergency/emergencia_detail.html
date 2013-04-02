@@ -16,7 +16,7 @@
   {% include "snippets/persona_menu.html" with persona=emergencia.persona %}
 </nav>
 </aside>
-<section id="emergencia" class="informacion span9">
+<section class="span9">
   <section class="hero-unit">
   <hgroup>
     <h1>Emergencia de {{ emergencia.persona.nombre_completo }}</h1>
@@ -24,33 +24,38 @@
   <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
   {% include "emergency/snippets/examen_fisico.html" with emergencia=emergencia %}
   </section>
-  {% include "snippets/persona_fotografia.html" with persona=emergencia.persona %}
-  <section id="personales" class="info">
-    {% include "snippets/persona.html" with persona=emergencia.persona %} <a href="{% url "persona-editar" emergencia.persona.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
-  </section>
-  <section id="fisico" class="antecedentes info">
-    {% include "snippets/fisico.html" with fisico=emergencia.persona.fisico %} <a href="{% url "emergencia-fisico-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Fisiolog&iacute;a</a>
-  </section>
-  <section id="patologico" class="antecedentes info">
-    {% include "snippets/antecedente.html" with antecedente=emergencia.persona.antecedente %} <a href="{% url "emergencia-antecedente-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
-  </section>
-  <section id="familiar" class="antecedente info">
-    {% include "snippets/antecedente_familiar.html" with antecedente=emergencia.persona.antecedente_familiar %} <a href="{% url "emergencia-antecedente-familiar-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
-  </section>
-  <section id="quirurgico" class="antecedente info">
-    <hgroup>
-      <h4>Antecedentes Quir&uacutergicos</h4>
-    </hgroup>
-    {% for antecedente in emergencia.persona.antecedentes_quirurgicos.all %}
-    {% include "snippets/antecedente_quirurgico.html" with antecedente=emergencia.persona.antecedente_quirurgico %}
-    {% endfor %}
-    <a href="{% url "emergencia-antecedente-quirurgico-agregar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
-  </section>
-  {% ifequal emergencia.persona.sexo 'F' %}
-  <section id="obstetrico" class="antecedente info">
-      {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %} <a href="{% url "emergencia-antecedente-obstetrico-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
-  </section>
-  {% endifequal %}
-  {% include "emergency/snippets/emergencia.html" with emergencia=emergencia %}
+  <section class="tabbable">
+    <ul class="nav nav-tabs">
+      <li><a class="active" href="#paciente" data-toggle="tab">Datos Personales</a></li>
+      <li><a href="#emergencia" data-toggle="tab">Datos Emergencia</a></li>
+    </ul>
+    <div class="tab-content">
+        <article id="paciente" class="tab-pane active">
+        {% include "snippets/persona_fotografia.html" with persona=emergencia.persona %}
+        {% include "snippets/persona.html" with persona=emergencia.persona %}
+        <a href="{% url "persona-editar" emergencia.persona.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
+        {% include "snippets/fisico.html" with fisico=emergencia.persona.fisico %}
+        <a href="{% url "emergencia-fisico-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Fisiolog&iacute;a</a>
+        {% include "snippets/antecedente.html" with antecedente=emergencia.persona.antecedente %}
+        <a href="{% url "emergencia-antecedente-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
+        {% include "snippets/antecedente_familiar.html" with antecedente=emergencia.persona.antecedente_familiar %}
+        <a href="{% url "emergencia-antecedente-familiar-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
+        <hgroup>
+          <h4>Antecedentes Quir&uacute;rgicos</h4>
+        </hgroup>
+        {% for antecedente in emergencia.persona.antecedentes_quirurgicos.all %}
+        {% include "snippets/antecedente_quirurgico.html" with antecedente=emergencia.persona.antecedente_quirurgico %}
+        {% endfor %}
+        <a href="{% url "emergencia-antecedente-quirurgico-agregar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
+        {% ifequal emergencia.persona.sexo 'F' %}
+        {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %}
+        <a href="{% url "emergencia-antecedente-obstetrico-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
+        {% endifequal %}
+      </article>
+      <article id="emergencia"  class="tab-pane">
+        {% include "emergency/snippets/emergencia.html" with emergencia=emergencia %}
+      </article>
+  </div>
+ </section>
 </section>
 {% endblock %}
