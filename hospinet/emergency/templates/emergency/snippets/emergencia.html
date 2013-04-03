@@ -1,3 +1,16 @@
+
+<section>
+  <p>{{ emergencia.historia_enfermedad_actual }}</p>
+    <ul>
+      <li>Pulso: {{ emergencia.pulso }}</li>
+      <li>Frecuencia Respiratoria: {{ emergencia.frecuencia_respiratoria }}</li>
+      <li>Temperatura: {{ emergencia.temperatura }}</li>
+      <li>Presi&oacute;n: {{ emergencia.presion }}</li>
+      <li>Frecuencia Cardiaca: {{ emergencia.frecuencia_cardiaca }}</li>
+      <li>Respiraci&oacute;n: {{ emergencia.respiracion }}</li>
+      <li>Saturacion de ox&iacute;geno: {{ emergencia.saturacion_de_oxigeno}}</li>
+    </ul>
+</section>
 {% include "emergency/snippets/examen_fisico.html" with emergencia=emergencia %}
 {% include "emergency/snippets/diagnosticos.html" with emergencia=emergencia %}
   <section id="hallazgos">
@@ -35,5 +48,5 @@
   {% endfor %}
   </section>
   <section id="cargos">
-{% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
+  {% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
   </section>

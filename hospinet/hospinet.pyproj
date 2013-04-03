@@ -172,6 +172,7 @@
     <Content Include="emergency\templates\emergency\index.html" />
     <Content Include="emergency\templates\emergency\remision_externa_create.html" />
     <Content Include="emergency\templates\emergency\snippets\cargos.html" />
+    <Content Include="emergency\templates\emergency\snippets\diagnosticos.html" />
     <Content Include="emergency\templates\emergency\snippets\emergencia.html" />
     <Content Include="emergency\templates\emergency\snippets\emergencia_list.html" />
     <Content Include="emergency\templates\emergency\snippets\examen_fisico.html" />
