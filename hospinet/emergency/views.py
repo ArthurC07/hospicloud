@@ -21,7 +21,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (CreateView, ListView, TemplateView,
-                                  DetailView, RedirectView, UpdateView)
+                                  DetailView, RedirectView, UpdateView,
+                                  DeleteView)
 from library.protected import LoginRequiredView
 from persona.models import Persona
 from persona.views import (PersonaCreateView, FisicoUpdateView,
@@ -211,6 +212,20 @@ class CobroCreateView(BaseCreateView):
 
     model = Cobro
     form_class = CobroForm
+
+class CobroDeleteView(DeleteView, LoginRequiredView):
+
+    model = Cobro
+
+    def get_object(self, queryset = None):
+
+        obj = super(CobroDeleteView, self).get_object(queryset)
+        self.emergencia = obj.emergencia
+        return obj
+
+    def get_success_url(self):
+
+        return self.emergencia.get_absolute_url()
 
 class DiagnosticoCreateView(BaseCreateView):
 
