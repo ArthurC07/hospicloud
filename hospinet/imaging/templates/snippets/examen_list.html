@@ -4,6 +4,8 @@
       <th>Fecha</th>
       <th>Paciente</th>
       <th>Examen</th>
+      <th>Identificaci&oacute;n</th>
+      <th>Nacimiento</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -13,6 +15,8 @@
       <td>{{ examen.fecha }}</td>
       <td>{{ examen.persona.nombre_completo }}</td>
       <td>{{ examen.nombre }}</td>
+      <td>{{ examen.identificacion }}</td>
+      <td>{{ examen.nacimiento }}</td>
       <td><a href="{% url "examen-view-id" examen.uuid %}">Ver</a></td>
     </tr>
     {% endfor %}

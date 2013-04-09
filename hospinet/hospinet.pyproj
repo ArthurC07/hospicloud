@@ -165,6 +165,7 @@
     <Content Include="clinique\templates\snippets\consultorio_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_aside.html" />
     <Content Include="clinique\templates\snippets\paciente_list.html" />
+    <Content Include="emergency\templates\emergency\cobro_confirm_delete.html" />
     <Content Include="emergency\templates\emergency\daily.html" />
     <Content Include="emergency\templates\emergency\emergencia_persona_list.html" />
     <Content Include="emergency\templates\emergency\emergencia_child_form.html" />
