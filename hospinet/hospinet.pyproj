@@ -196,7 +196,6 @@
     <Content Include="imaging\templates\examen\imagen_create.html" />
     <Content Include="imaging\templates\examen\estudio_programado_list.html" />
     <Content Include="imaging\templates\examen\examen_update.html" />
-    <Content Include="imaging\templates\search\indexes\laboratory\examen_text.txt" />
     <Content Include="imaging\templates\snippets\adjunto.html" />
     <Content Include="imaging\templates\snippets\dicom.html" />
     <Content Include="imaging\templates\snippets\examen.html" />
@@ -422,7 +421,6 @@
     <Folder Include="imaging\templates\examen" />
     <Folder Include="imaging\templates\search" />
     <Folder Include="imaging\templates\search\indexes" />
-    <Folder Include="imaging\templates\search\indexes\laboratory" />
     <Folder Include="imaging\templates\snippets" />
     <Folder Include="inventory\" />
     <Folder Include="inventory\templates" />
@@ -490,7 +488,7 @@
     <WebPiReference Include="https://www.microsoft.com/web/webpi/3.0/toolsproductlist.xml%3fDjango">
       <Feed>https://www.microsoft.com/web/webpi/3.0/toolsproductlist.xml</Feed>
       <ProductId>Django</ProductId>
-      <FriendlyName>Django 1.4</FriendlyName>
+      <FriendlyName>Django 1.5</FriendlyName>
     </WebPiReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Python Tools\Microsoft.PythonTools.Django.targets" />
