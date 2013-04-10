@@ -1,5 +1,5 @@
 <table class="table table-striped">
-  <thead class="gradient">
+  <thead>
     <tr>
       <th>Fecha</th>
       <th>Paciente</th>
@@ -14,10 +14,10 @@
     <tr>
       <td>{{ examen.fecha }}</td>
       <td>{{ examen.persona.nombre_completo }}</td>
-      <td>{{ examen.nombre }}</td>
-      <td>{{ examen.identificacion }}</td>
-      <td>{{ examen.nacimiento }}</td>
-      <td><a href="{% url "examen-view-id" examen.uuid %}">Ver</a></td>
+      <td>{{ examen.tipo_de_examen.nombre }}</td>
+      <td>{{ examen.persona.identificacion }}</td>
+      <td>{{ examen.persona.nacimiento }}</td>
+      <td><a class="btn btn-success" href="{% url "examen-view-id" examen.uuid %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

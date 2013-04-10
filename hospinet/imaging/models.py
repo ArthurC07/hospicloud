@@ -22,8 +22,8 @@ from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
 from library import image_to_content, dicom
 from persona.models import Persona
-from private_files.models.fields import PrivateFileField #@UnresolvedImport
-from sorl.thumbnail import ImageField #@UnresolvedImport
+from private_files.models.fields import PrivateFileField
+from sorl.thumbnail import ImageField
 from south.modelsinspector import add_introspection_rules
 import os
 

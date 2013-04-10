@@ -4,10 +4,10 @@
 <link rel="stylesheet" href="{% static "css/examen.css" %}" />
 {% endblock %}
 {% block content %}
-<aside class="span3 toolbox">
+<aside class="span3">
   {% include 'snippets/examen_aside.html' %}
-  <nav>
-    <ul>
+  <nav class="well sidebar-nav">
+    <ul class="nav nav-list">
       <li>
         <a href="{% url "examen-adjuntar-imagen" examen.id %}">Adjuntar una Fotograf&Iacute;a o Escaneo</a>
       </li>
