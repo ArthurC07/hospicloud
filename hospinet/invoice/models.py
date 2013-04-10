@@ -29,6 +29,7 @@ class Recibo(TimeStampedModel):
     cliente = models.ForeignKey(Persona, related_name='recibos')
     remite = models.CharField(max_length=255, blank=True, null=True)
     radiologo = models.CharField(max_length=255, blank=True, null=True)
+    descuento = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
     cajero = models.ForeignKey(User, related_name='recibos')
@@ -87,6 +88,7 @@ class Recibo(TimeStampedModel):
             return Decimal(0)
 
         discount = sum(v.discount() for v in self.ventas.all())
+        discount += self.subtotal() * self.descuento / Decimal("100")
         return Decimal(discount).quantize(Decimal('0.01'))
 
     def total(self):
