@@ -48,6 +48,14 @@ class Recibo(TimeStampedModel):
         self.nulo = True
         self.save()
 
+    def anular(self):
+
+        """Anula el :class:`Recibo` para que no se tome en cuenta en los
+        calculos financieros"""
+
+        self.cerrado = True
+        self.save()
+
     def __unicode__(self):
 
         """Crea una representación en texto del :class:`Recibo`"""

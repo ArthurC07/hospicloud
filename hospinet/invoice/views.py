@@ -19,6 +19,7 @@ from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 from emergency.models import Emergencia
 from invoice.models import Recibo, Producto, Venta
 from invoice.forms import ReciboForm, VentaForm, PeriodoForm
@@ -171,7 +172,21 @@ class ReciboAnularView(RedirectView, LoginRequiredView):
         recibo = get_object_or_404(Recibo, pk=kwargs['pk'])
         recibo.anular()
         messages.info(self.request, u'¡El recibo ha sido marcado como anulado!')
-        return reverse('recibo-view', args=[recibo.id])
+        return reverse('invoice-view-id', args=[recibo.id])
+
+class ReciboCerrarView(RedirectView, LoginRequiredView):
+
+    """Marca un :class:`Recibo` como anulado para que la facturación del mismo
+    no se vea reflejado en los cortes de caja"""
+    
+    permanent = False
+    
+    def get_redirect_url(self, **kwargs):
+        
+        recibo = get_object_or_404(Recibo, pk=kwargs['pk'])
+        recibo.cerrar()
+        messages.info(self.request, u'¡El recibo ha sido cerrado!')
+        return reverse('invoice-view-id', args=[recibo.id])
 
 class IndexView(TemplateView, LoginRequiredView):
     

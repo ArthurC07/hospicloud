@@ -1,20 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 <aside class="span3 toolbox">
-  <nav>
-    <ul>
-      <li>
-        <a href="{% url "invoice-index" %}">Inicio Recibo</a>
-      </li>
-      <li>
-        <a href="{% url "examen-index" %}">Inicio Estudios</a>
-      </li>
-    </ul>
-  </nav>
- <nav>
-    <ul>
+<nav class="well sidebar-nav">
+  <ul class="nav nav-list">
       <li>
         <a href="{% url "invoice-nullify" recibo.id %}">Anular Recibo</a>
+      </li
+      <li>
+        <a href="{% url "invoice-close" recibo.id %}">Cerrar Recibo</a>
       </li>
     </ul>
  </nav>
@@ -68,6 +61,7 @@
       </tr>
     </tfoot>
   <table>
+{% ifequal recibo.cerrado False %}
   <form  class="styled" method="post" action="{% url "venta-add" recibo.id %}">
     {% csrf_token %} <h1>Agregar Producto {{ persona.nombre_completo }}</h1>
     <div id="messages"></div>{% include "snippets/form.html" with form=form %}
@@ -75,5 +69,6 @@
       <input type="submit" value="Guardar" />
     </p>
   </form>
+{% endifequal %}
 </div>
 {% endblock %}

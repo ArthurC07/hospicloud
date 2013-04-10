@@ -16,9 +16,9 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, url
-from invoice.views import (IndexView, ReciboPersonaCreateView, 
+from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
      ReciboDetailView, VentaCreateView, ReporteReciboView, ReporteProductoView,
-     ReciboRemiteView, ReciboRadView, EmergenciaPeriodoView,
+     ReciboRemiteView, ReciboRadView, EmergenciaPeriodoView, ReciboCerrarView,
      ReciboExamenCreateView, EmergenciaDiaView)
 
 urlpatterns = patterns('',
@@ -40,8 +40,12 @@ urlpatterns = patterns('',
         name='invoice-view-id'),
     
     url(r'^(?P<pk>\d+)/anular$',
-        ReciboDetailView.as_view(),
+        ReciboAnularView.as_view(),
         name='invoice-nullify'),
+
+    url(r'^(?P<pk>\d+)/cerrar$',
+        ReciboCerrarView.as_view(),
+        name='invoice-close'),
     
     url(r'^(?P<recibo>\d+)/venta/add$',
         VentaCreateView.as_view(),
