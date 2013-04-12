@@ -68,5 +68,5 @@ def extraer_imagen(filename):
                            numpy_array.astype(numpy.uint8),
                            'raw', 'L', 0, 1)
     ## cutoff removes background noise and spikes
-    #pilImage = ImageOpsImageOps.autocontrast(pilImage, cutoff=.1)
+    pilImage = ImageOps.invert(ImageOps.autocontrast(pilImage, cutoff=.1))
     return pilImage
