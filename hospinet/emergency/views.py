@@ -54,6 +54,7 @@ class EmergenciaPreCreateView(TemplateView, LoginRequiredView):
         
         context = super(EmergenciaPreCreateView, self).get_context_data()
         context['persona_form'] = PersonaForm()
+        context['persona_form'].helper.form_action = 'emergency-persona-create'
         return context
 
 class PersonaEmergenciaCreateView(PersonaCreateView, LoginRequiredView):
