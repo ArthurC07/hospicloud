@@ -29,7 +29,7 @@
       <li><a href="#emergencia" data-toggle="tab">Datos Emergencia</a></li>
     </ul>
     <div class="tab-content">
-        <article id="paciente" class="tab-pane active">
+        <article id="paciente" class="tab-pane">
         {% include "snippets/persona_fotografia.html" with persona=emergencia.persona %}
         {% include "snippets/persona.html" with persona=emergencia.persona %}
         <a href="{% url "persona-editar" emergencia.persona.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
@@ -46,7 +46,7 @@
         <a href="{% url "emergencia-antecedente-obstetrico-editar" emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
         {% endifequal %}
       </article>
-      <article id="emergencia"  class="tab-pane">
+      <article id="emergencia"  class="tab-pane active">
         {% include "emergency/snippets/emergencia.html" with emergencia=emergencia %}
       </article>
   </div>
