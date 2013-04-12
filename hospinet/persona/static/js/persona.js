@@ -17,17 +17,26 @@ Persona.prototype.search_person = function (query, target)
         resultado.html("No se encontraron resultados");
         target.append(resultado);
     }
-    $.each(data.objects, function(i, persona)
-    {
-      var article = $('<article />');
-      var link = $('<a />');
-      link.attr('href', destination + 'persona/' + persona.id);
-      link.addClass('button');
-      link.html('Mostrar Paciente');
-      article.append('<h1>' + persona.nombre + ' ' + persona.apellido + '</h1>');
-      article.append(link);
-      article.addClass('persona-resultado');
-      target.append(article);
-    })
+    var resultado = $('<table />');
+    resultado.addClass('table-striped');
+    resultado.addClass('table');
+    $.each(data.objects, function (i, persona) {
+        var fila = $('<tr />');
+
+        var columna1 = $('<td />');
+        columna1.html(persona.nombre + ' ' + persona.apellido);
+        fila.append(columna1);
+
+        var link = $('<a />');
+        link.attr('href', destination + 'persona/' + persona.id);
+        link.addClass('btn');
+        link.addClass('btn-success');
+        link.html('Agregar');
+        var columna2 = $('<td />');
+        columna2.append(link);
+        fila.append(columna2);
+        resultado.append(fila);
+    });
+    target.append(resultado);
   });
 }

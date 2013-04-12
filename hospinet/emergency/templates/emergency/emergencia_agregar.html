@@ -3,19 +3,16 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <form id="persona-form">
-  <div>
-    <h1>Buscar un Paciente</h1>
+
+  <fieldset>
+    <legend>Buscar un Paciente</legend>
     <label>Nombre o Identidad:</label>
     <input id="persona-search" />
-    <input type="submit" value="Buscar" />
-  </div>
+    <button type="submit" class="btn" >Buscar</button>
+  </fieldset>
 </form>
 <div id="resultados"></div>
-<form enctype="multipart/form-data" action="{% url "emergency-persona-create" %}" class="styled" method="post">
-  {% csrf_token %} <h1>Ingresar un nuevo Paciente</h1>
-  <div id="messages"></div>
-  {% crispy persona_form %}
-</form>
+{% crispy persona_form %}
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="{% static "js/persona.js" %}"></script>
