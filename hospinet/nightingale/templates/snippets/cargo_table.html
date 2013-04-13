@@ -2,9 +2,10 @@
       <thead>
         <tr>
           <th>Fecha y Hora</th>
-          <th>Inicio</th>
+          <th>C&oacute;digo</th>
           <th>Cargo</th>
           <th>Cantidad</th>
+          <th>Inicio</th>
           <th>Fin</th>
         </tr>
       </thead>
@@ -17,9 +18,10 @@
         {% for cargo in admision.cargos.all %}
         <tr>
           <td>{{ cargo.created|date:"d/m/Y P" }}</td>
-          <td>{{ cargo.inicio|date:"d/m/Y P" }}</td>
+          <td>{{ cargo.cargo.id }}</td>
           <td>{{ cargo.cargo }}</td>
           <td>{{ cargo.cantidad }}</td>
+          <td>{{ cargo.inicio|date:"d/m/Y P" }}</td>
           <td>{{ cargo.fin|date:"d/m/Y P" }}</td>
         </tr>
         {% endfor %}
