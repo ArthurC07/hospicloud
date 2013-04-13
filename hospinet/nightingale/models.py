@@ -375,7 +375,7 @@ class Devolucion(TimeStampedModel, Turno):
 
     admision = models.ForeignKey(Admision, related_name='devoluciones')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
-                                   related_name='cargos')
+                                   related_name='devoluciones')
     descripcion = models.TextField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='devoluciones')
