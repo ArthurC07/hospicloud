@@ -27,23 +27,23 @@ from django_extensions.db.models import TimeStampedModel
 class Turno(object):
 
     def get_turno(self):
+        pass
+        #hora = timezone.localtime(self.fecha_y_hora.time())
+        #a_inicio = time(13, tzinfo=hora.tzinfo)
+        #b_inicio = time(21, tzinfo=hora.tzinfo)
+        #c_inicio = time(3, tzinfo=hora.tzinfo)
 
-        hora = timezone.localtime(self.fecha_y_hora.time())
-        a_inicio = time(13, tzinfo=hora.tzinfo)
-        b_inicio = time(21, tzinfo=hora.tzinfo)
-        c_inicio = time(3, tzinfo=hora.tzinfo)
+        #if hora > a_inicio and hora < b_inicio:
 
-        if hora > a_inicio and hora < b_inicio:
+        #    return u"turno-a"
 
-            return u"turno-a"
+        #if hora > b_inicio or hora < c_inicio:
 
-        if hora > b_inicio or hora < c_inicio:
+        #    return u"turno-b"
 
-            return u"turno-b"
+        #if hora > c_inicio and hora < a_inicio:
 
-        if hora > c_inicio and hora < a_inicio:
-
-            return u"turno-c"
+        #    return u"turno-c"
 
 class SignoVital(models.Model, Turno):
     
