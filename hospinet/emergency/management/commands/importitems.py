@@ -32,4 +32,7 @@ class Command(BaseCommand):
                 item = ItemTemplate()
                 item.id = line[0]
                 item.descripcion = line[1]
-                item.save()
+                try:
+                    item.save()
+                except:
+                    pass

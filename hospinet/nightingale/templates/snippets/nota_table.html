@@ -16,7 +16,7 @@
         {% for nota in admision.notas_enfermeria.all %}
         <tr class="{{ nota.get_turno }}">
           <td>{{ nota.fecha_y_hora }}</td>
-          <td>{{ nota.usuario.username }}</td>
+          <td>{{ nota.autor }}</td>
           <td>{{ nota.nota }}</td>
           {% if editable == 1%}
           <td>

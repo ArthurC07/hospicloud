@@ -263,7 +263,6 @@ class SignoVitalForm(BaseForm):
         super(SignoVitalForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Registrar Signos Vitales', *self.field_names)
 
-
 class MedicamentoForm(BaseForm):
 
     """Permite Agregar o modificar los datos de un :class:`Medicamento`"""

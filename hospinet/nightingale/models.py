@@ -203,6 +203,7 @@ class NotaEnfermeria(models.Model, Turno):
     nota = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='notas_enfermeria')
+    autor = models.CharField(max_length=200, blank=True)
     cerrada = models.BooleanField(default=False)
     
     def get_absolute_url(self):
