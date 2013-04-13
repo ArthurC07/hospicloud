@@ -129,7 +129,7 @@ class Cargo(TimeStampedModel, Turno):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('nightingale-view-id', args=[self.admision.id])
+        return reverse('enfermeria-cargo-agregar', args=[self.admision.id])
 
 class OrdenMedica(models.Model):
     
@@ -339,9 +339,7 @@ class Medicamento(models.Model):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('nightingale-view-id', args=[self.admision.id])
-        
-        return 'enfermeria-medicamentos', [self.admision.id]
+        return reverse('enfermeria-medicamentos', [self.admision.id])
 
 class Dosis(models.Model, Turno):
 
@@ -369,16 +367,21 @@ class Dosis(models.Model, Turno):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('nightingale-view-id', args=[self.admision.id])
-        
-        return 'enfermeria-medicamentos', [self.medicamento.admision.id]
+        return reverse('enfermeria-medicamentos', args=[self.medicamento.admision.id])
 
-class Devolucion(models.Model, Turno):
+class Devolucion(TimeStampedModel, Turno):
 
     """Representa todos aquellos materiales que han sido devueltos"""
 
     admision = models.ForeignKey(Admision, related_name='devoluciones')
+    cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
+                                   related_name='cargos')
     descripcion = models.TextField(max_length=200, blank=True, null=True)
-    fecha_y_hora = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='devoluciones')
+    
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('enfermeria-medicamentos', args=[self.medicamento.admision.id])

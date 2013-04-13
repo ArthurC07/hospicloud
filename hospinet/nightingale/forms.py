@@ -25,6 +25,7 @@ from django.contrib.auth.models import User
 from persona.forms import DateTimeWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from django.utils import timezone
 
 class AdmisionBaseForm(forms.ModelForm):
 
@@ -95,13 +96,9 @@ class CargoForm(AdmisionBaseForm):
         
         model = Cargo
     
-    inicio = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
+    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False, initial=timezone.now)
     
-    fin = forms.DateTimeField(widget=DateTimeWidget(),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
+    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False, initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
 

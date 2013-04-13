@@ -7,17 +7,19 @@
   <h1>Enfermer&iacute;a</h1>
 </hgroup>
 <div class="row-fluid">
-<section id="estadisticas" class="span4">
+<section id="estadisticas" class="span12">
   <article id="tiempo-espera">
     <h2>Tiempo en Espera de Ingreso</h2>
     <div id="grafico"></div>
     <h3>Promedio: {{ promedio }} minutos</h3>
   </article>
 </section>
-<section class="span4">
+</div>
+<div class="row-fluid">
+<section class="span6">
 {% include "snippets/enfermeria_list.html" with admisiones=hospitalizados %}
 </section>
-<section class="span4">
+<section class="span6">
 {% include "snippets/admitidos_list.html" with admisiones=admitidos %}
 </section>
 </div>

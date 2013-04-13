@@ -7,7 +7,7 @@
       <h1>Devoluciones de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     </hgroup>
     {% include "snippets/devolucion_table.html" %}
-    <a href="{% url enfermeria-devolucion-agregar admision.id %}" class="btn btn-primary">Agregar Devoluci&oacute;n</a>
+    <a href="{% url "enfermeria-devolucion-agregar" admision.id %}" class="btn btn-primary">Agregar Devoluci&oacute;n</a>
   </section>
 </div>
 {% endblock %}
