@@ -260,7 +260,7 @@ class SignoVitalForm(BaseForm):
     
     def __init__(self, *args, **kwargs):
 
-        super(IngestaForm, self).__init__(*args, **kwargs)
+        super(SignoVitalForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Registrar Signos Vitales', *self.field_names)
 
 
