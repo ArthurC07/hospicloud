@@ -25,6 +25,24 @@ from persona.forms import DateTimeWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 
+class AdmisionBaseForm(forms.ModelForm):
+
+    admision = forms.ModelChoiceField(label="",
+                                  queryset=Admision.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+
+        super(AdmisionBaseForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Guardar'))
+
 class BaseForm(forms.ModelForm):
 
     """Formulario base para los distintos ingresos de información de parte de
@@ -67,7 +85,7 @@ class IngresarForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Hospitalizar Paciente', *self.field_names)
 
-class CargoForm(BaseForm):
+class CargoForm(AdmisionBaseForm):
     
     """Muestra un formulario que permite agregar :class:`Cargo`s a una
     :class:`Persona` durante una :class:`Admision`"""

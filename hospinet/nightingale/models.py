@@ -22,6 +22,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from inventory.models import ItemTemplate
 from django.core.urlresolvers import reverse
+from django_extensions.db.models import TimeStampedModel
 
 class Turno(object):
 
@@ -111,14 +112,14 @@ class Evolucion(models.Model):
         
         return reverse('nightingale-view-id', args=[self.admision.id])
 
-class Cargo(models.Model, Turno):
+class Cargo(TimeStampedModel, Turno):
     
     """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
     
     admision = models.ForeignKey(Admision, related_name='cargos')
-    fecha_y_hora = models.DateTimeField(default=timezone.now)
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                                    related_name='cargos')
+    cantidad = models.DecimalField(max_digits=5, decimal_places=2)
     inicio = models.DateTimeField(default=timezone.now)
     fin = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
