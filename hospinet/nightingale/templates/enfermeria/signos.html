@@ -6,7 +6,7 @@
   <section id="signos-vitales" class="span9">
     <h2>Signos Vitales de {{ admision.paciente.nombre_completo }}</h2>
     <p>Frecuencia de Lectura: {{ admision.lectura.signos_vitales }} minutos</p>
-    <a href="{% url nightingale-signos-grafico admision.id %}" class="btn btn-primary">Mostrar Gr&aacute;fico</a>
+    <a href="{% url "nightingale-signos-grafico" admision.id %}" class="btn btn-primary">Mostrar Gr&aacute;fico</a>
     {% include "snippets/signo_table.html" %}
     <a href="{% url "enfermeria-signo-agregar" admision.id %}" class="btn btn-primary">Agregar Lectura</a>
   </section>

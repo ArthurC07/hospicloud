@@ -119,7 +119,7 @@ class Cargo(TimeStampedModel, Turno):
     admision = models.ForeignKey(Admision, related_name='cargos')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                                    related_name='cargos')
-    cantidad = models.DecimalField(max_digits=5, decimal_places=2)
+    cantidad = models.DecimalField(max_digits=5, decimal_places=2, default=1)
     inicio = models.DateTimeField(default=timezone.now)
     fin = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
@@ -263,7 +263,7 @@ class Insulina(models.Model, Turno):
         
         return reverse('nightingale-glucometria-id', args=[self.admision.id])
 
-class Sumario(models.Model):
+class Sumario(TimeStampedModel):
     
     """Registra los datos de una :class:`Persona` al momento de darle de alta
     de una :class:`Admision`"""

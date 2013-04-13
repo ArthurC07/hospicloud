@@ -40,6 +40,6 @@
     </tbody>
   </table>
   {% if editable == 1 %}
-  <a href="{% url enfermeria-dosis-agregar medicamento.id %}"  class="btn btn-primary">Agregar Dosis</a>
+  <a href="{% url "enfermeria-dosis-agregar" medicamento.id %}"  class="btn btn-primary">Agregar Dosis</a>
   {% endif %}
 </article>

@@ -4,15 +4,13 @@
           <th>Fecha y Hora</th>
           <th>Autor</th>
           <th>Descripci&oacute;n</th>
-          {% if editable == 1 %}
           <th>Acciones</th>
-          {% endif %}
         </tr>
       </thead>
       <tbody>
         {% if admision.notas_enfermeria.count == 0%}
         <tr>
-          <td colspan="5">No hay notas de enfermer&iacute;a registradas</td>
+          <td colspan="4">No hay notas de enfermer&iacute;a registradas</td>
         </tr>
         {% endif%}
         {% for nota in admision.notas_enfermeria.all %}
@@ -23,8 +21,8 @@
           {% if editable == 1%}
           <td>
             {% if not nota.cerrada and nota.usuario == user %}
-            <a href="{% url "enfermeria-nota-editar" nota.id %}">Editar</a>
-            <a href="{% url "enfermeria-nota-cerrar" nota.id %}">Cerrar</a>
+            <a class="btn btn-success" href="{% url "enfermeria-nota-editar" nota.id %}">Editar</a>
+            <a class="btn btn-danger" href="{% url "enfermeria-nota-cerrar" nota.id %}">Cerrar</a>
             {% endif %}
           </td>
           {% endif %}

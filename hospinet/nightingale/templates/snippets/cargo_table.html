@@ -4,20 +4,22 @@
           <th>Fecha y Hora</th>
           <th>Inicio</th>
           <th>Cargo</th>
+          <th>Cantidad</th>
           <th>Fin</th>
         </tr>
       </thead>
       <tbody>
         {% if admision.cargos.count == 0%}
         <tr>
-            <td colspan="4">No hay cargos registrados</td>
+            <td colspan="5">No hay cargos registrados</td>
         </tr>
         {% endif%}
         {% for cargo in admision.cargos.all %}
         <tr>
-          <td>{{ cargo.fecha_y_hora|date:"d/m/Y P" }}</td>
+          <td>{{ cargo.created|date:"d/m/Y P" }}</td>
           <td>{{ cargo.inicio|date:"d/m/Y P" }}</td>
           <td>{{ cargo.cargo }}</td>
+          <td>{{ cargo.cantidad }}</td>
           <td>{{ cargo.fin|date:"d/m/Y P" }}</td>
         </tr>
         {% endfor %}

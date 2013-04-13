@@ -23,6 +23,7 @@ from library import image_to_content
 from persona.models import Persona
 from sorl.thumbnail import ImageField
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 class Habitacion(models.Model):
     
@@ -215,6 +216,11 @@ class Admision(models.Model):
         
         return (ahora - self.momento).total_seconds() / 60
     
+    def dar_alta(self):
+
+        self.estado = 'C'
+        self.fecha_alta = timezone.now()
+
     def actualizar_tiempo(self):
 
         """Actualiza el tiempo transcurrido desde el ingreso hasta el momento

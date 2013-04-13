@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% load l10n %}
-{% block header %}
-{% include "snippets/signos_js.html" %}
-{% endblock %}
+{% load l10n %
 {% block content %}
 <div class="content clearfix">
 {% include "snippets/aside.html" with admision=admision %}
@@ -14,36 +11,20 @@
   <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
   <span>{{ admision.get_estado_display }}</span>
   {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
-  <div class="info">
-    {% include "snippets/lectura.html" with lectura=admision.frecuencia_lectura %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
-  </div>
-  <div class="info">
-    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url "persona-editar" admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
-  </div>
-  <div class="info">
-    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
-  </div>
-<section id="signos-vitales">
+  {% include "snippets/lectura.html" with lectura=admision.frecuencia_lectura %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
+  {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url "persona-editar" admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
+  {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
+  <section id="signos-vitales">
     <h2>Signos Vitales</h2>
-    <div id="signos_vitales" class="bloque-superior">
-      <article id="temperatura-article">
-        <section>
-            <div id="temperatura" class="grafica"></div>
-        </section>
-        <p>&nbsp;</p>
-        <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
-      </article>
-      <article id="presion-article">
-        <div id="presion" class="grafica"></div>
-        <p>&nbsp;</p>
-        <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }} / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
-      </article>
-      <article id="pulso-article">  
-        <div id="pulso" class="grafica"></div>
-        <p>&nbsp;</p>
-        <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
-      </article>
-    </div>
+        <div id="temperatura" class="grafica"></div>
+    <p>&nbsp;</p>
+    <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
+    <div id="presion" class="grafica"></div>
+    <p>&nbsp;</p>
+    <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }} / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
+    <div id="pulso" class="grafica"></div>
+    <p>&nbsp;</p>
+    <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
     {% include "snippets/signo_table.html" %}
   </section>
 <section id="ingestas-excretas">
@@ -107,4 +88,8 @@
     {% include "snippets/devolucion_table.html" %}
   </section>
 </div>
+</div>
+{% endblock %}
+{% block scripts %}
+{% include "snippets/signos_js.html" %}
 {% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<aside class="span3">
+<nav class="well sidebar-nav">
+  <ul class="nav nav-list">
+    <li><a href="{% url "invoice-index" %}">Regresar a caja</a></li>
+  </ul>
+</nav>
+</aside>
+<section class="span9 lista" id="altas">
+  <hgroup class="page-header"><h1>Admisiones Dadas de Alta el D&iacute;a de Hoy</h1></hgroup>
+  {% ifequal emergencias.count 0 %}
+    <p>No hay admisiones dadas de alta el d&iacute;a de hoy</p>
+  {% endifequal %}
+  {% for admision in admisiones %}
+    <article class="cobros">
+      <hgroup class="page-header">
+        <h2>{{ admision.paciente.nombre_completo }}</h2>
+        <small>Hora de Registro: {{ admision.fecha_y_hora|date:"d/m/Y P" }}</small>
+      </hgroup>
+      {% include "snippets/cargo_table.html" with admision=admision %}
+    </article>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{% block header %}
-{% include "snippets/signos_js.html" %}
-{% endblock %}
 {% block content %}
 {% include "snippets/aside.html" with admision=admision %}
 <div id="admision" class="span9">
@@ -29,4 +26,7 @@
       </article>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+{% include "snippets/signos_js.html" %}
 {% endblock %}

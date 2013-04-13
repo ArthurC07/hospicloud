@@ -25,10 +25,10 @@ from library.protected import LoginRequiredView
 from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
     GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
     NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm, MedicamentoForm,
-    DosisForm, DevolucionForm)
+    DosisForm, DevolucionForm, SumarioForm)
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
     Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital,
-    Medicamento, Dosis, Devolucion)
+    Medicamento, Dosis, Devolucion, Sumario)
 from spital.models import Admision
 from django.contrib import messages
 from django.utils import timezone
@@ -424,3 +424,26 @@ class DevolucionCreateView(BaseCreateView):
     model = Devolucion
     form_class = DevolucionForm
     template_name = 'enfermeria/devolucion_create.html'
+
+class SumarioCreateView(BaseCreateView):
+
+    model = Sumario
+    form_class = SumarioForm
+    template_name = 'enfermeria/sumario.html'
+
+    def form_valid(self, form):
+        
+        """Guarda el objeto generado espeficando la :class:`Admision` obtenida
+        de los argumentos y el :class:`User` que esta utilizando la aplicación
+        """
+
+        self.object = form.save(commit=False)
+        self.object.admision = self.admision
+        self.usuario = self.request.user
+        self.admision.dar_alta()
+        self.admision.save()
+        self.object.save()
+        
+        messages.info(self.request, u"Hospitalización Actualizada")
+        
+        return HttpResponseRedirect(self.get_success_url())

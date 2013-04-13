@@ -31,7 +31,8 @@ from library.protected import LoginRequiredView
 from django import forms
 from persona.models import Persona
 from imaging.models import Examen
-from datetime import datetime, time
+from spital.models import Admision
+from datetime import datetime, time, date
 from django.utils import timezone
 from collections import defaultdict
 from decimal import Decimal
@@ -423,3 +424,21 @@ class EmergenciaDiaView(EmergenciaListView, LoginRequiredView):
     han sido atendidas durante el día"""
 
     template_name = 'emergency/daily.html'
+
+class AdmisionAltaView(ListView, LoginRequiredView):
+    
+    """Muestra una lista de :class:`Admisiones` que ya han sido dadas de alta"""
+
+    context_object_name = 'admisiones'
+    template_name = 'enfermeria/altas.html'
+
+    def get_queryset(self):
+
+        """Obtiene las :class:`Admision`es dadas de alta el día de hoy"""
+        
+        inicio = timezone.make_aware(
+                                datetime.combine(date.today(), time.min),
+                                timezone.get_default_timezone())
+        fin = timezone.make_aware(datetime.combine(date.today(), time.max),
+                                        timezone.get_default_timezone())
+        return Admision.objects.filter(fecha_alta__range=(inicio, fin), estado='C')

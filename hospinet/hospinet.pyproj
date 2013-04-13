@@ -181,8 +181,6 @@
     <Content Include="emergency\templates\emergency\emergencia_create.html" />
     <Content Include="emergency\templates\emergency\emergencia_agregar.html" />
     <Content Include="emergency\templates\search\indexes\emergency\emergencia_text.txt" />
-    <Content Include="imaging\static\css\dicom.css" />
-    <Content Include="imaging\static\css\examen.css" />
     <Content Include="imaging\templates\examen\adjunto_create.html" />
     <Content Include="imaging\templates\examen\dicom_create.html" />
     <Content Include="imaging\templates\examen\dicom_detail.html" />
@@ -211,6 +209,7 @@
     <Content Include="invoice\templates\invoice\venta_form.html" />
     <Content Include="invoice\templates\invoice\recibo_detail.html" />
     <Content Include="invoice\templates\invoice\recibo_create.html" />
+    <Content Include="nightingale\templates\enfermeria\altas.html" />
     <Content Include="nightingale\templates\enfermeria\cargos.html" />
     <Content Include="nightingale\templates\enfermeria\cargo_create.html" />
     <Content Include="nightingale\templates\enfermeria\devoluciones.html" />
@@ -414,10 +413,7 @@
     <Folder Include="emergency\templates\search\indexes\" />
     <Folder Include="emergency\templates\search\indexes\emergency" />
     <Folder Include="imaging" />
-    <Folder Include="imaging\static\css" />
-    <Folder Include="imaging\static\js" />
     <Folder Include="imaging\templates" />
-    <Folder Include="imaging\static" />
     <Folder Include="imaging\templates\examen" />
     <Folder Include="imaging\templates\search" />
     <Folder Include="imaging\templates\search\indexes" />

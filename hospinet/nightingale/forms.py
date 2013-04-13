@@ -19,7 +19,8 @@ from django import forms
 from spital.models import Admision
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
-                                OrdenMedica, SignoVital, Medicamento, Devolucion)
+                                OrdenMedica, SignoVital, Medicamento,
+                                Devolucion, Sumario)
 from django.contrib.auth.models import User
 from persona.forms import DateTimeWidget
 from crispy_forms.helper import FormHelper
@@ -106,6 +107,20 @@ class CargoForm(AdmisionBaseForm):
 
         super(CargoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
+
+class SumarioForm(AdmisionBaseForm):
+    
+    """Muestra un formulario que permite agregar :class:`Cargo`s a una
+    :class:`Persona` durante una :class:`Admision`"""
+
+    class Meta:
+        
+        model = Sumario
+
+    def __init__(self, *args, **kwargs):
+
+        super(SumarioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Ingresar Sumario Médico', *self.field_names)
 
 class EvolucionForm(BaseForm):
     
