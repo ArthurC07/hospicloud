@@ -2,6 +2,7 @@
   <caption>Pacientes Hospitalizados</caption>
   <thead>
     <tr>
+      <th>Habitaci&oacute;n</th>
       <th>Identificaci&oacute;n</th>
       <th>Nombre</th>
       <th>Edad</th>
@@ -13,6 +14,7 @@
   <tbody>
     {% for admision in admisiones%}
     <tr>
+      <td>{{ admision.habitacion }}</td>
       <td>{{ admision.paciente.identificacion }}</td>
       <td>{{ admision.paciente.nombre_completo }}</td>
       <td>{{ admision.paciente.obtener_edad }}</td>
