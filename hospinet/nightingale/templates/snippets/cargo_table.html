@@ -7,6 +7,7 @@
           <th>Cantidad</th>
           <th>Inicio</th>
           <th>Fin</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -23,6 +24,7 @@
           <td>{{ cargo.cantidad }}</td>
           <td>{{ cargo.inicio|date:"d/m/Y P" }}</td>
           <td>{{ cargo.fin|date:"d/m/Y P" }}</td>
+          <td><a class="btn btn-danger" href="{% url "enfermeria-cargo-eliminar" cargo.id %}">Eliminar</a></td>
         </tr>
         {% endfor %}
       </tbody>

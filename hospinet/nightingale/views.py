@@ -20,7 +20,7 @@ from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
-                                  RedirectView)
+                                  RedirectView, DeleteView)
 from library.protected import LoginRequiredView
 from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
     GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
@@ -232,6 +232,20 @@ class CargoCreateView(BaseCreateView):
     model = Cargo
     form_class = CargoForm
     template_name = 'enfermeria/cargo_create.html'
+
+class CargoDeleteView(DeleteView, LoginRequiredView):
+
+    model = Cargo
+
+    def get_object(self, queryset = None):
+
+        obj = super(CargoDeleteView, self).get_object(queryset)
+        self.admision = obj.admision
+        return obj
+
+    def get_success_url(self):
+
+        return self.admision.get_absolute_url()
 
 class EvolucionCreateView(BaseCreateView):
     

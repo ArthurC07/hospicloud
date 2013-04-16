@@ -231,7 +231,6 @@ class NotaEnfermeriaForm(BaseForm):
         super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Nota Enfermeria', *self.field_names)
 
-
 class OrdenMedicaForm(BaseForm):
     
     """Muestra un formulario que permite agregar :class:`OrdenMedica`s a una
