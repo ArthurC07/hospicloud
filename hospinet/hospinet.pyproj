@@ -127,6 +127,8 @@
     <Compile Include="statistics\__init__.py" />
     <Compile Include="scripts\__init__.py" />
     <Compile Include="users\admin.py" />
+    <Compile Include="users\management\commands\__init__.py" />
+    <Compile Include="users\management\__init__.py" />
     <Compile Include="users\models.py" />
     <Compile Include="users\tests.py" />
     <Compile Include="users\urls.py" />
@@ -237,6 +239,7 @@
     <Content Include="nightingale\templates\enfermeria\signos_grafico.html" />
     <Content Include="nightingale\templates\enfermeria\signo_create.html" />
     <Content Include="nightingale\templates\enfermeria\sumario.html" />
+    <Content Include="nightingale\templates\nightingale\cargo_confirm_delete.html" />
     <Content Include="nightingale\templates\snippets\admitidos_list.html" />
     <Content Include="nightingale\templates\snippets\aside.html" />
     <Content Include="nightingale\templates\snippets\enfermeria_list.html" />
@@ -424,6 +427,7 @@
     <Folder Include="invoice\templates\" />
     <Folder Include="invoice\templates\invoice\" />
     <Folder Include="library" />
+    <Folder Include="nightingale\templates\nightingale\" />
     <Folder Include="scripts" />
     <Folder Include="nightingale" />
     <Folder Include="nightingale\migrations\" />
@@ -477,6 +481,8 @@
     <Folder Include="templates\search\" />
     <Folder Include="templates\snippets\" />
     <Folder Include="users" />
+    <Folder Include="users\management\" />
+    <Folder Include="users\management\commands\" />
     <Folder Include="users\templates\" />
     <Folder Include="users\templates\registration\" />
   </ItemGroup>

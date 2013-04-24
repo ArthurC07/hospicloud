@@ -31,7 +31,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
     Medicamento, Dosis, Devolucion, Sumario)
 from spital.models import Admision
 from django.contrib import messages
-from django.utils import timezone
+from django.utils import timezone   
 
 class NightingaleIndexView(ListView, LoginRequiredView):
     
