@@ -194,7 +194,7 @@
     <Content Include="imaging\templates\examen\examen_detail.html" />
     <Content Include="imaging\templates\examen\examen_paciente_detail.html" />
     <Content Include="imaging\templates\examen\imagen_create.html" />
-    <Content Include="imaging\templates\examen\estudio_programado_list.html" />
+    <Content Include="imaging\templates\examen\index.html" />
     <Content Include="imaging\templates\examen\examen_update.html" />
     <Content Include="imaging\templates\snippets\adjunto.html" />
     <Content Include="imaging\templates\snippets\dicom.html" />

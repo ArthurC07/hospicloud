@@ -35,9 +35,18 @@ class ExamenListView(ListView):
     """Muestra un listado de los ultimos 20 :class:`Examen`es que se han
     ingresado al sistema"""
 
-    template_name = 'examen/examen_list.html'
-    queryset = Examen.objects.all().order_by('-fecha')[:20]
+    template_name = 'examen/index.html'
     context_object_name = 'examenes'
+    model = Examen
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+
+        """Agrega los ultimos :class:`Examen`es efectuados a la vista"""
+        
+        context = super(ExamenListView, self).get_context_data(**kwargs)
+        context['estudios_programados'] = EstudioProgramado.objects.filter(efectuado=False)
+        return context
 
 class PersonaExamenCreateView(PersonaCreateView):
     

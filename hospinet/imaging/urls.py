@@ -17,17 +17,17 @@
 
 from django.conf.urls import patterns, url
 from imaging.views import (ExamenDetailView, ExamenCreateView,
-    ExamenUpdateView, ImagenCreateView, AdjuntoCreateView,
-    ExamenPersonaListView, ExamenListView, PersonaExamenCreateView,
-    ExamenPreCreateView, DicomDetailView, DicomCreateView,
-    EstudioProgramadoListView, EstudioProgramadoCreateView,
-    EstudioProgramadoEfectuarView, NotificarExamenView,
-    EstudioPreCreateView, PersonaEstudioCreateView, EstudioProgramadoDetailView)
+    ExamenUpdateView, ImagenCreateView, AdjuntoCreateView, ExamenListView,
+    ExamenPersonaListView, PersonaExamenCreateView, ExamenPreCreateView,
+    DicomDetailView, DicomCreateView, EstudioProgramadoListView,
+    EstudioProgramadoCreateView, EstudioProgramadoEfectuarView,
+    NotificarExamenView, EstudioPreCreateView, PersonaEstudioCreateView,
+    EstudioProgramadoDetailView)
 
 urlpatterns = patterns('',
     
     url(r'^$',
-        EstudioProgramadoListView.as_view(),
+        ExamenListView.as_view(),
         name='examen-index'),
     
     url(r'^(?P<pk>\d+)/notificar$',
