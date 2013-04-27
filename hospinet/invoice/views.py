@@ -221,14 +221,12 @@ class ReciboPeriodoView(TemplateView):
 
         if self.form.is_valid():
             
-            inicio = self.form.cleaned_data['inicio']
-            fin = self.form.cleaned_data['fin']
-            self.inicio = timezone.make_aware(
-                                    datetime.combine(inicio, time.min),
-                                    timezone.get_default_timezone())
-            self.fin = timezone.make_aware(datetime.combine(fin, time.max),
-                                            timezone.get_default_timezone())
-            self.recibos = Recibo.objects.filter(created__range=(inicio, fin))
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.recibos = Recibo.objects.filter(
+                created__gte=self.inicio,
+                created__lte=self.fin
+            )
 
         else:
             
@@ -397,12 +395,12 @@ class EmergenciaPeriodoView(TemplateView, LoginRequiredView):
         self.form = PeriodoForm(request.GET, prefix='emergencia')
         if self.form.is_valid():
 
-            inicio = self.form.cleaned_data['inicio']
-            fin = self.form.cleaned_data['fin']
-            self.inicio = datetime.combine(inicio, time.min)
-            self.fin = datetime.combine(fin, time.max)
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'],time.max)
             self.emergencias = Emergencia.objects.filter(
-                                                 created__range=(inicio, fin))
+                created__gte=self.inicio,
+                created__lte=self.fin
+            )
 
         else:
             
@@ -442,6 +440,4 @@ class AdmisionAltaView(ListView, LoginRequiredView):
         inicio = timezone.make_aware(
                                 datetime.combine(date.today(), time.min),
                                 timezone.get_default_timezone())
-        fin = timezone.make_aware(datetime.combine(date.today(), time.max),
-                                        timezone.get_default_timezone())
-        return Admision.objects.filter(fecha_alta__range=(inicio, fin), estado='C')
+        return Admision.objects.filter(fecha_alta__gte=(inicio), estado='C')
