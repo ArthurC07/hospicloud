@@ -75,7 +75,6 @@
     <Compile Include="invoice\urls.py" />
     <Compile Include="invoice\views.py" />
     <Compile Include="invoice\__init__.py" />
-    <Compile Include="library\dicom.py" />
     <Compile Include="library\protected.py" />
     <Compile Include="library\__init__.py" />
     <Compile Include="manage.py" />

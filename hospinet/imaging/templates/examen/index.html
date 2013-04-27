@@ -1,15 +1,19 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block content %}
-<aside class="span3">
-{% include 'snippets/examen_aside.html' %}
-</aside>
-<div id="personas" class="span9">
-  <hgroup>
-    <h1>Estudios Programados</h1>
-  </hgroup>
-  <table class="table table-striped">
-      <thead class="gradient">
+<div class="row-fluid">
+  <div class="hero-unit spa12">
+    <hgroup>
+      <h1>Centro de Im&aacute;genes</h1>
+      <small></small>
+    </hgroup>
+  </div>
+</div>
+<div class="row-fluid">
+  <div id="personas" class="span12">
+    <table class="table table-striped">
+      <caption>Estudios Programados</caption>
+      <thead>
         <tr>
           <th>Fecha</th>
           <th>Paciente</th>
@@ -30,9 +34,12 @@
         {% endfor %}
       </tbody>
     </table>
-    <hgroup>
-    <h1>&Uacute;ltimos Examenes Efectuados</h1>
-    </hgroup>
+    <a class="btn btn-primary" href="{% url "examen-nuevo" %}">Programar un Estudio Nuevo</a>
+  </div>
+</div>
+<div class="row-fluid">
+  <div class="span12">
     {% include "snippets/examen_list.html" with examenes=examenes %}
+  </div>
 </div>
 {% endblock %}

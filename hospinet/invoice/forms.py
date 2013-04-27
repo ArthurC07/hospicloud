@@ -19,6 +19,8 @@ from invoice.models import Recibo, Producto, Venta
 from django.contrib.auth.models import User
 from django import forms
 from persona.models import Persona
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Fieldset
 
 class ReciboForm(forms.ModelForm):
 
@@ -59,3 +61,13 @@ class PeriodoForm(forms.Form):
     fin = forms.DateTimeField(widget=forms.DateInput(
                     attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
                  input_formats=('%d/%m/%Y',))
+
+    def __init__(self, *args, **kwargs):
+
+        super(PeriodoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.form_method = 'get'
+        self.helper.layout = Fieldset(u'Por Periodo', *self.field_names)
