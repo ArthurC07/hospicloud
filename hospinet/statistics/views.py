@@ -5,6 +5,10 @@ import calendar
 from django.shortcuts import redirect
 from datetime import date
 from nightingale.models import Admision
+from invoice.forms import PeriodoForm
+from decimal import Decimal
+from datetime import datetime, time
+from collections import defaultdict
 
 class Estadisticas(TemplateView):
     
@@ -14,6 +18,8 @@ class Estadisticas(TemplateView):
         
         context = super(Estadisticas, self).get_context_data(**kwargs)
         context['formulario_anual'] = ReporteAnualForm()
+        context['admision_periodo'] = PeriodoForm(prefix='admisiones')
+        context['admision_periodo'].helper.form_action = 'estadisticas-hospitalizacion'
         return context
 
 class Atencion(object):
@@ -158,5 +164,94 @@ class IngresosHospitalarios(TemplateView, Atencion):
                                 momento__year=anio)
         
         context['puntos'] = self.calcular_meses(context, admisiones)
+        
+        return context
+
+class AdmisionPeriodo(TemplateView):
+    
+    template_name = 'estadisticas/admision.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+
+        """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
+        el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='admisiones')
+        if self.form.is_valid():
+
+            inicio = self.form.cleaned_data['inicio']
+            fin = self.form.cleaned_data['fin']
+            self.inicio = datetime.combine(inicio, time.min)
+            self.fin = datetime.combine(fin, time.max)
+            self.admisiones = Admision.objects.filter(
+                                                 admision__range=(inicio, fin))
+
+        else:
+            
+            return redirect('estadisticas')
+
+        return super(AdmisionPeriodo, self).dispatch(request, *args,
+                                                           **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        context = super(AdmisionPeriodo, self).get_context_data(**kwargs)
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['admisiones'] = self.admisiones
+        context['tiempo_promedio'] = sum(a.tiempo_hospitalizado() for a in self.admisiones.all()) / self.admisiones.count()
+        # Calcular todos los cargos efectuados en estas hospitalizaciones
+        cargos = defaultdict(Decimal)
+        habitaciones = defaultdict(int)
+        for admision in self.admisiones:
+
+            for cargo in admision.cargos.all():
+
+                cargos[cargo.cargo] += cargo.cantidad
+
+            habitaciones[admision.habitacion] += admision.tiempo_hospitalizado()
+        
+        context['cargos'] = cargos.items()
+        context['habitaciones'] = habitaciones.items()
+        return context
+
+class EmergenciaPeriodo(TemplateView):
+    
+    template_name = 'estadisticas/admision.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+
+        """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
+        el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='emergencias')
+        if self.form.is_valid():
+
+            inicio = self.form.cleaned_data['inicio']
+            fin = self.form.cleaned_data['fin']
+            self.inicio = datetime.combine(inicio, time.min)
+            self.fin = datetime.combine(fin, time.max)
+            self.emergencias = Emergencia.objects.filter(
+                                                 created__range=(inicio, fin))
+
+        else:
+            
+            return redirect('estadisticas')
+
+        return super(AdmisionPeriodo, self).dispatch(request, *args,
+                                                           **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        context = super(AdmisionPeriodo, self).get_context_data(**kwargs)
+
+        context['emergencia'] = self.emergencia
+        # Calcular todos los cargos efectuados en estas emergencias
+        context['cargos'] = defaultdict(lambda d: Decimal('0'))
+        for emergencia in self.emergencias:
+
+            for cobros in emergencia.cobros.all():
+
+                context['cargos'][cobro] += cobro.cantidad
         
         return context

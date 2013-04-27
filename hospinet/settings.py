@@ -182,6 +182,7 @@ INSTALLED_APPS = (
     'invoice',
     'emergency',
     'inventory',
+    'statistics',
     # Third party apps go here
     'django_extensions',
     'treemenus',
@@ -190,11 +191,11 @@ INSTALLED_APPS = (
     'haystack',
     'tastypie',
     'south',
-    'private_files',
     'userena',
     'guardian',
     'easy_thumbnails',
     'crispy_forms',
+    'bootstrap-pagination',
 )
 
 # A sample logging configuration. The only tangible logging

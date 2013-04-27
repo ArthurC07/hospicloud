@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, url
 from statistics.views import (AtencionAdulto, Estadisticas, AtencionInfantil,
-    Productividad, IngresosHospitalarios)
+    Productividad, IngresosHospitalarios, AdmisionPeriodo)
 
 urlpatterns = patterns('',
     
@@ -24,4 +24,12 @@ urlpatterns = patterns('',
     url(r'^estadisticas/ingresos$',
         IngresosHospitalarios.as_view(),
         name='estadisticas-ingresos-hospitalarios'),
+    
+    url(r'^hospitalizado$',
+        AdmisionPeriodo.as_view(),
+        name='estadisticas-hospitalizacion'),
+
+    url(r'^emergencia$',
+        IngresosHospitalarios.as_view(),
+        name='estadisticas-emergencias'),
 )

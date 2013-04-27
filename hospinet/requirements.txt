@@ -5,10 +5,8 @@ sorl.thumbnail
 python-whoosh
 haystack>=2.0.0-beta
 django-tastypie
-django-private-files
 django-extensions
 south
-python-gdcm
 django-audit-log
 django-templated-email
 django-userena

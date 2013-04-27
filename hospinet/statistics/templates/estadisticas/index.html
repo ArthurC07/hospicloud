@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block header %}
 {% endblock %}
+{% load crispy_forms_tags %}
 {% block content %}
 <aside class="toolbox span3">
   <nav>
     <ul>
       <li>
-        <a href="{% url admision-index %}">Admisiones</a>
+        <a href="{% url 'admision-index' %}">Admisiones</a>
       </li>
       <li>
-        <a href="{% url admision-iniciar %}">Admitir Paciente</a>
+        <a href="{% url 'admision-iniciar' %}">Admitir Paciente</a>
       </li>
     </ul>
   </nav>
@@ -18,14 +19,15 @@
   <hgroup class="top title">
     <h1>Estad&iacute;sticas de Admisiones</h1>
   </hgroup>
-  <form class="styled" method="get" action="{% url estadisticas-admision-adulto %}">
+  {% crispy admision_periodo %}
+  <form class="styled" method="get" action="{% url 'estadisticas-admision-adulto' %}">
     <h1>Atenci&oacute;n M&eacute;dica Adulta</h1>
     {% include "snippets/form.html" with form=formulario_anual %}
     <p>
       <input type="submit" value="Guardar" />
     </p>
   </form>
-  <form class="styled" method="get" action="{% url estadisticas-admision-infantil %}">
+  <form class="styled" method="get" action="{% url 'estadisticas-admision-infantil' %}">
     <h1>Atenci&oacute;n M&eacute;dica Infantil</h1>
     {% include "snippets/form.html" with form=formulario_anual %}
     <p>
