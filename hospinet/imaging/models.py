@@ -17,15 +17,16 @@
 
 from datetime import datetime, date
 from django.db import models
+from django.core.files.base import ContentFile
 from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
-from library import image_to_content, dicom
 from persona.models import Persona
 from private_files.models.fields import PrivateFileField
 from sorl.thumbnail import ImageField
 from south.modelsinspector import add_introspection_rules
 import os
+import subprocess
 
 class TipoExamen(models.Model):
 
@@ -146,12 +147,11 @@ class Dicom(models.Model):
 
     examen = models.ForeignKey(Examen, on_delete=models.CASCADE,
                                related_name='dicoms')
-    archivo = PrivateFileField(upload_to='examen/dicom/%Y/%m/%d',
-                               attachment=False)
+    archivo = models.FileField(upload_to='examen/dicom/%Y/%m/%d')
     descripcion = models.CharField(max_length=255, blank=True)
     convertido = models.BooleanField(default=False)
-    imagen = PrivateFileField(upload_to='examen/dicom/imagen/%Y/%m/%d',
-                              blank=True, attachment=False)
+    imagen = ImageField(upload_to='examen/dicom/imagen/%Y/%m/%d',
+                              blank=True)
     uuid = UUIDField(version=4)
     
     def extraer_imagen(self):
@@ -159,16 +159,13 @@ class Dicom(models.Model):
         """Permite extraer una :class:`Imagen` que se encuentra incrustada en
         los datos del archivo :class:`Dicom` adjunto.
         """
-        try:
-            absolute = os.path.abspath(self.archivo.file.name)
-            datos = dicom.extraer_imagen(str(absolute))
-        except IOError as error:
-            print(error.message)
-        
-        imagen_dicom = image_to_content(datos)
+       
+        absolute = os.path.abspath(self.archivo.file.name)
         archivo = os.path.splitext(os.path.basename(self.archivo.name))[0]
         self.convertido = True
-        self.imagen.save("{0}.jpg".format(archivo), imagen_dicom)
+        subprocess.call(['dcmj2pnm', '--write-jpeg', absolute, absolute + '.jpg'])
+        
+        self.imagen = self.archivo.name  + '.jpg'
         self.save()
     
     @permalink

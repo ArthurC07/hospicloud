@@ -174,7 +174,7 @@ class Admision(models.Model):
     def tiempo_autorizacion(self):
         
         """Calcula el tiempo que se tarda una :class:`Persona` para ser
-        admitida en el :class:`Hospital`"""
+        autorizar en el :class:`Hospital`"""
         
         if self.autorizacion <= self.momento:
             
@@ -203,6 +203,19 @@ class Admision(models.Model):
             return (timezone.now() - self.hospitalizacion).total_seconds() / 60
         
         return (self.ingreso - self.hospitalizacion).total_seconds() / 60
+    
+    def tiempo_hospitalizado(self):
+        
+        """Calcula el tiempo que se tarda una :class:`Persona` para ser
+        ingresada en el :class:`Hospital`"""
+        if self.hospitalizacion == None:
+            return (timezone.now() - self.momento).total_seconds() / 60
+
+        if self.ingreso == None or self.ingreso <= self.hospitalizacion:
+            
+            return (timezone.now() - self.hospitalizacion).total_seconds() / 60
+        
+        return (self.hospitalizacion - self.fecha_alta).days
     
     def tiempo_ahora(self):
         
