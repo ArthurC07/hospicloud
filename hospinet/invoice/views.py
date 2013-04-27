@@ -220,11 +220,14 @@ class ReciboPeriodoView(TemplateView):
         datos ingresados en el formulario"""
 
         if self.form.is_valid():
-
+            
             inicio = self.form.cleaned_data['inicio']
             fin = self.form.cleaned_data['fin']
-            self.inicio = datetime.combine(inicio, time.min)
-            self.fin = datetime.combine(fin, time.max)
+            self.inicio = timezone.make_aware(
+                                    datetime.combine(inicio, time.min),
+                                    timezone.get_default_timezone())
+            self.fin = timezone.make_aware(datetime.combine(fin, time.max),
+                                            timezone.get_default_timezone())
             self.recibos = Recibo.objects.filter(created__range=(inicio, fin))
 
         else:
