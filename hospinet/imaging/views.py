@@ -37,8 +37,11 @@ class ExamenListView(ListView):
 
     template_name = 'examen/index.html'
     context_object_name = 'examenes'
-    model = Examen
     paginate_by = 20
+
+    def get_queryset(self):
+        
+        return Examen.objects.all().order_by('-fecha')
 
     def get_context_data(self, **kwargs):
 
