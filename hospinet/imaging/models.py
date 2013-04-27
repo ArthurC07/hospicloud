@@ -92,7 +92,6 @@ class Examen(models.Model):
                                 related_name="examenes")
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
                                 related_name="examenes")
-    nombre = models.CharField(max_length=200, blank=True)
     fecha = models.DateTimeField(default=datetime.now)
     uuid = UUIDField(version=4)
     usuario = models.ForeignKey(User, blank=True, null=True,
