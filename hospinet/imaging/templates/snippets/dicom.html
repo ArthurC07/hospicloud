@@ -10,6 +10,6 @@
   <h3>{{ dicom.descripcion }}</h3>
   {% if dicom.imagen %}
   <a href="{{ dicom.imagen.url }}" class="btn btn-primary">Visor DICOM</a>
-  {% end %}
+  {% endif %}
   <a href="{{ dicom.archivo.url }}" class="btn btn-primary">Descargar Archivo DICOM</a>
 </article>
