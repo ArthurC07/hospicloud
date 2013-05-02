@@ -17,9 +17,10 @@
 </aside>
 <div id="estadisticas" class="span9">
   <hgroup class="top title">
-    <h1>Estad&iacute;sticas de Admisiones</h1>
+    <h1>Estad&iacute;stica Descriptiva</h1>
   </hgroup>
   {% crispy admision_periodo %}
+  {% crispy emergencia_periodo %}
   <form class="styled" method="get" action="{% url 'estadisticas-admision-adulto' %}">
     <h1>Atenci&oacute;n M&eacute;dica Adulta</h1>
     {% include "snippets/form.html" with form=formulario_anual %}

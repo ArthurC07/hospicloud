@@ -1,5 +1,6 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
+<div class="row-fluid">
 <form class="styled" method="post">
   {% csrf_token %} <h1>Agregar Tratamiento</h1>
   <div id="messages"></div>
@@ -8,4 +9,5 @@
     <input type="submit" value="Guardar" />
   </p>
 </form>
+</div>
 {% endblock %}

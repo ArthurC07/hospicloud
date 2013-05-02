@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load crispy_forms_tags %}
+<div class="row-fluid">
 <form class="styled" method="post">
   <fieldset>
   {% csrf_token %} <h1>Describir la Emergencia de {{ persona.nombre_completo }}</h1>
@@ -13,4 +14,5 @@
   </p>
   </fieldset>
 </form>
+</div>
 {% endblock %}

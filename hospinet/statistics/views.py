@@ -9,6 +9,9 @@ from invoice.forms import PeriodoForm
 from decimal import Decimal
 from datetime import datetime, time
 from collections import defaultdict
+from emergency.models import Emergencia
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Fieldset
 
 class Estadisticas(TemplateView):
     
@@ -20,6 +23,12 @@ class Estadisticas(TemplateView):
         context['formulario_anual'] = ReporteAnualForm()
         context['admision_periodo'] = PeriodoForm(prefix='admisiones')
         context['admision_periodo'].helper.form_action = 'estadisticas-hospitalizacion'
+        context['admision_periodo'].helper.layout = Fieldset(u'Admisiones por Periodo',
+                                                               *context['admision_periodo'].field_names)
+        context['emergencia_periodo'] = PeriodoForm(prefix='emergencia')
+        context['emergencia_periodo'].helper.form_action = 'estadisticas-emergencias'
+        context['emergencia_periodo'].helper.layout = Fieldset(u'Emergencias por Periodo',
+                                                               *context['emergencia_periodo'].field_names)
         return context
 
 class Atencion(object):
@@ -217,41 +226,43 @@ class AdmisionPeriodo(TemplateView):
 
 class EmergenciaPeriodo(TemplateView):
     
-    template_name = 'estadisticas/admision.html'
+    template_name = 'estadisticas/emergencia.html'
     
     def dispatch(self, request, *args, **kwargs):
 
         """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
         el formulario"""
 
-        self.form = PeriodoForm(request.GET, prefix='emergencias')
+        self.form = PeriodoForm(request.GET, prefix='emergencia')
         if self.form.is_valid():
 
-            inicio = self.form.cleaned_data['inicio']
-            fin = self.form.cleaned_data['fin']
-            self.inicio = datetime.combine(inicio, time.min)
-            self.fin = datetime.combine(fin, time.max)
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'],time.max)
             self.emergencias = Emergencia.objects.filter(
-                                                 created__range=(inicio, fin))
+                created__gte=self.inicio,
+                created__lte=self.fin
+            )
 
         else:
             
             return redirect('estadisticas')
 
-        return super(AdmisionPeriodo, self).dispatch(request, *args,
+        return super(EmergenciaPeriodo, self).dispatch(request, *args,
                                                            **kwargs)
 
     def get_context_data(self, **kwargs):
 
-        context = super(AdmisionPeriodo, self).get_context_data(**kwargs)
-
-        context['emergencia'] = self.emergencia
+        context = super(EmergenciaPeriodo, self).get_context_data(**kwargs)
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['emergencias'] = self.emergencias
         # Calcular todos los cargos efectuados en estas emergencias
-        context['cargos'] = defaultdict(lambda d: Decimal('0'))
+        cargos = defaultdict(Decimal)
         for emergencia in self.emergencias:
 
-            for cobros in emergencia.cobros.all():
+            for cobro in emergencia.cobros.all():
 
-                context['cargos'][cobro] += cobro.cantidad
-        
+                cargos[cobro.cargo] += cobro.cantidad
+
+        context['cargos'] = cargos.items()
         return context
