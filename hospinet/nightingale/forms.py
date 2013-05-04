@@ -26,6 +26,7 @@ from persona.forms import DateTimeWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
+from inventory.models import ItemTemplate
 
 class AdmisionBaseForm(forms.ModelForm):
 
@@ -96,8 +97,8 @@ class CargoForm(AdmisionBaseForm):
         
         model = Cargo
     
+    cargo  = forms.ModelChoiceField(ItemTemplate.objects.order_by('descripcion').all())
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False, initial=timezone.now)
-    
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False, initial=timezone.now)
 
     def __init__(self, *args, **kwargs):

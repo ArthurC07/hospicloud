@@ -371,6 +371,7 @@
     <Content Include="spital\templates\admision\ingresar.html" />
     <Content Include="spital\templates\admision\persona_create.html" />
     <Content Include="spital\templates\snippets\admision_list.html" />
+    <Content Include="statistics\templates\estadisticas\emergencia.html" />
     <Content Include="statistics\templates\estadisticas\admision.html" />
     <Content Include="statistics\templates\estadisticas\atencion_adulto.html" />
     <Content Include="statistics\templates\estadisticas\atencion_infantil.html" />
