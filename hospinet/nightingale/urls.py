@@ -20,7 +20,7 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     IngresarView, CargoCreateView, EvolucionCreateView, GlicemiaCreateView,
     InsulinaCreateView, GlucosuriaCreateView, IngestaCreateView, OrdenCreateView,
     NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView, 
-    MedicamentoCreateView, DosisSuministrarView, NotaUpdateView,
+    MedicamentoCreateView, DosisSuministrarView, NotaUpdateView, AdmisionListView,
     ResumenDetailView, DosisCreateView, MedicamentoSuspenderView,
     DevolucionCreateView, NotaCerrarView, SumarioCreateView, CargoDeleteView)
 
@@ -30,13 +30,17 @@ urlpatterns = patterns('',
         NightingaleIndexView.as_view(),
         name='nightingale-index'),
     
-    url(r'^(?P<pk>\d+)/ingresar',
+    url(r'^(?P<pk>\d+)/ingresar$',
         IngresarView.as_view(),
         name='enfermeria-ingresar'),
     
     url(r'^(?P<pk>\d+)$',
         NightingaleDetailView.as_view(),
         name='nightingale-view-id'),
+    
+    url(r'^admisiones$',
+        CargoDeleteView.as_view(),
+        name='enfermeria-admisiones'),
     
     url(r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})/resumen$',
         ResumenDetailView.as_view(),

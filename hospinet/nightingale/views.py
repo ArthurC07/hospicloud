@@ -60,6 +60,13 @@ class NightingaleIndexView(ListView, LoginRequiredView):
         
         return context
 
+class AdmisionListView(ListView):
+    
+    queryset = Admision.objects.all().order_by('-momento')
+    context_object_name = 'admisiones'
+    template_name = 'enfermeria/admisiones.html'
+    paginate_by = 20
+
 class IngresarView(UpdateView, LoginRequiredView):
     
     """Permite actualizar los datos de ingreso en la central de enfermeria"""

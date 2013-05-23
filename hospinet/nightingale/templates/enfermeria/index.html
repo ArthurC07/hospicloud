@@ -3,11 +3,24 @@
 {% block header %}
 {% endblock %}
 {% block content %}
-<hgroup class="top title">
+<div class="row-fluid">
+<hgroup class="page-header">
   <h1>Enfermer&iacute;a</h1>
 </hgroup>
 <div class="row-fluid">
-<section id="estadisticas" class="span12">
+<aside class="span3">
+<nav class="sidebar-nav">
+  <ul class="nav nav-tabs nav-stacked">
+      <li>
+        <a href="{% url "nightingale-view-id" admision.id %}">Paciente</a>
+      </li>
+    </ul>
+  </nav>
+<nav class="well sidebar-nav">
+  {% include "snippets/persona_menu.html" with persona=admision.paciente %}
+</nav>
+</aside>
+<section id="estadisticas" class="span9">
   <article id="tiempo-espera">
     <h2>Tiempo en Espera de Ingreso</h2>
     <div id="grafico"></div>

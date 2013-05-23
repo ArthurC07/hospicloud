@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row-fluid">
-{% include "snippets/aside.html" %}
-<div id="informacion" class="span9">
+<section id="ingestas-excretas" class="span12">
   <hgroup class="page-header">
     <h1>{{ admision.paciente.nombre_completo }} <small>{{ admision.habitacion }}</small></h1>
   </hgroup>
+</section>
+</div>
+<div class="row-fluid">
+{% include "snippets/aside.html" %}
+<div id="informacion" class="span9">
   <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
   <span>{{ admision.get_estado_display }}</span>
   {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
