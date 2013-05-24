@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="row-fluid">
+<aside class="span3">
+<nav class="well sidebar-nav">
+  <ul class="nav nav-list">
+  </ul>
+</nav>
+</aside>
+<section class="span6">
+  <hgroup class="page-header">
+    <h1>Remitir a Hospitalizaci&oacute;n</h1>
+  </hgroup>
+  {% crispy form %}
+</section>
+</div>
+{% endblock %}

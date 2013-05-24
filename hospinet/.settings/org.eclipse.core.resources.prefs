@@ -1,2 +1,10 @@
 eclipse.preferences.version=1
+encoding//emergency/forms.py=utf-8
+encoding//emergency/models.py=utf-8
 encoding//emergency/urls.py=utf-8
+encoding//nightingale/models.py=utf-8
+encoding//nightingale/views.py=utf-8
+encoding//spital/forms.py=utf-8
+encoding//spital/models.py=utf-8
+encoding//spital/urls.py=utf-8
+encoding//spital/views.py=utf-8

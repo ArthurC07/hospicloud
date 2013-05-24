@@ -1,5 +1,4 @@
 {% load static %}
-<aside class="span3">
 <nav class="sidebar-nav">
   <ul class="nav nav-tabs nav-stacked">
       <li>
@@ -17,7 +16,6 @@
       <li><a href="{% url "enfermeria-dar-alta" admision.id %}">Dar de Alta</a></li>
     </ul>
   </nav>
-<nav class="well sidebar-nav">
+<nav class="sidebar-nav">
   {% include "snippets/persona_menu.html" with persona=admision.paciente %}
 </nav>
-</aside>

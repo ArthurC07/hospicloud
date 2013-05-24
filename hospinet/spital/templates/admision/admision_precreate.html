@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<form class="styled" method="post">
+  <hgroup class="page-header">
+  {% csrf_token %} <h1>{{ preadmision.emergencia.persona.nombre_completo }} <small>Admitir</small></h1>
+  </hgroup>
+  <div id="messages"></div>
+  {% include "snippets/form.html" with form=form %}
+  <p>
+    <input type="submit" value="Guardar" />
+  </p>
+</form>
+{% endblock %}

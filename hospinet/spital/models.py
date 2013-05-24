@@ -24,6 +24,7 @@ from persona.models import Persona
 from sorl.thumbnail import ImageField
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from emergency.models import Emergencia
 
 class Habitacion(models.Model):
     
@@ -260,3 +261,17 @@ class Admision(models.Model):
     def __unicode__(self):
 
         return u"{0} en {1}".format(self.paciente.nombre_completo(), self.habitacion)
+
+class PreAdmision(models.Model):
+
+    """Permite mostrar aquellas entradaas"""
+
+    emergencia = models.ForeignKey(Emergencia, related_name="preadmisiones")
+    completada = models.BooleanField(default=False)
+    transferir_cobros = models.BooleanField(default=False)
+    
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('admision-index')

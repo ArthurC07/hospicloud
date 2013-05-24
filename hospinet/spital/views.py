@@ -25,10 +25,13 @@ from django.views.generic import (CreateView, ListView, TemplateView,
 from library.protected import LoginRequiredView
 from persona.models import Persona
 from persona.views import PersonaCreateView
-from spital.forms import AdmisionForm, HabitacionForm
-from spital.models import Admision, Habitacion
+from spital.forms import AdmisionForm, HabitacionForm, PreAdmisionForm
+from spital.models import Admision, Habitacion, PreAdmision
+from nightingale.models import Cargo
+from emergency.models import Emergencia
 from persona.forms import PersonaForm
 from django.contrib import messages
+from guardian.mixins import LoginRequiredMixin
 
 class AdmisionIndexView(ListView, LoginRequiredView):
     
@@ -57,6 +60,8 @@ class AdmisionIndexView(ListView, LoginRequiredView):
                                           admisiones[n].tiempo_ahora())
                       for n in range(self.queryset.count()))
         
+        context['preadmisiones'] = PreAdmision.objects.filter(completada=False)
+
         return context
 
 class IngresarView(TemplateView, LoginRequiredView):
@@ -319,3 +324,92 @@ class HabitacionUpdateView(UpdateView, LoginRequiredView):
     model = Habitacion
     form_class = HabitacionForm
     template_name = 'admision/habitacion_create.html'
+
+class PreAdmisionCreateView(CreateView, LoginRequiredView):
+    
+    model = PreAdmision
+    form_class = PreAdmisionForm
+    
+    def get_form_kwargs(self):
+        
+        """Agrega el id de la :class:`Persona` a los argumentos de la sesión"""
+
+        kwargs = super(PreAdmisionCreateView, self).get_form_kwargs()
+        kwargs.update({ 'initial':{'emergencia':self.emergencia.id}})
+        return kwargs
+    
+    def dispatch(self, *args, **kwargs):
+        
+        """Carga la :class:`Persona` desde el origen de datos"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        return super(PreAdmisionCreateView, self).dispatch(*args, **kwargs)
+    
+    def form_valid(self, form):
+        
+        """Agrega la :class:`Persona que se esta admitiendo y el :class:`User`
+        que esta realizando la :class:`Admision`"""
+
+        self.object = form.save(commit=False)
+        self.object.persona = self.emergencia.persona
+        self.object.save()
+        
+        return HttpResponseRedirect(self.get_success_url())
+
+class AdmisionPreCreateView(CreateView, LoginRequiredView):
+    
+    """Crea una :class:`Admision` para una :class:`Persona` ya existente en el
+    sistema"""
+    
+    model = Admision
+    form_class = AdmisionForm
+    template_name = 'admision/admision_precreate.html'
+    
+    def get_form_kwargs(self):
+        
+        """Agrega el id de la :class:`Persona` a los argumentos de la sesión"""
+        
+        kwargs = super(AdmisionPreCreateView, self).get_form_kwargs()
+        kwargs.update({ 'initial':{'paciente':self.preadmision.emergencia.persona.id}})
+        return kwargs
+    
+    def dispatch(self, *args, **kwargs):
+        
+        """Carga la :class:`Persona` desde el origen de datos"""
+        
+        self.preadmision = get_object_or_404(PreAdmision, pk=kwargs['preadmision'])
+        return super(AdmisionPreCreateView, self).dispatch(*args, **kwargs)
+    
+    def form_valid(self, form):
+        
+        """Agrega la :class:`Persona que se esta admitiendo y el :class:`User`
+        que esta realizando la :class:`Admision`"""
+        
+        self.object = form.save(commit=False)
+        self.object.persona = self.preadmision.emergencia.persona
+        self.object.admitio = self.request.user
+        self.preadmision.compleatada = True
+        if self.preadmision.transferir_cobros:
+            
+            for cobro in self.preadmision.emergencia.cobros.all():
+                cargo = Cargo()
+                cargo.admision = self.object
+                cargo.cargo = cobro.cargo
+                cargo.cantidad = cobro.cantidad
+                cargo.save()
+        
+        self.object.save()
+        self.preadmision.save()
+        
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def get_context_data(self, **kwargs):
+        
+        """Realiza los calculos para mostrar el gráfico de tiempo de espera
+        de las :class:`Admision`es"""
+        
+        context = super(AdmisionPreCreateView, self).get_context_data(**kwargs)
+        
+        context['preadmision'] = self.preadmision
+        
+        return context

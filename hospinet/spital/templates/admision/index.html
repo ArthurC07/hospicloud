@@ -14,60 +14,60 @@
 {% endblock %}
 {% block content %}
 <section class="row-fluid">
-	<aside class="span3">
-		<nav class="well sidebar-nav">
-			<ul class="nav nav-list">
-				<li>
-					<a href="{% url "admision-iniciar" %}">Admitir Paciente</a>
-				</li>
-			</ul>
-		</nav>
-	</aside>
-	<div id="admision" class="span9">
-		<hgroup class="top title">
-			<h1>Admisiones</h1>
-		</hgroup>
-		<div id="estadisticas" class="bloque-superior">
-			<article id="tiempo-espera">
-				<h2>Tiempo de Espera</h2>
-				<div id="grafico"></div>
-				<h3>Promedio: {{ promedio }} minutos</h3>
-			</article>
-		</div>
-	</div>
+  <aside class="span3">
+    <nav class="well sidebar-nav">
+      <ul class="nav nav-list">
+        <li>
+          <a href="{% url "admision-iniciar" %}">Admitir Paciente</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <div id="admision" class="span9">
+    <hgroup class="top title">
+      <h1>Admisiones</h1>
+    </hgroup>
+    <div id="estadisticas" class="bloque-superior">
+      <article id="tiempo-espera">
+        <h2>Tiempo de Espera</h2>
+        <div id="grafico"></div>
+        <h3>Promedio: {{ promedio }} minutos</h3>
+      </article>
+    </div>
+  </div>
 </section>
 <section class="row-fluid">
-	<table class="table table-bordered table-striped">
-		<caption>
-			Pacientes Remitidos por Emergencias
-		</caption>
-		<thead class="gradient">
-			<tr>
-				<th>Identidad</th>
-				<th>Nombre</th>
-				<th>Edad</th>
-				<th>Sexo</th>
-				<th>Hora de Ingreso</th>
-				<th>Acciones</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for preadmision in preadmisiones %}
-			<tr>
-				<td>{{ preadmision.persona.identificacion }}</td>
-				<td>{{ preadmision.persona.nombre_completo }}</td>
-				<td>{{ preadmision.persona.obtener_edad }}</td>
-				<td>{{ preadmision.persona.get_sexo_display }}</td>
-				<td>{{ preadmision.created|date:"d/m/Y H:i" }}</td>
-				<td><a class="btn" href="{% url 'emergency-view-id' preadmision.persona.id %}">Iniciar Admisi&oacute;n</a></td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+  <table class="table table-bordered table-striped">
+    <caption>
+      Pacientes Remitidos por Emergencias
+    </caption>
+    <thead class="gradient">
+      <tr>
+        <th>Identidad</th>
+        <th>Nombre</th>
+        <th>Edad</th>
+        <th>Sexo</th>
+        <th>Hora de Ingreso</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for preadmision in preadmisiones %}
+      <tr>
+        <td>{{ preadmision.emergencia.persona.identificacion }}</td>
+        <td>{{ preadmision.emergencia.persona.nombre_completo }}</td>
+        <td>{{ preadmision.emergencia.persona.obtener_edad }}</td>
+        <td>{{ preadmision.emergencia.persona.get_sexo_display }}</td>
+        <td>{{ preadmision.created|date:"d/m/Y H:i" }}</td>
+        <td><a class="btn" href="{% url 'admitir-preadmision' preadmision.id %}">Iniciar Admisi&oacute;n</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </section>
 <section class="row-fluid">
-	<article class="span12">
-		{% include "snippets/admision_list.html" with admisiones=admisiones %}
-	</article>
+  <article class="span12">
+    {% include "snippets/admision_list.html" with admisiones=admisiones %}
+  </article>
 </section>
 {% endblock %}

@@ -2,8 +2,8 @@
 {% block content %}
 <div class="row-fluid">
 <aside class="span3">
-<nav class="well sidebar-nav">
-  <ul class="nav nav-list">
+<nav class="sidebar-nav">
+  <ul class="nav nav-stacked">
     <li><a href="{% url "emergencia-hallazgo-agregar" emergencia.id %}">Agregar Hallazgos</a></li>
     <li><a href="{% url "emergencia-examen-fisico-agregar" emergencia.id %}">Agregar Examen F&iacute;sico</a></li>
     <li><a href="{% url "emergencia-diagnostico-agregar" emergencia.id %}">Agregar Examen Diagnostico</a></li>
@@ -11,6 +11,7 @@
     <li><a href="{% url "emergencia-cobro-agregar" emergencia.id %}">Agregar Materiales y Medicamentos</a></li>
     <li><a href="{% url "emergencia-remision-interna-agregar" emergencia.id %}">Remitir a un M&eacute;dico</a></li>
     <li><a href="{% url "emergencia-remision-externa-agregar" emergencia.id %}">Remitir otro Centro M&eacute;dico</a></li>
+    <li><a href="{% url 'preadmitir' emergencia.id %}">Remitir a Admisiones</a></li>
   </ul>
 </nav>
 <nav class="well sidebar-nav">
