@@ -4,18 +4,20 @@
 {% endblock %}
 {% block content %}
 <div class="row-fluid">
-<aside class="span3">
-<nav class="well sidebar-nav">
-  <ul class="nav nav-list">
-    <a href="{% url "emergency-ingresar" %}">Admitir Paciente</a>
-  </ul>
-</nav>
-</aside>
-<section id="admision" class="span9">
-  <hgroup class="top title">
-    <h1>Admisi&oacute;n de Emergencias</h1>
-  </hgroup>
-  {% include "emergency/snippets/emergencia_list.html" with emergencias=emergencias %}
-</section>
+  <aside class="span3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-tabs nav-stacked">
+        <li>
+          <a href="{% url 'emergency-ingresar' %}">Admitir Paciente</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <section id="admision" class="span9">
+    <hgroup class="page-header">
+      <h1>Emergencias <small>Admisi&oacute;n</small></h1>
+    </hgroup>
+    {% include "emergency/snippets/emergencia_list.html" with emergencias=emergencias %}
+  </section>
 </div>
-{% endblock %} 
+{% endblock %}
