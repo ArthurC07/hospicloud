@@ -1,45 +1,34 @@
 {% if personas %}
-    <table class="table table-striped">
-      <thead class="gradient">
-        <tr>
-          <th>Identificaci&oacute;n</th>
-          <th>Apellidos</th>
-          <th>Nombre</th>
-          <th>Edad</th>
-          <th>Sexo</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for persona in personas %}
-        <tr>
-          <td>{{ persona.identificacion }}</td>
-          <td>{{ persona.apellido }}</td>
-          <td>{{ persona.nombre }}</td>
-          <td>{{ persona.obtener_edad }}</td>
-          <td>{{ persona.get_sexo_display }}</td>
-          <td><a href="{% url "persona-view-id" persona.id %}">Ver</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% if is_paginated %}
-    <div class="pagination">
-        <span class="page-links">
-            <a href="?page={{ page_obj.start_index }}">Primera</a>
-            {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-            {% endif %}
-            <span class="page-current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">Pr&oacute;xima</a>
-            {% endif %}
-            <a href="?page={{ page_obj.end_index }}">&Uacute;ltima</a>
-        </span>
-    </div>
-    {% endif %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Identificaci&oacute;n</th>
+      <th>Apellidos</th>
+      <th>Nombre</th>
+      <th>Edad</th>
+      <th>Sexo</th>
+      <th class="no-print">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for persona in personas %}
+    <tr>
+      <td>{{ persona.identificacion }}</td>
+      <td>{{ persona.apellido }}</td>
+      <td>{{ persona.nombre }}</td>
+      <td>{{ persona.obtener_edad }}</td>
+      <td>{{ persona.get_sexo_display }}</td>
+      <td><a class="btn" href="{% url 'persona-view-id' persona.id %}">Ver</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if is_paginated %}
+{% load bootstrap_pagination %}
+{% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+{% endif %}
 {% else %}
-    <p>No se han encontrado Pacientes</p>
+<p>
+  No se han encontrado Pacientes
+</p>
 {% endif %}

@@ -4,41 +4,42 @@
 {% endblock %}
 {% block content %}
 <div class="row-fluid">
-<hgroup class="page-header">
-  <h1>Enfermer&iacute;a</h1>
-</hgroup>
-<div class="row-fluid">
-<aside class="span3">
+  <hgroup class="page-header">
+    <h1>Enfermer&iacute;a</h1>
+  </hgroup>
+  <div class="row-fluid">
+    <aside class="span3">
 
-</aside>
-<section id="estadisticas" class="span9">
-  <article id="tiempo-espera">
-    <h2>Tiempo en Espera de Ingreso</h2>
-    <div id="grafico"></div>
-    <h3>Promedio: {{ promedio }} minutos</h3>
-  </article>
-</section>
-</div>
-<div class="row-fluid">
-<section class="span6">
-{% include "snippets/enfermeria_list.html" with admisiones=hospitalizados %}
-</section>
-<section class="span6">
-{% include "snippets/admitidos_list.html" with admisiones=admitidos %}
-</section>
+    </aside>
+    <section id="estadisticas" class="span9">
+      <article id="tiempo-espera">
+        <hgroup class="page-header">
+          <h2>Tiempo en Espera de Ingreso</h2>
+        </hgroup>
+        <div id="grafico"></div>
+        <h3>Promedio: {{ promedio }} minutos</h3>
+      </article>
+    </section>
+  </div>
+  <div class="row-fluid">
+    <section class="span6">
+      {% include "snippets/enfermeria_list.html" with admisiones=hospitalizados %}
+    </section>
+    <section class="span6">
+      {% include "snippets/admitidos_list.html" with admisiones=admitidos %}
+    </section>
+  </div>
 </div>
 {% endblock %}
 {% block scripts %}
 <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static "js/excanvas.js" %}"></script><![endif]-->
-<script language="javascript" type="text/javascript" src="{% static "js/jquery.jqplot.js" %}"></script>
-<script language="javascript" type="text/javascript" src="{% static "js/jqplot.canvasTextRenderer.min.js" %}"></script>
-<script language="javascript" type="text/javascript" src="{% static "js/jqplot.canvasAxisLabelRenderer.min.js" %}"></script>
-<link rel="stylesheet" type="text/css" href="{% static "css/jquery.jqplot.css" %}" />
+<script type="text/javascript" src="{% static 'js/jquery.jqplot.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jqplot.canvasTextRenderer.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jqplot.canvasAxisLabelRenderer.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.jqplot.css' %}" />
 <script type="text/javascript">
-  $(document).ready(function()
-  {
-    $.jqplot('grafico', [[{{ puntos }} ]]);
-  });
+	$(document).ready(function() {
+		$.jqplot('grafico', [[{{ puntos }} ]]);
+	}); 
 </script>
 {% endblock %}
-

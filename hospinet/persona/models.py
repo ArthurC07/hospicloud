@@ -94,7 +94,7 @@ class Persona(models.Model):
         
         """Obtiene el nombre completo de la :class:`Persona`"""
         
-        return u'{0} {1}'.format(self.nombre, self.apellido)
+        return u'{0} {1}'.format(self.nombre, self.apellido).upper()
     
     def obtener_edad(self):
         
