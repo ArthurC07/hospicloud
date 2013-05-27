@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% load l10n %}
 {% block content %}
-<div class="row-fluid">
+<div class="row">
 <section id="ingestas-excretas" class="span12">
   <hgroup class="page-header">
     <h1>{{ admision.paciente.nombre_completo }} <small>{{ admision.habitacion }}</small></h1>
   </hgroup>
 </section>
 </div>
-<div class="row-fluid">
+<div class="row">
   {% include "snippets/aside.html" with admision=admision %}
   <section id="signos-vitales" class="span9">
     <hgroup class="page-header">

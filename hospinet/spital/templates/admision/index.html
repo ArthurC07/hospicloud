@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block content %}
-<section class="row-fluid">
+<section class="row">
   <aside class="span3">
     <nav class="sidebar-nav">
       <ul class="nav nav-tabs nav-stacked">
@@ -24,7 +24,7 @@
     </div>
   </div>
 </section>
-<section class="row-fluid">
+<section class="row">
   <table class="table table-bordered table-striped">
     <caption>
       Pacientes Remitidos por Emergencias
@@ -53,7 +53,7 @@
     </tbody>
   </table>
 </section>
-<section class="row-fluid">
+<section class="row">
   <article class="span12">
     {% include "snippets/admision_list.html" with admisiones=admisiones %}
   </article>

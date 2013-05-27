@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block content %}
-<div class="row-fluid">
+<div class="row">
   <hgroup class="page-header">
     <h1>{{ examen.persona.nombre_completo }}
     <small>ID: {{ examen.persona.id }} &bull; {{ examen.tipo_de_examen.nombre }}</small></h1>
   </hgroup>
 </div>
-<div class="row-fluid">
+<div class="row">
 <aside class="span3">
   {% include 'snippets/examen_aside.html' %}
   <nav class="well sidebar-nav">
