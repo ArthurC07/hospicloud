@@ -15,14 +15,14 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime, time
 from django.db.models import Q
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (CreateView, ListView, TemplateView,
                                   DetailView, RedirectView, UpdateView)
-from library.protected import LoginRequiredView
 from persona.models import Persona
 from persona.views import PersonaCreateView
 from spital.forms import AdmisionForm, HabitacionForm, PreAdmisionForm
@@ -32,20 +32,23 @@ from emergency.models import Emergencia
 from persona.forms import PersonaForm
 from django.contrib import messages
 from guardian.mixins import LoginRequiredMixin
+from invoice.forms import PeriodoForm
+from crispy_forms.layout import Fieldset
 
-class AdmisionIndexView(ListView, LoginRequiredView):
+class AdmisionIndexView(ListView, LoginRequiredMixin):
     
     """Muestra la pagina principal de el Centro de :class:`Admisiones`"""
-
+    
     context_object_name = 'admisiones'
-    queryset = Admision.objects.filter(~Q(estado='H')&~Q(estado='C')&~Q(estado='I'))
+    queryset = Admision.objects.filter(~Q(estado='H') & ~Q(estado='C')
+                                       & ~Q(estado='I'))
     template_name = 'admision/index.html'
     
     def get_context_data(self, **kwargs):
         
         """Realiza los calculos para mostrar el gráfico de tiempo de espera
         de las :class:`Admision`es"""
-
+        
         context = super(AdmisionIndexView, self).get_context_data(**kwargs)
         
         admisiones = self.queryset.all()
@@ -61,22 +64,26 @@ class AdmisionIndexView(ListView, LoginRequiredView):
                       for n in range(self.queryset.count()))
         
         context['preadmisiones'] = PreAdmision.objects.filter(completada=False)
-
+        
+        context['admision_periodo'] = PeriodoForm(prefix='admisiones')
+        context['admision_periodo'].helper.form_action = 'estadisticas-hospitalizacion'
+        context['admision_periodo'].helper.layout = Fieldset(u'Admisiones por Periodo',
+                                                               *context['admision_periodo'].field_names)
         return context
 
-class IngresarView(TemplateView, LoginRequiredView):
+class IngresarView(TemplateView, LoginRequiredMixin):
     
     """Muestra una interfaz para agregar una :class:`Admision` ya sea agregando
     una :class:`Persona` nueva o admitiendo una que ya se encuentra en el
     sistema"""
-
+    
     template_name = 'admision/ingresar.html'
     
     def get_context_data(self, **kwargs):
         
         """Agrega el formulario para crear una :class:`Persona` desde la misma
         página"""
-
+        
         context = super(IngresarView, self).get_context_data()
         context['persona_form'] = PersonaForm()
         return context
@@ -84,7 +91,7 @@ class IngresarView(TemplateView, LoginRequiredView):
 class PersonaAdmisionCreateView(PersonaCreateView):
     
     """Permite admitir una :class:`Persona` preexistente"""
-
+    
     template_name = 'admision/persona_create.html'
     
     def get_success_url(self):
@@ -95,7 +102,7 @@ class PersonaFiadorCreateView(PersonaCreateView):
     
     """Permite ingresar una :class:`Persona` al sistema que servira como
     :class:`Fiador` a una :class:`Admision`"""
-
+    
     template_name = 'admision/admision_fiador.html'
     
     def dispatch(self, *args, **kwargs):
@@ -127,7 +134,7 @@ class PersonaReferenciaCreateView(PersonaCreateView):
     
     """Permite agregar una :class:`Persona` como referencia a una
     :class:`Admision`"""
-
+    
     template_name = 'admision/admision_referencia.html'
     
     def dispatch(self, *args, **kwargs):
@@ -155,11 +162,11 @@ class PersonaReferenciaCreateView(PersonaCreateView):
         context['admision'] = self.admision
         return context
 
-class ReferenciaAgregarView(RedirectView, LoginRequiredView):
+class ReferenciaAgregarView(RedirectView, LoginRequiredMixin):
     
     """Permite agregar una :class:`Persona` como referencia de una
     :class:`Admision`"""
-
+    
     url = '/admision/referencia/agregar'
     
     def get_redirect_url(self, **kwargs):
@@ -170,11 +177,11 @@ class ReferenciaAgregarView(RedirectView, LoginRequiredView):
         admision.save()
         return reverse('admision-view-id', args=[admision.id])
 
-class FiadorAgregarView(RedirectView, LoginRequiredView):
+class FiadorAgregarView(RedirectView, LoginRequiredMixin):
     
     """Permite agregar una :class:`Persona` como fiador de una
     :class:`Admision`"""
-
+    
     url = '/admision/fiador/agregar'
     
     def get_redirect_url(self, **kwargs):
@@ -185,11 +192,11 @@ class FiadorAgregarView(RedirectView, LoginRequiredView):
         admision.save()
         return reverse('admision-view-id', args=[admision.id])
 
-class AdmisionCreateView(CreateView, LoginRequiredView):
+class AdmisionCreateView(CreateView, LoginRequiredMixin):
     
     """Crea una :class:`Admision` para una :class:`Persona` ya existente en el
     sistema"""
-
+    
     model = Admision
     form_class = AdmisionForm
     template_name = 'admision/admision_create.html'
@@ -197,7 +204,7 @@ class AdmisionCreateView(CreateView, LoginRequiredView):
     def get_form_kwargs(self):
         
         """Agrega el id de la :class:`Persona` a los argumentos de la sesión"""
-
+        
         kwargs = super(AdmisionCreateView, self).get_form_kwargs()
         kwargs.update({ 'initial':{'paciente':self.persona.id}})
         return kwargs
@@ -205,7 +212,7 @@ class AdmisionCreateView(CreateView, LoginRequiredView):
     def dispatch(self, *args, **kwargs):
         
         """Carga la :class:`Persona` desde el origen de datos"""
-
+        
         self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
         return super(AdmisionCreateView, self).dispatch(*args, **kwargs)
     
@@ -213,7 +220,7 @@ class AdmisionCreateView(CreateView, LoginRequiredView):
         
         """Agrega la :class:`Persona que se esta admitiendo y el :class:`User`
         que esta realizando la :class:`Admision`"""
-
+        
         self.object = form.save(commit=False)
         self.object.persona = self.persona
         self.object.admitio = self.request.user
@@ -221,19 +228,19 @@ class AdmisionCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class AdmisionDetailView(DetailView, LoginRequiredView):
+class AdmisionDetailView(DetailView, LoginRequiredMixin):
     
     """Permite mostrar los datos de una :class:`Admision`"""
-
+    
     context_object_name = 'admision'
     model = Admision
     template_name = 'admision/admision_detail.html'
     slug_field = 'uuid'
 
-class AutorizarView(RedirectView, LoginRequiredView):
+class AutorizarView(RedirectView, LoginRequiredMixin):
     
     """Permite marcar como autorizada una :class:`Admision`"""
-
+    
     url = '/admision/autorizar'
     permanent = False
     
@@ -244,10 +251,10 @@ class AutorizarView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡Admision Autorizada!')
         return reverse('admision-view-id', args=[admision.id])
 
-class PagarView(RedirectView, LoginRequiredView):
+class PagarView(RedirectView, LoginRequiredMixin):
     
     """Permite marcar como pagada una :class:`Admision`"""
-
+    
     url = '/admision/hospitalizar'
     permanent = False
     
@@ -258,10 +265,10 @@ class PagarView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡Registrado el pago de la Admision!')
         return reverse('admision-view-id', args=[admision.id])
 
-class HospitalizarView(RedirectView, LoginRequiredView):
+class HospitalizarView(RedirectView, LoginRequiredMixin):
     
     """Permite marcar como hospitalizada una :class:`Admision`"""
-
+    
     url = '/admision/hospitalizar'
     permanent = False
     
@@ -272,24 +279,57 @@ class HospitalizarView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡Admision Enviada a Enfermeria!')
         return reverse('admision-view-id', args=[admision.id])
 
-class HabitacionListView(ListView, LoginRequiredView):
+class AdmisionPeriodoView(TemplateView, LoginRequiredMixin):
+    
+    def dispatch(self, request, *args, **kwargs):
+        
+        """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
+        el formulario"""
+        
+        self.form = PeriodoForm(request.GET, prefix='admisiones')
+        if self.form.is_valid():
+            
+            inicio = self.form.cleaned_data['inicio']
+            fin = self.form.cleaned_data['fin']
+            self.inicio = datetime.combine(inicio, time.min)
+            self.fin = datetime.combine(fin, time.max)
+            self.admisiones = Admision.objects.filter(
+                                                 admision__range=(inicio, fin))
+            
+        else:
+            
+            return redirect('admision-index')
+        
+        return super(AdmisionPeriodoView, self).dispatch(request, *args,
+                                                           **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(AdmisionPeriodoView, self).get_context_data(**kwargs)
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['admisiones'] = self.admisiones
+        
+        return context
 
+class HabitacionListView(ListView, LoginRequiredMixin):
+    
     """Muestra la lista de las :class:`Habitacion`es para tener una vista
     rápida de las que se encuentran disponibles en un determinado momento"""
-
+    
     context_object_name = 'habitaciones'
     queryset = Habitacion.objects
     template_name = 'admision/habitaciones.html'
 
-class HabitacionCreateView(CreateView, LoginRequiredView):
-
+class HabitacionCreateView(CreateView, LoginRequiredMixin):
+    
     """Permite agregar una :class:`Habitacion` al :class:`Hospital`"""
-
+    
     model = Habitacion
     form_class = HabitacionForm
     template_name = 'admision/habitacion_create.html'
 
-class HabitacionDetailView(DetailView, LoginRequiredView):
+class HabitacionDetailView(DetailView, LoginRequiredMixin):
 
     """Permite mostrar el estado de una :class:`Habitacion`"""
     
@@ -306,7 +346,7 @@ class HabitacionDetailView(DetailView, LoginRequiredView):
         
         paginator = Paginator(self.object.admisiones, 10)
         try:
-            page = int(request.GET.get("page", '1'))
+            page = int(self.request.GET.get("page", '1'))
         except ValueError:
             page = 1
         
@@ -314,10 +354,10 @@ class HabitacionDetailView(DetailView, LoginRequiredView):
             context['admisiones'] = paginator.page(page)
         except (InvalidPage, EmptyPage):
             context['admisiones'] = paginator.page(paginator.num_pages)
-
+            
         return context
 
-class HabitacionUpdateView(UpdateView, LoginRequiredView):
+class HabitacionUpdateView(UpdateView, LoginRequiredMixin):
 
     """Permite editar los datos de una :class:`Habitacion`"""
 
@@ -325,7 +365,7 @@ class HabitacionUpdateView(UpdateView, LoginRequiredView):
     form_class = HabitacionForm
     template_name = 'admision/habitacion_create.html'
 
-class PreAdmisionCreateView(CreateView, LoginRequiredView):
+class PreAdmisionCreateView(CreateView, LoginRequiredMixin):
     
     model = PreAdmision
     form_class = PreAdmisionForm
@@ -356,7 +396,7 @@ class PreAdmisionCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class AdmisionPreCreateView(CreateView, LoginRequiredView):
+class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
     
     """Crea una :class:`Admision` para una :class:`Persona` ya existente en el
     sistema"""

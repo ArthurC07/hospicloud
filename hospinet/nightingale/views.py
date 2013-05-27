@@ -21,7 +21,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView)
-from library.protected import LoginRequiredView
 from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
     GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
     NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm, MedicamentoForm,
@@ -31,9 +30,10 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
     Medicamento, Dosis, Devolucion, Sumario)
 from spital.models import Admision
 from django.contrib import messages
-from django.utils import timezone   
+from django.utils import timezone
+from guardian.mixins import LoginRequiredMixin
 
-class NightingaleIndexView(ListView, LoginRequiredView):
+class NightingaleIndexView(ListView, LoginRequiredMixin):
     
     """Permite ingresar al lobby de Admisiones que estan siendo atendidas en
     una institucion hospitalaria"""
@@ -60,14 +60,14 @@ class NightingaleIndexView(ListView, LoginRequiredView):
         
         return context
 
-class AdmisionListView(ListView):
+class AdmisionListView(ListView, LoginRequiredMixin):
     
     queryset = Admision.objects.all().order_by('-momento')
     context_object_name = 'admisiones'
     template_name = 'enfermeria/admisiones.html'
     paginate_by = 20
 
-class IngresarView(UpdateView, LoginRequiredView):
+class IngresarView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos de ingreso en la central de enfermeria"""
 
@@ -80,7 +80,7 @@ class IngresarView(UpdateView, LoginRequiredView):
         self.object.ingresar()
         return reverse('nightingale-view-id', args=[self.object.id])
 
-class NotaUpdateView(UpdateView, LoginRequiredView):
+class NotaUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite editar una :class:`NotaEnfermeria` en caso de ser necesario"""
 
@@ -88,7 +88,7 @@ class NotaUpdateView(UpdateView, LoginRequiredView):
     form_class = NotaEnfermeriaForm
     template_name = 'enfermeria/nota_create.html'
 
-class NotaCerrarView(RedirectView, LoginRequiredView):
+class NotaCerrarView(RedirectView, LoginRequiredMixin):
 
     """Permite cambiar el estado de un :class:`NotaEnfermeria`"""
      
@@ -104,7 +104,7 @@ class NotaCerrarView(RedirectView, LoginRequiredView):
         nota.save()
         return reverse('enfermeria-notas', args=[nota.admision.id])
 
-class NightingaleDetailView(DetailView, LoginRequiredView):
+class NightingaleDetailView(DetailView, LoginRequiredMixin):
     
     """Permite ver los datos de una :class:`Admision` desde la interfaz de
     enfermeria
@@ -119,7 +119,7 @@ class NightingaleDetailView(DetailView, LoginRequiredView):
     template_name = 'enfermeria/nightingale_detail.html'
     slug_field = 'uuid'
 
-class SignosDetailView(DetailView, LoginRequiredView):
+class SignosDetailView(DetailView, LoginRequiredMixin):
     
     """Muestra los datos sobre los signos vitales de una :class:`Persona` en
     en una :class:`Admision`"""
@@ -187,7 +187,7 @@ class ResumenDetailView(NightingaleDetailView, SignosDetailView):
     template_name='enfermeria/resumen.html'
     slug_field = 'uuid'
 
-class BaseCreateView(CreateView, LoginRequiredView):
+class BaseCreateView(CreateView, LoginRequiredMixin):
     
     """Permite llenar el formulario de una clase que requiera
     :class:`Admision`es de manera previa - DRY"""
@@ -240,7 +240,7 @@ class CargoCreateView(BaseCreateView):
     form_class = CargoForm
     template_name = 'enfermeria/cargo_create.html'
 
-class CargoDeleteView(DeleteView, LoginRequiredView):
+class CargoDeleteView(DeleteView, LoginRequiredMixin):
 
     model = Cargo
 
@@ -349,7 +349,7 @@ class MedicamentoCreateView(BaseCreateView):
                                   'usuario':self.request.user.id}})
         return kwargs
 
-class DosisCreateView(CreateView, LoginRequiredView):
+class DosisCreateView(CreateView, LoginRequiredMixin):
 
     """Permite crear las :class:`Dosis` de un determinado :class:`Medicamento`
     que sera suministrado durante una :class:`Admision`
@@ -405,7 +405,7 @@ class DosisCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class DosisSuministrarView(RedirectView, LoginRequiredView):
+class DosisSuministrarView(RedirectView, LoginRequiredMixin):
 
     """Permite marcar una :class:`Dosis` como ya suministrada"""
      
@@ -424,7 +424,7 @@ class DosisSuministrarView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡Dosis registrada como suministrada!')
         return reverse('nightingale-view-id', args=[dosis.medicamento.admision.id])
 
-class MedicamentoSuspenderView(RedirectView, LoginRequiredView):
+class MedicamentoSuspenderView(RedirectView, LoginRequiredMixin):
 
     """Permite cambiar el estado de un :class:`Medicamento`"""
      
@@ -436,7 +436,7 @@ class MedicamentoSuspenderView(RedirectView, LoginRequiredView):
         suministrada, estampa la hora y el :class:`User` que la suministro"""
 
         medicamento = get_object_or_404(Medicamento, pk=kwargs['pk'])
-        mediamento.estado = kwargs['estado']
+        medicamento.estado = kwargs['estado']
         medicamento.save()
         return reverse('nightingale-view-id', args=[medicamento.admision.id])
 

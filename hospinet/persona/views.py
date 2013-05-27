@@ -20,22 +20,22 @@ en la aplicación.
 """
 from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, DetailView, UpdateView, ListView
-from library.protected import LoginRequiredView
 from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
     AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm,
     AntecedenteQuirurgicoForm)
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
 from django.shortcuts import get_object_or_404
+from guardian.mixins import LoginRequiredMixin
 
-class PersonaIndexView(ListView, LoginRequiredView):
+class PersonaIndexView(ListView, LoginRequiredMixin):
     
     context_object_name = 'personas'
     model = Persona
     template_name = 'persona/index.html'
     paginate_by = 10
 
-class PersonaDetailView(DetailView, LoginRequiredView):
+class PersonaDetailView(DetailView, LoginRequiredMixin):
     
     """Permite mostrar los datos de una :class:`Persona`"""
     
@@ -43,7 +43,7 @@ class PersonaDetailView(DetailView, LoginRequiredView):
     model = Persona
     template_name = 'persona/persona_detail.html'
 
-class PersonaCreateView(CreateView, LoginRequiredView):
+class PersonaCreateView(CreateView, LoginRequiredMixin):
     
     """Permite ingresar :class:`Persona`s a la aplicación""" 
     
@@ -80,7 +80,7 @@ class PersonaCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class PersonaUpdateView(UpdateView, LoginRequiredView):
+class PersonaUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos de una :class:`Persona`"""
     
@@ -88,7 +88,7 @@ class PersonaUpdateView(UpdateView, LoginRequiredView):
     form_class = PersonaForm
     template_name = 'persona/persona_update.html'
 
-class FisicoUpdateView(UpdateView, LoginRequiredView):
+class FisicoUpdateView(UpdateView, LoginRequiredMixin):
     
     """
     Permite actualizar los datos del :class:`Fisico` de una :class:`Persona`
@@ -98,7 +98,7 @@ class FisicoUpdateView(UpdateView, LoginRequiredView):
     form_class = FisicoForm
     template_name = 'persona/fisico_update.html'
 
-class EstiloVidaUpdateView(UpdateView, LoginRequiredView):
+class EstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos del :class:`EstiloVida` de una
     :class:`Persona`"""
@@ -107,7 +107,7 @@ class EstiloVidaUpdateView(UpdateView, LoginRequiredView):
     form_class = EstiloVidaForm
     template_name = 'persona/estilo_vida_update.html'
 
-class AntecedenteUpdateView(UpdateView, LoginRequiredView):
+class AntecedenteUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos del :class:`Antecedente` de una
     :class:`Persona`"""
@@ -116,7 +116,7 @@ class AntecedenteUpdateView(UpdateView, LoginRequiredView):
     form_class = AntecedenteForm
     template_name = 'persona/antecedente_update.html'
 
-class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredView):
+class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
     :class:`Persona`"""
@@ -125,7 +125,7 @@ class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredView):
     form_class = AntecedenteFamiliarForm
     template_name = 'persona/antecedente_familiar_update.html'
 
-class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredView):
+class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
     :class:`Persona`"""
@@ -134,7 +134,7 @@ class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredView):
     form_class = AntecedenteObstetricoForm
     template_name = 'persona/antecedente_obstetrico_update.html'
 
-class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredView):
+class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin):
     
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
@@ -176,11 +176,11 @@ class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredView):
         self.object.persona = self.persona
         self.object.save()
         
-        messages.info(self.request, u"Agregado Antecedente Quirúrgico")
+        #messages.info(self.request, u"Agregado Antecedente Quirúrgico")
         
         return HttpResponseRedirect(self.get_success_url())
 
-class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredView):
+class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""

@@ -23,14 +23,14 @@ from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
                            EstudioProgramadoForm, EmailForm)
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
-from library.protected import LoginRequiredView
 from persona.forms import PersonaForm
 from persona.models import Persona
 from persona.views import PersonaCreateView
 from django.contrib import messages
 from templated_email import send_templated_mail
+from guardian.mixins import LoginRequiredMixin
 
-class ExamenListView(ListView):
+class ExamenListView(ListView, LoginRequiredMixin):
     
     """Muestra un listado de los ultimos 20 :class:`Examen`es que se han
     ingresado al sistema"""
@@ -76,7 +76,7 @@ class ExamenPreCreateView(TemplateView):
         context['persona_form'] = PersonaForm()
         return context
 
-class ExamenDetailView(DetailView, LoginRequiredView):
+class ExamenDetailView(DetailView, LoginRequiredMixin):
     
     """Permite ver los detalles de un :class:`Examen`"""
     
@@ -85,7 +85,7 @@ class ExamenDetailView(DetailView, LoginRequiredView):
     template_name = 'examen/examen_detail.html'
     slug_field = 'uuid'
 
-class ExamenPersonaListView(DetailView, LoginRequiredView):
+class ExamenPersonaListView(DetailView, LoginRequiredMixin):
     
     """Muestra los :class:`Examen`es realizados a una :class:`Persona`"""
 
@@ -93,7 +93,7 @@ class ExamenPersonaListView(DetailView, LoginRequiredView):
     model = Persona
     template_name = 'examen/examen_paciente_detail.html'
 
-class ExamenUpdateView(UpdateView, LoginRequiredView):
+class ExamenUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos de un :class:`Examen`"""
     
@@ -101,7 +101,7 @@ class ExamenUpdateView(UpdateView, LoginRequiredView):
     form_class = ExamenForm
     template_name = 'examen/examen_update.html'
 
-class ExamenCreateView(CreateView, LoginRequiredView):
+class ExamenCreateView(CreateView, LoginRequiredMixin):
     
     """Permite crear un :class:`Examen` a una :class:`Persona`"""
     
@@ -128,7 +128,7 @@ class ExamenCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class ExamenDocBaseCreateView(CreateView, LoginRequiredView):
+class ExamenDocBaseCreateView(CreateView, LoginRequiredMixin):
     
     """Permite crear objetos que pertenecen a un :class:`Examen`"""
 
@@ -191,7 +191,7 @@ class DicomCreateView(ExamenDocBaseCreateView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class DicomDetailView(DetailView, LoginRequiredView):
+class DicomDetailView(DetailView, LoginRequiredMixin):
     
     """Muestra el visor DICOM básico en el navegador del usuario"""
 
@@ -200,7 +200,7 @@ class DicomDetailView(DetailView, LoginRequiredView):
     template_name = "examen/dicom_detail.html"
     slug_field = 'uuid'
 
-class NotificarExamenView(FormView, LoginRequiredView):
+class NotificarExamenView(FormView, LoginRequiredMixin):
 
     """Notifica a los interesados de que el :class:`Examen` se encuentra
     disponible"""
@@ -260,7 +260,7 @@ class PersonaEstudioCreateView(PersonaCreateView):
         
         return reverse('examen-programar', args=[self.object.id])
 
-class EstudioProgramadoDetailView(DetailView, LoginRequiredView):
+class EstudioProgramadoDetailView(DetailView, LoginRequiredMixin):
 
     """Muestra las acciones disponibles para un :class:`EstudioProgramado`"""
 
@@ -268,7 +268,7 @@ class EstudioProgramadoDetailView(DetailView, LoginRequiredView):
     model = EstudioProgramado
     template_name = 'examen/estudio_detail.html'
 
-class EstudioProgramadoCreateView(CreateView, LoginRequiredView):
+class EstudioProgramadoCreateView(CreateView, LoginRequiredMixin):
 
     """Permite recetar un :class:`Examen` a una :class:`Persona"""
     
@@ -300,7 +300,7 @@ class EstudioProgramadoCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class EstudioProgramadoListView(ListView, LoginRequiredView):
+class EstudioProgramadoListView(ListView, LoginRequiredMixin):
 
     """Permite mostrar una lista de :class:`Estudios`es que aún no han sido
     llevados a cabo"""
@@ -323,7 +323,7 @@ class EstudioProgramadoListView(ListView, LoginRequiredView):
         context['examenes'] = Examen.objects.all().order_by('-fecha')[:20]
         return context
 
-class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredView):
+class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredMixin):
     
     """Permite marcar un :class:`EstudioProgramado` como ya efectuado y
     muestra el formulario para crear un nuevo :class:`Examen` a la
@@ -339,7 +339,7 @@ class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡El estudio ha sido marcado como efectuado!')
         return reverse('examen-edit', args=[examen.id])
 
-class EstudioPreCreateView(TemplateView):
+class EstudioPreCreateView(TemplateView, LoginRequiredMixin):
     
     """Permite mostrar una interfaz donde decidir si agregar una nueva
     :class:`Persona` o agregar el :class:`Examen a una ya ingresada previamente

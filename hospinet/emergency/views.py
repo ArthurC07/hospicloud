@@ -15,15 +15,12 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import Q
-from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (CreateView, ListView, TemplateView,
-                                  DetailView, RedirectView, UpdateView,
+                                  DetailView, UpdateView,
                                   DeleteView)
-from library.protected import LoginRequiredView
 from persona.models import Persona
 from persona.views import (PersonaCreateView, FisicoUpdateView,
                            EstiloVidaUpdateView, AntecedenteUpdateView,
@@ -41,8 +38,9 @@ from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
 from django.contrib import messages
 from datetime import datetime, time, date
 from django.utils import timezone
+from guardian.mixins import LoginRequiredMixin
 
-class EmergenciaPreCreateView(TemplateView, LoginRequiredView):
+class EmergenciaPreCreateView(TemplateView, LoginRequiredMixin):
     
     """Permite mostrar una interfaz donde decidir si agregar una nueva
     :class:`Persona` o agregar la :class:`Emergencia` a una ya ingresada
@@ -57,7 +55,7 @@ class EmergenciaPreCreateView(TemplateView, LoginRequiredView):
         context['persona_form'].helper.form_action = 'emergency-persona-create'
         return context
 
-class PersonaEmergenciaCreateView(PersonaCreateView, LoginRequiredView):
+class PersonaEmergenciaCreateView(PersonaCreateView, LoginRequiredMixin):
     
     """Permite admitir una :class:`Persona` nueva"""
 
@@ -67,7 +65,7 @@ class PersonaEmergenciaCreateView(PersonaCreateView, LoginRequiredView):
         
         return reverse('emergency-create', args=[self.object.id])
 
-class EmergenciaCreateView(CreateView, LoginRequiredView):
+class EmergenciaCreateView(CreateView, LoginRequiredMixin):
     
     """Crea una :class:`Emergencia` para una :class:`Persona` ya existente en el
     sistema"""
@@ -109,19 +107,19 @@ class EmergenciaCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class EmergenciaDetailView(DetailView, LoginRequiredView):
+class EmergenciaDetailView(DetailView, LoginRequiredMixin):
 
     """Permite mostrar los datos de la :class:`Emergencia`"""
 
     model = Emergencia
     template_name = 'emergency/emergency_detail.html'
 
-class EmergenciaUpdateView(UpdateView, LoginRequiredView):
+class EmergenciaUpdateView(UpdateView, LoginRequiredMixin):
 
     model = Emergencia
     template_name = 'emergency/emergencia_update.html'
 
-class BaseCreateView(CreateView, LoginRequiredView):
+class BaseCreateView(CreateView, LoginRequiredMixin):
     
     """Permite llenar el formulario de una clase que requiera
     :class:`Emergencia`s de manera previa - DRY"""
@@ -214,7 +212,7 @@ class CobroCreateView(BaseCreateView):
     model = Cobro
     form_class = CobroForm
 
-class CobroDeleteView(DeleteView, LoginRequiredView):
+class CobroDeleteView(DeleteView, LoginRequiredMixin):
 
     model = Cobro
 
@@ -236,7 +234,7 @@ class DiagnosticoCreateView(BaseCreateView):
     model = Diagnostico
     form_class = DiagnosticoForm
 
-class EmergenciaListView(ListView, LoginRequiredView):
+class EmergenciaListView(ListView, LoginRequiredMixin):
 
     context_object_name = 'emergencias'
     template_name = 'emergency/index.html'

@@ -20,10 +20,6 @@
 # go and generate it again. It was generated with the following command:
 # manage.py dumpscript
 
-import datetime
-from decimal import Decimal
-from django.contrib.contenttypes.models import ContentType
-
 def run():
 
     from treemenus.models import Menu

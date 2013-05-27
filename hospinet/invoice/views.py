@@ -16,19 +16,15 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.core.urlresolvers import reverse
-from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from emergency.models import Emergencia
-from invoice.models import Recibo, Producto, Venta
+from invoice.models import Recibo, Venta
 from invoice.forms import ReciboForm, VentaForm, PeriodoForm
-from django.contrib.auth.models import User
 from django.views.generic import (CreateView, UpdateView, DeleteView,
     TemplateView, DetailView, ListView, RedirectView)
 from emergency.views import EmergenciaListView
-from library.protected import LoginRequiredView
-from django import forms
 from persona.models import Persona
 from imaging.models import Examen
 from spital.models import Admision
@@ -36,8 +32,9 @@ from datetime import datetime, time, date
 from django.utils import timezone
 from collections import defaultdict
 from decimal import Decimal
+from guardian.mixins import LoginRequiredMixin
 
-class ReciboPersonaCreateView(CreateView, LoginRequiredView):
+class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
 
     """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
     existente en la aplicación"""
@@ -59,7 +56,7 @@ class ReciboPersonaCreateView(CreateView, LoginRequiredView):
         
         """Obtiene el :class:`Recibo` que se entrego como argumento en la
         url"""
-
+        
         self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
         return super(ReciboPersonaCreateView, self).dispatch(*args, **kwargs)
 
@@ -70,7 +67,7 @@ class ReciboPersonaCreateView(CreateView, LoginRequiredView):
         return context
 
 
-class ReciboExamenCreateView(CreateView, LoginRequiredView):
+class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
 
     """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
     existente en la aplicación"""
@@ -93,7 +90,7 @@ class ReciboExamenCreateView(CreateView, LoginRequiredView):
         
         """Obtiene el :class:`Recibo` que se entrego como argumento en la
         url"""
-
+        
         self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
         return super(ReciboExamenCreateView, self).dispatch(*args, **kwargs)
 
@@ -103,7 +100,7 @@ class ReciboExamenCreateView(CreateView, LoginRequiredView):
         context['persona'] = self.examen.persona
         return context
 
-class VentaCreateView(CreateView, LoginRequiredView):
+class VentaCreateView(CreateView, LoginRequiredMixin):
     
     """Permite agregar :class:`Venta`s a un :class:`Recibo`"""
     
@@ -131,7 +128,7 @@ class VentaCreateView(CreateView, LoginRequiredView):
         
         """Guarda el objeto generado espeficando precio obtenido directamente
         del :class:`Producto`"""
-
+        
         self.object = form.save(commit=False)
         self.object.precio = self.object.producto.precio
         self.object.impuesto = self.object.producto.impuesto * self.object.monto()
@@ -141,7 +138,7 @@ class VentaCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class ReciboDetailView(DetailView, LoginRequiredView):
+class ReciboDetailView(DetailView, LoginRequiredMixin):
 
     """Muestra los detalles del :class:`Recibo` para agregar :class:`Producto`s
     ir a la vista de impresión y realizar otras tareas relacionadas con
@@ -161,7 +158,7 @@ class ReciboDetailView(DetailView, LoginRequiredView):
         
         return context
 
-class ReciboAnularView(RedirectView, LoginRequiredView):
+class ReciboAnularView(RedirectView, LoginRequiredMixin):
 
     """Marca un :class:`Recibo` como anulado para que la facturación del mismo
     no se vea reflejado en los cortes de caja"""
@@ -175,7 +172,7 @@ class ReciboAnularView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡El recibo ha sido marcado como anulado!')
         return reverse('invoice-view-id', args=[recibo.id])
 
-class ReciboCerrarView(RedirectView, LoginRequiredView):
+class ReciboCerrarView(RedirectView, LoginRequiredMixin):
 
     """Marca un :class:`Recibo` como anulado para que la facturación del mismo
     no se vea reflejado en los cortes de caja"""
@@ -189,10 +186,10 @@ class ReciboCerrarView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡El recibo ha sido cerrado!')
         return reverse('invoice-view-id', args=[recibo.id])
 
-class IndexView(TemplateView, LoginRequiredView):
+class IndexView(TemplateView, LoginRequiredMixin):
     
     """Muestra las opciones disponibles para la aplicación"""
-
+    
     template_name = 'invoice/index.html'
     
     def get_context_data(self, **kwargs):
@@ -213,7 +210,7 @@ class ReciboPeriodoView(TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
     self.form"""
-
+    
     def dispatch(self, request, *args, **kwargs):
 
         """Efectua la consulta de los :class:`Recibo` de acuerdo a los
@@ -234,11 +231,11 @@ class ReciboPeriodoView(TemplateView):
 
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
 
-class ReporteReciboView(ReciboPeriodoView, LoginRequiredView):
+class ReporteReciboView(ReciboPeriodoView, LoginRequiredMixin):
 
     """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
     durante el periodo especificado"""
-
+    
     template_name = 'invoice/recibo_list.html'
     
     def dispatch(self, request, *args, **kwargs):
@@ -263,12 +260,12 @@ class ReporteReciboView(ReciboPeriodoView, LoginRequiredView):
 
         return context
 
-class ReporteProductoView(ReciboPeriodoView, LoginRequiredView):
+class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
 
     """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
     los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
     cuenta el periodo especificado"""
-
+    
     template_name = 'invoice/producto_list.html'
     
     def dispatch(self, request, *args, **kwargs):
@@ -305,12 +302,12 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredView):
         context['fin'] = self.fin
         return context
 
-class ReciboRemiteView(ReciboPeriodoView, LoginRequiredView):
+class ReciboRemiteView(ReciboPeriodoView, LoginRequiredMixin):
     
     """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
     los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
     cuenta el periodo especificado"""
-
+    
     template_name = 'invoice/remite_list.html'
     
     def dispatch(self, request, *args, **kwargs):
@@ -343,12 +340,12 @@ class ReciboRemiteView(ReciboPeriodoView, LoginRequiredView):
         context['fin'] = self.fin
         return context
 
-class ReciboRadView(ReciboPeriodoView, LoginRequiredView):
+class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
     
     """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
     los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
     cuenta el periodo especificado"""
-
+    
     template_name = 'invoice/remite_list.html'
     
     def dispatch(self, request, *args, **kwargs):
@@ -381,17 +378,17 @@ class ReciboRadView(ReciboPeriodoView, LoginRequiredView):
         context['fin'] = self.fin
         return context
 
-class EmergenciaPeriodoView(TemplateView, LoginRequiredView):
+class EmergenciaPeriodoView(TemplateView, LoginRequiredMixin):
     
     """Muestra las opciones disponibles para la aplicación"""
-
+    
     template_name = 'invoice/emergencia_list.html'
     
     def dispatch(self, request, *args, **kwargs):
 
         """Filtra las :class:`Emergencia` de acuerdo a los datos ingresados en
         el formulario"""
-
+        
         self.form = PeriodoForm(request.GET, prefix='emergencia')
         if self.form.is_valid():
 
@@ -419,20 +416,20 @@ class EmergenciaPeriodoView(TemplateView, LoginRequiredView):
         context['fin'] = self.fin
         return context
 
-class EmergenciaDiaView(EmergenciaListView, LoginRequiredView):
+class EmergenciaDiaView(EmergenciaListView, LoginRequiredMixin):
 
     """Muestra los materiales y medicamentos de las :class:`Emergencia`s que
     han sido atendidas durante el día"""
-
+    
     template_name = 'emergency/daily.html'
 
-class AdmisionAltaView(ListView, LoginRequiredView):
+class AdmisionAltaView(ListView, LoginRequiredMixin):
     
     """Muestra una lista de :class:`Admisiones` que ya han sido dadas de alta"""
-
+    
     context_object_name = 'admisiones'
     template_name = 'enfermeria/altas.html'
-
+    
     def get_queryset(self):
 
         """Obtiene las :class:`Admision`es dadas de alta el día de hoy"""

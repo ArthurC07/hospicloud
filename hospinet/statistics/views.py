@@ -10,8 +10,7 @@ from decimal import Decimal
 from datetime import datetime, time
 from collections import defaultdict
 from emergency.models import Emergencia
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Fieldset
+from crispy_forms.layout import Fieldset
 
 class Estadisticas(TemplateView):
     
@@ -184,24 +183,24 @@ class AdmisionPeriodo(TemplateView):
 
         """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
         el formulario"""
-
+        
         self.form = PeriodoForm(request.GET, prefix='admisiones')
         if self.form.is_valid():
-
+            
             inicio = self.form.cleaned_data['inicio']
             fin = self.form.cleaned_data['fin']
             self.inicio = datetime.combine(inicio, time.min)
             self.fin = datetime.combine(fin, time.max)
             self.admisiones = Admision.objects.filter(
                                                  admision__range=(inicio, fin))
-
+            
         else:
             
             return redirect('estadisticas')
-
+        
         return super(AdmisionPeriodo, self).dispatch(request, *args,
                                                            **kwargs)
-
+    
     def get_context_data(self, **kwargs):
 
         context = super(AdmisionPeriodo, self).get_context_data(**kwargs)
@@ -213,11 +212,11 @@ class AdmisionPeriodo(TemplateView):
         cargos = defaultdict(Decimal)
         habitaciones = defaultdict(int)
         for admision in self.admisiones:
-
+            
             for cargo in admision.cargos.all():
-
+                
                 cargos[cargo.cargo] += cargo.cantidad
-
+                
             habitaciones[admision.habitacion] += admision.tiempo_hospitalizado()
         
         context['cargos'] = cargos.items()
@@ -249,9 +248,9 @@ class EmergenciaPeriodo(TemplateView):
 
         return super(EmergenciaPeriodo, self).dispatch(request, *args,
                                                            **kwargs)
-
+    
     def get_context_data(self, **kwargs):
-
+        
         context = super(EmergenciaPeriodo, self).get_context_data(**kwargs)
         context['inicio'] = self.inicio
         context['fin'] = self.fin
@@ -259,10 +258,10 @@ class EmergenciaPeriodo(TemplateView):
         # Calcular todos los cargos efectuados en estas emergencias
         cargos = defaultdict(Decimal)
         for emergencia in self.emergencias:
-
+            
             for cobro in emergencia.cobros.all():
-
+                
                 cargos[cobro.cargo] += cobro.cantidad
-
+                
         context['cargos'] = cargos.items()
         return context
