@@ -35,3 +35,18 @@ body {
     margin-bottom: 15px;
     padding: 7px 9px;
 }
+/* 
+===============================================================================
+ Sidebar and table shadow
+===============================================================================
+*/
+ul.nav-tabs {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+}
+.table-bordered {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+}
+
+table caption {
+    font-weight: bold;
+}

@@ -17,12 +17,12 @@
 
 from django.views.generic.base import TemplateView
 from haystack.views import SearchView
-from library.protected import LoginRequiredView
+from guardian.mixins import LoginRequiredMixin
 
 class IndexView(TemplateView):
     
     template_name = 'index.html'
 
-class CustomSearchView(SearchView, LoginRequiredView):
+class CustomSearchView(SearchView, LoginRequiredMixin):
     
     template_name = 'search/search.html'

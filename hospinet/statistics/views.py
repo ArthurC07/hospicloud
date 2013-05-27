@@ -11,8 +11,9 @@ from datetime import datetime, time
 from collections import defaultdict
 from emergency.models import Emergencia
 from crispy_forms.layout import Fieldset
+from guardian.mixins import LoginRequiredMixin
 
-class Estadisticas(TemplateView):
+class Estadisticas(TemplateView, LoginRequiredMixin):
     
     template_name = 'estadisticas/index.html'
     
@@ -46,7 +47,7 @@ class Atencion(object):
         
         return ','.join('[{0}, {1}]'.format(p[0], p[1]) for p in parejas)
 
-class AtencionAdulto(TemplateView, Atencion):
+class AtencionAdulto(TemplateView, Atencion, LoginRequiredMixin):
     
     template_name = 'estadisticas/atencion_adulto.html'
     
@@ -67,7 +68,7 @@ class AtencionAdulto(TemplateView, Atencion):
         
         return context
 
-class AtencionInfantil(TemplateView, Atencion):
+class AtencionInfantil(TemplateView, Atencion, LoginRequiredMixin):
     
     template_name = 'estadisticas/atencion_infantil.html'
     
@@ -88,7 +89,7 @@ class AtencionInfantil(TemplateView, Atencion):
         
         return context
 
-class Productividad(TemplateView):
+class Productividad(TemplateView, LoginRequiredMixin):
     
     template_name = 'estadisticas/productividad.html'
     
@@ -156,7 +157,7 @@ class Productividad(TemplateView):
         
         return context
 
-class IngresosHospitalarios(TemplateView, Atencion):
+class IngresosHospitalarios(TemplateView, Atencion, LoginRequiredMixin):
     
     template_name = 'estadisticas/ingresos_hospitalarios.html'
     
@@ -175,7 +176,7 @@ class IngresosHospitalarios(TemplateView, Atencion):
         
         return context
 
-class AdmisionPeriodo(TemplateView):
+class AdmisionPeriodo(TemplateView, LoginRequiredMixin):
     
     template_name = 'estadisticas/admision.html'
     

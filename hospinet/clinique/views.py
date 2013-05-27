@@ -22,10 +22,9 @@ from clinique.models import (Consultorio, Paciente, Transaccion, Cita, Pago,
     Esperador, Consulta, Receta, HistoriaClinica, Optometria)
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (TemplateView, DetailView, CreateView,
                                   ListView, UpdateView)
-from library.protected import LoginRequiredView
 from persona.forms import PersonaForm
 from persona.models import Persona
 from persona.views import PersonaCreateView
@@ -33,12 +32,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.base import RedirectView
 from django.contrib import messages
+from guardian.mixins import LoginRequiredMixin
 
 class ConsultorioIndex(TemplateView):
     
     template_name = "consultorio/index.html"
 
-class ConsultorioCreateView(CreateView, LoginRequiredView):
+class ConsultorioCreateView(CreateView, LoginRequiredMixin):
     
     """Permite crear un :class:`Consultorio` para el usuario actual en caso de
     que el mismo sea un doctor"""
@@ -55,7 +55,7 @@ class ConsultorioCreateView(CreateView, LoginRequiredView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class ConsultorioDetailView(DetailView, LoginRequiredView):
+class ConsultorioDetailView(DetailView, LoginRequiredMixin):
     
     """Permite mostrar los detalles de un :class:`Consultorio`
     
@@ -74,7 +74,7 @@ class ConsultorioDetailView(DetailView, LoginRequiredView):
         context['formulario_diario'] = DiaForm()
         return context
 
-class BaseCreateView(CreateView, LoginRequiredView):
+class BaseCreateView(CreateView, LoginRequiredMixin):
     
     """Permite llenar el formulario de una clase que requiera
     :class:`Consultorio`s de manera previa - DRY"""
@@ -191,7 +191,7 @@ class PacienteCreateView(RedirectView):
         
         return self.paciente.get_absolute_url()
 
-class PacienteDetailView(DetailView, LoginRequiredView):
+class PacienteDetailView(DetailView, LoginRequiredMixin):
     
     """Permite al :class:`User` doctor o secretaria ver los detalles de una
     :class:`Persona` que tenga como paciente"""
@@ -201,7 +201,7 @@ class PacienteDetailView(DetailView, LoginRequiredView):
     context_object_name = 'paciente'
     slug_field = 'uuid'
 
-class PacienteUpdateView(UpdateView, LoginRequiredView):
+class PacienteUpdateView(UpdateView, LoginRequiredMixin):
     
     model = Paciente
     form_class = PacienteForm
@@ -243,7 +243,7 @@ class AgregarCitaCreateView(BaseCreateView):
     form_class = CitaForm
     template_name = "consultorio/paciente_create.html"
 
-class ConsultorioPacientes(ListView, LoginRequiredView):
+class ConsultorioPacientes(ListView, LoginRequiredMixin):
 
     model = Paciente
     template_name = 'consultorio/pacientes_list.html'
@@ -253,7 +253,7 @@ class ConsultorioPacientes(ListView, LoginRequiredView):
         self.consultorio = get_object_or_404(Consultorio, pk=kwargs['paciente'])
         return super(ConsultorioPacientes, self).dispatch(*args, **kwargs)
 
-class EsperaPacientes(ListView, LoginRequiredView):
+class EsperaPacientes(ListView, LoginRequiredMixin):
 
     """Muestra la lista de :class:`Paciente` que se encuentran actualmente en
     la Sala de Espera del :class:`Consultorio`"""
@@ -272,7 +272,7 @@ class EsperaPacientes(ListView, LoginRequiredView):
         self.consultorio = get_object_or_404(Consultorio, pk=self.kwargs['consultorio'])
         return Esperador.objects.filter(consultorio=self.consultorio, atendido=False)
 
-class EsperadorAgregarView(RedirectView, LoginRequiredView):
+class EsperadorAgregarView(RedirectView, LoginRequiredMixin):
     
     """Permite agregar un :class:`Paciente` a la sala de espera del consultorio en
     el cual se esta trabajando actualmente"""
@@ -289,7 +289,7 @@ class EsperadorAgregarView(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡Se agrego al paciente a la sala de espera!')
         return reverse('consultorio-view', args=[esperador.consultorio.uuid])
 
-class EsperadorAtendido(RedirectView, LoginRequiredView):
+class EsperadorAtendido(RedirectView, LoginRequiredMixin):
 
     permanent = False
 
@@ -301,7 +301,7 @@ class EsperadorAtendido(RedirectView, LoginRequiredView):
         messages.info(self.request, u'¡Se marco al Paciente como atendido!')
         return reverse('consultorio-view', args=[esperador.consultorio.uuid])
 
-class PacienteBasecreateView(CreateView, LoginRequiredView):
+class PacienteBasecreateView(CreateView, LoginRequiredMixin):
 
     """"Permite crear un formulario base para ingresar diversos tipos de datos
     relacionados con un :class:`Paciente`"""
@@ -333,7 +333,7 @@ class ConsultaCreateView(PacienteBasecreateView):
     form_class = ConsultaForm
     template_name = 'consultorio/consulta_form.html'
 
-class ConsultaDetailview(DetailView, LoginRequiredView):
+class ConsultaDetailview(DetailView, LoginRequiredMixin):
     
     """Permite que el doctor pueda agregar los resultados de la
     :class:`Consulta` a un :class:`Paciente`"""
@@ -348,7 +348,7 @@ class RecetaCreateView(PacienteBasecreateView):
     form_class = RecetaForm
     template_name = 'consultorio/receta_create.html'
 
-class RecetaDetailView(DetailView, LoginRequiredView):
+class RecetaDetailView(DetailView, LoginRequiredMixin):
 
     model = Receta
     template_name = 'consultorio/receta_detail.html'
@@ -363,7 +363,7 @@ class OptometriaCreateView(PacienteBasecreateView):
     form_class = OptometriaForm
     template_name = 'consultorio/optometria_create.html'
 
-class OptometriaDetailView(DetailView, LoginRequiredView):
+class OptometriaDetailView(DetailView, LoginRequiredMixin):
 
     """Permite mostrar los valores ingresados en una :class:`Optometria`
     ingresada por el medico"""
