@@ -21,10 +21,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView, FormView)
-from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
-    GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
-    NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm, MedicamentoForm,
-    DosisForm, DevolucionForm, SumarioForm, DosificarForm)
+from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
+    InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm, NotaEnfermeriaForm,
+    OrdenMedicaForm, SignoVitalForm, MedicamentoForm, DosisForm, DevolucionForm,
+    SumarioForm, DosificarForm)
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
     Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital,
     Medicamento, Dosis, Devolucion, Sumario)
@@ -66,19 +66,6 @@ class AdmisionListView(ListView, LoginRequiredMixin):
     context_object_name = 'admisiones'
     template_name = 'enfermeria/admisiones.html'
     paginate_by = 20
-
-class IngresarView(UpdateView, LoginRequiredMixin):
-    
-    """Permite actualizar los datos de ingreso en la central de enfermeria"""
-    
-    model = Admision
-    form_class = IngresarForm
-    template_name = 'enfermeria/ingresar.html'
-    
-    def get_success_url(self):
-        
-        self.object.ingresar()
-        return reverse('nightingale-view-id', args=[self.object.id])
 
 class NotaUpdateView(UpdateView, LoginRequiredMixin):
     

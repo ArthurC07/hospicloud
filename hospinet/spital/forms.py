@@ -64,3 +64,23 @@ class PreAdmisionForm(forms.ModelForm):
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Guardar'))
+
+class IngresarForm(forms.ModelForm):
+    
+    """Muestra un formulario que permite ingresar a una :class:`Persona`
+    al :class:`Hospital`"""
+
+    class Meta:
+        
+        model = Admision
+        fields = ('habitacion',)
+
+    def __init__(self, *args, **kwargs):
+
+        super(IngresarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.layout = Fieldset(u'Hospitalizar Paciente',
+                                      *self.field_names)

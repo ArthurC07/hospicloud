@@ -25,7 +25,8 @@ from django.views.generic import (CreateView, ListView, TemplateView,
                                   DetailView, RedirectView, UpdateView)
 from persona.models import Persona
 from persona.views import PersonaCreateView
-from spital.forms import AdmisionForm, HabitacionForm, PreAdmisionForm
+from spital.forms import (AdmisionForm, HabitacionForm, PreAdmisionForm,
+                          IngresarForm)
 from spital.models import Admision, Habitacion, PreAdmision
 from nightingale.models import Cargo
 from emergency.models import Emergencia
@@ -265,20 +266,6 @@ class PagarView(RedirectView, LoginRequiredMixin):
         messages.info(self.request, u'¡Registrado el pago de la Admision!')
         return reverse('admision-view-id', args=[admision.id])
 
-class HospitalizarView(RedirectView, LoginRequiredMixin):
-    
-    """Permite marcar como hospitalizada una :class:`Admision`"""
-    
-    url = '/admision/hospitalizar'
-    permanent = False
-    
-    def get_redirect_url(self, **kwargs):
-        
-        admision = get_object_or_404(Admision, pk=kwargs['pk'])
-        admision.hospitalizar()
-        messages.info(self.request, u'¡Admision Enviada a Enfermeria!')
-        return reverse('admision-view-id', args=[admision.id])
-
 class AdmisionPeriodoView(TemplateView, LoginRequiredMixin):
     
     def dispatch(self, request, *args, **kwargs):
@@ -461,3 +448,18 @@ class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
         context['preadmision'] = self.preadmision
         
         return context
+
+class HospitalizarView(UpdateView, LoginRequiredMixin):
+    
+    """Permite actualizar los datos de ingreso en la central de enfermeria"""
+    
+    model = Admision
+    form_class = IngresarForm
+    template_name = 'enfermeria/ingresar.html'
+    
+    def get_success_url(self):
+        
+        self.object.hospitalizar()
+        self.object.ingresar()
+        messages.info(self.request, u'¡Admision Enviada a Enfermeria!')
+        return reverse('nightingale-view-id', args=[self.object.id])
