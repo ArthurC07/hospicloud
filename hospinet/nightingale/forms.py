@@ -303,6 +303,23 @@ class MedicamentoForm(forms.ModelForm):
         self.helper.layout = Fieldset(u'Recetar Medicamento', *self.field_names)
         self.helper.add_input(Submit('submit', 'Guardar'))
 
+class DosificarForm(forms.Form):
+    
+    """Permite indicar el momento en el que se efectua la dosificación de un
+    :class:`Medicamento`"""
+    
+    hora = forms.DateTimeField(widget=DateTimeWidget(), required=False)
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(DosificarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.layout = Fieldset(u'Dosificar Medicamento',
+                                      *self.field_names)
+        self.helper.add_input(Submit('submit', 'Guardar'))
+
 class DosisForm(forms.ModelForm):
     
     class Meta:

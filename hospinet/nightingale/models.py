@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from inventory.models import ItemTemplate
 from django.core.urlresolvers import reverse
 from django_extensions.db.models import TimeStampedModel
+from datetime import timedelta
 
 class Turno(object):
     
@@ -358,21 +359,26 @@ class Medicamento(TimeStampedModel):
         
         """Crea un :class:`Cargo` basado en una Dosis del Medicamento"""
         
-        if self.suministrado >= self.cantidad:
+        if self.suministrado >= self.repeticiones:
             
-            self.estado = 3
-            return None
+            return
         
         cargo = Cargo()
+        cargo.admision = self.admision
         cargo.created = hora
         cargo.cargo = self.cargo
         cargo.usuario = usuario
         cargo.save()
         
-        self.suministrado += 1
-        self.save()
+        self.ultima_dosis = timezone.now()
+        print(timedelta(hours=self.intervalo))
+        self.proxima_dosis = self.ultima_dosis + timedelta(hours=self.intervalo)
         
-        return cargo
+        self.suministrado += 1
+        if self.suministrado == self.repeticiones:
+            self.estado = 3
+        
+        self.save()
 
 class Dosis(TimeStampedModel, Turno):
     

@@ -20,11 +20,11 @@ from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
-                                  RedirectView, DeleteView)
+                                  RedirectView, DeleteView, FormView)
 from nightingale.forms import (IngresarForm, CargoForm, EvolucionForm,
     GlicemiaForm, InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm,
     NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm, MedicamentoForm,
-    DosisForm, DevolucionForm, SumarioForm)
+    DosisForm, DevolucionForm, SumarioForm, DosificarForm)
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
     Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital,
     Medicamento, Dosis, Devolucion, Sumario)
@@ -37,7 +37,7 @@ class NightingaleIndexView(ListView, LoginRequiredMixin):
     
     """Permite ingresar al lobby de Admisiones que estan siendo atendidas en
     una institucion hospitalaria"""
-
+    
     queryset = Admision.objects.filter(Q(estado='H'))
     context_object_name = 'admitidos'
     template_name = 'enfermeria/index.html'
@@ -70,7 +70,7 @@ class AdmisionListView(ListView, LoginRequiredMixin):
 class IngresarView(UpdateView, LoginRequiredMixin):
     
     """Permite actualizar los datos de ingreso en la central de enfermeria"""
-
+    
     model = Admision
     form_class = IngresarForm
     template_name = 'enfermeria/ingresar.html'
@@ -83,13 +83,13 @@ class IngresarView(UpdateView, LoginRequiredMixin):
 class NotaUpdateView(UpdateView, LoginRequiredMixin):
     
     """Permite editar una :class:`NotaEnfermeria` en caso de ser necesario"""
-
+    
     model = NotaEnfermeria
     form_class = NotaEnfermeriaForm
     template_name = 'enfermeria/nota_create.html'
 
 class NotaCerrarView(RedirectView, LoginRequiredMixin):
-
+    
     """Permite cambiar el estado de un :class:`NotaEnfermeria`"""
      
     permanent = False
@@ -114,7 +114,7 @@ class NightingaleDetailView(DetailView, LoginRequiredMixin):
     :class:`SignoVital`es, :class:`OrdenMedica`s, y todos los demas datos que
     se relacionan con una :class:`Admision` de manera directa.
     """
-
+    
     model = Admision
     template_name = 'enfermeria/nightingale_detail.html'
     slug_field = 'uuid'
@@ -128,7 +128,7 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
     template_name = 'enfermeria/signos_grafico.html'
     
     def get_context_data(self, **kwargs):
-
+        
         """Formatea los datos para ser utilizado las graficas de signos
         vitales
         
@@ -182,7 +182,7 @@ class ResumenDetailView(NightingaleDetailView, SignosDetailView):
     imprimir adecuadamente la historia clínica de la :class:`Persona` admitida
     durante esta :class:`Admision`
     """
-
+    
     model = Admision
     template_name='enfermeria/resumen.html'
     slug_field = 'uuid'
@@ -191,7 +191,7 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
     
     """Permite llenar el formulario de una clase que requiera
     :class:`Admision`es de manera previa - DRY"""
-
+    
     def get_context_data(self, **kwargs):
         
         context = super(BaseCreateView, self).get_context_data(**kwargs)
@@ -202,7 +202,7 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
         
         """Agrega la :class:`Admision` obtenida como el valor a utilizar en el
         formulario que será llenado posteriormente"""
-
+        
         kwargs = super(BaseCreateView, self).get_form_kwargs()
         kwargs.update({'initial':{'admision':self.admision.id,
                                   'fecha_y_hora': timezone.now(),
@@ -213,7 +213,7 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
         
         """Obtiene la :class:`Admision` que se entrego como argumento en la
         url"""
-
+        
         self.admision = get_object_or_404(Admision, pk=kwargs['admision'])
         return super(BaseCreateView, self).dispatch(*args, **kwargs)
     
@@ -222,7 +222,7 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
         """Guarda el objeto generado espeficando la :class:`Admision` obtenida
         de los argumentos y el :class:`User` que esta utilizando la aplicación
         """
-
+        
         self.object = form.save(commit=False)
         self.object.admision = self.admision
         self.usuario = self.request.user
@@ -241,9 +241,9 @@ class CargoCreateView(BaseCreateView):
     template_name = 'enfermeria/cargo_create.html'
 
 class CargoDeleteView(DeleteView, LoginRequiredMixin):
-
+    
     model = Cargo
-
+    
     def get_object(self, queryset = None):
 
         obj = super(CargoDeleteView, self).get_object(queryset)
@@ -330,9 +330,9 @@ class SignoVitalCreateView(BaseCreateView):
     template_name = 'enfermeria/signo_create.html'
 
 class MedicamentoCreateView(BaseCreateView):
-
+    
     """Permite preescribir un :class:`Medicamento` a una :class:`Admision`"""
-
+    
     model = Medicamento
     form_class = MedicamentoForm
     template_name = 'enfermeria/medicamento_create.html'
@@ -341,7 +341,7 @@ class MedicamentoCreateView(BaseCreateView):
         
         """Agrega la :class:`Admision` obtenida como el valor a utilizar en el
         formulario que será llenado posteriormente"""
-
+        
         kwargs = super(BaseCreateView, self).get_form_kwargs()
         kwargs.update({'initial':{'admision':self.admision.id,
                                   'inicio': timezone.now(),
@@ -349,7 +349,7 @@ class MedicamentoCreateView(BaseCreateView):
         return kwargs
 
 class DosisCreateView(CreateView, LoginRequiredMixin):
-
+    
     """Permite crear las :class:`Dosis` de un determinado :class:`Medicamento`
     que sera suministrado durante una :class:`Admision`
     
@@ -357,11 +357,11 @@ class DosisCreateView(CreateView, LoginRequiredMixin):
     :class:`Medicamentos` es algo extremadamente subjetivo y varia de
     :class:`Persona` y doctor que lo indica
     """
-
+    
     model = Dosis
     form_class = DosisForm
     template_name = 'enfermeria/dosis_create.html'
-
+    
     def get_context_data(self, **kwargs):
         
         context = super(DosisCreateView, self).get_context_data(**kwargs)
@@ -372,7 +372,7 @@ class DosisCreateView(CreateView, LoginRequiredMixin):
         
         """Agrega el :class:`Medicamento` obtenida como el valor a utilizar en el
         formulario que será llenado posteriormente"""
-
+        
         kwargs = super(DosisCreateView, self).get_form_kwargs()
         kwargs.update({'initial':{'medicamento':self.medicamento.id,
                                   'fecha_y_hora': timezone.now(),
@@ -384,7 +384,7 @@ class DosisCreateView(CreateView, LoginRequiredMixin):
         
         """Obtiene la :class:`Admision` que se entrego como argumento en la
         url"""
-
+        
         self.medicamento = get_object_or_404(Medicamento, pk=kwargs['medicamento'])
         return super(DosisCreateView, self).dispatch(*args, **kwargs)
     
@@ -394,7 +394,7 @@ class DosisCreateView(CreateView, LoginRequiredMixin):
         a ser administrado de los argumentos y el :class:`User` que
         esta utilizando la aplicación
         """
-
+        
         self.object = form.save(commit=False)
         self.object.medicamento = self.medicamento
         self.usuario = self.request.user
@@ -414,7 +414,7 @@ class DosisSuministrarView(RedirectView, LoginRequiredMixin):
         
         """Obtiene la :class:`Dosis` desde la base de datos, la marca como
         suministrada, estampa la hora y el :class:`User` que la suministro"""
-
+        
         dosis = get_object_or_404(Dosis, pk=kwargs['pk'])
         dosis.estado = kwargs['estado']
         dosis.usuario = self.request.user
@@ -433,7 +433,7 @@ class MedicamentoSuspenderView(RedirectView, LoginRequiredMixin):
         
         """Obtiene el :class:`Medicamento` desde la base de datos, la marca como
         suministrada, estampa la hora y el :class:`User` que la suministro"""
-
+        
         medicamento = get_object_or_404(Medicamento, pk=kwargs['pk'])
         medicamento.estado = kwargs['estado']
         medicamento.save()
@@ -456,7 +456,7 @@ class SumarioCreateView(BaseCreateView):
         """Guarda el objeto generado espeficando la :class:`Admision` obtenida
         de los argumentos y el :class:`User` que esta utilizando la aplicación
         """
-
+        
         self.object = form.save(commit=False)
         self.object.admision = self.admision
         self.usuario = self.request.user
@@ -468,16 +468,38 @@ class SumarioCreateView(BaseCreateView):
         
         return HttpResponseRedirect(self.get_success_url())
 
-class DosificarMedicamentoView(RedirectView, LoginRequiredMixin):
+class DosificarMedicamentoView(FormView, LoginRequiredMixin):
     
-    permanent = False
+    """Permite registrar la dosificación de un :class:`Medicamento` recetado
+    al paciente, creando de manera simultanea un :class:`Cargo` que permite
+    enviar el cobro a caja"""
     
-    def get_redirect_url(self, **kwargs):
+    form_class = DosificarForm
+    template_name = 'enfermeria/dosificar_form.html'
+    
+    def dispatch(self, request, *args, **kwargs):
         
-        """Obtiene el :class:`Medicamento` desde la base de datos, la marca como
-        suministrada, estampa la hora y el :class:`User` que la suministro"""
-
-        medicamento = get_object_or_404(Medicamento, pk=kwargs['medicamento'])
-        medicamento.dosificar()
-        medicamento.save()
-        return reverse('enfermeria-cargos', args=[self.admision.id])
+        self.medicamento = get_object_or_404(Medicamento,
+                                             pk=kwargs['medicamento'])
+        return super(DosificarMedicamentoView, self).dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(DosificarMedicamentoView, self).get_context_data(**kwargs)
+        
+        context['medicamento'] = self.medicamento
+        
+        return context
+    
+    def form_valid(self, form):
+        
+        if form.is_valid():
+            
+            hora = form.cleaned_data['hora']
+            self.medicamento.suministrar(hora, self.request.user)
+        
+        return super(DosificarMedicamentoView, self).form_valid(form)
+    
+    def get_success_url(self):
+        
+        return reverse('enfermeria-cargos', args=[self.medicamento.admision.id])

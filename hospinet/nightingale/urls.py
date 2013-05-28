@@ -162,7 +162,7 @@ urlpatterns = patterns('',
         SumarioCreateView.as_view(),
         name='enfermeria-dar-alta'),
     
-    url(r'^(?P<medicamento>\d+)/alta',
+    url(r'^(?P<medicamento>\d+)/dosificar',
         DosificarMedicamentoView.as_view(),
         name='enfermeria-dosificar-medicamento'),
 )

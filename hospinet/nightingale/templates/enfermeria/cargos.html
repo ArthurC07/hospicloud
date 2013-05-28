@@ -35,12 +35,12 @@
           <td>{{ medicamento.cargo.descripcion }}</td>
           <td>{{ medicamento.get_intervalo_display }}</td>
           <td>{{ medicamento.unidades }}</td>
-          <td>{{ medicamento.repeticiones }}</td>
+          <td>{{ medicamento.repeticiones }} Veces</td>
           <td>{{ medicamento.get_estado_display }}</td>
-          <td>{{ medicamento.ultima_dosis|date:"H:M P" }}</td>
-          <td>{{ medicamento.suministrado }}</td>
-          <td>{{ medicamento.proxima_dosis|date:"H:M P" }}</td>
-          <td><a class="btn btn-success" href="#">Suministrar Dosis</a></td>
+          <td>{{ medicamento.ultima_dosis|date:"P" }}</td>
+          <td>{{ medicamento.suministrado }} Veces</td>
+          <td>{{ medicamento.proxima_dosis|date:"P" }}</td>
+          <td><a class="btn btn-success" href="{% url 'enfermeria-dosificar-medicamento' medicamento.id %}">Suministrar Dosis</a></td>
         </tr>
         {% endfor %}
       </tbody>
