@@ -25,9 +25,11 @@ from django.contrib import admin
 from tastypie.api import Api
 admin.autodiscover()
 from persona.api import PersonaResource
+from nightingale.api import MedicamentoResource
 
 v1_api = Api(api_name='mobile')
 v1_api.register(PersonaResource())
+v1_api.register(MedicamentoResource())
 
 urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:

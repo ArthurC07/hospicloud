@@ -1,12 +1,57 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="content clearfix">
-  {% include "snippets/aside.html" with admision=admision %}
-  <section id="cargos" class="span9">
+<div class="row">
+  <section id="cargos" class="span12">
     <hgroup class="page-header">
-      <h1>{{ admision.paciente.nombre_completo }}<small>Cargos en {{ admision.habitacion }}</small></h1>
+      <h1>{{ admision.paciente.nombre_completo }} <small>{{ admision.habitacion }}</small></h1>
     </hgroup>
-    <a href="{% url 'enfermeria-cargo-agregar' admision.id %}" class="btn btn-primary">Agregar Cargo</a>
+  </section>
+</div>
+<div class="row">
+  {% include "snippets/aside.html" with admision=admision %}
+  <section class="span9">
+    <a class="btn btn-primary" href="{% url 'enfermeria-cargo-agregar' admision.id %}">Agregar Cargo</a>
+    <a class="btn btn-primary" href="{% url 'enfermeria-medicamento-agregar' admision.id %}">Recetar Medicamento</a>
+    <hgroup class="page-header">
+      <h2>Medicamentos Preescritos</h2>
+    </hgroup>
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Medicamento</th>
+          <th>Intervalo</th>
+          <th>Unidades</th>
+          <th>Repeticiones</th>
+          <th>Estado</th>
+          <th>&Uacute;ltima Dosis</th>
+          <th>Suministrado</th>
+          <th>Pr&oacute;xima Dosis</th>
+          <th class="no-print">Acctiones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for medicamento in admision.medicamentos.all %}
+        <tr>
+          <td>{{ medicamento.cargo.descripcion }}</td>
+          <td>{{ medicamento.get_intervalo_display }}</td>
+          <td>{{ medicamento.unidades }}</td>
+          <td>{{ medicamento.repeticiones }}</td>
+          <td>{{ medicamento.get_estado_display }}</td>
+          <td>{{ medicamento.ultima_dosis|date:"H:M P" }}</td>
+          <td>{{ medicamento.suministrado }}</td>
+          <td>{{ medicamento.proxima_dosis|date:"H:M P" }}</td>
+          <td><a class="btn btn-success" href="#">Suministrar Dosis</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+<div class="row">
+  <section class="span9 offset3">
+    <hgroup class="page-header">
+      <h2>Materiales y Medicamentos Utilizados</h2>
+    </hgroup>
     {% include "snippets/cargo_table.html" %}
   </section>
 </div>

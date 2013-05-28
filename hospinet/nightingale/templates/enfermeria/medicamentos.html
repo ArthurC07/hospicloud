@@ -9,11 +9,11 @@
     {% endif %}
     {% for medicamento in admision.medicamentos.all %}
       {% include "snippets/medicamento.html" with editable=1 %}
-      <a href="{% url "enfermeria-medicamento-suspender" medicamento.id 2 %}" class="btn btn-primary">Suspender {{ medicamento.nombre }}</a>
-      <a href="{% url "enfermeria-medicamento-suspender" medicamento.id 3 %}" class="btn btn-primary">Terminar {{ medicamento.nombre }}</a>
+      <a href="{% url 'enfermeria-medicamento-suspender' medicamento.id 2 %}" class="btn btn-primary">Suspender {{ medicamento.nombre }}</a>
+      <a href="{% url 'enfermeria-medicamento-suspender' medicamento.id 3 %}" class="btn btn-primary">Terminar {{ medicamento.nombre }}</a>
     {% endfor %}
     <div class="clearfix">&nbsp;</div>
-    <a href="{% url "enfermeria-medicamento-agregar" admision.id %}" class="btn btn-primary">Agregar Medicamento</a>
+    <a href="{% url 'enfermeria-medicamento-agregar' admision.id %}" class="btn btn-primary">Agregar Medicamento</a>
   </section>
 </div>
 {% endblock %}

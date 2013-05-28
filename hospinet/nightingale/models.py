@@ -17,7 +17,6 @@
 
 from django.db import models
 from spital.models import Admision
-from datetime import time
 from django.utils import timezone
 from django.contrib.auth.models import User
 from inventory.models import ItemTemplate
@@ -25,23 +24,23 @@ from django.core.urlresolvers import reverse
 from django_extensions.db.models import TimeStampedModel
 
 class Turno(object):
-
+    
     def get_turno(self):
         pass
-        #hora = timezone.localtime(self.fecha_y_hora.time())
-        #a_inicio = time(13, tzinfo=hora.tzinfo)
-        #b_inicio = time(21, tzinfo=hora.tzinfo)
-        #c_inicio = time(3, tzinfo=hora.tzinfo)
+        # hora = timezone.localtime(self.fecha_y_hora.time())
+        # a_inicio = time(13, tzinfo=hora.tzinfo)
+        # b_inicio = time(21, tzinfo=hora.tzinfo)
+        # c_inicio = time(3, tzinfo=hora.tzinfo)
 
-        #if hora > a_inicio and hora < b_inicio:
+        # if hora > a_inicio and hora < b_inicio:
 
         #    return u"turno-a"
 
-        #if hora > b_inicio or hora < c_inicio:
+        # if hora > b_inicio or hora < c_inicio:
 
         #    return u"turno-b"
 
-        #if hora > c_inicio and hora < a_inicio:
+        # if hora > c_inicio and hora < a_inicio:
 
         #    return u"turno-c"
 
@@ -53,9 +52,12 @@ class SignoVital(models.Model, Turno):
     admision = models.ForeignKey(Admision, related_name='signos_vitales')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     pulso = models.IntegerField()
-    temperatura = models.DecimalField(decimal_places=2, max_digits=8, null=True)
-    presion_sistolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
-    presion_diastolica = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    temperatura = models.DecimalField(decimal_places=2, max_digits=8,
+                                      null=True)
+    presion_sistolica = models.DecimalField(decimal_places=2, max_digits=8,
+                                            null=True)
+    presion_diastolica = models.DecimalField(decimal_places=2, max_digits=8,
+                                             null=True)
     respiracion = models.DecimalField(decimal_places=2, max_digits=8, null=True)
     observacion = models.TextField(blank=True, null=True)
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
@@ -71,16 +73,19 @@ class SignoVital(models.Model, Turno):
         return reverse('nightingale-view-id', args=[self.admision.id])
     
     def save(self, *args, **kwargs):
-
+        
         """Permite guardar los datos mientras calcula algunos campos
         automaticamente"""
-
-        self.presion_arterial_media = float(self.presion_diastolica) + float(1) / float(3) * float(self.presion_sistolica -self.presion_diastolica)
-
+        
+        self.presion_arterial_media = float(self.presion_diastolica) + (
+                        float(1) / float(3) * float(self.presion_sistolica - 
+                                                    self.presion_diastolica))
+        
         super(SignoVital, self).save(*args, **kwargs)
 
 Admision.temperatura_promedio = property(lambda a:
-                                 sum(s.temperatura for s in a.signos_vitales.all())
+                                 sum(s.temperatura for s
+                                     in a.signos_vitales.all())
                                  / a.signos_vitales.count())
 
 Admision.pulso_promedio = property(lambda a:
@@ -88,11 +93,13 @@ Admision.pulso_promedio = property(lambda a:
                                  / a.signos_vitales.count())
 
 Admision.presion_sistolica_promedio = property(lambda a:
-                                 sum(s.presion_sistolica for s in a.signos_vitales.all())
+                                 sum(s.presion_sistolica for s
+                                     in a.signos_vitales.all())
                                  / a.signos_vitales.count())
 
 Admision.presion_diastolica_promedio = property(lambda a:
-                                 sum(s.presion_diastolica for s in a.signos_vitales.all())
+                                 sum(s.presion_diastolica for s
+                                     in a.signos_vitales.all())
                                  / a.signos_vitales.count())
 
 class Evolucion(models.Model):
@@ -120,8 +127,6 @@ class Cargo(TimeStampedModel, Turno):
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                                    related_name='cargos')
     cantidad = models.DecimalField(max_digits=8, decimal_places=2, default=1)
-    inicio = models.DateTimeField(default=timezone.now)
-    fin = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='cargos')
     
@@ -174,8 +179,8 @@ class Excreta(models.Model, Turno):
     
     MEDIOS = (
         ("S", u"Succión"),
-        ("O","Orina"),
-        ("V","Vomito"),
+        ("O", "Orina"),
+        ("V", "Vomito"),
     )
     
     admision = models.ForeignKey(Admision, related_name='excretas')
@@ -231,9 +236,9 @@ class Glicemia(models.Model, Turno):
         return reverse('nightingale-glucometria-id', args=[self.admision.id])
 
 class Glucosuria(models.Model, Turno):
-
+    
     """Registra la expulsión de Glucosa mediante la orina"""
-
+    
     admision = models.ForeignKey(Admision, related_name='glucosurias')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
@@ -248,9 +253,9 @@ class Glucosuria(models.Model, Turno):
         return reverse('nightingale-glucometria-id', args=[self.admision.id])
 
 class Insulina(models.Model, Turno):
-
+    
     """Registra la expulsión de Glucosa mediante la orina"""
-
+    
     admision = models.ForeignKey(Admision, related_name='insulina')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
@@ -283,7 +288,8 @@ class Sumario(TimeStampedModel):
         
         return reverse('nightingale-view-id', args=[self.admision.id])
 
-Admision.sumario = property(lambda a: Sumario.objects.get_or_create(admision=a)[0])
+Admision.sumario = property(
+                        lambda a: Sumario.objects.get_or_create(admision=a)[0])
 
 class FrecuenciaLectura(models.Model):
     
@@ -291,8 +297,8 @@ class FrecuenciaLectura(models.Model):
     de :class:`SignosVitales`"""
     
     admision = models.OneToOneField(Admision)
-    glucometria = models.IntegerField(default=0,blank=True)
-    signos_vitales = models.IntegerField(default=0,blank=True)
+    glucometria = models.IntegerField(default=0, blank=True)
+    signos_vitales = models.IntegerField(default=0, blank=True)
     
     def get_absolute_url(self):
         
@@ -300,9 +306,11 @@ class FrecuenciaLectura(models.Model):
         
         return reverse('nightingale-view-id', args=[self.admision.id])
 
-Admision.frecuencia_lectura = property(lambda a: FrecuenciaLectura.objects.get_or_create(admision=a)[0])
+Admision.frecuencia_lectura = property(
+                lambda a: FrecuenciaLectura.objects.get_or_create(admision=a)[0]
+                )
 
-class Medicamento(models.Model):
+class Medicamento(TimeStampedModel):
     
     """Permite A un :class:`User` recetar una droga que debera ser administrada
     a una :class:`Persona` durante una :class:`Admision`.
@@ -310,65 +318,88 @@ class Medicamento(models.Model):
     Esta droga puede administrarse a intervalos determinados por el doctor,
     dichos intervalos son medidos en horas.
     """
-
+    
     INTERVALOS = (
-        (1, u"Una vez al día"),
-        (2, u"Dos veces al día"),
-        (3, u"Tres veces al día"),
-        (4, u"Cuatro veces al día"),
-        (6, u"Seis veces al día"),
+        (24, u"Cada 24 Horas"),
+        (12, u"Cada 12 Horas"),
+        (8, u"Cada 8 Horas"),
+        (6, u"Cada 6 Horas"),
+        (4, u"Cada 4 Horas"),
     )
-
+    
     ESTADOS = (
         (1, u"Activo"),
         (2, u"Suspendido"),
         (3, u"Terminado"),
     )
-
+    
     admision = models.ForeignKey(Admision, related_name='medicamentos')
-    nombre = models.CharField(max_length=200, blank=True, null=True)
-    fecha_y_hora = models.DateTimeField(default=timezone.now)
+    cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
+                              related_name='medicamentos')
     inicio = models.DateTimeField(default=timezone.now)
     intervalo = models.IntegerField(blank=True, null=True, choices=INTERVALOS)
-    dias = models.IntegerField(blank=True, null=True)
-    control = models.CharField(max_length=200, blank=True, null=True)
+    unidades = models.CharField(max_length=200, blank=True)
+    repeticiones = models.IntegerField(blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='medicamentos')
-    estado = models.IntegerField(blank=True, null=True, choices=ESTADOS, default=1)
+    estado = models.IntegerField(blank=True, null=True, choices=ESTADOS,
+                                 default=1)
+    ultima_dosis = models.DateTimeField(default=timezone.now)
+    proxima_dosis = models.DateTimeField(default=timezone.now)
+    suministrado = models.IntegerField(default=0)
     
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('enfermeria-medicamentos', [self.admision.id])
+        return reverse('enfermeria-cargos', args=[self.admision.id])
+    
+    def suministrar(self, hora, usuario):
+        
+        """Crea un :class:`Cargo` basado en una Dosis del Medicamento"""
+        
+        if self.suministrado >= self.cantidad:
+            
+            self.estado = 3
+            return None
+        
+        cargo = Cargo()
+        cargo.created = hora
+        cargo.cargo = self.cargo
+        cargo.usuario = usuario
+        cargo.save()
+        
+        self.suministrado += 1
+        self.save()
+        
+        return cargo
 
-class Dosis(models.Model, Turno):
-
+class Dosis(TimeStampedModel, Turno):
+    
     """Permite llevar un control sobre los momentos en los que se debe
     administrar un :class:`Medicamento` y saber quien los ha administrado a la
     :class:`Persona`"""
-
+    
     ESTADOS = (
         (1, u"Pendiente"),
         (2, u"Rechazada"),
         (3, u"Administrada"),
     )
-
+    
     medicamento = models.ForeignKey(Medicamento, related_name='dosis',
                                    on_delete=models.CASCADE)
-    fecha_y_hora = models.DateTimeField(default=timezone.now)
-    estado = models.IntegerField(blank=True, null=True, choices=ESTADOS, default=1)
+    estado = models.IntegerField(blank=True, null=True, choices=ESTADOS,
+                                 default=1)
     recomendacion = models.CharField(max_length=200, blank=True, null=True)
-    usuario = models.ForeignKey(User, blank=True, null=True, related_name='dosis')
-    administrador = models.ForeignKey(User, blank=True, null=True,
-                                      related_name='dosis_administradas',
-                                      on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                related_name='dosis')
     
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('enfermeria-medicamentos', args=[self.medicamento.admision.id])
+        return reverse('enfermeria-medicamentos',
+                       args=[self.medicamento.admision.id])
 
 class Devolucion(TimeStampedModel, Turno):
 
@@ -385,4 +416,5 @@ class Devolucion(TimeStampedModel, Turno):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('enfermeria-medicamentos', args=[self.medicamento.admision.id])
+        return reverse('enfermeria-medicamentos',
+                       args=[self.medicamento.admision.id])

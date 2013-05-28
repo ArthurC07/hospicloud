@@ -11,7 +11,7 @@ from datetime import datetime, time
 from collections import defaultdict
 from emergency.models import Emergencia
 from crispy_forms.layout import Fieldset
-from guardian.mixins import LoginRequiredMixin
+from persona.mixins import LoginRequiredMixin
 
 class Estadisticas(TemplateView, LoginRequiredMixin):
     

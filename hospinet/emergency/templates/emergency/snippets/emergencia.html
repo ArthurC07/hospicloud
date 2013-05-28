@@ -1,52 +1,85 @@
-
-<section>
-  <p>{{ emergencia.historia_enfermedad_actual }}</p>
+<div class="row">
+  <section class="span9">
+    <p>
+      {{ emergencia.historia_enfermedad_actual }}
+    </p>
     <ul>
-      <li>Pulso: {{ emergencia.pulso }}</li>
-      <li>Frecuencia Respiratoria: {{ emergencia.frecuencia_respiratoria }}</li>
-      <li>Temperatura: {{ emergencia.temperatura }}</li>
-      <li>Presi&oacute;n: {{ emergencia.presion }}</li>
-      <li>Frecuencia Cardiaca: {{ emergencia.frecuencia_cardiaca }}</li>
-      <li>Respiraci&oacute;n: {{ emergencia.respiracion }}</li>
-      <li>Saturacion de ox&iacute;geno: {{ emergencia.saturacion_de_oxigeno}}</li>
+      <li>
+        Pulso: {{ emergencia.pulso }}
+      </li>
+      <li>
+        Frecuencia Respiratoria: {{ emergencia.frecuencia_respiratoria }}
+      </li>
+      <li>
+        Temperatura: {{ emergencia.temperatura }}
+      </li>
+      <li>
+        Presi&oacute;n: {{ emergencia.presion }}
+      </li>
+      <li>
+        Frecuencia Cardiaca: {{ emergencia.frecuencia_cardiaca }}
+      </li>
+      <li>
+        Respiraci&oacute;n: {{ emergencia.respiracion }}
+      </li>
+      <li>
+        Saturacion de ox&iacute;geno: {{ emergencia.saturacion_de_oxigeno}}
+      </li>
     </ul>
-</section>
-{% include "emergency/snippets/examen_fisico.html" with emergencia=emergencia %}
-{% include "emergency/snippets/diagnosticos.html" with emergencia=emergencia %}
-  <section id="hallazgos">
-  <hgroup>
-    <h3>Hallazgos</h3>
-  </hgroup>
-  {% for hallazgo in emergencia.hallazgos.all %}
-  <article class="hallazgo">
-    <p>{{ hallazgo.hallazgo }}</p>
-  </article>
-  {% endfor %}
   </section>
-  <section id="tratamientos">
-  <h2>Tratamientos</h2>
-  {% for tratamiento in emergencia.tratamientos.all %}
-  <article class="tratamiento">
-    <p>Indicaciones: {{ tratamiento.indicaciones }}</p>
-  </article>
-  {% endfor %}
+</div>
+<div class="row">
+  <section id="hallazgos" class="span4">
+    <hgroup class="page-header">
+      <h3>Hallazgos</h3>
+    </hgroup>
+    {% for hallazgo in emergencia.hallazgos.all %}
+    <article class="hallazgo">
+      <p>
+        {{ hallazgo.hallazgo }}
+      </p>
+    </article>
+    {% endfor %}
   </section>
-  <section id="Remisiones">
+  <section id="tratamientos" class="span5">
+    <hgroup class="page-header">
+      <h3>Tratamientos</h3>
+    </hgroup>
+    {% for tratamiento in emergencia.tratamientos.all %}
+    <article class="tratamiento">
+      <p>
+        Indicaciones: {{ tratamiento.indicaciones }}
+      </p>
+    </article>
+    {% endfor %}
+  </section>
+</div>
+<div class="row">
   {% for remision_interna in emergencia.remisiones_externas.all %}
-  <article>
+  <article class="span4">
     <h3>Remisi&oacute;n a Especialista</h3>
-    <p>M&eacute;dico: {{ remision_interna.doctor }}</p>
+    <p>
+      M&eacute;dico: {{ remision_interna.doctor }}
+    </p>
   </article>
   {% endfor %}
   {% for remision_externa in emergencia.remisiones_externas.all %}
-  <article>
+  <article class="span4">
     <h3>Remisi&oacute;n a otro Centro</h3>
-    <p>Destino: {{ remision_externa.destino }}</p>
-    <p>Diagn&oacute;stico: {{ remision_externa.diagnostico }}</p>
-    <p>Notas: {{ remision_externa.notas }}</p>
+    <p>
+      Destino: {{ remision_externa.destino }}
+    </p>
+    <p>
+      Diagn&oacute;stico: {{ remision_externa.diagnostico }}
+    </p>
+    <p>
+      Notas: {{ remision_externa.notas }}
+    </p>
   </article>
   {% endfor %}
-  </section>
-  <section id="cargos">
+</div>
+<section id="cargos">
   {% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
-  </section>
+</section>
+{% include "emergency/snippets/examen_fisico.html" with emergencia=emergencia %}
+{% include "emergency/snippets/diagnosticos.html" with emergencia=emergencia %}

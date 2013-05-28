@@ -40,7 +40,7 @@ body {
  Sidebar and table shadow
 ===============================================================================
 */
-ul.nav-tabs {
+aside ul.nav-tabs.nav-stacked {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
 }
 .table-bordered {

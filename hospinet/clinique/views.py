@@ -32,7 +32,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.base import RedirectView
 from django.contrib import messages
-from guardian.mixins import LoginRequiredMixin
+from persona.mixins import LoginRequiredMixin
 
 class ConsultorioIndex(TemplateView):
     

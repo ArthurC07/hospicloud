@@ -31,7 +31,7 @@ from nightingale.models import Cargo
 from emergency.models import Emergencia
 from persona.forms import PersonaForm
 from django.contrib import messages
-from guardian.mixins import LoginRequiredMixin
+from persona.mixins import LoginRequiredMixin
 from invoice.forms import PeriodoForm
 from crispy_forms.layout import Fieldset
 
@@ -395,6 +395,14 @@ class PreAdmisionCreateView(CreateView, LoginRequiredMixin):
         self.object.save()
         
         return HttpResponseRedirect(self.get_success_url())
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(PreAdmisionCreateView, self).get_context_data(**kwargs)
+        
+        context['emergencia'] = self.emergencia
+        
+        return context
 
 class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
     

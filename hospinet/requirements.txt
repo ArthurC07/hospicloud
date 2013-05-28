@@ -1,4 +1,4 @@
-django>=1.4
+django>=1.5
 django_countries
 django-treemenus
 sorl.thumbnail

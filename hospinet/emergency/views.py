@@ -38,7 +38,7 @@ from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
 from django.contrib import messages
 from datetime import datetime, time, date
 from django.utils import timezone
-from guardian.mixins import LoginRequiredMixin
+from persona.mixins import LoginRequiredMixin
 
 class EmergenciaPreCreateView(TemplateView, LoginRequiredMixin):
     

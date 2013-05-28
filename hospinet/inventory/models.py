@@ -14,18 +14,17 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 
 class Localidad(models.Model):
-
+    
     """Representa un lugar físico"""
-
+    
     name = models.CharField(max_length=255)
-
+    
     def __unicode__(self):
 
         return self.name
@@ -34,17 +33,17 @@ class Inventario(models.Model):
 
     localidad = models.ForeignKey(Localidad, null=True, blank=True,
                                  related_name='inventarios')
-
+    
     def __unicode__(self):
         if self.localidad == None:
             return u"None"
 
-        return u"Inventario de {0}".format(localidad.nombre)
+        return u"Inventario de {0}".format(self.localidad.nombre)
     
 class ItemTemplate(TimeStampedModel):
-
+    
     """"""
-
+    
     descripcion = models.CharField(max_length=255)
     marca = models.CharField(max_length=32, null=True, blank=True)
     modelo = models.CharField(max_length=32, null=True, blank=True)
@@ -53,6 +52,7 @@ class ItemTemplate(TimeStampedModel):
     suppliers = models.ManyToManyField("Proveedor", null=True, blank=True,
                                        related_name='plantillas')
     emergencia = models.BooleanField(default=True)
+    medicamento = models.BooleanField(default=True)
     
     def __unicode__(self):
 
@@ -65,50 +65,51 @@ class ItemTemplate(TimeStampedModel):
         return reverse('inventory-item-template', args=[self.id])
 
 class Proveedor(models.Model):
-
+    
     name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
-
+    
     def __unicode__(self):
-
+        
         return self.name
 
 class Item(TimeStampedModel):
-
+    
     plantilla = models.ForeignKey(ItemTemplate, related_name='items')
     inventario = models.ForeignKey(Inventario, related_name='items')
+    cantidad = models.IntegerField(default=0)
 
 class Transferencia(TimeStampedModel):
-
+    
     origen = models.ForeignKey(Inventario, related_name='salidas')
     destino = models.ForeignKey(Inventario, related_name='entradas')
     aplicada = models.BooleanField(default=False)
     item = models.ForeignKey(ItemTemplate, related_name='transferencias')
     cantidad = models.IntegerField()
-
+    
     def aplicar(self):
-
+        
         if self.aplicada:
-
+            
             return
-
+        
         self.aplicada = True
         self.save()
         # TODO: Add code to find out which one is the correct Item to update
 
 class Requisicion(TimeStampedModel):
-
+    
     inventario = models.ForeignKey(Inventario, related_name='requisiciones')
     item = models.ForeignKey(ItemTemplate, related_name='requisiciones')
     cantidad = models.IntegerField()
     aprobada = models.BooleanField(default=False)
     entregada = models.BooleanField(default=True)
-
+    
     def entregar(self):
-
+        
         if self.entregada:
-
+            
             return
-
+        
         self.entregada = True
         self.save()
         # TODO: Add code to find out which one is the correct Item to update

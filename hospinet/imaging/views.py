@@ -28,7 +28,7 @@ from persona.models import Persona
 from persona.views import PersonaCreateView
 from django.contrib import messages
 from templated_email import send_templated_mail
-from guardian.mixins import LoginRequiredMixin
+from persona.mixins import LoginRequiredMixin
 
 class ExamenListView(ListView, LoginRequiredMixin):
     

@@ -19,12 +19,10 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
 from django_extensions.db.fields import UUIDField
-from library import image_to_content
 from persona.models import Persona
-from sorl.thumbnail import ImageField
 from django.core.urlresolvers import reverse
-from django.utils import timezone
 from emergency.models import Emergencia
+from django_extensions.db.models import TimeStampedModel
 
 class Habitacion(models.Model):
     
@@ -122,22 +120,26 @@ class Admision(models.Model):
     
     observaciones = models.CharField(max_length=200, blank=True)
     admitio = models.ForeignKey(User)
-    admision = models.DateTimeField(default=timezone.now,null=True, blank=True)
+    admision = models.DateTimeField(default=timezone.now,null=True,blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue ingresada en
     admisiones"""
-    autorizacion = models.DateTimeField(default=timezone.now,null=True, blank=True)
+    autorizacion = models.DateTimeField(default=timezone.now,null=True,
+                                        blank=True)
     hospitalizacion = models.DateTimeField(null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue internada"""
     ingreso = models.DateTimeField(null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue enviada al area
     de enfermeria"""
-    fecha_pago = models.DateTimeField(default=timezone.now,null=True, blank=True)
-    fecha_alta = models.DateTimeField(default=timezone.now,null=True, blank=True)
+    fecha_pago = models.DateTimeField(default=timezone.now,null=True,
+                                      blank=True)
+    fecha_alta = models.DateTimeField(default=timezone.now,null=True,
+                                      blank=True)
     uuid = UUIDField(version=4)
     estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
     tiempo = models.IntegerField(default=0, blank=True)
     neonato = models.NullBooleanField(blank=True, null=True)
-    tipo_de_ingreso = models.CharField(max_length=200, blank=True, null=True, choices=TIPOS_INGRESOS)
+    tipo_de_ingreso = models.CharField(max_length=200, blank=True, null=True,
+                                       choices=TIPOS_INGRESOS)
     
     def autorizar(self):
         
@@ -260,12 +262,13 @@ class Admision(models.Model):
     
     def __unicode__(self):
 
-        return u"{0} en {1}".format(self.paciente.nombre_completo(), self.habitacion)
+        return u"{0} en {1}".format(self.paciente.nombre_completo(),
+                                    self.habitacion)
 
-class PreAdmision(models.Model):
-
+class PreAdmision(TimeStampedModel):
+    
     """Permite mostrar aquellas entradaas"""
-
+    
     emergencia = models.ForeignKey(Emergencia, related_name="preadmisiones")
     completada = models.BooleanField(default=False)
     transferir_cobros = models.BooleanField(default=False)

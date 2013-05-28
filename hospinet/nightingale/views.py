@@ -31,7 +31,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
 from spital.models import Admision
 from django.contrib import messages
 from django.utils import timezone
-from guardian.mixins import LoginRequiredMixin
+from persona.mixins import LoginRequiredMixin
 
 class NightingaleIndexView(ListView, LoginRequiredMixin):
     
@@ -344,7 +344,6 @@ class MedicamentoCreateView(BaseCreateView):
 
         kwargs = super(BaseCreateView, self).get_form_kwargs()
         kwargs.update({'initial':{'admision':self.admision.id,
-                                  'fecha_y_hora': timezone.now(),
                                   'inicio': timezone.now(),
                                   'usuario':self.request.user.id}})
         return kwargs
@@ -468,3 +467,17 @@ class SumarioCreateView(BaseCreateView):
         messages.info(self.request, u"Hospitalización Actualizada")
         
         return HttpResponseRedirect(self.get_success_url())
+
+class DosificarMedicamentoView(RedirectView, LoginRequiredMixin):
+    
+    permanent = False
+    
+    def get_redirect_url(self, **kwargs):
+        
+        """Obtiene el :class:`Medicamento` desde la base de datos, la marca como
+        suministrada, estampa la hora y el :class:`User` que la suministro"""
+
+        medicamento = get_object_or_404(Medicamento, pk=kwargs['medicamento'])
+        medicamento.dosificar()
+        medicamento.save()
+        return reverse('enfermeria-cargos', args=[self.admision.id])

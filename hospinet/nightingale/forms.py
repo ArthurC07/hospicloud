@@ -27,6 +27,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
 from inventory.models import ItemTemplate
+from django.db.models.query_utils import Q
 
 class AdmisionBaseForm(forms.ModelForm):
 
@@ -86,7 +87,8 @@ class IngresarForm(forms.ModelForm):
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Guardar'))
-        self.helper.layout = Fieldset(u'Hospitalizar Paciente', *self.field_names)
+        self.helper.layout = Fieldset(u'Hospitalizar Paciente',
+                                      *self.field_names)
 
 class CargoForm(AdmisionBaseForm):
     
@@ -97,9 +99,11 @@ class CargoForm(AdmisionBaseForm):
         
         model = Cargo
     
-    cargo  = forms.ModelChoiceField(ItemTemplate.objects.order_by('descripcion').all())
-    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False, initial=timezone.now)
-    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False, initial=timezone.now)
+    cargo = forms.ModelChoiceField(ItemTemplate.objects.order_by('descripcion').all())
+    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                 initial=timezone.now)
+    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                              initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
 
@@ -118,7 +122,8 @@ class SumarioForm(AdmisionBaseForm):
     def __init__(self, *args, **kwargs):
 
         super(SumarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Ingresar Sumario Médico', *self.field_names)
+        self.helper.layout = Fieldset(u'Ingresar Sumario Médico',
+                                      *self.field_names)
 
 class EvolucionForm(BaseForm):
     
@@ -164,7 +169,8 @@ class InsulinaForm(BaseForm):
     def __init__(self, *args, **kwargs):
 
         super(InsulinaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Administración de Insulina', *self.field_names)
+        self.helper.layout = Fieldset(u'Registrar Administración de Insulina',
+                                      *self.field_names)
 
 class GlucosuriaForm(BaseForm):
     
@@ -180,7 +186,8 @@ class GlucosuriaForm(BaseForm):
     def __init__(self, *args, **kwargs):
 
         super(GlucosuriaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Administración de Insulina', *self.field_names)
+        self.helper.layout = Fieldset(u'Registrar Administración de Insulina',
+                                      *self.field_names)
 
 class IngestaForm(BaseForm):
     
@@ -219,7 +226,7 @@ class NotaEnfermeriaForm(BaseForm):
     class Meta:
         
         model = NotaEnfermeria
-        exclude = ('cerrada', )
+        exclude = ('cerrada',)
     
     nota = forms.CharField(widget=forms.Textarea(attrs={'class': 'big' }))
     admision = forms.ModelChoiceField(label="",
@@ -230,7 +237,8 @@ class NotaEnfermeriaForm(BaseForm):
     def __init__(self, *args, **kwargs):
 
         super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Nota Enfermeria', *self.field_names)
+        self.helper.layout = Fieldset(u'Agregar Nota Enfermeria',
+                                      *self.field_names)
 
 class OrdenMedicaForm(BaseForm):
     
@@ -239,16 +247,16 @@ class OrdenMedicaForm(BaseForm):
     
     class Meta:
         
-       model = OrdenMedica
-
+        model = OrdenMedica
        
     def __init__(self, *args, **kwargs):
 
         super(IngestaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Orden Médica', *self.field_names)
+        self.helper.layout = Fieldset(u'Agregar Orden Médica',
+                                      *self.field_names)
 
 class SignoVitalForm(BaseForm):
-
+    
     """Muestra un formulario que permite registrar lectura de
     :class:`SignoVital`es a una :class:`Persona` durante una
     :class:`Admision`"""
@@ -261,27 +269,44 @@ class SignoVitalForm(BaseForm):
     def __init__(self, *args, **kwargs):
 
         super(SignoVitalForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Signos Vitales', *self.field_names)
+        self.helper.layout = Fieldset(u'Registrar Signos Vitales',
+                                      *self.field_names)
 
-class MedicamentoForm(BaseForm):
-
+class MedicamentoForm(forms.ModelForm):
+    
     """Permite Agregar o modificar los datos de un :class:`Medicamento`"""
-
+    
     class Meta:
-
+        
         model = Medicamento
-
+        exclude = ('proxima_dosis', 'suministrado')
+    
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False)
-
+    cargo = forms.ModelChoiceField(label='Medicamento',
+                        queryset=ItemTemplate.objects.filter(
+                            Q(medicamento=True)).order_by('descripcion').all())
+    
+    admision = forms.ModelChoiceField(label="",
+                                  queryset=Admision.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    
     def __init__(self, *args, **kwargs):
-
-        super(IngestaForm, self).__init__(*args, **kwargs)
+        
+        super(MedicamentoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
         self.helper.layout = Fieldset(u'Recetar Medicamento', *self.field_names)
+        self.helper.add_input(Submit('submit', 'Guardar'))
 
 class DosisForm(forms.ModelForm):
-
+    
     class Meta:
-
+        
         model = Dosis
     
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(), required=False)
@@ -298,7 +323,6 @@ class DosisForm(forms.ModelForm):
                                   queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
     
-
     def __init__(self, *args, **kwargs):
 
         super(DosisForm, self).__init__(*args, **kwargs)
@@ -306,17 +330,19 @@ class DosisForm(forms.ModelForm):
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Guardar'))
-        self.helper.layout = Fieldset(u'Registrar Dosis de Medicamento', *self.field_names)
+        self.helper.layout = Fieldset(u'Registrar Dosis de Medicamento',
+                                      *self.field_names)
 
 class DevolucionForm(forms.ModelForm):
-
+    
     """Permite editar los datos de una :class:`Devolucion`"""
-
+    
     class Meta:
          
         model = Devolucion
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(DosisForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True

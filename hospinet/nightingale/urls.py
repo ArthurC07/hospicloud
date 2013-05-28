@@ -19,10 +19,11 @@ from django.conf.urls import patterns, url
 from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     IngresarView, CargoCreateView, EvolucionCreateView, GlicemiaCreateView,
     InsulinaCreateView, GlucosuriaCreateView, IngestaCreateView, OrdenCreateView,
-    NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView, 
+    NotaCreateView, SignoVitalCreateView, SignosDetailView, ExcretaCreateView,
     MedicamentoCreateView, DosisSuministrarView, NotaUpdateView, AdmisionListView,
     ResumenDetailView, DosisCreateView, MedicamentoSuspenderView,
-    DevolucionCreateView, NotaCerrarView, SumarioCreateView, CargoDeleteView)
+    DevolucionCreateView, NotaCerrarView, SumarioCreateView, CargoDeleteView,
+    DosificarMedicamentoView)
 
 urlpatterns = patterns('',
     
@@ -77,7 +78,7 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/ordenes$',
         NightingaleDetailView.as_view(template_name='enfermeria/ordenes.html'),
         name='enfermeria-ordenes'),
-   url(r'^nota/(?P<pk>\d+)/editar$', 
+   url(r'^nota/(?P<pk>\d+)/editar$',
         NotaUpdateView.as_view(),
        name='enfermeria-nota-editar'),
     
@@ -160,4 +161,8 @@ urlpatterns = patterns('',
     url(r'^(?P<admision>\d+)/alta',
         SumarioCreateView.as_view(),
         name='enfermeria-dar-alta'),
+    
+    url(r'^(?P<medicamento>\d+)/alta',
+        DosificarMedicamentoView.as_view(),
+        name='enfermeria-dosificar-medicamento'),
 )

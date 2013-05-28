@@ -26,7 +26,7 @@ from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
 from django.shortcuts import get_object_or_404
-from guardian.mixins import LoginRequiredMixin
+from persona.mixins import LoginRequiredMixin
 
 class PersonaIndexView(ListView, LoginRequiredMixin):
     

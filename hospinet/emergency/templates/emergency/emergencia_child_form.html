@@ -4,8 +4,8 @@
 <div class="row">
 <aside class="span3">
 <nav class="well sidebar-nav">
-  <ul class="nav nav-list">
-    <li><a href="{% url "emergency-view-id" emergencia.id %}">Regresar a emergencia</a></li>
+  <ul class="nav nav-stacked nav-tabs">
+    <li><a href="{% url 'emergency-view-id' emergencia.id %}">Regresar a emergencia</a></li>
   </ul>
 </nav>
 </aside>
@@ -14,8 +14,7 @@
 </section>
 </div>
 <div class="row">
-<div class="span3"></div>
-<section id="cargos" class="span9">
+<section id="cargos" class="span9 offset3">
 {% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
 </section>
 </div>

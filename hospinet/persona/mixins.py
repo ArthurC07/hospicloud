@@ -15,14 +15,18 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from django.views.generic.base import TemplateView
-from haystack.views import SearchView
-from persona.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic import View
 
-class IndexView(TemplateView):
+class LoginRequiredMixin(View):
     
-    template_name = 'index.html'
-
-class CustomSearchView(SearchView, LoginRequiredMixin):
+    """Clase base para crear vistas que requieren inicio de sesión"""
     
-    template_name = 'search/search.html'
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        
+        """Permite despachar la petición en caso que el usuario tenga iniciada
+        su sesión en la aplicación"""
+        
+        return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)

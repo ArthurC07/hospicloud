@@ -15,14 +15,19 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from django.views.generic.base import TemplateView
-from haystack.views import SearchView
-from persona.mixins import LoginRequiredMixin
+from nightingale.models import Medicamento
+from tastypie.authorization import ReadOnlyAuthorization
+from tastypie.authentication import (ApiKeyAuthentication, MultiAuthentication,
+                                     SessionAuthentication, Authentication)
+from tastypie.resources import ModelResource
+from django.db.models.query_utils import Q
 
-class IndexView(TemplateView):
+class MedicamentoResource(ModelResource):
     
-    template_name = 'index.html'
-
-class CustomSearchView(SearchView, LoginRequiredMixin):
-    
-    template_name = 'search/search.html'
+    class Meta:
+        
+        queryset = Medicamento.objects.filter(~Q(estado=1))
+        authorization = ReadOnlyAuthorization()
+        authentication = MultiAuthentication(SessionAuthentication(),
+                                             Authentication(),
+                                             ApiKeyAuthentication())

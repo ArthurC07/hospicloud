@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}{{ emergencia.persona.nombre_completo }}{% endblock %}
 {% block content %}
-<div class="row-fluid">
+<div class="row">
 <aside class="span3">
   <nav class="sidebar-nav">
     <ul class="nav nav-tabs nav-stacked">
@@ -20,7 +21,7 @@
 </aside>
 <section class="span9">
   <hgroup class="page-header">
-    <h1>{{ emergencia.persona.nombre_completo }}<small>Emergencia</small></h1>
+    <h1>{{ emergencia.persona.nombre_completo }} <small>Emergencia</small></h1>
   </hgroup>
   <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
   <section class="tabbable">
@@ -29,7 +30,7 @@
       <li><a href="#emergencia" data-toggle="tab">Datos Emergencia</a></li>
     </ul>
     <div class="tab-content">
-        <article id="paciente" class="tab-pane">
+      <article id="paciente" class="tab-pane">
         {% include "snippets/persona_fotografia.html" with persona=emergencia.persona %}
         {% include "snippets/persona.html" with persona=emergencia.persona %}
         <a href="{% url 'persona-editar' emergencia.persona.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
@@ -45,10 +46,10 @@
         {% include "snippets/antecedente_obstetrico.html" with antecedente=emergencia.persona.antecedente_obstetrico %}
         <a href="{% url 'emergencia-antecedente-obstetrico-editar' emergencia.persona.id emergencia.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
         {% endifequal %}
-      </article>
-      <article id="emergencia"  class="tab-pane active">
-        {% include "emergency/snippets/emergencia.html" with emergencia=emergencia %}
-      </article>
+    </article>
+    <article id="emergencia"  class="tab-pane active">
+      {% include "emergency/snippets/emergencia.html" with emergencia=emergencia %}
+    </article>
   </div>
  </section>
 </section>
