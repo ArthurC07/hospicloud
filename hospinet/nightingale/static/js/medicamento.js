@@ -9,7 +9,7 @@ Medicamento.prototype.notificar = function() {
 	var destination = this.location;
 	var now = new Date();
 	var proximo = new Date(now.getTime() + 20*60000);
-	$.get(base_url + 'api/mobile/medicamento/?proxima_dosis__lte' + proximo.format("yy-M-ddTh:mm"), function(data) {
+	$.get(base_url + 'api/mobile/medicamento/?proxima_dosis__lte=' + proximo.toISOString(), function(data) {
 		$.each(data.objects, function(i, medicamento) {
 			$.pnotify({
 				title: 'Suministrar Medicamento',
