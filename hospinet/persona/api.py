@@ -21,6 +21,9 @@ from haystack.query import SearchQuerySet
 from persona.models import Persona
 from tastypie.resources import ModelResource
 from tastypie.utils.urls import trailing_slash
+from tastypie.authorization import ReadOnlyAuthorization
+from tastypie.authentication import (ApiKeyAuthentication, MultiAuthentication,
+                                     SessionAuthentication, Authentication)
 from django.forms.models import model_to_dict
 
 class PersonaResource(ModelResource):
@@ -28,13 +31,16 @@ class PersonaResource(ModelResource):
     class Meta:
         
         queryset = Persona.objects.all()
-        resource_name = 'persona'
+        authorization = ReadOnlyAuthorization()
+        authentication = MultiAuthentication(SessionAuthentication(),
+                                             Authentication(),
+                                             ApiKeyAuthentication())
     
     def prepend_urls(self):
         return [
             url(r"^(?P<resource_name>%s)/search%s$" % (self._meta.resource_name, trailing_slash()), self.wrap_view('get_search'), name="api_get_search"),
         ]
-
+    
     def get_search(self, request, **kwargs):
         self.method_check(request, allowed=['get'])
         self.is_authenticated(request)

@@ -36,9 +36,11 @@
 <script type="text/javascript" src="{% static 'js/jqplot.canvasTextRenderer.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jqplot.canvasAxisLabelRenderer.min.js' %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.jqplot.css' %}" />
+<script type="text/javascript" src="{% static 'js/medicamento.js' %}"></script>
 <script type="text/javascript">
-	$(document).ready(function() {
-		$.jqplot('grafico', [[{{ puntos }} ]]);
-	}); 
+  $(document).ready(function() {
+    data_source = new Medicamento("{% url 'home' %}", "{% url 'nightingale-index' %}");
+    data_source.notificar();
+  }); 
 </script>
 {% endblock %}
