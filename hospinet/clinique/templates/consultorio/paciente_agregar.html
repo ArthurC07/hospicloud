@@ -1,11 +1,11 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block header %}
-<script type="text/javascript" src="{% static "js/consultorio.js" %}"></script>
+<script type="text/javascript" src="{% static 'js/consultorio.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function()
   {
-    data_source = new Consultorio("{% url "home" %}", {{ consultorio.id }});
+    data_source = new Consultorio("{% url 'home' %}", {{ consultorio.id }});
     var resultados = $('#resultados');
     $('#persona-form').submit(function()
     {
@@ -26,10 +26,10 @@
   </div>
 </form>
 <div id="resultados"></div>
-<form enctype="multipart/form-data" action="{% url "consultorio-persona-nueva" consultorio.id %}" class="styled" method="post">
+<form enctype="multipart/form-data" action="{% url 'consultorio-persona-nueva" consultorio.id %}" class="styled" method="post">
   {% csrf_token %} <h1>Ingresar una nuevo Paciente</h1>
   <div id="messages"></div>
-  {% include "snippets/form.html" with form=persona_form %}
+  {% include 'snippets/form.html' with form=persona_form %}
   <p>
     <input type="submit" value="Guardar" />
   </p>

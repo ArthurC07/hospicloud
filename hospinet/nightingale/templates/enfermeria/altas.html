@@ -4,7 +4,7 @@
 <aside class="span3">
 <nav class="well sidebar-nav">
   <ul class="nav nav-list">
-    <li><a href="{% url "invoice-index" %}">Regresar a caja</a></li>
+    <li><a href="{% url 'invoice-index' %}">Regresar a caja</a></li>
   </ul>
 </nav>
 </aside>
@@ -19,7 +19,7 @@
         <h2>{{ admision.paciente.nombre_completo }}</h2>
         <small>Hora de Registro: {{ admision.fecha_y_hora|date:"d/m/Y P" }}</small>
       </div>
-      {% include "snippets/cargo_table.html" with admision=admision %}
+      {% include 'snippets/cargo_table.html' with admision=admision %}
     </article>
   {% endfor %}
 </section>

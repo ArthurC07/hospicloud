@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
 <div class="row">
@@ -29,17 +29,17 @@
           <td>{{ estudio.persona.nombre_completo }}</td>
           <td>{{ estudio.tipo_de_examen.nombre }}</td>
           <td>{{ estudio.remitio }}</td>
-          <td><a class="btn btn-danger" href="{% url "examen-efectuar" estudio.id %}">Efectuar</a></td>
+          <td><a class="btn btn-danger" href="{% url 'examen-efectuar' estudio.id %}">Efectuar</a></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-    <a class="btn btn-primary" href="{% url "examen-nuevo" %}">Programar un Estudio Nuevo</a>
+    <a class="btn btn-primary" href="{% url 'examen-nuevo' %}">Programar un Estudio Nuevo</a>
   </div>
 </div>
 <div class="row">
   <div class="span12">
-    {% include "snippets/examen_list.html" with examenes=examenes %}
+    {% include 'snippets/examen_list.html' with examenes=examenes %}
   </div>
 </div>
 {% endblock %}

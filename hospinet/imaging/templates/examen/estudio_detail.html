@@ -1,7 +1,7 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block header %}
-<link rel="stylesheet" href="{% static "css/examen.css" %}" />
+<link rel="stylesheet" href="{% static 'css/examen.css' %}" />
 {% endblock %}
 {% block content %}
 <aside class="span3">
@@ -11,8 +11,8 @@
   <div>
     <h1>{{ estudio.tipo_de_examen.nombre }} de {{ estudio.persona.nombre_completo }}</h1>
   </div>
-  {% include "snippets/examen.html" with examen=estudio %}
-<a href="{% url "examen-efectuar" estudio.id %}" class="btn btn-primary">Efectuar Estudio</a>
-<a href="{% url "invoice-create" estudio.persona.id %}" class="btn btn-primary">Crear Recibo</a>
+  {% include 'snippets/examen.html' with examen=estudio %}
+<a href="{% url 'examen-efectuar' estudio.id %}" class="btn btn-primary">Efectuar Estudio</a>
+<a href="{% url 'invoice-create' estudio.persona.id %}" class="btn btn-primary">Crear Recibo</a>
 </article>
 {% endblock %}

@@ -8,14 +8,17 @@
 </section>
 </div>
 <div class="row">
-{% include "snippets/aside.html" %}
+{% include 'snippets/aside.html' %}
 <div id="informacion" class="span9">
   <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
   <span>{{ admision.get_estado_display }}</span>
-  {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
-  {% include "snippets/lectura.html" with lectura=admision.frecuencia_lectura %} <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
-  {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url 'persona-editar' admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
-  {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
+  {% include 'snippets/persona_fotografia.html' with persona=admision.paciente %}
+  {% include 'snippets/lectura.html' with lectura=admision.frecuencia_lectura %}
+  <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
+  {% include 'snippets/persona.html' with persona=admision.paciente %}
+  <a href="{% url 'persona-editar' admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
+  {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %}
+  <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
 </div>
 </div>
 {% endblock %}

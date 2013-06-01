@@ -1,5 +1,6 @@
-<table class="table table-striped table-bordered">
-  <thead class="gradient">
+<table class="table table-striped table-bordered no-more-tables">
+  <caption>Admisiones en Espera de Hospitalizaci&oacute;n</caption>
+  <thead>
     <tr>
       <th>C&oacute;digo</th>
       <th>Habitaci&oacute;n</th>
@@ -7,7 +8,7 @@
       <th>Edad</th>
       <th>Sexo</th>
       <th>Hora de Ingreso</th>
-      <th>Acciones</th>
+      <th class="no-print">Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -19,7 +20,7 @@
       <td>{{ admision.paciente.obtener_edad }}</td>
       <td>{{ admision.paciente.get_sexo_display }}</td>
       <td>{{ admision.momento|date:"d/m/Y H:i" }}</td>
-      <td><a href="{% url "admision-view-slug" admision.uuid %}">Ver</a></td>
+      <td><a class="btn btn-block btn-primary no-print" href="{% url 'admision-view-slug' admision.uuid %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

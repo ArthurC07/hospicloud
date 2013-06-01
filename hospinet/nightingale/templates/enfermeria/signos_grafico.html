@@ -1,7 +1,7 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-{% include "snippets/aside.html" with admision=admision %}
+{% include 'snippets/aside.html' with admision=admision %}
 <div id="admision" class="span9">
     <div class="top title">
       <h1>Gr&aacute;fica de Lecturas de {{ admision.paciente.nombre_completo }}</h1>
@@ -28,5 +28,5 @@
 </div>
 {% endblock %}
 {% block scripts %}
-{% include "snippets/signos_js.html" %}
+{% include 'snippets/signos_js.html' %}
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block header %}
 {% endblock %}
@@ -17,7 +17,7 @@
     <div class="page-header">
       <h1>Emergencias <small>Admisi&oacute;n</small></h1>
     </div>
-    {% include "emergency/snippets/emergencia_list.html" with emergencias=emergencias %}
+    {% include 'emergency/snippets/emergencia_list.html' with emergencias=emergencias %}
   </section>
 </div>
 {% endblock %}

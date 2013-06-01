@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="content clearfix">
-  {% include "snippets/aside.html" with admision=admision %}
-  <section id="ordenes-medicas" class="span9">
-    <div>
-      <h1>Ordenes M&eacute;dicas de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
+<div class="row">
+<section class="span12">
+  <div class="page-header">
+    <h1>{{ admision.paciente.nombre_completo }} <small>{{ admision.habitacion }}</small></h1>
+  </div>
+</section>
+</div>
+<div class="row">
+{% include 'snippets/aside.html' %}<section id="ordenes-medicas" class="span9">
+    <div class="page-header">
+      <h2>Ordenes M&eacute;dicas</h2>
     </div>
-    {% include "snippets/orden_table.html" %}
-    <a href="{% url "enfermeria-orden-agregar" admision.id %}" class="btn btn-primary">Agregar Orden M&eacute;dica</a>
+    {% include 'snippets/orden_table.html' %}
+    <a href="{% url 'enfermeria-orden-agregar' admision.id %}" class="btn btn-primary">Agregar Orden M&eacute;dica</a>
   </section>
 </div>
 {% endblock %}

@@ -5,8 +5,8 @@
 
 {% blocktrans %}An email has been send to {{ new_email }} which contains a verification link. Click on the link in this email to activate it.{% endblocktrans %}
 
-{% trans "Thanks for using our site!" %}
+{% trans 'Thanks for using our site!' %}
 
-{% trans "Sincerely" %},
+{% trans 'Sincerely' %},
 {{ site.name }}
 {% endautoescape %}

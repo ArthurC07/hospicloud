@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
 <form id="persona-form">
@@ -10,10 +10,10 @@
   </div>
 </form>
 <div id="resultados"></div>
-<form enctype="multipart/form-data" action="{% url "examen-persona-nuevo" %}" class="styled" method="post">
+<form enctype="multipart/form-data" action="{% url 'examen-persona-nuevo' %}" class="styled" method="post">
   {% csrf_token %} <h1>Ingresar una nuevo Paciente</h1>
   <div id="messages"></div>
-  {% include "snippets/form.html" with form=persona_form %}
+  {% include 'snippets/form.html' with form=persona_form %}
   <p>
     <input type="submit" value="Guardar" />
   </p>
@@ -21,11 +21,11 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="{% static "js/persona.js" %}"></script>
+<script type="text/javascript" src="{% static 'js/persona.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function()
   {
-    data_source = new Persona("{% url "home" %}", "{% url "examen-index" %}");
+    data_source = new Persona("{% url 'home' %}", "{% url 'examen-index' %}");
     var resultados = $('#resultados');
     $('#persona-form').submit(function()
     {

@@ -1,6 +1,6 @@
-﻿{% extends "base.html" %}
+﻿{% extends 'base.html' %}
 {% block content %}
-{% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
+{% include 'snippets/consultorio_aside.html' with consultorio=consultorio %}
 <article id="consultorio">
   <div>
     <h1>Consultorio {{ consultorio.nombre }}</h1>

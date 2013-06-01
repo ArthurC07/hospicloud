@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.views.generic.edit import FormView
 
 """
 Contiene diversas vistas que permiten la presentación y manipulación de datos
@@ -22,7 +23,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, DetailView, UpdateView, ListView
 from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
     AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm,
-    AntecedenteQuirurgicoForm)
+    AntecedenteQuirurgicoForm, PersonaSearchForm)
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
 from django.shortcuts import get_object_or_404
@@ -188,3 +189,7 @@ class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
     template_name = 'persona/antecedente_quirurgico_update.html'
+
+class PersonaSearchView(FormView, LoginRequiredMixin):
+    
+    form_class = PersonaSearchForm

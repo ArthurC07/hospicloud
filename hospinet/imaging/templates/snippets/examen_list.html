@@ -18,12 +18,12 @@
       <td>{{ examen.tipo_de_examen.nombre }}</td>
       <td>{{ examen.persona.identificacion }}</td>
       <td>{{ examen.persona.nacimiento }}</td>
-      <td><a class="btn btn-success" href="{% url "examen-view-id" examen.uuid %}">Ver</a></td>
+      <td><a class="btn btn-success" href="{% url 'examen-view-id' examen.uuid %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% if is_paginated %}
 {% load bootstrap_pagination %}
-{% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true" %}
+{% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last="true' %}
 {% endif %}

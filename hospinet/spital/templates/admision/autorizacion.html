@@ -1,15 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="span12">
-  <p>
-    <h2>Informaci&oacute;n del Paciente</h2>
+<div class="row">
+  <section class="span12">
+    <section class="page-header">
+      <h2>Informaci&oacute;n del Paciente</h2>
+    </section>
     <h3>{{ admision.paciente.nombre_completo }}</h3>
-    {% include "snippets/persona.html" with persona=admision.paciente %} <h2>Fiadores</h2>
-    {% for fiador in admision.fiadores.all %} <h3>Fiador: {{ fiador.nombre_completo }}</h3>
-    {% include "snippets/persona.html" with persona=fiador %}
+    {% include 'snippets/persona.html' with persona=admision.paciente %}
+    {% ifnotequal admision.fiadores.count 0 %}
+    <section class="page-header">
+      <h2>Fiadores</h2>
+    </section>
+    {% for fiador in admision.fiadores.all %}
+    <h3>Fiador: {{ fiador.nombre_completo }}</h3>
+    {% include 'snippets/persona.html' with persona=fiador %}
     {% endfor %}
-  </p>
-  <p>
+    {% endifnotequal %}
+  </section>
+</div>
+<div class="row">
+  <section class="span12 text-justify">
     <ol>
       <li>
         Nosotros pacientes y fiadores DECLARÓ(MOS), OBLIGA(MOS) Y ACEPTO(MOS)
@@ -26,7 +36,7 @@
         Además aceptamos las regulaciones de este centro hospitalario,
         regulaciones que están para facilitar el cuidado y seguridad del
         paciente. Es entendido que los cirujanos y doctores que me están
-        atendiendo no son empleados del hospital XXX. Yo reconozco que esto
+        atendiendo no son empleados de EL HOSPITAL. Yo reconozco que esto
         médicos de prácticas privadas incluyen Radiológicos, médicos de
         cuidados intensivos cualquier medico consultado en el caso; en tal
         virtud liberamos de toda responsabilidad EL HOSPITAL proveniente de esta
@@ -44,9 +54,11 @@
         por responsabilidad nuestra y no de EL HOSPITAL.
       </li>
     </ol>
-  </p>
-  <p>
-    <a class="btn btn-primary" href="{% url 'admision-autorizar' admision.id %}">Autorizar</a>
-  </p>
-</section>
+  </section>
+</div>
+<div class="row">
+  <section class="span12">
+    <a class="no-print btn btn-primary" href="{% url 'admision-autorizar' admision.id %}">Autorizar</a>
+  </section>
+</div>
 {% endblock %}

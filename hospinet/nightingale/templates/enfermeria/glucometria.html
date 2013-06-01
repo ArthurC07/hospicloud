@@ -1,16 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="row">
+  <section class="span12">
+    <section class="page-header">
+      <h1>Control de Glucometr&iacute;a de {{ admision.paciente.nombre_completo }} <small> {{ admision.habitacion }}</small></h1>
+      <p>
+        Frecuencia de Lectura: {{ admision.lectura.glucometria }} minutos
+      </p>
+    </section>
+  </section>
+</div>
 <div class="content clearfix">
-  {% include "snippets/aside.html" with admision=admision %}
-  <section id="glicemia" class="span9">
-    <h2>Control de Glucometr&iacute;a de {{ admision.paciente.nombre_completo }}</h2>
-    <p>Frecuencia de Lectura: {{ admision.lectura.glucometria }} minutos</p>
-    {% include "snippets/glicemia_table.html" %}
-    <a href="{% url "enfermeria-glicemia-agregar" admision.id %}" class="btn btn-primary">Agregar Glicemia</a>
-    {% include "snippets/insulina_table.html" %}
-    <a href="{% url "enfermeria-insulina-agregar" admision.id %}" class="btn btn-primary">Registrar Insulina</a>
-    {% include "snippets/glucosuria_table.html" %}
-    <a href="{% url "enfermeria-glucosuria-agregar" admision.id %}" class="btn btn-primary">Registrar Glucosuria</a>
+  {% include 'snippets/aside.html' with admision=admision %}
+  <section class="span9">
+    <div class="row">
+      <section class="span9">
+        {% include 'snippets/glicemia_table.html' %}
+        <a href="{% url 'enfermeria-glicemia-agregar' admision.id %}" class="btn btn-primary">Agregar Glicemia</a>
+        {% include 'snippets/insulina_table.html' %}
+        <a href="{% url 'enfermeria-insulina-agregar' admision.id %}" class="btn btn-primary">Registrar Insulina</a>
+        {% include 'snippets/glucosuria_table.html' %}
+        <a href="{% url 'enfermeria-glucosuria-agregar' admision.id %}" class="btn btn-primary">Registrar Glucosuria</a>
+      </section>
+    </div>
   </section>
 </div>
 {% endblock %}

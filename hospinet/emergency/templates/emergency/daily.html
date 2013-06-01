@@ -3,7 +3,7 @@
 <aside class="span3">
 <nav class="well sidebar-nav">
   <ul class="nav nav-list">
-    <li><a href="{% url "invoice-index" %}">Regresar a caja</a></li>
+    <li><a href="{% url 'invoice-index' %}">Regresar a caja</a></li>
   </ul>
 </nav>
 </aside>
@@ -18,7 +18,7 @@
         <h2>{{ emergencia.persona.nombre_completo }}</h2>
         <small>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</small>
       </div>
-      {% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
+      {% include 'emergency/snippets/cargos.html' with emergencia=emergencia %}
     </article>
   {% endfor %}
 </section>

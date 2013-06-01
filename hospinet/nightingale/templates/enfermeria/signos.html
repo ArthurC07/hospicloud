@@ -9,15 +9,15 @@
 </section>
 </div>
 <div class="row">
-  {% include "snippets/aside.html" with admision=admision %}
+  {% include 'snippets/aside.html' with admision=admision %}
   <section id="signos-vitales" class="span9">
     <div class="page-header">
       <h2>Signos Vitales</h2>
     </div>
     <p>Frecuencia de Lectura: {{ admision.lectura.signos_vitales }} minutos</p>
-    <a href="{% url "nightingale-signos-grafico" admision.id %}" class="btn btn-primary">Mostrar Gr&aacute;fico</a>
-    {% include "snippets/signo_table.html" %}
-    <a href="{% url "enfermeria-signo-agregar" admision.id %}" class="btn btn-primary">Agregar Lectura</a>
+    <a href="{% url 'nightingale-signos-grafico' admision.id %}" class="btn btn-primary">Mostrar Gr&aacute;fico</a>
+    {% include 'snippets/signo_table.html' %}
+    <a href="{% url 'enfermeria-signo-agregar' admision.id %}" class="btn btn-primary">Agregar Lectura</a>
   </section>
 </div>
 {% endblock %}

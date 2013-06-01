@@ -1,27 +1,32 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block header %}
-<link rel="stylesheet" href="{% static "css/examen.css" %}" />
+<link rel="stylesheet" href="{% static 'css/examen.css' %}" />
 {% endblock %}
 {% block content %}
-<aside class="span3">
-<nav>
-  {% load tree_menu_tags %}{% show_menu "persona" %}
-</nav>
-</aside>
-<div id="examenes" class="span9">
-  <div>
-    <h1>{{ persona.nombre_completo }}</h1>
+<div class="row">
+  <aside class="span3">
+    <nav>
+      {% load tree_menu_tags %}{% show_menu 'persona' %}
+    </nav>
+  </aside>
+  <div id="examenes" class="span9">
+    <div>
+      <h1>{{ persona.nombre_completo }}</h1>
+    </div>
+    {% for examen in persona.examenes.all %}
+    <article class="examen">
+      <section class="main">
+        <div>
+          <h2>{{ examen.nombre }}</h2>
+        </div>
+        {% include 'snippets/examen.html' with examen=examen %}
+      </section>
+      <aside class="links">
+        <a class="btn btn-primary" href="{% url 'examen-view-id' examen.uuid %}">Mostrar</a>
+      </aside>
+    </article>
+    {% endfor %}
   </div>
-  {% for examen in persona.examenes.all %}<article class="examen">
-    <section class="main">
-      <div><h2>{{ examen.nombre }}</h2></div>
-  {% include "snippets/examen.html" with examen=examen %}
-    </section>
-    <aside class="links">
-      <a class="btn btn-primary" href="{% url "examen-view-id" examen.uuid %}">Mostrar</a>
-    </aside>
-    <div class="clear"></div>
-  </article>{% endfor %}
 </div>
 {% endblock %}

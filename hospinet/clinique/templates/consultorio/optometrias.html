@@ -15,7 +15,7 @@
         <tr>
           <td>{{ optometria.fecha_y_hora|date:"d/m/Y H:i" }}</td>
           <td>
-            <a href="{% url "consultorio-optometria-view" optometria.id %}">Ver</a>
+            <a href="{% url 'consultorio-optometria-view" optometria.id %}">Ver</a>
           </td>
         </tr>
       {% endfor %}

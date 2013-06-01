@@ -1,13 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="content clearfix">
-  {% include "snippets/aside.html" with admision=admision %}
+<div class="row">
+<section class="span12">
+  <div class="page-header">
+    <h1>{{ admision.paciente.nombre_completo }} <small>{{ admision.habitacion }}</small></h1>
+  </div>
+</section>
+</div>
+<div class="row">
+  {% include 'snippets/aside.html' %}
   <section id="evolucion" class="span9">
-    <div>
-      <h1>Notas de Enfermer&iacute;a para {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
+    <div class="page-header">
+      <h2>Notas de Enfermer&iacute;a</h2>
     </div>
-    {% include "snippets/nota_table.html" with editable=1 %}
-    <a href="{% url "enfermeria-nota-agregar" admision.id %}" class="btn btn-primary">Agregar Nota</a>
+    {% include 'snippets/nota_table.html' with editable=1 %}
+    <a href="{% url 'enfermeria-nota-agregar' admision.id %}" class="btn btn-primary">Agregar Nota</a>
   </section>
 </div>
 {% endblock %}

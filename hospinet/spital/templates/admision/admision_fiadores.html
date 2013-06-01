@@ -3,11 +3,11 @@
 <aside class="span3">
 <nav class="well sidebar-nav">
   <ul class="nav nav-list">
-    <li><a href="{% url "admision-view-id" admision.id %}">Regresar a la Admisi&oacute;n</a></li>
-    <li><a href="{% url "admision-autorizacion" admision.id %}">Autorizaci&oacute;n</a></li>
-    <li><a href="{% url "admision-referencias" admision.id %}">Referencias</a></li>
-    <li><a href="{% url "admision-fiadores" admision.id %}">Fiadores</a></li>
-    <li><a href="{% url "admision-index" %}">Regresar a Admisiones</a></li>
+    <li><a href="{% url 'admision-view-id" admision.id %}">Regresar a la Admisi&oacute;n</a></li>
+    <li><a href="{% url 'admision-autorizacion" admision.id %}">Autorizaci&oacute;n</a></li>
+    <li><a href="{% url 'admision-referencias" admision.id %}">Referencias</a></li>
+    <li><a href="{% url 'admision-fiadores" admision.id %}">Fiadores</a></li>
+    <li><a href="{% url 'admision-index' %}">Regresar a Admisiones</a></li>
   </ul>
 </nav>
 </aside>
@@ -22,9 +22,9 @@
       <h3> Fiador: {{ fiador.nombre_completo }}</h1>
     </div>
     {% thumbnail fiador.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
-    {% include "snippets/persona.html" with persona=fiador %}
-    <a href="{% url "persona-editar" fiador.id %}" class="btn btn-primary">Editar Datos</a>
+    {% include 'snippets/persona.html' with persona=fiador %}
+    <a href="{% url 'persona-editar" fiador.id %}" class="btn btn-primary">Editar Datos</a>
   {% endfor %}
-  <a href="{% url "admision-fiador" admision.id %}" class="btn btn-primary">Agregar Fiador</a>
+  <a href="{% url 'admision-fiador" admision.id %}" class="btn btn-primary">Agregar Fiador</a>
 </section>
 {% endblock %}

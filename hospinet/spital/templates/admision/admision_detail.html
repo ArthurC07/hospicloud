@@ -1,28 +1,47 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="row">
+  <div class="span12">
+    <section class="page-header">
+      <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
+    </section>
+  </div>
+</div>
+<div class="row">
 <aside class="span3">
-<nav class="well sidebar-nav">
-  <ul class="nav nav-list">
-    <li class="clearfix"><a href="{% url "admision-autorizacion" admision.id %}">Autorizaci&oacute;n</a></li>
-    <li class="clearfix"><a href="{% url "admision-hospitalizar" admision.id %}">Hospitalizar</a></li>
-    <li class="clearfix"><a href="{% url "admision-pagar" admision.id %}">Marcar como Pagada</a></li>
-    <li class="clearfix"><a href="{% url "admision-referencias" admision.id %}">Referencias</a></li>
-    <li class="clearfix"><a href="{% url "admision-fiadores" admision.id %}">Fiadores</a></li>
-  </ul>
-</nav>
+  <nav class="sidebar-nav">
+    <ul class="nav nav-stacked nav-tabs">
+      <li>
+        <a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a>
+      </li>
+      <li>
+        <a href="{% url 'admision-hospitalizar' admision.id %}">Hospitalizar</a>
+      </li>
+      <li>
+        <a href="{% url 'admision-pagar' admision.id %}">Marcar como Pagada</a>
+      </li>
+      <li>
+        <a href="{% url 'admision-referencias' admision.id %}">Referencias</a>
+      </li>
+      <li>
+        <a href="{% url 'admision-fiadores' admision.id %}">Fiadores</a>
+      </li>
+    </ul>
+  </nav>
 </aside>
-<section id="admision" class="informacion span9">
-  <div>
-    <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
+<section class="span9">
+  <div class="row">
+    
   </div>
   <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
   <span>{{ admision.get_estado_display }}</span>
-  {% include "snippets/persona_fotografia.html" with persona=admision.paciente %} 
+  {% include 'snippets/persona_fotografia.html' with persona=admision.paciente %}
   <div class="info">
-    {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url "persona-editar" admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
+    {% include 'snippets/persona.html' with persona=admision.paciente %} <a href="{% url 'persona-editar' admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
   </div>
   <div class="info">
-    {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
+    {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %} <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
   </div>
 </section>
+</div>
 {% endblock %}

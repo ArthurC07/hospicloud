@@ -50,7 +50,7 @@ class PersonaForm(forms.ModelForm):
     nacimiento = forms.DateTimeField(widget=forms.DateInput(
                     attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
                  input_formats=('%d/%m/%Y',))
-
+    
     def __init__(self, *args, **kwargs):
 
         super(PersonaForm, self).__init__(*args, **kwargs)
@@ -157,3 +157,16 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
 
         super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Antecendete Quirúgico', *self.field_names)
+
+class PersonaSearchForm(forms.Form):
+    
+    nombre = forms.CharField()
+    identidad = forms.CharField()
+    def __init__(self, *args, **kwargs):
+
+        super(PersonaForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Buscar'))
+        self.helper.layout = Fieldset(u'Buscar Persona', *self.field_names)
