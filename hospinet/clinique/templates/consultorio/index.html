@@ -13,9 +13,9 @@
   </nav>
 </aside>
 <section id="consultorios">
-  <hgroup>
+  <div>
     <h1>Mis Consultorios</h1>
-  </hgroup>
+  </div>
   {% if user.profile.doctor %}
   {% for consultorio in user.profile.consultorios.all %}
     <section class="span3">

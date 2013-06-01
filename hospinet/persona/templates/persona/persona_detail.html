@@ -3,12 +3,12 @@
 {% block content %}
 {% include "snippets/persona_aside.html" with persona=persona %}
 <section id="informacion" class="span9">
-  <hgroup>
+  <div>
     <h1>
     	{{ persona.nombre_completo }}
         {% include "snippets/persona_fotografia.html" with persona=persona %}
     </h1>
-  </hgroup>
+  </div>
   <br />
   <br />
   <div class="info">
@@ -24,9 +24,9 @@
     {% include "snippets/antecedente_familiar.html" with antecedente=persona.antecedente_familiar %} <a href="{% url "persona-antecedente-familiar-editar" persona.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
   </div>
   <section id="quirurgico" class="antecedente info">
-    <hgroup>
+    <div>
       <h4>Antecedentes Quir&uacutergicos<h4>
-    </hgroup>
+    </div>
     {% for antecedente in emergencia.persona.antecedentes_quirurgicos.all %}
     {% include "snippets/antecedente_quirurgico.html" with antecedente=emergencia.persona.antecedente_quirurgico %}
     {% endfor %}

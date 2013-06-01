@@ -2,10 +2,10 @@
 {% block content %}
 {% include "snippets/consultorio_aside.html" with consultorio=consultorio %}
 <article id="consultorio">
-  <hgroup>
+  <div>
     <h1>Consultorio {{ consultorio.nombre }}</h1>
     <h2>{{ consultorio.doctor.user.get_full_name }}</h2>
-  </hgroup>
+  </div>
   <p>Secretaria: {{ consultorio.secretaria.user.get_full_name }}</p>
 </article>
 <form class="styled" method="get" action="{% url "consultorio-pago-diario" consultorio.uuid %}">

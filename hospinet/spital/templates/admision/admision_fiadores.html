@@ -12,15 +12,15 @@
 </nav>
 </aside>
 <section class="span9">
-  <hgroup>
+  <div>
     <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
-  </hgroup>
+  </div>
   {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
   <h2>Fiadores</h2>
   {% for fiador in admision.fiadores.all %}
-    <hgroup>
+    <div>
       <h3> Fiador: {{ fiador.nombre_completo }}</h1>
-    </hgroup>
+    </div>
     {% thumbnail fiador.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
     {% include "snippets/persona.html" with persona=fiador %}
     <a href="{% url "persona-editar" fiador.id %}" class="btn btn-primary">Editar Datos</a>

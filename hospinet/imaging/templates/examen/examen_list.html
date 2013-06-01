@@ -14,9 +14,9 @@
   </nav>
 </aside>
 <div id="personas" class="grid_9">
-  <hgroup>
+  <div>
     <h1>Estudios Programados</h1>
-  </hgroup>
+  </div>
   <table class="data">
       <thead class="gradient">
         <tr>
@@ -37,9 +37,9 @@
         {% endfor %}
       </tbody>
     </table>
-    <hgroup>
+    <div>
     <h1>&Uacute;ltimos Examenes Efectuados</h1>
-    </hgroup>
+    </div>
     {% include "snippets/examen_list.html" with examenes=examenes %}
 </div>
 {% endblock %}

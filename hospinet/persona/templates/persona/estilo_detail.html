@@ -2,12 +2,12 @@
 {% block content %}
 {% include "snippets/persona_aside.html" with persona=persona %}
 <div id="informacion" class="span9">
-  <hgroup>
+  <div>
     <h1>
         {{ persona.nombre_completo }}
         {% include "snippets/persona_fotografia.html" with persona=persona %}
     </h1>
-  </hgroup>
+  </div>
   <br />
   <br />
   <div class="info">

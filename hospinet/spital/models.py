@@ -213,7 +213,7 @@ class Admision(models.Model):
         ingresada en el :class:`Hospital`"""
         if self.hospitalizacion == None:
             return (timezone.now() - self.momento).total_seconds() / 60
-
+        
         if self.ingreso == None or self.ingreso <= self.hospitalizacion:
             
             return (timezone.now() - self.hospitalizacion).total_seconds() / 60
@@ -224,7 +224,7 @@ class Admision(models.Model):
         
         """Permite mostrar el tiempo que ha transcurrido desde que se agrego
         la :class:`Admision` al sistema"""
-
+        
         ahora = timezone.now()
         if self.momento >= ahora:
             
@@ -233,18 +233,19 @@ class Admision(models.Model):
         return (ahora - self.momento).total_seconds() / 60
     
     def dar_alta(self):
-
+        
         self.estado = 'C'
         self.fecha_alta = timezone.now()
-
+        (m.suspender() for m in self.medicamentos.all())
+    
     def actualizar_tiempo(self):
-
+        
         """Actualiza el tiempo transcurrido desde el ingreso hasta el momento
         en que se dio de alta"""
 
         if self.ingreso == None:
             return
-
+        
         if not self.fecha_alta == None:
             self.tiempo = (self.fecha_alta - self.ingreso).total_seconds() / 60
         else:

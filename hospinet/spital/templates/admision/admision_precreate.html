@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 <form class="styled" method="post">
-  <hgroup class="page-header">
+  <div class="page-header">
   {% csrf_token %} <h1>{{ preadmision.emergencia.persona.nombre_completo }} <small>Admitir</small></h1>
-  </hgroup>
+  </div>
   <div id="messages"></div>
   {% include "snippets/form.html" with form=form %}
   <p>

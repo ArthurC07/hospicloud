@@ -3,91 +3,91 @@
 {% load l10n %}
 {% block content %}
 <div class="row">
-{% include "snippets/aside.html" with admision=admision %}
-<div id="informacion" class="span9">
-  <hgroup class="page-header">
+  <div class="page-header span12">
     <h1>{{ admision.paciente.nombre_completo }} <small>{{ admision.habitacion }}</small></h1>
-  </hgroup>
-  <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
-  <span>{{ admision.get_estado_display }}</span>
-  {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
-  {% include "snippets/lectura.html" with lectura=admision.frecuencia_lectura %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
-  {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url "persona-editar" admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
-  {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url "persona-fisico-editar" admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
-  <section id="signos-vitales">
-    <h2>Signos Vitales</h2>
+  </div>
+  <div class="row">
+    {% include "snippets/aside.html" with admision=admision %}
+    <div id="informacion" class="span9">
+      <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
+      <span>{{ admision.get_estado_display }}</span>
+      {% include "snippets/persona_fotografia.html" with persona=admision.paciente %}
+      {% include "snippets/lectura.html" with lectura=admision.frecuencia_lectura %} <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
+      {% include "snippets/persona.html" with persona=admision.paciente %} <a href="{% url 'persona-editar' admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
+      {% include "snippets/fisico.html" with fisico=admision.paciente.fisico %} <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
+      <section id="signos-vitales">
+        <h2>Signos Vitales</h2>
         <div id="temperatura" class="grafica"></div>
-    <p>&nbsp;</p>
-    <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
-    <div id="presion" class="grafica"></div>
-    <p>&nbsp;</p>
-    <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }} / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
-    <div id="pulso" class="grafica"></div>
-    <p>&nbsp;</p>
-    <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
-    {% include "snippets/signo_table.html" %}
-  </section>
-<section id="ingestas-excretas">
-    <hgroup>
-      <h2>Ingestas y Excretas</h2>
-    </hgroup>
-  <article id="ingestas">
-    {% include "snippets/ingesta_table.html" %}
-  </article>
-  <article id="excretas">
-    {% include "snippets/excreta_table.html" %}
-  </article>
-</section>
-<section id="evolucion">
-    <hgroup>
-      <h1>Evoluci&oacute;n</h1>
-    </hgroup>
-    {% include "snippets/evolucion_table.html" %}
-  </section>
-  <section id="glicemia">
-    <hgroup>
-      <h2>Glucometr&iacute;a</h2>
-    </hgroup>
-    {% include "snippets/glicemia_table.html" %}
-    {% include "snippets/insulina_table.html" %}
-    {% include "snippets/glucosuria_table.html" %}
-  </section>
-  <section id="ordenes-medicas">
-    <hgroup>
-      <h2>Ordenes M&eacute;dicas</h2>
-    </hgroup>
-    {% include "snippets/orden_table.html" %}
-  </section>
-  <section id="medicamentos">
-    <hgroup>
-      <h2>Medicamentos</h2>
-        </hgroup>
-      {% if admision.medicamentos.count == 0 %}
-        <p>No hay medicamentos indicados</p>
-      {% endif %}
-      {% for medicamento in admision.medicamentos.all %}
-        {% include "snippets/medicamento.html" with editable=0 %}
-      {% endfor %}
-  </section>
-  <section id="enfermeria">
-    <hgroup>
-      <h2>Notas de Enfermer&iacute;a</h2>
-    </hgroup>
-    {% include "snippets/nota_table.html" with editable=0 %}
-  </section>
-  <section id="cargos">
-    <hgroup>
-     <h2>Cargos</h2>
-    </hgroup>
-    {% include "snippets/cargo_table.html" %}
-  </section>
-  <section id="devolucion">
-    <hgroup>
-      <h1>Devoluciones</h1>
-    </hgroup>
-    {% include "snippets/devolucion_table.html" %}
-  </section>
-</div>
+        <p>
+          &nbsp;
+        </p>
+        <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
+        <div id="presion" class="grafica"></div>
+        <p>
+          &nbsp;
+        </p>
+        <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }} / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
+        <div id="pulso" class="grafica"></div>
+        <p>
+          &nbsp;
+        </p>
+        <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
+        {% include "snippets/signo_table.html" %}
+      </section>
+      <section id="ingestas-excretas">
+        <div>
+          <h2>Ingestas y Excretas</h2>
+        </div>
+        <article id="ingestas">
+          {% include "snippets/ingesta_table.html" %}
+        </article>
+        <article id="excretas">
+          {% include "snippets/excreta_table.html" %}
+        </article>
+      </section>
+      <section id="evolucion">
+        <div>
+          <h1>Evoluci&oacute;n</h1>
+        </div>
+        {% include "snippets/evolucion_table.html" %}
+      </section>
+      <section id="glicemia">
+        <div>
+          <h2>Glucometr&iacute;a</h2>
+        </div>
+        {% include "snippets/glicemia_table.html" %}
+        {% include "snippets/insulina_table.html" %}
+        {% include "snippets/glucosuria_table.html" %}
+      </section>
+      <section id="ordenes-medicas">
+        <div>
+          <h2>Ordenes M&eacute;dicas</h2>
+        </div>
+        {% include "snippets/orden_table.html" %}
+      </section>
+      <div class="row">
+        {% include "snippets/medicamentos.html" %}
+      </div>
+      <section id="enfermeria">
+        <div>
+          <h2>Notas de Enfermer&iacute;a</h2>
+        </div>
+        {% include "snippets/nota_table.html" with editable=0 %}
+      </section>
+      <section id="cargos">
+        <div>
+          <h2>Cargos</h2>
+        </div>
+        {% include "snippets/cargo_table.html" %}
+      </section>
+      <section id="devolucion">
+        <div>
+          <h1>Devoluciones</h1>
+        </div>
+        {% include "snippets/devolucion_table.html" %}
+      </section>
+    </div>
+  </div>
 </div>
 {% endblock %}
 {% block scripts %}

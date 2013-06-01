@@ -346,3 +346,22 @@ class DevolucionForm(forms.ModelForm):
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Efectuar Devolución', *self.field_names)
+
+class MedicamentoUpdateForm(forms.ModelForm):
+    
+    """Permite editar los datos de una :class:`Devolucion`"""
+    
+    class Meta:
+         
+        model = Medicamento
+        fields = ('repeticiones', 'unidades', 'intervalo')
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(MedicamentoUpdateForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.layout = Fieldset(u'Actualizar Posología de Medicamento',
+                                      *self.field_names)

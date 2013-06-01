@@ -10,12 +10,12 @@
 </nav>
 </aside>
 <div id="examenes" class="span9">
-  <hgroup>
+  <div>
     <h1>{{ persona.nombre_completo }}</h1>
-  </hgroup>
+  </div>
   {% for examen in persona.examenes.all %}<article class="examen">
     <section class="main">
-      <hgroup><h2>{{ examen.nombre }}</h2></hgroup>
+      <div><h2>{{ examen.nombre }}</h2></div>
   {% include "snippets/examen.html" with examen=examen %}
     </section>
     <aside class="links">

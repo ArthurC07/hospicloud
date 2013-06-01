@@ -30,9 +30,9 @@
 </div>
 <div class="row">
   <section id="hallazgos" class="span4">
-    <hgroup class="page-header">
+    <div class="page-header">
       <h3>Hallazgos</h3>
-    </hgroup>
+    </div>
     {% for hallazgo in emergencia.hallazgos.all %}
     <article class="hallazgo">
       <p>
@@ -42,9 +42,9 @@
     {% endfor %}
   </section>
   <section id="tratamientos" class="span5">
-    <hgroup class="page-header">
+    <div class="page-header">
       <h3>Tratamientos</h3>
-    </hgroup>
+    </div>
     {% for tratamiento in emergencia.tratamientos.all %}
     <article class="tratamiento">
       <p>

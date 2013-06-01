@@ -17,9 +17,9 @@
   </nav>
 </aside>
 <div id="estadisticas" class="span9">
-  <hgroup class="top title">
+  <div class="top title">
     <h1>Estad&iacute;stica Descriptiva</h1>
-  </hgroup>
+  </div>
   {% crispy admision_periodo %}
   {% crispy emergencia_periodo %}
   <form class="styled" method="get" action="{% url 'estadisticas-admision-adulto' %}">

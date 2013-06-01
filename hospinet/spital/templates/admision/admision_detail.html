@@ -12,9 +12,9 @@
 </nav>
 </aside>
 <section id="admision" class="informacion span9">
-  <hgroup>
+  <div>
     <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
-  </hgroup>
+  </div>
   <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
   <span>{{ admision.get_estado_display }}</span>
   {% include "snippets/persona_fotografia.html" with persona=admision.paciente %} 

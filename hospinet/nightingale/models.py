@@ -379,6 +379,23 @@ class Medicamento(TimeStampedModel):
             self.estado = 3
         
         self.save()
+    
+    def suspender(self):
+        
+        self.estado = 2
+        self.save()
+    
+    def save(self, force_insert=False, force_update=False, using=None, 
+        update_fields=None):
+        
+        if self.suministrado >= self.repeticiones:
+            
+            self.estado = 1
+        
+        return super(Medicamento, self).save(self, force_insert=force_insert,
+                                              force_update=force_update,
+                                              using=using,
+                                              update_fields=update_fields)
 
 class Dosis(TimeStampedModel, Turno):
     

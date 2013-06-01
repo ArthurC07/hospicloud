@@ -17,10 +17,10 @@
 </div>
 <div class="row">
   <article class="span9 offset3">
-    <hgroup class="page-header">
+    <div class="page-header">
       <h1>{{ medicamento.admision.paciente }} <small>{{ medicamento.admision.habitacion }}</small></h1>
-      <h2>{{ medicamento.cargo.descripcion }}</h2> <small>Medicamento a Dosificar</small>
-    </hgroup>
+      <h2>{{ medicamento.cargo.descripcion }} <small>Medicamento a Dosificar</small></h2>
+    </div>
     <ul>
       <li>{{ medicamento.cargo.descripcion }}</li>
       <li>{{ medicamento.get_intervalo_display }}</li>
@@ -35,7 +35,7 @@
 </div>
 <div class="row">
   <section id="cargos" class="span9 offset3">
-    {% include "emergency/snippets/cargos.html" with emergencia=emergencia %}
+    {% include "snippets/cargo_table.html" with admision=medicamento.admision %}
   </section>
 </div>
 {% endblock %}

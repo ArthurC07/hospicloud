@@ -3,9 +3,9 @@
 {% block content %}
 {% include "snippets/persona_aside.html" with persona=persona %}
 <section id="emergencia" class="informacion span9">
-  <hgroup>
+  <div>
     <h1>Emergencias de {{ persona.nombre_completo }}</h1>
-  </hgroup>
+  </div>
   {% for emergencia in persona.emergencias.all %}
     {% include "snippets/emergencia.html" with emergencia=emergencia %}
   {% endfor %}

@@ -24,7 +24,7 @@ from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
 from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
     InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm, NotaEnfermeriaForm,
     OrdenMedicaForm, SignoVitalForm, MedicamentoForm, DosisForm, DevolucionForm,
-    SumarioForm, DosificarForm)
+    SumarioForm, DosificarForm, MedicamentoUpdateForm)
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
     Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital,
     Medicamento, Dosis, Devolucion, Sumario)
@@ -490,3 +490,9 @@ class DosificarMedicamentoView(FormView, LoginRequiredMixin):
     def get_success_url(self):
         
         return reverse('enfermeria-cargos', args=[self.medicamento.admision.id])
+
+class MedicamentoUpdateView(UpdateView, LoginRequiredMixin):
+    
+    model = Medicamento
+    form_class = MedicamentoUpdateForm
+    context_object_name = 'medicamento'
