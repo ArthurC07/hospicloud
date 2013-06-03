@@ -17,6 +17,12 @@
         {% if persona.emergencias %}
         <li><a href="#emergencias" data-toggle="tab">Emergencias</a></li>
         {% endif %}
+        {% if persona.admisiones %}
+        <li><a href="#admisiones" data-toggle="tab">Hospitalizaciones</a></li>
+        {% endif %}
+        {% if persona.examenes %}
+        <li><a href="#examenes" data-toggle="tab">Im&aacute;genes</a></li>
+        {% endif %}
       </ul>
       <div class="tab-content">
         <article id="paciente" class="tab-pane active">
@@ -37,8 +43,18 @@
           {% endifequal %}
       </article>
       {% if persona.emergencias %}
-      <article id="emergencias">
+      <article id="emergencias" class="tab-pane">
         {% include 'emergency/snippets/emergencia_list.html' with emergencias=persona.emergencias.all %}
+      </article>
+      {% endif %}
+      {% if persona.admisiones %}
+      <article id="admisiones" class="tab-pane">
+        {% include 'snippets/enfermeria_list.html' with admisiones=persona.admisiones.all %}
+      </article>
+      {% endif %}
+      {% if persona.examenes %}
+      <article id="examenes" class="tab-pane">
+        {% include 'snippets/examen_list.html' with examenes=persona.examenes.all %}
       </article>
       {% endif %}
     </div>

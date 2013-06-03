@@ -4,6 +4,7 @@ encoding//emergency/forms.py=utf-8
 encoding//emergency/models.py=utf-8
 encoding//emergency/urls.py=utf-8
 encoding//emergency/views.py=utf-8
+encoding//imaging/urls.py=utf-8
 encoding//imaging/views.py=utf-8
 encoding//inventory/api.py=utf-8
 encoding//inventory/models.py=utf-8

@@ -19,13 +19,13 @@
   {% if user.profile.doctor %}
   {% for consultorio in user.profile.consultorios.all %}
     <section class="span3">
-      <a href="{% url 'consultorio-view" consultorio.uuid %}">{{ consultorio.nombre }}</a>
+      <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
     </section>
   {% endfor %}
   {% else %}
   {% for consultorio in user.profile.secretariados.all %}
     <section class="span3">
-      <a href="{% url 'consultorio-view" consultorio.uuid %}">{{ consultorio.nombre }}</a>
+      <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
     </section>
   {% endfor %}
   {% endif %}
