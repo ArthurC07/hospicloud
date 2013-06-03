@@ -1,17 +1,25 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-<aside class="span3">
-<nav class="sidebar-nav">
-  <ul class="nav nav-tabs nav-stacked">
-  	<li><a href="{% url 'persona-create' %}">Agregar Paciente</a></li>
-  </ul>
-</nav>
-</aside>
-<div id="personas" class="span9">
-	<div class="page-header">
-		<h1>Pacientes y Personas<small>Ultimos Ingresos</small></h1>
-	</div>
-  {% include 'snippets/persona_list.html' with personas=personas %}
+<div class="row">
+  <section class="span12">
+    <div class="page-header">
+      <h1>Pacientes y Personas</h1>
+    </div>
+  </section>
+</div>
+<div class="row">
+  <aside class="span3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-tabs nav-stacked">
+        <li>
+          <a href="{% url 'persona-create' %}">Agregar Paciente</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <div id="personas" class="span9">
+    {% include 'snippets/persona_list.html' with personas=personas %}
+  </div>
 </div>
 {% endblock %}

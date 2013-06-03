@@ -1,12 +1,12 @@
 <aside class="span3">
   <nav class="sidebar-nav">
-    {% load tree_menu_tags %}{% show_menu 'persona' %}
-  </nav>
-  <nav class="sidebar-nav">
     <ul class="nav nav-tabs nav-stacked">
       <li>
         <a href="{% url 'persona-estilo' persona.id %}">Estilo de Vida</a>
       </li>
     </ul>
+  </nav>
+  <nav class="sidebar-nav">
+    {% load tree_menu_tags %}{% show_menu 'persona' %}
   </nav>
 </aside>

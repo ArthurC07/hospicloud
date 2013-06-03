@@ -19,7 +19,7 @@
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
   </head>
   <body>
-      <nav id="top" class="navbar navbar-inverse navbar-fixed-top">
+      <nav id="top" class="navbar navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container-fluid">
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -30,14 +30,18 @@
             <a class="brand" href="{% url 'home' %}">Hospinet</a>
             <div class="nav-collapse collapse">
               <p class="navbar-text pull-right">
+                <span>&nbsp;</span>
                 {% if user.is_authenticated %}
                 Logged in as {{ user }} <a href="{% url 'userena_signout' %}" class="navbar-link">Cerrar Ses&oacute;n</a>
                 {% else %}
                 <a href="{% url 'userena_signin' %}" class="navbar-link">Iniciar Sesi&oacute;n</a>
                 {% endif %}
               </p>
+              <form class="navbar-search pull-right" method="get" action="{% url 'persona-search' %}">
+                <input type="text" name="query" class="span2 search-query" placeholder="Buscar Persona">
+              </form>
               {% load tree_menu_tags %}{% show_menu 'root' %}
-            </div><!--/.nav-collapse -->
+            </div>
           </div>
         </div>
       </nav>

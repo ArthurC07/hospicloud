@@ -17,7 +17,7 @@
       <td>{{ emergencia.persona.obtener_edad }}</td>
       <td>{{ emergencia.persona.get_sexo_display }}</td>
       <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
-      <td><a class="btn" href="{% url 'emergency-view-id' emergencia.id %}">Ver</a></td>
+      <td><a class="btn btn-block" href="{% url 'emergency-view-id' emergencia.id %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

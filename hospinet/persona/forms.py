@@ -160,11 +160,11 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
 
 class PersonaSearchForm(forms.Form):
     
-    nombre = forms.CharField()
-    identidad = forms.CharField()
+    query = forms.CharField()
+    
     def __init__(self, *args, **kwargs):
 
-        super(PersonaForm, self).__init__(*args, **kwargs)
+        super(PersonaSearchForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
