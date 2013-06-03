@@ -202,7 +202,6 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
         form.is_valid()
         
         query = form.cleaned_data['query']
-        print(query)
         
         queryset = Persona.objects.filter(
             Q(nombre__icontains=query) |
@@ -210,5 +209,4 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
             Q(identificacion__icontains=query)
         )
         
-        print(queryset.query.__str__())
         return queryset.all()

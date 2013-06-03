@@ -9,13 +9,20 @@
     {% include 'snippets/persona.html' with persona=admision.paciente %}
     {% ifnotequal admision.fiadores.count 0 %}
     <section class="page-header">
-      <h2>Fiadores</h2>
+      <h2>Informaci&oacute;n de los Fiadores</h2>
     </section>
     {% for fiador in admision.fiadores.all %}
-    <h3>Fiador: {{ fiador.nombre_completo }}</h3>
+    <h3>{{ fiador.nombre_completo }}</h3>
     {% include 'snippets/persona.html' with persona=fiador %}
     {% endfor %}
     {% endifnotequal %}
+  </section>
+</div>
+<div class="row page">
+  <section class="span12">
+    <div class="page-header">
+      <h1>Autorizaci&oacute;n</h1>
+    </div>
   </section>
 </div>
 <div class="row">
@@ -38,7 +45,7 @@
         paciente. Es entendido que los cirujanos y doctores que me están
         atendiendo no son empleados de EL HOSPITAL. Yo reconozco que esto
         médicos de prácticas privadas incluyen Radiológicos, médicos de
-        cuidados intensivos cualquier medico consultado en el caso; en tal
+        cuidados intensivos, cualquier medico consultado en el caso; en tal
         virtud liberamos de toda responsabilidad EL HOSPITAL proveniente de esta
         atención medico hospitalaria.
       </li>
@@ -56,6 +63,22 @@
     </ol>
   </section>
 </div>
+<div class="row">
+  <br />
+  <section class="span6 offset3">
+    <hr />
+    <p class="text-center">Firma {{ admision.paciente.nombre_completo }}</p>
+  </section>
+</div>
+{% for fiador in admision.fiadores.all %}
+<div class="row">
+  <br />
+  <section class="span6 offset3">
+    <hr />
+    <p class="text-center">Firma {{ fiador.nombre_completo }}</p>
+  </section>
+</div>
+{% endfor %}
 <div class="row">
   <section class="span12">
     <a class="no-print btn btn-primary" href="{% url 'admision-autorizar' admision.id %}">Autorizar</a>

@@ -1,3 +1,9 @@
 .no-print {
 	display: none;
 }
+.navbar-fixed-top {
+	display: none;
+}
+.page {
+	page-break-before: always;
+}
