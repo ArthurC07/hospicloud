@@ -1,30 +1,45 @@
 {% extends 'base.html' %}{% load thumbnail %}
 {% block content %}
-<aside class="span3">
-<nav class="well sidebar-nav">
-  <ul class="nav nav-list">
-    <li><a href="{% url 'admision-view-id" admision.id %}">Regresar a la Admisi&oacute;n</a></li>
-    <li><a href="{% url 'admision-autorizacion" admision.id %}">Autorizaci&oacute;n</a></li>
-    <li><a href="{% url 'admision-referencias" admision.id %}">Referencias</a></li>
-    <li><a href="{% url 'admision-fiadores" admision.id %}">Fiadores</a></li>
-    <li><a href="{% url 'admision-index' %}">Regresar a Admisiones</a></li>
-  </ul>
-</nav>
-</aside>
-<section class="span9">
-  <div>
-    <h1>Admisi&oacute;n de {{ admision.paciente.nombre_completo }}</h1>
-  </div>
-  {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
-  <h2>Fiadores</h2>
-  {% for fiador in admision.fiadores.all %}
-    <div>
-      <h3> Fiador: {{ fiador.nombre_completo }}</h1>
+<div class="row">
+  <section class="span12">
+    <div class="page-header">
+      <h1>{{ admision.paciente.nombre_completo }} <small>Fiadores</small></h1>
+    </div>
+  </section>
+</div>
+<div class="row">
+  <aside class="span3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-tabs nav-stacked no-print">
+        <li>
+          <a href="{% url 'admision-view-id' admision.id %}">Regresar a la Admisi&oacute;n</a>
+        </li>
+        <li>
+          <a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a>
+        </li>
+        <li>
+          <a href="{% url 'admision-referencias' admision.id %}">Referencias</a>
+        </li>
+        <li>
+          <a href="{% url 'admision-fiadores' admision.id %}">Fiadores</a>
+        </li>
+        <li>
+          <a href="{% url 'admision-index' %}">Regresar a Admisiones</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <section class="span9">
+    {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
+    {% for fiador in admision.fiadores.all %}
+    <div class="page-header">
+      <h3> Fiador: {{ fiador.nombre_completo }}</h3>
     </div>
     {% thumbnail fiador.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
     {% include 'snippets/persona.html' with persona=fiador %}
-    <a href="{% url 'persona-editar" fiador.id %}" class="btn btn-primary">Editar Datos</a>
-  {% endfor %}
-  <a href="{% url 'admision-fiador" admision.id %}" class="btn btn-primary">Agregar Fiador</a>
-</section>
+    <a href="{% url 'persona-editar' fiador.id %}" class="btn btn-primary">Editar Datos</a>
+    {% endfor %}
+    <a href="{% url 'admision-fiador' admision.id %}" class="btn btn-primary">Agregar Fiador</a>
+  </section>
+</div>
 {% endblock %}
