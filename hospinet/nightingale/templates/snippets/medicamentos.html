@@ -30,7 +30,7 @@
           <td data-title="Suministrado">{{ medicamento.suministrado }} Veces</td>
           <td data-title="Próxima Dosis">{{ medicamento.proxima_dosis|date:"P" }}</td>
           <td data-title="Acciones">
-            <a class="btn btn-success btn-block" href="{% url 'enfermeria-dosificar-medicamento' medicamento.id %}">Suministrar Dosis</a>
+            <a class="btn btn-primary btn-block" href="{% url 'enfermeria-dosificar-medicamento' medicamento.id %}">Suministrar Dosis</a>
             <a class="btn btn-success btn-block" href="{% url 'enfermeria-editar-medicamento' medicamento.id %}">Editar Posolog&iacute;a</a>
           </td>
         </tr>
