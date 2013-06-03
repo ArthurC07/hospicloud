@@ -9,14 +9,19 @@
 </div>
 <div class="row">
   {% include 'snippets/aside.html' with admision=admision %}
-  {% include 'snippets/medicamentos.html' %}
-</div>
-<div class="row">
-  <section class="span9 offset3">
-    <div class="page-header">
-      <h2>Materiales y Medicamentos Utilizados</h2>
+  <section class="span9">
+    <div class="row">
+      {% include 'snippets/medicamentos.html' %}
     </div>
-    {% include 'snippets/cargo_table.html' %}
+    <div class="row">
+      <section class="span9">
+        <div class="page-header">
+          <h2>Materiales y Medicamentos Utilizados</h2>
+        </div>
+        {% include 'snippets/cargo_table.html' %}
+      </section>
+    </div>
   </section>
 </div>
+
 {% endblock %}
