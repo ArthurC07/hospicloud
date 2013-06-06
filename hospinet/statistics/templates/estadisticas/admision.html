@@ -24,7 +24,7 @@
       <tbody>
        {% for admision in admisiones %}
         <tr>
-          <td>{{ admision.ingreso }}</td>
+          <td>{{ admision.hospitalizacion }}</td>
           <td>{{ admision.fecha_alta }}</td>
           <td>{{ admision.paciente.nombre_completo }}</td>
           <td><a class="btn btn-success" href="{% url 'admision-view-slug' admision.uuid %}">Ver</a></td>
