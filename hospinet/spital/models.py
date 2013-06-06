@@ -218,7 +218,7 @@ class Admision(models.Model):
             
             return (timezone.now() - self.hospitalizacion).total_seconds() / 60
         
-        return (self.hospitalizacion - self.fecha_alta).days
+        return (self.fecha_alta - self.hospitalizacion).days
     
     def tiempo_ahora(self):
         
