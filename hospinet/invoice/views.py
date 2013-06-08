@@ -32,7 +32,7 @@ from datetime import datetime, time, date
 from django.utils import timezone
 from collections import defaultdict
 from decimal import Decimal
-from persona.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
 

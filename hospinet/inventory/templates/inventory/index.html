@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="row">
+  <div class="span12">
+    <section class="page-header">
+      <h1>Inventario</h1>
+    </section>
+  </div>
+</div>
+<div class="row">
+  <aside class="span3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-stacked nav-tabs">
+        <li><a href="{% url 'itemtemplate-create' %}">Agregar Producto</a></li>
+        <li><a href="{% url 'inventario-create' %}">Agregar Almacen de Inventario</a></li>
+      </ul>
+    </nav>
+  </aside>
+  <section class="span9">
+    <div class="row">
+      {% for inventario in inventarios %}
+      <div class="row">
+        <section class="span9">
+          <section class="page-header"><h2>{{ inventario.lugar }}</h2></section>
+        </section>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

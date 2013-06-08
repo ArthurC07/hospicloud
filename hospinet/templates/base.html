@@ -32,7 +32,7 @@
               <p class="navbar-text pull-right">
                 <span>&nbsp;</span>
                 {% if user.is_authenticated %}
-                Logged in as {{ user }} <a href="{% url 'userena_signout' %}" class="navbar-link">Cerrar Ses&oacute;n</a>
+                Logged in as {{ user }} <a href="{% url 'userena_signout' %}" class="navbar-link">Cerrar Sesi&oacute;n</a>
                 {% else %}
                 <a href="{% url 'userena_signin' %}" class="navbar-link">Iniciar Sesi&oacute;n</a>
                 {% endif %}

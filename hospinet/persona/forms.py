@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#
 # Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -24,17 +25,17 @@ class DateTimeWidget(forms.DateTimeInput):
     
     """Permite mostrar un input preparado para fecha y hora utilizando
     JQuery UI DateTimePicker"""
-
+    
     class Media:
         js = ('js/jquery-ui-timepicker.js',)
-
+    
     def __init__(self, attrs=None):
         super(DateTimeWidget, self).__init__(attrs)
         if attrs is not None:
             self.attrs = attrs.copy()
         else:
             self.attrs = {'class': 'datetimepicker'}
-
+            
         if not 'format' in self.attrs:
             self.attrs['format'] = '%d/%m/%Y %H:%M'
 
@@ -52,7 +53,7 @@ class PersonaForm(forms.ModelForm):
                  input_formats=('%d/%m/%Y',))
     
     def __init__(self, *args, **kwargs):
-
+        
         super(PersonaForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
@@ -67,9 +68,9 @@ class BasePersonaForm(forms.ModelForm):
     persona = forms.ModelChoiceField(label="",
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput())
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(BasePersonaForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
@@ -83,9 +84,9 @@ class FisicoForm(BasePersonaForm):
     class Meta:
         
         model = Fisico
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(FisicoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Editar Fisico', *self.field_names)
 
@@ -96,9 +97,9 @@ class EstiloVidaForm(BasePersonaForm):
     class Meta:
         
         model = EstiloVida
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(FisicoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Editar Fisico', *self.field_names)
 
@@ -109,9 +110,9 @@ class AntecedenteForm(BasePersonaForm):
     class Meta:
         
         model = Antecedente
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(AntecedenteForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Editar Fisico', *self.field_names)
 
@@ -122,11 +123,12 @@ class AntecedenteFamiliarForm(BasePersonaForm):
     class Meta:
         
         model = AntecedenteFamiliar
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(AntecedenteFamiliarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Antecedentes Familiares', *self.field_names)
+        self.helper.layout = Fieldset(u'Editar Antecedentes Familiares',
+                                      *self.field_names)
 
 class AntecedenteObstetricoForm(BasePersonaForm):
     
@@ -137,9 +139,10 @@ class AntecedenteObstetricoForm(BasePersonaForm):
         model = AntecedenteObstetrico
 
     def __init__(self, *args, **kwargs):
-
+        
         super(AntecedenteObstetricoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Antecedentes Obstetricos', *self.field_names)
+        self.helper.layout = Fieldset(u'Editar Antecedentes Obstetricos',
+                                      *self.field_names)
 
 class AntecedenteQuirurgicoForm(BasePersonaForm):
     
@@ -152,18 +155,19 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
     fecha = forms.DateTimeField(widget=forms.DateInput(
                     attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
                  input_formats=('%d/%m/%Y',))
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Antecendete Quirúgico', *self.field_names)
+        self.helper.layout = Fieldset(u'Agregar Antecendete Quirúgico',
+                                      *self.field_names)
 
 class PersonaSearchForm(forms.Form):
     
     query = forms.CharField()
     
     def __init__(self, *args, **kwargs):
-
+        
         super(PersonaSearchForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True

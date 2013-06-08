@@ -32,7 +32,7 @@ from nightingale.models import Cargo
 from emergency.models import Emergencia
 from persona.forms import PersonaForm
 from django.contrib import messages
-from persona.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin
 from invoice.forms import PeriodoForm
 from crispy_forms.layout import Fieldset
 

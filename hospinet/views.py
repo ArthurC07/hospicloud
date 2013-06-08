@@ -17,7 +17,7 @@
 
 from django.views.generic.base import TemplateView
 from haystack.views import SearchView
-from persona.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin
 
 class IndexView(TemplateView):
     

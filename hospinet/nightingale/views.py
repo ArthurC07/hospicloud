@@ -31,7 +31,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
 from spital.models import Admision
 from django.contrib import messages
 from django.utils import timezone
-from persona.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin
 
 class NightingaleIndexView(ListView, LoginRequiredMixin):
     

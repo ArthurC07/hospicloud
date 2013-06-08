@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#
 # Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -14,15 +15,14 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.http import HttpResponseRedirect
-from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
-                                  TemplateView)
+from django.views.generic import (CreateView, DetailView, UpdateView, ListView)
 from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
     AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm,
     AntecedenteQuirurgicoForm, PersonaSearchForm)
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico)
-from django.shortcuts import get_object_or_404, redirect
-from persona.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+from users.mixins import LoginRequiredMixin
 from django.db.models.query_utils import Q
 
 class PersonaIndexView(ListView, LoginRequiredMixin):

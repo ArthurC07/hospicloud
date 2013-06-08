@@ -17,19 +17,19 @@
 
 from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
-                              Tratamiento, Hallazgo, Cobro, Diagnostico, ExamenFisico)
-from inventory.models import ItemTemplate
+                              Tratamiento, Hallazgo, Cobro, Diagnostico,
+                              ExamenFisico)
 from persona.models import Persona
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 
 class EmergenciaForm(forms.ModelForm):
-
+    
     """Formulario para agregar :class:`Emergencia`s"""
-
+    
     class Meta:
-
+        
         model = Emergencia
     
     persona = forms.ModelChoiceField(label="",
@@ -47,9 +47,9 @@ class EmergenciaBaseForm(forms.ModelForm):
     usuario = forms.ModelChoiceField(label="",
                                   queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(EmergenciaBaseForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
@@ -57,92 +57,92 @@ class EmergenciaBaseForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar'))
 
 class RemisionInternaForm(EmergenciaBaseForm):
-
+    
     """Formulario para agregar :class:`RemisionInterna`s"""
-
+    
     class Meta:
-
+        
         model = RemisionInterna
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(RemisionInternaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Remitir a un Especialista', *self.field_names)
 
 class RemisionExternaForm(EmergenciaBaseForm):
-
+    
     """Formulario para agregar :class:`RemisionExterna`s"""
-
+    
     class Meta:
-
+        
         model = RemisionExterna
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(RemisionExternaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Remitir a otro Centro', *self.field_names)
 
 class ExamenFisicoForm(EmergenciaBaseForm):
-
+    
     """Formulario para agregar :class:`ExamenFisico`s"""
-
+    
     class Meta:
-
+        
         model = ExamenFisico
-
+    
     def __init__(self, *args, **kwargs):
 
         super(ExamenFisicoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Examen Físico', *self.field_names)
 
 class HallazgoForm(EmergenciaBaseForm):
-
+    
     """Formulario para agregar :class:`RemisionExterna`s"""
-
+    
     class Meta:
-
+        
         model = Hallazgo
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(HallazgoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Hallazgo', *self.field_names)
 
 class TratamientoForm(EmergenciaBaseForm):
-
+    
     """Formulario para agregar :class:`Tratamiento`s"""
-
+    
     class Meta:
-
+        
         model = Tratamiento
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(TratamientoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Tratamiento', *self.field_names)
 
 class DiagnosticoForm(EmergenciaBaseForm):
-
+    
     """Formulario para agregar :class:`Tratamiento`s"""
-
+    
     class Meta:
-
+        
         model = Diagnostico
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(DiagnosticoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Diagnostico', *self.field_names)
 
 class CobroForm(EmergenciaBaseForm):
-
+    
     """Formulario para agregar :class:`Cobro`s"""
-
+    
     class Meta:
-
+        
         model = Cobro
-
+    
     def __init__(self, *args, **kwargs):
-
+        
         super(CobroForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Materiales y Medicamentos', *self.field_names)
