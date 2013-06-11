@@ -208,7 +208,10 @@ class AdmisionPeriodo(TemplateView, LoginRequiredMixin):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['admisiones'] = self.admisiones
-        context['tiempo_promedio'] = sum(a.tiempo_hospitalizado() for a in self.admisiones.all()) / self.admisiones.count()
+        if self.admisiones.count():
+            context['tiempo_promedio'] = sum(a.tiempo_hospitalizado() for a in self.admisiones.all()) / self.admisiones.count()
+        else:
+            context['tiempo_promedio'] = 0
         # Calcular todos los cargos efectuados en estas hospitalizaciones
         cargos = defaultdict(Decimal)
         habitaciones = defaultdict(int)
