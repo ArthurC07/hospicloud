@@ -69,7 +69,7 @@ class EmergenciaCreateView(CreateView, LoginRequiredMixin):
     
     """Crea una :class:`Emergencia` para una :class:`Persona` ya existente en el
     sistema"""
-
+    
     model = Emergencia
     form_class = EmergenciaForm
     template_name = 'emergency/emergencia_create.html'
@@ -83,7 +83,7 @@ class EmergenciaCreateView(CreateView, LoginRequiredMixin):
     def get_form_kwargs(self):
         
         """Agrega el id de la :class:`Persona` a los argumentos de la sesión"""
-
+        
         kwargs = super(EmergenciaCreateView, self).get_form_kwargs()
         kwargs.update({ 'initial':{'persona':self.persona.id}})
         return kwargs
@@ -91,7 +91,7 @@ class EmergenciaCreateView(CreateView, LoginRequiredMixin):
     def dispatch(self, *args, **kwargs):
         
         """Carga la :class:`Persona` desde el origen de datos"""
-
+        
         self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
         return super(EmergenciaCreateView, self).dispatch(*args, **kwargs)
     
@@ -99,7 +99,7 @@ class EmergenciaCreateView(CreateView, LoginRequiredMixin):
         
         """Agrega la :class:`Persona que se esta admitiendo y el :class:`User`
         que esta realizando la :class:`Emergencia`"""
-
+        
         self.object = form.save(commit=False)
         self.object.persona = self.persona
         self.object.usuario = self.request.user
@@ -110,7 +110,7 @@ class EmergenciaCreateView(CreateView, LoginRequiredMixin):
 class EmergenciaDetailView(DetailView, LoginRequiredMixin):
 
     """Permite mostrar los datos de la :class:`Emergencia`"""
-
+    
     model = Emergencia
     template_name = 'emergency/emergency_detail.html'
 
@@ -123,9 +123,9 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
     
     """Permite llenar el formulario de una clase que requiera
     :class:`Emergencia`s de manera previa - DRY"""
-
+    
     template_name = 'emergency/emergencia_child_form.html'
-
+    
     def get_context_data(self, **kwargs):
         
         context = super(BaseCreateView, self).get_context_data(**kwargs)
@@ -136,7 +136,7 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
         
         """Agrega la :class:`Emergencia` obtenida como el valor a utilizar en el
         formulario que será llenado posteriormente"""
-
+        
         kwargs = super(BaseCreateView, self).get_form_kwargs()
         kwargs.update({'initial':{'emergencia':self.emergencia.id,
                                   'usuario':self.request.user.id}})
@@ -146,7 +146,7 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
         
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
-
+        
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(BaseCreateView, self).dispatch(*args, **kwargs)
     
@@ -155,7 +155,7 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
         """Guarda el objeto generado espeficando la :class:`Emergencia` obtenida
         de los argumentos y el :class:`User` que esta utilizando la aplicación
         """
-
+        
         self.object = form.save(commit=False)
         self.object.emergencia = self.emergencia
         self.usuario = self.request.user
@@ -166,17 +166,17 @@ class BaseCreateView(CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 class TratamientoCreateView(BaseCreateView):
-
+    
     """Permite agregar un :class:`Tratamiento` a una :class:`Emergencia`"""
-
+    
     model = Tratamiento
     form_class = TratamientoForm
 
 class RemisionInternaCreateView(BaseCreateView):
-
+    
     """Registrar el envio de una :class:`Persona`, que ingreso a consulta,
     hacia un especialista"""
-
+    
     model = RemisionInterna
     form_class = RemisionInternaForm
 
@@ -192,7 +192,7 @@ class ExamenFisicoCreateView(BaseCreateView):
     
     """Registrar los :class:`ExamenFisico`s efectuados a la :class:`Persona`,
     que ingreso a consulta"""
-
+    
     model = ExamenFisico
     form_class = ExamenFisicoForm
 
@@ -205,150 +205,176 @@ class HallazgoCreateView(BaseCreateView):
     form_class = HallazgoForm
 
 class CobroCreateView(BaseCreateView):
-
+    
     """Registrar los :class:`Cobro`s efectuados a la :class:`Persona`,
     que ingreso a consulta"""
-
+    
     model = Cobro
     form_class = CobroForm
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        
+        item = self.request.user.profile.inventario.buscar_item(self.object.cargo)
+        item.disminuir(self.object.cantidad)
+        self.object.save()
+        
+        return HttpResponseRedirect(self.get_success_url())
 
 class CobroDeleteView(DeleteView, LoginRequiredMixin):
-
+    
     model = Cobro
-
+    
+    def delete(self, request, *args, **kwargs):
+        """
+        Calls the delete() method on the fetched object and then
+        redirects to the success URL.
+        """
+        self.object = self.get_object()
+        
+        item = self.request.user.profile.inventario.buscar_item(self.object.cargo)
+        item.incrementar(self.object.cantidad)
+        
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
+    
     def get_object(self, queryset = None):
 
         obj = super(CobroDeleteView, self).get_object(queryset)
         self.emergencia = obj.emergencia
         return obj
-
+    
     def get_success_url(self):
-
+        
         return self.emergencia.get_absolute_url()
 
 class DiagnosticoCreateView(BaseCreateView):
-
+    
     """Registrar los :class:`Diagnostico`s efectuados a la :class:`Persona`,
     que ingreso a consulta"""
-
+    
     model = Diagnostico
     form_class = DiagnosticoForm
 
 class EmergenciaListView(ListView, LoginRequiredMixin):
-
+    
+    model = Emergencia
     context_object_name = 'emergencias'
     template_name = 'emergency/index.html'
-
+    paginate_by = 20
+    
     def get_queryset(self):
-
+        
         """Obtiene las :class:`Emergencia`s atendidas el día de hoy"""
-
+        
         inicio = timezone.make_aware(
                                 datetime.combine(date.today(), time.min),
                                 timezone.get_default_timezone())
         fin = timezone.make_aware(datetime.combine(date.today(), time.max),
                                         timezone.get_default_timezone())
-        return Emergencia.objects.filter(created__range=(inicio, fin))
-
+        #return Emergencia.objects.filter(created__range=(inicio, fin))
+        return Emergencia.objects.order_by('-created')
+        
 
 class EmergenciaFisicoUpdateView(FisicoUpdateView):
-
+    
     def dispatch(self, *args, **kwargs):
         
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
-
+        
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(EmergenciaFisicoUpdateView, self).dispatch(*args, **kwargs)
-
+    
     def get_success_url(self):
         
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class EmergenciaEstiloVidaUpdateView(EstiloVidaUpdateView):
-
+    
     def dispatch(self, *args, **kwargs):
         
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
-
+        
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(EmergenciaEstiloVidaUpdateView,
                      self).dispatch(*args, **kwargs)
-
+    
     def get_success_url(self):
         
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class EmergenciaAntecedenteUpdateView(AntecedenteUpdateView):
-
+    
     def dispatch(self, *args, **kwargs):
         
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
-
+        
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(EmergenciaAntecedenteUpdateView, self).dispatch(*args, **kwargs)
-
+    
     def get_success_url(self):
         
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class EmergenciaAntecedenteFamiliarUpdateView(AntecedenteFamiliarUpdateView):
-
+    
     def dispatch(self, *args, **kwargs):
         
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
-
+        
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(EmergenciaAntecedenteFamiliarUpdateView, self).dispatch(*args, **kwargs)
-
+    
     def get_success_url(self):
         
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class EmergenciaAntecedenteObstetricoUpdateView(AntecedenteObstetricoUpdateView):
-
+    
     def dispatch(self, *args, **kwargs):
         
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
-
+        
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(EmergenciaAntecedenteObstetricoUpdateView,
                      self).dispatch(*args, **kwargs)
-
+    
     def get_success_url(self):
         
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class EmergenciaAntecedenteQuirurgicoUpdateView(AntecedenteQuirurgicoUpdateView):
-
+    
     def dispatch(self, *args, **kwargs):
         
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
-
+        
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(EmergenciaAntecedenteQuirurgicoUpdateView,
                      self).dispatch(*args, **kwargs)
-
+    
     def get_success_url(self):
         
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class EmergenciaAntecedenteQuirurgicoCreateView(AntecedenteQuirurgicoCreateView):
-
+    
     def dispatch(self, *args, **kwargs):
         
         """Obtiene la :class:`Emergencia` que se entrego como argumento en la
         url"""
-
+        
         self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
         return super(EmergenciaAntecedenteQuirurgicoCreateView,
                      self).dispatch(*args, **kwargs)
-
+    
     def get_success_url(self):
         
         return reverse('emergency-view-id', args=[self.emergencia.id])

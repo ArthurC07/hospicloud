@@ -19,7 +19,6 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django_extensions.db.models import TimeStampedModel
-from decimal import Decimal
 from persona.models import Persona
 from inventory.models import ItemTemplate
 
@@ -27,7 +26,7 @@ class Emergencia(TimeStampedModel):
 
     """Representa una visita de una :class:`Persona` a la consulta de
     emergencia"""
-
+    
     persona = models.ForeignKey(Persona, related_name='emergencias')
     historia_enfermedad_actual = models.TextField(blank=True, null=True)
     frecuencia_respiratoria = models.IntegerField(blank=True, null=True)
@@ -49,14 +48,14 @@ class Emergencia(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.id])
 
 class Tratamiento(TimeStampedModel):
-
+    
     """Registra las indiciaciones que la :class:`Persona` debe seguir"""
-
+    
     emergencia = models.ForeignKey(Emergencia, related_name='tratamientos')
     indicaciones = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_tratamientos')
-
+    
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
@@ -64,15 +63,15 @@ class Tratamiento(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class Diagnostico(TimeStampedModel):
-
+    
     """Registra el resultado que el medico ha encontrado luego de auscultar
     a la :class:`Persona`"""
-
+    
     emergencia = models.ForeignKey(Emergencia, related_name='diagnosticos')
     diagnostico = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_diagnosticos')
-
+    
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
@@ -80,9 +79,9 @@ class Diagnostico(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class ExamenFisico(TimeStampedModel):
-
+    
     """Registra los análisis que se le efectua a la :class:`Persona`"""
-
+    
     emergencia = models.ForeignKey(Emergencia,
                                 related_name='examenes_fisicos')
     orl = models.TextField()
@@ -92,7 +91,7 @@ class ExamenFisico(TimeStampedModel):
     otras = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='examenes_fisicos')
-
+    
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
@@ -106,7 +105,7 @@ class Hallazgo(TimeStampedModel):
     hallazgo = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='hallazgos')
-
+    
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
@@ -114,12 +113,12 @@ class Hallazgo(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class RemisionInterna(TimeStampedModel):
-
+    
     emergencia = models.ForeignKey(Emergencia, related_name='remisiones_internas')
     doctor = models.CharField(max_length=100)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_rinternas')
-
+    
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
@@ -127,14 +126,14 @@ class RemisionInterna(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class RemisionExterna(TimeStampedModel):
-
+    
     emergencia = models.ForeignKey(Emergencia, related_name='remisiones_externas')
     destino = models.CharField(max_length=100)
     diagnostico = models.TextField()
     notas = models.TextField()
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_rexternas')
-
+    
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
@@ -144,11 +143,11 @@ class RemisionExterna(TimeStampedModel):
 class Cobro(TimeStampedModel):
 
     """Permite registrar los distintos cargos"""
-
+    
     emergencia = models.ForeignKey(Emergencia, related_name='cobros')
     cargo = models.ForeignKey(ItemTemplate, related_name='cobros')
     cantidad = models.IntegerField(default=1)
-
+    
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""

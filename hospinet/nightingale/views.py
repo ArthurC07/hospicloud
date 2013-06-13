@@ -226,6 +226,24 @@ class CargoCreateView(BaseCreateView):
     model = Cargo
     form_class = CargoForm
     template_name = 'enfermeria/cargo_create.html'
+    
+    
+    def form_valid(self, form):
+        
+        """Guarda el objeto generado espeficando la :class:`Admision` obtenida
+        de los argumentos y el :class:`User` que esta utilizando la aplicación
+        """
+        
+        self.object = form.save(commit=False)
+        
+        item = self.request.user.profile.inventario.buscar_item(self.object.cargo)
+        item.disminuir(self.object.cantidad)
+        
+        self.object.save()
+        
+        messages.info(self.request, u"Hospitalización Actualizada")
+        
+        return HttpResponseRedirect(self.get_success_url())
 
 class CargoDeleteView(DeleteView, LoginRequiredMixin):
     
@@ -236,6 +254,19 @@ class CargoDeleteView(DeleteView, LoginRequiredMixin):
         obj = super(CargoDeleteView, self).get_object(queryset)
         self.admision = obj.admision
         return obj
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Calls the delete() method on the fetched object and then
+        redirects to the success URL.
+        """
+        self.object = self.get_object()
+        
+        item = self.request.user.profile.inventario.buscar_item(self.object.cargo)
+        item.incrementar(self.object.cantidad)
+        
+        self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
 
