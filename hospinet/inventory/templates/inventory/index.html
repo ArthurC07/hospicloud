@@ -18,15 +18,14 @@
     </nav>
   </aside>
   <section class="span9">
-    <div class="row">
       {% for inventario in inventarios %}
       <div class="row">
         <section class="span9">
           <section class="page-header"><h2>{{ inventario.lugar }}</h2></section>
+          <a class="btn btn-success" href="{% url 'inventario' inventario.id %}">Ver</a>
         </section>
       </div>
       {% endfor %}
-    </div>
   </section>
 </div>
 {% endblock %}

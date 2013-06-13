@@ -18,10 +18,28 @@
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView)
 from users.mixins import LoginRequiredMixin
 from inventory.models import (Inventario, Item, ItemTemplate, Transferencia,
-    Transferido, Compra, ItemType)
+    Transferido, Compra, ItemType, Requisicion, ItemRequisicion)
 from django.views.generic.detail import SingleObjectMixin
-from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm)
+from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm,
+    ItemForm, RequisicionForm, ItemRequisicionForm, TransferenciaForm,
+    TransferidoForm, CompraForm, TransferirForm, RequisicionCompletarForm)
 from django.views.generic.base import TemplateView
+from django.shortcuts import get_object_or_404
+from django.http.response import HttpResponseRedirect
+
+class InventarioFormMixin(CreateView):
+    
+    def dispatch(self, *args, **kwargs):
+        
+        self.inventario = get_object_or_404(Inventario, pk=kwargs['inventario'])
+        return super(InventarioFormMixin, self).dispatch(*args, **kwargs)
+    
+    def get_initial(self):
+        
+        initial = super(InventarioFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['inventario'] = self.inventario.id
+        return initial
 
 class IndexView(TemplateView, LoginRequiredMixin):
     
@@ -93,10 +111,84 @@ class ItemListView(ListView, LoginRequiredMixin):
     context_object_name = 'items'
     paginate_by = 10
 
+class ItemCreateView(InventarioFormMixin, LoginRequiredMixin):
+    
+    model = Item
+    form_class = ItemForm
+
 class ItemDetailView(ListView, LoginRequiredMixin):
     
     model = Item
     context_object_name = 'item'
+
+class RequisicionDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+    
+    paginate_by = 10
+    template_name = 'inventory/requisicion_detail.html'
+    
+    def get_context_data(self, **kwargs):
+        
+        kwargs['requisicion'] = self.object
+        return super(RequisicionDetailView, self).get_context_data(**kwargs)
+    
+    def get_queryset(self):
+        
+        self.object = self.get_object(Requisicion.objects.all())
+        return self.object.items.all()
+
+class RequisicionListView(ListView, LoginRequiredMixin):
+    
+    model = Requisicion
+    context_object_name = 'requisiciones'
+
+class RequisicionCreateView(InventarioFormMixin, LoginRequiredMixin):
+    
+    model = Requisicion
+    form_class = RequisicionForm
+
+class RequisicionUpdateView(UpdateView, LoginRequiredMixin):
+    
+    model = Requisicion
+    form_class = RequisicionCompletarForm
+
+class RequisicionFormMixin(CreateView):
+    
+    def dispatch(self, *args, **kwargs):
+        
+        self.requisicion = get_object_or_404(Requisicion, pk=kwargs['requisicion'])
+        return super(RequisicionFormMixin, self).dispatch(*args, **kwargs)
+    
+    def get_initial(self):
+        
+        initial = super(RequisicionFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['requisicion'] = self.requisicion.id
+        return initial
+
+class ItemRequisicionCreateView(RequisicionFormMixin, LoginRequiredMixin):
+    
+    model = ItemRequisicion
+    form_class = ItemRequisicionForm
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.pendiente = self.object.cantidad
+        self.object.save()
+        
+        return HttpResponseRedirect(self.get_success_url())
+
+class TransferenciaCreateView(RequisicionFormMixin, LoginRequiredMixin):
+    
+    model = Transferencia
+    form_class = TransferenciaForm
+    
+    def get_initial(self):
+        
+        initial = super(TransferenciaCreateView, self).get_initial()
+        initial = initial.copy()
+        initial['destino'] = self.requisicion.inventario.id
+        return initial
 
 class TransferenciaDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     
@@ -113,17 +205,53 @@ class TransferenciaDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         self.object = self.get_object(Transferencia.objects.all())
         return self.object.transferidos.all()
 
+class TransferenciaUpdateView(UpdateView):
+    
+    model = Transferencia
+    form_class = TransferirForm
+    context_object_name = 'trasferencia'
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.transferir()
+        self.object.save()
+        
+        return HttpResponseRedirect(self.get_success_url())
+
 class TransferenciaListView(ListView, LoginRequiredMixin):
     
     model = Transferencia
     context_object_name = 'transferencias'
     paginate_by = 10
 
+class TransferidoCreateView(CreateView, LoginRequiredMixin):
+    
+    model = Transferido
+    form_class = TransferidoForm
+    
+    def dispatch(self, *args, **kwargs):
+        
+        self.transferencia = get_object_or_404(Transferencia, pk=kwargs['transferencia'])
+        return super(TransferidoCreateView, self).dispatch(*args, **kwargs)
+    
+    def get_initial(self):
+        
+        initial = super(TransferidoCreateView, self).get_initial()
+        initial = initial.copy()
+        initial['transferencia'] = self.transferencia.id
+        return initial
+
 class TransferidoListView(ListView, LoginRequiredMixin):
     
     model = Transferido
     context_object_name = 'transferidos'
     paginate_by = 10
+
+class CompraCreateView(InventarioFormMixin, LoginRequiredMixin):
+    
+    model = Compra
+    form_class = CompraForm
 
 class CompraDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     
@@ -137,8 +265,8 @@ class CompraDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     
     def get_queryset(self):
         
-        self.object = self.get_object(Transferencia.objects.all())
-        return self.object.transferidos.all()
+        self.object = self.get_object(Compra.objects.all())
+        return self.object.items.all()
 
 class CompraListView(ListView, LoginRequiredMixin):
     

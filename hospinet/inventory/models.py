@@ -24,11 +24,12 @@ from guardian.models import User
 class Inventario(models.Model):
 
     lugar = models.CharField(max_length=255, default='Bodega')
-    puede_comprar = models.NullBooleanField(default=False, blank=True, null=True)
+    puede_comprar = models.NullBooleanField(default=False, blank=True,
+                                            null=True)
     
     def __unicode__(self):
         
-        return u"Inventario de {0}".format(self.nombre)
+        return u"Inventario de {0}".format(self.lugar)
     
     def buscar_item(self, item_template):
         
@@ -43,6 +44,18 @@ class Inventario(models.Model):
         """Obtiene la URL absoluta"""
         
         return reverse('inventario', args=[self.id])
+    
+    def requisiciones_pendientes(self):
+        
+        return self.requisiciones.filter(entregada=False).all()
+    
+    def transferencias_entrantes(self):
+        
+        return self.entradas.filter(aplicada=False).all()
+    
+    def transferencias_salientes(self):
+        
+        return self.salidas.filter(aplicada=False).all()
 
 class ItemType(TimeStampedModel):
     
@@ -110,6 +123,12 @@ class Item(TimeStampedModel):
         self.cantidad += cantidad
         self.save()
     
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('inventario', args=[self.inventario.id])
+    
     def __unicode__(self):
         
         return u'{0} en {1}'.format(self.plantilla.descripcion,
@@ -119,22 +138,56 @@ class Requisicion(TimeStampedModel):
     
     inventario = models.ForeignKey(Inventario, related_name='requisiciones',
                                    null=True, blank=True)
-    cantidad = models.IntegerField()
-    aprobada = models.BooleanField(default=False)
-    entregada = models.BooleanField(default=False)
+    aprobada = models.NullBooleanField(default=False)
+    entregada = models.NullBooleanField(default=False)
     usuario = models.ForeignKey(User, related_name="requisiciones",
                                 null=True, blank=True)
+    
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('requisicion', args=[self.id])
     
     def __unicode__(self):
         
         return u'Requisición de {0}'.format(self.inventario.lugar)
+    
+    def buscar_item(self, item_template):
+        
+        qs = self.items.filter(item=item_template)
+        r = list(qs[:1])
+        if r:
+            return r[0]
+        return ItemRequisicion(requisicion=self, item=item_template)
 
-class ItemRequsicion(TimeStampedModel):
+class ItemRequisicion(TimeStampedModel):
     
     requisicion = models.ForeignKey(Requisicion, related_name='items')
     item = models.ForeignKey(ItemTemplate, related_name='requisiciones')
     cantidad = models.IntegerField()
     entregada = models.BooleanField(default=False)
+    pendiente = models.IntegerField(default=0)
+    
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('item-requisicion-create', args=[self.requisicion.id])
+    
+    def disminuir(self, cantidad):
+        
+        self.pendiente -= cantidad
+        self.save()
+    
+    def incrementar(self, cantidad):
+    
+        self.pendiente += cantidad
+        
+        if self.pendiente >= self.cantidad:
+            self.entregada = True
+        
+        self.save()
 
 class Transferencia(TimeStampedModel):
     
@@ -151,7 +204,33 @@ class Transferencia(TimeStampedModel):
     def __unicode__(self):
         
         return u'Transferencia desde {0} hacia {1}'.format(self.origen.lugar,
-                                                           self.origen.lugar)
+                                                           self.destino.lugar)
+    
+    def transferir(self):
+        
+        for item in self.transferidos.all():
+            
+            if item.aplicada:
+                continue
+            
+            destino = self.destino.buscar_item(item.item)
+            origen = self.origen.buscar_item(item.item)
+            requisicion = self.requisicion.buscar_item(item.item)
+            
+            destino.incrementar(item.cantidad)
+            origen.disminuir(item.cantidad)
+            requisicion.disminuir(item.cantidad)
+            
+            item.aplicada = True
+            item.save()
+        
+        self.aplicada = True
+    
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('transferencia', args=[self.id])
 
 class Transferido(TimeStampedModel):
     
@@ -163,8 +242,14 @@ class Transferido(TimeStampedModel):
     
     def __unicode__(self):
         
-        return u'Transferir {1} {0}'.format(self.item.description,
+        return u'Transferir {1} {0}'.format(self.item.descripcion,
                                             self.cantidad)
+    
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('transferencia', args=[self.transferencia.id])
 
 class Compra(TimeStampedModel):
     
@@ -179,7 +264,9 @@ class Compra(TimeStampedModel):
 
 class ItemComprado(TimeStampedModel):
     
-    compra = models.ForeignKey(Compra, related_name='compras')
+    compra = models.ForeignKey(Compra, related_name='items')
+    item = models.ForeignKey(ItemTemplate, related_name='comprado', blank=True,
+                             null=True)
     ingresado = models.BooleanField(default=False)
 
 class ItemAction(TimeStampedModel):

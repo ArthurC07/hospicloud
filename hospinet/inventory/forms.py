@@ -18,7 +18,8 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
-from inventory.models import ItemTemplate, Inventario, Item, Compra, ItemType
+from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
+    Requisicion, ItemRequisicion, Transferencia, Transferido)
 
 class FieldSetFormMixin(forms.ModelForm):
     
@@ -88,4 +89,93 @@ class ItemTypeForm(FieldSetFormMixin):
         
         super(ItemTypeForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Tipos de Producto',
+                                      *self.field_names)
+
+class RequisicionForm(FieldSetFormMixin):
+    
+    class Meta:
+        
+        model = Requisicion
+        exclude = ('entregada', 'aprobada')
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(RequisicionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Requisición',
+                                      *self.field_names)
+
+class RequisicionCompletarForm(forms.ModelForm):
+    
+    class Meta:
+        
+        model = Requisicion
+        fields = ('entregada',)
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(RequisicionCompletarForm, self).__init__(*args, **kwargs)
+        
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Aplicar'))
+        self.helper.layout = Fieldset(u'¿Completar la Requisción Ahora?',
+                                      *self.field_names)
+
+
+class ItemRequisicionForm(FieldSetFormMixin):
+    
+    class Meta:
+        
+        model = ItemRequisicion
+        exclude = ('entregada', 'pendiente')
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(ItemRequisicionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Requisición de Producto',
+                                      *self.field_names)
+
+class TransferenciaForm(FieldSetFormMixin):
+    
+    class Meta:
+        
+        model = Transferencia
+        exclude = ('aplicada', )
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(TransferenciaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Transferencia de Inventario',
+                                      *self.field_names)
+
+class TransferirForm(forms.ModelForm):
+    
+    class Meta:
+        
+        model = Transferencia
+        fields = ('aplicada',)
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(TransferirForm, self).__init__(*args, **kwargs)
+        
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Aplicar'))
+        self.helper.layout = Fieldset(u'¿Aplicar la Transferencia Ahora?',
+                                      *self.field_names)
+
+class TransferidoForm(FieldSetFormMixin):
+    
+    class Meta:
+        
+        model = Transferido
+        exclude = ('aplicada', )
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(TransferidoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Producto a Transferir',
                                       *self.field_names)

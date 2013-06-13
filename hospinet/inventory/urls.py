@@ -18,7 +18,10 @@
 from django.conf.urls import patterns, url
 from inventory.views import (IndexView, ItemTemplateCreateView,
     ItemTemplateDetailView, ItemTypeCreateView, InventarioCreateView,
-    InventarioDetailView)
+    InventarioDetailView, ItemCreateView, RequisicionCreateView,
+    ItemRequisicionCreateView, RequisicionDetailView, TransferenciaCreateView,
+    TransferenciaDetailView, TransferidoCreateView, TransferenciaUpdateView,
+    RequisicionUpdateView)
 
 urlpatterns = patterns('',
     
@@ -46,4 +49,39 @@ urlpatterns = patterns('',
         InventarioDetailView.as_view(),
         name='inventario'),
     
+    url(r'^(?P<inventario>\d+)/item/agregar$',
+        ItemCreateView.as_view(),
+        name='item-create'),
+    
+    url(r'^(?P<inventario>\d+)/requisicion/agregar$',
+        RequisicionCreateView.as_view(),
+        name='requisicion-create'),
+    
+    url(r'^requisicion/(?P<pk>\d+)$',
+        RequisicionDetailView.as_view(),
+        name='requisicion'),
+    
+    url(r'^requisicion/(?P<pk>\d+)/completar$',
+        RequisicionUpdateView.as_view(),
+        name='requisicion-completar'),
+    
+    url(r'^requisicion/(?P<requisicion>\d+)/item/agregar$',
+        ItemRequisicionCreateView.as_view(),
+        name='item-requisicion-create'),
+    
+    url(r'^requisicion/(?P<requisicion>\d+)/transferencia/agregar$',
+        TransferenciaCreateView.as_view(),
+        name='transferencia-create'),
+    
+    url(r'^transferencia/(?P<pk>\d+)$',
+        TransferenciaDetailView.as_view(),
+        name='transferencia'),
+    
+    url(r'^transferencia/(?P<pk>\d+)/efectuar$',
+        TransferenciaUpdateView.as_view(),
+        name='transferencia-efectuar'),
+    
+    url(r'^transferencia/(?P<transferencia>\d+)/transferido/agregar$',
+        TransferidoCreateView.as_view(),
+        name='transferido-create'),
 )
