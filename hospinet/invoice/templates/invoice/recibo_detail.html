@@ -1,74 +1,80 @@
 {% extends 'base.html' %}
 {% block content %}
-<aside class="span3 toolbox">
-<nav class="well sidebar-nav">
-  <ul class="nav nav-list">
-      <li>
-        <a href="{% url 'invoice-nullify" recibo.id %}">Anular Recibo</a>
-      </li
-      <li>
-        <a href="{% url 'invoice-close" recibo.id %}">Cerrar Recibo</a>
-      </li>
-    </ul>
- </nav>
-</aside>
-<div id="informacion" class="span9">
-  <div>
-    <h1>Recibo {{ recibo.id }}</h1>
-    <h2>{{ recibo.cliente }}</h2>
+<div class="row">
+  <div class="span12">
+    <section class="page-header">
+      <h1>{{ recibo.id }} - {{ recibo.cliente }}<small>{{ recibo.created|date:"d/m/Y P" }}</small></h1>
+    </section>
   </div>
-  <span>Fecha: {{ recibo.created|date:"d/m/Y P" }}</span>
-  <table class="table table-striped table-bordered">
-    <thead>
-      <tr>
-        <th>Cantidad</th>
-        <th>Concepto</th>
-        <th>Descripci&oacute;n</th>
-        <th>Precio unitario</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for venta in recibo.ventas.all %}
-      <tr>
-        <td>{{ venta.cantidad }}</td>
-        <td>{{ venta.producto.nombre }}</td>
-        <td>{{ venta.descripcion }}</td>
-        <td>{{ venta.precio }}</td>
-        <td>{{ venta.monto }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-    <tfoot>
-      <tr>
-        <th colspan="3">&nbsp;</th>
-        <th>Subtotal:</th>
-        <th>{{ recibo.subtotal }}</th>
-      </tr>
-      <tr>
-        <th colspan="3">&nbsp;</th>
-        <th>Impuestos:</th>
-        <th>{{ recibo.impuesto }}</th>
-      </tr>
-        <th colspan="3">&nbsp;</th>
-        <th>Descuento:</th>
-        <th>{{ recibo.descuento }}</th>
-      </tr>
-      <tr>
-        <th colspan="3">&nbsp;</th>
-        <th>Totalotal:</th>
-        <th>{{ recibo.total }}</th>
-      </tr>
-    </tfoot>
-  <table>
-{% ifequal recibo.cerrado False %}
-  <form  class="styled" method="post" action="{% url 'venta-add" recibo.id %}">
-    {% csrf_token %} <h1>Agregar Producto {{ persona.nombre_completo }}</h1>
-    <div id="messages"></div>{% include 'snippets/form.html' with form=form %}
-    <p>
-      <input type="submit" value="Guardar" />
-    </p>
-  </form>
-{% endifequal %}
+</div>
+<div class="row">
+  <aside class="span3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-tabs nav-stacked">
+        <li>
+          <a href="{% url 'invoice-nullify' recibo.id %}">Anular Recibo</a>
+        </li>
+        <li>
+          <a href="{% url 'invoice-close' recibo.id %}">Cerrar Recibo</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <div id="informacion" class="span9">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Cantidad</th>
+          <th>Concepto</th>
+          <th>Descripci&oacute;n</th>
+          <th>Precio unitario</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for venta in recibo.ventas.all %}
+        <tr>
+          <td>{{ venta.cantidad }}</td>
+          <td>{{ venta.producto.nombre }}</td>
+          <td>{{ venta.descripcion }}</td>
+          <td>{{ venta.precio }}</td>
+          <td>{{ venta.monto }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="3">&nbsp;</th>
+          <th>Subtotal:</th>
+          <th>{{ recibo.subtotal }}</th>
+        </tr>
+        <tr>
+          <th colspan="3">&nbsp;</th>
+          <th>Impuestos:</th>
+          <th>{{ recibo.impuesto }}</th>
+        </tr>
+        <tr>
+          <th colspan="3">&nbsp;</th>
+          <th>Descuento:</th>
+          <th>{{ recibo.descuento }}</th>
+        </tr>
+        <tr>
+          <th colspan="3">&nbsp;</th>
+          <th>Totalotal:</th>
+          <th>{{ recibo.total }}</th>
+        </tr>
+      </tfoot>
+    </table>
+    {% ifequal recibo.cerrado False %}
+    <form  class="styled" method="post" action="{% url 'venta-add' recibo.id %}">
+      {% csrf_token %} <h1>Agregar Producto {{ persona.nombre_completo }}</h1>
+      <div id="messages"></div>
+      {% include 'snippets/form.html' with form=form %}
+      <p>
+        <input type="submit" value="Guardar" />
+      </p>
+    </form>
+    {% endifequal %}
+  </div>
 </div>
 {% endblock %}
