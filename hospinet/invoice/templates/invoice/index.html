@@ -1,48 +1,66 @@
 {% extends 'base.html' %}
 {% block content %}
-<aside class="span3">
-<nav class="well sidebar-nav">
-  <ul class="nav nav-list">
-    <li><a href="{% url 'invoice-dia-emergencia' %}">Emergencias de Hoy</a></li>
-    <li><a href="{% url 'invoice-dia-altas' %}">Altas de Hoy</a></li>
-  </ul>
-</nav>
-</aside>
-<div id="informacion" class="span9">
-<form  class="styled compact" action="{% url 'invoice-periodo-emergencia' %}" method="get">
-  {% csrf_token %} <h1>Mostrar Emergencias de un perido</h1>
-  <div id="messages"></div>{% include 'snippets/form.html' with form=emerperiodoform %}
-  <p>
-    <input type="submit" value="Mostrar" />
-  </p>
-</form>
-<form  class="styled compact" action="{% url 'invoice-periodo' %}" method="get">
-  {% csrf_token %} <h1>Mostrar Recibos de un Periodo</h1>
-  <div id="messages"></div>{% include 'snippets/form.html' with form=reciboperiodoform %}
-  <p>
-    <input type="submit" value="Mostrar" />
-  </p>
-</form>
-<form  class="styled compact" action="{% url 'invoice-periodo-producto' %}" method="get">
-  {% csrf_token %} <h1>Mostrar Productos Facturados de un Periodo</h1>
-  <div id="messages"></div>{% include 'snippets/form.html' with form=productoperiodoform %}
-  <p>
-    <input type="submit" value="Mostrar" />
-  </p>
-</form>
-<form  class="styled compact" action="{% url 'invoice-periodo-remite' %}" method="get">
-  {% csrf_token %} <h1>Mostrar Referencias de Doctores de un Periodo</h1>
-  <div id="messages"></div>{% include 'snippets/form.html' with form=remiteperiodoform %}
-  <p>
-    <input type="submit" value="Mostrar" />
-  </p>
-</form>
-<form  class="styled compact" action="{% url 'invoice-periodo-radiologo' %}" method="get">
-  {% csrf_token %} <h1>Mostrar Comisiones del Radiologo de un Periodo</h1>
-  <div id="messages"></div>{% include 'snippets/form.html' with form=radperiodoform %}
-  <p>
-    <input type="submit" value="Mostrar" />
-  </p>
-</form>
+<div class="row">
+  <div class="span12">
+    <section class="page-header">
+      <h1>Caja</h1>
+    </section>
+  </div>
+</div>
+<div class="row">
+  <aside class="span3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-stacked nav-tabs">
+        <li>
+          <a href="{% url 'invoice-dia-emergencia' %}">Emergencias por Facturar</a>
+        </li>
+        <li>
+          <a href="{% url 'invoice-dia-altas' %}">Admisiones por Facturar</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <div id="informacion" class="span9">
+    <form  class="styled compact" action="{% url 'invoice-periodo-emergencia' %}" method="get">
+      {% csrf_token %} <h1>Mostrar Emergencias de un perido</h1>
+      <div id="messages"></div>
+      {% include 'snippets/form.html' with form=emerperiodoform %}
+      <p>
+        <input type="submit" value="Mostrar" />
+      </p>
+    </form>
+    <form  class="styled compact" action="{% url 'invoice-periodo' %}" method="get">
+      {% csrf_token %} <h1>Mostrar Recibos de un Periodo</h1>
+      <div id="messages"></div>
+      {% include 'snippets/form.html' with form=reciboperiodoform %}
+      <p>
+        <input type="submit" value="Mostrar" />
+      </p>
+    </form>
+    <form  class="styled compact" action="{% url 'invoice-periodo-producto' %}" method="get">
+      {% csrf_token %} <h1>Mostrar Productos Facturados de un Periodo</h1>
+      <div id="messages"></div>
+      {% include 'snippets/form.html' with form=productoperiodoform %}
+      <p>
+        <input type="submit" value="Mostrar" />
+      </p>
+    </form>
+    <form  class="styled compact" action="{% url 'invoice-periodo-remite' %}" method="get">
+      {% csrf_token %} <h1>Mostrar Referencias de Doctores de un Periodo</h1>
+      <div id="messages"></div>
+      {% include 'snippets/form.html' with form=remiteperiodoform %}
+      <p>
+        <input type="submit" value="Mostrar" />
+      </p>
+    </form>
+    <form  class="styled compact" action="{% url 'invoice-periodo-radiologo' %}" method="get">
+      {% csrf_token %} <h1>Mostrar Comisiones del Radiologo de un Periodo</h1>
+      <div id="messages"></div>
+      {% include 'snippets/form.html' with form=radperiodoform %}
+      <p>
+        <input type="submit" value="Mostrar" />
+      </p>
+    </form>
+  </div>
 </div>
 {% endblock %}
