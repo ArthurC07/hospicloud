@@ -6,11 +6,20 @@
 {% block content_title %}<h2>{{ profile.user.username }} {% if profile.user.get_full_name %}({{ profile.user.get_full_name }}){% endif %}</h2>{% endblock %}
 
 {% block content %}
-  <div class="white-box">
+<div class="row">
+  <div class="span12">
+    <section class="page-header">
+      <h1>{{ user.get_full_name }} <small>{{ user.username }}</small></h1>
+    </section>
+  </div>
+</div>
+<div class="row">
+  <aside class="span3">
+    <nav class="sidebar-nav">  
     {% block profile_navigation %}
       {% comment %}Dirty hack. Will use django-guardian in the future.{% endcomment %}
       {% if user.username == profile.user.username %}
-        <ul id="box-nav">
+        <ul class="nav nav-stacked nav-tabs" id="box-nav">
           {% block profile_navigation_items %}
             <li><a href="{% url 'userena_profile_detail' user.username %}">{% trans 'View profile' %}</a></li>
             <li><a href="{% url 'userena_profile_edit' user.username %}">{% trans 'Edit details' %}</a></li>
@@ -20,10 +29,11 @@
         </ul>
       {% endif %}
     {% endblock %}
-
-    <div id="details">
+    </nav>
+  </aside>
+  <section class="span9">
       {% block profile_details %}
-        <img class="mugshot" src="{{ profile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
+          <img class="mugshot pull-right" src="{{ profile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
         <dl>
           {% block profile_definition_list %}
             {% if profile.user.get_full_name %}
@@ -51,8 +61,12 @@
               <dd>{{ profile.about_me }}</dd>
             {% endif %}
           {% endblock %}
+          {% if profile.inventario %}
+            <dt>Inventantario</dt>
+            <dd>{{ profile.inventario }}</dd>
+          {% endif %}
         </dl>
       {% endblock %}
-    </div>
-  </div>
+  </section>
+</div>
 {% endblock %}
