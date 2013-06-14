@@ -130,6 +130,7 @@ class Cargo(TimeStampedModel, Turno):
     cantidad = models.DecimalField(max_digits=8, decimal_places=2, default=1)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                    related_name='cargos')
+    facturada = models.NullBooleanField(default=False)
     
     def get_absolute_url(self):
         

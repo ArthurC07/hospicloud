@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
 <div class="row">
   <div class="span12">
     <section class="page-header">
-      <h1>{{ recibo.id }} - {{ recibo.cliente }}<small>{{ recibo.created|date:"d/m/Y P" }}</small></h1>
+      <h1>{{ recibo.id }} - {{ recibo.cliente }} <small>{{ recibo.created|date:"d/m/Y P" }}</small></h1>
     </section>
   </div>
 </div>
@@ -11,6 +12,9 @@
   <aside class="span3">
     <nav class="sidebar-nav">
       <ul class="nav nav-tabs nav-stacked">
+        <li>
+          <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+        </li>
         <li>
           <a href="{% url 'invoice-nullify' recibo.id %}">Anular Recibo</a>
         </li>
@@ -60,20 +64,13 @@
         </tr>
         <tr>
           <th colspan="3">&nbsp;</th>
-          <th>Totalotal:</th>
+          <th>Total:</th>
           <th>{{ recibo.total }}</th>
         </tr>
       </tfoot>
     </table>
     {% ifequal recibo.cerrado False %}
-    <form  class="styled" method="post" action="{% url 'venta-add' recibo.id %}">
-      {% csrf_token %} <h1>Agregar Producto {{ persona.nombre_completo }}</h1>
-      <div id="messages"></div>
-      {% include 'snippets/form.html' with form=form %}
-      <p>
-        <input type="submit" value="Guardar" />
-      </p>
-    </form>
+    {% crispy form %}
     {% endifequal %}
   </div>
 </div>

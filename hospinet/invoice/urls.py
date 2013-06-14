@@ -19,7 +19,8 @@ from django.conf.urls import patterns, url
 from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
      ReciboDetailView, VentaCreateView, ReporteReciboView, ReporteProductoView,
      ReciboRemiteView, ReciboRadView, EmergenciaPeriodoView, ReciboCerrarView,
-     ReciboExamenCreateView, EmergenciaDiaView, AdmisionAltaView)
+     ReciboExamenCreateView, EmergenciaDiaView, AdmisionAltaView,
+    EmergenciaFacturarView, AdmisionFacturarView)
 
 urlpatterns = patterns('',
     
@@ -78,4 +79,12 @@ urlpatterns = patterns('',
     url(r'^dia/altas',
         AdmisionAltaView.as_view(),
         name='invoice-dia-altas'),
+    
+    url(r'^emergencia/(?P<pk>\d+)$',
+        EmergenciaFacturarView.as_view(),
+        name='emergency-invoice'),
+    
+    url(r'^admision/(?P<pk>\d+)$',
+        AdmisionFacturarView.as_view(),
+        name='admision-invoice'),
 )

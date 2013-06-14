@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 from guardian.models import User
+from decimal import Decimal
 
 class Inventario(models.Model):
 
@@ -88,6 +89,8 @@ class ItemTemplate(TimeStampedModel):
                                           default=0)
     activo = models.BooleanField(default=True)
     item_type = models.ManyToManyField(ItemType, related_name='items')
+    comision = models.DecimalField(decimal_places=2, max_digits=4,
+                                   default=Decimal("30.00"))
     
     def __unicode__(self):
         

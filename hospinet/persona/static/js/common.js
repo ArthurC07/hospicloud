@@ -19,8 +19,4 @@ $(document).ready(function()
     maxHeight : '100%',
     scalePhotos : true,
   });
-  $('form').submit(function (e) {
-      // $('form button').attr('disabled', "true");
-      $(this).find('input[type=submit]').attr('disabled', "true");
-  });
 });

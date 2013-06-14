@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="row">
+  <aside class="span3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-stacked nav-tabs">
+        <li>
+          <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+        </li>
+        <li>
+          <a href="{% url 'emergency-view-id' emergencia.id %}">Regresar a emergencia</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <section class="span9">
+    {% crispy form %}
+  </section>
+</div>
+<div class="row">
+  <section id="cargos" class="span9 offset3">
+    {% include 'emergency/snippets/cargos.html' with emergencia=emergencia %}
+  </section>
+</div>
+{% endblock %}

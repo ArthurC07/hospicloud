@@ -21,9 +21,10 @@ from django.contrib.auth.models import User
 from django_extensions.db.models import TimeStampedModel
 from persona.models import Persona
 from inventory.models import ItemTemplate
+from collections import defaultdict
 
 class Emergencia(TimeStampedModel):
-
+    
     """Representa una visita de una :class:`Persona` a la consulta de
     emergencia"""
     
@@ -40,12 +41,25 @@ class Emergencia(TimeStampedModel):
                                                 null=True, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='emergencias')
+    facturada = models.NullBooleanField(default=False)
     
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
         return reverse('emergency-view-id', args=[self.id])
+    
+    def facturar(self):
+        
+        items = defaultdict(int)
+        
+        for cargo in self.cobros.filter(facturado=False).all():
+            
+            items[cargo.cargo] += cargo.cantidad
+            cargo.facturado = True
+            cargo.save()
+        
+        return items
 
 class Tratamiento(TimeStampedModel):
     
@@ -99,7 +113,7 @@ class ExamenFisico(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class Hallazgo(TimeStampedModel):
-
+    
     emergencia = models.ForeignKey(Emergencia,
                                 related_name='hallazgos')
     hallazgo = models.TextField()
@@ -141,15 +155,20 @@ class RemisionExterna(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 class Cobro(TimeStampedModel):
-
+    
     """Permite registrar los distintos cargos"""
     
     emergencia = models.ForeignKey(Emergencia, related_name='cobros')
     cargo = models.ForeignKey(ItemTemplate, related_name='cobros')
     cantidad = models.IntegerField(default=1)
+    facturado = models.NullBooleanField(default=False)
     
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
         return reverse('emergencia-cobro-agregar', args=[self.emergencia.id])
+    
+    def __unicode__(self):
+        
+        return u'{1}: {0}'.format(self.cargo.descripcion, self.created)

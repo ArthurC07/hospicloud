@@ -15,12 +15,15 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from invoice.models import Recibo, Producto, Venta
+from invoice.models import Recibo, Venta
 from django.contrib.auth.models import User
 from django import forms
 from persona.models import Persona
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from inventory.forms import FieldSetFormMixin
+from emergency.models import Emergencia
+from spital.models import Admision
 
 class ReciboForm(forms.ModelForm):
 
@@ -71,3 +74,29 @@ class PeriodoForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.form_method = 'get'
         self.helper.layout = Fieldset(u'Por Periodo', *self.field_names)
+
+class EmergenciaFacturarForm(FieldSetFormMixin):
+    
+    class Meta:
+        
+        model = Emergencia
+        fields = ('facturada', )
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(EmergenciaFacturarForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Facturar Emergencia',
+                                      *self.field_names)
+
+class AdmisionFacturarForm(FieldSetFormMixin):
+    
+    class Meta:
+        
+        model = Admision
+        fields = ('facturada', )
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(AdmisionFacturarForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Facturar Admisión',
+                                      *self.field_names)

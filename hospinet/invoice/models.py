@@ -21,6 +21,7 @@ from django.contrib.auth.models import User
 from django_extensions.db.models import TimeStampedModel
 from decimal import Decimal
 from persona.models import Persona
+from inventory.models import ItemTemplate
 
 class Recibo(TimeStampedModel):
     
@@ -146,13 +147,14 @@ class Venta(TimeStampedModel):
                                  decimal_places=2)
     impuesto = models.DecimalField(blank=True, null=True, max_digits=7,
                                    decimal_places=2)
-    descuento = models.IntegerField()
-    producto = models.ForeignKey(Producto, related_name='ventas')
+    descuento = models.IntegerField(default=0)
+    item = models.ForeignKey(ItemTemplate, related_name='ventas',
+                             blank=True, null=True)
     recibo = models.ForeignKey(Recibo, related_name='ventas')
     
     def __unicode__(self):
         
-        return u"{0} a {1}".format(self.producto.nombre, self.recibo.id)
+        return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
     
     def get_absolute_url(self):
         
@@ -178,7 +180,7 @@ class Venta(TimeStampedModel):
             
             return Decimal(0)
         
-        return (self.monto() - self.discount()) * self.producto.impuesto
+        return (self.monto() - self.discount()) * self.impuesto
 
     def total(self):
         

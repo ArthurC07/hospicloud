@@ -22,6 +22,7 @@ from django_extensions.db.fields import UUIDField
 from persona.models import Persona
 from django.core.urlresolvers import reverse
 from emergency.models import Emergencia
+from collections import defaultdict
 from django_extensions.db.models import TimeStampedModel
 
 class Habitacion(models.Model):
@@ -140,6 +141,7 @@ class Admision(models.Model):
     neonato = models.NullBooleanField(blank=True, null=True)
     tipo_de_ingreso = models.CharField(max_length=200, blank=True, null=True,
                                        choices=TIPOS_INGRESOS)
+    facturada = models.NullBooleanField(default=False)
     
     def autorizar(self):
         
@@ -261,6 +263,21 @@ class Admision(models.Model):
         
         return reverse('admision-view-id', args=[self.id])
     
+    def facturar(self):
+        
+        """Permite convertir los :class:`Cargo`s de esta :class:`Admision` en
+        las :class:`Venta`s de un :class:`Recibo`"""
+        
+        items = defaultdict(int)
+        
+        for cargo in self.cargos.filter(facturada=False):
+            
+            items[cargo.cargo] += cargo.cantidad
+            cargo.facturada = True
+            cargo.save()
+        
+        return items
+    
     def __unicode__(self):
 
         return u"{0} en {1}".format(self.paciente.nombre_completo(),
@@ -268,7 +285,8 @@ class Admision(models.Model):
 
 class PreAdmision(TimeStampedModel):
     
-    """Permite mostrar aquellas entradaas"""
+    """Permite ingresar :class:`Personas` desde una :class:`Emergencia` que se
+    haya atendido"""
     
     emergencia = models.ForeignKey(Emergencia, related_name="preadmisiones")
     completada = models.BooleanField(default=False)

@@ -18,7 +18,7 @@
 from django.contrib import admin
 from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
                               RemisionExterna, Hallazgo, Diagnostico,
-                              ExamenFisico)
+                              ExamenFisico, Cobro)
 
 admin.site.register(Emergencia)
 admin.site.register(Tratamiento)
@@ -27,3 +27,4 @@ admin.site.register(RemisionInterna)
 admin.site.register(RemisionExterna)
 admin.site.register(Diagnostico)
 admin.site.register(ExamenFisico)
+admin.site.register(Cobro)
