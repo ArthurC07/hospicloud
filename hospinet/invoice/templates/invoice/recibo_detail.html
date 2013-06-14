@@ -35,7 +35,7 @@
         {% for venta in recibo.ventas.all %}
         <tr>
           <td>{{ venta.cantidad }}</td>
-          <td>{{ venta.producto.nombre }}</td>
+          <td>{{ venta.item.descripcion }}</td>
           <td>{{ venta.descripcion }}</td>
           <td>{{ venta.precio }}</td>
           <td>{{ venta.monto }}</td>
