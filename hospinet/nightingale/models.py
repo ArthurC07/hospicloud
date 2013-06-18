@@ -386,14 +386,13 @@ class Medicamento(TimeStampedModel):
         self.estado = 2
         self.save()
     
-    def save(self, force_insert=False, force_update=False, using=None, 
-        update_fields=None):
+    def save(self, *args, **kwargs):
         
-        if self.suministrado <= self.repeticiones:
+        if self.suministrado < self.repeticiones:
             
             self.estado = 1
         
-        return super(Medicamento, self).save()
+        return super(Medicamento, self).save(*args, **kwargs)
 
 class Dosis(TimeStampedModel, Turno):
     
