@@ -389,7 +389,7 @@ class Medicamento(TimeStampedModel):
     def save(self, force_insert=False, force_update=False, using=None, 
         update_fields=None):
         
-        if self.suministrado >= self.repeticiones:
+        if self.suministrado <= self.repeticiones:
             
             self.estado = 1
         
