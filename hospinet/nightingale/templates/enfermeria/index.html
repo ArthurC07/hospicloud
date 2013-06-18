@@ -38,7 +38,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.jqplot.css' %}" />
 <script type="text/javascript" src="{% static 'js/medicamento.js' %}"></script>
 <script type="text/javascript">
-  /*$(document).ready(function() {
+  $(document).ready(function() {
     data_source = new Medicamento("{% url 'home' %}", "{% url 'nightingale-index' %}");
     data_source.notificar();
     var interval = setInterval(function(){
@@ -47,6 +47,6 @@
     $(window).unload(function(){
       clearInterval(interval);
     });
-  });*/
+  });
 </script>
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
 <div class="row">
   <div class="span12">
@@ -21,30 +22,43 @@
     </nav>
   </aside>
   <div id="informacion" class="span9">
-    <form  class="styled compact" action="{% url 'invoice-periodo-emergencia' %}" method="get">
-      {% csrf_token %} <h1>Mostrar Emergencias de un perido</h1>
-      <div id="messages"></div>
-      {% include 'snippets/form.html' with form=emerperiodoform %}
-      <p>
-        <input type="submit" value="Mostrar" />
-      </p>
-    </form>
-    <form  class="styled compact" action="{% url 'invoice-periodo' %}" method="get">
-      {% csrf_token %} <h1>Mostrar Recibos de un Periodo</h1>
-      <div id="messages"></div>
-      {% include 'snippets/form.html' with form=reciboperiodoform %}
-      <p>
-        <input type="submit" value="Mostrar" />
-      </p>
-    </form>
-    <form  class="styled compact" action="{% url 'invoice-periodo-producto' %}" method="get">
-      {% csrf_token %} <h1>Mostrar Productos Facturados de un Periodo</h1>
-      <div id="messages"></div>
-      {% include 'snippets/form.html' with form=productoperiodoform %}
-      <p>
-        <input type="submit" value="Mostrar" />
-      </p>
-    </form>
+    <div class="row">
+      <section class="span4">
+        <form  class="styled compact" action="{% url 'invoice-periodo-emergencia' %}" method="get">
+          {% csrf_token %} <h1>Mostrar Emergencias de un perido</h1>
+          <div id="messages"></div>
+          {% include 'snippets/form.html' with form=emerperiodoform %}
+          <p>
+            <input type="submit" value="Mostrar" />
+          </p>
+        </form>
+      </section>
+      <section class="span4">
+        <form  class="styled compact" action="{% url 'invoice-periodo' %}" method="get">
+          {% csrf_token %} <h1>Mostrar Recibos de un Periodo</h1>
+          <div id="messages"></div>
+          {% include 'snippets/form.html' with form=reciboperiodoform %}
+          <p>
+            <input type="submit" value="Mostrar" />
+          </p>
+        </form>
+      </section>
+      <section class="span4">
+        <form  class="styled compact" action="{% url 'invoice-periodo-producto' %}" method="get">
+          {% csrf_token %} <h1>Mostrar Productos Facturados de un Periodo</h1>
+          <div id="messages"></div>
+          {% include 'snippets/form.html' with form=productoperiodoform %}
+          <p>
+            <input type="submit" value="Mostrar" />
+          </p>
+        </form>
+      </section>
+    </div>
+    <div class="row">
+      <section class="span4">
+        {% crispy corteform %}
+      </section>
+    </div>
     <form  class="styled compact" action="{% url 'invoice-periodo-remite' %}" method="get">
       {% csrf_token %} <h1>Mostrar Referencias de Doctores de un Periodo</h1>
       <div id="messages"></div>
