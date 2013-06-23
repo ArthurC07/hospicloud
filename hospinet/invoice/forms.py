@@ -26,11 +26,11 @@ from emergency.models import Emergencia
 from spital.models import Admision
 
 class ReciboForm(forms.ModelForm):
-
+    
     """Genera un formulario para :class:`Recibo`:"""
-
+    
     class Meta:
-
+        
         model = Recibo
         exclude = ('nulo', 'cerrado')
     
@@ -43,9 +43,9 @@ class ReciboForm(forms.ModelForm):
                                   widget=forms.HiddenInput(), required=False)
 
 class VentaForm(forms.ModelForm):
-
+    
     """Genera un formulario para :class:`Venta`"""
-
+    
     class Meta:
 
         model = Venta
@@ -56,24 +56,32 @@ class VentaForm(forms.ModelForm):
                                   widget=forms.HiddenInput(), required=False)
 
 class PeriodoForm(forms.Form):
-
+    
     inicio = forms.DateTimeField(widget=forms.DateInput(
                     attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
                  input_formats=('%d/%m/%Y',))
-
+    
     fin = forms.DateTimeField(widget=forms.DateInput(
                     attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
                  input_formats=('%d/%m/%Y',))
-
+    
     def __init__(self, *args, **kwargs):
 
         super(PeriodoForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.add_input(Submit('submit', 'Mostrar'))
         self.helper.form_method = 'get'
         self.helper.layout = Fieldset(u'Por Periodo', *self.field_names)
+    
+    def set_legend(self, text):
+        
+        self.helper.layout = Fieldset(text, *self.field_names)
+    
+    def set_action(self, action):
+        
+        self.helper.form_action = action
 
 class EmergenciaFacturarForm(FieldSetFormMixin):
     
@@ -100,3 +108,12 @@ class AdmisionFacturarForm(FieldSetFormMixin):
         super(AdmisionFacturarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Facturar Admisión',
                                       *self.field_names)
+
+class CorteForm(PeriodoForm):
+    
+    usuario = forms.ModelChoiceField(queryset=User.objects.all())
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(CorteForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Corte de Caja', *self.field_names)

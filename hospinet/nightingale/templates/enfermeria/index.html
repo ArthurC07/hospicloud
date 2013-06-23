@@ -42,6 +42,7 @@
     data_source = new Medicamento("{% url 'home' %}", "{% url 'nightingale-index' %}");
     data_source.notificar();
     var interval = setInterval(function(){
+      $.pnotify_remove_all();
       data_source.notificar();
     }, 1000 * 60 * 5);
     $(window).unload(function(){

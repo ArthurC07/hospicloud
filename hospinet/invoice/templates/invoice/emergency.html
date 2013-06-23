@@ -37,7 +37,11 @@
           <td>{{ emergencia.persona.obtener_edad }}</td>
           <td>{{ emergencia.persona.get_sexo_display }}</td>
           <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
-          <td><a class="btn btn-block" href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a></td>
+          <td>
+            {% if not emergencia.facturada %}
+            <a class="btn btn-block" href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -46,7 +50,6 @@
       {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
       {% endif %}
     </table>
-
   </div>
 </div>
 {% endblock %}

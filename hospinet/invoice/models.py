@@ -204,4 +204,4 @@ class Venta(TimeStampedModel):
     
     def radiologo(self):
         
-        return self.monto() * self.producto.comision / Decimal("30.00")
+        return self.monto() * self.item.comision / Decimal("100")

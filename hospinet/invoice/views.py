@@ -22,7 +22,8 @@ from django.contrib import messages
 from emergency.models import Emergencia
 from invoice.models import Recibo, Venta
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
-                           EmergenciaFacturarForm, AdmisionFacturarForm)
+                           EmergenciaFacturarForm, AdmisionFacturarForm,
+    CorteForm)
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView)
 from persona.models import Persona
@@ -32,9 +33,13 @@ from datetime import datetime, time
 from collections import defaultdict
 from decimal import Decimal
 from users.mixins import LoginRequiredMixin
+from django.views.generic.detail import SingleObjectMixin
+from django.contrib.auth.models import User
+from django.views.generic.edit import FormMixin, FormView
+from django.views.generic.dates import DayArchiveView
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
-
+    
     """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
     existente en la aplicación"""
     
@@ -65,9 +70,8 @@ class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
         context['persona'] = self.persona
         return context
 
-
 class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
-
+    
     """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
     existente en la aplicación"""
     
@@ -197,11 +201,28 @@ class IndexView(TemplateView, LoginRequiredMixin):
         
         context = super(IndexView, self).get_context_data(**kwargs)
         context['reciboperiodoform'] = PeriodoForm(prefix='recibo')
+        context['reciboperiodoform'].set_legend(u'Recibos de un Periodo')
+        context['reciboperiodoform'].set_action('invoice-periodo')
+        
         context['productoperiodoform'] = PeriodoForm(prefix='producto')
+        context['productoperiodoform'].set_legend(u'Productos Facturados en un Periodo')
+        context['productoperiodoform'].set_action('invoice-periodo-producto')
+        
         context['remiteperiodoform'] = PeriodoForm(prefix='remite')
+        context['remiteperiodoform'].set_legend(u'Referencias de un Periodo')
+        context['remiteperiodoform'].set_action('invoice-periodo-remite')
+        
         context['radperiodoform'] = PeriodoForm(prefix='rad')
+        context['radperiodoform'].set_legend(u'Comisiones de un Periodo')
+        context['radperiodoform'].set_action('invoice-periodo-radiologo')
+        
         context['emerperiodoform'] = PeriodoForm(prefix='emergencia')
-
+        context['emerperiodoform'].set_legend(u'Emergencias de un Periodo')
+        context['emerperiodoform'].set_action('invoice-periodo-emergencia')
+        
+        context['corteform'] = CorteForm(prefix='corte')
+        context['corteform'].set_action('invoice-corte')
+        
         return context
 
 class ReciboPeriodoView(TemplateView):
@@ -223,10 +244,6 @@ class ReciboPeriodoView(TemplateView):
                 created__gte=self.inicio,
                 created__lte=self.fin
             )
-            
-        else:
-            
-            return redirect('invoice-index')
         
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
 
@@ -330,9 +347,10 @@ class ReciboRemiteView(ReciboPeriodoView, LoginRequiredMixin):
             
             doctores[recibo.remite]['monto'] += recibo.total()
             doctores[recibo.remite]['cantidad'] += 1
-            doctores[recibo.remite]['comision'] = +recibo.comision_doctor()
-            context['cantidad'] += doctores[recibo.remite]['comision']
-            
+            doctores[recibo.remite]['comision'] += recibo.comision_doctor()
+        
+        context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
+        
         context['recibos'] = self.recibos
         context['inicio'] = self.inicio
         context['doctores'] = doctores.items()
@@ -345,7 +363,7 @@ class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
     los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
     cuenta el periodo especificado"""
     
-    template_name = 'invoice/remite_list.html'
+    template_name = 'invoice/radiologo_list.html'
     
     def dispatch(self, request, *args, **kwargs):
         
@@ -368,9 +386,10 @@ class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
             
             doctores[recibo.radiologo]['monto'] += recibo.total()
             doctores[recibo.radiologo]['cantidad'] += 1
-            doctores[recibo.radiologo]['comision'] = +recibo.comision_radiologo()
-            context['cantidad'] += doctores[recibo.remite]['comision']
-            
+            doctores[recibo.radiologo]['comision'] += recibo.comision_radiologo()
+        
+        context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
+        
         context['recibos'] = self.recibos
         context['inicio'] = self.inicio
         context['doctores'] = doctores.items()
@@ -384,7 +403,7 @@ class EmergenciaPeriodoView(TemplateView, LoginRequiredMixin):
     template_name = 'invoice/emergencia_list.html'
     
     def dispatch(self, request, *args, **kwargs):
-
+        
         """Filtra las :class:`Emergencia` de acuerdo a los datos ingresados en
         el formulario"""
         
@@ -416,7 +435,7 @@ class EmergenciaPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 class EmergenciaDiaView(ListView, LoginRequiredMixin):
-
+    
     """Muestra los materiales y medicamentos de las :class:`Emergencia`s que
     han sido atendidas durante el día"""
     
@@ -517,3 +536,22 @@ class AdmisionAltaView(ListView, LoginRequiredMixin):
         """Obtiene las :class:`Admision`es que aun no han sido facturadas"""
         
         return Admision.objects.filter(facturada=False)
+
+class CorteView(ReciboPeriodoView):
+    
+    template_name = 'invoice/corte.html'
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(CorteView, self).get_context_data(**kwargs)
+        context['cajero'] = self.form.cleaned_data['usuario']
+        context['recibos'] = self.recibos.filter(cajero=context['cajero'])
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = sum(r.total() for r in context['recibos'].all())
+        return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        
+        self.form = CorteForm(request.GET, prefix='corte')
+        return super(CorteView, self).dispatch(request, *args, **kwargs)
