@@ -20,7 +20,7 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
      ReciboDetailView, VentaCreateView, ReporteReciboView, ReporteProductoView,
      ReciboRemiteView, ReciboRadView, EmergenciaPeriodoView, ReciboCerrarView,
      ReciboExamenCreateView, EmergenciaDiaView, AdmisionAltaView,
-    EmergenciaFacturarView, AdmisionFacturarView, CorteView)
+    EmergenciaFacturarView, AdmisionFacturarView, CorteView, ExamenView)
 
 urlpatterns = patterns('',
     
@@ -75,6 +75,10 @@ urlpatterns = patterns('',
     url(r'^dia/emergencia',
         EmergenciaDiaView.as_view(),
         name='invoice-dia-emergencia'),
+    
+    url(r'^examenes',
+        ExamenView.as_view(),
+        name='invoice-imaging'),
     
     url(r'^corte',
         CorteView.as_view(),

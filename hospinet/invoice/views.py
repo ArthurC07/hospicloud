@@ -447,6 +447,19 @@ class EmergenciaDiaView(ListView, LoginRequiredMixin):
         
         return Emergencia.objects.filter(facturada=False)
 
+class ExamenView(ListView, LoginRequiredMixin):
+    
+    """Muestra los materiales y medicamentos de las :class:`Emergencia`s que
+    han sido atendidas durante el día"""
+    
+    context_object_name = 'examenes'
+    template_name = 'invoice/examen_list.html'
+    paginate_by = 10
+    
+    def get_queryset(self):
+        
+        return Examen.objects.filter(facturado=False)
+
 def crear_ventas(items, recibo):
     
     """Permite convertir un :class:`dict` de :class:`ItemTemplate` y sus
