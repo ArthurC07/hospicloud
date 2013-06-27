@@ -133,8 +133,8 @@ class VentaCreateView(CreateView, LoginRequiredMixin):
         del :class:`Producto`"""
         
         self.object = form.save(commit=False)
-        self.object.precio = self.object.producto.precio
-        self.object.impuesto = self.object.producto.impuesto * self.object.monto()
+        self.object.precio = self.object.item.precio_de_venta
+        self.object.impuesto = self.object.item.impuestos * self.object.monto()
         self.object.save()
         
         # messages.info(self.request, u"Agregada una Venta al Recibo!")
