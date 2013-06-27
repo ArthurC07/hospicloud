@@ -42,7 +42,7 @@ class ReciboForm(forms.ModelForm):
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class VentaForm(forms.ModelForm):
+class VentaForm(FieldSetFormMixin):
     
     """Genera un formulario para :class:`Venta`"""
     
@@ -54,6 +54,15 @@ class VentaForm(forms.ModelForm):
     recibo = forms.ModelChoiceField(label="",
                                   queryset=Recibo.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
+    
+    def __init__(self, *args, **kwargs):
+
+        super(PeriodoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Agregar'))
+        self.helper.layout = Fieldset(u'Agregar un Cargo', *self.field_names)
 
 class PeriodoForm(forms.Form):
     
