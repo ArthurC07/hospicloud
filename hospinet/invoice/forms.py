@@ -57,7 +57,7 @@ class VentaForm(FieldSetFormMixin):
     
     def __init__(self, *args, **kwargs):
 
-        super(PeriodoForm, self).__init__(*args, **kwargs)
+        super(VentaForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
