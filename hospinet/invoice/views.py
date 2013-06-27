@@ -158,7 +158,7 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
         
         context = super(ReciboDetailView, self).get_context_data(**kwargs)
         context['form'] = VentaForm(initial={'recibo':context['recibo'].id})
-        context['form'].helper.form_action = 'venta-add'
+        context['form'].helper.form_action = reverse('venta-add', args=[context['recibo'].id])
         
         return context
 
