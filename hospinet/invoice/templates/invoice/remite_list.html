@@ -59,6 +59,7 @@
             <tr>
               <th>N&uacute;mero</th>
               <th>Fecha</th>
+              <th>Concepto</th>
               <th>Doctor</th>
               <th>Comisi&oacute;n</th>
               <th>Total</th>
@@ -69,6 +70,7 @@
             <tr>
               <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.id }}</a></td>
               <td>{{ recibo.created }}</td>
+              <td>{{ recibo.conceptos }}</td>
               <td>{{ recibo.remite }}</td>
               <td>{{ recibo.comision_doctor }}</td>
               <td>{{ recibo.total }}</td>

@@ -27,6 +27,7 @@ class ExamenForm(forms.ModelForm):
     class Meta:
         
         model = Examen
+        exclude = ('efectuado', 'usuario',)
     
     fecha = forms.DateTimeField(widget=forms.DateTimeInput(
                                             attrs={'class': 'datetimepicker' },

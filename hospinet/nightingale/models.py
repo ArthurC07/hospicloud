@@ -137,6 +137,13 @@ class Cargo(TimeStampedModel, Turno):
         """Obtiene la URL absoluta"""
         
         return reverse('enfermeria-cargo-agregar', args=[self.admision.id])
+    
+    def valor(self):
+        
+        return self.cantidad * self.cargo.precio_de_venta
+
+Admision.estado_de_cuenta = property(lambda a: sum(c.valor() for c
+                                                   in a.cargos.all()))
 
 class OrdenMedica(models.Model):
     

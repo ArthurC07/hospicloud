@@ -24,6 +24,7 @@ from crispy_forms.layout import Submit, Fieldset
 from inventory.forms import FieldSetFormMixin
 from emergency.models import Emergencia
 from spital.models import Admision
+from imaging.models import Examen
 
 class ReciboForm(forms.ModelForm):
     
@@ -116,6 +117,19 @@ class AdmisionFacturarForm(FieldSetFormMixin):
         
         super(AdmisionFacturarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Facturar Admisión',
+                                      *self.field_names)
+
+class ExamenFacturarForm(FieldSetFormMixin):
+    
+    class Meta:
+        
+        model = Examen
+        fields = ('facturado', 'radiologo', 'remitio')
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(ExamenFacturarForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Facturar Examen',
                                       *self.field_names)
 
 class CorteForm(PeriodoForm):

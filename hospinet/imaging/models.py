@@ -74,6 +74,7 @@ class EstudioProgramado(models.Model):
         examen.persona = self.persona
         examen.usuario = self.usuario
         examen.remitio = self.remitio
+        examen.radiologo = self.radiologo
         self.efectuado = True
         self.save()
         return examen
@@ -99,6 +100,7 @@ class Examen(models.Model):
                                    related_name='estudios_realizados')
     remitio = models.CharField(max_length=200, null=True)
     facturado = models.NullBooleanField(default=False)
+    radiologo = models.CharField(max_length=200, blank=True, null=True)
     
     @permalink
     def get_absolute_url(self):

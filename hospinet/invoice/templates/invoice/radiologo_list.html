@@ -15,7 +15,7 @@
           <th>Concepto</th>
           <th>Cantidad</th>
           <th>Costo Estudio</th>
-          <th>Comisi&oacute;n 30%</th>
+          <th>Comisi&oacute;n</th>
         </tr>
       </thead>
       <tbody>
@@ -43,20 +43,26 @@
         <tr>
           <th>N&uacute;mero</th>
           <th>Fecha</th>
+          <th>Concepto</th>
           <th>Radiologo</th>
+          <th>Porcentaje</th>
           <th>Comisi&oacute;n</th>
           <th>Total</th>
         </tr>
       </thead>
       <tbody>
         {% for recibo in recibos.all %}
-        <tr>
-          <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.id }}</a></td>
-          <td>{{ recibo.created }}</td>
-          <td>{{ recibo.radiologo }}</td>
-          <td>{{ recibo.comision_radiologo }}</td>
-          <td>{{ recibo.total }}</td>
-        </tr>
+          {% for venta in recibo.ventas.all %}
+          <tr>
+            <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.id }}</a></td>
+            <td>{{ recibo.created }}</td>
+            <td>{{ venta.item }}</td>
+            <td>{{ recibo.radiologo }}</td>
+            <td>{{ venta.item.comision }}%</td>
+            <td>{{ venta.radiologo }}</td>
+            <td>{{ recibo.total }}</td>
+          </tr>
+          {% endfor %}
         {% endfor %}
       </tbody>
     </table>

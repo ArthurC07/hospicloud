@@ -23,7 +23,7 @@ from emergency.models import Emergencia
 from invoice.models import Recibo, Venta
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
-    CorteForm)
+    CorteForm, ExamenFacturarForm)
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView)
 from persona.models import Persona
@@ -33,10 +33,6 @@ from datetime import datetime, time
 from collections import defaultdict
 from decimal import Decimal
 from users.mixins import LoginRequiredMixin
-from django.views.generic.detail import SingleObjectMixin
-from django.contrib.auth.models import User
-from django.views.generic.edit import FormMixin, FormView
-from django.views.generic.dates import DayArchiveView
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
     
@@ -529,6 +525,35 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
         recibo.cajero = self.request.user
         recibo.cliente = self.object.paciente
         
+        recibo.save()
+        
+        crear_ventas(items, recibo)
+        
+        self.object.save()
+        
+        return HttpResponseRedirect(recibo.get_absolute_url())
+
+class ExamenFacturarView(UpdateView, LoginRequiredMixin):
+    
+    """Permite crear de manera automática un :class:`Recibo` con todas sus
+    :class:`Ventas` a partir de una :class:`Admision` que aun no se haya marcado
+    como facturada"""
+    
+    model = Examen
+    context_object_name = 'examen'
+    form_class = ExamenFacturarForm
+    template_name = 'invoice/examen_form.html'
+    
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        
+        items = self.object.facturar()
+        
+        recibo = Recibo()
+        recibo.cajero = self.request.user
+        recibo.cliente = self.object.paciente
+        recibo.radiologo = self.object.radiologo
         recibo.save()
         
         crear_ventas(items, recibo)

@@ -100,6 +100,10 @@ class Recibo(TimeStampedModel):
         discount += self.subtotal() * self.discount / Decimal("100")
         return Decimal(discount).quantize(Decimal('0.01'))
     
+    def conceptos(self):
+        
+        return ', '.join(v.item.descripcion for v in self.ventas.all())
+    
     def total(self):
         
         """Calcula el monto que será mostrado en los cálculos financieros"""
