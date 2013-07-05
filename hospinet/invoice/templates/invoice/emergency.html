@@ -26,6 +26,7 @@
           <th>Edad</th>
           <th>Sexo</th>
           <th>Hora de Ingreso</th>
+          <th>Atendi&oacute;</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -37,6 +38,7 @@
           <td>{{ emergencia.persona.obtener_edad }}</td>
           <td>{{ emergencia.persona.get_sexo_display }}</td>
           <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
+          <td>{{ emergencia.usuario }}</td>
           <td>
             {% if not emergencia.facturada %}
             <a class="btn btn-block" href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
