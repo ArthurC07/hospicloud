@@ -46,6 +46,7 @@ encoding//statistics/forms.py=utf-8
 encoding//statistics/urls.py=utf-8
 encoding//statistics/views.py=utf-8
 encoding//users/admin.py=utf-8
+encoding//users/management/commands/edit_profile.py=utf-8
 encoding//users/mixins.py=utf-8
 encoding//users/models.py=utf-8
 encoding//users/views.py=utf-8
