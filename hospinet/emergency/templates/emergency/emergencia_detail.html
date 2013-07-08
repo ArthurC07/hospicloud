@@ -22,6 +22,7 @@
 <section class="span9">
   <div class="page-header">
     <h1>{{ emergencia.persona.nombre_completo }} <small>Emergencia</small></h1>
+    <h2>M&eacute;dico Tratante: {{ emergencia.usuario }}</h2>
   </div>
   <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
   <section class="tabbable">

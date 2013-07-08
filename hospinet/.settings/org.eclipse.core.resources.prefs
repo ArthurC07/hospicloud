@@ -2,6 +2,7 @@ eclipse.preferences.version=1
 encoding//clinique/views.py=utf-8
 encoding//emergency/admin.py=utf-8
 encoding//emergency/forms.py=utf-8
+encoding//emergency/management/commands/importitems.py=utf-8
 encoding//emergency/models.py=utf-8
 encoding//emergency/urls.py=utf-8
 encoding//emergency/views.py=utf-8

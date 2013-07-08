@@ -6,6 +6,7 @@
       <th>Edad</th>
       <th>Sexo</th>
       <th>Hora de Ingreso</th>
+      <th>M&eacute;dico</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -17,6 +18,7 @@
       <td>{{ emergencia.persona.obtener_edad }}</td>
       <td>{{ emergencia.persona.get_sexo_display }}</td>
       <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
+      <td>{{ emergencia.usuario }}</td>
       <td><a class="btn btn-block" href="{% url 'emergency-view-id' emergencia.id %}">Ver</a></td>
     </tr>
     {% endfor %}

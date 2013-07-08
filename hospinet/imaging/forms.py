@@ -16,14 +16,13 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from django.http import HttpRequest
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
 from persona.models import Persona
 
 class ExamenForm(forms.ModelForm):
     
     """Permite mostrar formularios para crear :class:`Examen`es nuevos"""
-
+    
     class Meta:
         
         model = Examen
@@ -43,7 +42,7 @@ class ImagenForm(forms.ModelForm):
     
     """"Permite mostrar un formulario para agregar una :class:`Imagen`
     a un :class:`Examen`"""
-
+    
     class Meta:
         
         model = Imagen
@@ -56,7 +55,7 @@ class AdjuntoForm(forms.ModelForm):
     
     """Muestra el formulario para agregar archivos :class:`Adjunto`s a un
     :class:`Examen`"""
-
+    
     class Meta:
         
         model = Adjunto
@@ -69,7 +68,7 @@ class DicomForm(forms.ModelForm):
     
     """Muestra el formulario para agregar un archivo :class:`Dicom` a un
     :class:`Examen`"""
-
+    
     class Meta:
         
         model = Dicom
@@ -82,7 +81,7 @@ class DicomForm(forms.ModelForm):
 class EstudioProgramadoForm(forms.ModelForm):
     
     """"Permite mostrar los formularios para crear una :class:`Remision`"""
-
+    
     class Meta:
         
         model = EstudioProgramado
@@ -96,14 +95,14 @@ class EmailForm(forms.Form):
 
     """Permite mostrar un formulario para enviar notificaciones a diversos
     correos"""
-
+    
     email = forms.CharField()
     examen = forms.ModelChoiceField(label="",
                                   queryset=Examen.objects.all(),
                                   widget=forms.HiddenInput())
-
+    
     def send_email(self):
-
+        
         """Realiza el envio del correo electrónico"""
         
         pass
