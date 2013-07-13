@@ -307,12 +307,12 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
                 productos[venta.item]['monto'] += venta.monto()
                 productos[venta.item]['cantidad'] += 1
                 
-                context['cantidad'] += 1
-                context['total'] += productos[venta.item]['monto'] 
+                context['cantidad'] += 1 
                 
         context['recibos'] = self.recibos
         context['productos'] = productos.items()
         context['impuesto'] = sum(r.impuesto() for r in self.recibos.all())
+        context['total'] = sum(r.total() for r in self.recibos.all())
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context
