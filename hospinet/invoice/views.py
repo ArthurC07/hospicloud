@@ -297,6 +297,7 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
         context = super(ReporteProductoView, self).get_context_data(**kwargs)
         
         context['cantidad'] = 0
+        context['total'] = Decimal('0')
         productos = defaultdict(lambda: defaultdict(Decimal))
         
         for recibo in self.recibos.all():
@@ -307,6 +308,7 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
                 productos[venta.item]['cantidad'] += 1
                 
                 context['cantidad'] += 1
+                context['total'] = productos[venta.item]['monto'] 
                 
         context['recibos'] = self.recibos
         context['productos'] = productos.items()
@@ -342,9 +344,9 @@ class ReciboRemiteView(ReciboPeriodoView, LoginRequiredMixin):
         
         for recibo in self.recibos.all():
             
-            doctores[recibo.remite]['monto'] += recibo.total()
-            doctores[recibo.remite]['cantidad'] += 1
-            doctores[recibo.remite]['comision'] += recibo.comision_doctor()
+            doctores[recibo.remite.upper()]['monto'] += recibo.total()
+            doctores[recibo.remite.upper()]['cantidad'] += 1
+            doctores[recibo.remite.upper()]['comision'] += recibo.comision_doctor()
         
         context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
         
@@ -381,11 +383,12 @@ class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
         
         for recibo in self.recibos.all():
             
-            doctores[recibo.radiologo]['monto'] += recibo.total()
-            doctores[recibo.radiologo]['cantidad'] += 1
-            doctores[recibo.radiologo]['comision'] += recibo.comision_radiologo()
+            doctores[recibo.radiologo.upper()]['monto'] += recibo.total()
+            doctores[recibo.radiologo.upper()]['cantidad'] += 1
+            doctores[recibo.radiologo.upper()]['comision'] += recibo.comision_radiologo()
         
         context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
+        context['costo'] = sum(r.total() for r in self.recibos.all())
         
         context['recibos'] = self.recibos
         context['inicio'] = self.inicio

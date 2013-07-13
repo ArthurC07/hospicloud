@@ -208,4 +208,7 @@ class Venta(TimeStampedModel):
     
     def radiologo(self):
         
+        if self.recibo.radiologo == None or self.recibo.radiologo == '':
+            return Decimal('0')
+        
         return self.monto() * self.item.comision / Decimal("100")
