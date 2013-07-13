@@ -308,7 +308,7 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
                 productos[venta.item]['cantidad'] += 1
                 
                 context['cantidad'] += 1
-                context['total'] = productos[venta.item]['monto'] 
+                context['total'] += productos[venta.item]['monto'] 
                 
         context['recibos'] = self.recibos
         context['productos'] = productos.items()
