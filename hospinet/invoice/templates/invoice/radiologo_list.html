@@ -48,7 +48,7 @@
           <th>Radiologo</th>
           <th>Porcentaje</th>
           <th>Comisi&oacute;n</th>
-          <th>Total</th>
+          <th>Total Facturado</th>
         </tr>
       </thead>
       <tbody>
@@ -60,12 +60,19 @@
             <td>{{ venta.item }}</td>
             <td>{{ recibo.radiologo.upper }}</td>
             <td>{{ venta.item.comision }}%</td>
-            <td>{{ venta.radiologo.upper }}</td>
+            <td>{{ venta.radiologo }}</td>
             <td>{{ recibo.total }}</td>
           </tr>
           {% endfor %}
         {% endfor %}
       </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="5">Totales:</th>
+          <th>{{ cantidad }}</th>
+          <th>{{ costo }}</th>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </div>
