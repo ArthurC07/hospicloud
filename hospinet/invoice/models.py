@@ -215,6 +215,6 @@ class Venta(TimeStampedModel):
             return Decimal('0')
         
         bruto = self.monto() * self.item.comision / Decimal("100")
-        neto = bruto - self.discount()
+        neto = bruto - bruto * self.descuento / Decimal("100")
         
         return neto.quantize(Decimal('0.01'))
