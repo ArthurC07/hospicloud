@@ -214,8 +214,7 @@ class Venta(TimeStampedModel):
         if self.recibo.radiologo == None or self.recibo.radiologo == '':
             return Decimal('0')
         
-        descuento = self.monto() * self.recibo.discount / Decimal("100")
         bruto = self.monto() * self.item.comision / Decimal("100")
-        neto = bruto - descuento
+        neto = bruto - self.discount()
         
         return neto.quantize(Decimal('0.01'))
