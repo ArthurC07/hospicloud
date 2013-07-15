@@ -208,7 +208,14 @@ class Venta(TimeStampedModel):
     
     def radiologo(self):
         
+        """Calcular las comisiones del radiologo que atiende tomando en cuenta
+        los descuentos que se han efectuado al recibo"""
+        
         if self.recibo.radiologo == None or self.recibo.radiologo == '':
             return Decimal('0')
         
-        return self.monto() * self.item.comision / Decimal("100")
+        descuento = self.monto() * self.recibo.discount / Decimal("100")
+        bruto = self.monto() * self.item.comision / Decimal("100")
+        neto = bruto - descuento
+        
+        return neto.quantize(Decimal('0.01'))
