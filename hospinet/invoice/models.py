@@ -155,6 +155,7 @@ class Venta(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, related_name='ventas',
                              blank=True, null=True)
     recibo = models.ForeignKey(Recibo, related_name='ventas')
+    placas = models.IntegerField(default=0)
     
     def __unicode__(self):
         

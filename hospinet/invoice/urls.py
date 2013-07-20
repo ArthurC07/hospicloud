@@ -20,18 +20,19 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
      ReciboDetailView, VentaCreateView, ReporteReciboView, ReporteProductoView,
      ReciboRemiteView, ReciboRadView, EmergenciaPeriodoView, ReciboCerrarView,
      ReciboExamenCreateView, EmergenciaDiaView, AdmisionAltaView,
-    EmergenciaFacturarView, AdmisionFacturarView, CorteView, ExamenView)
+    EmergenciaFacturarView, AdmisionFacturarView, CorteView, ExamenView,
+    ReporteReciboDetailView)
 
 urlpatterns = patterns('',
     
     url(r'^$',
         IndexView.as_view(),
         name='invoice-index'),
-
+    
     url(r'^(?P<persona>\d+)/crear',
         ReciboPersonaCreateView.as_view(),
         name='invoice-create'),
-
+    
     url(r'^examen/(?P<examen>\d+)/crear',
         ReciboExamenCreateView.as_view(),
         name='invoice-create-examen'),
@@ -43,7 +44,7 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/anular$',
         ReciboAnularView.as_view(),
         name='invoice-nullify'),
-
+    
     url(r'^(?P<pk>\d+)/cerrar$',
         ReciboCerrarView.as_view(),
         name='invoice-close'),
@@ -51,23 +52,27 @@ urlpatterns = patterns('',
     url(r'^(?P<recibo>\d+)/venta/add$',
         VentaCreateView.as_view(),
         name='venta-add'),
-
+    
     url(r'^periodo$',
         ReporteReciboView.as_view(),
         name='invoice-periodo'),
-
+    
+    url(r'^periodo/detalle$',
+        ReporteReciboDetailView.as_view(),
+        name='invoice-periodo-detail'),
+    
     url(r'^periodo/producto$',
         ReporteProductoView.as_view(),
         name='invoice-periodo-producto'),
-
+    
     url(r'^periodo/remite',
         ReciboRemiteView.as_view(),
         name='invoice-periodo-remite'),
-
+    
     url(r'^periodo/radiologo',
         ReciboRadView.as_view(),
         name='invoice-periodo-radiologo'),
-
+    
     url(r'^periodo/emergencia',
         EmergenciaPeriodoView.as_view(),
         name='invoice-periodo-emergencia'),

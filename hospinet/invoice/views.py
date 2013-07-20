@@ -201,6 +201,10 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['reciboperiodoform'].set_legend(u'Recibos de un Periodo')
         context['reciboperiodoform'].set_action('invoice-periodo')
         
+        context['recibodetailform'] = PeriodoForm(prefix='recibodetail')
+        context['recibodetailform'].set_legend(u'Detalle de Recibos de un Periodo')
+        context['recibodetailform'].set_action('invoice-periodo-detail')
+        
         context['productoperiodoform'] = PeriodoForm(prefix='producto')
         context['productoperiodoform'].set_legend(u'Productos Facturados en un Periodo')
         context['productoperiodoform'].set_action('invoice-periodo-producto')
@@ -265,6 +269,35 @@ class ReporteReciboView(ReciboPeriodoView, LoginRequiredMixin):
         """Agrega el formulario de :class:`Recibo`"""
         
         context = super(ReporteReciboView, self).get_context_data(**kwargs)
+        
+        context['recibos'] = self.recibos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = sum(r.total() for r in self.recibos.all())
+        
+        return context
+
+class ReporteReciboDetailView(ReciboPeriodoView):
+    
+    """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
+    durante el periodo especificado"""
+    
+    template_name = 'invoice/recibo_detail_list.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        
+        """Agrega el formulario"""
+        
+        self.form = PeriodoForm(request.GET, prefix='recibodetail')
+        
+        return super(ReporteReciboDetailView, self).dispatch(request, *args,
+                                                       **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        
+        """Agrega el formulario de :class:`Recibo`"""
+        
+        context = super(ReporteReciboDetailView, self).get_context_data(**kwargs)
         
         context['recibos'] = self.recibos
         context['inicio'] = self.inicio

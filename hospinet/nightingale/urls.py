@@ -133,6 +133,10 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/medicamentos$',
         NightingaleDetailView.as_view(template_name='enfermeria/medicamentos.html'),
         name='enfermeria-medicamentos'),
+    
+    url(r'^(?P<pk>\d+)/cuenta$',
+        NightingaleDetailView.as_view(template_name='enfermeria/cuenta.html'),
+        name='enfermeria-cuenta'),
 
     url(r'^(?P<admision>\d+)/medicamento/agregar$',
         MedicamentoCreateView.as_view(),

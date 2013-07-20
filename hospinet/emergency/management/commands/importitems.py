@@ -29,10 +29,16 @@ class Command(BaseCommand):
 
             reader = csv.reader(open(source))
             for line in reader:
-                item = ItemTemplate()
+                item = None
+                try:
+                    item = ItemTemplate.get(pk=line[0])
+                    
+                except:
+                    item = ItemTemplate()
+                
                 item.id = line[0]
                 item.descripcion = line[1]
-                try:
-                    item.save()
-                except:
-                    pass
+                item.activo = True
+                item.precio_de_venta = line[3]
+                item.costo = line[4]
+                item.save()
