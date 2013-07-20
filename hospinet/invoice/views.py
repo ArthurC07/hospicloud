@@ -341,8 +341,8 @@ class ReporteTipoView(ReciboPeriodoView):
             for venta in recibo.ventas.all():
                 
                 monto = venta.monto()
-                categorias[venta.item.item_type]['monto'] += monto
-                categorias[venta.item.item_type]['cantidad'] += 1
+                categorias[venta.item.item_type[0]]['monto'] += monto
+                categorias[venta.item.item_typeitem_type[0]]['cantidad'] += 1
                 
                 context['cantidad'] += 1 
                 context['total'] += monto
