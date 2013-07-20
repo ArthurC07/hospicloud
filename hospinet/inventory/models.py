@@ -19,7 +19,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
-from guardian.models import User
+from django.contrib.auth.models import User
 from decimal import Decimal
 
 class Inventario(models.Model):
