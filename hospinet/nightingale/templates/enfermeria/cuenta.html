@@ -23,7 +23,7 @@
               <th>Cantidad</th>
               <th>Precio Unitario</th>
               <th>Precio Valor Total</th>
-              <th>Acciones</th>
+              <th class="no-print">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -40,7 +40,7 @@
               <td data-title="Cantidad">{{ cargo.cantidad }}</td>
               <td data-title="Cantidad">{{ cargo.cargo.precio_de_venta }}</td>
               <td data-title="Cantidad">{{ cargo.valor }}</td>
-              <td data-title="Acciones">
+              <td class="no-print" data-title="Acciones">
                 <a class="btn btn-danger" href="{% url 'enfermeria-cargo-eliminar' cargo.id %}"><i class="icon-trash"></i> Eliminar</a>
               </td>
             </tr>
