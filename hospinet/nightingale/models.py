@@ -143,7 +143,7 @@ class Cargo(TimeStampedModel, Turno):
         return self.cantidad * self.cargo.precio_de_venta
 
 Admision.estado_de_cuenta = property(lambda a: sum(c.valor() for c
-                                                   in a.cargos.all()))
+                                                   in a.cargos.filter(facturada=False).all()))
 
 class OrdenMedica(models.Model):
     

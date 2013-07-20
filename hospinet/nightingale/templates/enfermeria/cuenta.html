@@ -9,10 +9,6 @@
 </div>
 <div class="row">
   {% include 'snippets/aside.html' with admision=admision %}
-  <section class="span9">
-    <div class="row">
-      {% include 'snippets/medicamentos.html' %}
-    </div>
     <div class="row">
       <section class="span9">
         <div class="page-header">
@@ -25,6 +21,8 @@
               <th>C&oacute;digo</th>
               <th>Cargo</th>
               <th>Cantidad</th>
+              <th>Precio Unitario</th>
+              <th>Precio Valor Total</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -48,6 +46,12 @@
             </tr>
             {% endfor %}
           </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="5">Total</th>
+              <th colspan="2">{{ admision.estado_de_cuenta }}</th>
+            </tr>
+          </tfoot>
         </table>
 
       </section>
