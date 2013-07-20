@@ -27,7 +27,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
 from inventory.models import ItemTemplate
-from django.db.models.query_utils import Q
 
 class AdmisionBaseForm(forms.ModelForm):
 

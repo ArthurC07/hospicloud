@@ -88,7 +88,8 @@ class ItemTemplate(TimeStampedModel):
     impuestos = models.DecimalField(max_digits=10, decimal_places=2,
                                           default=0)
     activo = models.BooleanField(default=True)
-    item_type = models.ManyToManyField(ItemType, related_name='items')
+    item_type = models.ManyToManyField(ItemType, related_name='items',
+                                       null=True, blank=True)
     comision = models.DecimalField(decimal_places=2, max_digits=4,
                                    default=Decimal("30.00"))
     

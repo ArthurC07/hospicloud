@@ -205,6 +205,10 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['recibodetailform'].set_legend(u'Detalle de Recibos de un Periodo')
         context['recibodetailform'].set_action('invoice-periodo-detail')
         
+        context['tipoform'] = PeriodoForm(prefix='tipo')
+        context['tipoform'].set_legend(u'Productos por Área y Periodo')
+        context['tipoform'].set_action('invoice-tipo')
+        
         context['productoperiodoform'] = PeriodoForm(prefix='producto')
         context['productoperiodoform'].set_legend(u'Productos Facturados en un Periodo')
         context['productoperiodoform'].set_action('invoice-periodo-producto')
@@ -304,6 +308,49 @@ class ReporteReciboDetailView(ReciboPeriodoView):
         context['fin'] = self.fin
         context['total'] = sum(r.total() for r in self.recibos.all())
         
+        return context
+
+class ReporteTipoView(ReciboPeriodoView):
+    
+    """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
+    durante el periodo especificado"""
+    
+    template_name = 'invoice/tipo_list.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        
+        """Agrega el formulario"""
+        
+        self.form = PeriodoForm(request.GET, prefix='tipo')
+        
+        return super(ReporteTipoView, self).dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        
+        """Agrega el formulario de :class:`Recibo`"""
+        
+        context = super(ReporteTipoView, self).get_context_data(**kwargs)
+        
+        
+        context['cantidad'] = 0
+        context['total'] = Decimal('0')
+        categorias = defaultdict(lambda: defaultdict(Decimal))
+        
+        for recibo in self.recibos.all():
+            
+            for venta in recibo.ventas.all():
+                
+                monto = venta.monto()
+                categorias[venta.item.item_type]['monto'] += monto
+                categorias[venta.item.item_type]['cantidad'] += 1
+                
+                context['cantidad'] += 1 
+                context['total'] += monto
+        
+        context['recibos'] = self.recibos
+        context['categorias'] = categorias.items()
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
         return context
 
 class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
