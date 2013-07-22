@@ -296,6 +296,19 @@ class Admision(models.Model):
 
         return u"{0} en {1}".format(self.paciente.nombre_completo(),
                                     self.habitacion)
+    
+    def tiempo_ahora(self):
+        
+        """Permite mostrar el tiempo que ha transcurrido desde que se agrego
+        la :class:`Admision` al sistema"""
+        
+        ahora = timezone.now()
+        
+        if self.ultimo_cobro >= ahora:
+            
+            return 0
+        
+        return (ahora - self.momento).total_seconds() / 60
 
 class PreAdmision(TimeStampedModel):
     
