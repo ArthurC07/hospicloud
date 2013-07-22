@@ -15,42 +15,45 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import timezone
-from django.contrib.auth.models import User
-from django.db import models
-from django_extensions.db.fields import UUIDField
-from persona.models import Persona
-from django.core.urlresolvers import reverse
-from emergency.models import Emergencia
 from collections import defaultdict
+from django.db import models
+from django.utils import timezone
+from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
+from django_extensions.db.fields import UUIDField
 from django_extensions.db.models import TimeStampedModel
+from persona.models import Persona
+from emergency.models import Emergencia
+from inventory.models import ItemTemplate
 
 class Habitacion(models.Model):
     
     """Permite llevar control acerca de las :class:`Habitacion`es que se
     encuentran en el hospital para asignar adecuadamente las mismas a cada
     :class:`Admision`"""
-
+    
     TIPOS = (
         ('N', 'Normal'),
         ('S', 'Suite'),
         ('U', 'U.C.I.'),
     )
-
+    
     ESTADOS = (
         ('D', 'Disponible'),
         ('O', 'Ocupada'),
         ('M', 'Mantenimiento'),
     )
-
+    
     numero = models.IntegerField()
     tipo = models.CharField(max_length=1, blank=True, choices=TIPOS)
     estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
+    item = models.ForeignKey(ItemTemplate, related_name='habitaciones',
+                             blank=True, null=True)
     
     def __unicode__(self):
-
+        
         return u'{0} {1}'.format(self.get_tipo_display(), self.numero)
-
+    
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta de la :class:`Habitacion`"""
@@ -61,7 +64,7 @@ class Admision(models.Model):
     
     """Permite registrar el Ingreso y estadía de una :class:`Persona` en el
     Hospital.
-
+    
     Durante cada :class:`Admision se registran los diversos procedmientos que
     efectuan la :class:`Persona` durante su estadía en el hospital, ya sean
     procedimientos quirúrgicos, examenes de laboratorio, controles de
@@ -142,6 +145,8 @@ class Admision(models.Model):
     tipo_de_ingreso = models.CharField(max_length=200, blank=True, null=True,
                                        choices=TIPOS_INGRESOS)
     facturada = models.NullBooleanField(default=False)
+    ultimo_cobro = models.DateTimeField(default=timezone.now,null=True,
+                                      blank=True)
     
     def autorizar(self):
         
@@ -151,7 +156,7 @@ class Admision(models.Model):
             self.save()
     
     def pagar(self):
-
+        
         """Registra el momento en el que se efectua el pago de una
         :class:`Admision`"""
         
@@ -211,8 +216,9 @@ class Admision(models.Model):
     
     def tiempo_hospitalizado(self):
         
-        """Calcula el tiempo que se tarda una :class:`Persona` para ser
-        ingresada en el :class:`Hospital`"""
+        """Calcula los días que una :class:`Persona` es atendida en el
+        centro hospitalario"""
+        
         if self.hospitalizacion == None:
             return (timezone.now() - self.momento).total_seconds() / 60
         
@@ -222,17 +228,16 @@ class Admision(models.Model):
         
         return (self.fecha_alta - self.hospitalizacion).days
     
-    def tiempo_ahora(self):
+    def tiempo_cobro(self):
         
-        """Permite mostrar el tiempo que ha transcurrido desde que se agrego
-        la :class:`Admision` al sistema"""
+        """Permite calcular el tiempo que hace falta por facturar"""
         
         ahora = timezone.now()
-        if self.momento >= ahora:
+        if self.ultimo_cobro >= ahora:
             
             return 0
         
-        return (ahora - self.momento).total_seconds() / 60
+        return (ahora - self.ultimo_cobro).days
     
     def dar_alta(self):
         
@@ -254,6 +259,7 @@ class Admision(models.Model):
             self.tiempo = self.tiempo_ahora()
     
     def save(self, *args, **kwargs):
+        
         self.actualizar_tiempo()
         super(Admision, self).save(*args, **kwargs)
     
@@ -269,6 +275,8 @@ class Admision(models.Model):
         las :class:`Venta`s de un :class:`Recibo`"""
         
         items = defaultdict(int)
+        
+        items[self.habitacion.item] += self.tiempo_cobro()
         
         for cargo in self.cargos.filter(facturada=False):
             
