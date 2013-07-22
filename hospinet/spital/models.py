@@ -239,6 +239,12 @@ class Admision(models.Model):
         
         return (ahora - self.ultimo_cobro).days
     
+    def debido(self):
+        
+        """Calcula el monto que aún se debe por conceptio de hospitalización"""
+        
+        return self.tiempo_cobro() * self.habitacion.item.precio_de_venta
+    
     def dar_alta(self):
         
         self.estado = 'C'

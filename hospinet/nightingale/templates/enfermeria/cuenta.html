@@ -45,7 +45,7 @@
             <td data-title="Cargo">{{ admision.habitacion.item }}</td>
             <td data-title="Cantidad">{{ admision.tiempo_cobro }}</td>
             <td data-title="Cantidad">{{ admision.habitacion.item.precio_de_venta }}</td>
-            <td data-title="Cantidad">{{ admision.habitacion.item.valor }}</td>
+            <td data-title="Cantidad">{{ admision.debido }}</td>
             <td class="no-print" data-title="Acciones"></td>
           </tr>
           {% for cargo in admision.cargos.all %}
