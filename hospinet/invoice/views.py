@@ -15,24 +15,25 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+from collections import defaultdict
+from datetime import datetime, time
+from decimal import Decimal
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
+from django.utils import timezone
+from django.views.generic import (CreateView, UpdateView, TemplateView,
+                                  DetailView, ListView, RedirectView)
+from users.mixins import LoginRequiredMixin
+from spital.models import Admision
 from emergency.models import Emergencia
+from imaging.models import Examen
+from persona.models import Persona
 from invoice.models import Recibo, Venta
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
     CorteForm, ExamenFacturarForm)
-from django.views.generic import (CreateView, UpdateView, TemplateView,
-                                  DetailView, ListView, RedirectView)
-from persona.models import Persona
-from imaging.models import Examen
-from spital.models import Admision
-from datetime import datetime, time
-from collections import defaultdict
-from decimal import Decimal
-from users.mixins import LoginRequiredMixin
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
     
@@ -618,7 +619,7 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
         recibo.save()
         
         crear_ventas(items, recibo)
-        
+        self.object.ultimo_cobro = timezone.now()
         self.object.save()
         
         return HttpResponseRedirect(recibo.get_absolute_url())
