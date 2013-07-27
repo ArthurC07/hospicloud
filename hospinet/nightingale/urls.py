@@ -23,7 +23,8 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     MedicamentoCreateView, DosisSuministrarView, NotaUpdateView, AdmisionListView,
     ResumenDetailView, DosisCreateView, MedicamentoSuspenderView,
     DevolucionCreateView, NotaCerrarView, SumarioCreateView, CargoDeleteView,
-    DosificarMedicamentoView, MedicamentoUpdateView)
+    DosificarMedicamentoView, MedicamentoUpdateView, OxigenoTerapiaCreateView,
+    OxigenoTerapiaUpdateView)
 
 urlpatterns = patterns('',
     
@@ -169,4 +170,16 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/editar',
         MedicamentoUpdateView.as_view(),
         name='enfermeria-editar-medicamento'),
+    
+    url(r'^(?P<pk>\d+)/oxigeno$',
+        NightingaleDetailView.as_view(template_name='nightingale/oxigeno.html'),
+        name='enfermeria-oxigeno'),
+    
+    url(r'^(?P<admision>\d+)/oxigeno/iniciar$',
+        OxigenoTerapiaCreateView.as_view(),
+        name='enfermeria-oxigeno-iniciar'),
+    
+    url(r'^(?P<admision>\d+)/oxigeno/terminar$',
+        OxigenoTerapiaUpdateView.as_view(),
+        name='enfermeria-oxigeno-terminar'),
 )

@@ -23,6 +23,7 @@ from inventory.models import ItemTemplate
 from django.core.urlresolvers import reverse
 from django_extensions.db.models import TimeStampedModel
 from datetime import timedelta
+from decimal import Decimal
 
 class Turno(object):
     
@@ -143,7 +144,10 @@ class Cargo(TimeStampedModel, Turno):
         return self.cantidad * self.cargo.precio_de_venta
 
 Admision.estado_de_cuenta = property(lambda a: sum(c.valor() for c
-                                                   in a.cargos.filter(facturada=False).all()) + a.debido())
+                                                   in a.cargos.filter(facturada=False).all())
+                                     + sum(o.valor() for o
+                                                   in a.oxigeno_terapias.all())
+                                     + a.debido())
 
 class OrdenMedica(models.Model):
     
@@ -448,11 +452,38 @@ class Devolucion(TimeStampedModel, Turno):
 
 class OxigenoTerapia(TimeStampedModel):
     
+    """Registra los tiempos en los cuales el paciente ha utilizado oxigeno"""
+    
     admision = models.ForeignKey(Admision, related_name='oxigeno_terapias')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                                    related_name='oxigeno_terapias')
     terminada = models.BooleanField(default=False)
     
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('enfermeria-oxigeno', args=[self.admision.id])
+    
     def tiempo(self):
         
-        return (self.modified - self.created).seconds / 3600
+        """Calcula el tiempo que la :class:`Persona` ha utilizado Oxigeno"""
+        
+        return (self.modified - self.final()).seconds / 3600
+    
+    def litros(self):
+        
+        """Calcula el volumen de Oxigeno utilizado"""
+        
+        return self.tiempo() * Decimal(0.33)
+    
+    def valor(self):
+        
+        return self.litros() * self.cargo.precio_de_venta
+    
+    def final(self):
+        
+        if self.created >= self.modified:
+            return timezone.now()
+            
+        return self.modified

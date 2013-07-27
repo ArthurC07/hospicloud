@@ -20,8 +20,9 @@ from spital.models import Admision
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
                                 OrdenMedica, SignoVital, Medicamento,
-                                Devolucion, Sumario)
+                                Devolucion, Sumario, OxigenoTerapia)
 from django.contrib.auth.models import User
+from chosen import forms as chosenforms
 from persona.forms import DateTimeWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
@@ -79,7 +80,7 @@ class CargoForm(AdmisionBaseForm):
         model = Cargo
         exclude = ('facturada', )
     
-    cargo = forms.ModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                  initial=timezone.now)
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
@@ -364,3 +365,31 @@ class MedicamentoUpdateForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Actualizar Posología de Medicamento',
                                       *self.field_names)
+
+class OxigenoTerapiaForm(forms.ModelForm):
+    
+    """Permite agregar y editar :class:`OxigenoTerapia`s"""
+    
+    class Meta:
+        
+        model = OxigenoTerapia
+        fields = ('cargo', 'terminada', 'admision')
+    
+    admision = forms.ModelChoiceField(label="",
+                                  queryset=Admision.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    
+    usuario = forms.ModelChoiceField(label="",
+                                  queryset=User.objects.all(),
+                                  widget=forms.HiddenInput(), required=False)
+    
+    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    
+    def __init__(self, *args, **kwargs):
+        
+        super(OxigenoTerapiaForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.layout = Fieldset(u'Oxigeno Terapia', *self.field_names)

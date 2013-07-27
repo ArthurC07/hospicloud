@@ -196,6 +196,7 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'crispy_forms',
     'bootstrap-pagination',
+    'chosen',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -1,0 +1,31 @@
+<table class="table table-striped table-bordered no-more-tables">
+  <thead>
+    <tr>
+      <th>Fecha y Hora</th>
+      <th>C&oacute;digo</th>
+      <th>Cargo</th>
+      <th>Tiempo</th>
+      <th>Litros</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if admision.oxigeno_terapias.count == 0%}
+    <tr>
+      <td colspan="5">No hay cargos registrados</td>
+    </tr>
+    {% endif%}
+    {% for terapia in admision.oxigeno_terapias.all %}
+    <tr>
+      <td data-title="Fecha y Hora">{{ terapia.created|date:"d/m/Y P" }}</td>
+      <td data-title="Código">{{ terapia.cargo.id }}</td>
+      <td data-title="Cargo">{{ terapia.cargo }}</td>
+      <td data-title="Tiempo">{{ terapia.tiempo }}</td>
+      <td data-title="Litros">{{ terapia.litros }}</td>
+      <td data-title="Acciones">
+        <a class="btn btn-danger" href="{% url 'enfermeria-oxigeno-terminar' terapia.id %}"><i class="icon-trash"></i> Terminar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

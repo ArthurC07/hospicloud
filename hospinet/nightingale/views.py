@@ -24,14 +24,15 @@ from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
 from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
     InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm, NotaEnfermeriaForm,
     OrdenMedicaForm, SignoVitalForm, MedicamentoForm, DosisForm, DevolucionForm,
-    SumarioForm, DosificarForm, MedicamentoUpdateForm)
+    SumarioForm, DosificarForm, MedicamentoUpdateForm, OxigenoTerapiaForm)
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
     Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital,
-    Medicamento, Dosis, Devolucion, Sumario)
+    Medicamento, Dosis, Devolucion, Sumario, OxigenoTerapia)
 from spital.models import Admision
+from spital.views import AdmisionFormMixin
 from django.contrib import messages
 from django.utils import timezone
-from users.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin, UserFormMixin
 
 class NightingaleIndexView(ListView, LoginRequiredMixin):
     
@@ -527,3 +528,14 @@ class MedicamentoUpdateView(UpdateView, LoginRequiredMixin):
     model = Medicamento
     form_class = MedicamentoUpdateForm
     context_object_name = 'medicamento'
+
+class OxigenoTerapiaCreateView(AdmisionFormMixin, UserFormMixin, LoginRequiredMixin):
+    
+    model = OxigenoTerapia
+    form_class = OxigenoTerapiaForm
+
+class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin):
+    
+    model = OxigenoTerapia
+    form_class = OxigenoTerapiaForm
+    context_object_name = 'oxigeno_terapia'

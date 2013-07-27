@@ -72,6 +72,30 @@ class AdmisionIndexView(ListView, LoginRequiredMixin):
                                                                *context['admision_periodo'].field_names)
         return context
 
+class AdmisionFormMixin(CreateView):
+    
+    def dispatch(self, *args, **kwargs):
+        
+        """Obtiene la :class:`Admision` desde la url"""
+        
+        self.admision = get_object_or_404(Admision, pk=kwargs['admision'])
+        return super(AdmisionFormMixin, self).dispatch(*args, **kwargs)
+    
+    def get_initial(self):
+        
+        """Agrega la :class:`Admision` a los campos del formulario"""
+        
+        initial = super(AdmisionFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['admision'] = self.admision.id
+        return initial
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(CreateView, self).get_context_data(**kwargs)
+        context['admision'] = self.admision
+        return context
+
 class IngresarView(TemplateView, LoginRequiredMixin):
     
     """Muestra una interfaz para agregar una :class:`Admision` ya sea agregando

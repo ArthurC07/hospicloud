@@ -43,19 +43,32 @@
             <td data-title="Fecha y Hora">{{ admision.ultimo_cobro }}</td>
             <td data-title="Código">{{ admision.habitacion.item.id }}</td>
             <td data-title="Cargo">{{ admision.habitacion.item }}</td>
-            <td data-title="Cantidad">{{ admision.tiempo_cobro }}</td>
-            <td data-title="Cantidad">{{ admision.habitacion.item.precio_de_venta }}</td>
-            <td data-title="Cantidad">{{ admision.debido }}</td>
+            <td data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
+            <td data-title="Precio Unitario">{{ admision.habitacion.item.precio_de_venta }}</td>
+            <td data-title="Total">{{ admision.debido }}</td>
             <td class="no-print" data-title="Acciones"></td>
           </tr>
+          {% for terapia in admision.oxigeno_terapias.all %}
+          <tr>
+            <td data-title="Fecha y Hora">{{ terapia.created|date:"d/m/Y P" }} a {{ terapia.final|date:"d/m/Y P" }}</td>
+            <td data-title="Código">{{ terapia.cargo.id }}</td>
+            <td data-title="Cargo">{{ terapia.cargo }}</td>
+            <td data-title="Tiempo">{{ terapia.tiempo }}</td>
+            <td data-title="Litros">{{ terapia.litros }}</td>
+            <td data-title="Total">{{ terapia.valor }}</td>
+            <td data-title="Acciones">
+              <a class="btn btn-danger" href="{% url 'enfermeria-oxigeno-terminar' terapia.id %}"><i class="icon-trash"></i> Terminar</a>
+            </td>
+          </tr>
+          {% endfor %}
           {% for cargo in admision.cargos.all %}
           <tr>
             <td data-title="Fecha y Hora">{{ cargo.created|date:"d/m/Y P" }}</td>
             <td data-title="Código">{{ cargo.cargo.id }}</td>
             <td data-title="Cargo">{{ cargo.cargo }}</td>
             <td data-title="Cantidad">{{ cargo.cantidad }}</td>
-            <td data-title="Cantidad">{{ cargo.cargo.precio_de_venta }}</td>
-            <td data-title="Cantidad">{{ cargo.valor }}</td>
+            <td data-title="Precio Unitario">{{ cargo.cargo.precio_de_venta }}</td>
+            <td data-title="Total">{{ cargo.valor }}</td>
             <td class="no-print" data-title="Acciones"><a class="btn btn-danger" href="{% url 'enfermeria-cargo-eliminar' cargo.id %}"><i class="icon-trash"></i> Eliminar</a></td>
           </tr>
           {% endfor %}

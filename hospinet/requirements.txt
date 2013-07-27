@@ -10,3 +10,4 @@ south
 django-audit-log
 django-templated-email
 django-userena
+django-chosen
