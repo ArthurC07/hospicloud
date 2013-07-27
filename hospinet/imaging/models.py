@@ -167,9 +167,9 @@ class Dicom(models.Model):
         absolute = os.path.abspath(self.archivo.file.name)
         archivo = os.path.splitext(os.path.basename(self.archivo.name))[0]
         self.convertido = True
-        subprocess.call(['dcmj2pnm', '--write-jpeg', absolute, absolute + '.jpg'])
+        subprocess.call(['dcmj2pnm', '--write-png', absolute, absolute + '.png'])
         
-        self.imagen = self.archivo.name  + '.jpg'
+        self.imagen = self.archivo.name  + '.png'
         self.save()
     
     @permalink
