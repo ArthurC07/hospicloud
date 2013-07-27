@@ -332,7 +332,6 @@ class ReporteTipoView(ReciboPeriodoView):
         
         context = super(ReporteTipoView, self).get_context_data(**kwargs)
         
-        
         context['cantidad'] = 0
         context['total'] = Decimal('0')
         categorias = defaultdict(lambda: defaultdict(Decimal))
@@ -341,7 +340,7 @@ class ReporteTipoView(ReciboPeriodoView):
             
             for venta in recibo.ventas.all():
                 
-                monto = venta.monto()
+                monto = venta.total()
                 
                 #TODO: Remove on django 1.6 update 
                 try:

@@ -121,6 +121,10 @@ class Recibo(TimeStampedModel):
     def comision_radiologo(self):
         
         return sum(v.radiologo() for v in self.ventas.all())
+    
+    def placas(self):
+        
+        return sum(v.placas for v in self.ventas.all())
 
 class Producto(TimeStampedModel):
     

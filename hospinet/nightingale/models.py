@@ -445,3 +445,14 @@ class Devolucion(TimeStampedModel, Turno):
         
         return reverse('enfermeria-medicamentos',
                        args=[self.medicamento.admision.id])
+
+class OxigenoTerapia(TimeStampedModel):
+    
+    admision = models.ForeignKey(Admision, related_name='oxigeno_terapias')
+    cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
+                                   related_name='oxigeno_terapias')
+    terminada = models.BooleanField(default=False)
+    
+    def tiempo(self):
+        
+        return (self.modified - self.created).seconds / 3600

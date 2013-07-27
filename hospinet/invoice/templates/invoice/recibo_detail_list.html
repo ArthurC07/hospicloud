@@ -22,16 +22,18 @@
       </thead>
       <tbody>
         {% for recibo in recibos.all %}
-        {% for venta in recibo.ventas.all %}
         <tr>
           <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.id }}</a></td>
           <td>{{ recibo.created }}</td>
           <td>{{ recibo }}</td>
           <td>{{ recibo.total }}</td>
-          <td>{{ venta.item.descripcion }}</td>
-          <td>{{ venta.placas }}</td>
+          <td>
+            {% for venta in recibo.ventas.all %}
+            {{ venta.item.descripcion }}
+            {% endfor %}
+          </td>
+          <td>{{ recibo.placas }}</td>
         </tr>
-        {% endfor %}
         {% endfor %}
       </tbody>
       <tfoot>

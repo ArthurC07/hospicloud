@@ -44,6 +44,7 @@
         <tr>
           <th>N&uacute;mero</th>
           <th>Fecha</th>
+          <th>Paciente</th>
           <th>Concepto</th>
           <th>Radiologo</th>
           <th>Porcentaje</th>
@@ -57,6 +58,7 @@
           <tr>
             <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.id }}</a></td>
             <td>{{ recibo.created }}</td>
+            <td>{{ recibo.cliente }}</td>
             <td>{{ venta.item }}</td>
             <td>{{ recibo.radiologo.upper }}</td>
             <td>{{ venta.item.comision }}%</td>
