@@ -19,10 +19,12 @@ from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
                               Tratamiento, Hallazgo, Cobro, Diagnostico,
                               ExamenFisico)
-from persona.models import Persona
-from django.contrib.auth.models import User
+from chosen import forms as chosenforms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from persona.models import Persona
+from django.contrib.auth.models import User
+from inventory.models import ItemTemplate
 
 class EmergenciaForm(forms.ModelForm):
     
@@ -141,6 +143,8 @@ class CobroForm(EmergenciaBaseForm):
     class Meta:
         
         model = Cobro
+    
+    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     
     def __init__(self, *args, **kwargs):
         

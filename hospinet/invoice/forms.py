@@ -25,6 +25,8 @@ from inventory.forms import FieldSetFormMixin
 from emergency.models import Emergencia
 from spital.models import Admision
 from imaging.models import Examen
+from chosen import forms as chosenforms
+from inventory.models import ItemTemplate
 
 class ReciboForm(forms.ModelForm):
     
@@ -43,6 +45,18 @@ class ReciboForm(forms.ModelForm):
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
+class ReciboNewForm(ReciboForm):
+    
+    def __init__(self, *args, **kwargs):
+
+        super(ReciboNewForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.layout = Fieldset(u'Datos del Recibo', *self.field_names)
+
 class VentaForm(FieldSetFormMixin):
     
     """Genera un formulario para :class:`Venta`"""
@@ -55,6 +69,7 @@ class VentaForm(FieldSetFormMixin):
     recibo = forms.ModelChoiceField(label="",
                                   queryset=Recibo.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
+    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     
     def __init__(self, *args, **kwargs):
 

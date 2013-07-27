@@ -21,13 +21,17 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
      ReciboRemiteView, ReciboRadView, EmergenciaPeriodoView, ReciboCerrarView,
      ReciboExamenCreateView, EmergenciaDiaView, AdmisionAltaView,
     EmergenciaFacturarView, AdmisionFacturarView, CorteView, ExamenView,
-    ReporteReciboDetailView, ReporteTipoView)
+    ReporteReciboDetailView, ReporteTipoView, ReciboCreateView)
 
 urlpatterns = patterns('',
     
     url(r'^$',
         IndexView.as_view(),
         name='invoice-index'),
+    
+    url(r'^nuevo',
+        ReciboCreateView.as_view(),
+        name='invoice-new'),
     
     url(r'^(?P<persona>\d+)/crear',
         ReciboPersonaCreateView.as_view(),

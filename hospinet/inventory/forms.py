@@ -18,6 +18,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from chosen import forms as chosenforms
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
     Requisicion, ItemRequisicion, Transferencia, Transferido)
 
@@ -60,6 +61,8 @@ class ItemForm(FieldSetFormMixin):
     class Meta:
         
         model = Item
+    
+    plantilla = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     
     def __init__(self, *args, **kwargs):
         
@@ -130,6 +133,8 @@ class ItemRequisicionForm(FieldSetFormMixin):
         model = ItemRequisicion
         exclude = ('entregada', 'pendiente')
     
+    item = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    
     def __init__(self, *args, **kwargs):
         
         super(ItemRequisicionForm, self).__init__(*args, **kwargs)
@@ -173,6 +178,8 @@ class TransferidoForm(FieldSetFormMixin):
         
         model = Transferido
         exclude = ('aplicada', )
+    
+    item = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     
     def __init__(self, *args, **kwargs):
         

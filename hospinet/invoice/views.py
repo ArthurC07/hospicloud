@@ -30,10 +30,12 @@ from spital.models import Admision
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
+from persona.forms import PersonaForm
 from invoice.models import Recibo, Venta
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
-    CorteForm, ExamenFacturarForm)
+    CorteForm, ExamenFacturarForm, ReciboNewForm)
+from django.forms.models import inlineformset_factory
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
     
@@ -42,7 +44,7 @@ class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
     
     model = Recibo
     form_class = ReciboForm
-    template_name = 'invoice/recibo_create.html'
+    template_name = 'invoice/recibo_persona_create.html'
     
     def get_form_kwargs(self):
         
@@ -67,6 +69,41 @@ class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
         context['persona'] = self.persona
         return context
 
+class ReciboCreateView(CreateView, LoginRequiredMixin):
+    
+    model = Recibo
+    
+    def dispatch(self, request, *args, **kwargs):
+        
+        self.persona = Persona()
+        self.ReciboFormset = inlineformset_factory(Persona, Recibo, form=ReciboNewForm,
+                                              fk_name='cliente', extra=1)
+        return super(CreateView, self).dispatch(request, *args, **kwargs)
+    
+    def get_form(self, form_class):
+        
+        self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
+        self.persona_form.helper.form_tag = False
+        formset = self.ReciboFormset(instance=self.persona, prefix='recibo')
+        return formset
+    
+    def get_context_data(self, **kwargs):
+        
+        context = super(ReciboCreateView, self).get_context_data(**kwargs)
+        context['persona_form'] = self.persona_form
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        self.form = PersonaForm(request.POST, request.FILES, instance=self.persona,
+                           prefix='persona')
+        self.formset = self.ReciboFormset(request.POST, request.FILES,
+                                     instance=self.persona, prefix='recibo')
+        
+        if self.form.is_valid() and self.formset.is_valid():
+            return self.form_valid(self.formset)
+        else:
+            return self.form_invalid(self.formset)
+
 class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
     
     """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
@@ -74,7 +111,7 @@ class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
     
     model = Recibo
     form_class = ReciboForm
-    template_name = 'invoice/recibo_create.html'
+    template_name = 'invoice/recibo_persona_create.html'
     
     def get_form_kwargs(self):
         

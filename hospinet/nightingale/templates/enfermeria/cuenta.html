@@ -35,6 +35,7 @@
             <th>Cantidad</th>
             <th>Precio Unitario</th>
             <th>Precio Valor Total</th>
+            <th>Usuario</th>
             <th class="no-print">Acciones</th>
           </tr>
         </thead>
@@ -46,6 +47,7 @@
             <td data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
             <td data-title="Precio Unitario">{{ admision.habitacion.item.precio_de_venta }}</td>
             <td data-title="Total">{{ admision.debido }}</td>
+            <td></td>
             <td class="no-print" data-title="Acciones"></td>
           </tr>
           {% for terapia in admision.oxigeno_terapias.all %}
@@ -56,6 +58,7 @@
             <td data-title="Tiempo">{{ terapia.tiempo }}</td>
             <td data-title="Litros">{{ terapia.litros }}</td>
             <td data-title="Total">{{ terapia.valor }}</td>
+            <td></td>
             <td data-title="Acciones">
               <a class="btn btn-danger" href="{% url 'enfermeria-oxigeno-terminar' terapia.id %}"><i class="icon-trash"></i> Terminar</a>
             </td>
@@ -69,6 +72,7 @@
             <td data-title="Cantidad">{{ cargo.cantidad }}</td>
             <td data-title="Precio Unitario">{{ cargo.cargo.precio_de_venta }}</td>
             <td data-title="Total">{{ cargo.valor }}</td>
+            <td>{{ cargo.usuario }}</td>
             <td class="no-print" data-title="Acciones"><a class="btn btn-danger" href="{% url 'enfermeria-cargo-eliminar' cargo.id %}"><i class="icon-trash"></i> Eliminar</a></td>
           </tr>
           {% endfor %}

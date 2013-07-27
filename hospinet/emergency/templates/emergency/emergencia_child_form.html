@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 <div class="row">
 <aside class="span3">
-<nav class="well sidebar-nav">
+<nav class="sidebar-nav">
   <ul class="nav nav-stacked nav-tabs">
     <li><a href="{% url 'emergency-view-id' emergencia.id %}">Regresar a emergencia</a></li>
   </ul>
@@ -18,4 +18,12 @@
 {% include 'emergency/snippets/cargos.html' with emergencia=emergencia %}
 </section>
 </div>
+{% endblock %}
+{% block scripts %}
+{{ form.media }}
+<script type="text/javascript">
+  $(document).ready(function(){
+    $(".chzn-select").chosen();
+  });
+</script>
 {% endblock %}
