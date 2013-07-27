@@ -79,7 +79,7 @@ class CargoForm(AdmisionBaseForm):
         model = Cargo
         exclude = ('facturada', )
     
-    cargo = forms.ModelChoiceField(ItemTemplate.objects.order_by('descripcion').all())
+    cargo = forms.ModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                  initial=timezone.now)
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
