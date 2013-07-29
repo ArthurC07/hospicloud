@@ -32,7 +32,7 @@ class AdmisionForm(forms.ModelForm):
         model = Admision
         fields = ('paciente', 'diagnostico', 'doctor',
                   'arancel', 'pago', 'poliza', 'certificado', 'aseguradora',
-                  'deposito', 'tipo_de_ingreso',)
+                  'deposito', 'tipo_de_ingreso', 'tipo_de_venta')
     
     paciente = forms.ModelChoiceField(label="",
                                   queryset=Persona.objects.all(),

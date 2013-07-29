@@ -4,6 +4,7 @@
     <list default="true" id="8470f082-7425-48bb-adaa-48d01e874c48" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory/admin.py" afterPath="$PROJECT_DIR$/inventory/admin.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nightingale/templates/enfermeria/cuenta.html" afterPath="$PROJECT_DIR$/nightingale/templates/enfermeria/cuenta.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spital/forms.py" afterPath="$PROJECT_DIR$/spital/forms.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/emergency/models.py" afterPath="$PROJECT_DIR$/emergency/models.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/inventory/models.py" afterPath="$PROJECT_DIR$/inventory/models.py" />
@@ -24,6 +25,7 @@
     <file path="/views.py" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375051515207" ignored="false" />
     <file path="/admin.py" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375054120473" ignored="false" />
     <file path="/cuenta.html" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375056104632" ignored="false" />
+    <file path="/forms.py" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375056912387" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,10 +115,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="views.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nightingale/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="351" column="4" selection-start="12905" selection-end="12905" vertical-scroll-proportion="0.7616823">
+            <state line="351" column="4" selection-start="12905" selection-end="12905" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="forms.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/spital/forms.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="34" column="63" selection-start="1394" selection-end="1394" vertical-scroll-proportion="0.5700599">
               <folding />
             </state>
           </provider>
@@ -176,6 +187,7 @@
         <option value="$PROJECT_DIR$/inventory/models.py" />
         <option value="$PROJECT_DIR$/spital/models.py" />
         <option value="$PROJECT_DIR$/nightingale/templates/enfermeria/cuenta.html" />
+        <option value="$PROJECT_DIR$/spital/forms.py" />
       </list>
     </option>
   </component>
@@ -240,60 +252,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="spital" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hospinet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hospinet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="nightingale" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hospinet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hospinet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="nightingale" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="templates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hospinet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hospinet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="nightingale" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="templates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="enfermeria" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -570,13 +528,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="196" column="19" selection-start="6941" selection-end="6941" vertical-scroll-proportion="0.47663552">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/imaging/templates/examen/examen_detail.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="15" column="77" selection-start="558" selection-end="558" vertical-scroll-proportion="0.30722892">
@@ -683,7 +634,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nightingale/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="351" column="4" selection-start="12905" selection-end="12905" vertical-scroll-proportion="0.7616823">
+        <state line="351" column="4" selection-start="12905" selection-end="12905" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spital/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="63" selection-start="1394" selection-end="1394" vertical-scroll-proportion="0.5700599">
           <folding />
         </state>
       </provider>
