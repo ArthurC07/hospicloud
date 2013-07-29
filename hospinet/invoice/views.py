@@ -715,11 +715,11 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
 
         for recibo in self.recibos.all():
 
-            for venta in recibo
+            for venta in recibo:
 
-            doctores[recibo.radiologo.upper()]['monto'] += recibo.total()
-            doctores[recibo.radiologo.upper()]['cantidad'] += 1
-            doctores[recibo.radiologo.upper()]['comision'] += recibo.comision_radiologo()
+                doctores[recibo.radiologo.upper()]['monto'] += recibo.total()
+                doctores[recibo.radiologo.upper()]['cantidad'] += 1
+                doctores[recibo.radiologo.upper()]['comision'] += recibo.comision_radiologo()
 
         context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
         context['costo'] = sum(r.total() for r in self.recibos.all())
