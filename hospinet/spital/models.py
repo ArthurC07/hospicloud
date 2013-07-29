@@ -294,6 +294,11 @@ class Admision(models.Model):
             items[cargo.cargo] += cargo.cantidad
             cargo.facturada = True
             cargo.save()
+            
+        for oxigeno in self.oxigeno_terapias.all():
+            items[oxigeno.cargo] += oxigeno.litros()
+            oxigeno.facturada = True
+            oxigeno.save()
 
         return items
 
