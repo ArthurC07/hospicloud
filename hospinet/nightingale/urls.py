@@ -24,7 +24,8 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
     ResumenDetailView, DosisCreateView, MedicamentoSuspenderView,
     DevolucionCreateView, NotaCerrarView, SumarioCreateView, CargoDeleteView,
     DosificarMedicamentoView, MedicamentoUpdateView, OxigenoTerapiaCreateView,
-    OxigenoTerapiaUpdateView)
+    OxigenoTerapiaUpdateView, HonorarioCreateView, HonorarioUpdateView,
+    HonorarioDeleteView)
 
 urlpatterns = patterns('',
     
@@ -175,11 +176,27 @@ urlpatterns = patterns('',
         NightingaleDetailView.as_view(template_name='nightingale/oxigeno.html'),
         name='enfermeria-oxigeno'),
     
-    url(r'^(?P<pk>\d+)/oxigeno/iniciar$',
+    url(r'^(?P<admision>\d+)/oxigeno/iniciar$',
         OxigenoTerapiaCreateView.as_view(),
         name='enfermeria-oxigeno-iniciar'),
     
     url(r'^(?P<pk>\d+)/oxigeno/terminar$',
         OxigenoTerapiaUpdateView.as_view(),
         name='enfermeria-oxigeno-terminar'),
+
+    url(r'^(?P<pk>\d+)/honorarios$',
+        NightingaleDetailView.as_view(template_name='nightingale/honorarios.html'),
+        name='enfermeria-honorarios'),
+
+    url(r'^(?P<admision>\d+)/honorario/agregar$',
+        HonorarioCreateView.as_view(),
+        name='enfermeria-honorario-agregar'),
+
+    url(r'^(?P<pk>\d+)/honorario/editar$',
+        HonorarioUpdateView.as_view(),
+        name='enfermeria-honorario-editar'),
+
+    url(r'^(?P<pk>\d+)/honorario/eliminar$',
+        HonorarioDeleteView.as_view(),
+        name='enfermeria-honorario-eliminar'),
 )

@@ -477,17 +477,17 @@ class OxigenoTerapia(TimeStampedModel, Precio):
         
         """Calcula el tiempo que la :class:`Persona` ha utilizado Oxigeno"""
         
-        return (self.modified - self.final()).seconds / 3600
+        return ((self.final() - self.created).seconds / Decimal(3600)).quantize(Decimal("0.01"))
     
     def litros(self):
         
         """Calcula el volumen de Oxigeno utilizado"""
         
-        return self.tiempo() * Decimal(0.33)
+        return (self.tiempo() * Decimal(0.33)).quantize(Decimal("0.01"))
     
     def valor(self):
         
-        return self.litros() * self.precio_unitario()
+        return (self.litros() * self.precio_unitario()).quantize(Decimal("0.01"))
     
     def final(self):
         
@@ -505,6 +505,7 @@ class Honorario(TimeStampedModel):
                                    related_name='honorarios')
     monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     facturada = models.NullBooleanField(default=False)
+    usuario = models.ForeignKey(User, blank=True, null=True, related_name='honorarios')
     
     def get_absolute_url(self):
         

@@ -8,21 +8,24 @@
   </section>
 </div>
 <div class="row">
-  <div class="span12">
-    <ul>
-      <li>
-        Tiempo Total Hospitalizado: {{ admision.tiempo_hospitalizado }}
-      </li>
-      <li>
-        &Uacute;ltimo Cobro: {{ admision.ultimo_cobro }}
-      </li>
-    </ul>
-  </div>
-</div>
-<div class="row">
   {% include 'snippets/aside.html' with admision=admision %}
   <div class="row">
     <section class="span9 full-size-print">
+    <div class="row">
+        <div class="span9">
+            <ul>
+                <li>
+                    Tiempo Total Hospitalizado: {{ admision.tiempo_hospitalizado }}
+                </li>
+                <li>
+                    &Uacute;ltimo Cobro: {{ admision.ultimo_cobro }}
+                </li>
+                <li>
+                    Tipo de Ingreso: {{ admision.tipo_de_venta }}
+                </li>
+            </ul>
+        </div>
+    </div>
       <div class="page-header">
         <h2>Cargos a Cobrar</h2>
       </div>
@@ -50,6 +53,20 @@
             <td></td>
             <td class="no-print" data-title="Acciones"></td>
           </tr>
+          {% for honorario in admision.honorarios.all %}
+          <tr>
+              <td data-title="Fecha y Hora">{{ honorario.created }}</td>
+              <td data-title="Código">{{ honorario.item.id }}</td>
+              <td data-title="Cargo">{{ honorario.item }}</td>
+              <td></td>
+              <td data-title="Precio Unitario">{{ honorario.monto }}</td>
+              <td data-title="Total">{{ honorario.monto }}</td>
+              <td data-title="Usuario">{{ honorario.usuario.full_name }}</td>
+              <td data-title="Acciones">
+                <a class="btn btn-danger" href="{% url 'enfermeria-honorario-eliminar' honorario.id %}"><i class="icon-trash"></i> Eliminar</a>
+              </td>
+          </tr>
+          {% endfor %}
           {% for terapia in admision.oxigeno_terapias.all %}
           <tr>
             <td data-title="Fecha y Hora">{{ terapia.created|date:"d/m/Y P" }} a {{ terapia.final|date:"d/m/Y P" }}</td>

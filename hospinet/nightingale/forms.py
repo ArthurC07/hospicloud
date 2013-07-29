@@ -20,7 +20,7 @@ from spital.models import Admision
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
                                 OrdenMedica, SignoVital, Medicamento,
-                                Devolucion, Sumario, OxigenoTerapia)
+                                Devolucion, Sumario, OxigenoTerapia, Honorario)
 from django.contrib.auth.models import User
 from chosen import forms as chosenforms
 from persona.forms import DateTimeWidget
@@ -393,3 +393,17 @@ class OxigenoTerapiaForm(forms.ModelForm):
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Oxigeno Terapia', *self.field_names)
+
+
+class HonorarioForm(AdmisionBaseForm):
+
+    class Meta:
+
+        model = Honorario
+
+    item = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+
+    def __init__(self, *args, **kwargs):
+
+        super(HonorarioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Honorarios', *self.field_names)

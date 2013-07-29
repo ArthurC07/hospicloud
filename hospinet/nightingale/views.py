@@ -21,11 +21,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView, FormView)
-from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
+from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm, HonorarioForm,
     InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm, NotaEnfermeriaForm,
     OrdenMedicaForm, SignoVitalForm, MedicamentoForm, DosisForm, DevolucionForm,
     SumarioForm, DosificarForm, MedicamentoUpdateForm, OxigenoTerapiaForm)
-from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina,
+from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Honorario,
     Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital,
     Medicamento, Dosis, Devolucion, Sumario, OxigenoTerapia)
 from spital.models import Admision
@@ -539,3 +539,18 @@ class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin):
     model = OxigenoTerapia
     form_class = OxigenoTerapiaForm
     context_object_name = 'oxigeno_terapia'
+
+class HonorarioCreateView(AdmisionFormMixin, UserFormMixin, LoginRequiredMixin):
+
+    model = Honorario
+    form_class = HonorarioForm
+
+class HonorarioUpdateView(UpdateView, LoginRequiredMixin):
+
+    model = Honorario
+    form_class = HonorarioForm
+    context_object_name = 'honorario'
+
+class HonorarioDeleteView(DeleteView, LoginRequiredMixin):
+
+    model = Honorario
