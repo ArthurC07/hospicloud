@@ -191,8 +191,27 @@ class Venta(TimeStampedModel):
         aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(100)
         disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / Decimal(100)
         
-        return self.precio + aumento + disminucion
-    
+        return self.precio + aumento - disminucion
+
+    def precio_previo(self):
+
+        if not self.recibo.tipo_de_venta:
+
+            return self.precio
+
+        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(100)
+
+        return self.precio + aumento
+
+    def descuento_tipo(self):
+
+        if not self.recibo.tipo_de_venta:
+
+            return Decimal(0)
+
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / Decimal(100)
+        return disminucion
+
     def tax(self):
         
         """Obtiene los impuestos a pagar por esta :class:`Venta`"""
