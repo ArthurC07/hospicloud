@@ -238,6 +238,10 @@ class Admision(models.Model):
 
     def precio_diario(self):
 
+        if not self.tipo_de_venta:
+
+            return self.habitacion.item.precio_de_venta
+
         aumento = self.tipo_de_venta.incremento * self.habitacion.item.precio_de_venta / Decimal(100)
         disminucion = self.tipo_de_venta.disminucion * self.habitacion.item.precio_de_venta / Decimal(100)
 
