@@ -175,11 +175,11 @@ urlpatterns = patterns('',
         NightingaleDetailView.as_view(template_name='nightingale/oxigeno.html'),
         name='enfermeria-oxigeno'),
     
-    url(r'^(?P<admision>\d+)/oxigeno/iniciar$',
+    url(r'^(?P<pk>\d+)/oxigeno/iniciar$',
         OxigenoTerapiaCreateView.as_view(),
         name='enfermeria-oxigeno-iniciar'),
     
-    url(r'^(?P<admision>\d+)/oxigeno/terminar$',
+    url(r'^(?P<pk>\d+)/oxigeno/terminar$',
         OxigenoTerapiaUpdateView.as_view(),
         name='enfermeria-oxigeno-terminar'),
 )

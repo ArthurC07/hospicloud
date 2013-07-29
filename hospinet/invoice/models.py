@@ -21,7 +21,7 @@ from django.contrib.auth.models import User
 from django_extensions.db.models import TimeStampedModel
 from decimal import Decimal
 from persona.models import Persona
-from inventory.models import ItemTemplate
+from inventory.models import ItemTemplate, TipoVenta
 
 class Recibo(TimeStampedModel):
     
@@ -34,6 +34,7 @@ class Recibo(TimeStampedModel):
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
     cajero = models.ForeignKey(User, related_name='recibos')
+    tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
     
     def get_absolute_url(self):
         
@@ -179,8 +180,19 @@ class Venta(TimeStampedModel):
             
             return Decimal(0)
         
-        return Decimal(self.precio * self.cantidad)
-
+        return Decimal(self.precio_unitario() * self.cantidad)
+    
+    def precio_unitario(self):
+        
+        if not self.recibo.tipo_de_venta:
+            
+            return self.precio
+        
+        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(100)
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / Decimal(100)
+        
+        return self.precio + aumento + disminucion
+    
     def tax(self):
         
         """Obtiene los impuestos a pagar por esta :class:`Venta`"""

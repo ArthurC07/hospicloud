@@ -45,7 +45,7 @@
             <td data-title="Código">{{ admision.habitacion.item.id }}</td>
             <td data-title="Cargo">{{ admision.habitacion.item }}</td>
             <td data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
-            <td data-title="Precio Unitario">{{ admision.habitacion.item.precio_de_venta }}</td>
+            <td data-title="Precio Unitario">{{ admision.precio_diario }}</td>
             <td data-title="Total">{{ admision.debido }}</td>
             <td></td>
             <td class="no-print" data-title="Acciones"></td>
@@ -70,7 +70,7 @@
             <td data-title="Código">{{ cargo.cargo.id }}</td>
             <td data-title="Cargo">{{ cargo.cargo }}</td>
             <td data-title="Cantidad">{{ cargo.cantidad }}</td>
-            <td data-title="Precio Unitario">{{ cargo.cargo.precio_de_venta }}</td>
+            <td data-title="Precio Unitario">{{ cargo.precio_unitario }}</td>
             <td data-title="Total">{{ cargo.valor }}</td>
             <td>{{ cargo.usuario }}</td>
             <td class="no-print" data-title="Acciones"><a class="btn btn-danger" href="{% url 'enfermeria-cargo-eliminar' cargo.id %}"><i class="icon-trash"></i> Eliminar</a></td>

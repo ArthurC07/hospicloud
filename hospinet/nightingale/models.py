@@ -25,6 +25,19 @@ from django_extensions.db.models import TimeStampedModel
 from datetime import timedelta
 from decimal import Decimal
 
+class Precio(object):
+
+    def precio_unitario(self):
+
+        if not self.admision.tipo_de_venta:
+
+            return self.cargo.precio_de_venta
+
+        aumento = self.admision.tipo_de_venta.incremento * self.cargo.precio_de_venta / Decimal(100)
+        disminucion = self.admision.tipo_de_venta.disminucion * self.cargo.precio_de_venta / Decimal(100)
+
+        return self.cargo.precio_de_venta + aumento - disminucion
+
 class Turno(object):
     
     def get_turno(self):
@@ -121,7 +134,7 @@ class Evolucion(models.Model):
         
         return reverse('nightingale-view-id', args=[self.admision.id])
 
-class Cargo(TimeStampedModel, Turno):
+class Cargo(TimeStampedModel, Precio):
     
     """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
     
@@ -141,13 +154,7 @@ class Cargo(TimeStampedModel, Turno):
     
     def valor(self):
         
-        return self.cantidad * self.cargo.precio_de_venta
-
-Admision.estado_de_cuenta = property(lambda a: sum(c.valor() for c
-                                                   in a.cargos.filter(facturada=False).all())
-                                     + sum(o.valor() for o
-                                                   in a.oxigeno_terapias.all())
-                                     + a.debido())
+        return self.cantidad * self.precio_unitario()
 
 class OrdenMedica(models.Model):
     
@@ -450,7 +457,7 @@ class Devolucion(TimeStampedModel, Turno):
         return reverse('enfermeria-medicamentos',
                        args=[self.medicamento.admision.id])
 
-class OxigenoTerapia(TimeStampedModel):
+class OxigenoTerapia(TimeStampedModel, Precio):
     
     """Registra los tiempos en los cuales el paciente ha utilizado oxigeno"""
     
@@ -458,13 +465,14 @@ class OxigenoTerapia(TimeStampedModel):
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                                    related_name='oxigeno_terapias')
     terminada = models.BooleanField(default=False)
+    facturada = models.NullBooleanField(default=False)
     
     def get_absolute_url(self):
         
         """Obtiene la URL absoluta"""
         
         return reverse('enfermeria-oxigeno', args=[self.admision.id])
-    
+
     def tiempo(self):
         
         """Calcula el tiempo que la :class:`Persona` ha utilizado Oxigeno"""
@@ -479,7 +487,7 @@ class OxigenoTerapia(TimeStampedModel):
     
     def valor(self):
         
-        return self.litros() * self.cargo.precio_de_venta
+        return self.litros() * self.precio_unitario()
     
     def final(self):
         
@@ -487,3 +495,19 @@ class OxigenoTerapia(TimeStampedModel):
             return timezone.now()
             
         return self.modified
+
+class Honorario(TimeStampedModel):
+    
+    """Permite agregar un cargo que no utiliza los precios predefinidos"""
+    
+    admision = models.ForeignKey(Admision, related_name='honorarios')
+    item = models.ForeignKey(ItemTemplate, blank=True, null=True,
+                                   related_name='honorarios')
+    monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    facturada = models.NullBooleanField(default=False)
+    
+    def get_absolute_url(self):
+        
+        """Obtiene la URL absoluta"""
+        
+        return reverse('enfermeria-honorarios', args=[self.admision.id])

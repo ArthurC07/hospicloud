@@ -1,13 +1,12 @@
 django>=1.5
 django_countries
 django-treemenus
-sorl.thumbnail
-python-whoosh
-haystack>=2.0.0-beta
+sorl-thumbnail
 django-tastypie
 django-extensions
 south
-django-audit-log
 django-templated-email
 django-userena
 django-chosen
+django-bootstrap-pagination
+django-crispy-forms
