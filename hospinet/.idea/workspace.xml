@@ -21,11 +21,12 @@
     <ignored path=".idea/workspace.xml" />
     <file path="/Dummy.txt" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375050403727" ignored="false" />
     <file path="/requirements.txt" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375050667642" ignored="false" />
-    <file path="/models.py" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375056428905" ignored="false" />
+    <file path="/models.py" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375058043292" ignored="false" />
     <file path="/views.py" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375051515207" ignored="false" />
     <file path="/admin.py" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375054120473" ignored="false" />
     <file path="/cuenta.html" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375056104632" ignored="false" />
     <file path="/forms.py" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375056912387" ignored="false" />
+    <file path="/recibo_detail.html" changelist="8470f082-7425-48bb-adaa-48d01e874c48" time="1375058104197" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,10 +125,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="forms.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="forms.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/spital/forms.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="63" selection-start="1394" selection-end="1394" vertical-scroll-proportion="0.5700599">
+            <state line="34" column="63" selection-start="1394" selection-end="1394" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -136,16 +137,16 @@
       <file leaf-file-name="models.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/invoice/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="186" column="41" selection-start="6143" selection-end="6143" vertical-scroll-proportion="0.0">
+            <state line="210" column="0" selection-start="6763" selection-end="6763" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/inventory/models.py">
+      <file leaf-file-name="recibo_detail.html" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/invoice/templates/invoice/recibo_detail.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="44" selection-start="815" selection-end="815" vertical-scroll-proportion="0.0">
+            <state line="88" column="0" selection-start="2337" selection-end="2337" vertical-scroll-proportion="0.9579728">
               <folding />
             </state>
           </provider>
@@ -182,12 +183,13 @@
         <option value="$PROJECT_DIR$/invoice/views.py" />
         <option value="$PROJECT_DIR$/inventory/admin.py" />
         <option value="$PROJECT_DIR$/emergency/models.py" />
-        <option value="$PROJECT_DIR$/invoice/models.py" />
         <option value="$PROJECT_DIR$/nightingale/models.py" />
-        <option value="$PROJECT_DIR$/inventory/models.py" />
         <option value="$PROJECT_DIR$/spital/models.py" />
         <option value="$PROJECT_DIR$/nightingale/templates/enfermeria/cuenta.html" />
         <option value="$PROJECT_DIR$/spital/forms.py" />
+        <option value="$PROJECT_DIR$/inventory/models.py" />
+        <option value="$PROJECT_DIR$/invoice/models.py" />
+        <option value="$PROJECT_DIR$/invoice/templates/invoice/recibo_detail.html" />
       </list>
     </option>
   </component>
@@ -251,7 +253,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="spital" />
+              <option name="myItemId" value="invoice" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -265,7 +267,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="emergency" />
+              <option name="myItemId" value="invoice" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="invoice" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -556,13 +562,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/invoice/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="0" selection-start="741" selection-end="741" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/imaging/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="341" column="59" selection-start="11394" selection-end="11394" vertical-scroll-proportion="0.0">
@@ -579,13 +578,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/invoice/templates/invoice/recibo_detail.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="2" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/emergency/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="65" column="0" selection-start="2687" selection-end="2687" vertical-scroll-proportion="0.4479042">
@@ -595,23 +587,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/invoice/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="186" column="41" selection-start="6143" selection-end="6143" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nightingale/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="33" column="45" selection-start="1233" selection-end="1441" vertical-scroll-proportion="-17.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/inventory/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="44" selection-start="815" selection-end="815" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -639,9 +617,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/inventory/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="262" column="0" selection-start="9383" selection-end="9383" vertical-scroll-proportion="5.3341317">
+          <folding>
+            <element signature="e#742#769#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/invoice/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="741" selection-end="741" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/spital/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="63" selection-start="1394" selection-end="1394" vertical-scroll-proportion="0.5700599">
+        <state line="34" column="63" selection-start="1394" selection-end="1394" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/invoice/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="210" column="0" selection-start="6763" selection-end="6763" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/invoice/templates/invoice/recibo_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="0" selection-start="2337" selection-end="2337" vertical-scroll-proportion="0.9579728">
           <folding />
         </state>
       </provider>
