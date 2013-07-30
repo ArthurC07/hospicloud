@@ -15,40 +15,39 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from invoice.models import Recibo, Venta
 from django.contrib.auth.models import User
 from django import forms
-from persona.models import Persona
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from chosen import forms as chosenforms
+
+from invoice.models import Recibo, Venta
+from persona.models import Persona
 from inventory.forms import FieldSetFormMixin
 from emergency.models import Emergencia
 from spital.models import Admision
 from imaging.models import Examen
-from chosen import forms as chosenforms
 from inventory.models import ItemTemplate
 
+
 class ReciboForm(forms.ModelForm):
-    
     """Genera un formulario para :class:`Recibo`:"""
-    
+
     class Meta:
-        
         model = Recibo
         exclude = ('nulo', 'cerrado')
-    
+
     cajero = forms.ModelChoiceField(label="",
-                                  queryset=User.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-    
+                                    queryset=User.objects.all(),
+                                    widget=forms.HiddenInput(), required=False)
+
     cliente = forms.ModelChoiceField(label="",
-                                  queryset=Persona.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
+                                     queryset=Persona.objects.all(),
+                                     widget=forms.HiddenInput(), required=False)
+
 
 class ReciboNewForm(ReciboForm):
-    
     def __init__(self, *args, **kwargs):
-
         super(ReciboNewForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
@@ -57,22 +56,20 @@ class ReciboNewForm(ReciboForm):
         self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Datos del Recibo', *self.field_names)
 
-class VentaForm(FieldSetFormMixin):
-    
-    """Genera un formulario para :class:`Venta`"""
-    
-    class Meta:
 
+class VentaForm(FieldSetFormMixin):
+    """Genera un formulario para :class:`Venta`"""
+
+    class Meta:
         model = Venta
         exclude = ('precio', 'impuesto',)
-    
-    recibo = forms.ModelChoiceField(label="",
-                                  queryset=Recibo.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
-    
-    def __init__(self, *args, **kwargs):
 
+    recibo = forms.ModelChoiceField(label="",
+                                    queryset=Recibo.objects.all(),
+                                    widget=forms.HiddenInput(), required=False)
+    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+
+    def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
@@ -80,18 +77,17 @@ class VentaForm(FieldSetFormMixin):
         self.helper.add_input(Submit('submit', 'Agregar'))
         self.helper.layout = Fieldset(u'Agregar un Cargo', *self.field_names)
 
-class PeriodoForm(forms.Form):
-    
-    inicio = forms.DateTimeField(widget=forms.DateInput(
-                    attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
-                 input_formats=('%d/%m/%Y',))
-    
-    fin = forms.DateTimeField(widget=forms.DateInput(
-                    attrs={'class': 'datepicker' }, format='%d/%m/%Y'),
-                 input_formats=('%d/%m/%Y',))
-    
-    def __init__(self, *args, **kwargs):
 
+class PeriodoForm(forms.Form):
+    inicio = forms.DateTimeField(widget=forms.DateInput(
+        attrs={'class': 'datepicker'}, format='%d/%m/%Y'),
+                                 input_formats=('%d/%m/%Y',))
+
+    fin = forms.DateTimeField(widget=forms.DateInput(
+        attrs={'class': 'datepicker'}, format='%d/%m/%Y'),
+                              input_formats=('%d/%m/%Y',))
+
+    def __init__(self, *args, **kwargs):
         super(PeriodoForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
@@ -99,59 +95,50 @@ class PeriodoForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Mostrar'))
         self.helper.form_method = 'get'
         self.helper.layout = Fieldset(u'Por Periodo', *self.field_names)
-    
+
     def set_legend(self, text):
-        
         self.helper.layout = Fieldset(text, *self.field_names)
-    
+
     def set_action(self, action):
-        
         self.helper.form_action = action
 
+
 class EmergenciaFacturarForm(FieldSetFormMixin):
-    
     class Meta:
-        
         model = Emergencia
         fields = ('facturada', )
-    
+
     def __init__(self, *args, **kwargs):
-        
         super(EmergenciaFacturarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Facturar Emergencia',
                                       *self.field_names)
 
+
 class AdmisionFacturarForm(FieldSetFormMixin):
-    
     class Meta:
-        
         model = Admision
         fields = ('facturada', )
-    
+
     def __init__(self, *args, **kwargs):
-        
         super(AdmisionFacturarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Facturar Admisión',
                                       *self.field_names)
 
+
 class ExamenFacturarForm(FieldSetFormMixin):
-    
     class Meta:
-        
         model = Examen
         fields = ('facturado', 'radiologo', 'remitio')
-    
+
     def __init__(self, *args, **kwargs):
-        
         super(ExamenFacturarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Facturar Examen',
                                       *self.field_names)
 
+
 class CorteForm(PeriodoForm):
-    
     usuario = forms.ModelChoiceField(queryset=User.objects.all())
-    
+
     def __init__(self, *args, **kwargs):
-        
         super(CorteForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Corte de Caja', *self.field_names)

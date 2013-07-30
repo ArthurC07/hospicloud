@@ -635,6 +635,7 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
             venta.cantidad = 1
             venta.precio = honorario.monto
             venta.impuesto = honorario.item.impuestos
+            venta.descontable = False
 
             venta.save()
             recibo.ventas.add(venta)
@@ -716,7 +717,6 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
         for recibo in self.recibos.all():
 
             for venta in recibo:
-
                 doctores[recibo.radiologo.upper()]['monto'] += recibo.total()
                 doctores[recibo.radiologo.upper()]['cantidad'] += 1
                 doctores[recibo.radiologo.upper()]['comision'] += recibo.comision_radiologo()
