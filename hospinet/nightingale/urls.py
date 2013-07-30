@@ -100,7 +100,7 @@ urlpatterns = patterns('',
         IngestaCreateView.as_view(),
         name='enfermeria-ingesta-agregar'),
     
-    url(r'^(?P<admision>\d+)/ingesta/agregar$',
+    url(r'^(?P<admision>\d+)/excreta/agregar$',
         ExcretaCreateView.as_view(),
         name='enfermeria-excreta-agregar'),
     
