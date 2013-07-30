@@ -253,7 +253,7 @@ class Glicemia(models.Model, Turno):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('nightingale-glucometria-id', args=[self.admision.id])
+        return reverse('nightingale-glucometria', args=[self.admision.id])
 
 class Glucosuria(models.Model, Turno):
     
@@ -270,7 +270,7 @@ class Glucosuria(models.Model, Turno):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('nightingale-glucometria-id', args=[self.admision.id])
+        return reverse('nightingale-glucometria', args=[self.admision.id])
 
 class Insulina(models.Model, Turno):
     
@@ -287,7 +287,7 @@ class Insulina(models.Model, Turno):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('nightingale-glucometria-id', args=[self.admision.id])
+        return reverse('nightingale-glucometria', args=[self.admision.id])
 
 class Sumario(TimeStampedModel):
     
