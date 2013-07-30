@@ -165,6 +165,13 @@ class RequisicionFormMixin(CreateView):
         initial['requisicion'] = self.requisicion.id
         return initial
 
+    def get_context_data(self, **kwargs):
+
+        context = super(RequisicionFormMixin, self).get_context_data(**kwargs)
+        context['requisicion'] = self.requisicion
+
+        return context
+
 class ItemRequisicionCreateView(RequisicionFormMixin, LoginRequiredMixin):
     
     model = ItemRequisicion

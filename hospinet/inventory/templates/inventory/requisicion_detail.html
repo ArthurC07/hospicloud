@@ -17,6 +17,9 @@
           <a href="{% url 'item-requisicion-create' requisicion.id %}">Agregar Producto</a>
         </li>
         <li>
+            <a href="{% url 'transferencia-create' requisicion.id %}">Efectuar Transferencia</a>
+        </li>
+        <li>
           <a href="{% url 'requisicion-completar' requisicion.id %}">Completar Requisici&oacute;n</a>
         </li>
         {% endif %}

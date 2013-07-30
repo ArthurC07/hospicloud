@@ -122,7 +122,7 @@ class RequisicionCompletarForm(forms.ModelForm):
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Aplicar'))
-        self.helper.layout = Fieldset(u'¿Completar la Requisción Ahora?',
+        self.helper.layout = Fieldset(u'¿Completar la Requisición Ahora?',
                                       *self.field_names)
 
 
