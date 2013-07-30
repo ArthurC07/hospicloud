@@ -232,7 +232,7 @@ class OrdenMedicaForm(BaseForm):
        
     def __init__(self, *args, **kwargs):
 
-        super(IngestaForm, self).__init__(*args, **kwargs)
+        super(OrdenMedicaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Orden Médica',
                                       *self.field_names)
 
