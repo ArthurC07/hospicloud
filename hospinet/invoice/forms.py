@@ -142,3 +142,9 @@ class CorteForm(PeriodoForm):
     def __init__(self, *args, **kwargs):
         super(CorteForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Corte de Caja', *self.field_names)
+
+class InventarioForm(PeriodoForm):
+
+    def __init__(self, *args, **kwargs):
+        super(InventarioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Relación entre Ventas e Inventario', *self.field_names)

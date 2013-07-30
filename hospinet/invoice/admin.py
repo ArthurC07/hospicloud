@@ -16,8 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from invoice.models import (Recibo, Producto, Venta)
+from invoice.models import (Recibo, Venta)
 
 admin.site.register(Recibo)
-admin.site.register(Producto)
 admin.site.register(Venta)

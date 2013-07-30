@@ -20,6 +20,7 @@ from datetime import datetime, time
 from decimal import Decimal
 
 from django.contrib import messages
+from django.db import models
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -37,7 +38,9 @@ from persona.forms import PersonaForm
 from invoice.models import Recibo, Venta
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
-                           CorteForm, ExamenFacturarForm, ReciboNewForm)
+                           CorteForm, ExamenFacturarForm, ReciboNewForm,
+                           InventarioForm)
+from inventory.models import ItemTemplate
 
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
@@ -254,6 +257,9 @@ class IndexView(TemplateView, LoginRequiredMixin):
 
         context['corteform'] = CorteForm(prefix='corte')
         context['corteform'].set_action('invoice-corte')
+
+        context['inventarioform'] = InventarioForm(prefix='inventario')
+        context['inventarioform'].set_action('invoice-inventario')
 
         return context
 
@@ -707,25 +713,34 @@ class CorteView(ReciboPeriodoView):
 class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
     template_name = 'invoice/recibo_inventario_list.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        """Agrega el formulario"""
+
+        self.form = InventarioForm(request.GET, prefix='inventario')
+
+        return super(ReciboInventarioView, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
 
         context = super(ReciboInventarioView, self).get_context_data(**kwargs)
 
-        context['cantidad'] = Decimal('0')
-        items = defaultdict(lambda: defaultdict(Decimal))
+        items = defaultdict(lambda: defaultdict(int))
 
-        for recibo in self.recibos.all():
+        ventas = Venta.objects.filter(recibo__created__gte=self.inicio,
+                                      recibo__created__lte=self.fin)
 
-            for venta in recibo:
-                doctores[recibo.radiologo.upper()]['monto'] += recibo.total()
-                doctores[recibo.radiologo.upper()]['cantidad'] += 1
-                doctores[recibo.radiologo.upper()]['comision'] += recibo.comision_radiologo()
+        for venta in ventas.all():
+            items[venta.item]['cantidad'] += venta.cantidad
 
-        context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
-        context['costo'] = sum(r.total() for r in self.recibos.all())
+        queryset = ItemTemplate.objects.annotate(total=models.Sum('items__cantidad'))
 
-        context['recibos'] = self.recibos
+        for item in queryset.all():
+
+            if item in items:
+
+                items[item]['inventario'] = item.total
+
         context['inicio'] = self.inicio
-        context['doctores'] = doctores.items()
+        context['items'] = items.items()
         context['fin'] = self.fin
         return context

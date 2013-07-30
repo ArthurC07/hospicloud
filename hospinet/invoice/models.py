@@ -127,23 +127,6 @@ class Recibo(TimeStampedModel):
         return sum(v.placas for v in self.ventas.all())
 
 
-class Producto(TimeStampedModel):
-    """Describe los diversos productos y servicios que serán vendidos
-    por la empresa"""
-
-    nombre = models.CharField(max_length=255)
-    descripcion = models.TextField(blank=True)
-    precio = models.DecimalField(decimal_places=2, max_digits=10)
-    impuesto = models.DecimalField(decimal_places=2, max_digits=4)
-    comision = models.DecimalField(decimal_places=2, max_digits=4,
-                                   default=Decimal("30.00"))
-
-    def __unicode__(self):
-        """Crea una representación en texto del producto"""
-
-        return self.nombre
-
-
 class Venta(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
     realizar los cobros asociados"""

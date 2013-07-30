@@ -15,10 +15,19 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType, TipoVenta)
+from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType,
+                              TipoVenta, Item, ItemComprado, ItemRequisicion,
+                              Transferencia, Transferido, Proveedor, Compra)
 
 admin.site.register(ItemTemplate)
 admin.site.register(Requisicion)
 admin.site.register(Inventario)
 admin.site.register(ItemType)
 admin.site.register(TipoVenta)
+admin.site.register(Item)
+admin.site.register(Transferido)
+admin.site.register(Transferencia)
+admin.site.register(Compra)
+admin.site.register(ItemComprado)
+admin.site.register(ItemRequisicion)
+admin.site.register(Proveedor)

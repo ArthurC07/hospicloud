@@ -239,7 +239,6 @@ class Admision(models.Model):
     def precio_diario(self):
 
         if not self.tipo_de_venta:
-
             return self.habitacion.item.precio_de_venta
 
         aumento = self.tipo_de_venta.incremento * self.habitacion.item.precio_de_venta / Decimal(100)
@@ -298,7 +297,7 @@ class Admision(models.Model):
             items[cargo.cargo] += cargo.cantidad
             cargo.facturada = True
             cargo.save()
-            
+
         for oxigeno in self.oxigeno_terapias.all():
             items[oxigeno.cargo] += oxigeno.litros()
             oxigeno.facturada = True

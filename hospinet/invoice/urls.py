@@ -21,7 +21,7 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
      ReciboRemiteView, ReciboRadView, EmergenciaPeriodoView, ReciboCerrarView,
      ReciboExamenCreateView, EmergenciaDiaView, AdmisionAltaView,
     EmergenciaFacturarView, AdmisionFacturarView, CorteView, ExamenView,
-    ReporteReciboDetailView, ReporteTipoView, ReciboCreateView)
+    ReporteReciboDetailView, ReporteTipoView, ReciboCreateView, ReciboInventarioView)
 
 urlpatterns = patterns('',
     
@@ -96,6 +96,10 @@ urlpatterns = patterns('',
     url(r'^corte',
         CorteView.as_view(),
         name='invoice-corte'),
+
+    url(r'^inventario',
+        ReciboInventarioView.as_view(),
+        name='invoice-inventario'),
 
     url(r'^dia/altas',
         AdmisionAltaView.as_view(),
