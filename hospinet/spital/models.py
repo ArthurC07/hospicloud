@@ -234,6 +234,9 @@ class Admision(models.Model):
         if self.ultimo_cobro >= ahora:
             return 0
 
+        dias = (ahora - self.ultimo_cobro).days
+        if dias < 1:
+            return 1
         return (ahora - self.ultimo_cobro).days
 
     def precio_diario(self):
@@ -244,7 +247,7 @@ class Admision(models.Model):
         aumento = self.tipo_de_venta.incremento * self.habitacion.item.precio_de_venta / Decimal(100)
         disminucion = self.tipo_de_venta.disminucion * self.habitacion.item.precio_de_venta / Decimal(100)
 
-        return self.habitacion.item.precio_de_venta + aumento - disminucion
+        return (self.habitacion.item.precio_de_venta + aumento - disminucion).quantize(Decimal("0.01"))
 
     def debido(self):
 
