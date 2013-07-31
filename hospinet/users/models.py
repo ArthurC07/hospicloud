@@ -38,6 +38,8 @@ def create_user_profile(sender, instance, created, **kwargs):
     
     if created:
         UserProfile.objects.create(user=instance)
+        from guardian.shortcuts import assign_perm
+        assign_perm('change_profile', instance, instance.get_profile())
 
 post_save.connect(create_user_profile, sender=User)
 
