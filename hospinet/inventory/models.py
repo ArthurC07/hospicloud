@@ -16,12 +16,14 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from decimal import Decimal
+from datetime import date
 
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
+
 
 class Inventario(models.Model):
     lugar = models.CharField(max_length=255, default='Bodega')
@@ -52,6 +54,7 @@ class Inventario(models.Model):
     def transferencias_salientes(self):
         return self.salidas.filter(aplicada=False).all()
 
+
 class ItemType(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
@@ -60,6 +63,7 @@ class ItemType(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('inventario-index')
+
 
 class ItemTemplate(TimeStampedModel):
     """"""
@@ -91,11 +95,13 @@ class ItemTemplate(TimeStampedModel):
 
         return reverse('itemtemplate', args=[self.id])
 
+
 class Proveedor(models.Model):
     name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
 
     def __unicode__(self):
         return self.name
+
 
 class Item(TimeStampedModel):
     plantilla = models.ForeignKey(ItemTemplate, related_name='items')
@@ -143,6 +149,7 @@ class Requisicion(TimeStampedModel):
             return r[0]
         return ItemRequisicion(requisicion=self, item=item_template)
 
+
 class ItemRequisicion(TimeStampedModel):
     requisicion = models.ForeignKey(Requisicion, related_name='items')
     item = models.ForeignKey(ItemTemplate, related_name='requisiciones')
@@ -166,6 +173,7 @@ class ItemRequisicion(TimeStampedModel):
             self.entregada = True
 
         self.save()
+
 
 class Transferencia(TimeStampedModel):
     requisicion = models.ForeignKey(Requisicion, related_name='transferencias',
@@ -243,6 +251,7 @@ class ItemComprado(TimeStampedModel):
                              null=True)
     ingresado = models.BooleanField(default=False)
 
+
 class ItemAction(TimeStampedModel):
     """Crea un registro de cada movimiento efectuado por un :class:`User`
     en un :class:`Item`"""
@@ -250,6 +259,7 @@ class ItemAction(TimeStampedModel):
     user = models.ForeignKey(User)
     action = models.TextField()
     item = models.ForeignKey(ItemTemplate, related_name='acciones')
+
 
 class TipoVenta(TimeStampedModel):
     descripcion = models.CharField(max_length=255, blank=True, null=True)
@@ -260,3 +270,24 @@ class TipoVenta(TimeStampedModel):
 
     def __unicode__(self):
         return self.descripcion
+
+
+class Historial(TimeStampedModel):
+    inventario = models.ForeignKey(Inventario, related_name='historico')
+    fecha = models.DateField(default=date.today())
+
+    def __unicode__(self):
+
+        return u'{0} el {1}'.format(self.inventario.lugar,
+                                    self.fecha.strftime('%d/%m/Y'))
+
+
+class ItemHistorial(TimeStampedModel):
+    historial = models.ForeignKey(Historial, related_name='items')
+    item = models.ForeignKey(ItemTemplate, related_name='historicos')
+
+    def __unicode__(self):
+
+        return u'{0} {1} el {2}'.format(self.item.descripcion,
+                                        self.historial.inventario.lugar,
+                                        self.fecha.strftime('%d/%m/Y'))

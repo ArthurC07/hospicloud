@@ -20,7 +20,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from chosen import forms as chosenforms
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
-    Requisicion, ItemRequisicion, Transferencia, Transferido)
+                              Requisicion, ItemRequisicion, Transferencia,
+                              Transferido, ItemComprado)
 
 class FieldSetFormMixin(forms.ModelForm):
     
@@ -185,4 +186,31 @@ class TransferidoForm(FieldSetFormMixin):
         
         super(TransferidoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Producto a Transferir',
+                                      *self.field_names)
+
+class HistorialForm(FieldSetFormMixin):
+
+    class Meta:
+
+        model = Transferido
+
+    def __init__(self, *args, **kwargs):
+
+        super(HistorialForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Crear Historial de Inventario',
+                                      *self.field_names)
+
+class ItemCompradoForm(FieldSetFormMixin):
+
+    class Meta:
+
+        model = ItemComprado
+        exclude = ('ingresado', )
+
+    item = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+
+    def __init__(self, *args, **kwargs):
+
+        super(ItemCompradoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Producto Comprado',
                                       *self.field_names)
