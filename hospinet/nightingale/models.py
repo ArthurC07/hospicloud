@@ -154,7 +154,7 @@ class Cargo(TimeStampedModel, Precio):
     
     def valor(self):
         
-        return self.cantidad * self.precio_unitario()
+        return (self.cantidad * self.precio_unitario()).quantize(Decimal("0.01"))
 
 class OrdenMedica(models.Model):
     

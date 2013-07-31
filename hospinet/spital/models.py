@@ -252,7 +252,7 @@ class Admision(models.Model):
         if not self.tipo_de_venta:
             return self.tiempo_cobro() * self.habitacion.item.precio_de_venta
 
-        return self.tiempo_cobro() * self.precio_diario()
+        return (self.tiempo_cobro() * self.precio_diario()).quantize(Decimal("0.01"))
 
     def dar_alta(self):
 
@@ -331,7 +331,7 @@ class Admision(models.Model):
         if not honorarios['monto__sum']:
             honorarios['monto__sum'] = 0
 
-        return cargos + oxigeno + Decimal(honorarios['monto__sum']) + self.debido()
+        return (cargos + oxigeno + Decimal(honorarios['monto__sum']) + self.debido()).quantize(Decimal("0.01"))
 
 
 class PreAdmision(TimeStampedModel):
