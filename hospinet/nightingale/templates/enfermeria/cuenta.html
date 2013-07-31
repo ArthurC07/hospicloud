@@ -12,7 +12,7 @@
   <div class="row">
     <section class="span9 full-size-print">
     <div class="row">
-        <div class="span9">
+        <div class="span6">
             <ul>
                 <li>
                     Tiempo Total Hospitalizado: {{ admision.tiempo_hospitalizado }}
@@ -24,6 +24,9 @@
                     Tipo de Ingreso: {{ admision.tipo_de_venta }}
                 </li>
             </ul>
+        </div>
+        <div class="span3">
+            <a class="btn btn-block" href="{% url 'admision-invoice' admision.id %}">Facturar</a>
         </div>
     </div>
       <div class="page-header">
