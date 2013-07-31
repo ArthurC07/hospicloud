@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-  <section id="cargos" class="span12">
+  <section class="span12">
     <div class="page-header">
-      <h1>{{ admision.paciente.nombre_completo }} <small>{{ admision.habitacion }}</small></h1>
+      <h1>{{ admision.paciente.nombre_completo }} <small>Cuenta {{ admision.id }}</small></h1>
     </div>
+
+      {% include 'snippets/persona.html' with persona=admision.paciente %}
   </section>
 </div>
 <div class="row">
-  {% include 'snippets/aside.html' with admision=admision %}
-  <div class="row">
-    <section class="span9 full-size-print">
+    <section class="span12 full-size-print">
     <div class="row">
-        <div class="span6">
+        <div class="span9">
             <ul>
                 <li>
                     Tiempo Total Hospitalizado: {{ admision.tiempo_hospitalizado }}
@@ -26,7 +26,7 @@
             </ul>
         </div>
         <div class="span3">
-            <a class="btn btn-block" href="{% url 'admision-invoice' admision.id %}">Facturar</a>
+            <a class="btn btn-block no-print" href="{% url 'admision-invoice' admision.id %}">Facturar</a>
         </div>
     </div>
       <div class="page-header">
@@ -41,7 +41,7 @@
             <th>Cantidad</th>
             <th>Precio Unitario</th>
             <th>Precio Valor Total</th>
-            <th>Usuario</th>
+            <th class="no-print">Usuario</th>
             <th class="no-print">Acciones</th>
           </tr>
         </thead>
@@ -53,7 +53,7 @@
             <td data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
             <td data-title="Precio Unitario">{{ admision.precio_diario }}</td>
             <td data-title="Total">{{ admision.debido }}</td>
-            <td></td>
+            <td class="no-print"></td>
             <td class="no-print" data-title="Acciones"></td>
           </tr>
           {% for honorario in admision.honorarios.all %}
@@ -64,8 +64,8 @@
               <td></td>
               <td data-title="Precio Unitario">{{ honorario.monto }}</td>
               <td data-title="Total">{{ honorario.monto }}</td>
-              <td data-title="Usuario">{{ honorario.usuario.full_name }}</td>
-              <td data-title="Acciones">
+              <td class="no-print" data-title="Usuario">{{ honorario.usuario.full_name }}</td>
+              <td class="no-print"  data-title="Acciones">
                 <a class="btn btn-danger" href="{% url 'enfermeria-honorario-eliminar' honorario.id %}"><i class="icon-trash"></i> Eliminar</a>
               </td>
           </tr>
@@ -77,8 +77,8 @@
             <td data-title="Cargo">{{ terapia.cargo }}</td>
             <td data-title="Tiempo">{{ terapia.tiempo }}</td>
             <td data-title="Litros">{{ terapia.litros }}</td>
-            <td data-title="Total">{{ terapia.valor }}</td>
-            <td></td>
+            <td class="no-print" data-title="Total">{{ terapia.valor }}</td>
+            <td class="no-print"></td>
             <td data-title="Acciones">
               <a class="btn btn-danger" href="{% url 'enfermeria-oxigeno-terminar' terapia.id %}"><i class="icon-trash"></i> Terminar</a>
             </td>
@@ -92,7 +92,7 @@
             <td data-title="Cantidad">{{ cargo.cantidad }}</td>
             <td data-title="Precio Unitario">{{ cargo.precio_unitario }}</td>
             <td data-title="Total">{{ cargo.valor }}</td>
-            <td>{{ cargo.usuario }}</td>
+            <td class="no-print">{{ cargo.usuario }}</td>
             <td class="no-print" data-title="Acciones"><a class="btn btn-danger" href="{% url 'enfermeria-cargo-eliminar' cargo.id %}"><i class="icon-trash"></i> Eliminar</a></td>
           </tr>
           {% endfor %}
@@ -101,6 +101,7 @@
           <tr>
             <th colspan="5">Total</th>
             <th colspan="2">{{ admision.estado_de_cuenta }}</th>
+            <th class="no-print"></th>
           </tr>
         </tfoot>
       </table>
