@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
+{% load crispy_forms_tags %}
 <div class="row">
   <div class="span12">
     <section class="page-header">
@@ -17,15 +18,20 @@
       </ul>
     </nav>
   </aside>
-  <section class="span9">
+  <section class="span6">
       {% for inventario in inventarios %}
       <div class="row">
-        <section class="span9">
+        <section class="span6">
           <section class="page-header"><h2>{{ inventario.lugar }}</h2></section>
           <a class="btn btn-success" href="{% url 'inventario' inventario.id %}">Ver</a>
         </section>
       </div>
       {% endfor %}
   </section>
+    <section class="span3">
+        <form action="{% url 'itemtemplate-search' %}">
+            {% crispy productoform %}
+        </form>
+    </section>
 </div>
 {% endblock %}
