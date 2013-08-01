@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="row">
+  <div class="span12">
+    <section class="page-header">
+      <h1>{{ item_template.descripcion }} <small>Producto</small></h1>
+    </section>
+  </div>
+</div>
+<div class="row">
+  <aside class="span3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-stacked nav-tabs">
+          <li>
+              <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar</a>
+          </li>
+      </ul>
+    </nav>
+  </aside>
+  <section class="span9">
+    <div class="row">
+        <section class="span6">
+            <ul>
+                <li>Marca: {{ item_template.marca }}</li>
+                <li>Modelo: {{ item_template.modelo }}</li>
+                <li>Marca: {{ item_template.notas }}</li>
+                <li>Marca: {{ item_template.precio_de_venta }}</li>
+                <li>Marca: {{ item_template.costo }}</li>
+                <li>Marca: {{ item_template.impuestos }}</li>
+                <li>Marca: {{ item_template.activo }}</li>
+                <li>Grupos:
+                    <ul>
+                        {% for grupo in item_template.item_type.all %}
+                        <li>{{ grupo }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        </section>
+    </div>
+  </section>
+</div>
+{% endblock %}

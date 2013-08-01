@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.db.models import Q
 
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView)
 from django.views.generic.detail import SingleObjectMixin
@@ -27,7 +28,7 @@ from inventory.models import (Inventario, Item, ItemTemplate, Transferencia, His
                               Requisicion, ItemRequisicion,)
 from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm, HistorialForm,
                              ItemForm, RequisicionForm, ItemRequisicionForm, TransferenciaForm,
-                             TransferidoForm, CompraForm, TransferirForm,
+                             TransferidoForm, CompraForm, TransferirForm, ItemTemplateSearchForm,
                              RequisicionCompletarForm, ItemCompradoForm)
 
 
@@ -50,6 +51,8 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context = super(IndexView, self).get_context_data(**kwargs)
 
         context['inventarios'] = Inventario.objects.all()
+        context['productoform'] = ItemTemplateSearchForm()
+        context['productoform'].helper.form_tag = False
 
         return context
 
@@ -284,3 +287,26 @@ class ItemCompradoCreateView(CompraFormMixin, LoginRequiredMixin):
 class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
     model = Historial
     form_class = HistorialForm
+
+class ItemTemplateSearchView(ListView, LoginRequiredMixin):
+
+    context_object_name = 'items'
+    model = ItemTemplate
+    paginate_by = 10
+
+    def get_queryset(self):
+
+        form = ItemTemplateSearchForm(self.request.GET)
+
+        #if not form.is_valid():
+        #    redirect('admision-estadisticas')
+        form.is_valid()
+
+        query = form.cleaned_data['query']
+
+        queryset = ItemTemplate.objects.filter(
+            Q(descripcion__icontains=query)
+        )
+
+        return queryset.all()
+

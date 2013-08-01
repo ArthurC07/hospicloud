@@ -21,7 +21,8 @@ from inventory.views import (IndexView, ItemTemplateCreateView,
     InventarioDetailView, ItemCreateView, RequisicionCreateView,
     ItemRequisicionCreateView, RequisicionDetailView, TransferenciaCreateView,
     TransferenciaDetailView, TransferidoCreateView, TransferenciaUpdateView,
-    RequisicionUpdateView)
+    RequisicionUpdateView, ItemTemplateSearchView, ItemTemplateUpdateView,
+    ItemTemplateListView)
 
 urlpatterns = patterns('',
     
@@ -32,11 +33,23 @@ urlpatterns = patterns('',
     url(r'^itemtemplate/agregar$',
         ItemTemplateCreateView.as_view(),
         name='itemtemplate-create'),
+
+    url(r'^itemtemplate/buscar$',
+        ItemTemplateSearchView.as_view(),
+        name='itemtemplate-search'),
     
     url(r'^itemtemplate/(?P<pk>\d+)$',
         ItemTemplateDetailView.as_view(),
         name='itemtemplate'),
-    
+
+    url(r'^itemtemplate/(?P<pk>\d+)/editar$',
+        ItemTemplateUpdateView.as_view(),
+        name='itemtemplate-edit'),
+
+    url(r'^itemtemplate/$',
+        ItemTemplateListView.as_view(),
+        name='itemtemplate-list'),
+
     url(r'^itemtype/agregar$',
         ItemTypeCreateView.as_view(),
         name='itemtype-create'),
