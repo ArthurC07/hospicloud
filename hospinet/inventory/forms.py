@@ -71,7 +71,7 @@ class CompraForm(FieldSetFormMixin):
         model = Compra
 
     def __init__(self, *args, **kwargs):
-        super(ItemForm, self).__init__(*args, **kwargs)
+        super(CompraForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Compra',
                                       *self.field_names)
 

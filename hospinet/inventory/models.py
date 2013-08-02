@@ -247,12 +247,18 @@ class Compra(TimeStampedModel):
     def __unicode__(self):
         return u"Compra efectuada el {0}".format(self.created)
 
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('compra', args=[self.id])
+
 
 class ItemComprado(TimeStampedModel):
     compra = models.ForeignKey(Compra, related_name='items')
     item = models.ForeignKey(ItemTemplate, related_name='comprado', blank=True,
                              null=True)
     ingresado = models.BooleanField(default=False)
+    cantidad = models.IntegerField(default=0)
 
 
 class ItemAction(TimeStampedModel):
