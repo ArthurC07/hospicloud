@@ -141,6 +141,7 @@ class TransferirForm(forms.ModelForm):
     class Meta:
         model = Transferencia
         fields = ('aplicada',)
+        item = chosenforms.ChosenModelChoiceField(Requisicion.objects.filter(entregada=False).all())
 
     def __init__(self, *args, **kwargs):
         super(TransferirForm, self).__init__(*args, **kwargs)

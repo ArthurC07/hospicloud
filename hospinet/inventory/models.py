@@ -140,7 +140,7 @@ class Requisicion(TimeStampedModel):
         return reverse('requisicion', args=[self.id])
 
     def __unicode__(self):
-        return u'Requisición de {0}'.format(self.inventario.lugar)
+        return u'Requisición Número {1} de {0}'.format(self.inventario.lugar, self.id)
 
     def buscar_item(self, item_template):
         qs = self.items.filter(item=item_template)
