@@ -32,6 +32,8 @@
           <td data-title="Acciones">
             <a class="btn btn-primary btn-block" href="{% url 'enfermeria-dosificar-medicamento' medicamento.id %}">Suministrar Dosis</a>
             <a class="btn btn-success btn-block" href="{% url 'enfermeria-editar-medicamento' medicamento.id %}">Editar Posolog&iacute;a</a>
+            <a href="{% url 'enfermeria-medicamento-suspender' medicamento.id 2 %}" class="btn btn-primary">Suspender {{ medicamento.nombre }}</a>
+            <a href="{% url 'enfermeria-medicamento-suspender' medicamento.id 3 %}" class="btn btn-primary">Terminar {{ medicamento.nombre }}</a>
           </td>
         </tr>
         {% endfor %}
