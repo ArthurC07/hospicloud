@@ -264,7 +264,7 @@ class MedicamentoForm(forms.ModelForm):
     
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False)
     cargo = forms.ModelChoiceField(label='Medicamento',
-                        queryset=ItemTemplate.objects.filter(item_type__nombre='Medicamento').order_by('descripcion').all())
+                        queryset=ItemTemplate.objects.order_by('descripcion').all())
     
     admision = forms.ModelChoiceField(label="",
                                   queryset=Admision.objects.all(),
