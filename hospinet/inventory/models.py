@@ -187,9 +187,12 @@ class Transferencia(TimeStampedModel):
                                 null=True, blank=True)
 
     def __unicode__(self):
-
-        return u'Transferencia desde {0} hacia {1}'.format(self.origen.lugar,
-                                                           self.destino.lugar)
+        origen = destino = ''
+        if self.origen:
+            origen = self.origen.lugar
+        if self.destino:
+            destino = self.destino.lugar
+        return u'Transferencia desde {0} hacia {1}'.format(origen, destino)
 
     def transferir(self):
 
