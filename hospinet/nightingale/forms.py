@@ -263,8 +263,7 @@ class MedicamentoForm(forms.ModelForm):
         exclude = ('proxima_dosis', 'suministrado')
     
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False)
-    cargo = forms.ModelChoiceField(label='Medicamento',
-                        queryset=ItemTemplate.objects.order_by('descripcion').all())
+    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     
     admision = forms.ModelChoiceField(label="",
                                   queryset=Admision.objects.all(),
