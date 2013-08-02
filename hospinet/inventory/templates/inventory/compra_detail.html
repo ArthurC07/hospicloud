@@ -4,7 +4,7 @@
 <div class="row">
   <div class="span12">
     <section class="page-header">
-      <h1>{{ inventario.lugar }} <small>Inventario</small></h1>
+      <h1>{{ compra }} <small>Compra</small></h1>
     </section>
   </div>
 </div>
@@ -13,13 +13,7 @@
     <nav class="sidebar-nav">
       <ul class="nav nav-stacked nav-tabs">
         <li>
-          <a href="{% url 'item-create' inventario.id %}">Agregar Producto</a>
-        </li>
-        <li>
-          <a href="{% url 'requisicion-create' inventario.id %}">Hacer Requisici&oacute;n</a>
-        </li>
-        <li>
-          <a href="{% url 'compra-create' inventario.id %}">Ingresar Compra</a>
+          <a href="{% url 'compra-item-create' compra.id %}">Agregar Producto</a>
         </li>
       </ul>
     </nav>
@@ -42,8 +36,8 @@
           <tbody>
             {% for item in page_obj %}
             <tr>
-              <td>{{ item.plantilla.id }}</td>
-              <td>{{ item.plantilla.descripcion }}</td>
+              <td>{{ item.item.id }}</td>
+              <td>{{ item.item.descripcion }}</td>
               <td>{{ item.cantidad }}</td>
               <td></td>
             </tr>
