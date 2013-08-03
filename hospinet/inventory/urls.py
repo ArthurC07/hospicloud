@@ -23,7 +23,7 @@ from inventory.views import (IndexView, ItemTemplateCreateView,
     TransferenciaDetailView, TransferidoCreateView, TransferenciaUpdateView,
     RequisicionUpdateView, ItemTemplateSearchView, ItemTemplateUpdateView,
     ItemTemplateListView, CompraCreateView, CompraDetailView, CompraListView,
-    ItemCompradoCreateView)
+    ItemCompradoCreateView, ItemRequisicionDeleteView)
 
 urlpatterns = patterns('',
     
@@ -110,4 +110,8 @@ urlpatterns = patterns('',
     url(r'^compra/(?P<compra>\d+)/item/agregar$',
         ItemCompradoCreateView.as_view(),
         name='compra-item-create'),
+
+    url(r'^requisicion/item(?P<pk>\d+)/borrar$',
+        ItemRequisicionDeleteView.as_view(),
+        name='itemrequisicion-delete'),
 )

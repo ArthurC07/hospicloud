@@ -16,20 +16,24 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.db.models import Q
 
-from django.views.generic import (CreateView, DetailView, UpdateView, ListView)
+from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
+                                  DeleteView)
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.base import TemplateView
 from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponseRedirect
 
 from users.mixins import LoginRequiredMixin
-from inventory.models import (Inventario, Item, ItemTemplate, Transferencia, Historial,
-                              ItemHistorial, ItemComprado, Transferido, Compra, ItemType,
-                              Requisicion, ItemRequisicion,)
-from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm, HistorialForm,
-                             ItemForm, RequisicionForm, ItemRequisicionForm, TransferenciaForm,
-                             TransferidoForm, CompraForm, TransferirForm, ItemTemplateSearchForm,
-                             RequisicionCompletarForm, ItemCompradoForm)
+from inventory.models import (Inventario, Item, ItemTemplate, Transferencia,
+                              Historial, ItemComprado, Transferido, Compra,
+                              ItemType,
+                              Requisicion, ItemRequisicion, )
+from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm,
+                             HistorialForm, ItemForm, RequisicionForm,
+                             ItemRequisicionForm, TransferenciaForm,
+                             TransferidoForm, CompraForm, TransferirForm,
+                             ItemTemplateSearchForm, RequisicionCompletarForm,
+                             ItemCompradoForm)
 
 
 class InventarioFormMixin(CreateView):
@@ -153,7 +157,8 @@ class RequisicionUpdateView(UpdateView, LoginRequiredMixin):
 
 class RequisicionFormMixin(CreateView):
     def dispatch(self, *args, **kwargs):
-        self.requisicion = get_object_or_404(Requisicion, pk=kwargs['requisicion'])
+        self.requisicion = get_object_or_404(Requisicion,
+                                             pk=kwargs['requisicion'])
         return super(RequisicionFormMixin, self).dispatch(*args, **kwargs)
 
     def get_initial(self):
@@ -179,6 +184,18 @@ class ItemRequisicionCreateView(RequisicionFormMixin, LoginRequiredMixin):
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class ItemRequisicionDeleteView(DeleteView, LoginRequiredMixin):
+    model = ItemRequisicion
+
+    def get_object(self, queryset=None):
+        obj = super(ItemRequisicionDeleteView, self).get_object(queryset)
+        self.requisicion = obj.requisicion
+        return obj
+
+    def get_success_url(self):
+        return self.requisicion.get_absolute_url()
 
 
 class TransferenciaCreateView(RequisicionFormMixin, LoginRequiredMixin):
@@ -229,7 +246,8 @@ class TransferidoCreateView(CreateView, LoginRequiredMixin):
     form_class = TransferidoForm
 
     def dispatch(self, *args, **kwargs):
-        self.transferencia = get_object_or_404(Transferencia, pk=kwargs['transferencia'])
+        self.transferencia = get_object_or_404(Transferencia,
+                                               pk=kwargs['transferencia'])
         return super(TransferidoCreateView, self).dispatch(*args, **kwargs)
 
     def get_initial(self):
@@ -274,28 +292,28 @@ class CompraFormMixin(CreateView):
         initial['compra'] = self.compra.id
         return initial
 
+
 class CompraListView(ListView, LoginRequiredMixin):
     model = Compra
     context_object_name = 'compras'
 
 
 class ItemCompradoCreateView(CompraFormMixin, LoginRequiredMixin):
-
     model = ItemComprado
     form_class = ItemCompradoForm
+
 
 class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
     model = Historial
     form_class = HistorialForm
 
-class ItemTemplateSearchView(ListView, LoginRequiredMixin):
 
+class ItemTemplateSearchView(ListView, LoginRequiredMixin):
     context_object_name = 'items'
     model = ItemTemplate
     paginate_by = 10
 
     def get_queryset(self):
-
         form = ItemTemplateSearchForm(self.request.GET)
 
         #if not form.is_valid():

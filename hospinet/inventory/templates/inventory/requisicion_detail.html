@@ -54,7 +54,7 @@
               <td>{{ item.cantidad }}</td>
               <td>{{ item.pediente }}</td>
               <td>{{ item.entregada|yesno }}</td>
-              <td></td>
+              <td><a href="{% url 'itemrequision-delete' item.id %}" class="btn btn-danger btn-block">Borrar</a></td>
             </tr>
             {% endfor %}
           </tbody>
