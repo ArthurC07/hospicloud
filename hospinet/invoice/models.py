@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from decimal import Decimal
+from fractions import Fraction
 
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -125,6 +126,16 @@ class Recibo(TimeStampedModel):
     def placas(self):
 
         return sum(v.placas for v in self.ventas.all())
+
+    def fractional(self):
+        """Obtiene la parte decimal del total del :class:`Recibo`"""
+
+        return self.total() % 1
+
+    def integer(self):
+        """Obtiene la parte entera del total del :class:`Recibo`"""
+
+        return int(self.total())
 
 
 class Venta(TimeStampedModel):
