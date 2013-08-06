@@ -24,13 +24,19 @@ from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
 from django.contrib import messages
 from django.utils import timezone
 
-from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm, HonorarioForm,
-                               InsulinaForm, GlucosuriaForm, IngestaForm, ExcretaForm, NotaEnfermeriaForm,
-                               OrdenMedicaForm, SignoVitalForm, MedicamentoForm, DosisForm, DevolucionForm,
-                               SumarioForm, DosificarForm, MedicamentoUpdateForm, OxigenoTerapiaForm)
+from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
+                               HonorarioForm,
+                               InsulinaForm, GlucosuriaForm, IngestaForm,
+                               ExcretaForm, NotaEnfermeriaForm,
+                               OrdenMedicaForm, SignoVitalForm,
+                               MedicamentoForm, DosisForm, DevolucionForm,
+                               SumarioForm, DosificarForm,
+                               MedicamentoUpdateForm, OxigenoTerapiaForm)
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Honorario,
-                                Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital,
-                                Medicamento, Dosis, Devolucion, Sumario, OxigenoTerapia)
+                                Glucosuria, Ingesta, Excreta, NotaEnfermeria,
+                                OrdenMedica, SignoVital,
+                                Medicamento, Dosis, Devolucion, Sumario,
+                                OxigenoTerapia)
 from spital.models import Admision
 from spital.views import AdmisionFormMixin
 from users.mixins import LoginRequiredMixin, UserFormMixin
@@ -54,11 +60,15 @@ class NightingaleIndexView(ListView, LoginRequiredMixin):
             context['promedio'] = 0
         else:
             context['promedio'] = sum(a.tiempo_hospitalizacion()
-                                      for a in admisiones) / self.queryset.count()
+                                      for a in
+                                      admisiones) / self.queryset.count()
 
         context['puntos'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
-                                                                       admisiones[n].tiempo_hospitalizacion())
-                                                   for n in range(self.queryset.count()))
+                                                                       admisiones[
+                                                                           n]
+                                                                       .tiempo_hospitalizacion())
+                                                   for n in
+                                                   range(self.queryset.count()))
 
         return context
 
@@ -125,7 +135,8 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
         """
 
         context = super(SignosDetailView, self).get_context_data(**kwargs)
-        signos = self.object.signos_vitales.extra(order_by=['fecha_y_hora']).all()
+        signos = self.object.signos_vitales.extra(
+            order_by=['fecha_y_hora']).all()
 
         context['min'] = self.object.hospitalizacion.strftime('%Y-%m-%d %H:%M')
 
@@ -137,8 +148,12 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
         else:
             context['temp_promedio'] = self.object.temperatura_promedio
             context['pulso_promedio'] = self.object.pulso_promedio
-            context['presion_diastolica_promedio'] = self.object.presion_diastolica_promedio
-            context['presion_sistolica_promedio'] = self.object.presion_sistolica_promedio
+            context[
+                'presion_diastolica_promedio'] = self.object\
+                .presion_diastolica_promedio
+            context[
+                'presion_sistolica_promedio'] = self.object\
+                .presion_sistolica_promedio
             inicio = signos[0].fecha_y_hora - timezone.timedelta(minutes=5)
             context['min'] = inicio.strftime('%Y-%m-%d %H:%M')
 
@@ -232,7 +247,8 @@ class CargoCreateView(BaseCreateView):
 
         self.object = form.save(commit=False)
 
-        item = self.request.user.profile.inventario.buscar_item(self.object.cargo)
+        item = self.request.user.profile.inventario.buscar_item(
+            self.object.cargo)
         item.disminuir(self.object.cantidad)
 
         self.object.save()
@@ -257,7 +273,8 @@ class CargoDeleteView(DeleteView, LoginRequiredMixin):
         """
         self.object = self.get_object()
 
-        item = self.request.user.profile.inventario.buscar_item(self.object.cargo)
+        item = self.request.user.profile.inventario.buscar_item(
+            self.object.cargo)
         item.incrementar(self.object.cantidad)
 
         self.object.delete()
@@ -265,6 +282,11 @@ class CargoDeleteView(DeleteView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.admision.get_absolute_url()
+
+
+class CargoUpdateView(UpdateView, LoginRequiredMixin):
+    model = Cargo
+    form_class = CargoForm
 
 
 class EvolucionCreateView(BaseCreateView):
@@ -379,7 +401,8 @@ class DosisCreateView(CreateView, LoginRequiredMixin):
         return context
 
     def get_form_kwargs(self):
-        """Agrega el :class:`Medicamento` obtenida como el valor a utilizar en el
+        """Agrega el :class:`Medicamento` obtenida como el valor a utilizar
+        en el
         formulario que será llenado posteriormente"""
 
         kwargs = super(DosisCreateView, self).get_form_kwargs()
@@ -393,7 +416,8 @@ class DosisCreateView(CreateView, LoginRequiredMixin):
         """Obtiene la :class:`Admision` que se entrego como argumento en la
         url"""
 
-        self.medicamento = get_object_or_404(Medicamento, pk=kwargs['medicamento'])
+        self.medicamento = get_object_or_404(Medicamento,
+                                             pk=kwargs['medicamento'])
         return super(DosisCreateView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
@@ -427,7 +451,8 @@ class DosisSuministrarView(RedirectView, LoginRequiredMixin):
         dosis.fecha_y_hora = timezone.now()
         dosis.save()
         messages.info(self.request, u'¡Dosis registrada como suministrada!')
-        return reverse('nightingale-view-id', args=[dosis.medicamento.admision.id])
+        return reverse('nightingale-view-id',
+                       args=[dosis.medicamento.admision.id])
 
 
 class MedicamentoSuspenderView(RedirectView, LoginRequiredMixin):
@@ -484,10 +509,12 @@ class DosificarMedicamentoView(FormView, LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         self.medicamento = get_object_or_404(Medicamento,
                                              pk=kwargs['medicamento'])
-        return super(DosificarMedicamentoView, self).dispatch(request, *args, **kwargs)
+        return super(DosificarMedicamentoView, self).dispatch(request, *args,
+                                                              **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(DosificarMedicamentoView, self).get_context_data(**kwargs)
+        context = super(DosificarMedicamentoView, self).get_context_data(
+            **kwargs)
 
         context['medicamento'] = self.medicamento
 
@@ -510,7 +537,8 @@ class MedicamentoUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'medicamento'
 
 
-class OxigenoTerapiaCreateView(AdmisionFormMixin, UserFormMixin, LoginRequiredMixin):
+class OxigenoTerapiaCreateView(AdmisionFormMixin, UserFormMixin,
+                               LoginRequiredMixin):
     model = OxigenoTerapia
     form_class = OxigenoTerapiaForm
 
