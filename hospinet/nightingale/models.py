@@ -85,7 +85,7 @@ class SignoVital(models.Model, Turno):
         
         """Obtiene la URL absoluta"""
         
-        return reverse('nightingale-view-id', args=[self.admision.id])
+        return reverse('enfermeria-signos', args=[self.admision.id])
     
     def save(self, *args, **kwargs):
         
