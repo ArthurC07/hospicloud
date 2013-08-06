@@ -18,7 +18,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from views import IndexView, CustomSearchView
+from views import IndexView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -55,9 +55,7 @@ urlpatterns = patterns('',
     url(r'^caja/', include('hospinet.invoice.urls')),
     url(r'^emergencia/', include('hospinet.emergency.urls')),
     url(r'^bussiness/', include('hospinet.statistics.urls')),
-    url(r'^busqueda/', CustomSearchView(), name='haystack_search'),
     url(r'^api/', include(v1_api.urls)),
-    url(r'^private_files/', include('private_files.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

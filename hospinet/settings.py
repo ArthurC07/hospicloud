@@ -196,7 +196,6 @@ INSTALLED_APPS = (
     'treemenus',
     'sorl.thumbnail',
     'django_countries',
-    'haystack',
     'tastypie',
     'south',
     'userena',
