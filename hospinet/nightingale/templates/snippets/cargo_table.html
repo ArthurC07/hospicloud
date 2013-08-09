@@ -22,8 +22,22 @@
       <td data-title="Cantidad">{{ cargo.cantidad }}</td>
       <td data-title="Acciones">
         <a class="btn btn-danger" href="{% url 'enfermeria-cargo-eliminar' cargo.id %}"><i class="icon-trash"></i> Eliminar</a>
+          <a class="btn btn-info" href="{% url 'enfermeria-cargo-editar' cargo.id %}"><i class="icon-trash"></i> Editar</a>
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+<ul>
+    {% for cargo, lista in admision.agrupar_cargos %}
+        <li>
+            {{ cargo.descripcion }} 1
+            <ul>
+                {% for detalle in lista %}
+                    <li>{{ detalle.created }}
+                    1</li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>

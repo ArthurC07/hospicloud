@@ -15,55 +15,43 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from django.db import models
-from spital.models import Admision
-from django.utils import timezone
-from django.contrib.auth.models import User
-from inventory.models import ItemTemplate
-from django.core.urlresolvers import reverse
-from django_extensions.db.models import TimeStampedModel
 from datetime import timedelta
 from decimal import Decimal
 
+from django.db import models
+from django.utils import timezone
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django_extensions.db.models import TimeStampedModel
+
+from spital.models import Admision
+from inventory.models import ItemTemplate
+
+
 class Precio(object):
-
     def precio_unitario(self):
-
         if not self.admision.tipo_de_venta:
-
             return self.cargo.precio_de_venta
 
-        aumento = self.admision.tipo_de_venta.incremento * self.cargo.precio_de_venta / Decimal(100)
-        disminucion = self.admision.tipo_de_venta.disminucion * self.cargo.precio_de_venta / Decimal(100)
+        aumento = self.admision.tipo_de_venta.incremento * self.cargo\
+            .precio_de_venta / Decimal(
+            100)
+        disminucion = self.admision.tipo_de_venta.disminucion * self.cargo\
+            .precio_de_venta / Decimal(
+            100)
 
         return self.cargo.precio_de_venta + aumento - disminucion
 
+
 class Turno(object):
-    
     def get_turno(self):
         pass
-        # hora = timezone.localtime(self.fecha_y_hora.time())
-        # a_inicio = time(13, tzinfo=hora.tzinfo)
-        # b_inicio = time(21, tzinfo=hora.tzinfo)
-        # c_inicio = time(3, tzinfo=hora.tzinfo)
 
-        # if hora > a_inicio and hora < b_inicio:
-
-        #    return u"turno-a"
-
-        # if hora > b_inicio or hora < c_inicio:
-
-        #    return u"turno-b"
-
-        # if hora > c_inicio and hora < a_inicio:
-
-        #    return u"turno-c"
 
 class SignoVital(models.Model, Turno):
-    
     """Registra los signos vitales de una :class:`Persona` durante una
     :class:`Admision` en el  Hospital"""
-    
+
     admision = models.ForeignKey(Admision, related_name='signos_vitales')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     pulso = models.IntegerField()
@@ -79,104 +67,99 @@ class SignoVital(models.Model, Turno):
                                                 null=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='signos_vitales')
-    
+                                related_name='signos_vitales')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
-        return reverse('nightingale-view-id', args=[self.admision.id])
-    
+
+        return reverse('enfermeria-signos', args=[self.admision.id])
+
     def save(self, *args, **kwargs):
-        
         """Permite guardar los datos mientras calcula algunos campos
         automaticamente"""
-        
+
         self.presion_arterial_media = float(self.presion_diastolica) + (
-                        float(1) / float(3) * float(self.presion_sistolica - 
-                                                    self.presion_diastolica))
-        
+            float(1) / float(3) * float(self.presion_sistolica -
+                                        self.presion_diastolica))
+
         super(SignoVital, self).save(*args, **kwargs)
 
+
 Admision.temperatura_promedio = property(lambda a:
-                                 sum(s.temperatura for s
-                                     in a.signos_vitales.all())
-                                 / a.signos_vitales.count())
+sum(s.temperatura for s
+    in a.signos_vitales.all())
+/ a.signos_vitales.count())
 
 Admision.pulso_promedio = property(lambda a:
-                                 sum(s.pulso for s in a.signos_vitales.all())
-                                 / a.signos_vitales.count())
+sum(s.pulso for s in a.signos_vitales.all())
+/ a.signos_vitales.count())
 
 Admision.presion_sistolica_promedio = property(lambda a:
-                                 sum(s.presion_sistolica for s
-                                     in a.signos_vitales.all())
-                                 / a.signos_vitales.count())
+sum(s.presion_sistolica for s
+    in a.signos_vitales.all())
+/ a.signos_vitales.count())
 
 Admision.presion_diastolica_promedio = property(lambda a:
-                                 sum(s.presion_diastolica for s
-                                     in a.signos_vitales.all())
-                                 / a.signos_vitales.count())
+sum(s.presion_diastolica for s
+    in a.signos_vitales.all())
+/ a.signos_vitales.count())
+
 
 class Evolucion(models.Model):
-    
     """Registra la evolución de la :class:`Persona durante una
     :class:`Admision`"""
-    
+
     admision = models.ForeignKey(Admision, related_name='evoluciones')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     nota = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='evoluciones')
-    
+                                related_name='evoluciones')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('nightingale-view-id', args=[self.admision.id])
+
 
 class Cargo(TimeStampedModel, Precio):
-    
     """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
-    
+
     admision = models.ForeignKey(Admision, related_name='cargos')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
-                                   related_name='cargos')
+                              related_name='cargos')
     cantidad = models.DecimalField(max_digits=8, decimal_places=2, default=1)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='cargos')
+                                related_name='cargos')
     facturada = models.NullBooleanField(default=False)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-cargo-agregar', args=[self.admision.id])
-    
+
     def valor(self):
-        
-        return (self.cantidad * self.precio_unitario()).quantize(Decimal("0.01"))
+        return (self.cantidad * self.precio_unitario()).quantize(
+            Decimal("0.01"))
+
 
 class OrdenMedica(models.Model):
-    
     """Registra las indicaciones a seguir por el personal de enfermeria"""
-    
+
     admision = models.ForeignKey(Admision, related_name='ordenes_medicas')
-    orden = models.CharField(max_length=200, blank=True)
-#    doctor = models.CharField(max_length=200, blank=True)
+    orden = models.TextField(blank=True)
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='ordenes_medicas')
-    
+                                related_name='ordenes_medicas')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('nightingale-view-id', args=[self.admision.id])
 
+
 class Ingesta(models.Model, Turno):
-    
     """Registra las ingestas que una :class:`Persona`"""
-    
+
     admision = models.ForeignKey(Admision, related_name='ingestas')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     ingerido = models.CharField(max_length=200, blank=True)
@@ -184,25 +167,24 @@ class Ingesta(models.Model, Turno):
     liquido = models.NullBooleanField(blank=True, null=True)
     via = models.CharField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='ingestas')
-    
+                                related_name='ingestas')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-ingestas-excretas', args=[self.admision.id])
 
+
 class Excreta(models.Model, Turno):
-    
     """Registra las excresiones de una :class:`Persona` durante una
     :class:`Admision`"""
-    
+
     MEDIOS = (
         ("S", u"Succión"),
         ("O", "Orina"),
         ("V", "Vomito"),
     )
-    
+
     admision = models.ForeignKey(Admision, related_name='excretas')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     medio = models.CharField(max_length=2, blank=True, choices=MEDIOS)
@@ -211,134 +193,129 @@ class Excreta(models.Model, Turno):
     otro = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='excretas')
-    
+                                related_name='excretas')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-ingestas-excretas', args=[self.admision.id])
 
+
 class NotaEnfermeria(models.Model, Turno):
-    
     """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
-    
+
     admision = models.ForeignKey(Admision, related_name='notas_enfermeria')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     nota = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='notas_enfermeria')
+                                related_name='notas_enfermeria')
     autor = models.CharField(max_length=200, blank=True)
     cerrada = models.BooleanField(default=False)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-notas', args=[self.admision.id])
 
+
 class Glicemia(models.Model, Turno):
-    
     """Registra las fluctuaciones en los niveles de Glucosa en la sangre de una
     :class:`Persona` durante una :class`Admision`"""
-    
+
     admision = models.ForeignKey(Admision, related_name='glicemias')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='glicemias')
-    
+                                related_name='glicemias')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
-        return reverse('nightingale-glucometria', args=[self.admision.id])
+
+        return reverse('enfermeria-glucometria', args=[self.admision.id])
+
 
 class Glucosuria(models.Model, Turno):
-    
     """Registra la expulsión de Glucosa mediante la orina"""
-    
+
     admision = models.ForeignKey(Admision, related_name='glucosurias')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='glucosurias')
-    
+                                related_name='glucosurias')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
-        return reverse('nightingale-glucometria', args=[self.admision.id])
+
+        return reverse('enfermeria-glucometria', args=[self.admision.id])
+
 
 class Insulina(models.Model, Turno):
-    
     """Registra la expulsión de Glucosa mediante la orina"""
-    
+
     admision = models.ForeignKey(Admision, related_name='insulina')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.CharField(max_length=200, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='insulinas')
-    
+                                related_name='insulinas')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
-        return reverse('nightingale-glucometria', args=[self.admision.id])
+
+        return reverse('enfermeria-glucometria', args=[self.admision.id])
+
 
 class Sumario(TimeStampedModel):
-    
     """Registra los datos de una :class:`Persona` al momento de darle de alta
     de una :class:`Admision`"""
-    
+
     admision = models.OneToOneField(Admision)
     diagnostico = models.TextField(blank=True)
     procedimiento_efectuado = models.TextField(blank=True)
     condicion = models.TextField(blank=True)
     recomendaciones = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='sumarios')
-    
+                                related_name='sumarios')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('nightingale-view-id', args=[self.admision.id])
 
+
 Admision.sumario = property(
-                        lambda a: Sumario.objects.get_or_create(admision=a)[0])
+    lambda a: Sumario.objects.get_or_create(admision=a)[0])
+
 
 class FrecuenciaLectura(models.Model):
-    
     """Indica cada cuanto se debe tomar una :class:`Glucometria` y una lectura
     de :class:`SignosVitales`"""
-    
+
     admision = models.OneToOneField(Admision)
     glucometria = models.IntegerField(default=0, blank=True)
     signos_vitales = models.IntegerField(default=0, blank=True)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('nightingale-view-id', args=[self.admision.id])
 
+
 Admision.frecuencia_lectura = property(
-                lambda a: FrecuenciaLectura.objects.get_or_create(admision=a)[0]
-                )
+    lambda a: FrecuenciaLectura.objects.get_or_create(admision=a)[0]
+)
+
 
 class Medicamento(TimeStampedModel):
-    
     """Permite A un :class:`User` recetar una droga que debera ser administrada
     a una :class:`Persona` durante una :class:`Admision`.
     
     Esta droga puede administrarse a intervalos determinados por el doctor,
     dichos intervalos son medidos en horas.
     """
-    
+
     INTERVALOS = (
         (24, u"Cada 24 Horas"),
         (12, u"Cada 12 Horas"),
@@ -346,13 +323,13 @@ class Medicamento(TimeStampedModel):
         (6, u"Cada 6 Horas"),
         (4, u"Cada 4 Horas"),
     )
-    
+
     ESTADOS = (
         (1, u"Activo"),
         (2, u"Suspendido"),
         (3, u"Terminado"),
     )
-    
+
     admision = models.ForeignKey(Admision, related_name='medicamentos')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                               related_name='medicamentos')
@@ -361,154 +338,149 @@ class Medicamento(TimeStampedModel):
     unidades = models.CharField(max_length=200, blank=True)
     repeticiones = models.IntegerField(blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='medicamentos')
+                                related_name='medicamentos')
     estado = models.IntegerField(blank=True, null=True, choices=ESTADOS,
                                  default=1)
     ultima_dosis = models.DateTimeField(default=timezone.now)
     proxima_dosis = models.DateTimeField(default=timezone.now)
     suministrado = models.IntegerField(default=0)
-    
+
     def get_absolute_url(self):
-        
+
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-cargos', args=[self.admision.id])
-    
+
     def suministrar(self, hora, usuario):
-        
+
         """Crea un :class:`Cargo` basado en una Dosis del Medicamento"""
-        
+
         if self.suministrado >= self.repeticiones:
-            
             return
-        
+
         cargo = Cargo()
         cargo.admision = self.admision
         cargo.created = hora
         cargo.cargo = self.cargo
         cargo.usuario = usuario
         cargo.save()
-        
+
         self.ultima_dosis = timezone.now()
         print(timedelta(hours=self.intervalo))
         self.proxima_dosis = self.ultima_dosis + timedelta(hours=self.intervalo)
-        
+
         self.suministrado += 1
         if self.suministrado == self.repeticiones:
             self.estado = 3
-        
+
         self.save()
-    
+
     def suspender(self):
-        
+
         self.estado = 2
         self.save()
-    
+
     def save(self, *args, **kwargs):
-        
+
         if self.suministrado < self.repeticiones:
-            
             self.estado = 1
-        
+
         return super(Medicamento, self).save(*args, **kwargs)
 
+
 class Dosis(TimeStampedModel, Turno):
-    
     """Permite llevar un control sobre los momentos en los que se debe
     administrar un :class:`Medicamento` y saber quien los ha administrado a la
     :class:`Persona`"""
-    
+
     ESTADOS = (
         (1, u"Pendiente"),
         (2, u"Rechazada"),
         (3, u"Administrada"),
     )
-    
+
     medicamento = models.ForeignKey(Medicamento, related_name='dosis',
-                                   on_delete=models.CASCADE)
+                                    on_delete=models.CASCADE)
     estado = models.IntegerField(blank=True, null=True, choices=ESTADOS,
                                  default=1)
     recomendacion = models.CharField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='dosis')
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-medicamentos',
                        args=[self.medicamento.admision.id])
 
-class Devolucion(TimeStampedModel, Turno):
 
+class Devolucion(TimeStampedModel, Turno):
     """Representa todos aquellos materiales que han sido devueltos"""
 
     admision = models.ForeignKey(Admision, related_name='devoluciones')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
-                                   related_name='devoluciones')
+                              related_name='devoluciones')
     descripcion = models.TextField(max_length=200, blank=True, null=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
-                                   related_name='devoluciones')
-    
+                                related_name='devoluciones')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-medicamentos',
                        args=[self.medicamento.admision.id])
 
+
 class OxigenoTerapia(TimeStampedModel, Precio):
-    
     """Registra los tiempos en los cuales el paciente ha utilizado oxigeno"""
-    
+
     admision = models.ForeignKey(Admision, related_name='oxigeno_terapias')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
-                                   related_name='oxigeno_terapias')
+                              related_name='oxigeno_terapias')
+    unidades_por_minuto = models.IntegerField(default=1)
     terminada = models.BooleanField(default=False)
     facturada = models.NullBooleanField(default=False)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-oxigeno', args=[self.admision.id])
 
     def tiempo(self):
-        
         """Calcula el tiempo que la :class:`Persona` ha utilizado Oxigeno"""
-        
-        return ((self.final() - self.created).seconds / Decimal(3600)).quantize(Decimal("0.01"))
-    
+
+        return ((self.final() - self.created).seconds / Decimal(60)).quantize(
+            Decimal("0.01"))
+
     def litros(self):
-        
         """Calcula el volumen de Oxigeno utilizado"""
-        
-        return (self.tiempo() * Decimal(0.33)).quantize(Decimal("0.01"))
-    
+
+        return (self.tiempo() * self.unidades_por_minuto).quantize(
+            Decimal("0.01"))
+
     def valor(self):
-        
-        return (self.litros() * self.precio_unitario()).quantize(Decimal("0.01"))
-    
+        return (self.litros() * self.precio_unitario()).quantize(
+            Decimal("0.01"))
+
     def final(self):
-        
         if self.created >= self.modified:
             return timezone.now()
-            
+
         return self.modified
 
+
 class Honorario(TimeStampedModel):
-    
     """Permite agregar un cargo que no utiliza los precios predefinidos"""
-    
+
     admision = models.ForeignKey(Admision, related_name='honorarios')
     item = models.ForeignKey(ItemTemplate, blank=True, null=True,
-                                   related_name='honorarios')
+                             related_name='honorarios')
     monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     facturada = models.NullBooleanField(default=False)
-    usuario = models.ForeignKey(User, blank=True, null=True, related_name='honorarios')
-    
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                related_name='honorarios')
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('enfermeria-honorarios', args=[self.admision.id])

@@ -21,9 +21,7 @@ from django.db.models import permalink
 from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
 from persona.models import Persona
-from private_files.models.fields import PrivateFileField
 from sorl.thumbnail import ImageField
-from south.modelsinspector import add_introspection_rules
 import os
 import subprocess
 from inventory.models import ItemTemplate
@@ -178,14 +176,3 @@ class Dicom(models.Model):
         """Obtiene la URL absoluta"""
         
         return 'examen-view-id', [self.examen.uuid]
-
-add_introspection_rules([
-    (
-        [PrivateFileField], # Class(es) these apply to
-        [],         # Positional arguments (not used)
-        {           # Keyword argument
-            #"ordered": ["ordered", {}],
-            #"sort": ["sort", {}],
-        },
-    ),
-], ["^private_files\.models\.fields\.PrivateFileField"])

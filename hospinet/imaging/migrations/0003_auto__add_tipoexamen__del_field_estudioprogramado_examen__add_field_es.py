@@ -20,7 +20,7 @@ class Migration(SchemaMigration):
 
         # Adding field 'EstudioProgramado.tipo_de_examen'
         db.add_column('imaging_estudioprogramado', 'tipo_de_examen',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=0, related_name='estudios_progamados', to=orm['imaging.TipoExamen']),
+                      self.gf('django.db.models.fields.related.ForeignKey')(blank=True, null=True, related_name='estudios_progamados', to=orm['imaging.TipoExamen']),
                       keep_default=False)
 
         # Adding field 'EstudioProgramado.remitio'
@@ -36,7 +36,7 @@ class Migration(SchemaMigration):
 
         # Adding field 'Examen.tipo_de_examen'
         db.add_column('imaging_examen', 'tipo_de_examen',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=0, related_name='examenes', to=orm['imaging.TipoExamen']),
+                      self.gf('django.db.models.fields.related.ForeignKey')(blank=True, null=True,  related_name='examenes', to=orm['imaging.TipoExamen']),
                       keep_default=False)
 
 

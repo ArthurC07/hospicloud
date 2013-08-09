@@ -16,13 +16,8 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.views.generic.base import TemplateView
-from haystack.views import SearchView
 from users.mixins import LoginRequiredMixin
 
 class IndexView(TemplateView):
     
     template_name = 'index.html'
-
-class CustomSearchView(SearchView, LoginRequiredMixin):
-    
-    template_name = 'search/search.html'

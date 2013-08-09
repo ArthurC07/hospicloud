@@ -334,7 +334,19 @@ class Admision(models.Model):
         if not honorarios['monto__sum']:
             honorarios['monto__sum'] = 0
 
-        return (cargos + oxigeno + Decimal(honorarios['monto__sum']) + self.debido()).quantize(Decimal("0.01"))
+        return (cargos + oxigeno + Decimal(honorarios['monto__sum'])
+                + self.debido()).quantize(Decimal("0.01"))
+
+    def agrupar_cargos(self):
+
+        agrupados = defaultdict(list)
+
+        for cargo in self.cargos.all():
+
+            agrupados[cargo.cargo].append(cargo)
+
+        print(agrupados)
+        return agrupados
 
 
 class PreAdmision(TimeStampedModel):

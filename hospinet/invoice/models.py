@@ -35,7 +35,8 @@ class Recibo(TimeStampedModel):
     discount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
-    cajero = models.ForeignKey(User, related_name='recibos')
+    cajero = models.ForeignKey(User, blank=True, null=True,
+                               related_name='recibos')
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
 
     def get_absolute_url(self):
@@ -126,6 +127,16 @@ class Recibo(TimeStampedModel):
 
         return sum(v.placas for v in self.ventas.all())
 
+    def fractional(self):
+        """Obtiene la parte decimal del total del :class:`Recibo`"""
+
+        return self.total() % 1
+
+    def integer(self):
+        """Obtiene la parte entera del total del :class:`Recibo`"""
+
+        return int(self.total())
+
 
 class Venta(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
@@ -168,8 +179,11 @@ class Venta(TimeStampedModel):
         if not self.recibo.tipo_de_venta or not self.descontable:
             return self.precio
 
-        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(100)
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / Decimal(100)
+        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(
+            100)
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / \
+                      Decimal(
+            100)
 
         return self.precio + aumento - disminucion
 
@@ -178,7 +192,8 @@ class Venta(TimeStampedModel):
         if not self.recibo.tipo_de_venta:
             return self.precio
 
-        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(100)
+        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(
+            100)
 
         return self.precio + aumento
 
@@ -187,7 +202,9 @@ class Venta(TimeStampedModel):
         if not self.recibo.tipo_de_venta:
             return Decimal(0)
 
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / Decimal(100)
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / \
+                      Decimal(
+            100)
         return disminucion
 
     def tax(self):

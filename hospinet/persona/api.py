@@ -17,7 +17,6 @@
 from django.conf.urls import url
 from django.core.paginator import Paginator, InvalidPage
 from django.http import Http404
-from haystack.query import SearchQuerySet
 from persona.models import Persona
 from tastypie.resources import ModelResource
 from tastypie.utils.urls import trailing_slash
@@ -47,27 +46,4 @@ class PersonaResource(ModelResource):
         self.throttle_check(request)
 
         # Do the query.
-        sqs = SearchQuerySet().models(Persona).load_all().auto_query(request.GET.get('q', ''))
-        paginator = Paginator(sqs, 20)
-
-        try:
-            page = paginator.page(int(request.GET.get('page', 1)))
-        except InvalidPage:
-            raise Http404("Sorry, no results on that page.")
-
-        objects = []
-
-        for result in page.object_list:
-            # Lo siguiente es un hack para que Haystack 2.0 alpha y tastypie 1.0beta
-            # funcionen adecuadamente
-            bundle = self.build_bundle(obj=result.object, data=model_to_dict(result.object))
-            bundle.pk = result.object.id
-            # bundle = self.full_dehydrate(bundle)
-            objects.append(bundle)
-        
-        object_list = {
-            'objects': objects,
-        }
-
-        self.log_throttled_access(request)
-        return self.create_response(request, object_list)
+        return

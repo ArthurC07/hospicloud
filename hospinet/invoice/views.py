@@ -277,6 +277,7 @@ class ReciboPeriodoView(TemplateView):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.recibos = Recibo.objects.filter(
+                nulo=False,
                 created__gte=self.inicio,
                 created__lte=self.fin
             )

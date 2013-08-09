@@ -18,6 +18,14 @@
 # Django settings for hospinet project.
 import os
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
+def env_var(key, default=None):
+    """Retrieves env vars and makes Python boolean replacements"""
+    val = os.environ.get(key, default)
+    if val == 'True':
+        val = True
+    elif val == 'False':
+        val = False
+    return val
 
 COMPANY = None
 if COMPANY != None:
@@ -30,8 +38,8 @@ else:
     LOGOUT_URL = '/accounts/signout/'
     LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+DEBUG = env_var('DEBUG', True)
+TEMPLATE_DEBUG = env_var('DEBUG', True)
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -42,9 +50,9 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'hospinet',                      # Or path to database file if using sqlite3.
-        'USER': 'hospinet',                      # Not used with sqlite3.
-        'PASSWORD': 'hospinet',                  # Not used with sqlite3.
+        'NAME': env_var('DBNAME', 'hospinet'), # Or path to database file if using sqlite3.
+        'USER': env_var('DBUSER', 'hospinet'), # Not used with sqlite3.
+        'PASSWORD': env_var('DBPASSWORD', 'hospinet'), # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -164,7 +172,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    #'django.contrib.humanize',
+    'django.contrib.humanize',
     #'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -188,7 +196,6 @@ INSTALLED_APPS = (
     'treemenus',
     'sorl.thumbnail',
     'django_countries',
-    'haystack',
     'tastypie',
     'south',
     'userena',
@@ -248,17 +255,7 @@ CACHES = {
         'LOCATION': 'cache',
     }
 }
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        'PATH': os.path.join(PROJECT_PATH,'whoosh_index'),
-        'INCLUDE_SPELLING': True,
-        'BATCH_SIZE': 100,
-    },
-}
 # Additional Settings
-FILE_PROTECTION_METHOD = 'basic'
 ANONYMOUS_USER_ID = -1
 AUTH_PROFILE_MODULE = 'users.UserProfile'
 USE_THOUSAND_SEPARATOR = True
