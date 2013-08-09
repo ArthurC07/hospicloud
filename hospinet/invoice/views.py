@@ -281,7 +281,7 @@ class ReciboPeriodoView(TemplateView):
                 created__gte=self.inicio,
                 created__lte=self.fin
             )
-            
+
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
 
 

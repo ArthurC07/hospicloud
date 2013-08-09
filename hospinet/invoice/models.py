@@ -16,7 +16,6 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from decimal import Decimal
-from fractions import Fraction
 
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -36,7 +35,8 @@ class Recibo(TimeStampedModel):
     discount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
-    cajero = models.ForeignKey(User, related_name='recibos')
+    cajero = models.ForeignKey(User, blank=True, null=True,
+                               related_name='recibos')
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
 
     def get_absolute_url(self):
