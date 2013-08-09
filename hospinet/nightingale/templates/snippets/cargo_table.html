@@ -28,3 +28,16 @@
     {% endfor %}
   </tbody>
 </table>
+<ul>
+    {% for cargo, lista in admision.agrupar_cargos %}
+        <li>
+            {{ cargo.descripcion }} 1
+            <ul>
+                {% for detalle in lista %}
+                    <li>{{ detalle.created }}
+                    1</li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
