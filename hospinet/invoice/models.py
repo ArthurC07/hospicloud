@@ -179,8 +179,11 @@ class Venta(TimeStampedModel):
         if not self.recibo.tipo_de_venta or not self.descontable:
             return self.precio
 
-        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(100)
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / Decimal(100)
+        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(
+            100)
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / \
+                      Decimal(
+            100)
 
         return self.precio + aumento - disminucion
 
@@ -189,7 +192,8 @@ class Venta(TimeStampedModel):
         if not self.recibo.tipo_de_venta:
             return self.precio
 
-        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(100)
+        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(
+            100)
 
         return self.precio + aumento
 
@@ -198,7 +202,9 @@ class Venta(TimeStampedModel):
         if not self.recibo.tipo_de_venta:
             return Decimal(0)
 
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / Decimal(100)
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / \
+                      Decimal(
+            100)
         return disminucion
 
     def tax(self):
