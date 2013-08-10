@@ -1,27 +1,77 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-<section class="span12">
-  <div class="page-header">
-    <h1>{{ admision.paciente.nombre_completo }} <br />
-        <small>
-          {{ admision.habitacion }},  Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
-        </small></h1>
-  </div>
-</section>
-</div>
-<div class="row">
-{% include 'snippets/aside.html' %}
-<div id="informacion" class="span9">
-  <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
-  <span>{{ admision.get_estado_display }}</span>
-  {% include 'snippets/persona_fotografia.html' with persona=admision.paciente %}
-  {% include 'snippets/lectura.html' with lectura=admision.frecuencia_lectura %}
-  <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
-  {% include 'snippets/persona.html' with persona=admision.paciente %}
-  <a href="{% url 'persona-editar' admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
-  {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %}
-  <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
-</div>
-</div>
+    <div class="row">
+        <section class="span12">
+            <div class="page-header">
+                <h1>{{ admision.paciente.nombre_completo }} <br/>
+                    <small>
+                        {{ admision.habitacion }},
+                        Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
+                    </small>
+                </h1>
+            </div>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="span4 action-nav-button">
+            <a href="{% url 'nightingale-resume' admision.uuid %}"><span>Resumen</span></a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-cuenta' admision.id %}"><span>Estado de Cuenta</span></a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-cargos' admision.id %}"><span>Cargos y Medicamentos</span></a>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-oxigeno' admision.id %}">Ox&iacute;geno-Terapia</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-honorarios' admision.id %}">Honorarios y
+                Examenes</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-signos' admision.id %}">Signos
+                Vitales</a>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-ordenes' admision.id %}">Ordenes M&eacute;dicas</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-evolucion' admision.id %}">Evoluci&oacute;n</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-ingestas-excretas' admision.id %}">Ingestas
+                y Excretas</a>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-devoluciones' admision.uuid %}">Devoluciones</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-dar-alta' admision.id %}">Dar de
+                Alta</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'examen-programar' admision.paciente.id %}">Programar
+                Estudio</a>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="span4 action-nav-button">
+            <a href="{% url 'persona-view-id' admision.paciente.id %}">Personal</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-dar-alta' admision.id %}">Dar de
+                Alta</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'examen-programar' admision.paciente.id %}">Programar
+                Estudio</a>
+        </section>
+    </div>
 {% endblock %}
