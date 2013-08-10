@@ -32,7 +32,7 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
                                DosificarMedicamentoView,
                                MedicamentoUpdateView, OxigenoTerapiaCreateView,
                                OxigenoTerapiaUpdateView, HonorarioCreateView,
-                               HonorarioUpdateView,
+                               HonorarioUpdateView, ChosenCargoCreateView,
                                HonorarioDeleteView, CargoUpdateView)
 
 urlpatterns = patterns('',
@@ -74,6 +74,10 @@ urlpatterns = patterns('',
                        url(r'^(?P<admision>\d+)/cargo/agregar$',
                            CargoCreateView.as_view(),
                            name='enfermeria-cargo-agregar'),
+
+                       url(r'^(?P<admision>\d+)/cargo/(?P<item>\d+)/agregar$',
+                           ChosenCargoCreateView.as_view(),
+                           name='enfermeria-cargo-pre-agregar'),
 
                        url(r'^cargo/(?P<pk>\d+)/eliminar$',
                            CargoDeleteView.as_view(),
