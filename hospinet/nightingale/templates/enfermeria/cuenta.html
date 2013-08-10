@@ -15,7 +15,8 @@
 <div class="row">
   <section class="span12">
     <div class="page-header">
-      <h1>{{ admision.paciente.nombre_completo }} <small>Cuenta {{ admision.id }}</small></h1>
+      <h1>{{ admision.paciente.nombre_completo }}<br/>
+          <small>{{ admision.habitacion }},  Dr. {{ admision.doctor }}, {{ admision.diagnostico }} Cuenta {{ admision.id }}</small></h1>
     </div>
 
       {% include 'snippets/persona.html' with persona=admision.paciente %}

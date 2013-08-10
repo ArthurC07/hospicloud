@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="row">
-        <section id="ingestas-excretas" class="span12">
+        <section class="span12">
             <div class="page-header">
-                <h1>{{ admision.paciente.nombre_completo }}
-                    <small>{{ admision.habitacion }}</small>
-                </h1>
+                <h1>{{ admision.paciente.nombre_completo }} <br />
+                    <small>
+                        {{ admision.habitacion }},  Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
+                    </small></h1>
             </div>
         </section>
     </div>
