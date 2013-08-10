@@ -238,6 +238,9 @@ class Admision(models.Model):
         if self.hospitalizacion == None:
             return (timezone.now() - self.momento).days
 
+        if self.fecha_alta > self.hospitalizacion:
+            return (self.fecha_alta - self.hospitalizacion).days
+
         if self.ingreso == None or self.ingreso <= self.hospitalizacion:
             return (timezone.now() - self.hospitalizacion).days
 
