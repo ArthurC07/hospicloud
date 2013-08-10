@@ -3,39 +3,24 @@
 {% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
+    <div class="row">
+    <div class="span12">
+        <div class="page-header">
+            <h1>Estad&iacute;stica Descriptiva</h1>
+        </div>
+    </div>
+    </div>
 <div class="row">
-<aside class="toolbox span3">
-  <nav>
-    <ul>
-      <li>
-        <a href="{% url 'admision-index' %}">Admisiones</a>
-      </li>
-      <li>
-        <a href="{% url 'admision-iniciar' %}">Admitir Paciente</a>
-      </li>
-    </ul>
-  </nav>
-</aside>
-<div id="estadisticas" class="span9">
-  <div class="top title">
-    <h1>Estad&iacute;stica Descriptiva</h1>
+<div class="span12">
+  <div class="row">
+      <div class="span4">
+          {% crispy admision_periodo %}
+      </div>
+      <div class="span4">
+          {% crispy emergencia_periodo %}
+      </div>
+      <div class="span4">
+          {% crispy habitacion_popular %}
+      </div>
   </div>
-  {% crispy admision_periodo %}
-  {% crispy emergencia_periodo %}
-  <form class="styled" method="get" action="{% url 'estadisticas-admision-adulto' %}">
-    <h1>Atenci&oacute;n M&eacute;dica Adulta</h1>
-    {% include 'snippets/form.html' with form=formulario_anual %}
-    <p>
-      <input type="submit" value="Guardar" />
-    </p>
-  </form>
-  <form class="styled" method="get" action="{% url 'estadisticas-admision-infantil' %}">
-    <h1>Atenci&oacute;n M&eacute;dica Infantil</h1>
-    {% include 'snippets/form.html' with form=formulario_anual %}
-    <p>
-      <input type="submit" value="Guardar" />
-    </p>
-  </form>
-</div>
-</div>
 {% endblock %}
