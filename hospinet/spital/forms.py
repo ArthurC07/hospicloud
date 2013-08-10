@@ -38,6 +38,9 @@ class AdmisionForm(forms.ModelForm):
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
+    doctor = forms.CharField(label="Medico Tratante", required=True)
+    diagnostico = forms.CharField(required=True)
+
 class HabitacionForm(forms.ModelForm):
 
     """Permite gestionar los datos de una :class:`Habitacion`"""
