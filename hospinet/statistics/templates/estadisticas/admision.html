@@ -18,6 +18,7 @@
           <th>Fecha Ingreso</th>
           <th>Fecha Alta</th>
           <th>Nombre Paciente</th>
+          <th>Habitación</th>
           <th>Tiempo Hospitalizado</th>
           <th>Acciones</th>
         </tr>
@@ -28,6 +29,7 @@
           <td>{{ admision.hospitalizacion }}</td>
           <td>{{ admision.fecha_alta }}</td>
           <td>{{ admision.paciente.nombre_completo }}</td>
+          <td>{{ admision.habitacion }}</td>
           <td>{{ admision.tiempo_hospitalizado }}</td>
           <td><a class="btn btn-success" href="{% url 'admision-view-slug' admision.uuid %}">Ver</a></td>
         </tr>
