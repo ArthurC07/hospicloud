@@ -6,6 +6,8 @@
       <th>Identificaci&oacute;n</th>
       <th>Nombre</th>
       <th>Edad</th>
+      <th>Diagn&oacute;stico</th>
+      <th>M&eacute;dico Tratante</th>
       <th>Sexo</th>
       <th>Hora de Ingreso</th>
       <th>Acciones</th>
@@ -18,6 +20,8 @@
       <td>{{ admision.paciente.identificacion }}</td>
       <td>{{ admision.paciente.nombre_completo }}</td>
       <td>{{ admision.paciente.obtener_edad }}</td>
+      <td>{{ admision.diagnostico }}</td>
+      <td>{{ admision.doctor }}</td>
       <td>{{ admision.paciente.get_sexo_display }}</td>
       <td>{{ admision.momento|date:"d/m/Y H:i" }}</td>
       <td><a class="btn btn-blue btn-block" href="{% url 'nightingale-view-id' admision.id %}">Ver</a></td>

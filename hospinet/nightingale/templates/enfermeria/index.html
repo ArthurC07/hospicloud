@@ -5,27 +5,11 @@
 {% block content %}
 <div class="row">
   <div class="page-header">
-    <h1>Enfermer&iacute;a</h1>
-  </div>
-  <div class="row">
-    <section id="estadisticas" class="span12">
-      <article id="tiempo-espera">
-        <div class="page-header">
-          <h2>Tiempo en Espera de Ingreso</h2>
-        </div>
-        <div id="grafico"></div>
-        <h3>Promedio: {{ promedio }} minutos</h3>
-      </article>
-    </section>
+    <h1>Hospitalizaci&oacute;n</h1>
   </div>
   <div class="row">
     <section class="span12">
       {% include 'snippets/enfermeria_list.html' with admisiones=hospitalizados %}
-    </section>
-  </div>
-  <div class="row">
-    <section class="span12">
-      {% include 'snippets/admitidos_list.html' with admisiones=admitidos %}
     </section>
   </div>
 </div>
