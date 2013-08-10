@@ -111,7 +111,7 @@ class Evolucion(models.Model):
 
     admision = models.ForeignKey(Admision, related_name='evoluciones')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
-    nota = models.CharField(max_length=200, blank=True)
+    nota = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='evoluciones')
 
