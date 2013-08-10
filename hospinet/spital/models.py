@@ -16,7 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from collections import defaultdict
-from decimal import Decimal
+from decimal import Decimal, getcontext
 
 from django.db import models
 from django.utils import timezone
@@ -28,7 +28,6 @@ from django_extensions.db.models import TimeStampedModel
 from persona.models import Persona
 from emergency.models import Emergencia
 from inventory.models import ItemTemplate, TipoVenta
-
 
 class CargoAdapter(object):
 
@@ -239,21 +238,32 @@ class Admision(models.Model):
         if self.hospitalizacion == None:
             dias = (timezone.now() - self.momento).days
             fraccion_dias = (timezone.now() - self.momento).total_seconds() / 3600 / 24
-            return dias + fraccion_dias
+            if dias < 0:
+                dias = 0
+            return Decimal(dias + fraccion_dias)
 
         if self.fecha_alta > self.hospitalizacion:
             dias = (self.fecha_alta - self.hospitalizacion).days
-            fraccion_dias = (self.fecha_alta - self.hospitalizacion).total_seconds() / 3600 /24
-            return dias + fraccion_dias
+            fraccion_dias = divmod((self.fecha_alta - self.hospitalizacion).seconds, 3600)[0] / 24
+            if dias < 0:
+                dias = 0
+            return Decimal(dias + fraccion_dias)
 
         if self.ingreso == None or self.ingreso <= self.hospitalizacion:
             dias = (timezone.now() - self.hospitalizacion).days
-            fraccion_dias = (timezone.now() - self.hospitalizacion).total_seconds() / 3600 / 24
-            return dias + fraccion_dias
+            fraccion_dias = divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[0] / 24
+            if dias < 0:
+                dias = 0
+            return Decimal(dias + fraccion_dias)
+
+        if self.fecha_alta <= self.hospitalizacion:
+            return divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[0] / 24
 
         dias = (self.fecha_alta - self.hospitalizacion).days
-        fraccion_dias = (self.fecha_alta - self.hospitalizacion).total_seconds() / 3600 /24
-        return dias + fraccion_dias
+        fraccion_dias = divmod((self.fecha_alta - self.hospitalizacion).seconds, 3600)[0] / 24
+        if dias < 0:
+            dias = 0
+        return Decimal(dias + fraccion_dias)
 
     def tiempo_cobro(self):
 
