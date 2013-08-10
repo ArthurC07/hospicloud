@@ -1,27 +1,27 @@
 <table class="table table-striped table-bordered">
-  <caption>Datos Personales</caption>
+  <caption class="persona">Datos Personales</caption>
   <tr>
-    <td>{{ persona.get_tipo_identificacion_display }}</td>
+    <th>{{ persona.get_tipo_identificacion_display }}</th>
     <td>{{ persona.identificacion }}</td>
-    <td>Sexo</td>
+    <th>Sexo</th>
     <td>{{ persona.get_sexo_display }}</td>
-    <td>Edad</td>
+    <th>Edad</th>
     <td>{{ persona.obtener_edad }} a&ntilde;os</td>
   </tr>
   <tr>
-    <td>Nacimiento</td>
+    <th>Nacimiento</th>
     <td>{{ persona.nacimiento|date:"d/m/Y" }}</td>
-    <td>Estado Civil</td>
+    <th>Estado Civil</th>
     <td>{{ persona.get_estado_civil_display }}</td>
-    <td>Profesión</td>
+    <th>Profesión</th>
     <td>{{ persona.profesion }}</td>
   </tr>
   <tr>
-    <td>Telefono</td>
+    <th>Telefono</th>
     <td>{{ persona.telefono }}</td>
-    <td>Direcci&oacute;n</td>
+    <th>Direcci&oacute;n</th>
     <td>{{ persona.direccion }}</td>
-    <td>Celular</td>
+    <th>Celular</th>
     <td>{{ persona.celular }}</td>
   </tr>
 </table>

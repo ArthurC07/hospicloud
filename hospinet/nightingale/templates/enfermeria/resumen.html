@@ -2,25 +2,25 @@
 {% load staticfiles %}
 {% load l10n %}
 {% block content %}
-    <div class="row">
-        <section class="span12">
+    <div class="row action-nav-normal">
+        <section class="span10">
             <div class="page-header">
                 <h1>{{ admision.paciente.nombre_completo }} <br />
                     <small>
-                        {{ admision.habitacion }},  Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
+                        {{ admision.habitacion }}, {{ admision.doctor }}, {{ admision.diagnostico }}
+                        Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}
                     </small></h1>
             </div>
         </section>
+        <section class="span2 action-nav-button">
+            <a href="{% url 'nightingale-view-id' admision.id %}"><i class="icon-home"></i><span>Regresar</span></a>
+        </section>
     </div>
 <div class="row">
-  {% include 'snippets/aside.html' with admision=admision %}
-  <div id="informacion" class="span9">
-    <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
-    <span>{{ admision.get_estado_display }}</span>
+  <div id="informacion" class="span12">
     {% include 'snippets/persona_fotografia.html' with persona=admision.paciente %}
-    {% include 'snippets/lectura.html' with lectura=admision.frecuencia_lectura %} <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar Frecuencia de Lectura</a>
-    {% include 'snippets/persona.html' with persona=admision.paciente %} <a href="{% url 'persona-editar' admision.paciente.id %}" class="btn btn-primary">Editar Datos del Paciente</a>
-    {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %} <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
+    {% include 'snippets/persona.html' with persona=admision.paciente %}
+    {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %}
     <section id="signos-vitales">
       <div class="page-header">
         <h2>Signos Vitales</h2>

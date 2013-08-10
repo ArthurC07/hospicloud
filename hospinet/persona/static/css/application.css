@@ -160,3 +160,7 @@ table caption {
     font-weight: 600;
     padding-top: 4px;
 }
+caption {
+    font-size: large;
+    padding-bottom: 5px;
+}
