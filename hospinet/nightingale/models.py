@@ -118,7 +118,7 @@ class Evolucion(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('nightingale-view-id', args=[self.admision.id])
+        return reverse('enfermeria-evolucion', args=[self.admision.id])
 
 
 class Cargo(TimeStampedModel, Precio):
@@ -154,7 +154,7 @@ class OrdenMedica(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('nightingale-view-id', args=[self.admision.id])
+        return reverse('enfermeria-ordenes', args=[self.admision.id])
 
 
 class Ingesta(models.Model, Turno):
