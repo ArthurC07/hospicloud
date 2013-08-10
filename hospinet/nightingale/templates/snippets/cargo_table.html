@@ -1,3 +1,4 @@
+{% load l10n %}
 <table class="table table-striped table-bordered no-more-tables">
   <thead>
     <tr>
@@ -16,7 +17,9 @@
     {% endif%}
     {% for cargo in admision.cargos.all %}
     <tr>
+        {% localize off %}
       <td data-title="Fecha y Hora">{{ cargo.created|date:"d/m/Y P" }}</td>
+        {% endlocalize %}
       <td data-title="Código">{{ cargo.cargo.id }}</td>
       <td data-title="Cargo">{{ cargo.cargo }}</td>
       <td data-title="Cantidad">{{ cargo.cantidad }}</td>
