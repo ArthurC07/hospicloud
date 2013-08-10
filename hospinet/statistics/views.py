@@ -216,7 +216,8 @@ class AdmisionPeriodoMixin(TemplateView):
             self.inicio = datetime.combine(self.inicio, time.min)
             self.fin = datetime.combine(self.fin, time.max)
             self.admisiones = Admision.objects.filter(
-                admision__range=(self.inicio, self.fin))
+                admision__range=(self.inicio, self.fin),
+                habitacion__isnull=False)
 
         else:
 
