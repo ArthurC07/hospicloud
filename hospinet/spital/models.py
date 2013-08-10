@@ -30,6 +30,23 @@ from emergency.models import Emergencia
 from inventory.models import ItemTemplate, TipoVenta
 
 
+class CargoAdapter(object):
+
+    def __init__(self):
+
+        self.cantidad = 0
+        self.detalles = list()
+        self.precio_unitario = Decimal(0)
+        self.valor = Decimal(0)
+
+    def __unicode__(self):
+
+        return u'{0} {1}'.format(self.precio_unitario, self.valor)
+
+    def __str__(self):
+
+        return '{0} {1}'.format(self.precio_unitario, self.valor)
+
 class Habitacion(models.Model):
     """Permite llevar control acerca de las :class:`Habitacion`es que se
     encuentran en el hospital para asignar adecuadamente las mismas a cada
@@ -339,14 +356,16 @@ class Admision(models.Model):
 
     def agrupar_cargos(self):
 
-        agrupados = defaultdict(list)
+        agrupados = defaultdict(CargoAdapter)
 
         for cargo in self.cargos.all():
 
-            agrupados[cargo.cargo].append(cargo)
+            agrupados[cargo.cargo].cantidad += cargo.cantidad
+            agrupados[cargo.cargo].detalles.append(cargo)
+            agrupados[cargo.cargo].precio_unitario = cargo.precio_unitario()
+            agrupados[cargo.cargo].valor += cargo.valor()
 
-        print(agrupados)
-        return agrupados
+        return dict(agrupados)
 
 
 class PreAdmision(TimeStampedModel):
