@@ -1,32 +1,47 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-{% include 'snippets/aside.html' with admision=admision %}
-<div id="admision" class="span9">
-    <div class="top title">
-      <h1>Gr&aacute;fica de Lecturas de {{ admision.paciente.nombre_completo }}</h1>
-    </div>
-    <div id="signos_vitales" class="bloque-superior">
-      <article id="temperatura-article">
-        <section>
-            <div id="temperatura" class="grafica"></div>
+    <div class="row">
+        <section class="span12">
+            <div class="page-header">
+                <h1>{{ admision.paciente.nombre_completo }} <br/>
+                    <small>
+                        {{ admision.habitacion }},
+                        Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
+                    </small>
+                </h1>
+            </div>
         </section>
-        <p>&nbsp;</p>
-        <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
-      </article>
-      <article id="presion-article">
-        <div id="presion" class="grafica"></div>
-        <p>&nbsp;</p>
-        <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }} / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
-      </article>
-      <article id="pulso-article">  
-        <div id="pulso" class="grafica"></div>
-        <p>&nbsp;</p>
-        <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
-      </article>
     </div>
-</div>
+    <div class="row">
+        {% include 'snippets/aside.html' with admision=admision %}
+        <div id="admision" class="span9">
+            <div id="signos_vitales" class="bloque-superior">
+                <article id="temperatura-article">
+                    <section>
+                        <div id="temperatura" class="grafica"></div>
+                    </section>
+                    <p>&nbsp;</p>
+
+                    <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
+                </article>
+                <article id="presion-article">
+                    <div id="presion" class="grafica"></div>
+                    <p>&nbsp;</p>
+
+                    <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }}
+                        / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
+                </article>
+                <article id="pulso-article">
+                    <div id="pulso" class="grafica"></div>
+                    <p>&nbsp;</p>
+
+                    <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
+                </article>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block scripts %}
-{% include 'snippets/signos_js.html' %}
+    {% include 'snippets/signos_js.html' %}
 {% endblock %}

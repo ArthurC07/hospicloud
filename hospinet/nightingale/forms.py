@@ -92,6 +92,29 @@ class CargoForm(AdmisionBaseForm):
         self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
 
 
+class PreCargoForm(AdmisionBaseForm):
+    """Muestra un formulario que permite agregar :class:`Cargo`s a una
+    :class:`Persona` durante una :class:`Admision`"""
+
+    class Meta:
+        model = Cargo
+        exclude = ('facturada', )
+
+    cargo = forms.ModelChoiceField(label="",
+                                   queryset=ItemTemplate.objects.filter(
+                                       activo=True).order_by(
+                                       'descripcion').all(),
+                                   widget=forms.HiddenInput(), required=False)
+    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                 initial=timezone.now)
+    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                              initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(PreCargoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
+
+
 class SumarioForm(AdmisionBaseForm):
     """Muestra un formulario que permite agregar :class:`Cargo`s a una
     :class:`Persona` durante una :class:`Admision`"""

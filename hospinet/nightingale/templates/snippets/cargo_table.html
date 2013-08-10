@@ -1,45 +1,48 @@
 {% load l10n %}
 <table class="table table-striped table-bordered no-more-tables">
-  <thead>
+    <thead>
     <tr>
-      <th>Fecha y Hora</th>
-      <th>C&oacute;digo</th>
-      <th>Cargo</th>
-      <th>Cantidad</th>
-      <th>Acciones</th>
+        <th>C&oacute;digo</th>
+        <th>Cargo</th>
+        <th>Cantidad</th>
+        <th>Acciones</th>
     </tr>
-  </thead>
-  <tbody>
-    {% if admision.cargos.count == 0%}
-    <tr>
-      <td colspan="5">No hay cargos registrados</td>
-    </tr>
-    {% endif%}
-    {% for cargo in admision.cargos.all %}
-    <tr>
-        {% localize off %}
-      <td data-title="Fecha y Hora">{{ cargo.created|date:"d/m/Y P" }}</td>
-        {% endlocalize %}
-      <td data-title="Código">{{ cargo.cargo.id }}</td>
-      <td data-title="Cargo">{{ cargo.cargo }}</td>
-      <td data-title="Cantidad">{{ cargo.cantidad }}</td>
-      <td data-title="Acciones">
-        <a class="btn btn-danger" href="{% url 'enfermeria-cargo-eliminar' cargo.id %}"><i class="icon-trash"></i> Eliminar</a>
-          <a class="btn btn-info" href="{% url 'enfermeria-cargo-editar' cargo.id %}"><i class="icon-trash"></i> Editar</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<ul>
+    </thead>
+    <tbody>
+    {% if admision.cargos.count == 0 %}
+        <tr>
+            <td colspan="5">No hay cargos registrados</td>
+        </tr>
+    {% endif %}
     {% for cargo, lista in admision.agrupar_cargos.items %}
-        <li>
-            {{ cargo.id }} - {{ cargo.descripcion }} - {{ lista.cantidad }}
-            <ul>
-                {% for detalle in lista.detalles %}
-                    <li>{{ detalle.created }} - Cantidad {{ detalle.cantidad }} {{ detalle.unidad }}</li>
-                {% endfor %}
-            </ul>
-        </li>
+        <tr>
+            <td data-title="Código">{{ cargo.id }}</td>
+            <td data-title="Cargo">
+                {{ cargo }}
+                <ul>
+                    {% for detalle in lista.detalles %}
+                        <li>
+                            {{ detalle.created }} -
+                            Cantidad {{ detalle.cantidad }} {{ detalle.unidad }}
+                            <a class="btn btn-danger no-print"
+                               href="{% url 'enfermeria-cargo-eliminar' detalle.id %}"><i
+                                    class="icon-trash"></i></a>
+                            <a class="btn btn-info no-print"
+                               href="{% url 'enfermeria-cargo-editar' detalle.id %}"><i
+                                    class="icon-edit"></i></a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td data-title="Cantidad">
+                {{ lista.cantidad }}
+            </td>
+            <td data-title="Acciones">
+                <a class="btn btn-primary"
+                   href="{% url 'enfermeria-cargo-pre-agregar' admision.id cargo.id %}"><i
+                        class="icon-plus"></i> Agregar</a>
+            </td>
+        </tr>
     {% endfor %}
-</ul>
+    </tbody>
+</table>

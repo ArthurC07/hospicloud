@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load l10n %}{% load staticfiles %}
+{% load l10n %}{% load staticfiles %}{% load humanize %}
 {% block content %}
     <div class="row">
         <div class="span12 text-center">
@@ -48,9 +48,9 @@
                         <td data-title="Código">{{ admision.habitacion.item.id }}</td>
                     {% endlocalize %}
                     <td data-title="Cargo">Hospitalizaci&oacute;n</td>
-                    <td data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
-                    <td data-title="Precio Unitario">{{ admision.precio_diario }}</td>
-                    <td data-title="Total">{{ admision.debido }}</td>
+                    <td class="text-right" data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
+                    <td class="text-right" data-title="Precio Unitario">{{ admision.precio_diario|floatformat:2|intcomma }}</td>
+                    <td class="text-right" data-title="Total">{{ admision.debido|floatformat:2|intcomma }}</td>
                 </tr>
                 {% for honorario in admision.honorarios.all %}
                     <tr>
@@ -59,8 +59,8 @@
                         {% endlocalize %}
                         <td data-title="Cargo">{{ honorario.item }}</td>
                         <td></td>
-                        <td data-title="Precio Unitario">{{ honorario.monto }}</td>
-                        <td data-title="Total">{{ honorario.monto }}</td>
+                        <td class="text-right" data-title="Precio Unitario">{{ honorario.monto|floatformat:2|intcomma }}</td>
+                        <td class="text-right" data-title="Total">{{ honorario.monto|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}
                 {% for terapia in admision.oxigeno_terapias.all %}
@@ -69,9 +69,9 @@
                             <td data-title="Código">{{ terapia.cargo.id }}</td>
                         {% endlocalize %}
                         <td data-title="Cargo">Oxigeno</td>
-                        <td data-title="Tiempo">{{ terapia.tiempo }}</td>
-                        <td data-title="Litros">{{ terapia.litros }}</td>
-                        <td class="no-print" data-title="Total">{{ terapia.valor }}</td>
+                        <td class="text-right" data-title="Tiempo">{{ terapia.tiempo }}</td>
+                        <td class="text-right" data-title="Litros">{{ terapia.litros }}</td>
+                        <td class="text-right" data-title="Total">{{ terapia.valor|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}
                 {% for cargo, lista in admision.agrupar_cargos.items %}
@@ -80,16 +80,16 @@
                             <td data-title="Código">{{ cargo.id }}</td>
                         {% endlocalize %}
                         <td data-title="Cargo">{{ cargo }}</td>
-                        <td data-title="Cantidad">{{ lista.cantidad }}</td>
-                        <td data-title="Precio Unitario">{{ lista.precio_unitario }}</td>
-                        <td data-title="Total">{{ lista.valor }}</td>
+                        <td data-title="Cantidad" class="text-right">{{ lista.cantidad }}</td>
+                        <td data-title="Precio Unitario" class="text-right">{{ lista.precio_unitario|floatformat:2|intcomma }}</td>
+                        <td data-title="Total" class="text-right">{{ lista.valor|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 <tr>
                     <th colspan="4">Total</th>
-                    <th >{{ admision.estado_de_cuenta }}</th>
+                    <th >{{ admision.estado_de_cuenta|floatformat:2|intcomma }}</th>
                 </tr>
                 </tfoot>
             </table>

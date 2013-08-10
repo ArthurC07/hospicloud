@@ -164,3 +164,6 @@ caption {
     font-size: large;
     padding-bottom: 5px;
 }
+.table td.text-right{
+    text-align: right;
+}
