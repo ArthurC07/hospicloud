@@ -236,10 +236,10 @@ class Admision(models.Model):
         centro hospitalario"""
 
         if self.hospitalizacion == None:
-            return (timezone.now() - self.momento).total_seconds() / 60
+            return (timezone.now() - self.momento).days
 
         if self.ingreso == None or self.ingreso <= self.hospitalizacion:
-            return (timezone.now() - self.hospitalizacion).total_seconds() / 60
+            return (timezone.now() - self.hospitalizacion).total_seconds().days
 
         return (self.fecha_alta - self.hospitalizacion).days
 

@@ -235,6 +235,12 @@ class AdmisionPeriodoMixin(TemplateView):
         return context
 
 
+class HabitacionAdapter(object):
+
+    def __init__(self):
+        self.admisiones = 0
+        self.dias = 0
+
 class HabitacionPopularView(AdmisionPeriodoMixin, LoginRequiredMixin):
     template_name = 'estadisticas/habitacion_popular.html'
 
@@ -250,10 +256,14 @@ class HabitacionPopularView(AdmisionPeriodoMixin, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super(HabitacionPopularView, self).get_context_data(**kwargs)
 
-        habitaciones = defaultdict(int)
+        habitaciones = defaultdict(HabitacionAdapter)
         for habitacion in Habitacion.objects.all():
-            habitaciones[habitacion] += self.admisiones.filter(
+            habitaciones[habitacion].admisiones += self.admisiones.filter(
                 habitacion=habitacion).count()
+
+        for admision in self.admisiones.all():
+
+            habitaciones[admision.habitacion].dias += admision.tiempo_hospitalizado()
 
         context['habitaciones'] = sorted(habitaciones.iteritems())
         return context
