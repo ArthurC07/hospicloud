@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 {% load l10n %}
 {% block content %}
-<div class="row">
-<section id="ingestas-excretas" class="span12">
-  <div class="page-header">
-    <h1>{{ admision.paciente.nombre_completo }} <small>{{ admision.habitacion }}</small></h1>
-  </div>
-</section>
-</div>
+    <div class="row">
+        <section class="span12">
+            <div class="page-header">
+                <h1>{{ admision.paciente.nombre_completo }} <br />
+                    <small>
+                        {{ admision.habitacion }},  Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
+                    </small></h1>
+            </div>
+        </section>
+    </div>
 <div class="row">
   {% include 'snippets/aside.html' with admision=admision %}
   <section id="signos-vitales" class="span9">
