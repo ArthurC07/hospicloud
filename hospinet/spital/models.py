@@ -239,7 +239,7 @@ class Admision(models.Model):
             return (timezone.now() - self.momento).days
 
         if self.ingreso == None or self.ingreso <= self.hospitalizacion:
-            return (timezone.now() - self.hospitalizacion).total_seconds().days
+            return (timezone.now() - self.hospitalizacion).days
 
         return (self.fecha_alta - self.hospitalizacion).days
 
