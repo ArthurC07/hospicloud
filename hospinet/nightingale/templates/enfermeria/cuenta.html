@@ -4,10 +4,8 @@
   <section class="span12">
     <div class="page-header">
       <h1>{{ admision.paciente.nombre_completo }}<br/>
-          <small>{{ admision.habitacion }},  Dr. {{ admision.doctor }}, {{ admision.diagnostico }} Cuenta {{ admision.id }}</small></h1>
+          <small>{{ admision.habitacion }}, {{ admision.doctor }}, {{ admision.diagnostico }} Cuenta {{ admision.id }}</small></h1>
     </div>
-
-      {% include 'snippets/persona.html' with persona=admision.paciente %}
   </section>
 </div>
 <div class="row">
@@ -36,73 +34,53 @@
       <table class="table table-striped table-bordered no-more-tables">
         <thead>
           <tr>
-            <th>Fecha y Hora</th>
             <th>C&oacute;digo</th>
             <th>Cargo</th>
             <th>Cantidad</th>
             <th>Precio Unitario</th>
             <th>Precio Valor Total</th>
-            <th class="no-print">Usuario</th>
-            <th class="no-print">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td data-title="Fecha y Hora">{{ admision.ultimo_cobro }}</td>
             <td data-title="Código">{{ admision.habitacion.item.id }}</td>
-            <td data-title="Cargo">{{ admision.habitacion.item }}</td>
+            <td data-title="Cargo">Hospitalizaci&oacute;n</td>
             <td data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
             <td data-title="Precio Unitario">{{ admision.precio_diario }}</td>
             <td data-title="Total">{{ admision.debido }}</td>
-            <td class="no-print"></td>
-            <td class="no-print" data-title="Acciones"></td>
           </tr>
           {% for honorario in admision.honorarios.all %}
           <tr>
-              <td data-title="Fecha y Hora">{{ honorario.created }}</td>
               <td data-title="Código">{{ honorario.item.id }}</td>
               <td data-title="Cargo">{{ honorario.item }}</td>
               <td></td>
               <td data-title="Precio Unitario">{{ honorario.monto }}</td>
               <td data-title="Total">{{ honorario.monto }}</td>
-              <td class="no-print" data-title="Usuario">{{ honorario.usuario.full_name }}</td>
-              <td class="no-print"  data-title="Acciones">
-                <a class="btn btn-danger" href="{% url 'enfermeria-honorario-eliminar' honorario.id %}"><i class="icon-trash"></i> Eliminar</a>
-              </td>
           </tr>
           {% endfor %}
           {% for terapia in admision.oxigeno_terapias.all %}
           <tr>
-            <td data-title="Fecha y Hora">{{ terapia.created|date:"d/m/Y P" }} a {{ terapia.final|date:"d/m/Y P" }}</td>
             <td data-title="Código">{{ terapia.cargo.id }}</td>
-            <td data-title="Cargo">{{ terapia.cargo }}</td>
+            <td data-title="Cargo">Oxigeno</td>
             <td data-title="Tiempo">{{ terapia.tiempo }}</td>
             <td data-title="Litros">{{ terapia.litros }}</td>
             <td class="no-print" data-title="Total">{{ terapia.valor }}</td>
-            <td class="no-print"></td>
-            <td data-title="Acciones">
-              <a class="btn btn-danger" href="{% url 'enfermeria-oxigeno-terminar' terapia.id %}"><i class="icon-trash"></i> Terminar</a>
-            </td>
           </tr>
           {% endfor %}
-          {% for cargo in admision.cargos.all %}
+          {% for cargo, lista in admision.agrupar_cargos.items %}
           <tr>
-            <td data-title="Fecha y Hora">{{ cargo.created|date:"d/m/Y P" }}</td>
-            <td data-title="Código">{{ cargo.cargo.id }}</td>
-            <td data-title="Cargo">{{ cargo.cargo }}</td>
-            <td data-title="Cantidad">{{ cargo.cantidad }}</td>
-            <td data-title="Precio Unitario">{{ cargo.precio_unitario }}</td>
-            <td data-title="Total">{{ cargo.valor }}</td>
-            <td class="no-print">{{ cargo.usuario }}</td>
-            <td class="no-print" data-title="Acciones"><a class="btn btn-danger" href="{% url 'enfermeria-cargo-eliminar' cargo.id %}"><i class="icon-trash"></i> Eliminar</a></td>
+            <td data-title="Código">{{ cargo.id }}</td>
+            <td data-title="Cargo">{{ cargo }}</td>
+            <td data-title="Cantidad">{{ lista.cantidad }}</td>
+            <td data-title="Precio Unitario">{{ lista.precio_unitario }}</td>
+            <td data-title="Total">{{ lista.valor }}</td>
           </tr>
           {% endfor %}
         </tbody>
         <tfoot>
           <tr>
-            <th colspan="5">Total</th>
-            <th colspan="2">{{ admision.estado_de_cuenta }}</th>
-            <th class="no-print"></th>
+            <th colspan="4">Total</th>
+            <th >{{ admision.estado_de_cuenta }}</th>
           </tr>
         </tfoot>
       </table>

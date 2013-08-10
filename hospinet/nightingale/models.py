@@ -40,7 +40,8 @@ class Precio(object):
             .precio_de_venta / Decimal(
             100)
 
-        return self.cargo.precio_de_venta + aumento - disminucion
+        return (self.cargo.precio_de_venta + aumento - disminucion).quantize(
+            Decimal("0.01"))
 
 
 class Turno(object):

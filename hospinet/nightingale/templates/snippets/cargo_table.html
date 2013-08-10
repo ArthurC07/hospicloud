@@ -29,13 +29,12 @@
   </tbody>
 </table>
 <ul>
-    {% for cargo, lista in admision.agrupar_cargos %}
+    {% for cargo, lista in admision.agrupar_cargos.items %}
         <li>
-            {{ cargo.descripcion }} 1
+            {{ cargo.id }} - {{ cargo.descripcion }} - {{ lista.cantidad }}
             <ul>
-                {% for detalle in lista %}
-                    <li>{{ detalle.created }}
-                    1</li>
+                {% for detalle in lista.detalles %}
+                    <li>{{ detalle.created }} - Cantidad {{ detalle.cantidad }} {{ detalle.unidad }}</li>
                 {% endfor %}
             </ul>
         </li>
