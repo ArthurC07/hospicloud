@@ -5,8 +5,8 @@
             <div class="page-header">
                 <h1>{{ admision.paciente.nombre_completo }} <br/>
                     <small>
-                        {{ admision.habitacion }},
-                        {{ admision.doctor }}, {{ admision.diagnostico }}
+                        {{ admision.habitacion }}, {{ admision.doctor }}, {{ admision.diagnostico }}
+                        Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}
                     </small>
                 </h1>
             </div>
