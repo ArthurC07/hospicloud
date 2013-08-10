@@ -234,17 +234,26 @@ class Admision(models.Model):
 
         """Calcula los días que una :class:`Persona` es atendida en el
         centro hospitalario"""
-
+        dias = 0
+        fraccion_dias = 0
         if self.hospitalizacion == None:
-            return (timezone.now() - self.momento).days
+            dias = (timezone.now() - self.momento).days
+            fraccion_dias = (timezone.now() - self.momento).total_seconds() / 3600 / 24
+            return dias + fraccion_dias
 
         if self.fecha_alta > self.hospitalizacion:
-            return (self.fecha_alta - self.hospitalizacion).days
+            dias = (self.fecha_alta - self.hospitalizacion).days
+            fraccion_dias = (self.fecha_alta - self.hospitalizacion).total_seconds() / 3600 /24
+            return dias + fraccion_dias
 
         if self.ingreso == None or self.ingreso <= self.hospitalizacion:
-            return (timezone.now() - self.hospitalizacion).days
+            dias = (timezone.now() - self.hospitalizacion).days
+            fraccion_dias = (timezone.now() - self.hospitalizacion).total_seconds() / 3600 / 24
+            return dias + fraccion_dias
 
-        return (self.fecha_alta - self.hospitalizacion).days
+        dias = (self.fecha_alta - self.hospitalizacion).days
+        fraccion_dias = (self.fecha_alta - self.hospitalizacion).total_seconds() / 3600 /24
+        return dias + fraccion_dias
 
     def tiempo_cobro(self):
 
