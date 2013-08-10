@@ -14,51 +14,48 @@
     </div>
     <div class="row action-nav-normal">
         <section class="span4 action-nav-button">
-            <a href="{% url 'nightingale-resume' admision.uuid %}"><span>Resumen</span></a>
+            <a href="{% url 'nightingale-resume' admision.uuid %}"><i class="icon-list-ol"></i><span>Resumen</span></a>
         </section>
         <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-cuenta' admision.id %}"><span>Estado de Cuenta</span></a>
+            <a href="{% url 'enfermeria-cuenta' admision.id %}"><i class="icon-dollar"></i><span>Estado de Cuenta</span></a>
         </section>
         <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-cargos' admision.id %}"><span>Cargos y Medicamentos</span></a>
-        </section>
-    </div>
-    <div class="row action-nav-normal">
-        <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-oxigeno' admision.id %}">Ox&iacute;geno-Terapia</a>
-        </section>
-        <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-honorarios' admision.id %}">Honorarios y
-                Examenes</a>
-        </section>
-        <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-signos' admision.id %}">Signos
-                Vitales</a>
+            <a href="{% url 'enfermeria-cargos' admision.id %}"><i class="icon-medkit"></i><span>Cargos y Medicamentos</span></a>
         </section>
     </div>
     <div class="row action-nav-normal">
         <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-ordenes' admision.id %}">Ordenes M&eacute;dicas</a>
+            <a href="{% url 'enfermeria-oxigeno' admision.id %}"><i class="icon-dashboard"></i><span>Ox&iacute;geno-Terapia</span></a>
         </section>
         <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-evolucion' admision.id %}">Evoluci&oacute;n</a>
+            <a href="{% url 'enfermeria-honorarios' admision.id %}"><i class="icon-user-md"></i><span>Honorarios</span></a>
         </section>
         <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-ingestas-excretas' admision.id %}">Ingestas
-                y Excretas</a>
+            <a href="{% url 'enfermeria-signos' admision.id %}"><i class="icon-heart"></i><span>Signos
+                Vitales</span></a>
         </section>
     </div>
     <div class="row action-nav-normal">
         <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-devoluciones' admision.uuid %}">Devoluciones</a>
+            <a href="{% url 'enfermeria-ordenes' admision.id %}"><i class="icon-stethoscope"></i><span>Ordenes M&eacute;dicas</span></a>
         </section>
         <section class="span4 action-nav-button">
-            <a href="{% url 'enfermeria-dar-alta' admision.id %}">Dar de
-                Alta</a>
+            <a href="{% url 'enfermeria-evolucion' admision.id %}"><i class="icon-upload-alt"></i><span>Evoluci&oacute;n</span></a>
         </section>
         <section class="span4 action-nav-button">
-            <a href="{% url 'examen-programar' admision.paciente.id %}">Programar
-                Estudio</a>
+            <a href="{% url 'enfermeria-ingestas-excretas' admision.id %}"><i class="icon-unlink"></i><span>Ingestas
+                y Excretas</span></a>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-notas' admision.id %}"><i class="icon-pencil"></i><span>Notas de Enfermer&iacute;a</span></a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-dar-alta' admision.id %}"><i class="icon-plus-sign-alt"></i><span>Exámenes</span></a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="{% url 'enfermeria-glucometria' admision.id %}"><i class="icon-tint"></i><span>Glucometr&iacute;a</span></a>
         </section>
     </div>
     <div class="row action-nav-normal">
