@@ -117,6 +117,14 @@ class NightingaleDetailView(DetailView, LoginRequiredMixin):
     template_name = 'enfermeria/nightingale_detail.html'
     slug_field = 'uuid'
 
+    def get_context_data(self, **kwargs):
+
+        context = super(NightingaleDetailView, self).get_context_data(**kwargs)
+
+        context['fecha'] = timezone.now()
+
+        return context
+
 
 class SignosDetailView(DetailView, LoginRequiredMixin):
     """Muestra los datos sobre los signos vitales de una :class:`Persona` en
