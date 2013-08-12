@@ -16,7 +16,8 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from spital.models import Admision, Habitacion
+from spital.models import Admision, Habitacion, PreAdmision
 
 admin.site.register(Admision)
 admin.site.register(Habitacion)
+admin.site.register(PreAdmision)
