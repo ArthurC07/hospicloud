@@ -71,7 +71,7 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
 
         self.fin = date.today()
         mes = timedelta(30)
-        self.inicio = self.inicio - mes
+        self.inicio = self.fin - mes
         self.inicio = datetime.combine(self.inicio, time.min)
         self.fin = datetime.combine(self.fin, time.max)
 
