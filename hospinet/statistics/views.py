@@ -44,28 +44,33 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
 
     def create_forms(self, context):
         context['formulario_anual'] = ReporteAnualForm()
+
         context['admision_periodo'] = PeriodoForm(prefix='admisiones')
-        context[
-            'admision_periodo'].helper.form_action = \
+        context['admision_periodo'].helper.form_action = \
             'estadisticas-hospitalizacion'
         context['admision_periodo'].helper.layout = Fieldset(
             u'Admisiones por Periodo',
             *context['admision_periodo'].field_names)
+
         context['emergencia_periodo'] = PeriodoForm(prefix='emergencia')
-        context[
-            'emergencia_periodo'].helper.form_action = \
+        context['emergencia_periodo'].helper.form_action = \
             'estadisticas-emergencias'
         context['emergencia_periodo'].helper.layout = Fieldset(
             u'Emergencias por Periodo',
             *context['emergencia_periodo'].field_names)
 
         context['habitacion_popular'] = PeriodoForm(prefix='popular')
-        context[
-            'habitacion_popular'].helper.form_action = \
+        context['habitacion_popular'].helper.form_action = \
             'estadisticas-habitacion-popular'
         context['habitacion_popular'].helper.layout = Fieldset(
             u'Uso de Habitaciones',
             *context['habitacion_popular'].field_names)
+
+        context['diagnostico'] = PeriodoForm(prefix='diagnostico')
+        context['diagnostico'].helper.form_action = 'estadisticas-diagnostico'
+        context['diagnostico'].helper.layout = Fieldset(
+            u'Admisiones por Diagnóstico',
+            *context['diagnostico'].field_names)
 
     def get_fechas(self):
 
@@ -81,6 +86,23 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
             admision__range=(self.inicio, self.fin),
             habitacion__isnull=False)
 
+    def get_diagnosticos(self, context):
+
+        diangosticos = defaultdict(int)
+        for admision in self.admisiones.all():
+            diangosticos[admision.diagnostico.upper()] += 1
+        context['diagnosticos'] = sorted(diangosticos.iteritems())
+
+    def get_habitaciones(self, context):
+        habitaciones = defaultdict(HabitacionAdapter)
+        for habitacion in Habitacion.objects.all():
+            habitaciones[habitacion].admisiones += self.admisiones.filter(
+                habitacion=habitacion).count()
+        for admision in self.admisiones.all():
+            habitaciones[
+                admision.habitacion].dias += admision.tiempo_hospitalizado()
+        context['habitaciones'] = sorted(habitaciones.iteritems())
+
     def get_context_data(self, **kwargs):
 
         context = super(Estadisticas, self).get_context_data(**kwargs)
@@ -89,16 +111,9 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
         self.get_fechas()
         self.get_admisiones()
 
-        habitaciones = defaultdict(HabitacionAdapter)
-        for habitacion in Habitacion.objects.all():
-            habitaciones[habitacion].admisiones += self.admisiones.filter(
-                habitacion=habitacion).count()
+        self.get_habitaciones(context)
 
-        for admision in self.admisiones.all():
-
-            habitaciones[admision.habitacion].dias += admision.tiempo_hospitalizado()
-
-        context['habitaciones'] = sorted(habitaciones.iteritems())
+        self.get_diagnosticos(context)
 
         return context
 
@@ -260,7 +275,6 @@ class AdmisionPeriodoMixin(TemplateView):
                 habitacion__isnull=False)
 
         else:
-
             return redirect('estadisticas')
 
         return super(AdmisionPeriodoMixin, self).dispatch(request, *args,
@@ -300,6 +314,30 @@ class HabitacionPopularView(AdmisionPeriodoMixin, LoginRequiredMixin):
             habitaciones[admision.habitacion].dias += admision.tiempo_hospitalizado()
 
         context['habitaciones'] = sorted(habitaciones.iteritems())
+        return context
+
+
+class DiagnosticoView(AdmisionPeriodoMixin, LoginRequiredMixin):
+    template_name = 'estadisticas/diagnostico.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
+        el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='diagnostico')
+
+        return super(DiagnosticoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(DiagnosticoView, self).get_context_data(**kwargs)
+
+        diangosticos = defaultdict(int)
+
+        for admision in self.admisiones.all():
+
+            diangosticos[admision.diagnostico.upper()] += 1
+
+        context['diagnosticos'] = sorted(diangosticos.iteritems())
         return context
 
 

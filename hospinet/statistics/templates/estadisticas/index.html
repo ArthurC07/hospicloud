@@ -27,6 +27,23 @@
         </div>
     </div>
     <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="page-header">
+                    <h1>Admisiones por Diagnóstico del Último Mes</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span6">
+                    <canvas width="400" height="400" id="diagnostico"></canvas>
+                </div>
+                <div class="span6">
+                    {% crispy diagnostico %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
     <div class="span12">
     <div class="row">
         <div class="span4">
@@ -59,6 +76,18 @@
             };
             var ctx = $("#habitacion").get(0).getContext("2d");
             var grafico = new Chart(ctx).Bar(data);
+            data = {
+                labels : [ {% for diagnostico, cantidad in diagnosticos %} '{{ diagnostico }}', {% endfor %} '' ],
+                datasets : [
+                    {
+                        fillColor : "rgba(151,187,205,0.5)",
+                        strokeColor : "rgba(151,187,205,1)",
+                        data : [ {% for diagnostico, cantidad in diagnosticos %} {{ diagnostico }}, {% endfor %} 0 ]
+                    }
+                ]
+            };
+            ctx = $("#diagnostico").get(0).getContext("2d");
+            grafico = new Chart(ctx).Bar(data);
         });
     </script>
 {% endlocalize %}
