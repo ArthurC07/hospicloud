@@ -69,9 +69,9 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
 
     def get_fechas(self):
 
-        self.inicio = date.today()
+        self.fin = date.today()
         mes = timedelta(30)
-        self.fin = self.inicio - mes
+        self.inicio = self.inicio - mes
         self.inicio = datetime.combine(self.inicio, time.min)
         self.fin = datetime.combine(self.fin, time.max)
 
