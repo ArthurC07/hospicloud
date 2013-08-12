@@ -244,7 +244,7 @@ class Admision(models.Model):
 
         if self.fecha_alta > self.hospitalizacion:
             dias = (self.fecha_alta - self.hospitalizacion).days
-            fraccion_dias = divmod((self.fecha_alta - self.hospitalizacion).seconds, 3600)[0] / 24
+            fraccion_dias = (self.fecha_alta - self.hospitalizacion).seconds / 3600 / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
