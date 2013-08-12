@@ -18,7 +18,7 @@
 import calendar
 from datetime import date
 from decimal import Decimal
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from collections import defaultdict
 
 from django.views.generic.base import TemplateView
@@ -32,11 +32,17 @@ from emergency.models import Emergencia
 from users.mixins import LoginRequiredMixin
 
 
+class HabitacionAdapter(object):
+
+    def __init__(self):
+        self.admisiones = 0
+        self.dias = 0
+
+
 class Estadisticas(TemplateView, LoginRequiredMixin):
     template_name = 'estadisticas/index.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(Estadisticas, self).get_context_data(**kwargs)
+    def create_forms(self, context):
         context['formulario_anual'] = ReporteAnualForm()
         context['admision_periodo'] = PeriodoForm(prefix='admisiones')
         context[
@@ -60,6 +66,40 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
         context['habitacion_popular'].helper.layout = Fieldset(
             u'Uso de Habitaciones',
             *context['habitacion_popular'].field_names)
+
+    def get_fechas(self):
+
+        self.inicio = date.today()
+        mes = timedelta(30)
+        self.fin = self.inicio - mes
+        self.inicio = datetime.combine(self.inicio, time.min)
+        self.fin = datetime.combine(self.fin, time.max)
+
+    def get_admisiones(self):
+
+        self.admisiones = Admision.objects.filter(
+            admision__range=(self.inicio, self.fin),
+            habitacion__isnull=False)
+
+    def get_context_data(self, **kwargs):
+
+        context = super(Estadisticas, self).get_context_data(**kwargs)
+
+        self.create_forms(context)
+        self.get_fechas()
+        self.get_admisiones()
+
+        habitaciones = defaultdict(HabitacionAdapter)
+        for habitacion in Habitacion.objects.all():
+            habitaciones[habitacion].admisiones += self.admisiones.filter(
+                habitacion=habitacion).count()
+
+        for admision in self.admisiones.all():
+
+            habitaciones[admision.habitacion].dias += admision.tiempo_hospitalizado()
+
+        context['habitaciones'] = sorted(habitaciones.iteritems())
+
         return context
 
 
@@ -234,13 +274,6 @@ class AdmisionPeriodoMixin(TemplateView):
         context['fin'] = self.fin
 
         return context
-
-
-class HabitacionAdapter(object):
-
-    def __init__(self):
-        self.admisiones = 0
-        self.dias = 0
 
 class HabitacionPopularView(AdmisionPeriodoMixin, LoginRequiredMixin):
     template_name = 'estadisticas/habitacion_popular.html'
