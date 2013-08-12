@@ -18,7 +18,7 @@
 from django.conf.urls import patterns, url
 from statistics.views import (AtencionAdulto, Estadisticas, AtencionInfantil,
     Productividad, IngresosHospitalarios, AdmisionPeriodo, EmergenciaPeriodo,
-    HabitacionPopularView)
+    HabitacionPopularView, DiagnosticoView)
 
 urlpatterns = patterns('',
     
@@ -53,4 +53,8 @@ urlpatterns = patterns('',
     url(r'^habitacion/popular$',
         HabitacionPopularView.as_view(),
         name='estadisticas-habitacion-popular'),
+
+    url(r'^admision/diagnostico$',
+        DiagnosticoView.as_view(),
+        name='estadisticas-diagnostico'),
 )
