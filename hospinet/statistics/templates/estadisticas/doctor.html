@@ -4,7 +4,7 @@
 <div class="row">
   <section class="span12">
     <div class="page-header">
-      <h1>Admisión por Diagnóstico</h1>
+      <h1>Admisión por Doctor</h1>
       <small>Del {{ inicio }} al {{ fin }}</small>
     </div>
   </section>
@@ -19,9 +19,9 @@
         </tr>
       <thead>
       <tbody>
-       {% for diagnostico, cantidad in diagnosticos %}
+       {% for doctor, cantidad in doctores %}
         <tr>
-          <td>{{ diagnostico }}</td>
+          <td>{{ doctor }}</td>
           <td>{{ cantidad }}</td>
         </tr>
        {% endfor %}
@@ -29,7 +29,7 @@
     </table>
   </article>
   <article class="span6">
-      <canvas width="400" height="400" id="diagnostico"></canvas>
+      <canvas width="400" height="400" id="doctor"></canvas>
   </article>
 </div>
 {% endblock %}
@@ -40,16 +40,16 @@
     $(document).ready(function()
     {
         var data = {
-            labels : [ {% for diagnostico, cantidad in diagnosticos %} '{{ diagnostico }}', {% endfor %} '' ],
+            labels : [ {% for doctor, cantidad in doctores %} '{{ diagnostico }}', {% endfor %} '' ],
             datasets : [
                 {
                     fillColor : "rgba(151,187,205,0.5)",
                     strokeColor : "rgba(151,187,205,1)",
-                    data : [ {% for diagnostico, cantidad in diagnosticos %} {{ cantidad }}, {% endfor %} 0 ]
+                    data : [ {% for doctor, cantidad in doctores %} {{ cantidad }}, {% endfor %} 0 ]
                 }
             ]
         };
-        var ctx = $("#diagnostico").get(0).getContext("2d");
+        var ctx = $("#doctor").get(0).getContext("2d");
         var grafico = new Chart(ctx).Bar(data);
     });
 </script>
