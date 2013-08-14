@@ -448,6 +448,7 @@ class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
         self.object.persona = self.preadmision.emergencia.persona
         self.object.admitio = self.request.user
         self.preadmision.compleatada = True
+        self.object.save()
         if self.preadmision.transferir_cobros:
             
             for cobro in self.preadmision.emergencia.cobros.all():
@@ -456,8 +457,7 @@ class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
                 cargo.cargo = cobro.cargo
                 cargo.cantidad = cobro.cantidad
                 cargo.save()
-        
-        self.object.save()
+
         self.preadmision.save()
         
         return HttpResponseRedirect(self.get_success_url())

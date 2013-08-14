@@ -72,6 +72,12 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
             u'Admisiones por Diagnóstico',
             *context['diagnostico'].field_names)
 
+        context['doctor'] = PeriodoForm(prefix='doctor')
+        context['doctor'].helper.form_action = 'estadisticas-doctor'
+        context['doctor'].helper.layout = Fieldset(
+            u'Admisiones por Doctor',
+            *context['doctor'].field_names)
+
     def get_fechas(self):
 
         self.fin = date.today()
@@ -338,6 +344,29 @@ class DiagnosticoView(AdmisionPeriodoMixin, LoginRequiredMixin):
             diangosticos[admision.diagnostico.upper()] += 1
 
         context['diagnosticos'] = sorted(diangosticos.iteritems())
+        return context
+
+class DoctorView(AdmisionPeriodoMixin, LoginRequiredMixin):
+    template_name = 'estadisticas/doctor.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
+        el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='doctor')
+
+        return super(DoctorView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(DoctorView, self).get_context_data(**kwargs)
+
+        doctores = defaultdict(int)
+
+        for admision in self.admisiones.all():
+
+            doctores[admision.doctor.upper()] += 1
+
+        context['doctores'] = sorted(doctores.iteritems())
         return context
 
 
