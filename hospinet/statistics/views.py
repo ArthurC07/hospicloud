@@ -78,6 +78,12 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
             u'Admisiones por Doctor',
             *context['doctor'].field_names)
 
+        context['cargo'] = PeriodoForm(prefix='cargos')
+        context['cargo'].helper.form_action = 'estadisticas-cargo'
+        context['cargo'].helper.layout = Fieldset(
+            u'Cargos por Periodo',
+            *context['cargo'].field_names)
+
     def get_fechas(self):
 
         self.fin = date.today()
@@ -346,6 +352,7 @@ class DiagnosticoView(AdmisionPeriodoMixin, LoginRequiredMixin):
         context['diagnosticos'] = sorted(diangosticos.iteritems())
         return context
 
+
 class DoctorView(AdmisionPeriodoMixin, LoginRequiredMixin):
     template_name = 'estadisticas/doctor.html'
 
@@ -364,9 +371,39 @@ class DoctorView(AdmisionPeriodoMixin, LoginRequiredMixin):
 
         for admision in self.admisiones.all():
 
-            doctores[admision.doctor.upper()] += 1
+            doctor = admision.doctor.upper().split('/')[0]
+
+            doctores[doctor] += 1
 
         context['doctores'] = sorted(doctores.iteritems())
+        return context
+
+
+class CargoView(AdmisionPeriodoMixin, LoginRequiredMixin):
+    template_name = 'estadisticas/cargo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
+        el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='cargos')
+
+        return super(CargoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CargoView, self).get_context_data(**kwargs)
+
+        cargos = defaultdict(int)
+
+        for admision in self.admisiones.all():
+
+            charges = admision.agrupar_cargos()
+
+            for cargo in charges:
+
+                cargos[cargo] += charges[cargo].cantidad
+
+        context['cargos'] = sorted(cargos.iteritems())
         return context
 
 
