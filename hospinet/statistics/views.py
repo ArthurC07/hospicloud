@@ -403,7 +403,7 @@ class CargoView(AdmisionPeriodoMixin, LoginRequiredMixin):
 
                 cargos[cargo] += int(charges[cargo].cantidad)
 
-        context['cargos'] = sorted(cargos.iterkeys(), key=lambda k: cargos[k][1])
+        context['cargos'] = sorted(cargos.iteritems())
         return context
 
 
