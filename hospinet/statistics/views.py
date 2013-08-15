@@ -371,7 +371,7 @@ class DoctorView(AdmisionPeriodoMixin, LoginRequiredMixin):
 
         for admision in self.admisiones.all():
 
-            doctor = admision.doctor.upper().split('/')[0]
+            doctor = admision.doctor.upper().split('/')[0].rstrip()
 
             doctores[doctor] += 1
 
@@ -401,9 +401,9 @@ class CargoView(AdmisionPeriodoMixin, LoginRequiredMixin):
 
             for cargo in charges:
 
-                cargos[cargo] += charges[cargo].cantidad
+                cargos[cargo] += int(charges[cargo].cantidad)
 
-        context['cargos'] = sorted(cargos.iteritems())
+        context['cargos'] = sorted(cargos.iterkeys(), key=lambda k: cargos[k][1])
         return context
 
 
