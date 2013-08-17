@@ -17,6 +17,7 @@
 
 from decimal import Decimal
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
@@ -44,6 +45,10 @@ class Recibo(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('invoice-view-id', args=[self.id])
+
+    def numero(self):
+
+        return settings.INVOICE_OFFSET + self.id
 
     def anular(self):
 

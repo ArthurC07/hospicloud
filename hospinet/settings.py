@@ -269,3 +269,4 @@ TIME_ZONE = 'America/Tegucigalpa'
 
 #HAYSTACK_SIGNAL_PROCESSOR = 'queued_search.signals.QueuedSignalProcessor'
 QUEUE_BACKEND = 'dummy'
+INVOICE_OFFSET = 0
