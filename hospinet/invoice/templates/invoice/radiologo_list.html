@@ -56,7 +56,7 @@
         {% for recibo in recibos.all %}
           {% for venta in recibo.ventas.all %}
           <tr>
-            <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.id }}</a></td>
+            <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.numero }}</a></td>
             <td>{{ recibo.created }}</td>
             <td>{{ recibo.cliente }}</td>
             <td>{{ venta.item }}</td>

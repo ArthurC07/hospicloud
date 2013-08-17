@@ -300,7 +300,7 @@ class Admision(models.Model):
 
         self.estado = 'C'
         self.fecha_alta = timezone.now()
-        (m.suspender() for m in self.medicamentos.all())
+        medicamentos = (m.suspender() for m in self.medicamentos.all())
 
     def actualizar_tiempo(self):
 
@@ -345,7 +345,7 @@ class Admision(models.Model):
             oxigeno.facturada = True
             oxigeno.save()
 
-        return items
+        return sorted(items)
 
     def __unicode__(self):
 
@@ -387,7 +387,7 @@ class Admision(models.Model):
             agrupados[cargo.cargo].precio_unitario = cargo.precio_unitario()
             agrupados[cargo.cargo].valor += cargo.valor()
 
-        return dict(agrupados)
+        return sorted(dict(agrupados))
 
 
 class PreAdmision(TimeStampedModel):
