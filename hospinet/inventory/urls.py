@@ -23,7 +23,8 @@ from inventory.views import (IndexView, ItemTemplateCreateView,
     TransferenciaDetailView, TransferidoCreateView, TransferenciaUpdateView,
     RequisicionUpdateView, ItemTemplateSearchView, ItemTemplateUpdateView,
     ItemTemplateListView, CompraCreateView, CompraDetailView, CompraListView,
-    ItemCompradoCreateView, ItemRequisicionDeleteView)
+    ItemCompradoCreateView, ItemRequisicionDeleteView, HistorialCreateView,
+    HistorialDetailView)
 
 urlpatterns = patterns('',
     
@@ -103,9 +104,17 @@ urlpatterns = patterns('',
         CompraCreateView.as_view(),
         name='compra-create'),
 
+    url(r'^(?P<inventario>\d+)/historial/agregar$',
+        HistorialCreateView.as_view(),
+        name='historial-create'),
+
     url(r'^compra/(?P<pk>\d+)$',
         CompraDetailView.as_view(),
         name='compra'),
+
+    url(r'^historial/(?P<pk>\d+)$',
+        HistorialDetailView.as_view(),
+        name='historial'),
 
     url(r'^compra/(?P<compra>\d+)/item/agregar$',
         ItemCompradoCreateView.as_view(),

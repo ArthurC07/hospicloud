@@ -27,7 +27,7 @@ from users.mixins import LoginRequiredMixin
 from inventory.models import (Inventario, Item, ItemTemplate, Transferencia,
                               Historial, ItemComprado, Transferido, Compra,
                               ItemType,
-                              Requisicion, ItemRequisicion, )
+                              Requisicion, ItemRequisicion, ItemHistorial)
 from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm,
                              HistorialForm, ItemForm, RequisicionForm,
                              ItemRequisicionForm, TransferenciaForm,
@@ -303,11 +303,6 @@ class ItemCompradoCreateView(CompraFormMixin, LoginRequiredMixin):
     form_class = ItemCompradoForm
 
 
-class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
-    model = Historial
-    form_class = HistorialForm
-
-
 class ItemTemplateSearchView(ListView, LoginRequiredMixin):
     context_object_name = 'items'
     model = ItemTemplate
@@ -319,6 +314,7 @@ class ItemTemplateSearchView(ListView, LoginRequiredMixin):
         #if not form.is_valid():
         #    redirect('admision-estadisticas')
         form.is_valid()
+        print(form.errors)
 
         query = form.cleaned_data['query']
 
@@ -327,4 +323,37 @@ class ItemTemplateSearchView(ListView, LoginRequiredMixin):
         )
 
         return queryset.all()
+
+
+
+class HistorialDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+    paginate_by = 10
+    template_name = 'inventory/historial_detail.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['historial'] = self.object
+        return super(HistorialDetailView, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        self.object = self.get_object(Historial.objects.all())
+        return self.object.items.all()
+
+
+class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
+    model = Historial
+    form_class = HistorialForm
+
+    def form_valid(self, form):
+
+        self.object = form.save()
+
+        for item in self.inventario.items.all():
+
+            historico = ItemHistorial()
+            historico.item = item.plantilla
+            historico.historial = self.object
+            historico.cantidad = item.cantidad
+            historico.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
