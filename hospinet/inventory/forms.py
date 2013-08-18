@@ -21,7 +21,7 @@ from crispy_forms.layout import Submit, Fieldset
 from chosen import forms as chosenforms
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
-                              Transferido, ItemComprado)
+                              Transferido, ItemComprado, Historial)
 
 
 class FieldSetFormMixin(forms.ModelForm):
@@ -169,7 +169,7 @@ class TransferidoForm(FieldSetFormMixin):
 
 class HistorialForm(FieldSetFormMixin):
     class Meta:
-        model = Transferido
+        model = Historial
 
     def __init__(self, *args, **kwargs):
         super(HistorialForm, self).__init__(*args, **kwargs)
