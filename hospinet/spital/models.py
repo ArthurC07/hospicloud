@@ -387,7 +387,7 @@ class Admision(models.Model):
             agrupados[cargo.cargo].precio_unitario = cargo.precio_unitario()
             agrupados[cargo.cargo].valor += cargo.valor()
 
-        return sorted(dict(agrupados))
+        return dict(agrupados)
 
 
 class PreAdmision(TimeStampedModel):

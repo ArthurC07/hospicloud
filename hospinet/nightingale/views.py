@@ -241,7 +241,7 @@ class AdmisionFormMixin(CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class CargoCreateView(AdmisionFormMixin):
+class CargoCreateView(AdmisionFormMixin, LoginRequiredMixin):
     """Permite crear un :class:`Cargo` a una :class:`Admision`"""
 
     model = Cargo
@@ -267,7 +267,7 @@ class CargoCreateView(AdmisionFormMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ChosenCargoCreateView(CargoCreateView):
+class ChosenCargoCreateView(CargoCreateView, LoginRequiredMixin):
 
     model = Cargo
     form_class = PreCargoForm
