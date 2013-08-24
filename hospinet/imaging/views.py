@@ -124,6 +124,7 @@ class ExamenCreateView(CreateView, LoginRequiredMixin):
         
         self.object = form.save(commit=False)
         self.object.persona = self.persona
+        self.object.usuario = self.request.user
         self.object.save()
         
         return HttpResponseRedirect(self.get_success_url())

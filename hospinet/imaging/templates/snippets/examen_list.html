@@ -20,8 +20,8 @@
       <td>{{ examen.tipo_de_examen.nombre }}</td>
       <td>{{ examen.persona.identificacion }}</td>
       <td>{{ examen.persona.nacimiento }}</td>
-      <td>{{ examen.usuario }}</td>
       <td>{{ examen.radiologo }}</td>
+      <td>{{ examen.usuario }}</td>
       <td><a class="btn btn-success btn-block" href="{% url 'examen-view-id' examen.uuid %}">Ver</a></td>
     </tr>
     {% endfor %}
