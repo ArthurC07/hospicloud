@@ -21,6 +21,29 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 
+class FieldSetFormMixin(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FieldSetFormMixin, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Guardar'))
+
+class DateWidget(forms.DateInput):
+
+    """Permite mostrar un input preparado para fecha y hora utilizando
+    JQuery UI DateTimePicker"""
+
+    def __init__(self, attrs=None):
+        super(DateWidget, self).__init__(attrs)
+        if attrs is not None:
+            self.attrs = attrs.copy()
+        else:
+            self.attrs = {'class': 'datepicker'}
+
+        if not 'format' in self.attrs:
+            self.attrs['format'] = '%d/%m/%Y'
+
 class DateTimeWidget(forms.DateTimeInput):
     
     """Permite mostrar un input preparado para fecha y hora utilizando
