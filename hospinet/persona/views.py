@@ -16,7 +16,8 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.http import HttpResponseRedirect
 from django.views.generic import (CreateView, DetailView, UpdateView,
-                                  ListView, View, FormView)
+                                  ListView, View)
+from django.views.generic.edit import FormMixin
 from django.shortcuts import get_object_or_404
 from django.db.models.query_utils import Q
 
@@ -218,7 +219,7 @@ class PersonaMixin(View):
         return super(PersonaMixin, self).dispatch(*args, **kwargs)
 
 
-class PersonaFormMixin(FormView, PersonaMixin):
+class PersonaFormMixin(FormMixin, PersonaMixin):
     def get_initial(self):
         initial = super(PersonaFormMixin, self).get_initial()
         initial = initial.copy()

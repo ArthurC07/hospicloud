@@ -18,26 +18,25 @@
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import View
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormMixin
+
 
 class LoginRequiredMixin(View):
-    
     """Clase base para crear vistas que requieren inicio de sesión"""
-    
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        
         """Permite despachar la petición en caso que el usuario tenga iniciada
         su sesión en la aplicación"""
-        
-        return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
-class UserFormMixin(CreateView):
-    
+        return super(LoginRequiredMixin, self).dispatch(request, *args,
+                                                        **kwargs)
+
+
+class UserFormMixin(FormMixin):
     def get_initial(self):
-        
         """Agrega la :class:`User` a los campos del formulario"""
-        
+
         initial = super(UserFormMixin, self).get_initial()
         initial = initial.copy()
         initial['usuario'] = self.request.user.id
