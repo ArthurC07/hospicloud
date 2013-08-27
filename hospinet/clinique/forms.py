@@ -15,126 +15,68 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from clinique.models import (Paciente, Cita, Transaccion, Consultorio, Pago,
-                             Consulta, Receta, HistoriaClinica, Optometria)
+from crispy_forms.layout import Fieldset
 from django import forms
 from django.contrib.auth.models import User
-from persona.forms import DateTimeWidget
 
-class DateForm(forms.ModelForm):
+from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento, Consulta)
+from persona.forms import FieldSetFormMixin
+from users.mixins import UserForm
 
-    """Formulario base para los distintos ingresos de información que requieren
-    una fecha y hora"""
 
-    fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(), required=False)
-    
-class ConsultorioForm(forms.ModelForm):
-    
-    """Permite editar los datos  de un :class:`Consultorio`"""
+class PacienteFormMixin(FieldSetFormMixin):
+    paciente = forms.ModelChoiceField(label="", queryset=Paciente.objects.all(),
+                                      widget=forms.HiddenInput(), required=False)
 
-    class Meta:
-        
-        model = Consultorio
-        fields = ('nombre', )
-    
-    doctor = forms.ModelChoiceField(label="",
-                                  queryset=User.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-
-class PacienteForm(forms.ModelForm):
-    
+class PacienteForm(UserForm):
     """Permite editar los datos de un :class:`Paciente`"""
 
     class Meta:
-        
         model = Paciente
-    
-    consultorio = forms.ModelChoiceField(label="",
-                                  queryset=Consultorio.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class CitaForm(DateForm):
+    doctor = forms.ModelChoiceField(label="", queryset=User.objects.all(),
+                                    widget=forms.HiddenInput(), required=False)
 
-    """Permite editar los datos de una :class:`Cita`"""
+    def __init__(self, *args, **kwargs):
+        super(PacienteForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Convertir en Paciente',
+                                      *self.field_names)
 
-    class Meta:
-        
-        model = Cita
-    
-    consultorio = forms.ModelChoiceField(label="",
-                                  queryset=Consultorio.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
 
-class TransaccionForm(DateForm):
-    
-    class Meta:
-        
-        model = Transaccion
-    
-    paciente = forms.ModelChoiceField(label="",
-                                  queryset=Paciente.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-
-class ConsultaForm(DateForm):
-
-    """Crea un formulario para agregar una :class:`Consulta`"""
+class ConsultaForm(PacienteFormMixin):
 
     class Meta:
-
         model = Consulta
 
-    paciente = forms.ModelChoiceField(label="",
-                                  queryset=Paciente.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
+    def __init__(self, *args, **kwargs):
+        super(ConsultaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Consulta', *self.field_names)
 
-class RecetaForm(DateForm):
-
-    """Crea un formulario para agregar una :class:`Receta`"""
+class EvaluacionForm(UserForm, PacienteFormMixin):
 
     class Meta:
+        model = Evaluacion
 
-        model = Receta
-    
-    paciente = forms.ModelChoiceField(label="",
-                                  queryset=Paciente.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
+    def __init__(self, *args, **kwargs):
+        super(EvaluacionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Evaluación',
+                                      *self.field_names)
 
-class HistoriaClinicaForm(DateForm):
 
-    """Crea un formulario para agregar una :class:`Historiaclinica`"""
+class CitaForm(FieldSetFormMixin):
+    class Meta:
+        model = Cita
+
+    def __init__(self, *args, **kwargs):
+        super(CitaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar una Cita', *self.field_names)
+
+
+class SeguimientoForm(PacienteFormMixin):
 
     class Meta:
+        model = Seguimiento
 
-        model = HistoriaClinica
-    
-    paciente = forms.ModelChoiceField(label="",
-                                  queryset=Paciente.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-
-class OptometriaForm(DateForm):
-
-    """Crea un formulario para agregar una :class:`Optometria`"""
-
-    class Meta:
-
-        model = Optometria
-    
-    paciente = forms.ModelChoiceField(label="",
-                                  queryset=Paciente.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-
-class PagoForm(DateForm):
-
-    class Meta:
-
-        model = Pago
-    
-    paciente = forms.ModelChoiceField(label="",
-                                  queryset=Paciente.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
-
-class DiaForm(forms.Form):
-
-    dia = forms.DateField(widget=forms.DateInput(attrs={'class' : 'datepicker'},
-                                            format='%d/%m/%Y'),
-                                input_formats=('%d/%m/%Y',))
+    def __init__(self, *args, **kwargs):
+        super(SeguimientoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar una Segumiento', *self.field_names)

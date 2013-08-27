@@ -119,7 +119,6 @@ class NightingaleDetailView(DetailView, LoginRequiredMixin):
     slug_field = 'uuid'
 
     def get_context_data(self, **kwargs):
-
         context = super(NightingaleDetailView, self).get_context_data(**kwargs)
 
         context['fecha'] = timezone.now()
@@ -158,10 +157,10 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
             context['temp_promedio'] = self.object.temperatura_promedio
             context['pulso_promedio'] = self.object.pulso_promedio
             context[
-                'presion_diastolica_promedio'] = self.object\
+                'presion_diastolica_promedio'] = self.object \
                 .presion_diastolica_promedio
             context[
-                'presion_sistolica_promedio'] = self.object\
+                'presion_sistolica_promedio'] = self.object \
                 .presion_sistolica_promedio
             inicio = signos[0].fecha_y_hora - timezone.timedelta(minutes=5)
             context['min'] = inicio.strftime('%Y-%m-%d %H:%M')
@@ -268,7 +267,6 @@ class CargoCreateView(AdmisionFormMixin, LoginRequiredMixin):
 
 
 class ChosenCargoCreateView(CargoCreateView, LoginRequiredMixin):
-
     model = Cargo
     form_class = PreCargoForm
     template_name = 'enfermeria/cargo_create.html'

@@ -1,86 +1,98 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-<div class="row">
-  <div class="hero span12">
-    <img src="{% static 'images/head.jpg' %}" />
-  </div>
-</div>
-<div class="row">
-  <br />
-  <article class="span3">
-    <div class="link-icon">
-      <div>
-        <a href="{% url  'persona-index' %}"><img src="{% static 'images/pacientes.png' %}" /></a>
-      </div>
-      <a class="btn btn-primary btn-block" href="{% url 'persona-index' %}">Pacientes</a>
-      <hr>
+    <div class="row">
+        <div class="hero span12">
+            <img class="centered" src="{% static 'images/head.jpg' %}"/>
+        </div>
     </div>
-  </article>
-  <article class="span3">
-    <div class="link-icon">
-      <div>
-        <a href="{% url  'admision-index' %}"><img src="{% static 'images/admisiones.png' %}" /></a>
-      </div>
-      <a class="btn btn-primary btn-block" href="{% url 'admision-index' %}">Admisiones</a>
-      <hr>
+    <br/>
+    <div class="row card">
+        <article class="span4 offset1 index-link">
+            <a href="{% url  'persona-index' %}">
+            <div class="row">
+                <div class="span1">
+                    <img src="{% static 'images/pacientes.png' %}"/>
+                </div>
+                <div class="span3">Pacientes</div>
+            </div>
+            </a>
+        </article>
+        <article class="span4 offset1 index-link">
+            <a href="{% url  'admision-index' %}">
+            <div class="row">
+                <div class="span1">
+                    <img src="{% static 'images/admisiones.png' %}"/>
+                </div>
+                <div class="span3">Admisiones</div>
+            </div>
+            </a>
+        </article>
     </div>
-  </article>
-  <article class="span3">
-    <div class="link-icon">
-      <div>
-        <a href="{% url 'examen-index' %}"><img src="{% static 'images/imagenes.png' %}" /></a>
-      </div>
-      <a class="btn btn-block btn-primary" href="{% url 'examen-index' %}">Centro de Im&aacute;genes</a>
-      <hr>
+    <div class="row card">
+        <article class="span4 offset1 index-link">
+            <a href="{% url 'examen-index' %}">
+                <div class="row">
+                    <div class="span1">
+                        <img src="{% static 'images/imagenes.png' %}"/>
+                    </div>
+                    <div class="span3">Centro de Im&aacute;genes</div>
+                </div>
+            </a>
+        </article>
+        <article class="span4 offset1 index-link">
+            <a href="{% url 'nightingale-index' %}">
+                <div class="row">
+                    <div class="span1">
+                        <img src="{% static 'images/enfermeria.png' %}"/>
+                    </div>
+                    <div class="span3">Hospitalizaci&oacute;n</div>
+                </div>
+            </a>
+        </article>
     </div>
-  </article>
-  <article class="span3">
-    <div class="link-icon">
-      <div>
-        <a href="{% url 'nightingale-index' %}"><img src="{% static 'images/enfermeria.png' %}" /></a>
-      </div>
-      <a class="btn btn-primary btn-block" href="{% url  'nightingale-index' %}">Hospitalizaci&oacute;n</a>
-      <hr>
+    <div class="row card">
+        <article class="span4 offset1 index-link">
+            <a href="{% url  'emergency-index' %}">
+                <div class="row">
+                    <div class="span1">
+                        <img src="{% static 'images/emergencia.png' %}">
+                    </div>
+                    <div class="span3">Emergencia</div>
+                </div>
+            </a>
+        </article>
+        <article class="span4 offset1 index-link">
+            <a href="{% url  'consultorio-index' %}">
+                <div class="row">
+                    <div class="span1">
+                        <img src="{% static 'images/pacientes.png' %}"/>
+                    </div>
+                    <div class="span3">Consultorio</div>
+                </div>
+            </a>
+        </article>
     </div>
-  </article>
-</div>
-<div class="row">
-  <article class="span3">
-    <div class="link-icon">
-      <div>
-        <a class="block" href="{% url  'emergency-index' %}"><img src="{% static 'images/emergencia.png' %}"></a>
-      </div>
-      <a class="btn btn-primary btn-block" href="{% url  'emergency-index' %}">Emergencia</a>
-      <hr>
+    <div class="row card">
+        <article class="span4 offset1 index-link">
+            <a href="{% url 'invoice-index' %}">
+                <div class="row">
+                    <div class="span1">
+                        <img src="{% static 'images/caja.png' %}"/>
+                    </div>
+                    <div class="span3">Caja</div>
+                </div>
+            </a>
+        </article>
+        <article class="span4 offset1 index-link">
+            <a href="{% url  'inventario-index' %}">
+                <div class="row">
+                    <div class="span1">
+                        <img src="{% static 'images/inventario.png' %}"/>
+                    </div>
+                    <div class="span3">Inventario</div>
+                </div>
+            </a>
+        </article>
     </div>
-  </article>
-  <article class="span3">
-    <div class="link-icon">
-      <div>
-        <a href="{% url  'consultorio-index' %}"><img src="{% static 'images/pacientes.png' %}" /></a>
-      </div>
-      <a class="btn btn-primary btn-block" href="{% url  'consultorio-index' %}">Consultorio</a>
-      <hr>
-    </div>
-  </article>
-  <article class="span3">
-    <div class="link-icon">
-      <div>
-        <a href="{% url 'invoice-index' %}"><img src="{% static 'images/caja.png' %}" /></a>
-      </div>
-      <a class="btn btn-primary btn-block" href="{% url  'invoice-index' %}">Caja</a>
-      <hr>
-    </div>
-  </article>
-  <article class="span3">
-    <div class="link-icon">
-      <div>
-        <a href="{% url  'inventario-index' %}"><img src="{% static 'images/inventario.png' %}" /></a>
-      </div>
-      <a class="btn btn-primary btn-block" href="{% url 'inventario-index' %}">Inventario</a>
-      <hr>
-    </div>
-  </article>
-</div>
 {% endblock %}

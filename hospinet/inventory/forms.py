@@ -19,19 +19,10 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from chosen import forms as chosenforms
+from persona.forms import FieldSetFormMixin
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
                               Transferido, ItemComprado, Historial)
-
-
-class FieldSetFormMixin(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(FieldSetFormMixin, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
-
 
 class ItemTemplateForm(FieldSetFormMixin):
     class Meta:

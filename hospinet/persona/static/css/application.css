@@ -4,7 +4,7 @@
 ===============================================================================
 */
 body {
-    padding-top: 60px;
+    padding-top: 40px;
 }
 @media screen and (max-width: 768px) {
     body {
@@ -35,7 +35,7 @@ body {
     margin-bottom: 15px;
     padding: 7px 9px;
 }
-/* 
+/*
 ===============================================================================
  Sidebar and table shadow
 ===============================================================================
@@ -50,7 +50,7 @@ aside ul.nav-tabs.nav-stacked {
 table caption {
     font-weight: bold;
 }
-/* ============================================================================ 
+/* ============================================================================
  * Tables
  * ============================================================================
  */
@@ -61,18 +61,18 @@ table caption {
     .no-more-tables td, .no-more-tables tr {
         display: block;
     }
-	
+
     /* Hide table headers (but not display: none;, for accessibility) */
     .no-more-tables thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
-	
+
     .no-more-tables tr {
         border: 1px solid #ccc;
     }
-	
+
     .no-more-tables td {
         /* Behave like a "row" */
         border: none;
@@ -82,7 +82,7 @@ table caption {
         white-space: normal;
         text-align: left;
     }
-	
+
     .no-more-tables td:before {
         /* Now like a table header */
         position: absolute;
@@ -95,7 +95,7 @@ table caption {
         text-align: left;
         font-weight: bold;
     }
-	
+
     /*
      Label the data
      */
@@ -104,13 +104,13 @@ table caption {
     }
 }
 .table td {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 .table th {
-	text-align: center;
+    text-align: center;
 }
 .text-justify {
-	text-align: justify;
+    text-align: justify;
 }
 .action-nav-normal .action-nav-button {
     display: inline-block;
@@ -141,7 +141,7 @@ table caption {
     text-decoration: none;
 }
 .icon-envelope:before {
-    content: "";
+    content: "?";
 }
 [class^="icon-"]:before, [class*=" icon-"]:before {
     display: inline-block;
@@ -167,3 +167,24 @@ caption {
 .table td.text-right{
     text-align: right;
 }
+.card {
+    margin: 2em 0;
+}
+footer, .index-link, .navbar-inverse navbar-inner {
+    background: #002857;
+}
+.index-link a {
+    color: white;
+    display: block;
+    font-size: large;
+}
+.index-link .span3 {
+    padding: 1.3em 0;
+}
+footer
+{
+    height: 200px;
+    color: white;
+    margin: 1em 0;
+}
+
