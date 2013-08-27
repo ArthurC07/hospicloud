@@ -16,9 +16,14 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, url
-from clinique.views import (PacienteCreateView, PacienteDetailView)
+from clinique.views import (PacienteCreateView, PacienteDetailView,
+                            ConsultorioIndexView)
 
 urlpatterns = patterns('',
+
+   url(r'^$',
+       ConsultorioIndexView.as_view(),
+       name='consultorio-index'),
 
    url(r'^(?P<pk>\d+)$',
        PacienteDetailView.as_view(),

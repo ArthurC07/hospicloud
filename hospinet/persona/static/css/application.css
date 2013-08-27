@@ -4,7 +4,7 @@
 ===============================================================================
 */
 body {
-    padding-top: 35px;
+    padding-top: 40px;
 }
 @media screen and (max-width: 768px) {
     body {
@@ -167,8 +167,19 @@ caption {
 .table td.text-right{
     text-align: right;
 }
+.card {
+    margin: 1em 0;
+}
+footer, .index-link {
+    background:#023BA6;
+}
+.index-link a {
+    color: white;
+    display: block;
+}
 footer
 {
-    background:#002857;
+    height: 200px;
+    color: white;
 }
 

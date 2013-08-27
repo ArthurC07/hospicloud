@@ -8,10 +8,10 @@
     <meta name="author" content="">
     {% load staticfiles %}{% load url from future %}{% load tz %}{% load l10n %}{% load i18n %}
     <!-- Le styles -->
-    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
     <link href="{% static 'css/application.css' %}" rel="stylesheet" />
     <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/bootstrap-responsive.min.css' %}" rel="stylesheet" />
     <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
     <link href="{% static 'css/jquery.pnotify.default.css' %}" rel="stylesheet" />
     <link href="{% static 'css/print.css' %}" rel="stylesheet" media="print" />
@@ -68,35 +68,11 @@
       </div>
       {% endif %}
       {% block content %}{% endblock %}
-      <hr>
         <footer class="row no-print">
-            <article class="span4"><div>
-
-                <p>®Hospinet 2013 todos los derechos reservados </p>
-
-                <p>Logos Y diseño Forman parte de Hospinet </p>
-
-
-
-            </div>
+            <article class="span6">
+                <p>Copyright &copy; Know How Honduras, Todos los Derechos Reservados</p>
             </article>
-
-            <article class="span2"><div>
-
-                <br>
-
-
-
-
-
-            </div>
-            </article>
-
-            <article class="span6"><div>
-
-                Para reservacion de <br>
-                capacitaciones y mas llamar al 97655779
-            </div>
+            <article class="span6">
             </article>
         </footer>
     </div>

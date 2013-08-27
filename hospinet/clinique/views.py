@@ -33,6 +33,9 @@ from persona.models import Persona
 from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin, UserFormMixin
 
+class ConsultorioIndexView(TemplateView):
+
+    template_name = 'clinique/index.html'
 
 class PacienteCreateView(CreateView, PersonaFormMixin, UserFormMixin,
                          LoginRequiredMixin):
