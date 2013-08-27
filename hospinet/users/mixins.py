@@ -16,10 +16,12 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.views.generic.edit import FormMixin
-
+from django.forms import forms
+from persona.forms import FieldSetFormMixin
 
 class LoginRequiredMixin(View):
     """Clase base para crear vistas que requieren inicio de sesión"""
@@ -41,3 +43,9 @@ class UserFormMixin(FormMixin):
         initial = initial.copy()
         initial['usuario'] = self.request.user.id
         return initial
+
+
+class UserForm(FieldSetFormMixin):
+
+    usuario = forms.ModelChoiceField(label="", queryset=User.objects.all(),
+                                     widget=forms.HiddenInput(), required=False)
