@@ -20,7 +20,7 @@ from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.views.generic.edit import FormMixin
-from django.forms import forms
+from django import forms
 from persona.forms import FieldSetFormMixin
 
 class LoginRequiredMixin(View):

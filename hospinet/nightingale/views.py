@@ -567,20 +567,19 @@ class MedicamentoUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'medicamento'
 
 
-class OxigenoTerapiaCreateView(AdmisionFormMixin, UserFormMixin, CreateView,
+class OxigenoTerapiaCreateView(AdmisionFormMixin, UserFormMixin,
                                LoginRequiredMixin):
     model = OxigenoTerapia
     form_class = OxigenoTerapiaForm
 
 
-class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin, CreateView):
+class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin):
     model = OxigenoTerapia
     form_class = OxigenoTerapiaForm
     context_object_name = 'oxigeno_terapia'
 
 
-class HonorarioCreateView(AdmisionFormMixin, UserFormMixin, LoginRequiredMixin,
-                          CreateView):
+class HonorarioCreateView(AdmisionFormMixin, UserFormMixin, LoginRequiredMixin):
     model = Honorario
     form_class = HonorarioForm
 
