@@ -168,18 +168,23 @@ caption {
     text-align: right;
 }
 .card {
-    margin: 1em 0;
+    margin: 2em 0;
 }
-footer, .index-link {
-    background:#023BA6;
+footer, .index-link, .navbar-inverse navbar-inner {
+    background: #002857;
 }
 .index-link a {
     color: white;
     display: block;
+    font-size: large;
+}
+.index-link .span3 {
+    padding: 1.3em 0;
 }
 footer
 {
     height: 200px;
     color: white;
+    margin: 1em 0;
 }
 
