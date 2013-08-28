@@ -21,6 +21,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.views.generic.edit import FormMixin
 from django import forms
+from chosen import forms as chosenforms
 from persona.forms import FieldSetFormMixin
 
 class LoginRequiredMixin(View):
@@ -35,17 +36,21 @@ class LoginRequiredMixin(View):
                                                         **kwargs)
 
 
-class UserFormMixin(FormMixin):
+class CurrentUserFormMixin(FormMixin):
     def get_initial(self):
         """Agrega la :class:`User` a los campos del formulario"""
 
-        initial = super(UserFormMixin, self).get_initial()
+        initial = super(CurrentUserFormMixin, self).get_initial()
         initial = initial.copy()
         initial['usuario'] = self.request.user.id
         return initial
 
 
-class UserForm(FieldSetFormMixin):
+class HiddenUserForm(FieldSetFormMixin):
 
     usuario = forms.ModelChoiceField(label="", queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
+
+class UserForm(FieldSetFormMixin):
+
+    usuario = chosenforms.ChosenModelChoiceField(User.objects.all())

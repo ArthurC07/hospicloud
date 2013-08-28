@@ -19,16 +19,19 @@ from crispy_forms.layout import Fieldset
 from django import forms
 from django.contrib.auth.models import User
 
-from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento, Consulta)
+from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
+                             Consulta, LecturaSignos)
 from persona.forms import FieldSetFormMixin
-from users.mixins import UserForm
+from users.mixins import HiddenUserForm, UserForm
 
 
 class PacienteFormMixin(FieldSetFormMixin):
     paciente = forms.ModelChoiceField(label="", queryset=Paciente.objects.all(),
-                                      widget=forms.HiddenInput(), required=False)
+                                      widget=forms.HiddenInput(),
+                                      required=False)
 
-class PacienteForm(UserForm):
+
+class PacienteForm(HiddenUserForm):
     """Permite editar los datos de un :class:`Paciente`"""
 
     class Meta:
@@ -44,7 +47,6 @@ class PacienteForm(UserForm):
 
 
 class ConsultaForm(PacienteFormMixin):
-
     class Meta:
         model = Consulta
 
@@ -52,8 +54,8 @@ class ConsultaForm(PacienteFormMixin):
         super(ConsultaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Consulta', *self.field_names)
 
-class EvaluacionForm(UserForm, PacienteFormMixin):
 
+class EvaluacionForm(HiddenUserForm, PacienteFormMixin):
     class Meta:
         model = Evaluacion
 
@@ -63,7 +65,7 @@ class EvaluacionForm(UserForm, PacienteFormMixin):
                                       *self.field_names)
 
 
-class CitaForm(FieldSetFormMixin):
+class CitaForm(UserForm):
     class Meta:
         model = Cita
 
@@ -72,11 +74,22 @@ class CitaForm(FieldSetFormMixin):
         self.helper.layout = Fieldset(u'Agregar una Cita', *self.field_names)
 
 
-class SeguimientoForm(PacienteFormMixin):
-
+class SeguimientoForm(PacienteFormMixin, HiddenUserForm):
     class Meta:
         model = Seguimiento
 
     def __init__(self, *args, **kwargs):
         super(SeguimientoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar una Segumiento', *self.field_names)
+        self.helper.layout = Fieldset(u'Agregar una Segumiento',
+                                      *self.field_names)
+
+
+class LecturaSignosForm(PacienteFormMixin):
+    class Meta:
+        model = LecturaSignos
+
+    def __init__(self, *args, **kwargs):
+        super(LecturaSignosForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar una Lectura de Signos',
+                                      *self.field_names)
+
