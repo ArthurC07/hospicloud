@@ -121,13 +121,9 @@ class ExamenCreateView(CreateView, LoginRequiredMixin):
         return super(ExamenCreateView, self).dispatch(*args, **kwargs)
     
     def form_valid(self, form):
-        
-        self.object = form.save(commit=False)
-        self.object.persona = self.persona
-        self.object.usuario = self.request.user
-        self.object.save()
-        
-        return HttpResponseRedirect(self.get_success_url())
+
+        form.instance.usuario = self.request.user
+        return super(ExamenCreateView, self).form_valid(form)
 
 class ExamenDocBaseCreateView(CreateView, LoginRequiredMixin):
     
@@ -336,6 +332,7 @@ class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredMixin):
         
         estudio = get_object_or_404(EstudioProgramado, pk=kwargs['pk'])
         examen = estudio.efectuar()
+        examen.usuario = self.request.user
         examen.save()
         messages.info(self.request, u'¡El estudio ha sido marcado como efectuado!')
         return reverse('examen-edit', args=[examen.id])
