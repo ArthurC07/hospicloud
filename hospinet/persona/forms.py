@@ -21,13 +21,22 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 
-class FieldSetFormMixin(forms.ModelForm):
+class FieldSetFormMixin(forms.Form):
     def __init__(self, *args, **kwargs):
         super(FieldSetFormMixin, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
+        self.helper.form_class = 'form-horizontal'
         self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
+
+class FieldSetModelFormMixin(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FieldSetModelFormMixin, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.helper.form_class = 'form-horizontal'
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', u'Guardar'))
 
 class DateWidget(forms.DateInput):
 
@@ -62,7 +71,7 @@ class DateTimeWidget(forms.DateTimeInput):
         if not 'format' in self.attrs:
             self.attrs['format'] = '%d/%m/%Y %H:%M'
 
-class PersonaForm(forms.ModelForm):
+class PersonaForm(FieldSetModelFormMixin):
     
     """Permite mostrar una interfaz para capturar los datos de una
     :class:`Persona`"""
@@ -78,13 +87,10 @@ class PersonaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         
         super(PersonaForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.add_input(Submit('submit', u'Guardar'))
         self.helper.layout = Fieldset(u'Agregar Persona', *self.field_names)
 
-class BasePersonaForm(forms.ModelForm):
+class BasePersonaForm(FieldSetModelFormMixin):
     
     """Permite editar la información que depende de una :class:`Persona`"""
 
@@ -187,7 +193,7 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
 
 class PersonaSearchForm(forms.Form):
     
-    query = forms.CharField()
+    query = forms.CharField(label=u"Nombre o Identidad")
     
     def __init__(self, *args, **kwargs):
         
@@ -195,5 +201,7 @@ class PersonaSearchForm(forms.Form):
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Buscar'))
+        self.helper.form_class = 'form-horizontal'
+        self.helper.add_input(Submit('submit', u'Buscar'))
         self.helper.layout = Fieldset(u'Buscar Persona', *self.field_names)
+        self.helper.form_method = 'GET'

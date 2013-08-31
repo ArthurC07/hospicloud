@@ -19,11 +19,12 @@ from django import forms
 from spital.models import Admision, Habitacion, PreAdmision
 from emergency.models import Emergencia
 from persona.models import Persona
+from persona.forms import FieldSetModelFormMixin
 from django.utils.translation.trans_null import _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 
-class AdmisionForm(forms.ModelForm):
+class AdmisionForm(FieldSetModelFormMixin):
     
     """Permite ingresar una :class:`Admision` al Hospital"""
 
@@ -41,7 +42,7 @@ class AdmisionForm(forms.ModelForm):
     doctor = forms.CharField(label="Medico Tratante", required=True)
     diagnostico = forms.CharField(required=True)
 
-class HabitacionForm(forms.ModelForm):
+class HabitacionForm(FieldSetModelFormMixin):
 
     """Permite gestionar los datos de una :class:`Habitacion`"""
 
@@ -49,7 +50,7 @@ class HabitacionForm(forms.ModelForm):
 
         model = Habitacion
 
-class PreAdmisionForm(forms.ModelForm):
+class PreAdmisionForm(FieldSetModelFormMixin):
     
     class Meta:
         
@@ -63,12 +64,8 @@ class PreAdmisionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
 
         super(PreAdmisionForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
 
-class IngresarForm(forms.ModelForm):
+class IngresarForm(FieldSetModelFormMixin):
     
     """Muestra un formulario que permite ingresar a una :class:`Persona`
     al :class:`Hospital`"""
@@ -81,9 +78,5 @@ class IngresarForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
 
         super(IngresarForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Hospitalizar Paciente',
                                       *self.field_names)

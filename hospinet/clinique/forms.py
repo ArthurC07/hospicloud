@@ -21,11 +21,11 @@ from django.contrib.auth.models import User
 
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos)
-from persona.forms import FieldSetFormMixin
+from persona.forms import FieldSetModelFormMixin
 from users.mixins import HiddenUserForm, UserForm
 
 
-class PacienteFormMixin(FieldSetFormMixin):
+class PacienteFormMixin(FieldSetModelFormMixin):
     paciente = forms.ModelChoiceField(label="", queryset=Paciente.objects.all(),
                                       widget=forms.HiddenInput(),
                                       required=False)

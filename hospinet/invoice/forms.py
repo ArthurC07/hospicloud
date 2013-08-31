@@ -23,14 +23,14 @@ from chosen import forms as chosenforms
 
 from invoice.models import Recibo, Venta
 from persona.models import Persona
-from inventory.forms import FieldSetFormMixin
+from inventory.forms import FieldSetModelFormMixin
 from emergency.models import Emergencia
 from spital.models import Admision
 from imaging.models import Examen
 from inventory.models import ItemTemplate
 
 
-class ReciboForm(forms.ModelForm):
+class ReciboForm(FieldSetModelFormMixin):
     """Genera un formulario para :class:`Recibo`:"""
 
     class Meta:
@@ -57,7 +57,7 @@ class ReciboNewForm(ReciboForm):
         self.helper.layout = Fieldset(u'Datos del Recibo', *self.field_names)
 
 
-class VentaForm(FieldSetFormMixin):
+class VentaForm(FieldSetModelFormMixin):
     """Genera un formulario para :class:`Venta`"""
 
     class Meta:
@@ -71,9 +71,6 @@ class VentaForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Agregar'))
         self.helper.layout = Fieldset(u'Agregar un Cargo', *self.field_names)
 
@@ -103,7 +100,7 @@ class PeriodoForm(forms.Form):
         self.helper.form_action = action
 
 
-class EmergenciaFacturarForm(FieldSetFormMixin):
+class EmergenciaFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Emergencia
         fields = ('facturada', )
@@ -114,7 +111,7 @@ class EmergenciaFacturarForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class AdmisionFacturarForm(FieldSetFormMixin):
+class AdmisionFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Admision
         fields = ('facturada', )
@@ -125,7 +122,7 @@ class AdmisionFacturarForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class ExamenFacturarForm(FieldSetFormMixin):
+class ExamenFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Examen
         fields = ('facturado', 'radiologo', 'remitio')
