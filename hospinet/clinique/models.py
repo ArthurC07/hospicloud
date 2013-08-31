@@ -29,6 +29,15 @@ class TipoConsulta(models.Model):
     def __unicode__(self):
         return self.tipo
 
+class Consultorio(TimeStampedModel):
+
+    nombre = models.CharField(max_length=50, blank=True, null=True)
+    usuario = models.ForeignKey(User, related_name='consultorios')
+    secretaria = models.ForeignKey(User, related_name='secretarias')
+
+    def __unicode__(self):
+
+        return self.nombre
 
 class Paciente(TimeStampedModel):
     """Relaciona a una :class:`Persona` con un :class:`Doctor` para
@@ -37,7 +46,8 @@ class Paciente(TimeStampedModel):
     el :class:`User` al que pertenece el :class:`Consultorio`"""
 
     persona = models.ForeignKey(Persona, related_name='pacientes')
-    usuario = models.ForeignKey(User, related_name='pacientes')
+    consultorio = models.ForeignKey(Consultorio, related_name='pacientes', blank=True,
+                               null=True)
 
     def __unicode__(self):
         return u"Paciente {0} de {1}".format(self.persona.nombre_completo(),
