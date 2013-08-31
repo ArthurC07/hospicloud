@@ -24,6 +24,7 @@ from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
                               Transferido, ItemComprado, Historial)
 
+
 class ItemTemplateForm(FieldSetFormMixin):
     class Meta:
         model = ItemTemplate
@@ -109,7 +110,8 @@ class ItemRequisicionForm(FieldSetFormMixin):
         model = ItemRequisicion
         exclude = ('entregada', 'pendiente')
 
-    item = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = chosenforms.ChosenModelChoiceField(
+        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemRequisicionForm, self).__init__(*args, **kwargs)
@@ -124,15 +126,17 @@ class TransferenciaForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(TransferenciaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Transferencia de Inventario',
-                                      *self.field_names)
+        self.helper.layout = Fieldset(
+            u'Formulario de Transferencia de Inventario',
+            *self.field_names)
 
 
 class TransferirForm(forms.ModelForm):
     class Meta:
         model = Transferencia
         fields = ('aplicada',)
-        item = chosenforms.ChosenModelChoiceField(Requisicion.objects.filter(entregada=False).all())
+        item = chosenforms.ChosenModelChoiceField(
+            Requisicion.objects.filter(entregada=False).all())
 
     def __init__(self, *args, **kwargs):
         super(TransferirForm, self).__init__(*args, **kwargs)
@@ -150,7 +154,8 @@ class TransferidoForm(FieldSetFormMixin):
         model = Transferido
         exclude = ('aplicada', )
 
-    item = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = chosenforms.ChosenModelChoiceField(
+        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(TransferidoForm, self).__init__(*args, **kwargs)
@@ -173,7 +178,8 @@ class ItemCompradoForm(FieldSetFormMixin):
         model = ItemComprado
         exclude = ('ingresado', )
 
-    item = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = chosenforms.ChosenModelChoiceField(
+        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemCompradoForm, self).__init__(*args, **kwargs)

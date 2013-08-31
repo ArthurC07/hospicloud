@@ -1,5 +1,8 @@
   <section class="info">
-    <p>Fecha {{ examen.fecha|date:"d/m/Y" }}</p>
-    <p>Estudio Efectuado: {{ examen.tipo_de_examen.nombre }}</p>
-    <p>Remiti&oacute;: {{ examen.remitio }}</p>
+      <ul>
+          <li>Fecha {{ examen.fecha|date:"d/m/Y" }}</li>
+          <li>Estudio Efectuado: {{ examen.tipo_de_examen.nombre }}</li>
+          <li>Remiti&oacute;: {{ examen.remitio }}</li>
+          <li>T&eacute;nico: {{ examen.usuario }}</li>
+      </ul>
   </section>

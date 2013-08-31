@@ -40,7 +40,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Honorario,
                                 OxigenoTerapia)
 from spital.models import Admision
 from spital.views import AdmisionFormMixin
-from users.mixins import LoginRequiredMixin, UserFormMixin
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
 class NightingaleIndexView(ListView, LoginRequiredMixin):
@@ -567,7 +567,7 @@ class MedicamentoUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'medicamento'
 
 
-class OxigenoTerapiaCreateView(AdmisionFormMixin, UserFormMixin,
+class OxigenoTerapiaCreateView(AdmisionFormMixin, CurrentUserFormMixin,
                                LoginRequiredMixin):
     model = OxigenoTerapia
     form_class = OxigenoTerapiaForm
@@ -579,7 +579,7 @@ class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'oxigeno_terapia'
 
 
-class HonorarioCreateView(AdmisionFormMixin, UserFormMixin, LoginRequiredMixin):
+class HonorarioCreateView(AdmisionFormMixin, CurrentUserFormMixin, LoginRequiredMixin):
     model = Honorario
     form_class = HonorarioForm
 

@@ -77,8 +77,6 @@ class LecturaSignos(TimeStampedModel):
                                              null=True)
     respiracion = models.DecimalField(decimal_places=2, max_digits=8, null=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
-                               related_name='lectura_signos')
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

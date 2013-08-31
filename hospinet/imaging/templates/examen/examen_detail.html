@@ -9,8 +9,8 @@
 <div class="row">
   <aside class="span3">
     {% include 'snippets/examen_aside.html' %}
-    <nav class="well sidebar-nav">
-      <ul class="nav nav-list">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-tabs nav-stacked">
         <li>
           <a href="{% url 'examen-adjuntar-imagen' examen.id %}">Adjuntar una Fotograf&Iacute;a o Escaneo</a>
         </li>
@@ -20,12 +20,16 @@
         <li>
           <a href="{% url 'examen-adjuntar-dicom' examen.id %}">Adjuntar Imagen DICOM</a>
         </li>
+       <li>
+           <a href="{% url 'examen-notificar' examen.id %}" >Notificar por correo</a>
+       </li>
+          <li>
+              <a href="{% url 'invoice-create' examen.persona.id %}" >Crear Recibo</a>
+          </li>
       </ul>
     </nav>
   </aside>
   <article id="examen" class="span9">
-    <a href="{% url 'invoice-create' examen.persona.id %}" class="btn btn-primary">Crear Recibo</a>
-    <a href="{% url 'examen-notificar' examen.id %}" class="btn btn-primary" >Notificar</a>
     {% include 'snippets/persona.html' with persona=examen.persona %}
     {% include 'snippets/examen.html' with examen=examen %}
     <section id="imagenes">
