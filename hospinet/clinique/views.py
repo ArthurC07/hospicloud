@@ -56,6 +56,10 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         self.object = self.get_object(Consultorio.objects.all())
         return self.object.pacientes.all()
 
+class ConsultorioCreateView(CurrentUserFormMixin):
+    model = Consultorio
+    form_class = ConsultorioForm
+
 
 class ConsultorioMixin(View):
     def dispatch(self, *args, **kwargs):

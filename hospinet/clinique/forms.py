@@ -100,3 +100,7 @@ class DiagnosticoClinicoForm(PacienteFormMixin):
         self.helper.layout = Fieldset(u'Agregar un Diagnóstico',
                                       *self.field_names)
 
+
+class ConsultorioForm(HiddenUserForm):
+    class Meta:
+        model = Consultorio
