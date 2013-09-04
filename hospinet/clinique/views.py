@@ -23,7 +23,7 @@ from django.views.generic.edit import FormMixin
 
 from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             ConsultaForm, SeguimientoForm, LecturaSignosForm,
-                            DiagnosticoClinicoForm)
+                            DiagnosticoClinicoForm, ConsultorioForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico)
