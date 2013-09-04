@@ -38,6 +38,11 @@ class Consultorio(TimeStampedModel):
     def __unicode__(self):
         return self.nombre
 
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('consultorio', args=[self.id])
+
 
 class Paciente(TimeStampedModel):
     """Relaciona a una :class:`Persona` con un :class:`Doctor` para
@@ -92,7 +97,7 @@ class LecturaSignos(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('clinique-paciente', args=[self.paciente.id])
-
+    
     def save(self, *args, **kwargs):
         """Permite guardar los datos mientras calcula algunos campos
         automaticamente"""
