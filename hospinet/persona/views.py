@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+
 from django.http import HttpResponseRedirect
 from django.views.generic import (CreateView, DetailView, UpdateView,
                                   ListView, View)
@@ -175,7 +176,7 @@ class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin):
         self.object.persona = self.persona
         self.object.save()
 
-        #messages.info(self.request, u"Agregado Antecedente Quirúrgico")
+        messages.info(self.request, u"Agregado Antecedente Quirúrgico")
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -214,12 +215,16 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
 
 
 class PersonaMixin(View):
+    """Agrega una :class:`Persona` en la vista"""
+
     def dispatch(self, *args, **kwargs):
         self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
         return super(PersonaMixin, self).dispatch(*args, **kwargs)
 
 
 class PersonaFormMixin(FormMixin, PersonaMixin):
+    """Agrega la :class:`Persona` a los argumentos iniciales de un formulario"""
+
     def get_initial(self):
         initial = super(PersonaFormMixin, self).get_initial()
         initial = initial.copy()

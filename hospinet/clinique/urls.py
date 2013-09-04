@@ -19,7 +19,8 @@ from django.conf.urls import patterns, url
 from clinique.views import (PacienteCreateView, PacienteDetailView,
                             ConsultorioIndexView, LecturaSignosCreateView,
                             EvaluacionCreateView, SeguimientoCreateView,
-                            CitaCreateView)
+                            CitaCreateView, ConsultorioDetailView,
+                            DiagnosticoCreateView)
 
 urlpatterns = patterns('',
 
@@ -27,11 +28,15 @@ urlpatterns = patterns('',
                            ConsultorioIndexView.as_view(),
                            name='consultorio-index'),
 
-                       url(r'^(?P<pk>\d+)$',
+                       url(r'^paciente/(?P<pk>\d+)$',
                            PacienteDetailView.as_view(),
                            name='clinique-paciente'),
 
-                       url(r'^(?P<persona>\d+)/paciente/agregar$',
+                       url(r'^(?P<pk>\d+)$',
+                           ConsultorioDetailView.as_view(),
+                           name='consultorio'),
+
+                       url(r'^(?P<persona>\d+)/(?P<consultorio>\d+)/paciente/agregar$',
                            PacienteCreateView.as_view(),
                            name='consultorio-paciente-agregar'),
 
@@ -54,4 +59,8 @@ urlpatterns = patterns('',
                        url(r'^cita/(?P<paciente>\d+)/agregar',
                            CitaCreateView.as_view(),
                            name='consultorio-cita-agregar'),
+
+                       url(r'^diagnostico/(?P<paciente>\d+)/agregar',
+                           DiagnosticoCreateView.as_view(),
+                           name='consultorio-diagnostico-agregar'),
 )

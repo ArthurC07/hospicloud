@@ -17,9 +17,10 @@
 
 from django import forms
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
+from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
 from persona.models import Persona
 
-class ExamenForm(forms.ModelForm):
+class ExamenForm(FieldSetModelFormMixin):
     
     """Permite mostrar formularios para crear :class:`Examen`es nuevos"""
     
@@ -38,7 +39,7 @@ class ExamenForm(forms.ModelForm):
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class ImagenForm(forms.ModelForm):
+class ImagenForm(FieldSetModelFormMixin):
     
     """"Permite mostrar un formulario para agregar una :class:`Imagen`
     a un :class:`Examen`"""
@@ -51,7 +52,7 @@ class ImagenForm(forms.ModelForm):
                                   queryset=Examen.objects.all(),
                                   widget=forms.HiddenInput())
 
-class AdjuntoForm(forms.ModelForm):
+class AdjuntoForm(FieldSetModelFormMixin):
     
     """Muestra el formulario para agregar archivos :class:`Adjunto`s a un
     :class:`Examen`"""
@@ -64,7 +65,7 @@ class AdjuntoForm(forms.ModelForm):
                                   queryset=Examen.objects.all(),
                                   widget=forms.HiddenInput())
 
-class DicomForm(forms.ModelForm):
+class DicomForm(FieldSetModelFormMixin):
     
     """Muestra el formulario para agregar un archivo :class:`Dicom` a un
     :class:`Examen`"""
@@ -78,7 +79,7 @@ class DicomForm(forms.ModelForm):
                                   queryset=Examen.objects.all(),
                                   widget=forms.HiddenInput())
 
-class EstudioProgramadoForm(forms.ModelForm):
+class EstudioProgramadoForm(FieldSetModelFormMixin):
     
     """"Permite mostrar los formularios para crear una :class:`Remision`"""
     
@@ -91,7 +92,7 @@ class EstudioProgramadoForm(forms.ModelForm):
                                   queryset=Persona.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class EmailForm(forms.Form):
+class EmailForm(FieldSetFormMixin):
 
     """Permite mostrar un formulario para enviar notificaciones a diversos
     correos"""

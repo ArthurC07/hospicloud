@@ -1,5 +1,27 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-
+<div class="row">
+    <section class="span12">
+        <div class="page-header">
+            <h1>Consultorios Médicos <small>{{ user.get_full_name }}</small></h1>
+        </div>
+    </section>
+</div>
+{% for consultorio in user.consultorios.all %}
+<div class="row">
+    <div class="span12">
+        <div class="row">
+            <div class="span12">
+                <div class="page-header">
+                    <h2>
+                        {{ consultorio }}
+                        <a class="pull-right btn btn-primary" href="{% url 'consultorio' consultorio.id %}">Ver</a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

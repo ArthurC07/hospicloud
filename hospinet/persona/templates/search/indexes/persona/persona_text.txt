@@ -1,2 +1,0 @@
-{{ object.identificacion }}
-{{ object.nombre_completo }}

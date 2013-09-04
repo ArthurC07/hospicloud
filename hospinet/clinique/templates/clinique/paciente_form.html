@@ -5,7 +5,6 @@
         <aside class="span3">
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
-                    <li><a href="#"></a></li>
                 </ul>
             </nav>
         </aside>
@@ -13,4 +12,12 @@
             {% crispy form %}
         </section>
     </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".chzn-select").chosen();
+        });
+    </script>
 {% endblock %}

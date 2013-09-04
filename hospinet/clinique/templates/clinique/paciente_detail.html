@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="span12">
+        <h1>{{ paciente }}<small>{{ paciente.consultorio }}</small></h1>
+    </div>
+</div>
+<div class="row">
+    <aside class="span3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-tabs nav-stacked">
+                <li><a href="{% url 'consultorio-consulta-agregar' %}">Agregar Consulta Inicial</a></li>
+                <li><a href="{% url 'consultorio-evaluacion-agregar' %}">Agregar Exámen Físico</a></li>
+                <li><a href="{% url 'consultorio-segumiento-agregar' %}">Agregar Consulta de Segumiento</a></li>
+                <li><a href="{% url 'consultorio-lectura-agregar' %}">Agregar Lectura de Signos</a></li>
+                <li><a href="{% url 'consultorio-diagnostico-agregar' %}">Agregar Diagnóstico</a></li>
+            </ul>
+        </nav>
+    </aside>
+    <div class="span9">
+        <div id="consultas">
+            {% for consulta in paciente.consultas.all %}
+                <p>Descripción de la Dolencia: {{ consulta.padecimiento }}</p>
+                <p>{{ consulta.tipo }}</p>
+            {% endfor %}
+        </div>
+        <div id="signos">
+            {% for consulta in paciente.signos_vitales.all %}
+                <ul>
+                    <li>
+                        Pulso: {{ signos_vitales.pulso }}
+                    </li>
+                    <li>
+                        Frecuencia Respiratoria: {{ signos_vitales.frecuencia_respiratoria }}
+                    </li>
+                    <li>
+                        Temperatura: {{ signos_vitales.temperatura }}
+                    </li>
+                    <li>
+                        Presi&oacute;n: {{ signos_vitales.presion }}
+                    </li>
+                    <li>
+                        Frecuencia Cardiaca: {{ signos_vitales.frecuencia_cardiaca }}
+                    </li>
+                    <li>
+                        Respiraci&oacute;n: {{ signos_vitales.respiracion }}
+                    </li>
+                    <li>
+                        Saturacion de ox&iacute;geno: {{ signos_vitales.saturacion_de_oxigeno}}
+                    </li>
+                </ul>
+            {% endfor %}
+        </div>
+        <div id="seguimientos">
+            {% for segumiento in paciente.seguimientos.all %}
+                <p>{{ seguimiento.observaciones }}</p>
+            {% endfor %}
+        </div>
+        <div id="evaluaciones">
+            {% load l10n %}
+            <table class="table table-striped table-bordered">
+                <caption>Examenes F&iacute;sicos</caption>
+                <thead>
+                <tr>
+                    <th>ORL</th>
+                    <th>Cardiopulmonar</th>
+                    <th>Gastrointestinal</th>
+                    <th>Extremidades</th>
+                    <th>Otras</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for evaluacion in paciente.evaluaciones.all %}
+                    <tr>
+                        <td>ORL: {{ evaluacion.orl }}</td>
+                        <td>Cardiopulmonar: {{ evaluacion.cardiopulmonar }}</td>
+                        <td>Gastrointestinal: {{ evaluacion.gastrointestinal }}</td>
+                        <td>Extremidades: {{ evaluacion.extremidades }}</td>
+                        <td>Otras: {{ evaluacion.otras }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="diagnosticos">
+            {% for diagnostico in paciente.diagnosticos_clinicos.all %}
+                <p>{{ diagnostico.created }}: {{ diagnostico.diagnostico }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

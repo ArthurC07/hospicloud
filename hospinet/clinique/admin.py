@@ -16,9 +16,11 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from clinique.models import (Paciente, Cita, Consulta, TipoConsulta)
+from clinique.models import (Paciente, Cita, Consulta, TipoConsulta,
+                             Consultorio)
 
 admin.site.register(Paciente)
 admin.site.register(Cita)
 admin.site.register(Consulta)
 admin.site.register(TipoConsulta)
+admin.site.register(Consultorio)

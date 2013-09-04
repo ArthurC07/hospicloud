@@ -27,11 +27,11 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
                                 OrdenMedica, SignoVital, Medicamento,
                                 Devolucion, Sumario, OxigenoTerapia, Honorario)
-from persona.forms import DateTimeWidget
+from persona.forms import DateTimeWidget, FieldSetModelFormMixin
 from inventory.models import ItemTemplate
 
 
-class AdmisionBaseForm(forms.ModelForm):
+class AdmisionBaseForm(FieldSetModelFormMixin):
     admision = forms.ModelChoiceField(label="",
                                       queryset=Admision.objects.all(),
                                       widget=forms.HiddenInput(),
@@ -41,15 +41,8 @@ class AdmisionBaseForm(forms.ModelForm):
                                      queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
-    def __init__(self, *args, **kwargs):
-        super(AdmisionBaseForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
 
-
-class BaseForm(forms.ModelForm):
+class BaseForm(FieldSetModelFormMixin):
     """Formulario base para los distintos ingresos de información de parte de
     los diversos modelos de enfermeria"""
 
@@ -64,12 +57,6 @@ class BaseForm(forms.ModelForm):
                                      queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
-    def __init__(self, *args, **kwargs):
-        super(BaseForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
 
 
 class CargoForm(AdmisionBaseForm):
@@ -258,7 +245,7 @@ class SignoVitalForm(BaseForm):
                                       *self.field_names)
 
 
-class MedicamentoForm(forms.ModelForm):
+class MedicamentoForm(AdmisionBaseForm):
     """Permite Agregar o modificar los datos de un :class:`Medicamento`"""
 
     class Meta:
@@ -280,11 +267,7 @@ class MedicamentoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(MedicamentoForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
         self.helper.layout = Fieldset(u'Recetar Medicamento', *self.field_names)
-        self.helper.add_input(Submit('submit', 'Guardar'))
 
 
 class DosificarForm(forms.Form):
@@ -303,7 +286,7 @@ class DosificarForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Guardar'))
 
 
-class DosisForm(forms.ModelForm):
+class DosisForm(FieldSetModelFormMixin):
     class Meta:
         model = Dosis
 
@@ -325,15 +308,11 @@ class DosisForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(DosisForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Registrar Dosis de Medicamento',
                                       *self.field_names)
 
 
-class DevolucionForm(forms.ModelForm):
+class DevolucionForm(FieldSetModelFormMixin):
     """Permite editar los datos de una :class:`Devolucion`"""
 
     class Meta:
@@ -341,14 +320,10 @@ class DevolucionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(DosisForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Efectuar Devolución', *self.field_names)
 
 
-class MedicamentoUpdateForm(forms.ModelForm):
+class MedicamentoUpdateForm(FieldSetModelFormMixin):
     """Permite editar los datos de una :class:`Devolucion`"""
 
     class Meta:
@@ -357,15 +332,11 @@ class MedicamentoUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(MedicamentoUpdateForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Actualizar Posología de Medicamento',
                                       *self.field_names)
 
 
-class OxigenoTerapiaForm(forms.ModelForm):
+class OxigenoTerapiaForm(FieldSetModelFormMixin):
     """Permite agregar y editar :class:`OxigenoTerapia`s"""
 
     class Meta:
@@ -386,10 +357,6 @@ class OxigenoTerapiaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OxigenoTerapiaForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Oxigeno Terapia', *self.field_names)
 
 

@@ -1,0 +1,50 @@
+﻿{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="row">
+        <div class="span12">
+            <div class="page-header">
+                <h1>{{ consultorio.nombre }} <small>Consultorio</small></h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <aside class="span3">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-stacked nav-tabs">
+                    <li><a href="{% url 'persona-create' %}">Agregar Paciente</a></li>
+                    <li><a href="{% url 'consultorio-cita-agregar' consultorio.id %}">Crear una Cita</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div class="span9">
+            <div class="row">
+                <section class="span9">
+                    {% crispy buscar %}
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <table class="table table-bordered table-striped">
+                <caption>Pacientes</caption>
+                <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for paciente in consultorio.pacientes.all %}
+                    <tr>
+                        <td>{{ paciente }}</td>
+                        <td>{{ paciente.obtener_edad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -19,13 +19,13 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from chosen import forms as chosenforms
-from persona.forms import FieldSetFormMixin
+from persona.forms import FieldSetModelFormMixin
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
                               Transferido, ItemComprado, Historial)
 
 
-class ItemTemplateForm(FieldSetFormMixin):
+class ItemTemplateForm(FieldSetModelFormMixin):
     class Meta:
         model = ItemTemplate
 
@@ -35,7 +35,7 @@ class ItemTemplateForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class InventarioForm(FieldSetFormMixin):
+class InventarioForm(FieldSetModelFormMixin):
     class Meta:
         model = Inventario
 
@@ -45,7 +45,7 @@ class InventarioForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class ItemForm(FieldSetFormMixin):
+class ItemForm(FieldSetModelFormMixin):
     class Meta:
         model = Item
 
@@ -58,7 +58,7 @@ class ItemForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class CompraForm(FieldSetFormMixin):
+class CompraForm(FieldSetModelFormMixin):
     class Meta:
         model = Compra
 
@@ -68,7 +68,7 @@ class CompraForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class ItemTypeForm(FieldSetFormMixin):
+class ItemTypeForm(FieldSetModelFormMixin):
     class Meta:
         model = ItemType
 
@@ -78,7 +78,7 @@ class ItemTypeForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class RequisicionForm(FieldSetFormMixin):
+class RequisicionForm(FieldSetModelFormMixin):
     class Meta:
         model = Requisicion
         exclude = ('entregada', 'aprobada')
@@ -105,7 +105,7 @@ class RequisicionCompletarForm(forms.ModelForm):
                                       *self.field_names)
 
 
-class ItemRequisicionForm(FieldSetFormMixin):
+class ItemRequisicionForm(FieldSetModelFormMixin):
     class Meta:
         model = ItemRequisicion
         exclude = ('entregada', 'pendiente')
@@ -119,7 +119,7 @@ class ItemRequisicionForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class TransferenciaForm(FieldSetFormMixin):
+class TransferenciaForm(FieldSetModelFormMixin):
     class Meta:
         model = Transferencia
         exclude = ('aplicada', )
@@ -131,7 +131,7 @@ class TransferenciaForm(FieldSetFormMixin):
             *self.field_names)
 
 
-class TransferirForm(forms.ModelForm):
+class TransferirForm(FieldSetModelFormMixin):
     class Meta:
         model = Transferencia
         fields = ('aplicada',)
@@ -140,16 +140,12 @@ class TransferirForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TransferirForm, self).__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Aplicar'))
         self.helper.layout = Fieldset(u'¿Aplicar la Transferencia Ahora?',
                                       *self.field_names)
 
 
-class TransferidoForm(FieldSetFormMixin):
+class TransferidoForm(FieldSetModelFormMixin):
     class Meta:
         model = Transferido
         exclude = ('aplicada', )
@@ -163,7 +159,7 @@ class TransferidoForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class HistorialForm(FieldSetFormMixin):
+class HistorialForm(FieldSetModelFormMixin):
     class Meta:
         model = Historial
 
@@ -173,7 +169,7 @@ class HistorialForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class ItemCompradoForm(FieldSetFormMixin):
+class ItemCompradoForm(FieldSetModelFormMixin):
     class Meta:
         model = ItemComprado
         exclude = ('ingresado', )
@@ -187,13 +183,10 @@ class ItemCompradoForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class ItemTemplateSearchForm(forms.Form):
+class ItemTemplateSearchForm(FieldSetModelFormMixin):
     query = forms.CharField()
 
     def __init__(self, *args, **kwargs):
         super(ItemTemplateSearchForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Buscar'))
         self.helper.layout = Fieldset(u'Buscar Producto', *self.field_names)

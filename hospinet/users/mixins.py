@@ -22,7 +22,7 @@ from django.views.generic import View
 from django.views.generic.edit import FormMixin
 from django import forms
 from chosen import forms as chosenforms
-from persona.forms import FieldSetFormMixin
+from persona.forms import FieldSetModelFormMixin
 
 class LoginRequiredMixin(View):
     """Clase base para crear vistas que requieren inicio de sesión"""
@@ -46,11 +46,11 @@ class CurrentUserFormMixin(FormMixin):
         return initial
 
 
-class HiddenUserForm(FieldSetFormMixin):
+class HiddenUserForm(FieldSetModelFormMixin):
 
     usuario = forms.ModelChoiceField(label="", queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
-class UserForm(FieldSetFormMixin):
+class UserForm(FieldSetModelFormMixin):
 
     usuario = chosenforms.ChosenModelChoiceField(User.objects.all())

@@ -57,7 +57,8 @@ class Persona(models.Model):
     apellido = models.CharField(max_length=50, blank=True)
     sexo = models.CharField(max_length=1, choices=GENEROS, blank=True)
     nacimiento = models.DateField(default=date.today)
-    estado_civil = models.CharField(max_length=1, choices=ESTADOS_CIVILES, blank=True)
+    estado_civil = models.CharField(max_length=1, choices=ESTADOS_CIVILES,
+                                    blank=True)
     profesion = models.CharField(max_length=200, blank=True)
     telefono = models.CharField(max_length=200, blank=True)
     celular = models.CharField(max_length=200, blank=True)
@@ -134,10 +135,18 @@ class Fisico(models.Model):
         ('+', u'+'),
         ('-', u'-'),
     )
+
+    LATERALIDAD = (
+        ('D', u'Derecha'),
+        ('I', u'Izquierda'),
+    )
     
     persona = models.OneToOneField(Persona, primary_key=True)
     peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    lateralidad = models.CharField(max_length=1, choices=LATERALIDAD,
+                                   blank=True)
     altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)

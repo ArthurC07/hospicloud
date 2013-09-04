@@ -20,25 +20,23 @@ from django import forms
 from django.contrib.auth.models import User
 
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
-                             Consulta, LecturaSignos)
-from persona.forms import FieldSetFormMixin
+                             Consulta, LecturaSignos, Consultorio,
+                             DiagnosticoClinico)
+from persona.forms import FieldSetModelFormMixin
 from users.mixins import HiddenUserForm, UserForm
 
 
-class PacienteFormMixin(FieldSetFormMixin):
+class PacienteFormMixin(FieldSetModelFormMixin):
     paciente = forms.ModelChoiceField(label="", queryset=Paciente.objects.all(),
                                       widget=forms.HiddenInput(),
                                       required=False)
 
 
-class PacienteForm(HiddenUserForm):
+class PacienteForm(FieldSetModelFormMixin):
     """Permite editar los datos de un :class:`Paciente`"""
 
     class Meta:
         model = Paciente
-
-    doctor = forms.ModelChoiceField(label="", queryset=User.objects.all(),
-                                    widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(PacienteForm, self).__init__(*args, **kwargs)
@@ -91,5 +89,14 @@ class LecturaSignosForm(PacienteFormMixin):
     def __init__(self, *args, **kwargs):
         super(LecturaSignosForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar una Lectura de Signos',
+                                      *self.field_names)
+
+class DiagnosticoClinicoForm(PacienteFormMixin):
+    class Meta:
+        model = DiagnosticoClinico
+
+    def __init__(self, *args, **kwargs):
+        super(DiagnosticoClinicoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar un Diagnóstico',
                                       *self.field_names)
 
