@@ -36,6 +36,10 @@ urlpatterns = patterns('',
                            ConsultorioDetailView.as_view(),
                            name='consultorio'),
 
+                       url(r'^agregar$',
+                           ConsultorioDetailView.as_view(),
+                           name='consultorio-agregar'),
+
                        url(r'^(?P<persona>\d+)/(?P<consultorio>\d+)/paciente/agregar$',
                            PacienteCreateView.as_view(),
                            name='consultorio-paciente-agregar'),
