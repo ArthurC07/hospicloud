@@ -77,7 +77,7 @@ class ConsultorioFormMixin(ConsultorioMixin):
 
 
 class PacienteCreateView(CreateView, PersonaFormMixin, ConsultorioFormMixin,
-                         CurrentUserFormMixin, LoginRequiredMixin):
+                         LoginRequiredMixin):
     """Permite agregar una :class:`Persona` como un :class:`Paciente` de un
     doctor que tiene un :class:`User` en el sistema"""
 

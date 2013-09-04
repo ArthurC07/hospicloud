@@ -97,7 +97,7 @@ class LecturaSignos(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('clinique-paciente', args=[self.paciente.id])
-
+    
     def save(self, *args, **kwargs):
         """Permite guardar los datos mientras calcula algunos campos
         automaticamente"""
