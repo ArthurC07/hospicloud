@@ -15,15 +15,19 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from django.views.generic import (TemplateView, DetailView, CreateView, View,
+from django.views.generic import (DetailView, CreateView, View,
                                   ListView)
+from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin
 
 from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
-                            ConsultaForm, SeguimientoForm, LecturaSignosForm)
+                            ConsultaForm, SeguimientoForm, LecturaSignosForm,
+                            DiagnosticoClinicoForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
-                             Seguimiento, LecturaSignos)
+                             Seguimiento, LecturaSignos, Consultorio,
+                             DiagnosticoClinico)
+from persona.forms import PersonaSearchForm
 from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
@@ -34,12 +38,42 @@ class ConsultorioIndexView(ListView, LoginRequiredMixin):
     context_object_name = 'pacientes'
 
     def get_queryset(self):
+        return Paciente.objects.filter(
+            consultorio__usuario=self.request.user).all()
 
-        return Paciente.objects.filter(usuario=self.request.user).all()
+
+class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+    paginate_by = 20
+    template_name = 'clinique/consultorio_detail.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['consultorio'] = self.object
+        kwargs['buscar'] = PersonaSearchForm()
+        kwargs['buscar'].helper.form_action = 'persona-search'
+        return super(ConsultorioDetailView, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        self.object = self.get_object(Consultorio.objects.all())
+        return self.object.pacientes.all()
 
 
-class PacienteCreateView(CreateView, PersonaFormMixin, CurrentUserFormMixin,
-                         LoginRequiredMixin):
+class ConsultorioMixin(View):
+    def dispatch(self, *args, **kwargs):
+        self.consultorio = get_object_or_404(Consultorio,
+                                             pk=kwargs['consultorio'])
+        return super(ConsultorioMixin, self).dispatch(*args, **kwargs)
+
+
+class ConsultorioFormMixin(ConsultorioMixin):
+    def get_initial(self):
+        initial = super(ConsultorioFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['consultorio'] = self.consultorio.id
+        return initial
+
+
+class PacienteCreateView(CreateView, PersonaFormMixin, ConsultorioFormMixin,
+                         CurrentUserFormMixin, LoginRequiredMixin):
     """Permite agregar una :class:`Persona` como un :class:`Paciente` de un
     doctor que tiene un :class:`User` en el sistema"""
 
@@ -95,6 +129,12 @@ class SeguimientoCreateView(PacienteFormMixin, CurrentUserFormMixin, CreateView,
     form_class = SeguimientoForm
 
 
-class LecturaSignosCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+class LecturaSignosCreateView(PacienteFormMixin, LoginRequiredMixin,
+                              CreateView):
     model = LecturaSignos
     form_class = LecturaSignosForm
+
+
+class DiagnosticoCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+    model = DiagnosticoClinico
+    form_class = DiagnosticoClinicoForm

@@ -1,18 +1,27 @@
 <aside class="span3">
-  <nav class="sidebar-nav">
-    <ul class="nav nav-tabs nav-stacked">
-      <li>
-        <a href="{% url 'persona-estilo' persona.id %}">Estilo de Vida</a>
-      </li>
-      <li>
-        <a href="{% url 'examen-programar' persona.id %}">Programar Estudio</a>
-      </li>
-      <li>
-        <a href="{% url 'emergency-create' persona.id %}">Ingresar a Emergencias</a>
-      </li>
-      <li>
-        <a href="{% url 'admision-persona-agregar' persona.id %}">Hospitalizar</a>
-      </li>
-    </ul>
-  </nav>
+    <nav class="sidebar-nav">
+        <ul class="nav nav-tabs nav-stacked">
+            <li>
+                <a href="{% url 'persona-estilo' persona.id %}">Estilo de
+                    Vida</a>
+            </li>
+            <li>
+                <a href="{% url 'examen-programar' persona.id %}">Programar
+                    Estudio</a>
+            </li>
+            <li>
+                <a href="{% url 'emergency-create' persona.id %}">Ingresar a
+                    Emergencias</a>
+            </li>
+            <li>
+                <a href="{% url 'admision-persona-agregar' persona.id %}">Hospitalizar</a>
+            </li>
+            <li>
+                {% for consultorio in user.consultorios.all %}
+                    <a href="{% url 'consultorio-paciente-agregar' persona.id consultorio.id %}">Agregar
+                        Paciente a Consultorio {{ consultorio }}</a>
+                {% endfor %}
+            </li>
+        </ul>
+    </nav>
 </aside>
