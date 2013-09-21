@@ -477,6 +477,7 @@ class Honorario(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, blank=True, null=True,
                              related_name='honorarios')
     monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    medico = models.CharField(max_length=200, blank=True)
     facturada = models.NullBooleanField(default=False)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='honorarios')

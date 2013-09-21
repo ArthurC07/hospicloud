@@ -345,6 +345,11 @@ class Admision(models.Model):
             oxigeno.facturada = True
             oxigeno.save()
 
+        for honorario in self.honorarios.all():
+            items[honorario.item] += honorario.monto
+            honorario.facturada = True
+            honorario.save()
+
         return sorted(items)
 
     def __unicode__(self):
