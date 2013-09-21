@@ -58,7 +58,7 @@
                             <td data-title="Código">{{ honorario.item.id }}</td>
                         {% endlocalize %}
                         <td data-title="Cargo">{{ honorario.item }}</td>
-                        <td></td>
+                        <td>Médico: {{ honorario.medico }}</td>
                         <td class="text-right" data-title="Precio Unitario">{{ honorario.monto|floatformat:2|intcomma }}</td>
                         <td class="text-right" data-title="Total">{{ honorario.monto|floatformat:2|intcomma }}</td>
                     </tr>
