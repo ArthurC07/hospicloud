@@ -13,7 +13,10 @@
     <nav class="sidebar-nav">
       <ul class="nav nav-stacked nav-tabs">
           <li>
-              <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar</a>
+              <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar {{ item_template.descripcion }}</a>
+          </li>
+          <li>
+              <a href="{% url 'inventory' %}">Regresar a Inventario</a>
           </li>
       </ul>
     </nav>
@@ -24,11 +27,11 @@
             <ul>
                 <li>Marca: {{ item_template.marca }}</li>
                 <li>Modelo: {{ item_template.modelo }}</li>
-                <li>Marca: {{ item_template.notas }}</li>
-                <li>Marca: {{ item_template.precio_de_venta }}</li>
-                <li>Marca: {{ item_template.costo }}</li>
-                <li>Marca: {{ item_template.impuestos }}</li>
-                <li>Marca: {{ item_template.activo }}</li>
+                <li>Notas: {{ item_template.notas }}</li>
+                <li>Precio de venta: {{ item_template.precio_de_venta }}</li>
+                <li>Precio de Costo: {{ item_template.costo }}</li>
+                <li>Impuestos: {{ item_template.impuestos }}</li>
+                <li>Activo: {{ item_template.activo|yesno }}</li>
                 <li>Grupos:
                     <ul>
                         {% for grupo in item_template.item_type.all %}
