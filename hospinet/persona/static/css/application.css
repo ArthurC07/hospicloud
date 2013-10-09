@@ -188,3 +188,7 @@ footer
     margin: 1em 0;
 }
 
+header .navbar-inverse .navbar-inner {
+    background-image: none;
+    background-color: #002857;
+}
