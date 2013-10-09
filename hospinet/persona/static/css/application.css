@@ -171,7 +171,7 @@ caption {
     margin: 2em 0;
 }
 footer, .index-link, .navbar-inverse navbar-inner {
-    background: #002857;
+    background: #004BCC;
 }
 .index-link a {
     color: white;
@@ -191,4 +191,5 @@ footer
 nav.navbar-inverse .navbar-inner {
     background-image: none;
     background-color: #004BCC;
+    color: white;
 }
