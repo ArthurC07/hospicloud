@@ -68,12 +68,14 @@
       </div>
       {% endif %}
       {% block content %}{% endblock %}
-        <footer class="row no-print">
+    </div>
+    <footer class="container-fluid no-print">
+        <section class="row-fluid">
             <article class="span12 text-right">
                 <p>Copyright &copy; Know How Honduras, Todos los Derechos Reservados </p>
             </article>
-        </footer>
-    </div>
+        </section>
+    </footer>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
     <script src="{% static '/js/html5shiv.js' %}"></script>
