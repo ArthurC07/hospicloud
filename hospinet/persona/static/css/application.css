@@ -193,3 +193,8 @@ nav.navbar-inverse .navbar-inner {
     background-color: #004BCC;
     color: white;
 }
+.navbar-inverse .brand, .navbar-inverse .nav > li > a {
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
