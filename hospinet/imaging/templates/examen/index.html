@@ -2,12 +2,24 @@
 {% load staticfiles %}
 {% block content %}
 <div class="row">
-  <div class="hero-unit spa12">
-    <div>
+  <div class="span12">
+    <div class="page-header">
       <h1>Centro de Im&aacute;genes</h1>
       <small></small>
     </div>
   </div>
+</div>
+<div class="row">
+    <div class="span12">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="#">Acciones</a>
+                <ul class="nav">
+                    <li><a href="{% url 'examen-nuevo' %}">Programar un Estudio Nuevo</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="row">
   <div id="personas" class="span12">
@@ -34,7 +46,6 @@
         {% endfor %}
       </tbody>
     </table>
-    <a class="btn btn-primary" href="{% url 'examen-nuevo' %}">Programar un Estudio Nuevo</a>
   </div>
 </div>
 <div class="row">
