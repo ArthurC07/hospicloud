@@ -410,4 +410,4 @@ class PreAdmision(TimeStampedModel):
 
     def __unicode__(self):
 
-        return "Preadmision de {0} {1}".format(self.emergencia.persona.nombre_completo(), self.completada)
+        return u"Preadmision de {0} {1}".format(self.emergencia.persona.nombre_completo(), self.completada)
