@@ -447,7 +447,7 @@ class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
         self.object = form.save(commit=False)
         self.object.persona = self.preadmision.emergencia.persona
         self.object.admitio = self.request.user
-        self.preadmision.compleatada = True
+        self.preadmision.completada = True
         self.object.save()
         if self.preadmision.transferir_cobros:
             
