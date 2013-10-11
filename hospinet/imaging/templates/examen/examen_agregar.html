@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
+    <div class="row">
+        <div class="span6">
+            {% crispy persona_search_form %}
+        </div>
+    </div>
 <form id="persona-form">
   <div>
     <h1>Buscar una Paciente</h1>

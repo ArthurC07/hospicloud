@@ -23,7 +23,7 @@ from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
                            EstudioProgramadoForm, EmailForm)
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
-from persona.forms import PersonaForm
+from persona.forms import PersonaForm, PersonaSearchForm
 from persona.models import Persona
 from persona.views import PersonaCreateView
 from django.contrib import messages
@@ -350,5 +350,6 @@ class EstudioPreCreateView(TemplateView, LoginRequiredMixin):
         """Agrega el formulario de :class:`Persona` a la vista"""
 
         context = super(EstudioPreCreateView, self).get_context_data()
+        context['persona_search_form'] = PersonaSearchForm()
         context['persona_form'] = PersonaForm()
         return context

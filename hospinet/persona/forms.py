@@ -189,3 +189,4 @@ class PersonaSearchForm(FieldSetFormMixin):
         self.helper.add_input(Submit('submit', u'Buscar'))
         self.helper.layout = Fieldset(u'Buscar Persona', *self.field_names)
         self.helper.form_method = 'GET'
+        self.helper.form_action = 'persona-search'
