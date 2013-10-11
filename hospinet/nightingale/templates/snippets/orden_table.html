@@ -3,6 +3,7 @@
         <tr>
           <th>Fecha y Hora</th>
           <th>Doctor</th>
+          <th>Usuario</th>
           <th>Descripci&oacute;n</th>
         </tr>
       </thead>
@@ -14,9 +15,10 @@
         {% endif%}
         {% for orden in admision.ordenes_medicas.all %}
         <tr>
-          <th>{{ orden.fecha_y_hora }}</th>
-          <th>{{ orden.usuario.username }}</th>
-          <th>{{ orden.orden }}</th>
+          <td>{{ orden.fecha_y_hora }}</td>
+          <td>{{ orden.doctor }}</td>
+          <td>{{ orden.usuario.username }}</td>
+          <td>{{ orden.orden }}</td>
         </tr>
         {% endfor %}
       </tbody>

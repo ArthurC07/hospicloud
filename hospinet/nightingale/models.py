@@ -149,6 +149,7 @@ class OrdenMedica(models.Model):
     admision = models.ForeignKey(Admision, related_name='ordenes_medicas')
     orden = models.TextField(blank=True)
     fecha_y_hora = models.DateTimeField(default=timezone.now)
+    doctor = models.CharField(blank=True, null=True, max_length=255)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='ordenes_medicas')
 

@@ -489,9 +489,15 @@ class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
         doctores = defaultdict(lambda: defaultdict(Decimal))
 
         for recibo in self.recibos.all():
-            doctores[recibo.radiologo.upper()]['monto'] += recibo.total()
-            doctores[recibo.radiologo.upper()]['cantidad'] += 1
-            doctores[recibo.radiologo.upper()]['comision'] += recibo.comision_radiologo()
+            radiologo = recibo.radiologo.upper()
+
+            if not radiologo in doctores:
+                doctores[radiologo]['recibos'] = list()
+            
+            doctores[radiologo]['recibos'].append(recibo)
+            doctores[radiologo]['monto'] += recibo.total()
+            doctores[radiologo]['cantidad'] += 1
+            doctores[radiologo]['comision'] += recibo.comision_radiologo()
 
         context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
         context['costo'] = sum(r.total() for r in self.recibos.all())
