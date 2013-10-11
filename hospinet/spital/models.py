@@ -94,6 +94,7 @@ class Admision(models.Model):
         ('H', 'Hospitalizar'),
         ('I', 'Ingresado'),
         ('C', 'Alta'),
+        ('Q', 'Cancelada'),
     )
 
     ARANCELES = (
