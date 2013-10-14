@@ -352,4 +352,5 @@ class EstudioPreCreateView(TemplateView, LoginRequiredMixin):
         context = super(EstudioPreCreateView, self).get_context_data()
         context['persona_search_form'] = PersonaSearchForm()
         context['persona_form'] = PersonaForm()
+        context['persona_form'].helper.form_action = 'examen-persona-nuevo'
         return context
