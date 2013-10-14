@@ -89,7 +89,6 @@ class PersonaForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', u'Guardar'))
         self.helper.layout = Fieldset(u'Agregar Persona', *self.field_names)
 
 
