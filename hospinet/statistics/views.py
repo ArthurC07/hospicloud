@@ -463,7 +463,7 @@ class AdmisionPeriodo(AdmisionPeriodoMixin, LoginRequiredMixin):
 
         context['cargos'] = cargos.items()
         context['habitaciones'] = habitaciones.items()
-        context['total'] = sum(a.estado_cuenta(True) for a in self.admisiones)
+        context['total'] = sum(a.estado_de_cuenta(True) for a in self.admisiones)
         return context
 
 
