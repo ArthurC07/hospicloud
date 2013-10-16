@@ -346,10 +346,7 @@ class Admision(models.Model):
             oxigeno.facturada = True
             oxigeno.save()
 
-        for honorario in self.honorarios.all():
-            items[honorario.item] += honorario.monto
-            honorario.facturada = True
-            honorario.save()
+        # TODO: Agregar honorarios médicos a la automatización de facturación
 
         return sorted(items)
 
@@ -370,10 +367,10 @@ class Admision(models.Model):
 
         return (ahora - self.momento).total_seconds() / 60
 
-    def estado_de_cuenta(self):
+    def estado_de_cuenta(self, total=False):
 
-        cargos = sum(c.valor() for c in self.cargos.filter(facturada=False).all())
-        oxigeno = sum(o.valor() for o in self.oxigeno_terapias.all())
+        cargos = sum(c.valor() for c in self.cargos.filter(facturada=total).all())
+        oxigeno = sum(o.valor() for o in self.oxigeno_terapias.filter(facturada=total).all())
         honorarios = self.honorarios.aggregate(models.Sum('monto'))
 
         if not honorarios['monto__sum']:
@@ -394,6 +391,10 @@ class Admision(models.Model):
             agrupados[cargo.cargo].valor += cargo.valor()
 
         return dict(agrupados)
+
+    def total(self):
+
+        return self.estado_de_cuenta(True)
 
 
 class PreAdmision(TimeStampedModel):
