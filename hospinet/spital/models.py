@@ -367,17 +367,19 @@ class Admision(models.Model):
 
         return (ahora - self.momento).total_seconds() / 60
 
-    def estado_de_cuenta(self, total=False):
+    def estado_de_cuenta(self, total=False, honorarios=True):
 
-        cargos = sum(c.valor() for c in self.cargos.filter(facturada=total).all())
-        oxigeno = sum(o.valor() for o in self.oxigeno_terapias.filter(facturada=total).all())
+        total = Decimal()
+        total += sum(c.valor() for c in self.cargos.filter(facturada=total).all())
+        total += sum(o.valor() for o in self.oxigeno_terapias.filter(facturada=total).all())
         honorarios = self.honorarios.aggregate(models.Sum('monto'))
 
         if not honorarios['monto__sum']:
             honorarios['monto__sum'] = 0
+        if honorarios:
+            total += honorarios['monto__sum']
 
-        return (cargos + oxigeno + Decimal(honorarios['monto__sum'])
-                + self.debido()).quantize(Decimal("0.01"))
+        return (total + self.debido()).quantize(Decimal("0.01"))
 
     def agrupar_cargos(self):
 
