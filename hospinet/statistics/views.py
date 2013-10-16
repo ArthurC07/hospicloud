@@ -269,6 +269,31 @@ class IngresosHospitalarios(TemplateView, Atencion, LoginRequiredMixin):
 
         return context
 
+class PeriodoMixin(TemplateView):
+
+    def dispatch(self, request, *args, **kwargs):
+
+        """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
+        el formulario"""
+
+        if self.form.is_valid():
+
+            self.inicio = datetime.combine(self.form.cleaned_data['inicio'], time.min)
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+
+        else:
+            return redirect('estadisticas')
+
+        return super(PeriodoMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        context = super(PeriodoMixin, self).get_context_data(**kwargs)
+
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
 
 class AdmisionPeriodoMixin(TemplateView):
     def dispatch(self, request, *args, **kwargs):
@@ -438,6 +463,7 @@ class AdmisionPeriodo(AdmisionPeriodoMixin, LoginRequiredMixin):
 
         context['cargos'] = cargos.items()
         context['habitaciones'] = habitaciones.items()
+        context['total'] = sum(a.estado_cuenta(True) for a in self.admisiones)
         return context
 
 
@@ -514,3 +540,5 @@ class EmergenciaPeriodo(TemplateView):
 
         context['cargos'] = cargos.items()
         return context
+
+
