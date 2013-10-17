@@ -236,7 +236,7 @@ class Admision(models.Model):
         centro hospitalario"""
         dias = 0
         fraccion_dias = 0
-        if self.hospitalizacion == None:
+        if self.hospitalizacion is None:
             dias = (timezone.now() - self.momento).days
             fraccion_dias = (timezone.now() - self.momento).total_seconds() / 3600 / 24
             if dias < 0:
@@ -277,6 +277,11 @@ class Admision(models.Model):
         dias = (ahora - self.ultimo_cobro).days
         if dias < 1:
             return 1
+
+        if self.estado == 'C':
+
+            return (self.fecha_alta - self.ultimo_cobro).days
+
         return (ahora - self.ultimo_cobro).days
 
     def precio_diario(self):
