@@ -86,6 +86,7 @@ class PersonaForm(FieldSetModelFormMixin):
     nacimiento = forms.DateTimeField(widget=forms.DateInput(
         attrs={'class': 'datepicker'}, format='%d/%m/%Y'),
                                      input_formats=('%d/%m/%Y',))
+    domicilio = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
