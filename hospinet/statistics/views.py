@@ -33,7 +33,6 @@ from users.mixins import LoginRequiredMixin
 
 
 class HabitacionAdapter(object):
-
     def __init__(self):
         self.admisiones = 0
         self.dias = 0
@@ -269,8 +268,8 @@ class IngresosHospitalarios(TemplateView, Atencion, LoginRequiredMixin):
 
         return context
 
-class PeriodoMixin(TemplateView):
 
+class PeriodoMixin(TemplateView):
     def dispatch(self, request, *args, **kwargs):
 
         """Filtra las :class:`Admision` de acuerdo a los datos ingresados en
@@ -294,6 +293,7 @@ class PeriodoMixin(TemplateView):
         context['fin'] = self.fin
 
         return context
+
 
 class AdmisionPeriodoMixin(TemplateView):
     def dispatch(self, request, *args, **kwargs):
@@ -326,6 +326,7 @@ class AdmisionPeriodoMixin(TemplateView):
 
         return context
 
+
 class HabitacionPopularView(AdmisionPeriodoMixin, LoginRequiredMixin):
     template_name = 'estadisticas/habitacion_popular.html'
 
@@ -347,7 +348,6 @@ class HabitacionPopularView(AdmisionPeriodoMixin, LoginRequiredMixin):
                 habitacion=habitacion).count()
 
         for admision in self.admisiones.all():
-
             habitaciones[admision.habitacion].dias += admision.tiempo_hospitalizado()
 
         context['habitaciones'] = sorted(habitaciones.iteritems())
@@ -371,7 +371,6 @@ class DiagnosticoView(AdmisionPeriodoMixin, LoginRequiredMixin):
         diangosticos = defaultdict(int)
 
         for admision in self.admisiones.all():
-
             diangosticos[admision.diagnostico.upper()] += 1
 
         context['diagnosticos'] = sorted(diangosticos.iteritems())
@@ -395,7 +394,6 @@ class DoctorView(AdmisionPeriodoMixin, LoginRequiredMixin):
         doctores = defaultdict(int)
 
         for admision in self.admisiones.all():
-
             doctor = admision.doctor.upper().split('/')[0].rstrip()
 
             doctores[doctor] += 1
@@ -425,7 +423,6 @@ class CargoView(AdmisionPeriodoMixin, LoginRequiredMixin):
             charges = admision.agrupar_cargos()
 
             for cargo in charges:
-
                 cargos[cargo] += int(charges[cargo].cantidad)
 
         context['cargos'] = sorted(cargos.iteritems())
@@ -447,8 +444,8 @@ class AdmisionPeriodo(AdmisionPeriodoMixin, LoginRequiredMixin):
         context['admisiones'] = self.admisiones
         if self.admisiones.count():
             context['tiempo_promedio'] = sum(a.tiempo_hospitalizado() for a in
-                                             self.admisiones.all()) / self\
-                .admisiones.count()
+                                             self.admisiones.all()) / self \
+                                             .admisiones.count()
         else:
             context['tiempo_promedio'] = 0
             # Calcular todos los cargos efectuados en estas hospitalizaciones
@@ -500,6 +497,7 @@ class TratanteEstadisticaView(AdmisionPeriodoMixin, LoginRequiredMixin):
         context['habitaciones'] = habitaciones.items()
         return context
 
+
 class EmergenciaPeriodo(TemplateView):
     template_name = 'estadisticas/emergencia.html'
 
@@ -539,6 +537,5 @@ class EmergenciaPeriodo(TemplateView):
                 cargos[cobro.cargo] += cobro.cantidad
 
         context['cargos'] = cargos.items()
+        context['total'] = sum(e.total() for e in self.emergencias)
         return context
-
-

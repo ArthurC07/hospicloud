@@ -61,6 +61,10 @@ class Emergencia(TimeStampedModel):
 
         return items
 
+    def total(self):
+
+        return sum(c.total() for c in self.cobros.all())
+
 class Tratamiento(TimeStampedModel):
     """Registra las indiciaciones que la :class:`Persona` debe seguir"""
 
@@ -161,3 +165,7 @@ class Cobro(TimeStampedModel):
 
     def __unicode__(self):
         return u'{1}: {0}'.format(self.cargo.descripcion, self.created)
+
+    def total(self):
+
+        return self.cargo.precio_de_venta * self.cantidad
