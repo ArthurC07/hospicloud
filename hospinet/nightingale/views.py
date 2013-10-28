@@ -519,7 +519,7 @@ class SumarioCreateView(AdmisionFormMixin):
         self.object = form.save(commit=False)
         self.object.admision = self.admision
         self.usuario = self.request.user
-        self.admision.dar_alta()
+        self.admision.dar_alta(self.object.created)
         self.admision.save()
         self.object.save()
 
