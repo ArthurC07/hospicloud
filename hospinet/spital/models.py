@@ -302,8 +302,9 @@ class Admision(models.Model):
 
         return (self.tiempo_cobro() * self.precio_diario()).quantize(Decimal("0.01"))
 
-    def dar_alta(self):
+    def dar_alta(self, day):
 
+        self.fecha_alta = day
         self.estado = 'C'
         self.fecha_alta = timezone.now()
         medicamentos = (m.suspender() for m in self.medicamentos.all())
@@ -420,3 +421,13 @@ class PreAdmision(TimeStampedModel):
     def __unicode__(self):
 
         return u"Preadmision de {0} {1}".format(self.emergencia.persona.nombre_completo(), self.completada)
+
+
+class Especialidad(TimeStampedModel):
+
+    nombre = models.CharField(max_length=50)
+
+
+class Doctor(TimeStampedModel):
+
+    nombre = models.CharField(max_length=50)
