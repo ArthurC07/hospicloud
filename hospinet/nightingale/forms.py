@@ -29,17 +29,14 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
                                 Devolucion, Sumario, OxigenoTerapia, Honorario)
 from persona.forms import DateTimeWidget, FieldSetModelFormMixin
 from inventory.models import ItemTemplate
+from users.mixins import HiddenUserForm
 
 
-class AdmisionBaseForm(FieldSetModelFormMixin):
+class AdmisionBaseForm(HiddenUserForm):
     admision = forms.ModelChoiceField(label="",
                                       queryset=Admision.objects.all(),
                                       widget=forms.HiddenInput(),
                                       required=False)
-
-    usuario = forms.ModelChoiceField(label="",
-                                     queryset=User.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
 
 
 class BaseForm(FieldSetModelFormMixin):
@@ -56,7 +53,6 @@ class BaseForm(FieldSetModelFormMixin):
     usuario = forms.ModelChoiceField(label="",
                                      queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
-
 
 
 class CargoForm(AdmisionBaseForm):
@@ -105,6 +101,9 @@ class PreCargoForm(AdmisionBaseForm):
 class SumarioForm(AdmisionBaseForm):
     """Muestra un formulario que permite agregar :class:`Cargo`s a una
     :class:`Persona` durante una :class:`Admision`"""
+
+    fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                initial=timezone.now)
 
     class Meta:
         model = Sumario
