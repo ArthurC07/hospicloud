@@ -184,7 +184,6 @@ class DicomCreateView(ExamenDocBaseCreateView):
         self.object = form.save(commit=False)
         self.object.examen = self.examen
         self.object.save()
-        self.object.extraer_imagen()
         
         return HttpResponseRedirect(self.get_success_url())
 

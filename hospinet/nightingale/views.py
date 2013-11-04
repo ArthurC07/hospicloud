@@ -506,26 +506,10 @@ class DevolucionCreateView(AdmisionFormMixin):
     template_name = 'enfermeria/devolucion_create.html'
 
 
-class SumarioCreateView(AdmisionFormMixin):
+class SumarioCreateView(AdmisionFormMixin, CurrentUserFormMixin):
     model = Sumario
     form_class = SumarioForm
     template_name = 'enfermeria/sumario.html'
-
-    def form_valid(self, form):
-        """Guarda el objeto generado espeficando la :class:`Admision` obtenida
-        de los argumentos y el :class:`User` que esta utilizando la aplicación
-        """
-
-        self.object = form.save(commit=False)
-        self.object.admision = self.admision
-        self.usuario = self.request.user
-        self.admision.dar_alta(self.object.created)
-        self.admision.save()
-        self.object.save()
-
-        messages.info(self.request, u"Hospitalización Actualizada")
-
-        return HttpResponseRedirect(self.get_success_url())
 
 
 class DosificarMedicamentoView(FormView, LoginRequiredMixin):

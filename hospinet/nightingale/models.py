@@ -147,6 +147,7 @@ class OrdenMedica(models.Model):
     """Registra las indicaciones a seguir por el personal de enfermeria"""
 
     admision = models.ForeignKey(Admision, related_name='ordenes_medicas')
+    evolucion = models.TextField(blank=True)
     orden = models.TextField(blank=True)
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     doctor = models.CharField(blank=True, null=True, max_length=255)
@@ -280,11 +281,16 @@ class Sumario(TimeStampedModel):
     recomendaciones = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='sumarios')
+    fecha = models.DateTimeField(blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
         return reverse('nightingale-view-id', args=[self.admision.id])
+
+    def save(self, **kwargs):
+        self.admision.dar_alta(self.fecha.created)
+        super(Sumario, self).save(**kwargs)
 
 
 Admision.sumario = property(
