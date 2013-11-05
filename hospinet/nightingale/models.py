@@ -289,7 +289,7 @@ class Sumario(TimeStampedModel):
         return reverse('nightingale-view-id', args=[self.admision.id])
 
     def save(self, **kwargs):
-        self.admision.dar_alta(self.fecha.created)
+        self.admision.dar_alta(self.fecha)
         super(Sumario, self).save(**kwargs)
 
 
