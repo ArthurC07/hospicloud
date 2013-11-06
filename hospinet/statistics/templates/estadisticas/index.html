@@ -3,26 +3,82 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="row">
-        <div class="span6">
-            <table class="table table-striped table-bordered">
-                <caption>Admsiones por Habitación</caption>
-                <thead>
-                <tr>
-                    <th>Habitaci&oacute;n</th>
-                    <th>Cantidad de Hospitalizaciones</th>
-                    <th>D&iacute;s</th>
-                </tr>
-                <thead>
-                <tbody>
-                {% for habitacion, detalle in habitaciones %}
+        <div class="span12">
+            <div class="page-header">
+                <h1>Estad&iacute;sticas</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="span4 action-nav-button">
+            <a href="#">
+                <table class="table table-striped table-bordered">
+                    <caption>Admisiones por Habitación</caption>
+                    <thead>
                     <tr>
-                        <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
-                        <td>{{ detalle.admisiones }}</td>
-                        <td>{{ detalle.dias }}</td>
+                        <th>Habitaci&oacute;n</th>
+                        <th>Cantidad de Hospitalizaciones</th>
+                        <th>D&iacute;as</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    <thead>
+                    <tbody>
+                    {% for habitacion, detalle in habitaciones %}
+                        <tr>
+                            <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
+                            <td>{{ detalle.admisiones }}</td>
+                            <td>{{ detalle.dias }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <td>Totales</td>
+                    <td>{{ total }}</td>
+                    <td>{{ dias }}</td>
+                    </tfoot>
+                </table>
+            </a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="#">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Diagnóstico</th>
+                        <th>Hospitalizaciones</th>
+                    </tr>
+                    <thead>
+                    <tbody>
+                    {% for doctor, cantidad in doctores %}
+                        <tr>
+                            <td>{{ doctor }}</td>
+                            <td>{{ cantidad }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <td>Total</td>
+                    <td colspan="2">{{ total_doctores }}</td>
+                    </tfoot>
+                </table>
+            </a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="#">Hola</a>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="span4 action-nav-button">
+            <a href="#">Hola</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="#">Hola</a>
+        </section>
+        <section class="span4 action-nav-button">
+            <a href="#">Hola</a>
+        </section>
+    </div>
+    <div class="row">
+        <div class="span6">
         </div>
         <div class="span6">
             <article class="span6">
