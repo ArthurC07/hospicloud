@@ -308,6 +308,7 @@ class Admision(models.Model):
         self.estado = 'C'
         self.fecha_alta = timezone.now()
         medicamentos = (m.suspender() for m in self.medicamentos.all())
+        self.save()
 
     def actualizar_tiempo(self):
 
