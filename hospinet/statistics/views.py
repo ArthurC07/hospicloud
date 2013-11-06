@@ -343,12 +343,18 @@ class HabitacionPopularView(AdmisionPeriodoMixin, LoginRequiredMixin):
         context = super(HabitacionPopularView, self).get_context_data(**kwargs)
 
         habitaciones = defaultdict(HabitacionAdapter)
+        context['total'] = 0
+        context['dias'] = 0
         for habitacion in Habitacion.objects.all():
             habitaciones[habitacion].admisiones += self.admisiones.filter(
                 habitacion=habitacion).count()
 
         for admision in self.admisiones.all():
             habitaciones[admision.habitacion].dias += admision.tiempo_hospitalizado()
+
+        for habitacion in Habitacion.objects.all():
+            context['total'] += habitaciones[habitacion].admisiones
+            context['dias'] += habitaciones[habitacion].dias
 
         context['habitaciones'] = sorted(habitaciones.iteritems())
         return context
