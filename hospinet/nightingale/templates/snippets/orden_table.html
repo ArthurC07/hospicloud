@@ -4,7 +4,8 @@
           <th>Fecha y Hora</th>
           <th>Doctor</th>
           <th>Usuario</th>
-          <th>Descripci&oacute;n</th>
+          <th>Evoluci&oacute;n</th>
+          <th>Orden M&eacute;dica</th>
         </tr>
       </thead>
       <tbody>
@@ -18,6 +19,7 @@
           <td>{{ orden.fecha_y_hora }}</td>
           <td>{{ orden.doctor }}</td>
           <td>{{ orden.usuario.username }}</td>
+          <td>{{ orden.evolucion }}</td>
           <td>{{ orden.orden }}</td>
         </tr>
         {% endfor %}
