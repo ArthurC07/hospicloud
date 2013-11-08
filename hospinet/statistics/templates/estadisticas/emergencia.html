@@ -1,51 +1,59 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load l10n %}{% load staticfiles %}{% load humanize %}
 {% block content %}
 <div class="row">
-  <section class="span12 hero-unit">
-    <div>
+  <section class="span12">
+    <div class="page-header">
       <h1>Estad&iacute;sticas de Emergencias</h1>
       <small>Del {{ inicio }} al {{ fin }}</small>
     </div>
   </section>
 </div>
 <div class="row">
-  <article class="span12">
-    <table class="table table-striped table-bordered">
-      <caption>Emergencias Atendidas</caption>
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Nombre Paciente</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-       {% for emergencia in emergencias %}
-        <tr>
-          <td>{{ emergencia.created }}</td>
-          <td>{{ emergencia.persona.nombre_completo }}</td>
-          <td>{{ emergencia.total }}</td>
-        </tr>
-           <tr>
-            <table>
-                {% for cargo in emergencia.cargos.all %}
-                <tr>
-                    <td>{{ cargo }}</td>
-                    <td>{{ cargo.valor|floatformat:2|intcomma }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-           </tr>
-       {% endfor %}
-      </tbody>
-      <tfoot>
-        <tr>
-          <th colspan="2">Total de Emergencias</th>
-          <th>{{ emergencias.count }}</th>
-        </tr>
-      </tfoot>
-    </table>
+  <article class="span4">
+      <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+                <th>Doctor</th>
+                <th>Emergencias</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for doctor, cantidad in doctores %}
+              <tr>
+                  <td>{{ doctor.get_full_name }}</td>
+                  <td>{{ cantidad }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
   </article>
+    <div class="span4">
+        <canvas id="emergencia" width="400" height="400"></canvas>
+    </div>
 </div>
+{% endblock %}
+{% block scripts %}
+    {% localize off %}
+        <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function()
+            {
+                var data = {
+                    labels : [ {% for doctor, cantidad in grafico %} '{{ doctor.get_full_name }}', {% endfor %} ],
+                    datasets : [
+                        {
+                            fillColor : "rgba(151,187,205,0.5)",
+                            strokeColor : "rgba(151,187,205,1)",
+                            data : [ {% for doctor, cantidad in grafico2 %} {{ cantidad }}, {% endfor %} ]
+                        }
+                    ]
+                };
+                var ctx = $("#emergencia").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data, {
+                    scaleShowLabels: true
+                });
+            });
+        </script>
+    {% endlocalize %}
 {% endblock %}
