@@ -5,10 +5,72 @@
     <div class="row">
         <div class="span12">
             <div class="page-header">
-                <h1>Estad&iacute;stica Descriptiva</h1>
+                <h1>Estad&iacute;sticas</h1>
             </div>
         </div>
     </div>
+    <div class="row action-nav-normal">
+        <section class="span3 action-nav-button">
+            <a href="#">
+                <table class="table table-striped table-bordered">
+                    <caption>Admisiones por Habitación</caption>
+                    <thead>
+                    <tr>
+                        <th>Habitaci&oacute;n</th>
+                        <th>Cantidad</th>
+                        <th>D&iacute;as</th>
+                    </tr>
+                    <thead>
+                    <tbody>
+                    {% for habitacion, detalle in habitaciones %}
+                        <tr>
+                            <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
+                            <td>{{ detalle.admisiones }}</td>
+                            <td>{{ detalle.dias }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <td>Totales</td>
+                    <td>{{ total }}</td>
+                    <td>{{ dias }}</td>
+                    </tfoot>
+                </table>
+            </a>
+        </section>
+        <section class="span6 action-nav-button">
+            <canvas width="600" height="400" id="meses"></canvas>
+        </section>
+        <section class=" span3 action-nav-button">
+            <a href="#">
+                <table class="table table-striped table-bordered">
+                    <caption>Admisiones Especialista</caption>
+                    <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th></th>
+                    </tr>
+                    <thead>
+                    <tbody>
+                    {% for doctor, cantidad in doctores %}
+                        <tr>
+                            <td>{{ doctor }}</td>
+                            <td>{{ cantidad }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <td>Total</td>
+                    <td colspan="2">{{ total_doctores }}</td>
+                    </tfoot>
+                </table>
+            </a>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+
+    </div>
+    <div class="row"></div>
     <div class="row">
         <div class="span12">
             <div class="row">
@@ -99,29 +161,19 @@
             $(document).ready(function()
             {
                 var data = {
-                    labels : [ {% for habitacion, detalle in habitaciones %} '{{ habitacion }}', {% endfor %} '' ],
+                    labels : [ {% for mes, cantidad in meses %} '{{ mes }}', {% endfor %} '' ],
                     datasets : [
                         {
                             fillColor : "rgba(151,187,205,0.5)",
                             strokeColor : "rgba(151,187,205,1)",
-                            data : [ {% for habitacion, detalle in habitaciones %} {{ detalle.admisiones }}, {% endfor %} 0 ]
+                            data : [ {% for mes, cantidad in meses %} {{ cantidad }}, {% endfor %} 0 ]
                         }
                     ]
                 };
-                var ctx = $("#habitacion").get(0).getContext("2d");
-                var grafico = new Chart(ctx).Bar(data);
-                data = {
-                    labels : [ {% for diagnostico, cantidad in diagnosticos %} '{{ diagnostico }}', {% endfor %} '' ],
-                    datasets : [
-                        {
-                            fillColor : "rgba(151,187,205,0.5)",
-                            strokeColor : "rgba(151,187,205,1)",
-                            data : [ {% for diagnostico, cantidad in diagnosticos %} {{ cantidad }}, {% endfor %} 0 ]
-                        }
-                    ]
-                };
-                ctx = $("#diagnostico").get(0).getContext("2d");
-                grafico = new Chart(ctx).Bar(data);
+                var ctx = $("#meses").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data, {
+                    scaleShowLabels: true
+                });
             });
         </script>
     {% endlocalize %}

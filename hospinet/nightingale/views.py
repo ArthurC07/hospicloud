@@ -272,8 +272,6 @@ class ChosenCargoCreateView(CargoCreateView, LoginRequiredMixin):
     template_name = 'enfermeria/cargo_create.html'
 
     def get_initial(self):
-        """Agrega la :class:`Admision` obtenida como el valor a utilizar en el
-        formulario que será llenado posteriormente"""
         initial = super(ChosenCargoCreateView, self).get_initial()
         initial = initial.copy()
         initial['cargo'] = self.cargo.id
@@ -563,7 +561,8 @@ class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'oxigeno_terapia'
 
 
-class HonorarioCreateView(AdmisionFormMixin, CurrentUserFormMixin, LoginRequiredMixin):
+class HonorarioCreateView(AdmisionFormMixin, CurrentUserFormMixin,
+                          LoginRequiredMixin):
     model = Honorario
     form_class = HonorarioForm
 

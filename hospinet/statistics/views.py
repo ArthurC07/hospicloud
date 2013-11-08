@@ -20,6 +20,7 @@ from datetime import date
 from decimal import Decimal
 from datetime import datetime, time, timedelta
 from collections import defaultdict
+from operator import attrgetter
 
 from django.views.generic.base import TemplateView
 from django.shortcuts import redirect
@@ -106,13 +107,51 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
 
     def get_habitaciones(self, context):
         habitaciones = defaultdict(HabitacionAdapter)
+        context['dias'] = 0
+        context['total'] = 0
+
         for habitacion in Habitacion.objects.all():
             habitaciones[habitacion].admisiones += self.admisiones.filter(
                 habitacion=habitacion).count()
         for admision in self.admisiones.all():
             habitaciones[
                 admision.habitacion].dias += admision.tiempo_hospitalizado()
-        context['habitaciones'] = sorted(habitaciones.iteritems())
+        context['habitaciones'] = sorted(habitaciones.items(), key=lambda x: x[0].tipo)
+
+        for habitacion in Habitacion.objects.all():
+            context['total'] += habitaciones[habitacion].admisiones
+            context['dias'] += habitaciones[habitacion].dias
+
+    def get_doctor(self, context):
+
+        doctores = defaultdict(int)
+
+        for admision in self.admisiones.all():
+            doctor = admision.doctor.upper().split('/')[0].rstrip()
+
+            doctores[doctor] += 1
+
+        context['doctores'] = reversed(sorted(doctores.iteritems(), key=lambda x: x[1]))
+        context['total_doctores'] = sum(doctores[d] for d in doctores)
+        return context
+
+    def get_year(self, context):
+
+        today = date.today()
+        admisiones = Admision.objects.filter(momento__year=today.year)
+        meses = defaultdict(int)
+        for n in range(1, 12):
+            meses[n] = 0
+
+        for admision in admisiones.all():
+            meses[admision.momento.month] += 1
+
+        context['meses'] = list()
+        for mes in sorted(meses.iteritems()):
+
+            context['meses'].append((calendar.month_name[mes[0]],mes[1]))
+
+        return context
 
     def get_context_data(self, **kwargs):
 
@@ -125,6 +164,8 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
         self.get_habitaciones(context)
 
         self.get_diagnosticos(context)
+        self.get_doctor(context)
+        self.get_year(context)
 
         return context
 
