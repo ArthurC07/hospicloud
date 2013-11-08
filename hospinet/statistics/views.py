@@ -138,7 +138,8 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
     def get_year(self, context):
 
         today = date.today()
-        admisiones = Admision.objects.filter(momento__year=today.year)
+        admisiones = Admision.objects.filter(momento__year=today.year,
+                                             habitacion__isnull=False)
         meses = defaultdict(int)
         for n in range(1, 12):
             meses[n] = 0
