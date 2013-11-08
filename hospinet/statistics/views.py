@@ -135,6 +135,24 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
         context['total_doctores'] = sum(doctores[d] for d in doctores)
         return context
 
+    def get_year(self, context):
+
+        today = date.today()
+        admisiones = Admision.objects.filter(momento__year=today.year)
+        meses = defaultdict(int)
+        for n in range(1, 12):
+            meses[n] = 0
+
+        for admision in admisiones.all():
+            meses[admision.momento.month] += 1
+
+        context['meses'] = list()
+        for mes in sorted(meses.iteritems()):
+
+            context['meses'].append((calendar.month_name[mes[0]],mes[1]))
+
+        return context
+
     def get_context_data(self, **kwargs):
 
         context = super(Estadisticas, self).get_context_data(**kwargs)
@@ -147,6 +165,7 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
 
         self.get_diagnosticos(context)
         self.get_doctor(context)
+        self.get_year(context)
 
         return context
 
