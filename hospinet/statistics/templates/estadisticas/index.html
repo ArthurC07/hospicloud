@@ -70,87 +70,26 @@
     <div class="row action-nav-normal">
 
     </div>
-    <div class="row"></div>
     <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="page-header">
-                    <h1>Ocupación de Habitaciones del Último Mes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span6">
-                    <canvas width="400" height="400" id="habitacion"></canvas>
-                </div>
-                <div class="span6">
-                    {% crispy habitacion_popular %}
-                </div>
-            </div>
+        <div class="span4">
+            {% crispy habitacion_popular %}
+        </div>
+        <div class="span4">
+            {% crispy diagnostico %}
+        </div>
+        <div class="span4">
+            {% crispy doctor %}
         </div>
     </div>
     <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="page-header">
-                    <h1>Admisiones por Diagnóstico del Último Mes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span6">
-                    <canvas width="400" height="400" id="diagnostico"></canvas>
-                </div>
-                <div class="span6">
-                    {% crispy diagnostico %}
-                </div>
-            </div>
+        <div class="span4">
+            {% crispy cargo %}
         </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="page-header">
-                    <h1>Admisiones por Doctor del Último Mes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span6">
-                    <canvas width="400" height="400" id="doctor"></canvas>
-                </div>
-                <div class="span6">
-                    {% crispy doctor %}
-                </div>
-            </div>
+        <div class="span4">
+            {% crispy admision_periodo %}
         </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="page-header">
-                    <h1>Cargos del Último Mes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span6">
-                    <canvas width="400" height="400" id="cargo"></canvas>
-                </div>
-                <div class="span6">
-                    {% crispy cargo %}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="span4">
-                    {% crispy admision_periodo %}
-                </div>
-                <div class="span4">
-                    {% crispy emergencia_periodo %}
-                </div>
-                <div class="span4">
-                </div>
-            </div>
+        <div class="span4">
+            {% crispy emergencia_periodo %}
         </div>
     </div>
 {% endblock %}
