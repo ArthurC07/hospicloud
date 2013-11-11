@@ -18,7 +18,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from views import IndexView
+from hospinet.views import IndexView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -44,17 +44,17 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     
     url(r'^$', IndexView.as_view(), name='home'),
-    url(r'^persona/', include('hospinet.persona.urls')),
-    url(r'^examen/', include('hospinet.imaging.urls')),
+    url(r'^persona/', include('persona.urls')),
+    url(r'^examen/', include('imaging.urls')),
     url(r'^accounts/', include('userena.urls')),
-    url(r'^inventory/', include('hospinet.inventory.urls')),
-    url(r'^admision/', include('hospinet.spital.urls')),
-    url(r'^reportes/', include('hospinet.statistics.urls')),
-    url(r'^enfermeria/', include('hospinet.nightingale.urls')),
-    url(r'^consultorio/', include('hospinet.clinique.urls')),
-    url(r'^caja/', include('hospinet.invoice.urls')),
-    url(r'^emergencia/', include('hospinet.emergency.urls')),
-    url(r'^bussiness/', include('hospinet.statistics.urls')),
+    url(r'^inventory/', include('inventory.urls')),
+    url(r'^admision/', include('spital.urls')),
+    url(r'^reportes/', include('statistics.urls')),
+    url(r'^enfermeria/', include('nightingale.urls')),
+    url(r'^consultorio/', include('clinique.urls')),
+    url(r'^caja/', include('invoice.urls')),
+    url(r'^emergencia/', include('emergency.urls')),
+    url(r'^bussiness/', include('statistics.urls')),
     url(r'^api/', include(v1_api.urls)),
 )
 

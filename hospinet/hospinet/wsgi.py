@@ -17,6 +17,8 @@
 
 import os
 import sys
+from hospinet import settings
+
 program, subplace = os.path.split(os.path.dirname(__file__))
 #program, subplace = os.path.split(program)
 path = os.path.dirname(__file__)
@@ -24,8 +26,6 @@ sys.path.append(program)
 
 if path not in sys.path:
     sys.path.append(path)
-
-import settings
 
 import django.core.management
 django.core.management.setup_environ(settings)

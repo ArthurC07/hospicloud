@@ -20,7 +20,10 @@
       <td>{{ admision.paciente.obtener_edad }}</td>
       <td>{{ admision.paciente.get_sexo_display }}</td>
       <td>{{ admision.momento|date:"d/m/Y H:i" }}</td>
-      <td><a class="btn btn-block btn-primary no-print" href="{% url 'admision-view-slug' admision.uuid %}">Ver</a></td>
+      <td>
+          <a class="btn btn-block btn-primary no-print" href="{% url 'admision-view-id' admision.id %}">Ver</a>
+          <a class="btn btn-block btn-primary no-print" href="{% url 'admision-delete' admision.id %}">Eliminar</a>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

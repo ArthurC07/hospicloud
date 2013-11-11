@@ -27,7 +27,7 @@ from django.shortcuts import redirect
 from crispy_forms.layout import Fieldset
 
 from statistics.forms import ReporteAnualForm, ReporteMensualForm
-from spital.models import Habitacion, Admision
+from spital.models import Habitacion, Admision, PreAdmision
 from invoice.forms import PeriodoForm
 from emergency.models import Emergencia
 from users.mixins import LoginRequiredMixin
@@ -156,6 +156,52 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
 
         return context
 
+    def get_emergencies(self, context):
+
+        self.emergencias = Emergencia.objects.filter(
+            created__gte=self.inicio,
+            created__lte=self.fin
+        )
+
+        context['emergencias'] = self.emergencias
+
+        doctores = defaultdict(int)
+        for emergencia in self.emergencias:
+            doctores[emergencia.usuario] += 1
+
+        context['emergencia_doctores'] = reversed(
+            sorted(doctores.items(), key=lambda x: x[1]))
+        context['emergencia_grafico'] = reversed(
+            sorted(doctores.items(), key=lambda x: x[1]))
+        context['emergencia_grafico2'] = reversed(
+            sorted(doctores.items(), key=lambda x: x[1]))
+        context['emergencia_total'] = self.emergencias.count()
+
+        return context
+
+    def get_preadmision(self, context):
+
+        self.preadmisiones = PreAdmision.objects.filter(
+            emergencia__created__gte=self.inicio,
+            emergencia__created__lte=self.fin
+        )
+
+        context['preadmisiones'] = self.emergencias
+
+        doctores = defaultdict(int)
+        for preadmision in self.preadmisiones:
+            doctores[preadmision.emergencia.usuario] += 1
+
+        context['preadmision_doctores'] = reversed(
+            sorted(doctores.items(), key=lambda x: x[1]))
+        context['preadmision_grafico'] = reversed(
+            sorted(doctores.items(), key=lambda x: x[1]))
+        context['preadmision_grafico2'] = reversed(
+            sorted(doctores.items(), key=lambda x: x[1]))
+        context['preadmision_total'] = self.preadmisiones.count()
+
+        return context
+
     def get_context_data(self, **kwargs):
 
         context = super(Estadisticas, self).get_context_data(**kwargs)
@@ -165,10 +211,11 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
         self.get_admisiones()
 
         self.get_habitaciones(context)
-
         self.get_diagnosticos(context)
         self.get_doctor(context)
         self.get_year(context)
+        self.get_emergencies(context)
+        self.get_preadmision(context)
 
         return context
 
