@@ -21,7 +21,7 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import (CreateView, ListView, TemplateView,
+from django.views.generic import (CreateView, ListView, TemplateView, DeleteView,
                                   DetailView, RedirectView, UpdateView)
 from persona.models import Persona
 from persona.views import PersonaCreateView
@@ -474,3 +474,11 @@ class HospitalizarView(UpdateView, LoginRequiredMixin):
         self.object.ingresar()
         messages.info(self.request, u'¡Admision Enviada a Enfermeria!')
         return reverse('nightingale-view-id', args=[self.object.id])
+
+
+class AdmisionDeleteView(DeleteView, LoginRequiredMixin):
+
+    model = Admision
+
+    def get_success_url(self):
+        return reverse('admision-index')

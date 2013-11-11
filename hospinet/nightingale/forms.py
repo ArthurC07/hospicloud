@@ -236,7 +236,7 @@ class SignoVitalForm(BaseForm):
 
     class Meta:
         model = SignoVital
-        exclude = ("presion_arterial_media")
+        exclude = ("presion_arterial_media", )
 
     def __init__(self, *args, **kwargs):
         super(SignoVitalForm, self).__init__(*args, **kwargs)
