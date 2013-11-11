@@ -17,6 +17,9 @@
 
 # Django settings for hospinet project.
 import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 def env_var(key, default=None):
     """Retrieves env vars and makes Python boolean replacements"""
