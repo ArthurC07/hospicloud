@@ -25,6 +25,7 @@ from operator import attrgetter
 from django.views.generic.base import TemplateView
 from django.shortcuts import redirect
 from crispy_forms.layout import Fieldset
+from imaging.models import Examen
 
 from statistics.forms import ReporteAnualForm, ReporteMensualForm
 from spital.models import Habitacion, Admision, PreAdmision
@@ -202,6 +203,34 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
 
         return context
 
+    def get_examenes(self, context):
+
+        self.examenes = Examen.objects.filter(
+            fecha__gte=self.inicio,
+            fecha__lte=self.fin
+        )
+
+        context['examenes'] = self.examenes
+
+        doctores = defaultdict(int)
+        examenes = defaultdict(int)
+        for examen in self.examenes:
+            doctores[examen.usuario] += 1
+            examenes[examen.tipo_de_examen] += 1
+
+        context['examenes_tecnicos'] = reversed(
+            sorted(doctores.items(), key=lambda x: x[1]))
+        context['examenes_grafico'] = reversed(
+            sorted(examenes.items(), key=lambda x: x[1]))
+        context['examenes_grafico2'] = reversed(
+            sorted(examenes.items(), key=lambda x: x[1]))
+        context['examenes_tipo'] = reversed(
+            sorted(examenes.items(), key=lambda x: x[1]))
+
+        context['examenes_total'] = self.examenes.count()
+
+        return context
+
     def get_context_data(self, **kwargs):
 
         context = super(Estadisticas, self).get_context_data(**kwargs)
@@ -216,6 +245,7 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
         self.get_year(context)
         self.get_emergencies(context)
         self.get_preadmision(context)
+        self.get_examenes(context)
 
         return context
 

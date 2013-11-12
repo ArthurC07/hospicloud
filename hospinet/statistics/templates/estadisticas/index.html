@@ -95,7 +95,7 @@
     <div class="offset1 span4">
         <canvas id="emergencia" width="400" height="400"></canvas>
     </div>
-        <article class="span3">
+        <article class="offset1 span3">
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -115,6 +115,59 @@
                 <tr>
                     <th>Total</th>
                     <th>{{ preadmision_total }}</th>
+                </tr>
+                </tfoot>
+            </table>
+        </article>
+    </div>
+    <div class="row">
+        <article class="span3">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>T&eacute;cnico</th>
+                    <th>Examenes</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tecnico, cantidad in examenes_tecnicos %}
+                    <tr>
+                        <td>{{ tecnico }}</td>
+                        <td>{{ cantidad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>{{ examenes_total }}</th>
+                </tr>
+                </tfoot>
+            </table>
+        </article>
+        <div class="offset1 span4">
+            <canvas id="examenes" width="400" height="400"></canvas>
+        </div>
+        <article class="offset1 span3">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Tipo de Examen</th>
+                    <th>Cantidad</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tipo, cantidad in examenes_tipo %}
+                    <tr>
+                        <td>{{ tipo }}</td>
+                        <td>{{ cantidad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>{{ examenes_total }}</th>
                 </tr>
                 </tfoot>
             </table>
@@ -174,6 +227,20 @@
                     ]
                 };
                 var ctx = $("#emergencia").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data, {
+                    scaleShowLabels: true
+                });
+                var data = {
+                    labels : [ {% for tipo, cantidad in examenes_grafico %} '{{ tipo }}', {% endfor %} ],
+                    datasets : [
+                        {
+                            fillColor : "rgba(151,187,205,0.5)",
+                            strokeColor : "rgba(151,187,205,1)",
+                            data : [ {% for tipo, cantidad in examenes_grafico2 %} {{ cantidad }}, {% endfor %} ]
+                        }
+                    ]
+                };
+                var ctx = $("#examenes").get(0).getContext("2d");
                 var grafico = new Chart(ctx).Bar(data, {
                     scaleShowLabels: true
                 });
