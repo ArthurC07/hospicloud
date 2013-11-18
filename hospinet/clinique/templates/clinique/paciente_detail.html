@@ -9,11 +9,11 @@
     <aside class="span3">
         <nav class="sidebar-nav">
             <ul class="nav nav-tabs nav-stacked">
-                <li><a href="{% url 'consultorio-consulta-agregar' %}">Agregar Consulta Inicial</a></li>
-                <li><a href="{% url 'consultorio-evaluacion-agregar' %}">Agregar Exámen Físico</a></li>
-                <li><a href="{% url 'consultorio-segumiento-agregar' %}">Agregar Consulta de Segumiento</a></li>
-                <li><a href="{% url 'consultorio-lectura-agregar' %}">Agregar Lectura de Signos</a></li>
-                <li><a href="{% url 'consultorio-diagnostico-agregar' %}">Agregar Diagnóstico</a></li>
+                <li><a href="{% url 'consultorio-consulta-agregar' paciente.id %}">Agregar Consulta Inicial</a></li>
+                <li><a href="{% url 'consultorio-evaluacion-agregar' paciente.id %}">Agregar Exámen Físico</a></li>
+                <li><a href="{% url 'consultorio-segumiento-agregar' paciente.id %}">Agregar Consulta de Segumiento</a></li>
+                <li><a href="{% url 'consultorio-lectura-agregar' paciente.id %}">Agregar Lectura de Signos</a></li>
+                <li><a href="{% url 'consultorio-diagnostico-agregar' paciente.id %}">Agregar Diagnóstico</a></li>
             </ul>
         </nav>
     </aside>
