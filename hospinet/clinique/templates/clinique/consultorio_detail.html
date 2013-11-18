@@ -41,6 +41,7 @@
                     <tr>
                         <td>{{ paciente }}</td>
                         <td>{{ paciente.obtener_edad }}</td>
+                        <td><a href="{% ulr 'clinique-paciente' paciente.id %}"></a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
