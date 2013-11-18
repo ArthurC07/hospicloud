@@ -56,7 +56,7 @@ class Paciente(TimeStampedModel):
 
     def __unicode__(self):
         return u"Paciente {0} de {1}".format(self.persona.nombre_completo(),
-                                             self.user.get_full_name())
+                                     self.consultorio.usuario.get_full_name())
 
     def identificacion(self):
         return self.persona.identificacion
@@ -97,7 +97,7 @@ class LecturaSignos(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('clinique-paciente', args=[self.paciente.id])
-    
+
     def save(self, *args, **kwargs):
         """Permite guardar los datos mientras calcula algunos campos
         automaticamente"""
@@ -151,6 +151,7 @@ class Seguimiento(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return reverse('clinique-paciente', args=[self.paciente.id])
+
 
 class DiagnosticoClinico(TimeStampedModel):
     paciente = models.ForeignKey(Paciente, related_name='diagnosticos_clinicos')
