@@ -40,7 +40,8 @@ urlpatterns = patterns('',
                            ConsultorioCreateView.as_view(),
                            name='consultorio-agregar'),
 
-                       url(r'^(?P<persona>\d+)/(?P<consultorio>\d+)/paciente/agregar$',
+                       url(
+                           r'^(?P<persona>\d+)/(?P<consultorio>\d+)/paciente/agregar$',
                            PacienteCreateView.as_view(),
                            name='consultorio-paciente-agregar'),
 
