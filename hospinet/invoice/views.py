@@ -367,12 +367,7 @@ class ReporteTipoView(ReciboPeriodoView):
             for venta in recibo.ventas.all():
 
                 monto = venta.total()
-
-                #TODO: Remove on django 1.6 update 
-                try:
-                    categoria = venta.item.item_type.all()[0]
-                except IndexError:
-                    categoria = None
+                categoria = venta.item.item_type.first()
 
                 categorias[categoria]['monto'] += monto
                 categorias[categoria]['cantidad'] += 1
