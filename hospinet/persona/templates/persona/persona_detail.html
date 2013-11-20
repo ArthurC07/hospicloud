@@ -26,14 +26,14 @@
       </ul>
       <div class="tab-content">
         <article id="paciente" class="tab-pane active">
-          {% include 'snippets/persona_fotografia.html'  %}
-          {% include 'snippets/persona.html' %}
+          {% include 'snippets/persona_fotografia.html'  with persona=persona %}
+          {% include 'snippets/persona.html' with persona=persona %}
           <a href="{% url 'persona-editar' persona.id %}" class="btn btn-primary">Editar Datos</a>
-          {% include 'snippets/fisico.html' %}
+          {% include 'snippets/fisico.html' with persona=persona  %}
           <a href="{% url 'persona-fisico-editar' persona.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
-          {% include 'snippets/antecedente.html'%}
+          {% include 'snippets/antecedente.html' with persona=persona %}
           <a href="{% url 'persona-antecedente-editar' persona.id %}" class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
-          {% include 'snippets/antecedente_familiar.html' %}
+          {% include 'snippets/antecedente_familiar.html' with persona=persona %}
           <a href="{% url 'persona-antecedente-familiar-editar' persona.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
           {% include 'snippets/antecedente_quirurgico.html' with persona=persona %}
           <a href="{% url 'persona-antecedente-quirurgico-agregar' persona.id %}" class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
