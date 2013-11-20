@@ -106,7 +106,7 @@ class PacienteFormMixin(FormMixin, PacienteMixin):
     def get_initial(self):
         initial = super(PacienteFormMixin, self).get_initial()
         initial = initial.copy()
-        initial['persona'] = self.persona
+        initial['paciente'] = self.persona
         return initial
 
 
