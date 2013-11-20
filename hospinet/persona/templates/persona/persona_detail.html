@@ -29,7 +29,7 @@
           {% include 'snippets/persona_fotografia.html'  with persona=persona %}
           {% include 'snippets/persona.html' with persona=persona %}
           <a href="{% url 'persona-editar' persona.id %}" class="btn btn-primary">Editar Datos</a>
-          {% include 'snippets/fisico.html' with persona=persona  %}
+          {% include 'snippets/fisico.html' with fisico=persona.fisico %}
           <a href="{% url 'persona-fisico-editar' persona.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
           {% include 'snippets/antecedente.html' with persona=persona %}
           <a href="{% url 'persona-antecedente-editar' persona.id %}" class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
