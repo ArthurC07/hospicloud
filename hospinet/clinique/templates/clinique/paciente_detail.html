@@ -25,7 +25,7 @@
             {% endfor %}
         </div>
         <div id="signos">
-            {% for consulta in paciente.signos_vitales.all %}
+            {% for signos_vitales in paciente.signos_vitales.all %}
                 <ul>
                     <li>
                         Pulso: {{ signos_vitales.pulso }}
@@ -52,7 +52,7 @@
             {% endfor %}
         </div>
         <div id="seguimientos">
-            {% for segumiento in paciente.seguimientos.all %}
+            {% for seguimiento in paciente.seguimientos.all %}
                 <p>{{ seguimiento.observaciones }}</p>
             {% endfor %}
         </div>

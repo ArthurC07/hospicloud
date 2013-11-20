@@ -112,7 +112,7 @@ class LecturaSignos(TimeStampedModel):
 class Evaluacion(TimeStampedModel):
     """Registra los análisis que se le efectua a la :class:`Persona`"""
 
-    paciente = models.ForeignKey(Paciente, related_name='examenes_fisicos')
+    paciente = models.ForeignKey(Paciente, related_name='evaluaciones')
     orl = models.TextField()
     cardiopulmonar = models.TextField()
     gastrointestinal = models.TextField()

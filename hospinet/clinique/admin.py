@@ -17,10 +17,13 @@
 
 from django.contrib import admin
 from clinique.models import (Paciente, Cita, Consulta, TipoConsulta,
-                             Consultorio)
+                             Consultorio, Evaluacion, Seguimiento, LecturaSignos)
 
 admin.site.register(Paciente)
 admin.site.register(Cita)
 admin.site.register(Consulta)
 admin.site.register(TipoConsulta)
 admin.site.register(Consultorio)
+admin.site.register(Seguimiento)
+admin.site.register(Evaluacion)
+admin.site.register(LecturaSignos)
