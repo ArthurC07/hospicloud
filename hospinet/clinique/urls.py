@@ -20,7 +20,7 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             ConsultorioIndexView, LecturaSignosCreateView,
                             EvaluacionCreateView, SeguimientoCreateView,
                             CitaCreateView, ConsultorioDetailView,
-                            DiagnosticoCreateView, ConsultorioCreateView)
+                            DiagnosticoCreateView, ConsultorioCreateView, ConsultaCreateView)
 
 urlpatterns = patterns('',
 
@@ -46,7 +46,7 @@ urlpatterns = patterns('',
                            name='consultorio-paciente-agregar'),
 
                        url(r'^consulta/(?P<paciente>\d+)/agregar',
-                           PacienteCreateView.as_view(),
+                           ConsultaCreateView.as_view(),
                            name='consultorio-consulta-agregar'),
 
                        url(r'^lectura/(?P<paciente>\d+)/agregar',
