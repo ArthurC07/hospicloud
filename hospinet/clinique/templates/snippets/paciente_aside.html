@@ -1,25 +1,25 @@
 <aside class="span3 toolbox">
   <nav>
   	<ul>
-        <li><a href="{% url 'consultorio-paciente-historia" paciente.uuid %}">Historia Cl&iacute;nica</a></li>
-  		<li><a href="{% url 'consultorio-paciente-consultas" paciente.uuid %}">Consultas Realizadas</a></li>
-  		<li><a href="{% url 'consultorio-paciente-recetas" paciente.uuid %}">Recetas Suministradas</a></li>
-  		<li><a href="{% url 'consultorio-paciente-optometrias" paciente.uuid %}">Optometrias Realizadas</a></li>
+        <li><a href="{% url 'consultorio-paciente-historia' paciente.uuid %}">Historia Cl&iacute;nica</a></li>
+  		<li><a href="{% url 'consultorio-paciente-consultas' paciente.uuid %}">Consultas Realizadas</a></li>
+  		<li><a href="{% url 'consultorio-paciente-recetas' paciente.uuid %}">Recetas Suministradas</a></li>
+  		<li><a href="{% url 'consultorio-paciente-optometrias' paciente.uuid %}">Optometrias Realizadas</a></li>
   	</ul>
   </nav>
   <nav>
   	<ul>
-  		<li><a href="{% url 'consultorio-esperador-nuevo" paciente.id %}">Enviar a Sala de Espera</a></li>
-  		<li><a href="{% url 'consultorio-consulta-nueva" paciente.id %}">Agregar una Consulta</a></li>
-  		<li><a href="{% url 'consultorio-receta-nueva" paciente.id %}">Agregar una Receta</a></li>
-  		<li><a href="{% url 'consultorio-optometria-nueva" paciente.id %}">Agregar una Optometria</a></li>
-        <li><a href="{% url 'consultorio-pago-nuevo" paciente.id %}">Agregar un Pago</a></li>
+  		<li><a href="{% url 'consultorio-esperador-nuevo'. paciente.id %}">Enviar a Sala de Espera</a></li>
+  		<li><a href="{% url 'consultorio-consulta-nueva' paciente.id %}">Agregar una Consulta</a></li>
+  		<li><a href="{% url 'consultorio-receta-nueva' paciente.id %}">Agregar una Receta</a></li>
+  		<li><a href="{% url 'consultorio-optometria-nueva' paciente.id %}">Agregar una Optometria</a></li>
+        <li><a href="{% url 'consultorio-pago-nuevo' paciente.id %}">Agregar un Pago</a></li>
   	</ul>
   </nav>
   <nav>
   	<ul>
-  		<li><a href="{% url 'examen-persona-lista" paciente.persona.id %}">Mostrar Estudios</a></li>
-  		<li><a href="{% url 'examen-agregar" paciente.persona.id %}">Agregar un Estudio</a></li>
+  		<li><a href="{% url 'examen-persona-lista' paciente.persona.id %}">Mostrar Estudios</a></li>
+  		<li><a href="{% url 'examen-agregar' paciente.persona.id %}">Agregar un Estudio</a></li>
   	</ul>
   </nav>
 </aside>
