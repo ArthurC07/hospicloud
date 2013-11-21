@@ -216,7 +216,7 @@ class Estadisticas(TemplateView, LoginRequiredMixin):
         examenes = defaultdict(int)
         for examen in self.examenes:
             doctores[examen.usuario] += 1
-            examenes[examen.tipo_de_examen.item.item_type] += 1
+            examenes[examen.tipo_de_examen.item] += 1
 
         context['examenes_tecnicos'] = reversed(
             sorted(doctores.items(), key=lambda x: x[1]))
