@@ -379,7 +379,7 @@ class Admision(models.Model):
         total = Decimal()
         total += sum(c.valor() for c in self.cargos.filter(facturada=total).all())
         total += sum(o.valor() for o in self.oxigeno_terapias.filter(facturada=total).all())
-        total += sum(h.montos for h in self.honorarios.all())
+        total += sum(h.monto for h in self.honorarios.all())
 
         return (total + self.debido()).quantize(Decimal("0.01"))
 
