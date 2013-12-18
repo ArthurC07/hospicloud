@@ -14,7 +14,7 @@
     </div>
     <div class="row action-nav-normal">
         <section class="span2 offset3 action-nav-button">
-            <a href="{% url 'nightingale-resume' admision.uuid %}"><i class="icon-list-ol"></i><span>Resumen</span></a>
+            <a href="{% url 'nightingale-resume' admision.id %}"><i class="icon-list-ol"></i><span>Resumen</span></a>
         </section>
         <section class="span2 action-nav-button">
             <a href="{% url 'enfermeria-cuenta' admision.id %}"><i class="icon-dollar"></i><span>Estado de Cuenta</span></a>
@@ -31,8 +31,7 @@
             <a href="{% url 'enfermeria-honorarios' admision.id %}"><i class="icon-user-md"></i><span>Honorarios</span></a>
         </section>
         <section class="span2 action-nav-button">
-            <a href="{% url 'enfermeria-signos' admision.id %}"><i class="icon-heart"></i><span>Signos
-                Vitales</span></a>
+            <a href="{% url 'enfermeria-signos' admision.id %}"><i class="icon-heart"></i><span>Signos Vitales</span></a>
         </section>
     </div>
     <div class="row action-nav-normal">

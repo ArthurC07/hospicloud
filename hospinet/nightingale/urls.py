@@ -50,8 +50,7 @@ urlpatterns = patterns('',
                            name='enfermeria-admisiones'),
 
                        url(
-                           r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-['
-                           r'a-z0-9]{4}-[a-z0-9]{12})/resumen$',
+                           r'^(?P<pk>\d+)/resumen$',
                            ResumenDetailView.as_view(),
                            name='nightingale-resume'),
 
