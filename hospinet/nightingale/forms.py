@@ -351,6 +351,11 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
                                      queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
+    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                 initial=timezone.now)
+    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                              initial=timezone.now)
+
     cargo = chosenforms.ChosenModelChoiceField(
         ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 

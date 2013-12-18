@@ -447,6 +447,8 @@ class OxigenoTerapia(TimeStampedModel, Precio):
                               related_name='oxigeno_terapias')
     unidades_por_minuto = models.IntegerField(default=1)
     terminada = models.BooleanField(default=False)
+    inicio = models.DateTimeField(null=True, blank=True)
+    fin = models.DateTimeField(null=True, blank=True)
     facturada = models.NullBooleanField(default=False)
 
     def get_absolute_url(self):
