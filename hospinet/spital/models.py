@@ -189,14 +189,12 @@ class Admision(models.Model):
         sido enviada a enfermeria para ingresar al hospital"""
 
         if self.hospitalizacion == None or self.hospitalizacion <= self.momento:
-            self.hospitalizacion = timezone.now()
             self.estado = 'H'
             self.save()
 
     def ingresar(self):
 
         if self.ingreso == None or self.ingreso <= self.momento:
-            self.ingreso = timezone.now()
             self.estado = 'I'
             self.save()
 
@@ -427,3 +425,12 @@ class Especialidad(TimeStampedModel):
 class Doctor(TimeStampedModel):
 
     nombre = models.CharField(max_length=50)
+
+
+class Laboratorio(TimeStampedModel):
+
+    nombre = models.CharField(max_length=50)
+
+    def __unicode__(self):
+
+        return self.nombre
