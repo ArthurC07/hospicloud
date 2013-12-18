@@ -43,6 +43,14 @@ class Precio(object):
         return (self.cargo.precio_de_venta + aumento - disminucion).quantize(
             Decimal("0.01"))
 
+    def descuento(self):
+
+        if not self.admision.tipo_de_venta:
+            return Decimal(0)
+
+        return self.admision.tipo_de_venta.disminucion * self.cargo \
+            .precio_de_venta / Decimal(100)
+
 
 class Turno(object):
     def get_turno(self):

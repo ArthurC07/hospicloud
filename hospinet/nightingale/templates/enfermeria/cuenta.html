@@ -88,6 +88,10 @@
                 </tbody>
                 <tfoot>
                 <tr>
+                    <th colspan="4">Total Descuento</th>
+                    <th >{{ admision.descuento|floatformat:2|intcomma }}</th>
+                </tr>
+                <tr>
                     <th colspan="4">Total</th>
                     <th >{{ admision.estado_de_cuenta|floatformat:2|intcomma }}</th>
                 </tr>

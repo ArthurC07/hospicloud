@@ -318,7 +318,7 @@ class DevolucionForm(FieldSetModelFormMixin):
         model = Devolucion
 
     def __init__(self, *args, **kwargs):
-        super(DosisForm, self).__init__(*args, **kwargs)
+        super(DevolucionForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Efectuar Devolución', *self.field_names)
 
 

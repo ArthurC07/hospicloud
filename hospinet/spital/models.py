@@ -394,6 +394,10 @@ class Admision(models.Model):
 
         return dict(agrupados)
 
+    def descuento(self):
+
+        return sum(c.descuento() for c in self.cargos.all())
+
     def total(self):
 
         return self.estado_de_cuenta(True)
