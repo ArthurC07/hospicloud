@@ -43,6 +43,14 @@ class Precio(object):
         return (self.cargo.precio_de_venta + aumento - disminucion).quantize(
             Decimal("0.01"))
 
+    def descuento(self):
+
+        if not self.admision.tipo_de_venta:
+            return Decimal(0)
+
+        return self.admision.tipo_de_venta.disminucion * self.cargo \
+            .precio_de_venta / Decimal(100)
+
 
 class Turno(object):
     def get_turno(self):
@@ -447,6 +455,8 @@ class OxigenoTerapia(TimeStampedModel, Precio):
                               related_name='oxigeno_terapias')
     unidades_por_minuto = models.IntegerField(default=1)
     terminada = models.BooleanField(default=False)
+    inicio = models.DateTimeField(null=True, blank=True)
+    fin = models.DateTimeField(null=True, blank=True)
     facturada = models.NullBooleanField(default=False)
 
     def get_absolute_url(self):

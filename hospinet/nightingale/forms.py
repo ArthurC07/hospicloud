@@ -318,7 +318,7 @@ class DevolucionForm(FieldSetModelFormMixin):
         model = Devolucion
 
     def __init__(self, *args, **kwargs):
-        super(DosisForm, self).__init__(*args, **kwargs)
+        super(DevolucionForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Efectuar Devolución', *self.field_names)
 
 
@@ -350,6 +350,11 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
     usuario = forms.ModelChoiceField(label="",
                                      queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
+
+    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                 initial=timezone.now)
+    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                              initial=timezone.now)
 
     cargo = chosenforms.ChosenModelChoiceField(
         ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
