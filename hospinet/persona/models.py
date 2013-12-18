@@ -237,7 +237,8 @@ class AntecedenteFamiliar(models.Model):
     
     """Registra los antecedentes familiares de una :class:`Persona`"""
     
-    persona = models.OneToOneField(Persona, primary_key=True)
+    persona = models.OneToOneField(Persona, primary_key=True,
+                                   related_name='antecedente_familiar')
     
     carcinogenico = models.BooleanField(default=False, blank=True)
     cardiovascular = models.BooleanField(default=False, blank=True)
@@ -255,7 +256,8 @@ class AntecedenteObstetrico(models.Model):
     
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
     
-    persona = models.OneToOneField(Persona, primary_key=True)
+    persona = models.ForeignKey(Persona, primary_key=True,
+                                   related_name='antecedente_quirurgico')
     
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)
