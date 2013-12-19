@@ -4,7 +4,7 @@
 <div class="row">
   <div class="span12">
     <section class="page-header">
-      <h1>{{ inventario.lugar }} <small>Inventario</small></h1>
+      <h1>{{ Proveedor.nombre }} <small>Proveedor</small></h1>
     </section>
   </div>
 </div>
@@ -13,17 +13,8 @@
     <nav class="sidebar-nav">
       <ul class="nav nav-stacked nav-tabs">
         <li>
-          <a href="{% url 'item-create' inventario.id %}">Agregar Producto</a>
+          <a href="{% url 'proveedor-editar' proveedor.id %}">Editar {{ proveedor.nombre }}</a>
         </li>
-        <li>
-          <a href="{% url 'requisicion-create' inventario.id %}">Hacer Requisici&oacute;n</a>
-        </li>
-        <li>
-          <a href="{% url 'compra-create' inventario.id %}">Ingresar Compra</a>
-        </li>
-          <li>
-              <a href="{% url 'historial-create' inventario.id %}">Guardar Histórico</a>
-          </li>
       </ul>
     </nav>
   </aside>
@@ -32,7 +23,7 @@
       <section class="span9">
         <table class="table table-striped table-bordered no-more-tables">
           <caption>
-            Productos en Inventario
+            Productos Provistos
           </caption>
           <thead>
             <tr>
@@ -55,54 +46,6 @@
         </table>
       </section>
     </div>
-    <div class="row">
-      <section class="span9">
-        <table class="table table-striped table-bordered no-more-tables">
-          <caption>
-            Requisiciones
-          </caption>
-          <thead>
-            <tr>
-              <th>Usuario</th>
-              <th>Nombre</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for requisicion in inventario.requisiciones_pendientes %}
-            <tr>
-              <td>{{ requisicion.usuario.nombre }}</td>
-              <td>{{ requisicion.created }}</td>
-              <td><a class="btn btn-success" href="{% url 'requisicion' requisicion.id %}">Mostrar</a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </section>
-    </div>
-      <div class="row">
-          <section class="span9">
-              <table class="table table-striped table-bordered no-more-tables">
-                  <caption>
-                      Históricos
-                  </caption>
-                  <thead>
-                  <tr>
-                      <th>Fecha</th>
-                      <th>Acciones</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {% for historial in inventario.historiales.all %}
-                      <tr>
-                          <td>{{ historial.fecha }}</td>
-                          <td><a class="btn btn-success" href="{% url 'historial' historial.id %}">Mostrar</a></td>
-                      </tr>
-                  {% endfor %}
-                  </tbody>
-              </table>
-          </section>
-      </div>
   </section>
 </div>
 {% endblock %}
