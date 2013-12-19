@@ -21,7 +21,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.views.generic.edit import FormMixin
 from django import forms
-from chosen import forms as chosenforms
+from select2.fields import ModelChoiceField
 from persona.forms import FieldSetModelFormMixin
 
 class LoginRequiredMixin(View):
@@ -53,4 +53,4 @@ class HiddenUserForm(FieldSetModelFormMixin):
 
 class UserForm(FieldSetModelFormMixin):
 
-    usuario = chosenforms.ChosenModelChoiceField(User.objects.all())
+    usuario = ModelChoiceField(name="", model="", queryset=User.objects.all())

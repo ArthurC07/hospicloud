@@ -7,6 +7,6 @@ django-extensions
 south
 django-templated-email
 django-userena
-django-chosen
 django-bootstrap-pagination
 django-crispy-forms
+django-select2-forms

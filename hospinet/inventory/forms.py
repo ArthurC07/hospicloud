@@ -16,18 +16,21 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
+from select2.fields import ModelChoiceField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
-from chosen import forms as chosenforms
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
-                              Transferido, ItemComprado, Historial)
+                              Transferido, ItemComprado, Historial, Proveedor)
 
 
 class ItemTemplateForm(FieldSetModelFormMixin):
     class Meta:
         model = ItemTemplate
+
+    suppliers = forms.ModelMultipleChoiceField(Proveedor.objects.all(),
+                                               label='Proveedores')
 
     def __init__(self, *args, **kwargs):
         super(ItemTemplateForm, self).__init__(*args, **kwargs)
@@ -49,8 +52,8 @@ class ItemForm(FieldSetModelFormMixin):
     class Meta:
         model = Item
 
-    plantilla = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    plantilla = ModelChoiceField(name="", model="",
+                                  queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
@@ -110,8 +113,8 @@ class ItemRequisicionForm(FieldSetModelFormMixin):
         model = ItemRequisicion
         exclude = ('entregada', 'pendiente')
 
-    item = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = ModelChoiceField(name="", model="",
+                             queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemRequisicionForm, self).__init__(*args, **kwargs)
@@ -135,8 +138,8 @@ class TransferirForm(FieldSetModelFormMixin):
     class Meta:
         model = Transferencia
         fields = ('aplicada',)
-        item = chosenforms.ChosenModelChoiceField(
-            Requisicion.objects.filter(entregada=False).all())
+        item = ModelChoiceField(name="", model="",
+                                 queryset=Requisicion.objects.filter(entregada=False).all())
 
     def __init__(self, *args, **kwargs):
         super(TransferirForm, self).__init__(*args, **kwargs)
@@ -150,8 +153,8 @@ class TransferidoForm(FieldSetModelFormMixin):
         model = Transferido
         exclude = ('aplicada', )
 
-    item = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(TransferidoForm, self).__init__(*args, **kwargs)
@@ -174,8 +177,8 @@ class ItemCompradoForm(FieldSetModelFormMixin):
         model = ItemComprado
         exclude = ('ingresado', )
 
-    item = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemCompradoForm, self).__init__(*args, **kwargs)
@@ -184,9 +187,21 @@ class ItemCompradoForm(FieldSetModelFormMixin):
 
 
 class ItemTemplateSearchForm(FieldSetFormMixin):
-    query = forms.CharField()
+    query = forms.CharField(label="Nombre del Producto")
 
     def __init__(self, *args, **kwargs):
         super(ItemTemplateSearchForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Buscar'))
         self.helper.layout = Fieldset(u'Buscar Producto', *self.field_names)
+
+
+class ProveedorForm(FieldSetModelFormMixin):
+
+    class Meta:
+        model = Proveedor
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProveedorForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Proveedor',
+                                      *self.field_names)

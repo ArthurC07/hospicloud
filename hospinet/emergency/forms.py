@@ -19,7 +19,8 @@ from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
                               Tratamiento, Hallazgo, Cobro, Diagnostico,
                               ExamenFisico)
-from chosen import forms as chosenforms
+
+from select2.fields import ModelChoiceField
 from crispy_forms.layout import Submit, Fieldset
 from persona.forms import FieldSetModelFormMixin
 from persona.models import Persona
@@ -141,7 +142,8 @@ class CobroForm(EmergenciaBaseForm):
         
         model = Cobro
     
-    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    cargo =  ModelChoiceField(name="", model="",
+                              queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     
     def __init__(self, *args, **kwargs):
         

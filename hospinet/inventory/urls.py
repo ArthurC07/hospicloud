@@ -16,111 +16,140 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, url
+
 from inventory.views import (IndexView, ItemTemplateCreateView,
-    ItemTemplateDetailView, ItemTypeCreateView, InventarioCreateView,
-    InventarioDetailView, ItemCreateView, RequisicionCreateView,
-    ItemRequisicionCreateView, RequisicionDetailView, TransferenciaCreateView,
-    TransferenciaDetailView, TransferidoCreateView, TransferenciaUpdateView,
-    RequisicionUpdateView, ItemTemplateSearchView, ItemTemplateUpdateView,
-    ItemTemplateListView, CompraCreateView, CompraDetailView, CompraListView,
-    ItemCompradoCreateView, ItemRequisicionDeleteView, HistorialCreateView,
-    HistorialDetailView)
+                             ItemTemplateDetailView, ItemTypeCreateView,
+                             InventarioCreateView,
+                             InventarioDetailView, ItemCreateView,
+                             RequisicionCreateView,
+                             ItemRequisicionCreateView, RequisicionDetailView,
+                             TransferenciaCreateView,
+                             TransferenciaDetailView, TransferidoCreateView,
+                             TransferenciaUpdateView,
+                             RequisicionUpdateView, ItemTemplateSearchView,
+                             ItemTemplateUpdateView,
+                             ItemTemplateListView, CompraCreateView,
+                             CompraDetailView, CompraListView,
+                             ItemCompradoCreateView, ItemRequisicionDeleteView,
+                             HistorialCreateView,
+                             HistorialDetailView, ProveedorDetailView,
+                             ProveedorListView,
+                             ProveedorCreateView, ProveedorUpdateView)
+
 
 urlpatterns = patterns('',
-    
-    url(r'^$',
-        IndexView.as_view(),
-        name='inventario-index'),
-    
-    url(r'^itemtemplate/agregar$',
-        ItemTemplateCreateView.as_view(),
-        name='itemtemplate-create'),
 
-    url(r'^itemtemplate/buscar$',
-        ItemTemplateSearchView.as_view(),
-        name='itemtemplate-search'),
-    
-    url(r'^itemtemplate/(?P<pk>\d+)$',
-        ItemTemplateDetailView.as_view(),
-        name='itemtemplate'),
+                       url(r'^$',
+                           IndexView.as_view(),
+                           name='inventario-index'),
 
-    url(r'^itemtemplate/(?P<pk>\d+)/editar$',
-        ItemTemplateUpdateView.as_view(),
-        name='itemtemplate-edit'),
+                       url(r'^itemtemplate/agregar$',
+                           ItemTemplateCreateView.as_view(),
+                           name='itemtemplate-create'),
 
-    url(r'^itemtemplate/$',
-        ItemTemplateListView.as_view(),
-        name='itemtemplate-list'),
+                       url(r'^itemtemplate/buscar$',
+                           ItemTemplateSearchView.as_view(),
+                           name='itemtemplate-search'),
 
-    url(r'^itemtype/agregar$',
-        ItemTypeCreateView.as_view(),
-        name='itemtype-create'),
-    
-    url(r'^inventario/agregar$',
-        InventarioCreateView.as_view(),
-        name='inventario-create'),
-    
-    url(r'^inventario/(?P<pk>\d+)$',
-        InventarioDetailView.as_view(),
-        name='inventario'),
-    
-    url(r'^(?P<inventario>\d+)/item/agregar$',
-        ItemCreateView.as_view(),
-        name='item-create'),
-    
-    url(r'^(?P<inventario>\d+)/requisicion/agregar$',
-        RequisicionCreateView.as_view(),
-        name='requisicion-create'),
-    
-    url(r'^requisicion/(?P<pk>\d+)$',
-        RequisicionDetailView.as_view(),
-        name='requisicion'),
-    
-    url(r'^requisicion/(?P<pk>\d+)/completar$',
-        RequisicionUpdateView.as_view(),
-        name='requisicion-completar'),
-    
-    url(r'^requisicion/(?P<requisicion>\d+)/item/agregar$',
-        ItemRequisicionCreateView.as_view(),
-        name='item-requisicion-create'),
-    
-    url(r'^requisicion/(?P<requisicion>\d+)/transferencia/agregar$',
-        TransferenciaCreateView.as_view(),
-        name='transferencia-create'),
-    
-    url(r'^transferencia/(?P<pk>\d+)$',
-        TransferenciaDetailView.as_view(),
-        name='transferencia'),
-    
-    url(r'^transferencia/(?P<pk>\d+)/efectuar$',
-        TransferenciaUpdateView.as_view(),
-        name='transferencia-efectuar'),
-    
-    url(r'^transferencia/(?P<transferencia>\d+)/transferido/agregar$',
-        TransferidoCreateView.as_view(),
-        name='transferido-create'),
+                       url(r'^itemtemplate/(?P<pk>\d+)$',
+                           ItemTemplateDetailView.as_view(),
+                           name='itemtemplate'),
 
-    url(r'^(?P<inventario>\d+)/compra/agregar$',
-        CompraCreateView.as_view(),
-        name='compra-create'),
+                       url(r'^itemtemplate/(?P<pk>\d+)/editar$',
+                           ItemTemplateUpdateView.as_view(),
+                           name='itemtemplate-edit'),
 
-    url(r'^(?P<inventario>\d+)/historial/agregar$',
-        HistorialCreateView.as_view(),
-        name='historial-create'),
+                       url(r'^itemtemplate/$',
+                           ItemTemplateListView.as_view(),
+                           name='itemtemplate-list'),
 
-    url(r'^compra/(?P<pk>\d+)$',
-        CompraDetailView.as_view(),
-        name='compra'),
+                       url(r'^itemtype/agregar$',
+                           ItemTypeCreateView.as_view(),
+                           name='itemtype-create'),
 
-    url(r'^historial/(?P<pk>\d+)$',
-        HistorialDetailView.as_view(),
-        name='historial'),
+                       url(r'^inventario/agregar$',
+                           InventarioCreateView.as_view(),
+                           name='inventario-create'),
 
-    url(r'^compra/(?P<compra>\d+)/item/agregar$',
-        ItemCompradoCreateView.as_view(),
-        name='compra-item-create'),
+                       url(r'^inventario/(?P<pk>\d+)$',
+                           InventarioDetailView.as_view(),
+                           name='inventario'),
 
-    url(r'^requisicion/item(?P<pk>\d+)/borrar$',
-        ItemRequisicionDeleteView.as_view(),
-        name='itemrequisicion-delete'),
+                       url(r'^(?P<inventario>\d+)/item/agregar$',
+                           ItemCreateView.as_view(),
+                           name='item-create'),
+
+                       url(r'^(?P<inventario>\d+)/requisicion/agregar$',
+                           RequisicionCreateView.as_view(),
+                           name='requisicion-create'),
+
+                       url(r'^requisicion/(?P<pk>\d+)$',
+                           RequisicionDetailView.as_view(),
+                           name='requisicion'),
+
+                       url(r'^requisicion/(?P<pk>\d+)/completar$',
+                           RequisicionUpdateView.as_view(),
+                           name='requisicion-completar'),
+
+                       url(r'^requisicion/(?P<requisicion>\d+)/item/agregar$',
+                           ItemRequisicionCreateView.as_view(),
+                           name='item-requisicion-create'),
+
+                       url(
+                           r'^requisicion/(?P<requisicion>\d+)/transferencia/agregar$',
+                           TransferenciaCreateView.as_view(),
+                           name='transferencia-create'),
+
+                       url(r'^transferencia/(?P<pk>\d+)$',
+                           TransferenciaDetailView.as_view(),
+                           name='transferencia'),
+
+                       url(r'^transferencia/(?P<pk>\d+)/efectuar$',
+                           TransferenciaUpdateView.as_view(),
+                           name='transferencia-efectuar'),
+
+                       url(
+                           r'^transferencia/(?P<transferencia>\d+)/transferido/agregar$',
+                           TransferidoCreateView.as_view(),
+                           name='transferido-create'),
+
+                       url(r'^(?P<inventario>\d+)/compra/agregar$',
+                           CompraCreateView.as_view(),
+                           name='compra-create'),
+
+                       url(r'^(?P<inventario>\d+)/historial/agregar$',
+                           HistorialCreateView.as_view(),
+                           name='historial-create'),
+
+                       url(r'^compra/(?P<pk>\d+)$',
+                           CompraDetailView.as_view(),
+                           name='compra'),
+
+                       url(r'^historial/(?P<pk>\d+)$',
+                           HistorialDetailView.as_view(),
+                           name='historial'),
+
+                       url(r'^compra/(?P<compra>\d+)/item/agregar$',
+                           ItemCompradoCreateView.as_view(),
+                           name='compra-item-create'),
+
+                       url(r'^requisicion/item(?P<pk>\d+)/borrar$',
+                           ItemRequisicionDeleteView.as_view(),
+                           name='itemrequisicion-delete'),
+
+                       url(r'^proveedor/(?P<pk>\d+)$',
+                           ProveedorDetailView.as_view(),
+                           name='proveedor'),
+
+                       url(r'^proveedor/(?P<pk>\d+)/editar$',
+                           ProveedorUpdateView.as_view(),
+                           name='proveedor-edit'),
+
+                       url(r'^proveedor/$',
+                           ProveedorListView.as_view(),
+                           name='proveedor-list'),
+
+                       url(r'^proveedor/agregar$',
+                           ProveedorCreateView.as_view(),
+                           name='proveedor-create'),
 )

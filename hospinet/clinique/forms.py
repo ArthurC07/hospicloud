@@ -104,3 +104,8 @@ class DiagnosticoClinicoForm(PacienteFormMixin):
 class ConsultorioForm(HiddenUserForm):
     class Meta:
         model = Consultorio
+
+    def __init__(self, *args, **kwargs):
+        super(DiagnosticoClinicoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Crear Consultorio',
+                                      *self.field_names)
