@@ -19,7 +19,7 @@ from django.contrib.auth.models import User
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
-from chosen import forms as chosenforms
+from select2.fields import ModelChoiceField
 
 from invoice.models import Recibo, Venta
 from persona.models import Persona
@@ -67,7 +67,8 @@ class VentaForm(FieldSetModelFormMixin):
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
                                     widget=forms.HiddenInput(), required=False)
-    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    cargo = ModelChoiceField(name="", model="",
+                             queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)

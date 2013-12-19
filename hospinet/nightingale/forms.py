@@ -17,9 +17,9 @@
 
 from django import forms
 from django.contrib.auth.models import User
-from chosen import forms as chosenforms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from select2.fields import ModelChoiceField
 from django.utils import timezone
 
 from spital.models import Admision
@@ -63,8 +63,7 @@ class CargoForm(AdmisionBaseForm):
         model = Cargo
         exclude = ('facturada', )
 
-    cargo = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    cargo = ModelChoiceField(queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all(), name="nombre", model="")
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                  initial=timezone.now)
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
@@ -252,8 +251,8 @@ class MedicamentoForm(AdmisionBaseForm):
         exclude = ('proxima_dosis', 'suministrado')
 
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False)
-    cargo = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    cargo = ModelChoiceField(name='cargo', model='',
+        queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     admision = forms.ModelChoiceField(label="",
                                       queryset=Admision.objects.all(),
@@ -356,8 +355,8 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                               initial=timezone.now)
 
-    cargo = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    cargo = ModelChoiceField(name="", model="",
+        queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(OxigenoTerapiaForm, self).__init__(*args, **kwargs)
@@ -368,8 +367,8 @@ class HonorarioForm(AdmisionBaseForm):
     class Meta:
         model = Honorario
 
-    item = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = ModelChoiceField(name="", model="",
+        queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(HonorarioForm, self).__init__(*args, **kwargs)
