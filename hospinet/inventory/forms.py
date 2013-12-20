@@ -19,10 +19,11 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from chosen import forms as chosenforms
+
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
-                              Transferido, ItemComprado, Historial)
+                              Transferido, ItemComprado, Historial, Proveedor)
 
 
 class ItemTemplateForm(FieldSetModelFormMixin):
@@ -190,3 +191,13 @@ class ItemTemplateSearchForm(FieldSetFormMixin):
         super(ItemTemplateSearchForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Buscar'))
         self.helper.layout = Fieldset(u'Buscar Producto', *self.field_names)
+
+
+class ProveedorForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Proveedor
+
+    def __init__(self, *args, **kwargs):
+        super(ItemTemplateSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Proveedor',
+                                      *self.field_names)
