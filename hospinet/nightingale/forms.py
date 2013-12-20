@@ -63,7 +63,9 @@ class CargoForm(AdmisionBaseForm):
         model = Cargo
         exclude = ('facturada', )
 
-    cargo = ModelChoiceField(queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all(), name="nombre", model="")
+    cargo = ModelChoiceField(
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion').all(), name="nombre", model="")
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                  initial=timezone.now)
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
@@ -252,7 +254,8 @@ class MedicamentoForm(AdmisionBaseForm):
 
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False)
     cargo = ModelChoiceField(name='cargo', model='',
-        queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+                             queryset=ItemTemplate.objects.filter(
+                                 activo=True).order_by('descripcion').all())
 
     admision = forms.ModelChoiceField(label="",
                                       queryset=Admision.objects.all(),
@@ -356,7 +359,8 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
                               initial=timezone.now)
 
     cargo = ModelChoiceField(name="", model="",
-        queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+                             queryset=ItemTemplate.objects.filter(
+                                 activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(OxigenoTerapiaForm, self).__init__(*args, **kwargs)
@@ -368,7 +372,8 @@ class HonorarioForm(AdmisionBaseForm):
         model = Honorario
 
     item = ModelChoiceField(name="", model="",
-        queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(HonorarioForm, self).__init__(*args, **kwargs)
