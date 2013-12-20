@@ -68,7 +68,8 @@ class VentaForm(FieldSetModelFormMixin):
                                     queryset=Recibo.objects.all(),
                                     widget=forms.HiddenInput(), required=False)
     cargo = ModelChoiceField(name="", model="",
-                             queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+                             queryset=ItemTemplate.objects.filter(
+                                 activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
@@ -141,8 +142,9 @@ class CorteForm(PeriodoForm):
         super(CorteForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Corte de Caja', *self.field_names)
 
-class InventarioForm(PeriodoForm):
 
+class InventarioForm(PeriodoForm):
     def __init__(self, *args, **kwargs):
         super(InventarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Relación entre Ventas e Inventario', *self.field_names)
+        self.helper.layout = Fieldset(u'Relación entre Ventas e Inventario',
+                                      *self.field_names)
