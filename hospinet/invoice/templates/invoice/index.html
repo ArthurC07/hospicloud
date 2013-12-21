@@ -34,6 +34,96 @@
         </nav>
       </div>
     </div>
+    <table class="table table-striped table-bordered">
+        <caption>Admisiones sin Facturar</caption>
+      <thead class="gradient">
+      <tr>
+          <th>C&oacute;digo</th>
+          <th>Nombre</th>
+          <th>Edad</th>
+          <th>Sexo</th>
+          <th>Hora de Ingreso</th>
+          <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for admision in admisiones %}
+          <tr>
+              <td>{{ admision.paciente.identificacion }}</td>
+              <td>{{ admision.paciente.nombre_completo }}</td>
+              <td>{{ admision.paciente.obtener_edad }}</td>
+              <td>{{ admision.paciente.get_sexo_display }}</td>
+              <td>{{ admision.created|date:"d/m/Y H:i" }}</td>
+              <td><a class="btn btn-block" href="{% url 'admision-invoice' admision.id %}">Facturar</a></td>
+          </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+      <table class="table table-striped table-bordered">
+        <caption>Emergencias sin Facturar</caption>
+          <thead class="gradient">
+          <tr>
+              <th>Identificaci&oacute;n</th>
+              <th>Nombre</th>
+              <th>Edad</th>
+              <th>Sexo</th>
+              <th>Hora de Ingreso</th>
+              <th>Atendi&oacute;</th>
+              <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for emergencia in emergencias %}
+              <tr>
+                  <td>
+                      <a href="{% url 'persona-view-id' emergencia.persona.id %}">
+                          {% if emergencia.persona.identificacion %}
+                              {{ emergencia.persona.identificacion }}
+                          {% else %}
+                              {{ emergencia.persona.id }}
+                          {% endif %}
+                      </a>
+                  </td>
+                  <td>{{ emergencia.persona.nombre_completo }}</td>
+                  <td>{{ emergencia.persona.obtener_edad }}</td>
+                  <td>{{ emergencia.persona.get_sexo_display }}</td>
+                  <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
+                  <td>{{ emergencia.usuario }}</td>
+                  <td>
+                      {% if not emergencia.facturada %}
+                          <a class="btn btn-block" href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
+                      {% endif %}
+                      <a class="btn btn-block" href="{% url 'emergency-view-id' emergencia.id %}">Ver</a>
+                  </td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+      <table class="table table-striped table-bordered">
+      <caption>Estudios de Im&aacute;genes sin Facturar</caption>
+          <thead>
+          <tr>
+              <th>Fecha</th>
+              <th>Paciente</th>
+              <th>Examen</th>
+              <th>Identificaci&oacute;n</th>
+              <th>Nacimiento</th>
+              <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for examen in examenes%}
+              <tr>
+                  <td>{{ examen.fecha }}</td>
+                  <td>{{ examen.persona.nombre_completo }}</td>
+                  <td>{{ examen.tipo_de_examen.nombre }}</td>
+                  <td>{{ examen.persona.identificacion }}</td>
+                  <td>{{ examen.persona.nacimiento }}</td>
+                  <td><a class="btn btn-success btn-block" href="{% url 'examen-view-id' examen.uuid %}">Ver</a></td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
     <div class="row">
       <section class="span4">
         {% crispy reciboperiodoform %}
