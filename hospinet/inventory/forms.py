@@ -24,6 +24,7 @@ from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
                               Transferido, ItemComprado, Historial, Proveedor)
+from users.mixins import HiddenUserForm
 
 
 class ItemTemplateForm(FieldSetModelFormMixin):
@@ -79,7 +80,7 @@ class ItemTypeForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class RequisicionForm(FieldSetModelFormMixin):
+class RequisicionForm(HiddenUserForm):
     class Meta:
         model = Requisicion
         exclude = ('entregada', 'aprobada')
@@ -120,7 +121,7 @@ class ItemRequisicionForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class TransferenciaForm(FieldSetModelFormMixin):
+class TransferenciaForm(HiddenUserForm):
     class Meta:
         model = Transferencia
         exclude = ('aplicada', )
