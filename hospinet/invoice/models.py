@@ -30,6 +30,11 @@ from inventory.models import ItemTemplate, TipoVenta
 class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
 
+    class Meta:
+        permissions = (
+            ('cajero', 'Permite al usuario gestionar caja'),
+        )
+
     cliente = models.ForeignKey(Persona, related_name='recibos')
     remite = models.CharField(max_length=255, blank=True, null=True)
     radiologo = models.CharField(max_length=255, blank=True, null=True)

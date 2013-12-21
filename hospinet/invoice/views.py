@@ -606,7 +606,7 @@ class EmergenciaFacturarView(UpdateView, LoginRequiredMixin):
     context_object_name = 'emergencia'
     template_name = 'invoice/emergency_form.html'
 
-    @method_decorator(permission_required('cajero'))
+    @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
         return super(EmergenciaFacturarView, self).dispatch(*args, **kwargs)
 
@@ -639,7 +639,7 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
     form_class = AdmisionFacturarForm
     template_name = 'invoice/admision_form.html'
 
-    @method_decorator(permission_required('cajero'))
+    @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
         return super(AdmisionFacturarView, self).dispatch(*args, **kwargs)
 
@@ -685,7 +685,7 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
     form_class = ExamenFacturarForm
     template_name = 'invoice/examen_form.html'
 
-    @method_decorator(permission_required('cajero'))
+    @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
         return super(ExamenFacturarView, self).dispatch(*args, **kwargs)
 
