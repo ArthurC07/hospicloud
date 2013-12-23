@@ -144,8 +144,7 @@ class RequisicionListView(ListView, LoginRequiredMixin):
     context_object_name = 'requisiciones'
 
 
-class RequisicionCreateView(InventarioFormMixin, LoginRequiredMixin,
-                            CurrentUserFormMixin):
+class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin):
     model = Requisicion
     form_class = RequisicionForm
 
@@ -209,8 +208,7 @@ class TransferenciaCreateView(RequisicionFormMixin, LoginRequiredMixin):
         return initial
 
 
-class TransferenciaDetailView(SingleObjectMixin, ListView, LoginRequiredMixin,
-                              CurrentUserFormMixin):
+class TransferenciaDetailView(SingleObjectMixin, ListView, CurrentUserFormMixin):
     paginate_by = 10
     template_name = 'inventory/transferencia_detail.html'
 
