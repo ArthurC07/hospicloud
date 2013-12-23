@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, url
+
 from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            ReciboDetailView, VentaCreateView,
                            ReporteReciboView, ReporteProductoView,
@@ -26,7 +27,9 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            EmergenciaFacturarView, AdmisionFacturarView,
                            CorteView, ExamenView,
                            ReporteReciboDetailView, ReporteTipoView,
-                           ReciboCreateView, ReciboInventarioView)
+                           ReciboCreateView, ReciboInventarioView,
+                           PagoCreateView)
+
 
 urlpatterns = patterns('',
 
@@ -122,4 +125,8 @@ urlpatterns = patterns('',
                        url(r'^admision/(?P<pk>\d+)$',
                            AdmisionFacturarView.as_view(),
                            name='admision-invoice'),
+
+                       url(r'^(?P<recibo>\d+)/pago/add$',
+                           PagoCreateView.as_view(),
+                           name='pago-add'),
 )

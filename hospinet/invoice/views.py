@@ -31,17 +31,17 @@ from django.views.generic import (CreateView, UpdateView, TemplateView,
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
 
-from users.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from spital.models import Admision
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
 from persona.forms import PersonaForm
-from invoice.models import Recibo, Venta
+from invoice.models import Recibo, Venta, Pago
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, ReciboNewForm,
-                           InventarioForm)
+                           InventarioForm, PagoForm)
 from inventory.models import ItemTemplate
 
 
@@ -141,6 +141,18 @@ class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
         context = super(ReciboExamenCreateView, self).get_context_data(**kwargs)
         context['persona'] = self.examen.persona
         return context
+
+
+class ReciboFormMixin(CreateView):
+    def dispatch(self, *args, **kwargs):
+        self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
+        return super(ReciboFormMixin, self).dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        initial = super(ReciboFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['recibo'] = self.recibo.id
+        return initial
 
 
 class VentaCreateView(CreateView, LoginRequiredMixin):
@@ -772,3 +784,9 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
         context['items'] = items.items()
         context['fin'] = self.fin
         return context
+
+
+class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
+    """"""
+    model = Pago
+    form_class = PagoForm
