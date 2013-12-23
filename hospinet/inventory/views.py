@@ -22,7 +22,7 @@ from django.views.generic.base import TemplateView
 from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponseRedirect
 
-from users.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from inventory.models import (Inventario, Item, ItemTemplate, Transferencia,
                               Historial, ItemComprado, Transferido, Compra,
                               ItemType, Requisicion, ItemRequisicion,
@@ -144,7 +144,7 @@ class RequisicionListView(ListView, LoginRequiredMixin):
     context_object_name = 'requisiciones'
 
 
-class RequisicionCreateView(InventarioFormMixin, LoginRequiredMixin):
+class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin):
     model = Requisicion
     form_class = RequisicionForm
 
@@ -208,7 +208,7 @@ class TransferenciaCreateView(RequisicionFormMixin, LoginRequiredMixin):
         return initial
 
 
-class TransferenciaDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+class TransferenciaDetailView(SingleObjectMixin, ListView, CurrentUserFormMixin):
     paginate_by = 10
     template_name = 'inventory/transferencia_detail.html'
 

@@ -22,7 +22,9 @@ from django.views.generic import View
 from django.views.generic.edit import FormMixin
 from django import forms
 from select2.fields import ModelChoiceField
+
 from persona.forms import FieldSetModelFormMixin
+
 
 class LoginRequiredMixin(View):
     """Clase base para crear vistas que requieren inicio de sesión"""
@@ -36,7 +38,7 @@ class LoginRequiredMixin(View):
                                                         **kwargs)
 
 
-class CurrentUserFormMixin(FormMixin):
+class CurrentUserFormMixin(FormMixin, LoginRequiredMixin):
     def get_initial(self):
         """Agrega la :class:`User` a los campos del formulario"""
 
@@ -47,10 +49,9 @@ class CurrentUserFormMixin(FormMixin):
 
 
 class HiddenUserForm(FieldSetModelFormMixin):
-
     usuario = forms.ModelChoiceField(label="", queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
-class UserForm(FieldSetModelFormMixin):
 
+class UserForm(FieldSetModelFormMixin):
     usuario = ModelChoiceField(name="", model="", queryset=User.objects.all())

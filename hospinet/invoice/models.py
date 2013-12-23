@@ -21,14 +21,27 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.fields.related import ForeignKey
 from django_extensions.db.models import TimeStampedModel
 
 from persona.models import Persona
 from inventory.models import ItemTemplate, TipoVenta
 
 
+class TipoPago(TimeStampedModel):
+    nombre = models.CharField(max_length=255, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.nombre
+
+
 class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
+
+    class Meta:
+        permissions = (
+            ('cajero', 'Permite al usuario gestionar caja'),
+        )
 
     cliente = models.ForeignKey(Persona, related_name='recibos')
     remite = models.CharField(max_length=255, blank=True, null=True)
@@ -103,7 +116,6 @@ class Recibo(TimeStampedModel):
             return Decimal(0)
 
         discount = sum(v.discount() for v in self.ventas.all())
-        discount += self.subtotal() * self.discount / Decimal("100")
         return Decimal(discount).quantize(Decimal('0.01'))
 
     def conceptos(self):
@@ -165,13 +177,11 @@ class Venta(TimeStampedModel):
         return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
 
     def get_absolute_url(self):
-
         """Obtiene la URL absoluta"""
 
         return reverse('invoice-view-id', args=[self.recibo.id])
 
     def monto(self):
-
         """Obtiene el valor a pagar por esta :class:`Venta`"""
 
         if self.recibo.nulo:
@@ -182,72 +192,68 @@ class Venta(TimeStampedModel):
     def precio_unitario(self):
 
         if not self.recibo.tipo_de_venta or not self.descontable:
-            return self.precio
+            return self.precio.quantize(Decimal('0.01'))
 
-        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(
-            100)
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / \
-                      Decimal(
-            100)
-
-        return self.precio + aumento - disminucion
+        aumento = self.recibo.tipo_de_venta.incremento * self.precio
+        return (self.precio + aumento).quantize(Decimal('0.01'))
 
     def precio_previo(self):
 
         if not self.recibo.tipo_de_venta:
-            return self.precio
+            return self.precio.quantize(Decimal('0.01'))
 
-        aumento = self.recibo.tipo_de_venta.incremento * self.precio / Decimal(
-            100)
-
-        return self.precio + aumento
+        aumento = self.recibo.tipo_de_venta.incremento * self.precio
+        return (self.precio + aumento).quantize(Decimal('0.01'))
 
     def descuento_tipo(self):
 
         if not self.recibo.tipo_de_venta:
             return Decimal(0)
 
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio / \
-                      Decimal(
-            100)
-        return disminucion
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio_unitario() * self.cantidad
+        return disminucion.quantize(Decimal('0.01'))
 
     def tax(self):
-
         """Obtiene los impuestos a pagar por esta :class:`Venta`"""
 
         if self.recibo.nulo:
             return Decimal(0)
 
-        return (self.monto() - self.discount()) * self.impuesto
+        return ((self.monto() - self.discount()) * self.impuesto).quantize(Decimal('0.01'))
 
     def total(self):
-
         """Calcula el valor total de esta :class:`Venta`"""
 
         if self.recibo.nulo:
             return Decimal(0)
 
-        return self.tax() + self.monto() - self.discount()
+        return (self.tax() + self.monto() - self.descuento_tipo()).quantize(Decimal('0.01'))
 
     def discount(self):
 
         """Calcula la cantidad que se disminuye de la :class:`Venta`"""
 
-        if self.recibo.nulo:
-            return Decimal(0)
-
-        return self.monto() * self.descuento / Decimal("100")
+        return self.descuento_tipo()
 
     def radiologo(self):
 
         """Calcular las comisiones del radiologo que atiende tomando en cuenta
         los descuentos que se han efectuado al recibo"""
 
-        if self.recibo.radiologo == None or self.recibo.radiologo == '':
+        if self.recibo.radiologo is None or self.recibo.radiologo == '':
             return Decimal('0')
 
         bruto = self.monto() * self.item.comision / Decimal("100")
         neto = bruto - bruto * self.descuento / Decimal("100")
 
         return neto.quantize(Decimal('0.01'))
+
+
+class Pago(TimeStampedModel):
+    """Permite especificar los montos de acuerdo al :class:`TipoPago` utilizado
+    por el cliente para pagar el :class:`Recibo`"""
+
+    tipo = ForeignKey(TipoPago, related_name='pagos')
+    recibo = ForeignKey(Recibo, related_name='pagos')
+    monto = models.DecimalField(blank=True, null=True, max_digits=7,
+                                decimal_places=2)

@@ -131,7 +131,13 @@ class Evolucion(models.Model):
 
 
 class Cargo(TimeStampedModel, Precio):
-    """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
+    """Indica los cargos en base a los diversos """
+
+    class Meta:
+        permissions = (
+            ('enfermeria', 'Permite al usuario gestionar hospitalizaciones'),
+            ('enfermeria_ver', 'Permite al usuario ver datos'),
+        )
 
     admision = models.ForeignKey(Admision, related_name='cargos')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,

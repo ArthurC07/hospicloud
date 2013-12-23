@@ -21,7 +21,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from select2.fields import ModelChoiceField
 
-from invoice.models import Recibo, Venta
+from invoice.models import Recibo, Venta, Pago
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
 from emergency.models import Emergencia
@@ -147,4 +147,14 @@ class InventarioForm(PeriodoForm):
     def __init__(self, *args, **kwargs):
         super(InventarioForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Relación entre Ventas e Inventario',
+                                      *self.field_names)
+
+
+class PagoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Pago
+
+    def __init__(self, *args, **kwargs):
+        super(PagoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar un metodo de PAgo',
                                       *self.field_names)
