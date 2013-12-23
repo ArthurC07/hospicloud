@@ -14,11 +14,13 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib.auth.decorators import permission_required
 
 from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView, FormView)
 from django.contrib import messages
@@ -199,7 +201,7 @@ class ResumenDetailView(NightingaleDetailView, SignosDetailView):
     slug_field = 'uuid'
 
 
-class AdmisionFormMixin(CreateView, LoginRequiredMixin):
+class AdmisionFormMixin(CreateView, CurrentUserFormMixin):
     """Permite llenar el formulario de una clase que requiera
     :class:`Admision`es de manera previa - DRY"""
 
@@ -213,31 +215,17 @@ class AdmisionFormMixin(CreateView, LoginRequiredMixin):
         formulario que será llenado posteriormente"""
         initial = super(AdmisionFormMixin, self).get_initial()
         initial = initial.copy()
-        initial['usuario'] = self.request.user.id
         initial['fecha_y_hora'] = timezone.now()
         initial['admision'] = self.admision.id
         return initial
 
+    @method_decorator(permission_required('enfermeria'))
     def dispatch(self, *args, **kwargs):
         """Obtiene la :class:`Admision` que se entrego como argumento en la
         url"""
 
         self.admision = get_object_or_404(Admision, pk=kwargs['admision'])
         return super(AdmisionFormMixin, self).dispatch(*args, **kwargs)
-
-    def form_valid(self, form):
-        """Guarda el objeto generado espeficando la :class:`Admision` obtenida
-        de los argumentos y el :class:`User` que esta utilizando la aplicación
-        """
-
-        self.object = form.save(commit=False)
-        self.object.admision = self.admision
-        self.usuario = self.request.user
-        self.object.save()
-
-        messages.info(self.request, u"Hospitalización Actualizada")
-
-        return HttpResponseRedirect(self.get_success_url())
 
 
 class CargoCreateView(AdmisionFormMixin, LoginRequiredMixin):
@@ -549,8 +537,7 @@ class MedicamentoUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'medicamento'
 
 
-class OxigenoTerapiaCreateView(AdmisionFormMixin, CurrentUserFormMixin,
-                               LoginRequiredMixin):
+class OxigenoTerapiaCreateView(AdmisionFormMixin, CurrentUserFormMixin):
     model = OxigenoTerapia
     form_class = OxigenoTerapiaForm
 
@@ -561,8 +548,7 @@ class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'oxigeno_terapia'
 
 
-class HonorarioCreateView(AdmisionFormMixin, CurrentUserFormMixin,
-                          LoginRequiredMixin):
+class HonorarioCreateView(AdmisionFormMixin, CurrentUserFormMixin):
     model = Honorario
     form_class = HonorarioForm
 
