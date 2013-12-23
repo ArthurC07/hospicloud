@@ -36,6 +36,7 @@ class CargoAdapter(object):
         self.detalles = list()
         self.precio_unitario = Decimal(0)
         self.valor = Decimal(0)
+        self.descuento = Decimal(0)
 
     def __unicode__(self):
         return u'{0} {1}'.format(self.precio_unitario, self.valor)
@@ -400,6 +401,7 @@ class Admision(models.Model):
             agrupados[cargo.cargo].detalles.append(cargo)
             agrupados[cargo.cargo].precio_unitario = cargo.precio_unitario()
             agrupados[cargo.cargo].valor += cargo.valor()
+            agrupados[cargo.cargo].descuento += cargo.descuento()
 
         return dict(agrupados)
 

@@ -34,13 +34,9 @@ class Precio(object):
             return self.cargo.precio_de_venta
 
         aumento = self.admision.tipo_de_venta.incremento * self.cargo\
-            .precio_de_venta / Decimal(
-            100)
-        disminucion = self.admision.tipo_de_venta.disminucion * self.cargo\
-            .precio_de_venta / Decimal(
-            100)
+            .precio_de_venta
 
-        return (self.cargo.precio_de_venta + aumento - disminucion).quantize(
+        return (self.cargo.precio_de_venta + aumento).quantize(
             Decimal("0.01"))
 
     def descuento(self):
@@ -48,8 +44,8 @@ class Precio(object):
         if not self.admision.tipo_de_venta:
             return Decimal(0)
 
-        return self.admision.tipo_de_venta.disminucion * self.cargo \
-            .precio_de_venta / Decimal(100)
+        return self.admision.tipo_de_venta.disminucion * self.cantidad * self.cargo\
+            .precio_de_venta
 
 
 class Turno(object):
@@ -153,7 +149,7 @@ class Cargo(TimeStampedModel, Precio):
         return reverse('enfermeria-cargo-agregar', args=[self.admision.id])
 
     def valor(self):
-        return (self.cantidad * self.precio_unitario()).quantize(
+        return (self.cantidad * self.precio_unitario() - self.descuento()).quantize(
             Decimal("0.01"))
 
 
