@@ -36,7 +36,7 @@ class LoginRequiredMixin(View):
                                                         **kwargs)
 
 
-class CurrentUserFormMixin(FormMixin):
+class CurrentUserFormMixin(FormMixin, LoginRequiredMixin):
     def get_initial(self):
         """Agrega la :class:`User` a los campos del formulario"""
 
