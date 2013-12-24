@@ -322,8 +322,11 @@ class Admision(models.Model):
             return dias * self.habitacion.item.precio_de_venta
 
         subtotal = (dias * self.precio_diario()).quantize(dot01)
-        descuento = (dias * self.descuento_diario()).quantize(dot01)
         return subtotal
+
+    def descontado(self):
+
+        return self.debido() - self.descuento_hospitalizacion()
 
     def dar_alta(self, day):
 

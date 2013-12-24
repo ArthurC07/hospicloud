@@ -52,9 +52,9 @@
                     <td data-title="Cargo">Hospitalizaci&oacute;n</td>
                     <td class="text-right" data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
                     <td class="text-right" data-title="Precio Unitario">{{ admision.precio_diario|floatformat:2|intcomma }}</td>
-                    <td class="text-right" data-tittle="Subtotal"></td>
+                    <td class="text-right" data-tittle="Subtotal">{{ admision.debido|floatformat:2|intcomma }}</td>
                     <td class="text-right" data-tittle="Descuento">{{ admision.descuento_hospitalizacion|floatformat:2|intcomma }}</td>
-                    <td class="text-right" data-title="Total">{{ admision.debido|floatformat:2|intcomma }}</td>
+                    <td class="text-right" data-title="Total">{{ admision.descontado|floatformat:2|intcomma }}</td>
                 </tr>
                 {% for honorario in admision.honorarios.all %}
                     <tr>
