@@ -29,6 +29,8 @@ from persona.models import Persona
 from emergency.models import Emergencia
 from inventory.models import ItemTemplate, TipoVenta
 
+dot01 = Decimal("0.01")
+
 
 class CargoAdapter(object):
     def __init__(self):
@@ -37,6 +39,7 @@ class CargoAdapter(object):
         self.precio_unitario = Decimal(0)
         self.valor = Decimal(0)
         self.descuento = Decimal(0)
+        self.subtotal = Decimal(0)
 
     def __unicode__(self):
         return u'{0} {1}'.format(self.precio_unitario, self.valor)
@@ -289,26 +292,38 @@ class Admision(models.Model):
 
     def precio_diario(self):
 
+        precio = self.habitacion.item.precio_de_venta
+
         if not self.tipo_de_venta:
-            return self.habitacion.item.precio_de_venta
+            return precio
 
-        aumento = self.tipo_de_venta.incremento * self.habitacion.item.precio_de_venta / Decimal(
-            100)
-        disminucion = self.tipo_de_venta.disminucion * self.habitacion.item.precio_de_venta / Decimal(
-            100)
+        aumento = self.tipo_de_venta.incremento * precio
+        return (precio + aumento).quantize(Decimal("0.01"))
 
-        return (
-        self.habitacion.item.precio_de_venta + aumento - disminucion).quantize(
-            Decimal("0.01"))
+    def descuento_diario(self):
+
+        if not self.tipo_de_venta:
+            return Decimal(0)
+        precio = self.habitacion.item.precio_de_venta
+
+        return self.tipo_de_venta.disminucion * precio
+
+    def descuento_hospitalizacion(self):
+
+        return self.descuento_diario() * self.tiempo_cobro()
 
     def debido(self):
 
         """Calcula el monto que aún se debe por conceptio de hospitalización"""
-        if not self.tipo_de_venta:
-            return self.tiempo_cobro() * self.habitacion.item.precio_de_venta
 
-        return (self.tiempo_cobro() * self.precio_diario()).quantize(
-            Decimal("0.01"))
+        dias = self.tiempo_cobro()
+
+        if not self.tipo_de_venta:
+            return dias * self.habitacion.item.precio_de_venta
+
+        subtotal = (dias * self.precio_diario()).quantize(dot01)
+        descuento = (dias * self.descuento_diario()).quantize(dot01)
+        return subtotal
 
     def dar_alta(self, day):
 
@@ -386,11 +401,12 @@ class Admision(models.Model):
 
         total = Decimal()
         total += sum(c.valor() for c in self.cargos.all())
-        total += self.debido()
+        total += self.debido() - self.descuento_hospitalizacion()
 
         total += sum(h.monto for h in self.honorarios.all())
+        total += sum(o.valor() for o in self.oxigeno_terapias.all())
 
-        return total.quantize(Decimal("0.01"))
+        return total.quantize(dot01)
 
     def agrupar_cargos(self):
 
@@ -402,12 +418,23 @@ class Admision(models.Model):
             agrupados[cargo.cargo].precio_unitario = cargo.precio_unitario()
             agrupados[cargo.cargo].valor += cargo.valor()
             agrupados[cargo.cargo].descuento += cargo.descuento()
+            agrupados[cargo.cargo].subtotal += cargo.subtotal()
 
         return dict(agrupados)
 
+    def subtotal(self):
+
+        total = Decimal(0)
+        total += sum(c.subtotal() for c in self.cargos.all())
+        total += self.debido()
+        total += sum(h.monto for h in self.honorarios.all())
+        total += sum(o.subtotal() for o in self.oxigeno_terapias.all())
+
+        return total.quantize(dot01)
+
     def descuento(self):
 
-        return sum(c.descuento() for c in self.cargos.all())
+        return sum(c.descuento() for c in self.cargos.all()) + self.descuento_hospitalizacion()
 
     def total(self):
 
