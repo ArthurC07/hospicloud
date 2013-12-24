@@ -60,6 +60,7 @@
                     <th>Cargo</th>
                     <th>Cantidad</th>
                     <th>Precio Unitario</th>
+                    <th>Subtotal</th>
                     <th>Descuento</th>
                     <th>Precio Valor Total</th>
                 </tr>
@@ -72,7 +73,8 @@
                     <td data-title="Cargo">Hospitalizaci&oacute;n</td>
                     <td class="text-right" data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
                     <td class="text-right" data-title="Precio Unitario">{{ admision.precio_diario|floatformat:2|intcomma }}</td>
-                    <td class="text-right" data-tittle="Descuento"></td>
+                    <td class="text-right" data-tittle="Subtotal"></td>
+                    <td class="text-right" data-tittle="Descuento">{{ admision.descuento_hospitalizacion|floatformat:2|intcomma }}</td>
                     <td class="text-right" data-title="Total">{{ admision.debido|floatformat:2|intcomma }}</td>
                 </tr>
                 {% for honorario in admision.honorarios.all %}
@@ -83,6 +85,7 @@
                         <td data-title="Cargo">{{ honorario.item }}</td>
                         <td>Médico: {{ honorario.medico }}</td>
                         <td class="text-right" data-title="Precio Unitario">{{ honorario.monto|floatformat:2|intcomma }}</td>
+                        <td class="text-right"></td>
                         <td class="text-right" data-tittle="Descuento"></td>
                         <td class="text-right" data-title="Total">{{ honorario.monto|floatformat:2|intcomma }}</td>
                     </tr>
@@ -99,26 +102,31 @@
                         <td class="text-right" data-title="Total">{{ terapia.valor|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}
-                {% for cargo, lista in admision.agrupar_cargos.items %}
+                {% for cargo, datos in admision.agrupar_cargos.items %}
                     <tr>
                         {% localize off %}
                             <td data-title="Código">{{ cargo.id }}</td>
                         {% endlocalize %}
                         <td data-title="Cargo">{{ cargo }}</td>
-                        <td data-title="Cantidad" class="text-right">{{ lista.cantidad }}</td>
-                        <td data-title="Precio Unitario" class="text-right">{{ lista.precio_unitario|floatformat:2|intcomma }}</td>
-                        <td class="text-right" data-tittle="Descuento">{{ lista.descuento|floatformat:2|intcomma }}</td>
-                        <td data-title="Total" class="text-right">{{ lista.valor|floatformat:2|intcomma }}</td>
+                        <td data-title="Cantidad" class="text-right">{{ datos.cantidad }}</td>
+                        <td data-title="Precio Unitario" class="text-right">{{ datos.precio_unitario|floatformat:2|intcomma }}</td>
+                        <td data-title="Subtotal" class="text-right">{{ datos.subtotal|floatformat:2|intcomma }}</td>
+                        <td class="text-right" data-tittle="Descuento">{{ datos.descuento|floatformat:2|intcomma }}</td>
+                        <td data-title="Total" class="text-right">{{ datos.valor|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="4">Total Descuento</th>
+                    <th colspan="6">Subtotal</th>
+                    <th >{{ admision.subtotal|floatformat:2|intcomma }}</th>
+                </tr>
+                <tr>
+                    <th colspan="6">Total Descuento</th>
                     <th >{{ admision.descuento|floatformat:2|intcomma }}</th>
                 </tr>
                 <tr>
-                    <th colspan="4">Total</th>
+                    <th colspan="6">Total</th>
                     <th >{{ admision.estado_de_cuenta|floatformat:2|intcomma }}</th>
                 </tr>
                 </tfoot>

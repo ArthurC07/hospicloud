@@ -219,7 +219,7 @@ class AdmisionFormMixin(CreateView, CurrentUserFormMixin):
         initial['admision'] = self.admision.id
         return initial
 
-    @method_decorator(permission_required('enfermeria'))
+    @method_decorator(permission_required('nightingale.enfermeria'))
     def dispatch(self, *args, **kwargs):
         """Obtiene la :class:`Admision` que se entrego como argumento en la
         url"""

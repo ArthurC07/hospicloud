@@ -28,6 +28,9 @@ from spital.models import Admision
 from inventory.models import ItemTemplate
 
 
+dot01 = Decimal('0.01')
+
+
 class Precio(object):
     def precio_unitario(self):
         if not self.admision.tipo_de_venta:
@@ -148,9 +151,12 @@ class Cargo(TimeStampedModel, Precio):
 
         return reverse('enfermeria-cargo-agregar', args=[self.admision.id])
 
+    def subtotal(self):
+
+        return (self.cantidad * self.precio_unitario()).quantize(dot01)
+
     def valor(self):
-        return (self.cantidad * self.precio_unitario() - self.descuento()).quantize(
-            Decimal("0.01"))
+        return (self.subtotal() - self.descuento()).quantize(dot01)
 
 
 class OrdenMedica(models.Model):
@@ -478,9 +484,12 @@ class OxigenoTerapia(TimeStampedModel, Precio):
         return (self.tiempo() * self.unidades_por_minuto).quantize(
             Decimal("0.01"))
 
+    def subtotal(self):
+
+        return (self.litros() * self.precio_unitario()).quantize(dot01)
+
     def valor(self):
-        return (self.litros() * self.precio_unitario()).quantize(
-            Decimal("0.01"))
+        return self.subtotal() - self.descuento() * self.litros()
 
     def final(self):
         if self.created >= self.modified:
