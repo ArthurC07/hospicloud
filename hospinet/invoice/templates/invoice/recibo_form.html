@@ -13,6 +13,7 @@
   </aside>
   <section class="span9">
     <form method="post" class="form-horizontal">
+      {{ form.management_form }}
       {% crispy persona_form %}
       {% for subform in form %}
         {% crispy subform %}
