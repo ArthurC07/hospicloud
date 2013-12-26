@@ -18,8 +18,8 @@
     {% endif%}
     {% for terapia in admision.oxigeno_terapias.all %}
     <tr>
-      <td data-title="Fecha y Hora">{{ terapia.created|date:"d/m/Y P" }}</td>
-        <td data-title="Fecha y Hora">{{ terapia.final|date:"d/m/Y P" }}</td>
+      <td data-title="Fecha y Hora">{{ terapia.inicio|date:"d/m/Y P" }}</td>
+      <td data-title="Fecha y Hora">{{ terapia.fin|date:"d/m/Y P" }}</td>
       <td data-title="Código">{{ terapia.cargo.id }}</td>
       <td data-title="Cargo">{{ terapia.cargo }}</td>
       <td data-title="Tiempo">{{ terapia.tiempo }}</td>

@@ -96,9 +96,10 @@
                             <td data-title="Código">{{ terapia.cargo.id }}</td>
                         {% endlocalize %}
                         <td data-title="Cargo">Oxigeno</td>
-                        <td class="text-right" data-title="Tiempo">{{ terapia.tiempo }}</td>
                         <td class="text-right" data-title="Litros">{{ terapia.litros }}</td>
-                        <td class="text-right" data-tittle="Descuento"></td>
+                        <td class="text-right" data-title="Precio Unitario">{{ terapia.precio_unitario }}</td>
+                        <td class="text-right" data-title="Subtotal">{{ terapia.subtotal|floatformat:2|intcomma }}</td>
+                        <td class="text-right" data-tittle="Descuento">{{ terapia.descuento|floatformat:2|intcomma }}</td>
                         <td class="text-right" data-title="Total">{{ terapia.valor|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}

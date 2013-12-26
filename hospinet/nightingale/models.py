@@ -39,16 +39,16 @@ class Precio(object):
         aumento = self.admision.tipo_de_venta.incremento * self.cargo\
             .precio_de_venta
 
-        return (self.cargo.precio_de_venta + aumento).quantize(
-            Decimal("0.01"))
+        return (self.cargo.precio_de_venta + aumento).quantize(dot01)
 
     def descuento(self):
 
         if not self.admision.tipo_de_venta:
             return Decimal(0)
 
-        return self.admision.tipo_de_venta.disminucion * self.cantidad * self.cargo\
-            .precio_de_venta
+        disminucion = self.admision.tipo_de_venta.disminucion * self.cantidad
+
+        return  disminucion * self.cargo.precio_de_venta
 
 
 class Turno(object):
@@ -461,7 +461,6 @@ class OxigenoTerapia(TimeStampedModel, Precio):
     admision = models.ForeignKey(Admision, related_name='oxigeno_terapias')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                               related_name='oxigeno_terapias')
-    unidades_por_minuto = models.IntegerField(default=1)
     terminada = models.BooleanField(default=False)
     inicio = models.DateTimeField(null=True, blank=True)
     fin = models.DateTimeField(null=True, blank=True)
@@ -475,27 +474,35 @@ class OxigenoTerapia(TimeStampedModel, Precio):
     def tiempo(self):
         """Calcula el tiempo que la :class:`Persona` ha utilizado Oxigeno"""
 
-        return ((self.final() - self.created).seconds / Decimal(60)).quantize(
-            Decimal("0.01"))
+        delta = self.fin - self.inicio
+        return delta.days * 24 + (delta.seconds / 3600)
 
     def litros(self):
         """Calcula el volumen de Oxigeno utilizado"""
 
-        return (self.tiempo() * self.unidades_por_minuto).quantize(
-            Decimal("0.01"))
+        return self.tiempo() * 180
 
     def subtotal(self):
 
         return (self.litros() * self.precio_unitario()).quantize(dot01)
 
+    def descuento(self):
+
+        if not self.admision.tipo_de_venta:
+            return Decimal(0)
+
+        disminucion = self.admision.tipo_de_venta.disminucion * self.litros()
+
+        return disminucion * self.precio_unitario()
+
     def valor(self):
-        return self.subtotal() - self.descuento() * self.litros()
+        return self.subtotal() - self.descuento()
 
     def final(self):
         if self.created >= self.modified:
             return timezone.now()
 
-        return self.modified
+        return self.fin
 
 
 class Honorario(TimeStampedModel):
