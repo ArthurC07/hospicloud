@@ -342,7 +342,6 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = OxigenoTerapia
-        fields = ('cargo', 'unidades_por_minuto', 'terminada', 'admision')
 
     admision = forms.ModelChoiceField(label="",
                                       queryset=Admision.objects.all(),
