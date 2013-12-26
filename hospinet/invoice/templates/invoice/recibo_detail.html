@@ -38,7 +38,6 @@
         <tr>
           <th>Cantidad</th>
           <th>Concepto</th>
-          <th>Descripci&oacute;n</th>
           <th>Precio unitario</th>
           <th>Subtotal</th>
           <th>Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
@@ -49,8 +48,7 @@
         {% for venta in recibo.ventas.all %}
         <tr>
           <td>{{ venta.cantidad }}</td>
-          <td>{{ venta.item.descripcion }}</td>
-          <td>{{ venta.descripcion }}</td>
+          <td>{{ venta.item }}</td>
           <td>{{ venta.precio_unitario }}</td>
           <td>{{ venta.monto }}</td>
           <td>{{ venta.descuento_tipo }}</td>
@@ -60,31 +58,40 @@
       </tbody>
       <tfoot>
         <tr>
-          <th colspan="5">&nbsp;</th>
+          <th colspan="4">&nbsp;</th>
           <th>Subtotal:</th>
           <th>{{ recibo.subtotal }}</th>
         </tr>
         <tr>
-          <th colspan="5">&nbsp;</th>
+          <th colspan="4">&nbsp;</th>
           <th>Impuestos:</th>
           <th>{{ recibo.impuesto }}</th>
         </tr>
         <tr>
-          <th colspan="5">&nbsp;</th>
+          <th colspan="4">&nbsp;</th>
           <th>Descuento:</th>
           <th>{{ recibo.descuento }}</th>
         </tr>
         <tr>
-          <th colspan="5">&nbsp;</th>
+          <th colspan="4">&nbsp;</th>
           <th>Total:</th>
           <th>{{ recibo.total }}</th>
         </tr>
       </tfoot>
     </table>
-    {% ifequal recibo.cerrado False %}
-    {% crispy form %}
-    {% endifequal %}
   </div>
+</div>
+<div class="row">
+    <div class="span6">
+        {% ifequal recibo.cerrado False %}
+            {% crispy form %}
+        {% endifequal %}
+    </div>
+    <div class="span6">
+        {% ifequal recibo.cerrado False %}
+            {% crispy pago_form %}
+        {% endifequal %}
+    </div>
 </div>
 {% endblock %}
 {% block scripts %}

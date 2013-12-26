@@ -209,11 +209,11 @@ class Venta(TimeStampedModel):
 
     def descuento_tipo(self):
 
-        if not self.recibo.tipo_de_venta:
+        if not self.recibo.tipo_de_venta or not self.descontable:
             return Decimal(0)
 
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.precio_unitario() * self.cantidad
-        return disminucion.quantize(dot01)
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
+        return (self.precio_unitario() * disminucion).quantize(dot01)
 
     def tax(self):
         """Obtiene los impuestos a pagar por esta :class:`Venta`"""
@@ -221,7 +221,8 @@ class Venta(TimeStampedModel):
         if self.recibo.nulo:
             return Decimal(0)
 
-        return ((self.monto() - self.discount()) * self.impuesto).quantize(dot01)
+        return ((self.monto() - self.discount()) * self.impuesto).quantize(
+            dot01)
 
     def total(self):
         """Calcula el valor total de esta :class:`Venta`"""
@@ -229,7 +230,8 @@ class Venta(TimeStampedModel):
         if self.recibo.nulo:
             return Decimal(0)
 
-        return (self.tax() + self.monto() - self.descuento_tipo()).quantize(dot01)
+        return (self.tax() + self.monto() - self.descuento_tipo()).quantize(
+            dot01)
 
     def discount(self):
 

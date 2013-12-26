@@ -35,7 +35,7 @@ class ReciboForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Recibo
-        exclude = ('nulo', 'cerrado')
+        exclude = ('nulo', 'cerrado', 'discount')
 
     cajero = forms.ModelChoiceField(label="",
                                     queryset=User.objects.all(),
@@ -45,10 +45,8 @@ class ReciboForm(FieldSetModelFormMixin):
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
-
-class ReciboNewForm(ReciboForm):
     def __init__(self, *args, **kwargs):
-        super(ReciboNewForm, self).__init__(*args, **kwargs)
+        super(ReciboForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.html5_required = True
@@ -62,18 +60,17 @@ class VentaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Venta
-        exclude = ('precio', 'impuesto',)
+        exclude = ('impuesto', 'descuento', 'descripcion', 'placas', )
 
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
                                     widget=forms.HiddenInput(), required=False)
-    cargo = ModelChoiceField(name="", model="",
+    item = ModelChoiceField(name="", model="",
                              queryset=ItemTemplate.objects.filter(
                                  activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Agregar'))
         self.helper.layout = Fieldset(u'Agregar un Cargo', *self.field_names)
 
 
@@ -154,7 +151,11 @@ class PagoForm(FieldSetModelFormMixin):
     class Meta:
         model = Pago
 
+    recibo = forms.ModelChoiceField(label="",
+                                    queryset=Recibo.objects.all(),
+                                    widget=forms.HiddenInput(), required=False)
+
     def __init__(self, *args, **kwargs):
         super(PagoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar un metodo de PAgo',
+        self.helper.layout = Fieldset(u'Agregar un método de Pago',
                                       *self.field_names)
