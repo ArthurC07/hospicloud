@@ -42,18 +42,23 @@
           <th>Nombre</th>
           <th>Edad</th>
           <th>Sexo</th>
-          <th>Hora de Ingreso</th>
           <th>Acciones</th>
       </tr>
       </thead>
       <tbody>
       {% for admision in admisiones %}
           <tr>
-              <td>{{ admision.paciente.identificacion }}</td>
+              <td>
+                  <a href="{% url 'persona-view-id' admision.paciente.id %}">
+                      {% if admision.paciente.identificacion %}
+                          {{ admision.paciente.identificacion }}
+                      {% else %}
+                          {{ admision.paciente.id }}
+                      {% endif %}
+                  </a></td>
               <td>{{ admision.paciente.nombre_completo }}</td>
               <td>{{ admision.paciente.obtener_edad }}</td>
               <td>{{ admision.paciente.get_sexo_display }}</td>
-              <td>{{ admision.created|date:"d/m/Y H:i" }}</td>
               <td><a class="btn btn-block" href="{% url 'admision-invoice' admision.id %}">Facturar</a></td>
           </tr>
       {% endfor %}
@@ -67,7 +72,6 @@
               <th>Nombre</th>
               <th>Edad</th>
               <th>Sexo</th>
-              <th>Hora de Ingreso</th>
               <th>Atendi&oacute;</th>
               <th>Acciones</th>
           </tr>
@@ -93,7 +97,6 @@
                       {% if not emergencia.facturada %}
                           <a class="btn btn-block" href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
                       {% endif %}
-                      <a class="btn btn-block" href="{% url 'emergency-view-id' emergencia.id %}">Ver</a>
                   </td>
               </tr>
           {% endfor %}
@@ -119,7 +122,7 @@
                   <td>{{ examen.tipo_de_examen.nombre }}</td>
                   <td>{{ examen.persona.identificacion }}</td>
                   <td>{{ examen.persona.nacimiento }}</td>
-                  <td><a class="btn btn-success btn-block" href="{% url 'examen-view-id' examen.uuid %}">Ver</a></td>
+                  <td><a class="btn btn-block" href="{% url 'invoice-create-examen' examen.id %}">Facturar</a></td>
               </tr>
           {% endfor %}
           </tbody>

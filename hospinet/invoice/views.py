@@ -40,8 +40,8 @@ from persona.forms import PersonaForm
 from invoice.models import Recibo, Venta, Pago
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
-                           CorteForm, ExamenFacturarForm, ReciboNewForm,
-                           InventarioForm, PagoForm)
+                           CorteForm, ExamenFacturarForm, InventarioForm,
+                                                         PagoForm)
 from inventory.models import ItemTemplate
 
 
@@ -82,7 +82,7 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
 
         self.persona = Persona()
         self.ReciboFormset = inlineformset_factory(Persona, Recibo,
-                                                   form=ReciboNewForm,
+                                                   form=ReciboForm,
                                                    fk_name='cliente', extra=1)
         return super(CreateView, self).dispatch(request, *args, **kwargs)
 
@@ -206,6 +206,10 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
         context = super(ReciboDetailView, self).get_context_data(**kwargs)
         context['form'] = VentaForm(initial={'recibo': context['recibo'].id})
         context['form'].helper.form_action = reverse('venta-add', args=[
+            context['recibo'].id])
+
+        context['pago_form'] = PagoForm(initial={'recibo': context['recibo'].id})
+        context['pago_form'].helper.form_action = reverse('pago-add', args=[
             context['recibo'].id])
 
         return context
