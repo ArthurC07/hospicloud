@@ -30,12 +30,27 @@ from imaging.models import Examen
 from inventory.models import ItemTemplate
 
 
+class PersonaForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Persona
+        fields = ('nombre', 'apellido')
+
+    def __init__(self, *args, **kwargs):
+        super(PersonaForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.layout = Fieldset(u'Datos del Cliente', *self.field_names)
+
+
 class ReciboForm(FieldSetModelFormMixin):
     """Genera un formulario para :class:`Recibo`:"""
 
     class Meta:
         model = Recibo
-        exclude = ('nulo', 'cerrado', 'discount')
+        exclude = ('nulo', 'cerrado', 'discount', 'radiologo', 'remite')
 
     cajero = forms.ModelChoiceField(label="",
                                     queryset=User.objects.all(),

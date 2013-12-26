@@ -36,12 +36,11 @@ from spital.models import Admision
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
-from persona.forms import PersonaForm
 from invoice.models import Recibo, Venta, Pago
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
-                                                         PagoForm)
+                                                         PagoForm, PersonaForm)
 from inventory.models import ItemTemplate
 
 
@@ -108,9 +107,17 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
                                           prefix='recibo')
 
         if self.form.is_valid() and self.formset.is_valid():
+            self.form.save()
+            instances = self.formset.save()
+            for instance in instances:
+                self.recibo = instance
             return self.form_valid(self.formset)
         else:
             return self.form_invalid(self.formset)
+
+    def get_success_url(self):
+
+        return reverse('invoice-view-id', args=[self.recibo.id])
 
 
 class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
