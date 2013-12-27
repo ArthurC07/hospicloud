@@ -261,3 +261,4 @@ class Pago(TimeStampedModel):
     recibo = ForeignKey(Recibo, related_name='pagos')
     monto = models.DecimalField(blank=True, null=True, max_digits=7,
                                 decimal_places=2)
+    comprobante = models.CharField(max_length=255, blank=True, null=True)
