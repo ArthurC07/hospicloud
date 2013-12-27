@@ -26,8 +26,8 @@ from django.views.generic import (CreateView, ListView, TemplateView, DeleteView
 from persona.models import Persona
 from persona.views import PersonaCreateView
 from spital.forms import (AdmisionForm, HabitacionForm, PreAdmisionForm,
-                          IngresarForm)
-from spital.models import Admision, Habitacion, PreAdmision
+                          IngresarForm, DepositoForm)
+from spital.models import Admision, Habitacion, PreAdmision, Deposito
 from nightingale.models import Cargo
 from emergency.models import Emergencia
 from persona.forms import PersonaForm
@@ -482,3 +482,11 @@ class AdmisionDeleteView(DeleteView, LoginRequiredMixin):
 
     def get_success_url(self):
         return reverse('admision-index')
+
+
+class DepositoCreateView(AdmisionFormMixin):
+
+    model = Deposito
+    form_class = DepositoForm
+    template_name = 'admision/deposito_form.html'
+
