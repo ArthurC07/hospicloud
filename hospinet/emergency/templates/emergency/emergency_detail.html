@@ -11,6 +11,7 @@
 <aside class="span3">
   <nav class="sidebar-nav">
     <ul class="nav nav-tabs nav-stacked">
+    <li><a href="{% url 'emergencia-update' emergencia.id %}">Editar Emergencia</a></li>
     <li><a href="{% url 'emergencia-hallazgo-agregar' emergencia.id %}">Agregar Hallazgos</a></li>
     <li><a href="{% url 'emergencia-examen-fisico-agregar' emergencia.id %}">Agregar Examen F&iacute;sico</a></li>
     <li><a href="{% url 'emergencia-diagnostico-agregar' emergencia.id %}">Agregar Examen Diagnostico</a></li>
