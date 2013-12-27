@@ -114,4 +114,21 @@
             </table>
         </section>
     </div>
+    <div class="row">
+        <section class="span">
+            <table class="table table-striped table-bordered no-more-tables">
+                <caption>Depositos</caption>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                </tr>
+                {% for deposito in admision.depositos.all %}
+                <tr>
+                    <td>{{ deposito.fecha }}</td>
+                    <td>{{ deposito.monto }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+    </div>
 {% endblock %}

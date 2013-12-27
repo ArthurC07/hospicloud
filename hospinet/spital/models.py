@@ -475,3 +475,17 @@ class Laboratorio(TimeStampedModel):
 
     def __unicode__(self):
         return self.nombre
+
+
+class Deposito(TimeStampedModel):
+
+    admision = models.ForeignKey(Admision, related_name='depositos')
+    monto = models.DecimalField(blank=True, null=True, max_digits=7,
+                                decimal_places=2)
+    fecha = models.DateTimeField(default=timezone.now, null=True, blank=True)
+
+    def get_absolute_url(self):
+
+        """Obtiene la URL absoluta"""
+
+        return reverse('admision-view-id', args=[self.admision.id])

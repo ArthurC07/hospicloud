@@ -19,7 +19,7 @@ from django import forms
 from crispy_forms.layout import Fieldset
 from django.utils import timezone
 
-from spital.models import Admision, Habitacion, PreAdmision
+from spital.models import Admision, Habitacion, PreAdmision, Deposito
 from emergency.models import Emergencia
 from persona.models import Persona
 from persona.forms import DateTimeWidget, FieldSetModelFormMixin
@@ -82,3 +82,17 @@ class IngresarForm(FieldSetModelFormMixin):
         super(IngresarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Hospitalizar Paciente',
                                       *self.field_names)
+
+
+class DepositoForm(AdmisionForm):
+
+    class Meta:
+        model = Deposito
+
+    fecha = forms.DateTimeField(widget=DateTimeWidget(),
+                                required=False,
+                                initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(IngresarForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Deposito', *self.field_names)
