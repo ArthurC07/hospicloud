@@ -15,7 +15,6 @@
         <nav class="navbar">
           <div class="navbar-inner">
             <a class="brand">Pendiente de Facturaci&oacute;n</a>
-
             <ul class="nav">
               <li>
                 <a href="{% url 'invoice-dia-emergencia' %}">Emergencias</a>
@@ -56,7 +55,14 @@
                           {{ admision.paciente.id }}
                       {% endif %}
                   </a></td>
-              <td>{{ admision.paciente.nombre_completo }}</td>
+              <td>
+                  {{ admision.paciente.nombre_completo }}
+                  <ul>
+                      {% for deposito in admision.depositos.all %}
+                          <li>Dep&oacute;sito {{ deposito.fecha }} {{ deposito.monto }}</li>
+                      {% endfor %}
+                  </ul>
+              </td>
               <td>{{ admision.paciente.obtener_edad }}</td>
               <td>{{ admision.paciente.get_sexo_display }}</td>
               <td><a class="btn btn-block" href="{% url 'admision-invoice' admision.id %}">Facturar</a></td>
@@ -72,6 +78,7 @@
               <th>Nombre</th>
               <th>Edad</th>
               <th>Sexo</th>
+              <th>Fecha</th>
               <th>Atendi&oacute;</th>
               <th>Acciones</th>
           </tr>

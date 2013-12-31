@@ -32,7 +32,7 @@ class AdmisionForm(FieldSetModelFormMixin):
         model = Admision
         fields = ('paciente', 'diagnostico', 'doctor',
                   'arancel', 'pago', 'poliza', 'certificado', 'aseguradora',
-                  'deposito', 'tipo_de_ingreso', 'tipo_de_venta')
+                  'tipo_de_ingreso', 'tipo_de_venta')
 
     paciente = forms.ModelChoiceField(label="",
                                       queryset=Persona.objects.all(),
@@ -41,6 +41,10 @@ class AdmisionForm(FieldSetModelFormMixin):
 
     doctor = forms.CharField(label="Medico Tratante", required=True)
     diagnostico = forms.CharField(required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(AdmisionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Datos de la Admisión', *self.field_names)
 
 
 class HabitacionForm(FieldSetModelFormMixin):
@@ -84,7 +88,7 @@ class IngresarForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class DepositoForm(AdmisionForm):
+class DepositoForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Deposito
@@ -94,5 +98,5 @@ class DepositoForm(AdmisionForm):
                                 initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
-        super(IngresarForm, self).__init__(*args, **kwargs)
+        super(DepositoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Deposito', *self.field_names)
