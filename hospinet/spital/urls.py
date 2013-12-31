@@ -21,7 +21,8 @@ from spital.views import (AdmisionIndexView, PersonaAdmisionCreateView,
     FiadorAgregarView, ReferenciaAgregarView, PersonaFiadorCreateView,
     PersonaReferenciaCreateView, HospitalizarView, PagarView,
     HabitacionCreateView, HabitacionDetailView, HabitacionUpdateView,
-    HabitacionListView, PreAdmisionCreateView, AdmisionPreCreateView, AdmisionDeleteView)
+    HabitacionListView, PreAdmisionCreateView, AdmisionPreCreateView, AdmisionDeleteView,
+    DepositoCreateView)
 
 urlpatterns = patterns('',
     
@@ -116,4 +117,8 @@ urlpatterns = patterns('',
     url(r'^preadmision/(?P<preadmision>\d+)/admitir$',
         AdmisionPreCreateView.as_view(),
         name='admitir-preadmision'),
+
+    url(r'^(?P<admision>\d+)/deposito/agregar$',
+        DepositoCreateView.as_view(),
+        name='admision-deposito-agregar'),
 )
