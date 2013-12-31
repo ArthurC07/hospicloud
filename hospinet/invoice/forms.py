@@ -37,11 +37,6 @@ class PersonaForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Datos del Cliente', *self.field_names)
 
 
@@ -62,11 +57,6 @@ class ReciboForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ReciboForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Datos del Recibo', *self.field_names)
 
 

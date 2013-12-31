@@ -149,6 +149,25 @@ class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
         context['persona'] = self.examen.persona
         return context
 
+    def form_valid(self, form):
+        self.object = form.save()
+
+        venta = Venta()
+        venta.item = self.examen.tipo_de_examen.item
+        venta.recibo = self.object
+        venta.cantidad = 1
+        venta.precio = venta.item.precio_de_venta
+        venta.impuesto = venta.item.impuestos
+
+        venta.save()
+        self.object.ventas.add(venta)
+        self.examen.facturado = True
+        self.examen.save()
+
+        self.object.save()
+
+        return HttpResponseRedirect(self.object.get_absolute_url())
+
 
 class ReciboFormMixin(CreateView):
     def dispatch(self, *args, **kwargs):
