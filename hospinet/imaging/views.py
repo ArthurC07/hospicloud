@@ -21,8 +21,9 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
                                   TemplateView, RedirectView, FormView)
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
-                           EstudioProgramadoForm, EmailForm)
-from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
+                           EstudioProgramadoForm, EmailForm, EstudioForm)
+from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
+    Estudio
 from persona.forms import PersonaForm, PersonaSearchForm
 from persona.models import Persona
 from persona.views import PersonaCreateView
@@ -124,6 +125,18 @@ class ExamenCreateView(CreateView, LoginRequiredMixin):
 
         form.instance.usuario = self.request.user
         return super(ExamenCreateView, self).form_valid(form)
+
+
+class ExamenFormMixin(CreateView, LoginRequiredMixin):
+    def dispatch(self, *args, **kwargs):
+        self.exaemn = get_object_or_404(Examen, pk=kwargs['examen'])
+        return super(ExamenFormMixin, self).dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        initial = super(ExamenFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['examen'] = self.examen.id
+        return initial
 
 class ExamenDocBaseCreateView(CreateView, LoginRequiredMixin):
     
@@ -353,3 +366,9 @@ class EstudioPreCreateView(TemplateView, LoginRequiredMixin):
         context['persona_form'] = PersonaForm()
         context['persona_form'].helper.form_action = 'examen-persona-nuevo'
         return context
+
+
+class EstudioCreateView(ExamenFormMixin):
+
+    model = Estudio
+    form_class = EstudioForm
