@@ -179,7 +179,7 @@ class Estudio(TimeStampedModel):
 
     examen = models.ForeignKey(Examen, related_name='estudios')
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
-                                       related_name="examenes")
+                                       related_name="estudios")
 
     @permalink
     def get_absolute_url(self):

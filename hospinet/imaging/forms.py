@@ -114,4 +114,5 @@ class EstudioForm(FieldSetModelFormMixin):
     examen = forms.ModelChoiceField(label="",
                                     queryset=Examen.objects.all(),
                                     widget=forms.HiddenInput())
-    tipo_de_examen = ModelChoiceField(queryset=TipoExamen.objects.all())
+    tipo_de_examen = ModelChoiceField(queryset=TipoExamen.objects.all(),
+                                       name="nombre", model="")
