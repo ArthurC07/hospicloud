@@ -26,7 +26,7 @@
                         <tr>
                             <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
                             <td>{{ detalle.admisiones }}</td>
-                            <td>{{ detalle.dias }}</td>
+                            <td>{{ detalle.dias|floatformat:0 }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
