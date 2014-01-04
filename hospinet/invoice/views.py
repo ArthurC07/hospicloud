@@ -36,11 +36,12 @@ from spital.models import Admision
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
-from invoice.models import Recibo, Venta, Pago
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
-                                                         PagoForm, PersonaForm)
+                           PagoForm, PersonaForm,
+                           TurnoCajaForm, CierreTurnoForm)
 from inventory.models import ItemTemplate
 
 
@@ -234,7 +235,8 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
         context['form'].helper.form_action = reverse('venta-add', args=[
             context['recibo'].id])
 
-        context['pago_form'] = PagoForm(initial={'recibo': context['recibo'].id})
+        context['pago_form'] = PagoForm(
+            initial={'recibo': context['recibo'].id})
         context['pago_form'].helper.form_action = reverse('pago-add', args=[
             context['recibo'].id])
 
@@ -315,6 +317,9 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['examenes'] = Examen.objects.filter(facturado=False)
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(facturada=False)
+
+        context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
+                                                     finalizado=False).all()
 
         return context
 
@@ -820,3 +825,36 @@ class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
     """"""
     model = Pago
     form_class = PagoForm
+
+
+class TurnoCajaDetailView(DetailView, LoginRequiredMixin):
+    model = TurnoCaja
+    context_object_name = "turno"
+
+
+class TurnoCajaCreateView(CreateView, CurrentUserFormMixin):
+    model = TurnoCaja
+    form_class = TurnoCajaForm
+
+
+class TurnoCajaUpdateView(UpdateView, LoginRequiredMixin):
+    model = TurnoCaja
+    form_class = TurnoCajaForm
+
+
+class TurnoCajaFormMixin(CreateView, LoginRequiredMixin):
+    def dispatch(self, *args, **kwargs):
+        self.turno = get_object_or_404(TurnoCaja, pk=kwargs['recibo'])
+        return super(TurnoCajaFormMixin, self).dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        initial = super(TurnoCajaFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['turno'] = self.turno.id
+        return initial
+
+
+class CierreTurnoCreateView(TurnoCajaFormMixin):
+    model = CierreTurno
+    form_class = CierreTurnoForm
+
