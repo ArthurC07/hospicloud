@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            CorteView, ExamenView,
                            ReporteReciboDetailView, ReporteTipoView,
                            ReciboCreateView, ReciboInventarioView,
-                           PagoCreateView)
+                           PagoCreateView, TurnoCajaCreateView,
+                           TurnoCajaDetailView, CierreTurnoCreateView)
 
 
 urlpatterns = patterns('',
@@ -129,4 +130,17 @@ urlpatterns = patterns('',
                        url(r'^(?P<recibo>\d+)/pago/add$',
                            PagoCreateView.as_view(),
                            name='pago-add'),
+
+                       url(r'^turno/(?P<pk>\d+)$',
+                           TurnoCajaDetailView.as_view(),
+                           name='invoice-turno'),
+
+                       url(r'^turno/nuevo',
+                           TurnoCajaCreateView.as_view(),
+                           name='invoice-turno-nuevo'),
+
+                       url(r'^turno/(?P<pk>\d+)/cierre/nuevo$',
+                           CierreTurnoCreateView.as_view(),
+                           name='invoice-cierre-nuevo'),
+
 )

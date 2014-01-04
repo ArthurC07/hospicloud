@@ -3,7 +3,7 @@
 <div class="row">
   <div class="spa12">
     <section class="page-header">
-      <h1>Recibos<small>del {{ inicio }} al {{ fin }}</small></h1>
+      <h1>Reporte de Cajero {{ turno.usuario }}<small>del {{ turno.inicio }} al {{ turno.fin }}</small></h1>
     </section>
   </div>
 </div>
@@ -19,7 +19,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for recibo in recibos.all %}
+        {% for recibo in turno.recibos.all %}
         <tr>
           <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.numero }}</a></td>
           <td>{{ recibo.created }}</td>

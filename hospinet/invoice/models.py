@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -262,3 +262,40 @@ class Pago(TimeStampedModel):
     monto = models.DecimalField(blank=True, null=True, max_digits=7,
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
+
+
+class TurnoCaja(TimeStampedModel):
+    usuario = models.ForeignKey(User, related_name='turno_caja')
+    inicio = models.DateTimeField(null=True, blank=True)
+    fin = models.DateTimeField(null=True, blank=True)
+    apertura = models.DecimalField(blank=True, null=True, max_digits=7,
+                                   decimal_places=2)
+    finalizado = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return u"Turno de {0} del {1} al {2}".format(
+            self.usuario.get_full_name(),
+            self.inicio, self.fin)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('invoice-turno', args=[self.id])
+
+    def recibos(self):
+        return Recibo.objects.filter(cajero=self.usuario,
+                                     created_gte=self.inicio,
+                                     created_lte=self.fin).all()
+
+
+class CierreTurno(TimeStampedModel):
+    turno = models.ForeignKey(TurnoCaja, related_name='cierres')
+    pago = models.ForeignKey(TipoPago, related_name='cierres')
+    monto = models.DecimalField(blank=True, null=True, max_digits=7,
+                                decimal_places=2)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('invoice-turno', args=[self.recibo.id])
+

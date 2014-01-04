@@ -18,6 +18,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from django.utils import timezone
 
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
                             AntecedenteFamiliar, AntecedenteObstetrico,
@@ -83,9 +84,8 @@ class PersonaForm(FieldSetModelFormMixin):
     class Meta:
         model = Persona
 
-    nacimiento = forms.DateTimeField(widget=forms.DateInput(
-        attrs={'class': 'datepicker'}, format='%d/%m/%Y'),
-                                     input_formats=('%d/%m/%Y',))
+    nacimiento = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                    initial=timezone.now)
     domicilio = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
@@ -171,9 +171,8 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
     class Meta:
         model = AntecedenteQuirurgico
 
-    fecha = forms.DateTimeField(widget=forms.DateInput(
-        attrs={'class': 'datepicker'}, format='%d/%m/%Y'),
-                                input_formats=('%d/%m/%Y',))
+    fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)

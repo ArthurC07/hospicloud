@@ -19,15 +19,18 @@ from django.contrib.auth.models import User
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from django.utils import timezone
 from select2.fields import ModelChoiceField
 
-from invoice.models import Recibo, Venta, Pago
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno
+from persona.forms import DateTimeWidget
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
 from emergency.models import Emergencia
 from spital.models import Admision
 from imaging.models import Examen
 from inventory.models import ItemTemplate
+from users.mixins import CurrentUserFormMixin, HiddenUserForm
 
 
 class PersonaForm(FieldSetModelFormMixin):
@@ -71,8 +74,8 @@ class VentaForm(FieldSetModelFormMixin):
                                     queryset=Recibo.objects.all(),
                                     widget=forms.HiddenInput(), required=False)
     item = ModelChoiceField(name="", model="",
-                             queryset=ItemTemplate.objects.filter(
-                                 activo=True).order_by('descripcion').all())
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
@@ -164,3 +167,31 @@ class PagoForm(FieldSetModelFormMixin):
         super(PagoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar un método de Pago',
                                       *self.field_names)
+
+
+class TurnoCajaForm(HiddenUserForm):
+    class Meta:
+        model = TurnoCaja
+        exclude = ('finalizado', 'fin')
+
+    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                 initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(TurnoCajaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Iniciar un Turno', *self.field_names)
+
+
+class CierreTurnoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = CierreTurno
+
+    turno = forms.ModelChoiceField(label="",
+                                   queryset=TurnoCaja.objects.all(),
+                                   widget=forms.HiddenInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(CierreTurnoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar cierre de Turno',
+                                      *self.field_names)
+
