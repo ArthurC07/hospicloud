@@ -474,6 +474,9 @@ class OxigenoTerapia(TimeStampedModel, Precio):
     def tiempo(self):
         """Calcula el tiempo que la :class:`Persona` ha utilizado Oxigeno"""
 
+        if self.fin is None or self.inicio is None:
+            return 0
+
         delta = self.fin - self.inicio
         return delta.days * 24 + (delta.seconds / 3600)
 
