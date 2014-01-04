@@ -33,22 +33,27 @@ dot01 = Decimal('0.01')
 
 class Precio(object):
     def precio_unitario(self):
-        if not self.admision.tipo_de_venta:
-            return self.cargo.precio_de_venta
 
-        aumento = self.admision.tipo_de_venta.incremento * self.cargo\
-            .precio_de_venta
+        tipo_de_venta = self.admision.tipo_de_venta
+        precio_de_venta = self.cargo.precio_de_venta
 
-        return (self.cargo.precio_de_venta + aumento).quantize(dot01)
+        if not tipo_de_venta:
+            return precio_de_venta
+
+        aumento = tipo_de_venta.incremento * precio_de_venta
+
+        return (precio_de_venta + aumento).quantize(dot01)
 
     def descuento(self):
 
-        if not self.admision.tipo_de_venta:
+        tipo_de_venta = self.admision.tipo_de_venta
+
+        if not tipo_de_venta:
             return Decimal(0)
 
-        disminucion = self.admision.tipo_de_venta.disminucion * self.cantidad
+        disminucion = tipo_de_venta.disminucion * self.cantidad
 
-        return  disminucion * self.cargo.precio_de_venta
+        return disminucion * self.cargo.precio_de_venta
 
 
 class Turno(object):

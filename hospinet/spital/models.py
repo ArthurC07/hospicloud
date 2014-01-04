@@ -278,17 +278,21 @@ class Admision(models.Model):
         """Permite calcular el tiempo que hace falta por facturar"""
 
         ahora = timezone.now()
-        if self.ultimo_cobro >= ahora:
+        ultimo = self.hospitalizacion
+        if ultimo is None:
+            ultimo = self.admision
+
+        if ultimo >= ahora:
             return 0
 
-        dias = (ahora - self.ultimo_cobro).days
+        dias = (ahora - ultimo).days
         if dias < 1:
             return 1
 
         if self.estado == 'C':
-            return (self.fecha_alta - self.ultimo_cobro).days
+            return (self.fecha_alta - ultimo).days
 
-        return (ahora - self.ultimo_cobro).days
+        return (ahora - ultimo).days
 
     def precio_diario(self):
 
