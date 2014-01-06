@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from collections import defaultdict
 
 from decimal import Decimal
 
@@ -22,10 +23,12 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
+from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 
 from persona.models import Persona
 from inventory.models import ItemTemplate, TipoVenta
+from spital.models import Deposito
 
 dot01 = Decimal("0.01")
 
@@ -156,6 +159,10 @@ class Recibo(TimeStampedModel):
 
         return int(self.total())
 
+    def pagado(self):
+
+        return sum(p.monto for p in self.pagos.all())
+
 
 class Venta(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
@@ -263,6 +270,11 @@ class Pago(TimeStampedModel):
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
 
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('invoice-view-id', args=[self.recibo.id])
+
 
 class TurnoCaja(TimeStampedModel):
     usuario = models.ForeignKey(User, related_name='turno_caja')
@@ -283,9 +295,76 @@ class TurnoCaja(TimeStampedModel):
         return reverse('invoice-turno', args=[self.id])
 
     def recibos(self):
+
+        fin = self.fin
+        if fin is None:
+            fin = timezone.now()
+
         return Recibo.objects.filter(cajero=self.usuario,
-                                     created_gte=self.inicio,
-                                     created_lte=self.fin).all()
+                                     created__gte=self.inicio,
+                                     created__lte=fin).all()
+
+    def depositos(self):
+
+        fin = self.fin
+        if fin is None:
+            fin = timezone.now()
+
+        return Deposito.objects.filter(created__gte=self.inicio,
+                                       created__lte=fin).all()
+
+    def venta(self):
+
+        return sum(r.total() for r in self.recibos())
+
+    def depositado(self):
+
+        return sum(d.monto for d in self.depositos())
+
+    def ingresos(self):
+        return self.apertura + sum(r.pagado() for r in self.recibos())
+
+    def pagos(self):
+
+        metodos = defaultdict(Decimal)
+        for tipo in TipoPago.objects.all():
+            metodos[tipo] = 0
+
+        for recibo in self.recibos():
+
+            for pago in recibo.pagos.all():
+                metodos[pago.tipo] += pago.monto
+
+        return metodos.iteritems()
+
+    def total_cierres(self):
+
+        return sum(c.monto for c in self.cierres.all())
+
+    def diferencia(self):
+
+        metodos = defaultdict(Decimal)
+        for recibo in self.recibos():
+
+            for pago in recibo.pagos.all():
+                metodos[pago.tipo] += pago.monto
+
+        cierres = defaultdict(Decimal)
+        for cierre in self.cierres.all():
+            cierres[cierre.pago] += cierre.monto
+
+        diferencia = defaultdict(Decimal)
+        for tipo in TipoPago.objects.all():
+            diferencia[tipo] = cierres[tipo] - metodos[tipo]
+
+        return diferencia.iteritems()
+
+    def total(self):
+
+        cierre = sum(c.monto for c in self.cierres.all())
+        pagos = sum(r.pagado() for r in self.recibos())
+
+        return cierre - pagos - self.apertura
 
 
 class CierreTurno(TimeStampedModel):

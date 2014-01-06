@@ -32,7 +32,7 @@ from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
 
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
-from spital.models import Admision
+from spital.models import Admision, Deposito
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
@@ -844,7 +844,7 @@ class TurnoCajaUpdateView(UpdateView, LoginRequiredMixin):
 
 class TurnoCajaFormMixin(CreateView, LoginRequiredMixin):
     def dispatch(self, *args, **kwargs):
-        self.turno = get_object_or_404(TurnoCaja, pk=kwargs['recibo'])
+        self.turno = get_object_or_404(TurnoCaja, pk=kwargs['turno'])
         return super(TurnoCajaFormMixin, self).dispatch(*args, **kwargs)
 
     def get_initial(self):
@@ -858,3 +858,7 @@ class CierreTurnoCreateView(TurnoCajaFormMixin):
     model = CierreTurno
     form_class = CierreTurnoForm
 
+
+class DepositoDetailView(DetailView, LoginRequiredMixin):
+    model = Deposito
+    context_object_name = 'deposito'
