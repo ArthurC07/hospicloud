@@ -18,54 +18,29 @@
 
             <ul class="nav">
               <li>
-                <a href="{% url 'invoice-dia-emergencia' %}">Emergencias</a>
+                <a href="{% url 'invoice-dia-emergency' %}"><img src="{% static 'images/iconografic/emergenciasg.png' %}"></a>
               </li>
               <li>
-                <a href="{% url 'invoice-dia-altas' %}">Admisiones</a>
+                <a href="{% url 'invoice-dia-altas' %}"><img src="{% static 'images/iconografic/admisionesg.png' %}"></a>
               </li>
               <li>
-                <a href="{% url 'invoice-imaging' %}">Estudios de Im&aacute;genes</a>
+                <a href="{% url 'invoice-imaging' %}"><img src="{% static 'images/iconografic/imagenesg.png' %}"></a>
               </li>
               <li>
-                <a href="{% url 'invoice-new' %}">Crear Recibo</a>
+                <a href="{% url 'invoice-new' %}"><img src="{% static 'images/iconografic/recibog.png' %}"></a>
               </li>
-            </ul>
+                <li>
+                    <a href="{% url 'invoice-new' %}"><img src="{% static 'images/iconografic/reporteg.png' %}"></a>
+                </li>
+                <li>
+                    <a href="{% url 'invoice-new' %}"><img src="{% static 'images/iconografic/abrir_turno.png' %}"></a>
+                </li>
+              </ul>
           </div>
         </nav>
       </div>
     </div>
-    <div class="row">
-      <section class="span4">
-        {% crispy reciboperiodoform %}
-      </section>
-      <section class="span4">
-        {% crispy productoperiodoform %}
-      </section>
-      <section class="span4">
-        {% crispy emerperiodoform %}
-      </section>
-    </div>
-    <div class="row">
-      <section class="span4">
-        {% crispy remiteperiodoform %}
-      </section>
-      <section class="span4">
-        {% crispy radperiodoform %}
-      </section>
-      <section class="span4">
-        {% crispy corteform %}
-      </section>
-    </div>
-    <div class="row">
-      <section class="span4">
-        {% crispy recibodetailform %}
-      </section>
-      <section class="span4">
-        {% crispy tipoform %}
-      </section>
-        <section class="span4">
-            {% crispy inventarioform %}
-        </section>
+
     </div>
   </div>
 </div>
