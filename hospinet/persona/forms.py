@@ -34,6 +34,15 @@ class FieldSetFormMixin(forms.Form):
         self.field_names = self.fields.keys()
 
 
+class FieldSetModelFormMixinNoButton(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FieldSetModelFormMixinNoButton, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.helper.form_class = 'form-horizontal'
+        self.field_names = self.fields.keys()
+
+
 class FieldSetModelFormMixin(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FieldSetModelFormMixin, self).__init__(*args, **kwargs)
