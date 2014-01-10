@@ -23,7 +23,7 @@ from django.utils import timezone
 from select2.fields import ModelChoiceField
 
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno
-from persona.forms import DateTimeWidget
+from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
 from emergency.models import Emergencia
@@ -33,7 +33,7 @@ from inventory.models import ItemTemplate
 from users.mixins import CurrentUserFormMixin, HiddenUserForm
 
 
-class PersonaForm(FieldSetModelFormMixin):
+class PersonaForm(FieldSetModelFormMixinNoButton):
     class Meta:
         model = Persona
         fields = ('nombre', 'apellido')
