@@ -146,6 +146,6 @@ urlpatterns = patterns('',
 
                        url(r'^deposito/(?P<pk>\d+)$',
                            DepositoDetailView.as_view(),
-                           name='invoice-turno'),
+                           name='invoice-deposito'),
 
 )

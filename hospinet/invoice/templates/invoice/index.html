@@ -41,6 +41,7 @@
                 <div class="row">
                     <div class="span12">
                         {{ turno }}
+                        <a class="btn btn-primary" href="{% url 'invoice-turno' turno.id %}">Mostrar Reporte</a>
                     </div>
                 </div>
             {% endfor %}
