@@ -112,6 +112,9 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
             instances = self.formset.save()
             for instance in instances:
                 self.recibo = instance
+                self.recibo.cajero = self.request.user
+                self.recibo.save()
+
             return self.form_valid(self.formset)
         else:
             return self.form_invalid(self.formset)
