@@ -10,3 +10,4 @@ django-userena
 django-bootstrap-pagination
 django-crispy-forms
 django-select2-forms
+django-constance[database]
