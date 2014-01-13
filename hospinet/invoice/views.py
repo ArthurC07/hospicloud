@@ -41,7 +41,7 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
                            PagoForm, PersonaForm,
-                           TurnoCajaForm, CierreTurnoForm)
+                           TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm)
 from inventory.models import ItemTemplate
 
 
@@ -211,7 +211,8 @@ class VentaCreateView(CreateView, LoginRequiredMixin):
         del :class:`Producto`"""
 
         self.object = form.save(commit=False)
-        self.object.precio = self.object.item.precio_de_venta
+        if self.object.precio == Decimal(0):
+            self.object.precio = self.object.item.precio_de_venta
         self.object.impuesto = self.object.item.impuestos * self.object.monto()
         self.object.save()
 
@@ -860,6 +861,11 @@ class TurnoCajaFormMixin(CreateView, LoginRequiredMixin):
 class CierreTurnoCreateView(TurnoCajaFormMixin):
     model = CierreTurno
     form_class = CierreTurnoForm
+
+
+class TurnoCajaUpdateView(UpdateView, LoginRequiredMixin):
+    model = TurnoCaja
+    form_class = TurnoCajaCierreForm
 
 
 class DepositoDetailView(DetailView, LoginRequiredMixin):

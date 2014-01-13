@@ -195,3 +195,15 @@ class CierreTurnoForm(FieldSetModelFormMixin):
         self.helper.layout = Fieldset(u'Agregar cierre de Turno',
                                       *self.field_names)
 
+class TurnoCajaCierreForm(FieldSetModelFormMixin):
+    class Meta:
+        model = TurnoCaja
+        fields = ('finalizado', 'fin',)
+
+    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                              initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(TurnoCajaCierreForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Cerrar Turno',
+                                      *self.field_names)

@@ -1,24 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="row">
-        <div class="spa12">
+        <div class="span12">
             <section class="page-header">
-                <h1>Reporte de Cajero {{ turno.usuario }}
+                <h1>Reporte {{ turno.id }} de Cajero {{ turno.usuario }}
                     <small>del {{ turno.inicio }} al {{ turno.fin }}</small>
                 </h1>
             </section>
         </div>
     </div>
     <section class="row">
+        {% ifnotequal turno.finalizado True %}
         <div class="span3">
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                     <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
                         Pago de Cierre</a></li>
+                    <li><a href="{% url 'invoice-turno-cerrar' turno.id %}">Cerrar Turno</a></li>
                 </ul>
             </nav>
         </div>
         <div class="span9">
+        {% else %}
+        <div class="span12">
+        {% endifnotequal %}
             <h3>Total de Ventas: {{ turno.venta }}</h3>
             <table class="table table-striped table-bordered">
                 <caption>Reporte de Facturaci&oacute;n</caption>
@@ -40,7 +45,7 @@
                     </tr>
                 {% endfor %}
                 <tr>
-                    <th>Total Ingresos</th>
+                    <th>Total de Ingresos</th>
                     <th>{{ turno.ingresos }}</th>
                 </tr>
                 {% for cierre in turno.cierres.all %}
@@ -50,7 +55,7 @@
                     </tr>
                 {% endfor %}
                 <tr>
-                    <th>Total Reportado</th>
+                    <th>Total en Caja</th>
                     <th>{{ turno.total_cierres }}</th>
                 </tr>
                 {% for diferencia, monto in turno.diferencia %}
@@ -62,8 +67,12 @@
                 </tbody>
             <tfoot>
                 <tr>
-                    <th>Monto de Cierre</th>
-                    <th>{{ turno.total }}</th>
+                    <td>Menos Apertura</td>
+                    <td>{{ turno.apertura }}</td>
+                </tr>
+                <tr>
+                    <th>Diferencia Total de Cierre</th>
+                    <th>{{ turno.diferencia_total }}</th>
                 </tr>
                 <tr>
                     <th>Dep&oacute;sitos de Admisiones</th>
@@ -82,6 +91,7 @@
                     <th>Fecha</th>
                     <th>Paciente</th>
                     <th>Total</th>
+                    <th>Pagos</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -91,6 +101,7 @@
                         <td>{{ recibo.created }}</td>
                         <td>{{ recibo }}</td>
                         <td>{{ recibo.total }}</td>
+                        <td>{{ recibo.pagado }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -98,9 +109,10 @@
                 <tr>
                     <th colspan="3">Total:</th>
                     <th>{{ total }}</th>
+                    <th>{{ pagos }}</th>
                 </tr>
                 </tfoot>
             </table>
         </div>
-    </div>x
+    </div>
 {% endblock %}
