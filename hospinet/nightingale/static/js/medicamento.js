@@ -15,7 +15,7 @@ Medicamento.prototype.notificar = function() {
 				title: 'Suministrar Medicamento',
 				text: '<a href="' + location + medicamento.id + '/dosificar">' + medicamento.cargo.descripcion + ' a ' +
 				medicamento.admision.paciente.nombre + ' ' + medicamento.admision.paciente.apellido + '</a>',
-				hide: false,
+				hide: false
 			});
 		});
 	});

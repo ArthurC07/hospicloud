@@ -270,6 +270,12 @@ class Pago(TimeStampedModel):
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
 
+    def __unicode__(self):
+
+        return "Pago en {2} de {0} al recibo {1}".format(self.monto,
+                                                         self.recibo.id,
+                                                         self.tipo.nombre)
+
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
@@ -322,7 +328,7 @@ class TurnoCaja(TimeStampedModel):
         return sum(d.monto for d in self.depositos())
 
     def ingresos(self):
-        return self.apertura + sum(r.pagado() for r in self.recibos())
+        return sum(r.pagado() for r in self.recibos())
 
     def pagos(self):
 
@@ -359,7 +365,7 @@ class TurnoCaja(TimeStampedModel):
 
         return diferencia.iteritems()
 
-    def total(self):
+    def diferencia_total(self):
 
         cierre = sum(c.monto for c in self.cierres.all())
         pagos = sum(r.pagado() for r in self.recibos())
@@ -376,5 +382,5 @@ class CierreTurno(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('invoice-turno', args=[self.recibo.id])
+        return reverse('invoice-turno', args=[self.turno.id])
 
