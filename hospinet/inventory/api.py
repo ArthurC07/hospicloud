@@ -31,7 +31,7 @@ class ItemTemplateResource(ModelResource):
                                              Authentication(),
                                              ApiKeyAuthentication()) 
 
-class InventarioREsource(ModelResource):
+class InventarioResource(ModelResource):
     
     class Meta:
         
