@@ -15,10 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
-
 from decimal import Decimal
 
-from django.conf import settings
+from constance import config
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
@@ -66,7 +65,7 @@ class Recibo(TimeStampedModel):
 
     def numero(self):
 
-        return settings.INVOICE_OFFSET + self.id
+        return config.INVOICE_OFFSET + self.id
 
     def anular(self):
 
@@ -271,7 +270,6 @@ class Pago(TimeStampedModel):
     comprobante = models.CharField(max_length=255, blank=True, null=True)
 
     def __unicode__(self):
-
         return "Pago en {2} de {0} al recibo {1}".format(self.monto,
                                                          self.recibo.id,
                                                          self.tipo.nombre)

@@ -21,6 +21,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
+
+
 def env_var(key, default=None):
     """Retrieves env vars and makes Python boolean replacements"""
     val = os.environ.get(key, default)
@@ -29,6 +31,7 @@ def env_var(key, default=None):
     elif val == 'False':
         val = False
     return val
+
 
 COMPANY = None
 if COMPANY != None:
@@ -45,7 +48,7 @@ DEBUG = env_var('DEBUG', True)
 TEMPLATE_DEBUG = env_var('DEBUG', True)
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+# ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -53,11 +56,12 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env_var('DBNAME', 'hospinet'), # Or path to database file if using sqlite3.
+        'NAME': env_var('DBNAME', 'hospinet'),
+        # Or path to database file if using sqlite3.
         'USER': env_var('DBUSER', 'hospinet'), # Not used with sqlite3.
         'PASSWORD': env_var('DBPASSWORD', 'hospinet'), # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '', # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -131,9 +135,9 @@ else:
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+# Put strings here, like "/home/html/static" or "C:/www/django/static".
+# Always use forward slashes, even on Windows.
+# Don't forget to use absolute paths, not relative paths.
 )
 
 # List of finder classes that know how to find static files in
@@ -141,7 +145,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -151,7 +155,7 @@ SECRET_KEY = '%d3r*q0fk6#5y-j%88zn#f+pq16)v2x6ap%q_y)7dj+r59@_#^'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -206,7 +210,9 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'crispy_forms',
     'bootstrap-pagination',
-    'select2'
+    'select2',
+    'constance',
+    'constance.backends.database',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -265,6 +271,13 @@ USE_THOUSAND_SEPARATOR = True
 LANGUAGE_CODE = 'es-NI'
 TIME_ZONE = 'America/Tegucigalpa'
 
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+CONSTANCE_CONFIG = {
+    'EMERGENCIA': (1, u'Cuenta utilizada para estadia en emergencias'),
+    'INVOICE_OFFSET': (0, u'Numeración para iniciar recibos'),
+}
+
+
 #EMAIL_HOST = 'smtp.gmail.com'
 #EMAIL_PORT = 587
 #EMAIL_HOST_USER = 'me@gmail.com'
@@ -272,5 +285,4 @@ TIME_ZONE = 'America/Tegucigalpa'
 
 #HAYSTACK_SIGNAL_PROCESSOR = 'queued_search.signals.QueuedSignalProcessor'
 QUEUE_BACKEND = 'dummy'
-INVOICE_OFFSET = 0
 CRISPY_TEMPLATE_PACK = 'bootstrap'
