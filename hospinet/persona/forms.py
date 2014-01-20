@@ -93,8 +93,8 @@ class PersonaForm(FieldSetModelFormMixin):
     class Meta:
         model = Persona
 
-    nacimiento = forms.DateTimeField(widget=DateTimeWidget(), required=False,
-                                    initial=timezone.now)
+    nacimiento = forms.DateField(widget=DateWidget(), required=False,
+                                 initial=timezone.now)
     domicilio = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):

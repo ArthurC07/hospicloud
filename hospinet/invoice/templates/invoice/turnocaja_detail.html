@@ -95,7 +95,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for recibo in turno.recibos.all %}
+                {% for recibo in turno.recibos %}
                     <tr>
                         <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.numero }}</a></td>
                         <td>{{ recibo.created }}</td>
