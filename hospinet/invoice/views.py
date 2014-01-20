@@ -19,6 +19,7 @@ from collections import defaultdict
 from datetime import datetime, time
 from decimal import Decimal
 
+from constance import config
 from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -318,7 +319,8 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['inventarioform'] = InventarioForm(prefix='inventario')
         context['inventarioform'].set_action('invoice-inventario')
 
-        context['examenes'] = Examen.objects.filter(facturado=False)
+        context['examenes'] = Examen.objects.filter(facturado=False).order_by(
+            id).all()
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(facturada=False)
 
@@ -715,6 +717,18 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
             venta.cantidad = 1
             venta.precio = honorario.monto
             venta.impuesto = honorario.item.impuestos
+            venta.descontable = False
+
+            venta.save()
+            recibo.ventas.add(venta)
+
+        for deposito in self.object.depositos.all():
+            venta = Venta()
+            venta.item = ItemTemplate.get(config.DEPOSIT_ACCOUNT)
+            venta.recibo = recibo
+            venta.cantidad = 1
+            venta.precio = 0 - deposito.monto
+            venta.impuesto = 0
             venta.descontable = False
 
             venta.save()

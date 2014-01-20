@@ -275,6 +275,7 @@ CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_CONFIG = {
     'EMERGENCIA': (1, u'Cuenta utilizada para estadia en emergencias'),
     'INVOICE_OFFSET': (0, u'Numeración para iniciar recibos'),
+    'DEPOSIT_ACCOUNT': (1, u'Cuenta utilizada para disminuir depositos'),
 }
 
 
