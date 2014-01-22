@@ -209,7 +209,7 @@ INSTALLED_APPS = (
     'guardian',
     'easy_thumbnails',
     'crispy_forms',
-    'bootstrap-pagination',
+    'bootstrap_pagination',
     'select2',
     'constance',
     'constance.backends.database',
