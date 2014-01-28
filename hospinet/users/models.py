@@ -21,13 +21,15 @@ from django.db.models.signals import post_save
 from userena.models import UserenaBaseProfile
 from django_extensions.db.models import TimeStampedModel
 
-from inventory.models import Inventario
+from inventory.models import Inventario, ItemTemplate
 
 
 class UserProfile(UserenaBaseProfile):
     user = models.OneToOneField(User, primary_key=True)
     inventario = models.ForeignKey(Inventario, related_name='usuarios',
                                    blank=True, null=True)
+    honorario = models.ForeignKey(ItemTemplate, related_name='usuarios',
+                                  blank=True, null=True)
 
     def __unicode__(self):
         return self.user.username
