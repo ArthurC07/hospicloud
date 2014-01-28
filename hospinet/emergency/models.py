@@ -68,6 +68,9 @@ class Emergencia(TimeStampedModel):
             cargo.save()
 
         horas = self.tiempo()
+        if horas <= 0:
+            horas = 1
+        
         items[config.EMERGENCIA] = horas
         items[self.usuario.profile.honorarios] = 1
 
