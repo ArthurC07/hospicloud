@@ -670,6 +670,7 @@ class EmergenciaFacturarView(UpdateView, LoginRequiredMixin):
         recibo = Recibo()
         recibo.cajero = self.request.user
         recibo.cliente = self.object.persona
+        recibo.tipo_de_venta = self.object.tipo_de_venta
 
         recibo.save()
 
