@@ -55,7 +55,7 @@ class Emergencia(TimeStampedModel):
 
     def tiempo(self):
         ahora = timezone.now()
-        delta = (ahora - self.created).seconds // 3600
+        delta = ahora - self.created
         hours, remainder = divmod(delta.seconds, 3600)
         return hours
 
