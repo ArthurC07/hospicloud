@@ -72,7 +72,7 @@ class Emergencia(TimeStampedModel):
             horas = 1
         
         items[config.EMERGENCIA] = horas
-        items[self.usuario.profile.honorarios] = 1
+        items[self.usuario.profile.honorario] = 1
 
         return items
 
