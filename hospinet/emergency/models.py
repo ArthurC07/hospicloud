@@ -71,7 +71,7 @@ class Emergencia(TimeStampedModel):
         if horas <= 0:
             horas = 1
 
-        emergencia = ItemTemplate.objects.get(config.EMERGENCIA)
+        emergencia = ItemTemplate.objects.get(pk=config.EMERGENCIA)
         
         items[emergencia] = horas
         items[self.usuario.profile.honorario] = 1
