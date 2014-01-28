@@ -70,10 +70,12 @@ class Emergencia(TimeStampedModel):
         horas = self.tiempo()
         if horas <= 0:
             horas = 1
-        
-        items[config.EMERGENCIA] = horas
-        items[self.usuario.profile.honorario] = 1
 
+        emergencia = ItemTemplate.objects.get(config.EMERGENCIA)
+        
+        items[emergencia] = horas
+        items[self.usuario.profile.honorario] = 1
+        
         return items
 
     def total(self):
