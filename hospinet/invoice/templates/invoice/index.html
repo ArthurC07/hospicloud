@@ -159,7 +159,7 @@
                                 <td>{{ examen.persona.identificacion }}</td>
                                 <td>{{ examen.persona.nacimiento }}</td>
                                 <td><a class="btn btn-block"
-                                       href="{% url 'invoice-create-examen' examen.id %}">Facturar</a>
+                                       href="{% url 'examen-invoice' examen.id %}">Facturar</a>
                                 </td>
                             </tr>
                         {% endfor %}
