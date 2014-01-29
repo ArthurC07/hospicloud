@@ -129,7 +129,7 @@ class ExamenCreateView(CreateView, LoginRequiredMixin):
 
 class ExamenFormMixin(CreateView, LoginRequiredMixin):
     def dispatch(self, *args, **kwargs):
-        self.exaemn = get_object_or_404(Examen, pk=kwargs['examen'])
+        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
         return super(ExamenFormMixin, self).dispatch(*args, **kwargs)
 
     def get_initial(self):

@@ -16,13 +16,14 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
+from crispy_forms.layout import Submit, Fieldset
+from select2.fields import ModelChoiceField
 
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
     Estudio, TipoExamen
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
 from persona.models import Persona
 
-from select2.fields import ModelChoiceField
 
 class ExamenForm(FieldSetModelFormMixin):
     """Permite mostrar formularios para crear :class:`Examen`es nuevos"""
@@ -107,7 +108,6 @@ class EmailForm(FieldSetFormMixin):
 
 
 class EstudioForm(FieldSetModelFormMixin):
-
     class Meta:
         model = Estudio
 
@@ -115,4 +115,8 @@ class EstudioForm(FieldSetModelFormMixin):
                                     queryset=Examen.objects.all(),
                                     widget=forms.HiddenInput())
     tipo_de_examen = ModelChoiceField(queryset=TipoExamen.objects.all(),
-                                       name="nombre", model="")
+                                      name="nombre", model="")
+
+    def __init__(self, *args, **kwargs):
+        super(EstudioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Examen', *self.field_names)

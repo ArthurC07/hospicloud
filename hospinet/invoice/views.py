@@ -761,7 +761,7 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
 
         recibo = Recibo()
         recibo.cajero = self.request.user
-        recibo.cliente = self.object.paciente
+        recibo.cliente = self.object.persona
         recibo.radiologo = self.object.radiologo
         recibo.save()
 
