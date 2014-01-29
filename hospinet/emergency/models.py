@@ -68,13 +68,16 @@ class Emergencia(TimeStampedModel):
             cargo.save()
 
         horas = self.tiempo()
-        if horas <= 0:
-            horas = 1
 
         emergencia = ItemTemplate.objects.get(pk=config.EMERGENCIA)
-        
-        items[emergencia] = horas
+
+        items[emergencia] = 1
         items[self.usuario.profile.honorario] = 1
+
+        if horas >= 1:
+            restante = horas - 1
+            extra = ItemTemplate.objects.get(pk=config.EXTRA_EMERGENCIA)
+            items[extra] = restante
         
         return items
 
