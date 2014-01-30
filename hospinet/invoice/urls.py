@@ -31,7 +31,7 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            PagoCreateView, TurnoCajaCreateView,
                            TurnoCajaDetailView, CierreTurnoCreateView,
                            DepositoDetailView, TurnoCajaUpdateView,
-                           ExamenFacturarView)
+                           ExamenFacturarView, DepositoFacturarView)
 
 
 urlpatterns = patterns('',
@@ -128,6 +128,10 @@ urlpatterns = patterns('',
        url(r'^admision/(?P<pk>\d+)$',
            AdmisionFacturarView.as_view(),
            name='admision-invoice'),
+
+       url(r'^deposito/(?P<pk>\d+)$',
+           DepositoFacturarView.as_view(),
+           name='deposito-invoice'),
 
        url(r'^examen/(?P<pk>\d+)$',
            ExamenFacturarView.as_view(),
