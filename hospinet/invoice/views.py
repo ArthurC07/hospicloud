@@ -759,6 +759,7 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         recibo.cajero = self.request.user
         recibo.cliente = self.object.persona
         recibo.radiologo = self.object.radiologo
+        recibo.tipo_de_venta = self.object.tipo_de_venta
         recibo.save()
 
         crear_ventas(items, recibo)
