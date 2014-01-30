@@ -38,7 +38,8 @@ from spital.models import Admision, Deposito
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
-from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, TipoPago, \
+    dot01
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
@@ -633,7 +634,7 @@ class ExamenView(ListView, LoginRequiredMixin):
         return Examen.objects.filter(facturado=False)
 
 
-def crear_ventas(items, recibo):
+def crear_ventas(items, recibo, examen=False):
     """Permite convertir un :class:`dict` de :class:`ItemTemplate` y sus
     cantidades en una las :class:`Venta`s de un :class:`Recibo`"""
 
@@ -642,7 +643,13 @@ def crear_ventas(items, recibo):
         venta.item = item
         venta.recibo = recibo
         venta.cantidad = items[item]
-        venta.precio = item.precio_de_venta
+
+        precio = item.precio_de_venta
+
+        if examen:
+            venta.precio = precio - precio * item.comision * dot01
+        else:
+            venta.precio = precio
         venta.impuesto = item.impuestos
 
         venta.save()
@@ -762,7 +769,15 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         recibo.tipo_de_venta = self.object.tipo_de_venta
         recibo.save()
 
-        crear_ventas(items, recibo)
+        crear_ventas(items, recibo, True)
+
+        honorarios = sum(i.precio_de_venta * i.comision * dot01 for i in items)
+        venta = Venta()
+        venta.recibo = recibo
+        venta.precio = honorarios
+        venta.cantidad = 1
+        venta.item = self.object.radiologo.item
+        venta.save()
 
         self.object.save()
 

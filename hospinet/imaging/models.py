@@ -43,6 +43,14 @@ class TipoExamen(models.Model):
         return self.nombre
 
 
+class Radiologo(TimeStampedModel):
+    nombre = models.CharField(max_length=255, blank=True)
+    item = models.ForeignKey(ItemTemplate, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.nombre
+
+
 class EstudioProgramado(models.Model):
     """Permite que se planifique un :class:`Examen` antes de
     efectuarlo"""
@@ -53,6 +61,7 @@ class EstudioProgramado(models.Model):
                                 related_name="estudios_progamados")
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
                                        related_name="estudios_progamados")
+    radiologo = models.ForeignKey(Radiologo, related_name='estudios')
     fecha = models.DateField(default=date.today)
     remitio = models.CharField(max_length=200)
     radiologo = models.CharField(max_length=200, blank=True, null=True)
@@ -75,6 +84,7 @@ class EstudioProgramado(models.Model):
         examen.remitio = self.remitio
         examen.radiologo = self.radiologo
         examen.tipo_de_venta = self.tipo_de_venta
+        examen.radiologo = self.radiologo
         self.efectuado = True
         self.save()
         return examen
@@ -94,13 +104,13 @@ class Examen(models.Model):
                                 related_name="examenes")
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
                                        related_name="examenes")
+    radiologo = models.ForeignKey(Radiologo, related_name='examenes')
     fecha = models.DateTimeField(default=datetime.now)
     uuid = UUIDField(version=4)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='estudios_realizados')
     remitio = models.CharField(max_length=200, null=True)
     facturado = models.NullBooleanField(default=False)
-    radiologo = models.CharField(max_length=200, blank=True, null=True)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='examenes')
 
     def get_absolute_url(self):
