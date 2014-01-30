@@ -15,12 +15,11 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
-
 from datetime import datetime, date
 import os
 import subprocess
-from django.core.urlresolvers import reverse
 
+from django.core.urlresolvers import reverse
 from django.db import models
 from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
@@ -112,7 +111,6 @@ class Examen(models.Model):
         items[self.tipo_de_examen.item] = 1
 
         for estudio in self.estudios.all():
-
             items[estudio.tipo_de_examen.item] = 1
 
         return items

@@ -29,6 +29,7 @@ from persona.models import Persona
 from inventory.models import ItemTemplate, TipoVenta
 from spital.models import Deposito
 
+
 dot01 = Decimal("0.01")
 
 

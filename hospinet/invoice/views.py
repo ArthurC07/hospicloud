@@ -31,6 +31,7 @@ from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView)
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
+from spital.forms import DepositoForm
 
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from spital.models import Admision, Deposito
@@ -723,16 +724,11 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
             recibo.ventas.add(venta)
 
         for deposito in self.object.depositos.all():
-            venta = Venta()
-            venta.item = ItemTemplate.get(config.DEPOSIT_ACCOUNT)
-            venta.recibo = recibo
-            venta.cantidad = 1
-            venta.precio = 0 - deposito.monto
-            venta.impuesto = 0
-            venta.descontable = False
-
-            venta.save()
-            recibo.ventas.add(venta)
+            pago = Pago()
+            pago.recibo = recibo
+            pago.monto = deposito.monto
+            pago.tipo = config.DEPOSIT_PAYMENT
+            pago.save()
 
         self.object.ultimo_cobro = timezone.now()
         self.object.save()
@@ -885,3 +881,26 @@ class TurnoCajaUpdateView(UpdateView, LoginRequiredMixin):
 class DepositoDetailView(DetailView, LoginRequiredMixin):
     model = Deposito
     context_object_name = 'deposito'
+
+
+class DepositoFacturarView(UpdateView, LoginRequiredMixin):
+    model = Deposito
+    form_class = DepositoForm
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        recibo = Recibo()
+        recibo.cajero = self.request.user
+        recibo.cliente = self.object.ademision.paciente
+
+        venta = Venta()
+        venta.item = ItemTemplate.get(config.DEPOSIT_ACCOUNT)
+        venta.recibo = recibo
+        venta.cantidad = 1
+        venta.precio = self.object.monto
+        venta.impuesto = 0
+        venta.descontable = False
+        venta.save()
+
+        return HttpResponseRedirect(recibo.get_absolute_url())
