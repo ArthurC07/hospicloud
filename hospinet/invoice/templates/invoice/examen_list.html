@@ -25,7 +25,7 @@
           <td>{{ examen.tipo_de_examen.nombre }}</td>
           <td>{{ examen.persona.identificacion }}</td>
           <td>{{ examen.persona.nacimiento }}</td>
-          <td><a class="btn btn-success btn-block" href="{% url 'examen-invoice' examen.uuid %}">Facturar</a></td>
+          <td><a class="btn btn-success btn-block" href="{% url 'examen-invoice' examen.id %}">Facturar</a></td>
         </tr>
         {% endfor %}
       </tbody>
