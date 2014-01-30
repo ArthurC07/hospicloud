@@ -148,8 +148,6 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
         signos = self.object.signos_vitales.extra(
             order_by=['fecha_y_hora']).all()
 
-        context['min'] = self.object.hospitalizacion.strftime('%Y-%m-%d %H:%M')
-
         if self.object.signos_vitales.count() == 0:
             context['temp_promedio'] = 0
             context['pulso_promedio'] = 0
