@@ -278,6 +278,7 @@ CONSTANCE_CONFIG = {
     'DEPOSIT_ACCOUNT': (1, u'Cuenta utilizada para disminuir depositos'),
     'EXTRA_EMERGENCIA': (
     1, u'Cuenta utilizada para agregar tiempo extra de emergencias'),
+    'DEPOSIT_PAYMENT': (1, u'Tipo de Pago para Abonos a cuenta'),
 }
 
 
