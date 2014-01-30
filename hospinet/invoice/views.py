@@ -723,6 +723,12 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
             venta.save()
             recibo.ventas.add(venta)
 
+        for deposito in self.object.depositos.all():
+            pago = Pago()
+            pago.recibo = recibo
+            pago.monto = deposito.monto
+            pago.save()
+
         self.object.ultimo_cobro = timezone.now()
         self.object.save()
 
