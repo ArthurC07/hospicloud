@@ -27,7 +27,7 @@ from django_extensions.db.models import TimeStampedModel
 from sorl.thumbnail import ImageField
 
 from persona.models import Persona
-from inventory.models import ItemTemplate
+from inventory.models import ItemTemplate, TipoVenta
 
 
 class TipoExamen(models.Model):
@@ -57,6 +57,7 @@ class EstudioProgramado(models.Model):
     remitio = models.CharField(max_length=200)
     radiologo = models.CharField(max_length=200, blank=True, null=True)
     efectuado = models.NullBooleanField(default=False)
+    tipo_de_venta = models.ForeignKey(TipoVenta, related_name='estudios')
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -73,6 +74,7 @@ class EstudioProgramado(models.Model):
         examen.usuario = self.usuario
         examen.remitio = self.remitio
         examen.radiologo = self.radiologo
+        examen.tipo_de_venta = self.tipo_de_venta
         self.efectuado = True
         self.save()
         return examen
@@ -99,6 +101,7 @@ class Examen(models.Model):
     remitio = models.CharField(max_length=200, null=True)
     facturado = models.NullBooleanField(default=False)
     radiologo = models.CharField(max_length=200, blank=True, null=True)
+    tipo_de_venta = models.ForeignKey(TipoVenta, related_name='examenes')
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
