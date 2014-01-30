@@ -727,7 +727,7 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
             pago = Pago()
             pago.recibo = recibo
             pago.monto = deposito.monto
-            pago.tipo = config.DEPOSIT_PAYMENT
+            pago.tipo = TipoPago.objects.get(pk=config.DEPOSIT_PAYMENT)
             pago.save()
 
         self.object.ultimo_cobro = timezone.now()
