@@ -64,7 +64,6 @@ class EstudioProgramado(models.Model):
     radiologo = models.ForeignKey(Radiologo, related_name='estudios')
     fecha = models.DateField(default=date.today)
     remitio = models.CharField(max_length=200)
-    radiologo = models.CharField(max_length=200, blank=True, null=True)
     efectuado = models.NullBooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='estudios')
 
