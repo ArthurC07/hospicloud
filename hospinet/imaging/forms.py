@@ -42,6 +42,10 @@ class ExamenForm(FieldSetModelFormMixin):
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
+    def __init__(self, *args, **kwargs):
+        super(ExamenForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Editar Examen', *self.field_names)
+
 
 class ImagenForm(FieldSetModelFormMixin):
     """"Permite mostrar un formulario para agregar una :class:`Imagen`
@@ -91,6 +95,11 @@ class EstudioProgramadoForm(FieldSetModelFormMixin):
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
+    def __init__(self, *args, **kwargs):
+        super(EstudioProgramadoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Estudio Programado',
+                                      *self.field_names)
+
 
 class EmailForm(FieldSetFormMixin):
     """Permite mostrar un formulario para enviar notificaciones a diversos
@@ -100,6 +109,10 @@ class EmailForm(FieldSetFormMixin):
     examen = forms.ModelChoiceField(label="",
                                     queryset=Examen.objects.all(),
                                     widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(EmailForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Enviar Correo', *self.field_names)
 
     def send_email(self):
         """Realiza el envio del correo electrónico"""
