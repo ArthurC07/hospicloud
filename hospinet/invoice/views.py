@@ -910,7 +910,7 @@ class DepositoFacturarView(UpdateView, LoginRequiredMixin):
         recibo.cliente = self.object.admision.paciente
 
         venta = Venta()
-        venta.item = ItemTemplate.get(config.DEPOSIT_ACCOUNT)
+        venta.item = ItemTemplate.objects.get(pk=config.DEPOSIT_ACCOUNT)
         venta.recibo = recibo
         venta.cantidad = 1
         venta.precio = self.object.monto
