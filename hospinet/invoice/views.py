@@ -319,7 +319,7 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['inventarioform'] = InventarioForm(prefix='inventario')
         context['inventarioform'].set_action('invoice-inventario')
 
-        context['examenes'] = Examen.objects.filter(facturado=False)
+        context['examenes'] = Examen.objects.filter(facturado=False).order_by('-id')
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(facturada=False)
 
