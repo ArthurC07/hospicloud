@@ -491,5 +491,3 @@ class AdmisionDeleteView(DeleteView, LoginRequiredMixin):
 class DepositoCreateView(AdmisionFormMixin):
     model = Deposito
     form_class = DepositoForm
-    template_name = 'admision/deposito_form.html'
-
