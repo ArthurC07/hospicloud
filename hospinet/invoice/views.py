@@ -28,7 +28,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
-                                  DetailView, ListView, RedirectView)
+                                  DetailView, ListView, RedirectView,
+                                  DeleteView)
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
 from spital.forms import DepositoForm
@@ -176,6 +177,18 @@ class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
+class VentaDeleteView(DeleteView, LoginRequiredMixin):
+    model = Venta
+
+    def get_object(self, queryset=None):
+        obj = super(VentaDeleteView, self).get_object(queryset)
+        self.recibo = obj.recibo
+        return obj
+
+    def get_success_url(self):
+        return self.recibo.get_absolute_url()
+
+
 class ReciboFormMixin(CreateView):
     def dispatch(self, *args, **kwargs):
         self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
@@ -188,26 +201,11 @@ class ReciboFormMixin(CreateView):
         return initial
 
 
-class VentaCreateView(CreateView, LoginRequiredMixin):
+class VentaCreateView(ReciboFormMixin, LoginRequiredMixin):
     """Permite agregar :class:`Venta`s a un :class:`Recibo`"""
 
     model = Venta
     form_class = VentaForm
-
-    def get_form_kwargs(self):
-        """Agrega el :class:`Recibo` obtenida como el valor a utilizar en el
-        formulario que será llenado posteriormente"""
-
-        kwargs = super(VentaCreateView, self).get_form_kwargs()
-        kwargs.update({'initial': {'recibo': self.recibo.id}})
-        return kwargs
-
-    def dispatch(self, *args, **kwargs):
-        """Obtiene el :class:`Recibo` que se entrego como argumento en la
-        url"""
-
-        self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
-        return super(VentaCreateView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         """Guarda el objeto generado espeficando precio obtenido directamente
@@ -777,6 +775,7 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         venta.precio = honorarios
         venta.cantidad = 1
         venta.item = self.object.radiologo.item
+        venta.impuesto = self.object.radiologo.item.impuestos
         venta.save()
 
         self.object.save()
