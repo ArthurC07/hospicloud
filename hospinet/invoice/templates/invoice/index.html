@@ -75,7 +75,7 @@
                                         {% for deposito in admision.depositos.all %}
                                             <li>
                                                 Dep&oacute;sito {{ deposito.fecha }} {{ deposito.monto }}
-                                                <a class="btn" href="{% url 'deposito-invoice' %}">Facturar</a>
+                                                <a class="btn" href="{% url 'deposito-invoice' deposito.id %}">Facturar</a>
                                             </li>
                                         {% endfor %}
                                     </ul>
