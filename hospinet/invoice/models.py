@@ -163,6 +163,10 @@ class Recibo(TimeStampedModel):
 
         return sum(p.monto for p in self.pagos.all())
 
+    def debido(self):
+
+        return self.total() - self.pagado()
+
 
 class Venta(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite

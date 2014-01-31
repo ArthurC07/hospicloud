@@ -90,13 +90,25 @@
                     <th>M&eacute;todo</th>
                     <th>Monto</th>
                 </tr>
+            </thead>
+            <tbody>
                 {% for pago in recibo.pagos.all %}
                 <tr>
                     <td>{{ pago.tipo }}</td>
                     <td>{{ pago.monto }}</td>
                 </tr>
                 {% endfor %}
-            </thead>
+            </tbody>
+        <tfoot>
+            <tr>
+                <th>Total Pagado</th>
+                <th>{{ recibo.pagado }}</th>
+            </tr>
+            <tr>
+                <th>Monto Debido</th>
+                <th>{{ recibo.debido }}</th>
+            </tr>
+        </tfoot>
         </table>
     </div>
 </div>
