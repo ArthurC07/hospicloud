@@ -907,7 +907,7 @@ class DepositoFacturarView(UpdateView, LoginRequiredMixin):
 
         recibo = Recibo()
         recibo.cajero = self.request.user
-        recibo.cliente = self.object.ademision.paciente
+        recibo.cliente = self.object.admision.paciente
 
         venta = Venta()
         venta.item = ItemTemplate.get(config.DEPOSIT_ACCOUNT)
