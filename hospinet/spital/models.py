@@ -190,13 +190,15 @@ class Admision(models.Model):
         """Permite que registrar el momento en que una :class:`Admision` ha
         sido enviada a enfermeria para ingresar al hospital"""
 
-        if self.hospitalizacion == None or self.hospitalizacion <= self.momento:
+        if self.hospitalizacion is None or self.hospitalizacion <= self.momento:
+            self.hospitalizacion = timezone.now()
             self.estado = 'H'
             self.save()
 
     def ingresar(self):
 
-        if self.ingreso == None or self.ingreso <= self.momento:
+        if self.ingreso is None or self.ingreso <= self.momento:
+            self.ingreso = timezone.now()
             self.estado = 'I'
             self.save()
 
@@ -225,7 +227,7 @@ class Admision(models.Model):
         """Calcula el tiempo que se tarda una :class:`Persona` para ser
         ingresada en el :class:`Hospital`"""
 
-        if self.ingreso == None or self.ingreso <= self.hospitalizacion:
+        if self.ingreso is None or self.ingreso <= self.hospitalizacion:
             return (timezone.now() - self.hospitalizacion).total_seconds() / 60
 
         return (self.ingreso - self.hospitalizacion).total_seconds() / 60
@@ -252,7 +254,7 @@ class Admision(models.Model):
                 dias = 0
             return Decimal(dias + fraccion_dias)
 
-        if self.ingreso == None or self.ingreso <= self.hospitalizacion:
+        if self.ingreso is None or self.ingreso <= self.hospitalizacion:
             dias = (timezone.now() - self.hospitalizacion).days
             fraccion_dias = \
             divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[
