@@ -2,17 +2,17 @@
 {% load staticfiles %}
 {% block content %}
 <div class="row">
-    <div class="span12">
+    <div class="col-md-12">
         <div class="page-header">
             <h1>{{ estudio.tipo_de_examen.nombre }} de {{ estudio.persona.nombre_completo }}</h1>
         </div>
     </div>
 </div>
 <div class="row">
-    <aside class="span3 navbar">
+    <aside class="col-md-3 navbar">
         {% include 'snippets/examen_aside.html' %}
     </aside>
-    <article id="examen" class="span9">
+    <article id="examen" class="col-md-9">
         {% include 'snippets/examen.html' with examen=estudio %}
         <a href="{% url 'examen-efectuar' estudio.id %}" class="btn btn-primary">Efectuar Estudio</a>
         <a href="{% url 'invoice-create' estudio.persona.id %}" class="btn btn-primary">Crear Recibo</a>

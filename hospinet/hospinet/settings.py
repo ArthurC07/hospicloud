@@ -289,4 +289,4 @@ CONSTANCE_CONFIG = {
 
 #HAYSTACK_SIGNAL_PROCESSOR = 'queued_search.signals.QueuedSignalProcessor'
 QUEUE_BACKEND = 'dummy'
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

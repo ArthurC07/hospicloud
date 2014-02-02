@@ -2,14 +2,14 @@
 {% load l10n %}{% load staticfiles %}{% load humanize %}
 {% block content %}
     <div class="row">
-        <div class="span12 text-center">
+        <div class="col-md-12 text-center">
             <div class="page-header">
                 <h4>Estado de Cuenta</h4>
             </div>
         </div>
     </div>
     <div class="row">
-        <section class="span12">
+        <section class="col-md-12">
             <table class="table">
                 <tr>
                     <td><h1>{{ admision.paciente.nombre_completo }}</h1></td>
@@ -17,7 +17,7 @@
                     <td>
                         <a class="btn btn-block no-print" href="{% url 'admision-invoice' admision.id %}">Facturar</a>
                         <div class="row">
-                            <div class="span3">
+                            <div class="col-md-3">
                                 <br />
                                 <ul>
                                     <li>Cuenta {{ admision.id }}</li>
@@ -32,7 +32,7 @@
         </section>
     </div>
     <div class="row">
-        <section class="span12 full-size-print">
+        <section class="col-md-12 full-size-print">
             <table class="table table-striped table-bordered no-more-tables">
             <thead>
                 <tr>
@@ -115,7 +115,7 @@
         </section>
     </div>
     <div class="row">
-        <section class="span12">
+        <section class="col-md-12">
             {% include 'snippets/depositos_list.html' %}
         </section>
     </div>

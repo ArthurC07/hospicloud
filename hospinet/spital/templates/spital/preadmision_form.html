@@ -2,7 +2,7 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <div class="page-header">
       <h1>{{ emergencia.persona.nombre_completo }}<small> Hospitalizar Emergencia</small></h1>
     </div>
@@ -10,7 +10,7 @@
   </section>
 </div>
 <div class="row">
-  <section id="emergencia" class="span12">
+  <section id="emergencia" class="col-md-12">
     {% include 'emergency/snippets/emergencia.html' with emergencia=emergencia %}
   </section>
 </div>

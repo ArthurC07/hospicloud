@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block content %}
     <div class="row">
-        <section class="span12">
+        <section class="col-md-12">
             <div class="page-header">
                 <h1>{{ admision.paciente.nombre_completo }} <br/>
                     <small>
@@ -15,7 +15,7 @@
     </div>
     <div class="row">
         {% include 'snippets/aside.html' with admision=admision %}
-        <div id="admision" class="span9">
+        <div id="admision" class="col-md-9">
             <div id="signos_vitales" class="bloque-superior">
                 <article id="temperatura-article">
                     <section>

@@ -10,8 +10,7 @@
         </div>
     </div>
     <div class="row">
-        <aside class="span3">
-            {% include 'snippets/examen_aside.html' %}
+        <aside class="col-md-3">
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
                     <li>
@@ -41,7 +40,7 @@
                 </ul>
             </nav>
         </aside>
-        <article id="examen" class="span9">
+        <article id="examen" class="col-md-9">
             {% include 'snippets/persona.html' with persona=examen.persona %}
             {% include 'snippets/examen.html' with examen=examen %}
             <section id="imagenes">

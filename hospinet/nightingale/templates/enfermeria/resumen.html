@@ -3,7 +3,7 @@
 {% load l10n %}
 {% block content %}
     <div class="row action-nav-normal">
-        <section class="span10">
+        <section class="col-md-10">
             <div class="page-header">
                 <h1>{{ admision.paciente.nombre_completo }} <br />
                     <small>
@@ -11,12 +11,12 @@
                     </small></h1>
             </div>
         </section>
-        <section class="span2 action-nav-button">
+        <section class="col-md-2 action-nav-button">
             <a href="{% url 'nightingale-view-id' admision.id %}"><i class="icon-home"></i><span>Regresar</span></a>
         </section>
     </div>
 <div class="row">
-  <div id="informacion" class="span12">
+  <div id="informacion" class="col-md-12">
     {% include 'snippets/persona_fotografia.html' with persona=admision.paciente %}
     {% include 'snippets/persona.html' with persona=admision.paciente %}
     {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %}

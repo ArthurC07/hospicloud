@@ -4,13 +4,16 @@
 ===============================================================================
 */
 body {
-    padding-top: 40px;
+    padding-top: 60px;
+    padding-bottom: 60px;
 }
+
 @media screen and (max-width: 768px) {
     body {
         padding-top: 0px;
     }
 }
+
 /*
 ===============================================================================
  Login Form
@@ -26,30 +29,27 @@ body {
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
+
 .form-signin .form-signin-heading, .form-signin .checkbox {
     margin-bottom: 10px;
 }
+
 .form-signin input[type="text"], .form-signin input[type="password"] {
     font-size: 16px;
     height: auto;
     margin-bottom: 15px;
     padding: 7px 9px;
 }
+
 /*
 ===============================================================================
  Sidebar and table shadow
 ===============================================================================
 */
-aside ul.nav-tabs.nav-stacked {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
-}
-.table-bordered {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
-}
-
 table caption {
     font-weight: bold;
 }
+
 /* ============================================================================
  * Tables
  * ============================================================================
@@ -103,15 +103,19 @@ table caption {
         content: attr(data-title);
     }
 }
+
 .table td {
     vertical-align: middle;
 }
+
 .table th {
     text-align: center;
 }
+
 .text-justify {
     text-align: justify;
 }
+
 .action-nav-normal .action-nav-button {
     display: inline-block;
     margin-bottom: 15px;
@@ -120,16 +124,17 @@ table caption {
     text-shadow: 0px 0px 4px #acacac;
     filter: dropshadow(color=#acacac, offx=0, offy=0);
 }
+
 .action-nav-normal .action-nav-button a {
     -moz-box-sizing: border-box;
     background: #fafafa; /* Old browsers */
     background: -moz-linear-gradient(top, #fafafa 0%, #ececec 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fafafa), color-stop(100%,#ececec)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #fafafa 0%,#ececec 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #fafafa 0%,#ececec 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #fafafa 0%,#ececec 100%); /* IE10+ */
-    background: linear-gradient(to bottom, #fafafa 0%,#ececec 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#ececec',GradientType=0 ); /* IE6-9 */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fafafa), color-stop(100%, #ececec)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #fafafa 0%, #ececec 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #fafafa 0%, #ececec 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #fafafa 0%, #ececec 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #fafafa 0%, #ececec 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fafafa', endColorstr='#ececec', GradientType=0); /* IE6-9 */
     border: 1px solid #D5D5D5;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 0 0 1px #fafafa inset, 0 1px 1px 0 #DDDDDD;
@@ -140,59 +145,61 @@ table caption {
     white-space: nowrap;
     text-decoration: none;
 }
+
 .icon-envelope:before {
     content: "?";
 }
+
 [class^="icon-"]:before, [class*=" icon-"]:before {
     display: inline-block;
     text-decoration: inherit;
 }
+
 .action-nav-normal .action-nav-button a > i {
     color: #808080;
     font-size: 32px;
 }
+
 .action-nav-normal .action-nav-button {
     text-align: center;
     vertical-align: middle;
 }
+
 .action-nav-normal .action-nav-button a > span {
     display: block;
     font-weight: 600;
     padding-top: 4px;
 }
+
 caption {
     font-size: large;
     padding-bottom: 5px;
 }
-.table td.text-right{
+
+.table td.text-right {
     text-align: right;
 }
+
 .card {
     margin: 2em 0;
 }
-footer, .index-link, .navbar-inverse navbar-inner {
-    background: #004BCC;
-}
+
 .index-link a {
     color: white;
     display: block;
     font-size: large;
+    background: #004BCC none;
 }
-.index-link .span3 {
+
+.index-link .col-md-3 {
     padding: 1.3em 0;
-}
-footer
-{
-    height: 200px;
-    color: white;
-    margin: 1em 0;
 }
 
 nav.navbar-inverse .navbar-inner {
-    background-image: none;
-    background-color: #004BCC;
+    background: #004BCC none;
     color: white;
 }
+
 .navbar-inverse .brand, .navbar-inverse .nav > li > a {
     color: #ffffff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);

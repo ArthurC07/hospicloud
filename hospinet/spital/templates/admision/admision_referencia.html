@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="row">
-  <div class="span12">
+  <div class="col-md-12">
     <section class="page-header">
       <h1>{{ admision.paciente.nombre_completo }} <small>Fiadores</small></h1>
     </section>
@@ -13,7 +13,7 @@
 </div>
 <div class="row">
 {% include 'snippets/admision_aside.html' %}
-  <section class="span9">
+  <section class="col-md-9">
   <form enctype="multipart/form-data" class="styled" method="post">
     {% csrf_token %} <h1>Ingresar una nueva Referencia</h1>
     <div id="messages"></div>

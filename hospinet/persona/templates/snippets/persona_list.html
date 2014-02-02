@@ -1,5 +1,5 @@
 {% if personas %}
-<table class="table table-striped table-bordered">
+<table class="table table-striped table-responsive">
   <thead>
     <tr>
       <th>Identificaci&oacute;n</th>
@@ -18,7 +18,7 @@
       <td>{{ persona.nombre }}</td>
       <td>{{ persona.obtener_edad }}</td>
       <td>{{ persona.get_sexo_display }}</td>
-      <td><a class="btn" href="{% url 'persona-view-id' persona.id %}">Ver</a></td>
+      <td><a class="btn btn-default" href="{% url 'persona-view-id' persona.id %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

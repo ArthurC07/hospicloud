@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="row">
-        <div class="span12">
+        <div class="col-md-12">
             <section class="page-header">
                 <h1>Reporte {{ turno.id }} de Cajero {{ turno.usuario }}
                     <small>del {{ turno.inicio }} al {{ turno.fin }}</small>
@@ -11,7 +11,7 @@
     </div>
     <section class="row">
         {% ifnotequal turno.finalizado True %}
-        <div class="span3">
+        <div class="col-md-3">
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                     <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
@@ -20,9 +20,9 @@
                 </ul>
             </nav>
         </div>
-        <div class="span9">
+        <div class="col-md-9">
         {% else %}
-        <div class="span12">
+        <div class="col-md-12">
         {% endifnotequal %}
             <h3>Total de Ventas: {{ turno.venta }}</h3>
             <table class="table table-striped table-bordered">
@@ -83,7 +83,7 @@
         </div>
     </section>
     <div class="row">
-        <div class="span12">
+        <div class="col-md-12">
             <table class="table table-striped table-bordered">
                 <thead>
                 <tr>

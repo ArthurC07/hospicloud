@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <section class="page-header">
       <h1>Control de Glucometr&iacute;a de {{ admision.paciente.nombre_completo }} <small> {{ admision.habitacion }}</small></h1>
       <p>
@@ -12,9 +12,9 @@
 </div>
 <div class="row">
   {% include 'snippets/aside.html' with admision=admision %}
-  <section class="span9">
+  <section class="col-md-9">
     <div class="row">
-      <section class="span9">
+      <section class="col-md-9">
         {% include 'snippets/glicemia_table.html' %}
         <a href="{% url 'enfermeria-glicemia-agregar' admision.id %}" class="btn btn-primary">Agregar Glicemia</a>
         {% include 'snippets/insulina_table.html' %}

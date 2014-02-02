@@ -2,14 +2,14 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="row">
-        <div class="span12">
+        <div class="col-md-12">
             <div class="page-header">
                 <h1>{{ consultorio.nombre }} <small>Consultorio</small></h1>
             </div>
         </div>
     </div>
     <div class="row">
-        <aside class="span3">
+        <aside class="col-md-3">
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                     <li><a href="{% url 'persona-create' %}">Agregar Paciente</a></li>
@@ -17,16 +17,16 @@
                 </ul>
             </nav>
         </aside>
-        <div class="span9">
+        <div class="col-md-9">
             <div class="row">
-                <section class="span9">
+                <section class="col-md-9">
                     {% crispy buscar %}
                 </section>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="span12">
+        <div class="col-md-12">
             <table class="table table-bordered table-striped">
                 <caption>Pacientes</caption>
                 <thead>
