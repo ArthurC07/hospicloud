@@ -4,20 +4,20 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <div class="page-header">
-                <h4>Estado de Cuenta</h4>
+                <h3>Estado de Cuenta</h3>
             </div>
         </div>
     </div>
     <div class="row">
         <section class="col-md-12">
-            <table class="table">
+            <table class="col-md-12">
                 <tr>
                     <td><h1>{{ admision.paciente.nombre_completo }}</h1></td>
                     <td></td>
                     <td>
-                        <a class="btn btn-block no-print" href="{% url 'admision-invoice' admision.id %}">Facturar</a>
+                        <a class="btn btn-block btn-primary no-print" href="{% url 'admision-invoice' admision.id %}">Facturar</a>
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-12">
                                 <br />
                                 <ul>
                                     <li>Cuenta {{ admision.id }}</li>
