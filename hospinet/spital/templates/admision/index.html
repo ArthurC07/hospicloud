@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block title %} Admisiones{% endblock %}
 {% load staticfiles %}
 {% block content %}
 <div class="row">
@@ -44,15 +45,6 @@
   <article class="col-md-12">
     {% include 'snippets/admision_list.html' with admisiones=admisiones %}
   </article>
-</section>
-<section class="row">
-  <div id="admision" class="col-md-12">
-    <section class="page-header">
-      <h2>Tiempo de Espera</h2>
-    </section>
-    <div id="grafico"></div>
-    <h3>Promedio: {{ promedio }} minutos</h3>
-  </div>
 </section>
 {% endblock %}
 {% block scripts %}
