@@ -21,7 +21,7 @@ from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
                               ExamenFisico)
 
 from select2.fields import ModelChoiceField
-from crispy_forms.layout import Submit, Fieldset
+from crispy_forms.layout import Fieldset
 from persona.forms import FieldSetModelFormMixin
 from persona.models import Persona
 from django.contrib.auth.models import User
@@ -54,7 +54,6 @@ class EmergenciaBaseForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         
         super(EmergenciaBaseForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Guardar'))
 
 class RemisionInternaForm(EmergenciaBaseForm):
     
