@@ -74,6 +74,8 @@ class Recibo(TimeStampedModel):
         calculos financieros"""
 
         self.nulo = True
+        for pago in self.pagos.all():
+            pago.delete()
         self.save()
 
     def cerrar(self):
