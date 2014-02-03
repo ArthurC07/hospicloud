@@ -11,7 +11,7 @@
     </div>
     <section class="row">
         {% ifnotequal turno.finalizado True %}
-        <div class="col-md-3">
+        <div class="col-md-3 no-print">
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                     <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
