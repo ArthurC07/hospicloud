@@ -9,202 +9,208 @@
         </div>
     </div>
     <div class="row">
-        <div id="informacion" class="col-md-12">
-            <div class="row">
-                <div class="col-md-12">
-                    <nav class="navbar navbar-default" role="navigation">
-                        <div class="navbar-header">
-                            <a class="navbar-brand">Pendiente de Facturaci&oacute;n</a>
-                            <ul class="nav navbar-nav">
-                                <li>
-                                    <a href="{% url 'invoice-dia-emergencia' %}">Emergencias</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'invoice-dia-altas' %}">Admisiones</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'invoice-imaging' %}">Estudios
-                                        de Im&aacute;genes</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'invoice-new' %}">Crear
-                                        Recibo</a>
-                                </li>
-                                <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
-                                    Turno</a></li>
-                            </ul>
-                        </div>
-                    </nav>
+    <div id="informacion" class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <a class="navbar-brand">Pendiente de Facturaci&oacute;n</a>
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="{% url 'invoice-dia-emergencia' %}">Emergencias</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-dia-altas' %}">Admisiones</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-imaging' %}">Estudios
+                                de Im&aacute;genes</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-new' %}">Crear
+                                Recibo</a>
+                        </li>
+                        <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
+                            Turno</a></li>
+                    </ul>
                 </div>
-            </div>
-            {% for turno in turnos %}
-                <div class="row">
-                    <div class="col-md-12">
-                        {{ turno }}
-                        <a class="btn btn-primary"
-                           href="{% url 'invoice-turno' turno.id %}">Mostrar
-                            Reporte</a>
-                    </div>
-                </div>
-            {% endfor %}
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table table-striped table-bordered">
-                        <caption>Admisiones sin Facturar</caption>
-                        <thead class="gradient">
-                        <tr>
-                            <th>C&oacute;digo</th>
-                            <th>Nombre</th>
-                            <th>Edad</th>
-                            <th>Sexo</th>
-                            <th>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for admision in admisiones %}
-                            <tr>
-                                <td>
-                                    <a href="{% url 'persona-view-id' admision.paciente.id %}">
-                                        {% if admision.paciente.identificacion %}
-                                            {{ admision.paciente.identificacion }}
-                                        {% else %}
-                                            {{ admision.paciente.id }}
-                                        {% endif %}
-                                    </a></td>
-                                <td>
-                                    {{ admision.paciente.nombre_completo }}
-                                    <ul>
-                                        {% for deposito in admision.depositos.all %}
-                                            <li>
-                                                Dep&oacute;sito {{ deposito.fecha }} {{ deposito.monto }}
-                                                <a class="btn"
-                                                   href="{% url 'deposito-invoice' deposito.id %}">Facturar</a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </td>
-                                <td>{{ admision.paciente.obtener_edad }}</td>
-                                <td>{{ admision.paciente.get_sexo_display }}</td>
-                                <td><a class="btn btn-block"
-                                       href="{% url 'admision-invoice' admision.id %}">Facturar</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-
-                <div class="col-md-12">
-                    <table class="table table-striped table-bordered">
-                        <caption>Emergencias sin Facturar</caption>
-                        <thead class="gradient">
-                        <tr>
-                            <th>Identificaci&oacute;n</th>
-                            <th>Nombre</th>
-                            <th>Edad</th>
-                            <th>Sexo</th>
-                            <th>Fecha</th>
-                            <th>Atendi&oacute;</th>
-                            <th>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for emergencia in emergencias %}
-                            <tr>
-                                <td>
-                                    <a href="{% url 'persona-view-id' emergencia.persona.id %}">
-                                        {% if emergencia.persona.identificacion %}
-                                            {{ emergencia.persona.identificacion }}
-                                        {% else %}
-                                            {{ emergencia.persona.id }}
-                                        {% endif %}
-                                    </a>
-                                </td>
-                                <td>{{ emergencia.persona.nombre_completo }}</td>
-                                <td>{{ emergencia.persona.obtener_edad }}</td>
-                                <td>{{ emergencia.persona.get_sexo_display }}</td>
-                                <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
-                                <td>{{ emergencia.usuario }}</td>
-                                <td>
-                                    {% if not emergencia.facturada %}
-                                        <a class="btn btn-block"
-                                           href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-
-                <div class="col-md-12">
-                    <table class="table table-striped table-bordered">
-                        <caption>Estudios de Im&aacute;genes sin Facturar
-                        </caption>
-                        <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Paciente</th>
-                            <th>Examen</th>
-                            <th>Identificaci&oacute;n</th>
-                            <th>Nacimiento</th>
-                            <th>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for examen in examenes %}
-                            <tr>
-                                <td>{{ examen.fecha }}</td>
-                                <td>{{ examen.persona.nombre_completo }}</td>
-                                <td>{{ examen.tipo_de_examen.nombre }}</td>
-                                <td>{{ examen.persona.identificacion }}</td>
-                                <td>{{ examen.persona.nacimiento }}</td>
-                                <td><a class="btn btn-block"
-                                       href="{% url 'examen-invoice' examen.id %}">Facturar</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <section class="col-md-4">
-                    {% crispy reciboperiodoform %}
-                </section>
-                <section class="col-md-4">
-                    {% crispy productoperiodoform %}
-                </section>
-                <section class="col-md-4">
-                    {% crispy emerperiodoform %}
-                </section>
-            </div>
-            <div class="row">
-                <section class="col-md-4">
-                    {% crispy remiteperiodoform %}
-                </section>
-                <section class="col-md-4">
-                    {% crispy radperiodoform %}
-                </section>
-                <section class="col-md-4">
-                    {% crispy corteform %}
-                </section>
-            </div>
-            <div class="row">
-                <section class="col-md-4">
-                    {% crispy recibodetailform %}
-                </section>
-                <section class="col-md-4">
-                    {% crispy tipoform %}
-                </section>
-                <section class="col-md-4">
-                    {% crispy inventarioform %}
-                </section>
+            </nav>
+        </div>
+    </div>
+    {% for turno in turnos %}
+        <div class="row">
+            <div class="col-md-12">
+                {{ turno }}
+                <a class="btn btn-primary"
+                   href="{% url 'invoice-turno' turno.id %}">Mostrar
+                    Reporte</a>
             </div>
         </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col-md-12">
+            <section class="tabbable">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#admisiones" data-toggle="tab">Admisiones</a></li>
+                    <li><a href="#emergencias" data-toggle="tab">Emergencias</a></li>
+                    <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a></li>
+                </ul>
+                <div class="tab-content">
+                    <article id="admisiones" class="tab-pane active">
+                        <table class="table table-striped table-bordered">
+                            <caption>Admisiones sin Facturar</caption>
+                            <thead class="gradient">
+                            <tr>
+                                <th>C&oacute;digo</th>
+                                <th>Nombre</th>
+                                <th>Edad</th>
+                                <th>Sexo</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for admision in admisiones %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'persona-view-id' admision.paciente.id %}">
+                                            {% if admision.paciente.identificacion %}
+                                                {{ admision.paciente.identificacion }}
+                                            {% else %}
+                                                {{ admision.paciente.id }}
+                                            {% endif %}
+                                        </a></td>
+                                    <td>
+                                        {{ admision.paciente.nombre_completo }}
+                                        <ul>
+                                            {% for deposito in admision.depositos.all %}
+                                                <li>
+                                                    Dep&oacute;sito {{ deposito.fecha }} {{ deposito.monto }}
+                                                    <a class="btn btn-primary"
+                                                       href="{% url 'deposito-invoice' deposito.id %}">Facturar</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>{{ admision.paciente.obtener_edad }}</td>
+                                    <td>{{ admision.paciente.get_sexo_display }}</td>
+                                    <td><a class="btn btn-block btn-primary"
+                                           href="{% url 'admision-invoice' admision.id %}">Facturar</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </article>
+
+                    <article id="emergencias" class="tab-pane">
+                        <table class="table table-striped table-bordered">
+                            <caption>Emergencias sin Facturar</caption>
+                            <thead class="gradient">
+                            <tr>
+                                <th>Identificaci&oacute;n</th>
+                                <th>Nombre</th>
+                                <th>Edad</th>
+                                <th>Sexo</th>
+                                <th>Fecha</th>
+                                <th>Atendi&oacute;</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for emergencia in emergencias %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'persona-view-id' emergencia.persona.id %}">
+                                            {% if emergencia.persona.identificacion %}
+                                                {{ emergencia.persona.identificacion }}
+                                            {% else %}
+                                                {{ emergencia.persona.id }}
+                                            {% endif %}
+                                        </a>
+                                    </td>
+                                    <td>{{ emergencia.persona.nombre_completo }}</td>
+                                    <td>{{ emergencia.persona.obtener_edad }}</td>
+                                    <td>{{ emergencia.persona.get_sexo_display }}</td>
+                                    <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ emergencia.usuario }}</td>
+                                    <td>
+                                        {% if not emergencia.facturada %}
+                                            <a class="btn btn-block btn-primary"
+                                               href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </article>
+                    <article id="imagenes" class="tab-pane">
+                        <table class="table table-striped table-bordered">
+                            <caption>Estudios de Im&aacute;genes sin Facturar
+                            </caption>
+                            <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Paciente</th>
+                                <th>Examen</th>
+                                <th>Identificaci&oacute;n</th>
+                                <th>Nacimiento</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for examen in examenes %}
+                                <tr>
+                                    <td>{{ examen.fecha }}</td>
+                                    <td>{{ examen.persona.nombre_completo }}</td>
+                                    <td>{{ examen.tipo_de_examen.nombre }}</td>
+                                    <td>{{ examen.persona.identificacion }}</td>
+                                    <td>{{ examen.persona.nacimiento }}</td>
+                                    <td><a class="btn btn-block btn-primary"
+                                           href="{% url 'examen-invoice' examen.id %}">Facturar</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-4">
+            {% crispy reciboperiodoform %}
+        </section>
+        <section class="col-md-4">
+            {% crispy productoperiodoform %}
+        </section>
+        <section class="col-md-4">
+            {% crispy emerperiodoform %}
+        </section>
+    </div>
+    <div class="row">
+        <section class="col-md-4">
+            {% crispy remiteperiodoform %}
+        </section>
+        <section class="col-md-4">
+            {% crispy radperiodoform %}
+        </section>
+        <section class="col-md-4">
+            {% crispy corteform %}
+        </section>
+    </div>
+    <div class="row">
+        <section class="col-md-4">
+            {% crispy recibodetailform %}
+        </section>
+        <section class="col-md-4">
+            {% crispy tipoform %}
+        </section>
+        <section class="col-md-4">
+            {% crispy inventarioform %}
+        </section>
+    </div>
+    </div>
     </div>
 {% endblock %}
