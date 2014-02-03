@@ -30,7 +30,7 @@ from emergency.models import Emergencia
 from spital.models import Admision
 from imaging.models import Examen
 from inventory.models import ItemTemplate
-from users.mixins import CurrentUserFormMixin, HiddenUserForm
+from users.mixins import HiddenUserForm
 
 
 class PersonaForm(FieldSetModelFormMixinNoButton):
@@ -195,6 +195,7 @@ class CierreTurnoForm(FieldSetModelFormMixin):
         self.helper.layout = Fieldset(u'Agregar cierre de Turno',
                                       *self.field_names)
 
+
 class TurnoCajaCierreForm(FieldSetModelFormMixin):
     class Meta:
         model = TurnoCaja
@@ -206,4 +207,15 @@ class TurnoCajaCierreForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(TurnoCajaCierreForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Cerrar Turno',
+                                      *self.field_names)
+
+
+class VentaPeriodoForm(PeriodoForm):
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
+
+    def __init__(self, *args, **kwargs):
+        super(VentaPeriodoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Detalle de Ventas de un Periodo',
                                       *self.field_names)
