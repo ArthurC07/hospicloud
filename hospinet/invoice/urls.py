@@ -31,7 +31,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            PagoCreateView, TurnoCajaCreateView,
                            TurnoCajaDetailView, CierreTurnoCreateView,
                            DepositoDetailView, TurnoCajaUpdateView,
-                           ExamenFacturarView, DepositoFacturarView)
+                           ExamenFacturarView, DepositoFacturarView,
+                           VentaDeleteView)
 
 
 urlpatterns = patterns('',
@@ -72,6 +73,10 @@ urlpatterns = patterns('',
        url(r'^(?P<recibo>\d+)/venta/add$',
            VentaCreateView.as_view(),
            name='venta-add'),
+
+       url(r'^venta/(?P<pk>\d+)/delete$',
+           VentaDeleteView.as_view(),
+           name='venta-delete'),
 
        url(r'^periodo$',
            ReporteReciboView.as_view(),
