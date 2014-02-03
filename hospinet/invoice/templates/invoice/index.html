@@ -9,8 +9,6 @@
         </div>
     </div>
     <div class="row">
-    <div id="informacion" class="col-md-12">
-    <div class="row">
         <div class="col-md-12">
             <nav class="navbar navbar-default" role="navigation">
                 <div class="navbar-header">
@@ -51,9 +49,14 @@
         <div class="col-md-12">
             <section class="tabbable">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#admisiones" data-toggle="tab">Admisiones</a></li>
-                    <li><a href="#emergencias" data-toggle="tab">Emergencias</a></li>
-                    <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a></li>
+                    <li class="active"><a href="#admisiones" data-toggle="tab">Admisiones</a>
+                    </li>
+                    <li><a href="#emergencias" data-toggle="tab">Emergencias</a>
+                    </li>
+                    <li><a href="#imagenes"
+                           data-toggle="tab">Im&aacute;genes</a></li>
+
+                    <li><a href="#reporte" data-toggle="tab">Reportes</a>
                 </ul>
                 <div class="tab-content">
                     <article id="admisiones" class="tab-pane active">
@@ -103,7 +106,7 @@
                     </article>
 
                     <article id="emergencias" class="tab-pane">
-                        <table class="table table-striped table-bordered">
+                        <table class="table table-striped no-more-tables">
                             <caption>Emergencias sin Facturar</caption>
                             <thead class="gradient">
                             <tr>
@@ -145,7 +148,7 @@
                         </table>
                     </article>
                     <article id="imagenes" class="tab-pane">
-                        <table class="table table-striped table-bordered">
+                        <table class="table table-striped no-more-tables">
                             <caption>Estudios de Im&aacute;genes sin Facturar
                             </caption>
                             <thead>
@@ -174,43 +177,43 @@
                             </tbody>
                         </table>
                     </article>
+                    <article id="reporte" class="tab-pane">
+                        <div class="row">
+                            <section class="col-md-4">
+                                {% crispy reciboperiodoform %}
+                            </section>
+                            <section class="col-md-4">
+                                {% crispy productoperiodoform %}
+                            </section>
+                            <section class="col-md-4">
+                                {% crispy emerperiodoform %}
+                            </section>
+                        </div>
+                        <div class="row">
+                            <section class="col-md-4">
+                                {% crispy remiteperiodoform %}
+                            </section>
+                            <section class="col-md-4">
+                                {% crispy radperiodoform %}
+                            </section>
+                            <section class="col-md-4">
+                                {% crispy corteform %}
+                            </section>
+                        </div>
+                        <div class="row">
+                            <section class="col-md-4">
+                                {% crispy recibodetailform %}
+                            </section>
+                            <section class="col-md-4">
+                                {% crispy tipoform %}
+                            </section>
+                            <section class="col-md-4">
+                                {% crispy inventarioform %}
+                            </section>
+                        </div>
+                    </article>
                 </div>
             </section>
         </div>
-    </div>
-    <div class="row">
-        <section class="col-md-4">
-            {% crispy reciboperiodoform %}
-        </section>
-        <section class="col-md-4">
-            {% crispy productoperiodoform %}
-        </section>
-        <section class="col-md-4">
-            {% crispy emerperiodoform %}
-        </section>
-    </div>
-    <div class="row">
-        <section class="col-md-4">
-            {% crispy remiteperiodoform %}
-        </section>
-        <section class="col-md-4">
-            {% crispy radperiodoform %}
-        </section>
-        <section class="col-md-4">
-            {% crispy corteform %}
-        </section>
-    </div>
-    <div class="row">
-        <section class="col-md-4">
-            {% crispy recibodetailform %}
-        </section>
-        <section class="col-md-4">
-            {% crispy tipoform %}
-        </section>
-        <section class="col-md-4">
-            {% crispy inventarioform %}
-        </section>
-    </div>
-    </div>
     </div>
 {% endblock %}

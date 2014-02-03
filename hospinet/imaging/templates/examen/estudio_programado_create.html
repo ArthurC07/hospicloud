@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
-<form  class="styled" method="post">
-  {% csrf_token %} <h1>Programar un Examen</h1>
-  <div id="messages"></div>{% include 'snippets/form.html' with form=form %}
-  <p>
-    <input type="submit" value="Guardar" />
-  </p>
-</form>
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+        <section class="col-md-6 col-md-offset-3">
+            {% crispy form %}
+        </section>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
 {% endblock %}
