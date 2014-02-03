@@ -12,10 +12,10 @@
         <div id="informacion" class="col-md-12">
             <div class="row">
                 <div class="col-md-12">
-                    <nav class="navbar">
+                    <nav class="navbar navbar-default" role="navigation">
                         <div class="navbar-header">
                             <a class="navbar-brand">Pendiente de Facturaci&oacute;n</a>
-                            <ul class="nav">
+                            <ul class="nav navbar-nav">
                                 <li>
                                     <a href="{% url 'invoice-dia-emergencia' %}">Emergencias</a>
                                 </li>
@@ -41,7 +41,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         {{ turno }}
-                        <a class="btn btn-primary" href="{% url 'invoice-turno' turno.id %}">Mostrar Reporte</a>
+                        <a class="btn btn-primary"
+                           href="{% url 'invoice-turno' turno.id %}">Mostrar
+                            Reporte</a>
                     </div>
                 </div>
             {% endfor %}
@@ -75,7 +77,8 @@
                                         {% for deposito in admision.depositos.all %}
                                             <li>
                                                 Dep&oacute;sito {{ deposito.fecha }} {{ deposito.monto }}
-                                                <a class="btn" href="{% url 'deposito-invoice' deposito.id %}">Facturar</a>
+                                                <a class="btn"
+                                                   href="{% url 'deposito-invoice' deposito.id %}">Facturar</a>
                                             </li>
                                         {% endfor %}
                                     </ul>
