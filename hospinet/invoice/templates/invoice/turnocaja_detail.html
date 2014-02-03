@@ -11,7 +11,7 @@
     </div>
     <section class="row">
         {% ifnotequal turno.finalizado True %}
-        <div class="col-md-3">
+        <div class="col-md-3 no-print">
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                     <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
@@ -25,7 +25,7 @@
         <div class="col-md-12">
         {% endifnotequal %}
             <h3>Total de Ventas: {{ turno.venta }}</h3>
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered table-condensed">
                 <caption>Reporte de Facturaci&oacute;n</caption>
                 <thead>
                 <tr>
@@ -82,37 +82,4 @@
             </table>
         </div>
     </section>
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th>N&uacute;mero</th>
-                    <th>Fecha</th>
-                    <th>Paciente</th>
-                    <th>Total</th>
-                    <th>Pagos</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for recibo in turno.recibos %}
-                    <tr>
-                        <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.numero }}</a></td>
-                        <td>{{ recibo.created }}</td>
-                        <td>{{ recibo }}</td>
-                        <td>{{ recibo.total }}</td>
-                        <td>{{ recibo.pagado }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th colspan="3">Total:</th>
-                    <th>{{ total }}</th>
-                    <th>{{ pagos }}</th>
-                </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
 {% endblock %}
