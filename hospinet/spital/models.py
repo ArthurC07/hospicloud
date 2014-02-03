@@ -191,14 +191,12 @@ class Admision(models.Model):
         sido enviada a enfermeria para ingresar al hospital"""
 
         if self.hospitalizacion is None or self.hospitalizacion <= self.momento:
-            self.hospitalizacion = timezone.now()
             self.estado = 'H'
             self.save()
 
     def ingresar(self):
 
         if self.ingreso is None or self.ingreso <= self.momento:
-            self.ingreso = timezone.now()
             self.estado = 'I'
             self.save()
 

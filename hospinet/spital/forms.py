@@ -76,10 +76,10 @@ class IngresarForm(FieldSetModelFormMixin):
         model = Admision
         fields = ('habitacion', 'ingreso', 'hospitalizacion')
 
-    ingreso = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+    ingreso = forms.DateTimeField(widget=DateTimeWidget(), required=True,
                                   initial=timezone.now)
     hospitalizacion = forms.DateTimeField(widget=DateTimeWidget(),
-                                          required=False,
+                                          required=True,
                                           initial=timezone.now)
 
     def __init__(self, *args, **kwargs):

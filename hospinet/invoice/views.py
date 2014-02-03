@@ -343,7 +343,7 @@ class ReciboPeriodoView(TemplateView):
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.recibos = Recibo.objects.filter(
                 created__gte=self.inicio,
-                created__lte=self.fin
+                created__lte=self.fin,
             )
 
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
@@ -485,6 +485,38 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
         context['productos'] = productos.items()
         context['impuesto'] = sum(r.impuesto() for r in self.recibos.all())
         context['total'] = sum(r.total() for r in self.recibos.all())
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        return context
+
+
+class VentaListView(ListView):
+    context_object_name = 'ventas'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        self.form = PeriodoForm(request.GET, prefix='venta')
+
+        self.inicio = self.form.cleaned_data['inicio']
+        self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+        self.item = get_object_or_404(ItemTemplate,
+                                      pk=self.form.cleaned_data['item'])
+
+        return super(VentaListView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+
+        return Venta.objects.filter(
+            recibo__created__gte=self.inicio,
+            recibo__created__lte=self.fin,
+            recibo__nulo=False,
+            item=self.item,
+        )
+
+    def get_context_data(self, **kwargs):
+
+        context = super(VentaListView, self).get_context_data(**kwargs)
+        context['item'] = self.item
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context
