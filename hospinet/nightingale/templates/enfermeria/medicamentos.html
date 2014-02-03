@@ -2,7 +2,7 @@
 {% block content %}
 {% include 'snippets/aside.html' %}
 <div class="content">
-  <section id="medicamentos" class="span9">
+  <section id="medicamentos" class="col-md-9">
     <h1>Medicamentos de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
     {% if admision.medicamentos.count == 0 %}
       <p>No hay medicamentos indicados</p>

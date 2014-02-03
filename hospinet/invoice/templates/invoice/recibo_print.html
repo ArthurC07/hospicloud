@@ -9,21 +9,23 @@
 <body>
 <div class="container">
     <div class="row">
-        <table class="table span12">
+        <table class="table col-md-12">
             <tr>
-                <td class="span3">
+                <td class="col-md-3">
                     <img src="{% static 'images/h_logo.png' %}">
                 </td>
                 <td class="span6">
                     <div class="text-center">
                         <section class="page-header">
                             <h1>
-                                <small>El nuevo</small><br />
+                                <small>El nuevo</small>
+                                <br/>
                                 HOSPIMED
                             </h1>
                         </section>
                         <small>
-                            <p>Colonia Kennedy contiguo a la Biblioteca del Banco Central de Honduras, Tegucigalpa.
+                            <p>Colonia Kennedy contiguo a la Biblioteca del
+                                Banco Central de Honduras, Tegucigalpa.
                                 <br/>
                                 Teléfonos: 22301911, 22302360.
                                 R.T.N 08019995324317
@@ -35,68 +37,79 @@
         </table>
     </div>
     <div class="row">
-        <div class="span12">
-                    <div>Cliente: {{ recibo.cliente }}
-                        <p>Factura {{ recibo.numero }}</p>
-                        Fecha: {{ recibo.created }}</div>
+        <div class="col-md-12">
+            <div>Cliente: {{ recibo.cliente }}
+                <div class="col-md-12">
+                    <table style="width: 100%">
+                        <thead>
+                        <tr>
+                        <th>Cliente: {{ recibo.cliente }}</th>
+                        <th class="text-right">
+                            <p>Factura {{ recibo.numero }}</p>
+                            Fecha:
+                    {{ recibo.created }}</div>
 
-                        <table style="width: 100%">
-                            <thead>
-                            <tr>
-                                <th>Cantidad</th>
-                                <th>Concepto</th>
-                                <th>Precio unitario</th>
-                                <th>Subtotal</th>
-                                <th>Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
-                                <th>Total</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for venta in recibo.ventas.all %}
-                                <tr>
-                                    <td>{{ venta.cantidad }}</td>
-                                    <td>{{ venta.item }}</td>
-                                    <td>{{ venta.precio_unitario }}</td>
-                                    <td>{{ venta.monto }}</td>
-                                    <td>{{ venta.descuento_tipo }}</td>
-                                    <td>{{ venta.total }}</td>
-                                </tr>
-                            {% endfor %}
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Subtotal:</th>
-                                <th>{{ recibo.subtotal }}</th>
-                            </tr>
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Impuestos:</th>
-                                <th>{{ recibo.impuesto }}</th>
-                            </tr>
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Descuento:</th>
-                                <th>{{ recibo.descuento }}</th>
-                            </tr>
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Total:</th>
-                                <th>{{ recibo.total }}</th>
-                            </tr>
-                            </tbody>
-                        </table>
-        </div>
-        <div class="row">
-            <div class="offset4 span6">
-                <br />
-                <br />
-                <br />
-                <p>Firma Cliente</p>
+                <table style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Concepto</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                        <th>
+                            Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for venta in recibo.ventas.all %}
+                        <tr>
+                            <td>{{ venta.cantidad }}</td>
+                            <td>{{ venta.item }}</td>
+                            <td>{{ venta.precio_unitario }}</td>
+                            <td>{{ venta.monto }}</td>
+                            <td>{{ venta.descuento_tipo }}</td>
+                            <td>{{ venta.total }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Subtotal:</th>
+                        <th>{{ recibo.subtotal }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Impuestos:</th>
+                        <th>{{ recibo.impuesto }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Descuento:</th>
+                        <th>{{ recibo.descuento }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Total:</th>
+                        <th>{{ recibo.total }}</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-4 col-md-6">
+                    <br/>
+                    <br/>
+                    <br/>
+
+                    <p>Firma Cliente</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<script type="text/javascript">
-    window.onload = function() { window.print(); }
-</script>
+    <script type="text/javascript">
+        window.onload = function () {
+            window.print();
+        }
+    </script>
 </body>
 </html>

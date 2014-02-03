@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <div class="pull-right">
       {{ user }}
     </div>
   </section>
 </div>
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <section class="page-header">
       <h2>Informaci&oacute;n del Paciente</h2>
     </section>
@@ -26,14 +26,14 @@
   </section>
 </div>
 <div class="row page">
-  <section class="span12">
+  <section class="col-md-12">
     <div class="page-header">
       <h1>Autorizaci&oacute;n</h1>
     </div>
   </section>
 </div>
 <div class="row">
-  <section class="span12 text-justify">
+  <section class="col-md-12 text-justify">
     <ol>
       <li>
         Nosotros pacientes y fiadores DECLARÓ(MOS), OBLIGA(MOS) Y ACEPTO(MOS)
@@ -72,7 +72,7 @@
 </div>
 <div class="row">
   <br />
-  <section class="span6 offset3">
+  <section class="col-md-6 col-md-offset-3">
     <hr />
     <p class="text-center">Firma {{ admision.paciente.nombre_completo }}</p>
   </section>
@@ -80,14 +80,14 @@
 {% for fiador in admision.fiadores.all %}
 <div class="row">
   <br />
-  <section class="span6 offset3">
+  <section class="col-md-6 col-md-offset-3">
     <hr />
     <p class="text-center">Firma {{ fiador.nombre_completo }}</p>
   </section>
 </div>
 {% endfor %}
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <a class="no-print btn btn-primary" href="{% url 'admision-autorizar' admision.id %}">Autorizar</a>
   </section>
 </div>

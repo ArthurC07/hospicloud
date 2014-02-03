@@ -2,14 +2,14 @@
 {% load staticfiles %}
 {% block content %}
 <div class="row">
-  <div class="span12">
+  <div class="col-md-12">
     <section class="page-header">
       <h1>{{ item_template.descripcion }} <small>Producto</small></h1>
     </section>
   </div>
 </div>
 <div class="row">
-  <aside class="span3">
+  <aside class="col-md-3">
     <nav class="sidebar-nav">
       <ul class="nav nav-stacked nav-tabs">
           <li>
@@ -18,9 +18,9 @@
       </ul>
     </nav>
   </aside>
-  <section class="span9">
+  <section class="col-md-9">
     <div class="row">
-        <section class="span6">
+        <section class="col-md-6">
             <ul>
                 <li>Marca: {{ item_template.marca }}</li>
                 <li>Modelo: {{ item_template.modelo }}</li>

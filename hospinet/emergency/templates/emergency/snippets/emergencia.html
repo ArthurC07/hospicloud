@@ -1,5 +1,5 @@
 <div class="row">
-  <section class="span9">
+  <section class="col-md-9">
     <p>
       {{ emergencia.historia_enfermedad_actual }}
     </p>
@@ -29,7 +29,7 @@
   </section>
 </div>
 <div class="row">
-  <section id="hallazgos" class="span4">
+  <section id="hallazgos" class="col-md-4">
     <div class="page-header">
       <h3>Hallazgos</h3>
     </div>
@@ -41,7 +41,7 @@
     </article>
     {% endfor %}
   </section>
-  <section id="tratamientos" class="span5">
+  <section id="tratamientos" class="col-md-5">
     <div class="page-header">
       <h3>Tratamientos</h3>
     </div>
@@ -56,7 +56,7 @@
 </div>
 <div class="row">
   {% for remision_interna in emergencia.remisiones_externas.all %}
-  <article class="span4">
+  <article class="col-md-4">
     <h3>Remisi&oacute;n a Especialista</h3>
     <p>
       M&eacute;dico: {{ remision_interna.doctor }}
@@ -64,7 +64,7 @@
   </article>
   {% endfor %}
   {% for remision_externa in emergencia.remisiones_externas.all %}
-  <article class="span4">
+  <article class="col-md-4">
     <h3>Remisi&oacute;n a otro Centro</h3>
     <p>
       Destino: {{ remision_externa.destino }}

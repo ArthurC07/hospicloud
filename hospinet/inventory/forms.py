@@ -16,9 +16,9 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from select2.fields import ModelChoiceField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from select2.fields import ModelChoiceField
 
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,

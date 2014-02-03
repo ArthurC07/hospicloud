@@ -1,5 +1,5 @@
-<table class="data">
-  <thead class="gradient">
+<table class="table table-responsive table-striped">
+  <thead>
     <tr>
       <th>Tipo</th>
       <th>N&uacute;mero</th>
@@ -13,7 +13,7 @@
       <td>{{ habitacion.get_tipo_display }}</td>
       <td>{{ habitacion.numero }}</td>
       <td>{{ habitacion.get_estado_display }}</td>
-      <td><a href="{% url habitacion-view habitacion.id %}">Ver</a></td>
+      <td><a class="btn btn-primary" href="{% url habitacion-view habitacion.id %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

@@ -58,6 +58,11 @@ class ImagenForm(FieldSetModelFormMixin):
                                     queryset=Examen.objects.all(),
                                     widget=forms.HiddenInput())
 
+    def __init__(self, *args, **kwargs):
+        super(ImagenForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Adjuntar Imagen',
+                                      *self.field_names)
+
 
 class AdjuntoForm(FieldSetModelFormMixin):
     """Muestra el formulario para agregar archivos :class:`Adjunto`s a un
@@ -69,6 +74,11 @@ class AdjuntoForm(FieldSetModelFormMixin):
     examen = forms.ModelChoiceField(label="",
                                     queryset=Examen.objects.all(),
                                     widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(AdjuntoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Adjuntar Archivo',
+                                      *self.field_names)
 
 
 class DicomForm(FieldSetModelFormMixin):
@@ -82,6 +92,11 @@ class DicomForm(FieldSetModelFormMixin):
     examen = forms.ModelChoiceField(label="",
                                     queryset=Examen.objects.all(),
                                     widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(DicomForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Imagen Dicom',
+                                      *self.field_names)
 
 
 class EstudioProgramadoForm(FieldSetModelFormMixin):

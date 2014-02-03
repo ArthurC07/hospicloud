@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-    <div class="span12">
+    <div class="col-md-12">
         <h1>{{ paciente }}<small>{{ paciente.consultorio }}</small></h1>
     </div>
 </div>
 <div class="row">
-    <aside class="span3">
+    <aside class="col-md-3">
         <nav class="sidebar-nav">
             <ul class="nav nav-tabs nav-stacked">
                 <li><a href="{% url 'consultorio-consulta-agregar' paciente.id %}">Agregar Consulta Inicial</a></li>
@@ -17,7 +17,7 @@
             </ul>
         </nav>
     </aside>
-    <div class="span9">
+    <div class="col-md-9">
         <div id="consultas">
             {% for consulta in paciente.consultas.all %}
                 <p>Descripción de la Dolencia: {{ consulta.padecimiento }}</p>
