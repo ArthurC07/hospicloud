@@ -2,14 +2,14 @@
 {% load staticfiles %}
 {% block content %}
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <div class="page-header">
       <h1>Pacientes y Personas</h1>
     </div>
   </section>
 </div>
 <div class="row">
-  <aside class="span3">
+  <aside class="col-md-3">
     <nav class="sidebar-nav">
       <ul class="nav nav-tabs nav-stacked">
         <li>
@@ -18,7 +18,7 @@
       </ul>
     </nav>
   </aside>
-  <div id="personas" class="span9">
+  <div id="personas" class="col-md-9">
     {% include 'snippets/persona_list.html' with personas=personas %}
   </div>
 </div>

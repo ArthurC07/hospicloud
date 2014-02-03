@@ -1,7 +1,7 @@
 {% extends 'base.html' %}{% load thumbnail %}
 {% block content %}
 <div class="row">
-  <div class="span12">
+  <div class="col-md-12">
     <section class="page-header">
       <h1>{{ admision.paciente.nombre_completo }} <small>Referencias</small></h1>
     </section>
@@ -9,7 +9,7 @@
 </div>
 <div class="row">
 {% include 'snippets/admision_aside.html' %}
-<div id="informacion" class="span9">
+<div id="informacion" class="col-md-9">
   {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
   {% for referencia in admision.referencias.all %}
     <div class="page-header">

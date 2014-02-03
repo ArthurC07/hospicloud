@@ -2,95 +2,94 @@
 {% load staticfiles %}
 {% block content %}
     <div class="row">
-        <div class="hero span12">
+        <div class="col-md-12">
             <img class="centered" src="{% static 'images/head.jpg' %}"/>
         </div>
     </div>
-    <br/>
     <div class="row card">
-        <article class="span4 offset1 index-link">
-            <a href="{% url  'persona-index' %}">
+        <article class="col-md-4 col-md-offset-1">
+            <a href="{% url  'persona-index' %}" class="btn btn-primary btn-block">
             <div class="row">
-                <div class="span1">
+                <div class="col-md-6">
                     <img src="{% static 'images/pacientes.png' %}"/>
                 </div>
-                <div class="span3">Pacientes</div>
+                <div class="col-md-6">Pacientes</div>
             </div>
             </a>
         </article>
-        <article class="span4 offset1 index-link">
-            <a href="{% url  'admision-index' %}">
+        <article class="col-md-4 col-md-offset-1">
+            <a href="{% url  'admision-index' %}" class="btn btn-primary btn-block">
             <div class="row">
-                <div class="span1">
+                <div class="col-md-6">
                     <img src="{% static 'images/admisiones.png' %}"/>
                 </div>
-                <div class="span3">Admisiones</div>
+                <div class="col-md-6">Admisiones</div>
             </div>
             </a>
         </article>
     </div>
     <div class="row card">
-        <article class="span4 offset1 index-link">
-            <a href="{% url 'examen-index' %}">
+        <article class="col-md-4 col-md-offset-1">
+            <a href="{% url 'examen-index' %}" class="btn btn-primary btn-block">
                 <div class="row">
-                    <div class="span1">
+                    <div class="col-md-5">
                         <img src="{% static 'images/imagenes.png' %}"/>
                     </div>
-                    <div class="span3">Centro de Im&aacute;genes</div>
+                    <div class="col-md-6">Centro de Im&aacute;genes</div>
                 </div>
             </a>
         </article>
-        <article class="span4 offset1 index-link">
-            <a href="{% url 'nightingale-index' %}">
+        <article class="col-md-4 col-md-offset-1">
+            <a href="{% url 'nightingale-index' %}" class="btn btn-primary btn-block">
                 <div class="row">
-                    <div class="span1">
+                    <div class="col-md-5">
                         <img src="{% static 'images/enfermeria.png' %}"/>
                     </div>
-                    <div class="span3">Hospitalizaci&oacute;n</div>
+                    <div class="col-md-6">Hospitalizaci&oacute;n</div>
                 </div>
             </a>
         </article>
     </div>
     <div class="row card">
-        <article class="span4 offset1 index-link">
-            <a href="{% url  'emergency-index' %}">
+        <article class="col-md-4 col-md-offset-1">
+            <a href="{% url  'emergency-index' %}" class="btn btn-primary btn-block">
                 <div class="row">
-                    <div class="span1">
+                    <div class="col-md-6">
                         <img src="{% static 'images/emergencia.png' %}">
                     </div>
-                    <div class="span3">Emergencia</div>
+                    <div class="col-md-6">Emergencia</div>
                 </div>
             </a>
         </article>
-        <article class="span4 offset1 index-link">
-            <a href="{% url  'consultorio-index' %}">
+        <article class="col-md-4 col-md-offset-1">
+            <a href="{% url  'consultorio-index' %}" class="btn btn-primary btn-block">
                 <div class="row">
-                    <div class="span1">
+                    <div class="col-md-6">
                         <img src="{% static 'images/consultorio.png' %}"/>
                     </div>
-                    <div class="span3">Consultorio</div>
+                    <div class="col-md-6">Consultorio</div>
                 </div>
             </a>
         </article>
     </div>
     <div class="row card">
-        <article class="span4 offset1 index-link">
-            <a href="{% url 'invoice-index' %}">
+        <article class="col-md-4 col-md-offset-1">
+            <a href="{% url 'invoice-index' %}" class="btn btn-primary btn-block">
                 <div class="row">
-                    <div class="span1">
+                    <div class="col-md-6">
                         <img src="{% static 'images/caja.png' %}"/>
                     </div>
-                    <div class="span3">Caja</div>
+                    <div class="col-md-6">Caja</div>
                 </div>
             </a>
         </article>
-        <article class="span4 offset1 index-link">
-            <a href="{% url  'inventario-index' %}">
+        <article class="col-md-4 col-md-offset-1">
+            <a href="{% url  'inventario-index' %}" class="btn btn-primary btn-block">
                 <div class="row">
-                    <div class="span1">
+                    <div class="col-md-6">
                         <img src="{% static 'images/inventario.png' %}"/>
                     </div>
-                    <div class="span3">Inventario</div>
+                    <div class="col-md-6">Inventario</div>
                 </div>
             </a>
         </article>

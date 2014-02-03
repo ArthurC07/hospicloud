@@ -8,7 +8,7 @@
   </div>
 </div>
 <div class="row">
-<aside class="span3">
+<aside class="col-md-3">
   <nav class="sidebar-nav">
     <ul class="nav nav-tabs nav-stacked">
     <li><a href="{% url 'emergencia-update' emergencia.id %}">Editar Emergencia</a></li>
@@ -26,7 +26,7 @@
   {% include 'snippets/persona_menu.html' with persona=emergencia.persona %}
 </nav>
 </aside>
-<section class="span9">
+<section class="col-md-9">
   <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
   <section class="tabbable">
     <ul class="nav nav-tabs">

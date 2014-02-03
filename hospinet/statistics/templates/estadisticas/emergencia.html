@@ -2,7 +2,7 @@
 {% load staticfiles %}{% load l10n %}{% load staticfiles %}{% load humanize %}
 {% block content %}
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <div class="page-header">
       <h1>Estad&iacute;sticas de Emergencias</h1>
       <small>Del {{ inicio }} al {{ fin }}</small>
@@ -10,7 +10,7 @@
   </section>
 </div>
 <div class="row">
-  <article class="span4">
+  <article class="col-md-4">
       <table class="table table-bordered table-striped">
           <thead>
             <tr>
@@ -28,7 +28,7 @@
           </tbody>
       </table>
   </article>
-    <div class="span4">
+    <div class="col-md-4">
         <canvas id="emergencia" width="400" height="400"></canvas>
     </div>
 </div>

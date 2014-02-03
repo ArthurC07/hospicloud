@@ -1,18 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
-{% block header %}
-    {{ form.media.css }}
-{% endblock %}
-<div class="row">
-<aside class="span3">
-<nav class="sidebar-nav">
-</nav>
-</aside>
-<section class="span6">
-  {% crispy form %}
-</section>
-</div>
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+        <section class="col-md-6 col-md-offset-3">
+            {% crispy form %}
+        </section>
+    </div>
 {% endblock %}
 {% block scripts %}
     {{ form.media.js }}

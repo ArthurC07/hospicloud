@@ -2,7 +2,7 @@
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
 {% include 'snippets/consultorio_aside.html' with consultorio=consultorio %}
-<div id="informacion" class="span9">
+<div id="informacion" class="col-md-9">
   {% include 'snippets/paciente_list.html' with pacientes=consultorio.pacientes.all %}
 </div>
 {% endblock %}

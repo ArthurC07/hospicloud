@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-<aside class="span3">
+<aside class="col-md-3">
 <nav class="well sidebar-nav">
   <ul class="nav nav-list">
     <li><a href="{% url 'invoice-index' %}">Regresar a caja</a></li>
   </ul>
 </nav>
 </aside>
-<section class="span9 lista" id="emergencias">
+<section class="col-md-9 lista" id="emergencias">
   <div class="page-header"><h1>Emergencias del D&iacute;a de Hoy</h1></div>
   {% ifequal emergencias.count 0 %}
     <p>No hay emergencias atendidas el d&iacute;a de hoy</p>

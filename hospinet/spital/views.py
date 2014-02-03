@@ -55,23 +55,7 @@ class AdmisionIndexView(ListView, LoginRequiredMixin):
 
         context = super(AdmisionIndexView, self).get_context_data(**kwargs)
 
-        admisiones = self.queryset.all()
-
-        if self.queryset.count() == 0:
-            context['promedio'] = 0
-        else:
-            context['promedio'] = sum(a.tiempo_ahora()
-                                      for a in
-                                      admisiones) / self.queryset.count()
-
-        context['puntos'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
-                                                                       admisiones[
-                                                                           n].tiempo_ahora())
-                                                   for n in
-                                                   range(self.queryset.count()))
-
         context['preadmisiones'] = PreAdmision.objects.filter(completada=False)
-
         context['admision_periodo'] = PeriodoForm(prefix='admisiones')
         context[
             'admision_periodo'].helper.form_action = 'estadisticas-hospitalizacion'

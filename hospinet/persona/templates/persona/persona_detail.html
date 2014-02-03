@@ -2,7 +2,7 @@
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <section class="page-header">
       <h1> {{ persona.nombre_completo }} <small>Informaci&oacute;n</small></h1>
     </section>
@@ -10,7 +10,7 @@
 </div>
 <div class="row">
   {% include 'snippets/persona_aside.html' with persona=persona %}
-  <section id="informacion" class="span9">
+  <section id="informacion" class="col-md-9">
     <section class="tabbable">
       <ul class="nav nav-tabs">
         <li><a class="active" href="#paciente" data-toggle="tab">Datos Personales</a></li>

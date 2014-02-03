@@ -2,14 +2,14 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <div class="row">
-<aside class="span3">
+<aside class="col-md-3">
 <nav class="well sidebar-nav">
   <ul class="nav nav-list">
     
   </ul>
 </nav>
 </aside>
-<section class="span9">
+<section class="col-md-9">
 <form method="post">{% csrf_token %}
     <fieldset>
     <legend>Esta Seguro de Borrar el Cargo?</legend>

@@ -31,6 +31,8 @@ class FieldSetFormMixin(forms.Form):
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-4'
+        self.helper.field_class = 'col-md-7'
         self.field_names = self.fields.keys()
 
 
@@ -40,6 +42,8 @@ class FieldSetModelFormMixinNoButton(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-4'
+        self.helper.field_class = 'col-md-7'
         self.field_names = self.fields.keys()
 
 
@@ -49,6 +53,8 @@ class FieldSetModelFormMixin(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-4'
+        self.helper.field_class = 'col-md-7'
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', u'Guardar'))
 

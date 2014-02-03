@@ -26,10 +26,10 @@
                             Cantidad {{ detalle.cantidad }} {{ detalle.unidad }}
                             <a class="btn btn-danger no-print"
                                href="{% url 'enfermeria-cargo-eliminar' detalle.id %}"><i
-                                    class="icon-trash"></i></a>
+                                    class="glyphicon glyphicon-trash"></i></a>
                             <a class="btn btn-info no-print"
                                href="{% url 'enfermeria-cargo-editar' detalle.id %}"><i
-                                    class="icon-edit"></i></a>
+                                    class="glyphicon glyphicon-edit"></i></a>
                         </li>
                     {% endfor %}
                 </ul>
