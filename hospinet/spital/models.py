@@ -375,7 +375,8 @@ class Admision(models.Model):
 
         items[self.habitacion.item] += self.tiempo_cobro()
 
-        for cargo in self.cargos.filter(facturada=False):
+        for cargo in self.cargos.all():
+            print(cargo)
             items[cargo.cargo] += cargo.cantidad
             cargo.facturada = True
             cargo.save()
@@ -384,8 +385,6 @@ class Admision(models.Model):
             items[oxigeno.cargo] += oxigeno.litros()
             oxigeno.facturada = True
             oxigeno.save()
-
-        # TODO: Agregar honorarios médicos a la automatización de facturación
 
         return items
 
