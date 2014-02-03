@@ -18,7 +18,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
-from chosen import forms as chosenforms
+from select2.fields import ModelChoiceField
 
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
@@ -51,8 +51,9 @@ class ItemForm(FieldSetModelFormMixin):
     class Meta:
         model = Item
 
-    plantilla = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    plantilla = ModelChoiceField(name="", model="",
+                                 queryset=ItemTemplate.objects.filter(
+                                     activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
@@ -112,8 +113,9 @@ class ItemRequisicionForm(FieldSetModelFormMixin):
         model = ItemRequisicion
         exclude = ('entregada', 'pendiente')
 
-    item = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemRequisicionForm, self).__init__(*args, **kwargs)
@@ -137,8 +139,9 @@ class TransferirForm(FieldSetModelFormMixin):
     class Meta:
         model = Transferencia
         fields = ('aplicada',)
-        item = chosenforms.ChosenModelChoiceField(
-            Requisicion.objects.filter(entregada=False).all())
+        item = ModelChoiceField(name="", model="",
+                                queryset=Requisicion.objects.filter(
+                                    entregada=False).all())
 
     def __init__(self, *args, **kwargs):
         super(TransferirForm, self).__init__(*args, **kwargs)
@@ -152,8 +155,9 @@ class TransferidoForm(FieldSetModelFormMixin):
         model = Transferido
         exclude = ('aplicada', )
 
-    item = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(TransferidoForm, self).__init__(*args, **kwargs)
@@ -176,8 +180,9 @@ class ItemCompradoForm(FieldSetModelFormMixin):
         model = ItemComprado
         exclude = ('ingresado', )
 
-    item = chosenforms.ChosenModelChoiceField(
-        ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemCompradoForm, self).__init__(*args, **kwargs)
