@@ -45,7 +45,8 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
                            PagoForm, PersonaForm,
-                           TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm)
+                           TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm,
+                           VentaPeriodoForm)
 from inventory.models import ItemTemplate
 
 
@@ -326,6 +327,9 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
                                                      finalizado=False).all()
 
+        context['ventaperiodoform'] = VentaPeriodoForm(prefix='venta')
+        context['ventaperiodoform'].set_action('periodo-venta')
+
         return context
 
 
@@ -495,12 +499,12 @@ class VentaListView(ListView):
 
     def dispatch(self, request, *args, **kwargs):
 
-        self.form = PeriodoForm(request.GET, prefix='venta')
-
-        self.inicio = self.form.cleaned_data['inicio']
-        self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
-        self.item = get_object_or_404(ItemTemplate,
-                                      pk=self.form.cleaned_data['item'])
+        self.form = VentaPeriodoForm(request.GET, prefix='venta')
+        if self.form.is_valid():
+            print(self.form.cleaned_data)
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.item = self.form.cleaned_data['item']
 
         return super(VentaListView, self).dispatch(request, *args, **kwargs)
 
