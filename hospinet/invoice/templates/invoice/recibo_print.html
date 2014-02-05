@@ -22,13 +22,12 @@
                     HOSPIMED
                 </h3>
             </section>
-            <small>
-                <p>Colonia Kennedy contiguo a la Biblioteca del
-                    Banco Central de Honduras, Tegucigalpa.
-                    <br/>
-                    Teléfonos: 22301911, 22302360.
-                    R.T.N 08019995324317
-            </small>
+            <p>Colonia Kennedy contiguo a la Biblioteca del
+                Banco Central de Honduras, Tegucigalpa.
+                <br/>
+                Teléfonos: 22301911, 22302360.
+                R.T.N 08019995324317
+            </p>
         </div>
     </div>
     <div class="row">
@@ -41,7 +40,9 @@
                             <th>Cliente: {{ recibo.cliente }}</th>
                             <th class="text-right">
                                 <p>Factura {{ recibo.numero }}</p>
-                                Fecha: {{ recibo.created }}</th>
+                                Fecha: {{ recibo.created }}
+                                <br />
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -69,6 +70,9 @@
                             </tr>
                         {% endfor %}
                         <tr>
+                            <td colspan="3">&nbsp;</td>
+                        </tr>
+                        <tr>
                             <th colspan="4">&nbsp;</th>
                             <th>Subtotal:</th>
                             <th>{{ recibo.subtotal }}</th>
@@ -92,7 +96,7 @@
                     </table>
                 </div>
                 <div class="row">
-                    <div class="col-md-offset-4 col-md-6">
+                    <div class="col-md-12 text-center">
                         <br/>
                         <br/>
                         <br/>
