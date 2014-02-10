@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block title %} Recibos {{ cajero }} {% endblock %}
 {% block content %}
 <div class="row">
   <div class="spa12">
@@ -8,19 +9,7 @@
   </div>
 </div>
 <div class="row">
-  <aside class="span3 toolbox">
-    <nav class="sidebar-nav">
-      <ul class="nav nav-stacked nav-tabs">
-        <li>
-          <a href="{% url 'invoice-index' %}">Inicio Recibo</a>
-        </li>
-        <li>
-          <a href="{% url 'examen-index' %}">Inicio Estudios</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-  <div id="informacion" class="span9">
+  <div id="informacion" class="col-md-12">
     <table class="table table-striped table-bordered">
       <thead>
         <tr>
@@ -28,6 +17,7 @@
           <th>Fecha</th>
           <th>Paciente</th>
           <th>Total</th>
+          <th>Pagos</th>
         </tr>
       </thead>
       <tbody>
@@ -37,6 +27,13 @@
           <td>{{ recibo.created }}</td>
           <td>{{ recibo }}</td>
           <td>{{ recibo.total }}</td>
+          <td>
+            <ul>
+              {% for pago in recibo.pagos.all %}
+              <li>{{ pago.tipo }}: {{ pago.monto }}</li>
+              {% endfor %}
+            </ul>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

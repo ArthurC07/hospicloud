@@ -21,9 +21,10 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
                                   TemplateView, RedirectView, FormView)
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
-                           EstudioProgramadoForm, EmailForm)
-from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado
-from persona.forms import PersonaForm
+                           EstudioProgramadoForm, EmailForm, EstudioForm)
+from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
+    Estudio
+from persona.forms import PersonaForm, PersonaSearchForm
 from persona.models import Persona
 from persona.views import PersonaCreateView
 from django.contrib import messages
@@ -121,12 +122,21 @@ class ExamenCreateView(CreateView, LoginRequiredMixin):
         return super(ExamenCreateView, self).dispatch(*args, **kwargs)
     
     def form_valid(self, form):
-        
-        self.object = form.save(commit=False)
-        self.object.persona = self.persona
-        self.object.save()
-        
-        return HttpResponseRedirect(self.get_success_url())
+
+        form.instance.usuario = self.request.user
+        return super(ExamenCreateView, self).form_valid(form)
+
+
+class ExamenFormMixin(CreateView, LoginRequiredMixin):
+    def dispatch(self, *args, **kwargs):
+        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
+        return super(ExamenFormMixin, self).dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        initial = super(ExamenFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['examen'] = self.examen.id
+        return initial
 
 class ExamenDocBaseCreateView(CreateView, LoginRequiredMixin):
     
@@ -187,7 +197,6 @@ class DicomCreateView(ExamenDocBaseCreateView):
         self.object = form.save(commit=False)
         self.object.examen = self.examen
         self.object.save()
-        self.object.extraer_imagen()
         
         return HttpResponseRedirect(self.get_success_url())
 
@@ -335,6 +344,7 @@ class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredMixin):
         
         estudio = get_object_or_404(EstudioProgramado, pk=kwargs['pk'])
         examen = estudio.efectuar()
+        examen.usuario = self.request.user
         examen.save()
         messages.info(self.request, u'¡El estudio ha sido marcado como efectuado!')
         return reverse('examen-edit', args=[examen.id])
@@ -352,5 +362,13 @@ class EstudioPreCreateView(TemplateView, LoginRequiredMixin):
         """Agrega el formulario de :class:`Persona` a la vista"""
 
         context = super(EstudioPreCreateView, self).get_context_data()
+        context['persona_search_form'] = PersonaSearchForm()
         context['persona_form'] = PersonaForm()
+        context['persona_form'].helper.form_action = 'examen-persona-nuevo'
         return context
+
+
+class EstudioCreateView(ExamenFormMixin):
+
+    model = Estudio
+    form_class = EstudioForm

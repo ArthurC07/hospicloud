@@ -3,14 +3,14 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <div class="row">
-  <div class="span12">
+  <div class="col-md-12">
     <section class="page-header">
       <h1>Inventario</h1>
     </section>
   </div>
 </div>
 <div class="row">
-  <aside class="span3">
+  <aside class="col-md-3">
     <nav class="sidebar-nav">
       <ul class="nav nav-stacked nav-tabs">
         <li><a href="{% url 'itemtemplate-create' %}">Agregar Producto</a></li>
@@ -18,17 +18,17 @@
       </ul>
     </nav>
   </aside>
-  <section class="span6">
+  <section class="col-md-6">
       {% for inventario in inventarios %}
       <div class="row">
-        <section class="span6">
+        <section class="col-md-6">
           <section class="page-header"><h2>{{ inventario.lugar }}</h2></section>
           <a class="btn btn-success" href="{% url 'inventario' inventario.id %}">Ver</a>
         </section>
       </div>
       {% endfor %}
   </section>
-    <section class="span3">
+    <section class="col-md-3">
         <form action="{% url 'itemtemplate-search' %}">
             {% crispy productoform %}
         </form>

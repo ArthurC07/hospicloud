@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="row">
-        <section class="span12">
+        <section class="col-md-12">
             <div class="page-header">
                 <h1>{{ admision.paciente.nombre_completo }} <br />
                     <small>
@@ -12,7 +12,7 @@
     </div>
 <div class="row">
   {% include 'snippets/aside.html' with admision=admision %}
-  <section class="span9">
+  <section class="col-md-9">
     <div>
       <h1>Devoluciones</h1>
     </div>

@@ -1,0 +1,17 @@
+<table class="table table-responsive table-striped">
+    <caption>Dep&oacute;sitos</caption>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Monto</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for deposito in admision.depositos.all %}
+        <tr>
+            <td>{{ deposito.fecha }}</td>
+            <td>{{ deposito.monto }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

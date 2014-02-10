@@ -1,3 +1,0 @@
-{{ object.fecha }}
-{{ object.persona.nombre_completo }}
-{{ object.nombre }}

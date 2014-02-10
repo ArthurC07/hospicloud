@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.db.models import Q
-
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
                                   DeleteView)
 from django.views.generic.detail import SingleObjectMixin
@@ -23,17 +22,17 @@ from django.views.generic.base import TemplateView
 from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponseRedirect
 
-from users.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from inventory.models import (Inventario, Item, ItemTemplate, Transferencia,
                               Historial, ItemComprado, Transferido, Compra,
-                              ItemType,
-                              Requisicion, ItemRequisicion, ItemHistorial)
+                              ItemType, Requisicion, ItemRequisicion,
+                              ItemHistorial, Proveedor)
 from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm,
                              HistorialForm, ItemForm, RequisicionForm,
                              ItemRequisicionForm, TransferenciaForm,
                              TransferidoForm, CompraForm, TransferirForm,
                              ItemTemplateSearchForm, RequisicionCompletarForm,
-                             ItemCompradoForm)
+                             ItemCompradoForm, ProveedorForm)
 
 
 class InventarioFormMixin(CreateView):
@@ -145,7 +144,7 @@ class RequisicionListView(ListView, LoginRequiredMixin):
     context_object_name = 'requisiciones'
 
 
-class RequisicionCreateView(InventarioFormMixin, LoginRequiredMixin):
+class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin):
     model = Requisicion
     form_class = RequisicionForm
 
@@ -209,7 +208,7 @@ class TransferenciaCreateView(RequisicionFormMixin, LoginRequiredMixin):
         return initial
 
 
-class TransferenciaDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+class TransferenciaDetailView(SingleObjectMixin, ListView, CurrentUserFormMixin):
     paginate_by = 10
     template_name = 'inventory/transferencia_detail.html'
 
@@ -325,7 +324,6 @@ class ItemTemplateSearchView(ListView, LoginRequiredMixin):
         return queryset.all()
 
 
-
 class HistorialDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     paginate_by = 10
     template_name = 'inventory/historial_detail.html'
@@ -344,11 +342,9 @@ class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
     form_class = HistorialForm
 
     def form_valid(self, form):
-
         self.object = form.save()
 
         for item in self.inventario.items.all():
-
             historico = ItemHistorial()
             historico.item = item.plantilla
             historico.historial = self.object
@@ -357,3 +353,31 @@ class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
 
         return HttpResponseRedirect(self.get_success_url())
 
+
+class ProveedorListView(ListView, LoginRequiredMixin):
+    model = Proveedor
+    context_object_name = 'proveedores'
+    paginate_by = 10
+
+
+class ProveedorDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+    paginate_by = 10
+    template_name = 'inventory/proveedor_detail.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['inventario'] = self.object
+        return super(ProveedorDetailView, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        self.object = self.get_object(Proveedor.objects.all())
+        return self.object.items.all()
+
+
+class ProveedorCreateView(CreateView, LoginRequiredMixin):
+    model = Proveedor
+    form_class = ProveedorForm
+
+
+class ProveedorUpdateView(UpdateView, LoginRequiredMixin):
+    model = Proveedor
+    form_class = ProveedorForm

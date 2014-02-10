@@ -2,7 +2,7 @@
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
 {% include 'snippets/paciente_aside.html' with paciente=paciente %}
-<div id="informacion" class="span9">
+<div id="informacion" class="col-md-9">
   <div>
     <h1>
     	{{ paciente.id }} - {{ paciente.persona.nombre_completo }}
@@ -12,20 +12,20 @@
   <br />
   <br />
   <div class="info">
-    {% include 'snippets/persona.html' with persona=paciente.persona %} <a href="{% url 'persona-editar" paciente.persona.id %}" class="btn btn-primary">Editar Datos</a>
+    {% include 'snippets/persona.html' with persona=paciente.persona %} <a href="{% url 'persona-editar' paciente.persona.id %}" class="btn btn-primary">Editar Datos</a>
   </div>
   <div class="info">
-    {% include 'snippets/fisico.html' with fisico=paciente.persona.fisico %} <a href="{% url 'persona-fisico-editar" paciente.persona.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
+    {% include 'snippets/fisico.html' with fisico=paciente.persona.fisico %} <a href="{% url 'persona-fisico-editar' paciente.persona.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
   </div>
   <div class="info">
-    {% include 'snippets/antecedente.html' with antecedente=paciente.persona.antecedente %} <a href="{% url 'persona-antecedente-editar" paciente.persona.id %}" class="btn btn-primary">Editar Antecedentes Cl&iacute;nicos</a>
+    {% include 'snippets/antecedente.html' with antecedente=paciente.persona.antecedente %} <a href="{% url 'persona-antecedente-editar' paciente.persona.id %}" class="btn btn-primary">Editar Antecedentes Cl&iacute;nicos</a>
   </div>
   <div class="info">
-    {% include 'snippets/antecedente_familiar.html' with antecedente=paciente.persona.antecedente_familiar %} <a href="{% url 'persona-antecedente-familiar-editar" paciente.persona.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
+    {% include 'snippets/antecedente_familiar.html' with antecedente=paciente.persona.antecedente_familiar %} <a href="{% url 'persona-antecedente-familiar-editar' paciente.persona.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
   </div>
   <div class="info">
     {% ifequal persona.sexo 'F' %}
-    {% include 'snippets/antecedente_obstetrico.html' with antecedente=paciente.persona.antecedente_obstetrico %} <a href="{% url 'persona-antecedente-obstetrico-editar" paciente.persona.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
+    {% include 'snippets/antecedente_obstetrico.html' with antecedente=paciente.persona.antecedente_obstetrico %} <a href="{% url 'persona-antecedente-obstetrico-editar' paciente.persona.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
     {% endifequal %}
   </div>
 </div>

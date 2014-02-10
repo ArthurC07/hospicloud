@@ -2,26 +2,27 @@
 {% load l10n %}{% load staticfiles %}{% load humanize %}
 {% block content %}
     <div class="row">
-        <div class="span12 text-center">
+        <div class="col-md-12 text-center">
             <div class="page-header">
-                <h4>Estado de Cuenta</h4>
+                <h3>Estado de Cuenta</h3>
             </div>
         </div>
     </div>
     <div class="row">
-        <section class="span12">
-            <table class="table">
+        <section class="col-md-12">
+            <table class="col-md-12">
                 <tr>
                     <td><h1>{{ admision.paciente.nombre_completo }}</h1></td>
                     <td></td>
                     <td>
-                        <a class="btn btn-block no-print" href="{% url 'admision-invoice' admision.id %}">Facturar</a>
+                        <a class="btn btn-block btn-primary no-print" href="{% url 'admision-invoice' admision.id %}">Facturar</a>
                         <div class="row">
-                            <div class="span3">
+                            <div class="col-md-12">
                                 <br />
                                 <ul>
                                     <li>Cuenta {{ admision.id }}</li>
                                     <li>{{ fecha }}</li>
+                                    <li>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -31,7 +32,7 @@
         </section>
     </div>
     <div class="row">
-        <section class="span12 full-size-print">
+        <section class="col-md-12 full-size-print">
             <table class="table table-striped table-bordered no-more-tables">
             <thead>
                 <tr>
@@ -39,6 +40,8 @@
                     <th>Cargo</th>
                     <th>Cantidad</th>
                     <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                    <th>Descuento</th>
                     <th>Precio Valor Total</th>
                 </tr>
             </thead>
@@ -50,7 +53,9 @@
                     <td data-title="Cargo">Hospitalizaci&oacute;n</td>
                     <td class="text-right" data-title="Tiempo">{{ admision.tiempo_cobro }}</td>
                     <td class="text-right" data-title="Precio Unitario">{{ admision.precio_diario|floatformat:2|intcomma }}</td>
-                    <td class="text-right" data-title="Total">{{ admision.debido|floatformat:2|intcomma }}</td>
+                    <td class="text-right" data-tittle="Subtotal">{{ admision.debido|floatformat:2|intcomma }}</td>
+                    <td class="text-right" data-tittle="Descuento">{{ admision.descuento_hospitalizacion|floatformat:2|intcomma }}</td>
+                    <td class="text-right" data-title="Total">{{ admision.descontado|floatformat:2|intcomma }}</td>
                 </tr>
                 {% for honorario in admision.honorarios.all %}
                     <tr>
@@ -58,8 +63,10 @@
                             <td data-title="Código">{{ honorario.item.id }}</td>
                         {% endlocalize %}
                         <td data-title="Cargo">{{ honorario.item }}</td>
-                        <td></td>
+                        <td>Médico: {{ honorario.medico }}</td>
                         <td class="text-right" data-title="Precio Unitario">{{ honorario.monto|floatformat:2|intcomma }}</td>
+                        <td class="text-right"></td>
+                        <td class="text-right" data-tittle="Descuento"></td>
                         <td class="text-right" data-title="Total">{{ honorario.monto|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}
@@ -69,30 +76,47 @@
                             <td data-title="Código">{{ terapia.cargo.id }}</td>
                         {% endlocalize %}
                         <td data-title="Cargo">Oxigeno</td>
-                        <td class="text-right" data-title="Tiempo">{{ terapia.tiempo }}</td>
                         <td class="text-right" data-title="Litros">{{ terapia.litros }}</td>
+                        <td class="text-right" data-title="Precio Unitario">{{ terapia.precio_unitario }}</td>
+                        <td class="text-right" data-title="Subtotal">{{ terapia.subtotal|floatformat:2|intcomma }}</td>
+                        <td class="text-right" data-tittle="Descuento">{{ terapia.descuento|floatformat:2|intcomma }}</td>
                         <td class="text-right" data-title="Total">{{ terapia.valor|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}
-                {% for cargo, lista in admision.agrupar_cargos.items %}
+                {% for cargo, datos in admision.agrupar_cargos.items %}
                     <tr>
                         {% localize off %}
                             <td data-title="Código">{{ cargo.id }}</td>
                         {% endlocalize %}
                         <td data-title="Cargo">{{ cargo }}</td>
-                        <td data-title="Cantidad" class="text-right">{{ lista.cantidad }}</td>
-                        <td data-title="Precio Unitario" class="text-right">{{ lista.precio_unitario|floatformat:2|intcomma }}</td>
-                        <td data-title="Total" class="text-right">{{ lista.valor|floatformat:2|intcomma }}</td>
+                        <td data-title="Cantidad" class="text-right">{{ datos.cantidad }}</td>
+                        <td data-title="Precio Unitario" class="text-right">{{ datos.precio_unitario|floatformat:2|intcomma }}</td>
+                        <td data-title="Subtotal" class="text-right">{{ datos.subtotal|floatformat:2|intcomma }}</td>
+                        <td class="text-right" data-tittle="Descuento">{{ datos.descuento|floatformat:2|intcomma }}</td>
+                        <td data-title="Total" class="text-right">{{ datos.valor|floatformat:2|intcomma }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="4">Total</th>
+                    <th colspan="6">Subtotal</th>
+                    <th >{{ admision.subtotal|floatformat:2|intcomma }}</th>
+                </tr>
+                <tr>
+                    <th colspan="6">Total Descuento</th>
+                    <th >{{ admision.descuento|floatformat:2|intcomma }}</th>
+                </tr>
+                <tr>
+                    <th colspan="6">Total</th>
                     <th >{{ admision.estado_de_cuenta|floatformat:2|intcomma }}</th>
                 </tr>
                 </tfoot>
             </table>
+        </section>
+    </div>
+    <div class="row">
+        <section class="col-md-12">
+            {% include 'snippets/depositos_list.html' %}
         </section>
     </div>
 {% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %} Turno de Caja {% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <section class="page-header">
+                <h1>Reporte {{ turno.id }} de Cajero {{ turno.usuario }}
+                    <small>del {{ turno.inicio }} al {{ turno.fin }}</small>
+                </h1>
+            </section>
+        </div>
+    </div>
+    <section class="row">
+        {% ifnotequal turno.finalizado True %}
+        <div class="col-md-3 no-print">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-stacked nav-tabs">
+                    <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
+                        Pago de Cierre</a></li>
+                    <li><a href="{% url 'invoice-turno-cerrar' turno.id %}">Cerrar Turno</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-md-9">
+        {% else %}
+        <div class="col-md-12">
+        {% endifnotequal %}
+            <h3>Total de Ventas: {{ turno.venta }}</h3>
+            <table class="table table-striped table-bordered table-condensed">
+                <caption>Reporte de Facturaci&oacute;n</caption>
+                <thead>
+                <tr>
+                    <th>Tipo de Pago</th>
+                    <th>Monto</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Apertura</td>
+                    <td>{{ turno.apertura }}</td>
+                </tr>
+                {% for metodo, monto in turno.pagos %}
+                    <tr>
+                        <td>{{ metodo }} Facturado</td>
+                        <td>{{ monto }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th>Total de Ingresos</th>
+                    <th>{{ turno.ingresos }}</th>
+                </tr>
+                {% for cierre in turno.cierres.all %}
+                    <tr>
+                        <td>En Caja {{ cierre.pago }}</td>
+                        <td>{{ cierre.monto }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th>Total en Caja</th>
+                    <th>{{ turno.total_cierres }}</th>
+                </tr>
+                {% for diferencia, monto in turno.diferencia %}
+                    <tr>
+                        <td>Diferencia {{ diferencia }}</td>
+                        <td>{{ monto }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            <tfoot>
+                <tr>
+                    <td>Menos Apertura</td>
+                    <td>{{ turno.apertura }}</td>
+                </tr>
+                <tr>
+                    <th>Diferencia Total de Cierre</th>
+                    <th>{{ turno.diferencia_total }}</th>
+                </tr>
+                <tr>
+                    <th>Dep&oacute;sitos de Admisiones</th>
+                    <th>{{ turno.depositado }}</th>
+                </tr>
+            </tfoot>
+            </table>
+        </div>
+    </section>
+{% endblock %}

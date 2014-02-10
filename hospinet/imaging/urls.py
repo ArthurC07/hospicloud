@@ -22,7 +22,7 @@ from imaging.views import (ExamenDetailView, ExamenCreateView,
     DicomDetailView, DicomCreateView, EstudioProgramadoListView,
     EstudioProgramadoCreateView, EstudioProgramadoEfectuarView,
     NotificarExamenView, EstudioPreCreateView, PersonaEstudioCreateView,
-    EstudioProgramadoDetailView)
+    EstudioProgramadoDetailView, EstudioCreateView)
 
 urlpatterns = patterns('',
     
@@ -93,4 +93,8 @@ urlpatterns = patterns('',
     url(r'^dicom/(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})$',
         DicomDetailView.as_view(),
         name='dicom-view'),
+
+    url(r'^(?P<examen>\d+)/estudio/agregar$',
+        EstudioCreateView.as_view(),
+        name='examen-estudio-create'),
 )

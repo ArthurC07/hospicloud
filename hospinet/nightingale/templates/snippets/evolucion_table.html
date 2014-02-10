@@ -1,4 +1,4 @@
-<table class="table table-striped table-bordered">
+<table class="table table-striped table-responsive">
   <thead>
     <tr>
         <th>Fecha y Hora</th>
@@ -14,8 +14,9 @@
     {% endif%}
     {% for evolucion in admision.evoluciones.all %}
     <tr>
-        <th>{{ evolucion.fecha_y_hora|date:"d/m/Y P" }}</th>
-        <th>{{ evolucion.nota }}</th>
+        <td>{{ evolucion.fecha_y_hora|date:"d/m/Y P" }}</td>
+        <td>{{ evolucion.nota }}</td>
+        <td>{{ evolucion.usuario }}</td>
     </tr>
     {% endfor %}
   </tbody>

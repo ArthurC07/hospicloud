@@ -28,20 +28,32 @@ from spital.models import Admision
 from inventory.models import ItemTemplate
 
 
+dot01 = Decimal('0.01')
+
+
 class Precio(object):
     def precio_unitario(self):
-        if not self.admision.tipo_de_venta:
-            return self.cargo.precio_de_venta
 
-        aumento = self.admision.tipo_de_venta.incremento * self.cargo\
-            .precio_de_venta / Decimal(
-            100)
-        disminucion = self.admision.tipo_de_venta.disminucion * self.cargo\
-            .precio_de_venta / Decimal(
-            100)
+        tipo_de_venta = self.admision.tipo_de_venta
+        precio_de_venta = self.cargo.precio_de_venta
 
-        return (self.cargo.precio_de_venta + aumento - disminucion).quantize(
-            Decimal("0.01"))
+        if not tipo_de_venta:
+            return precio_de_venta
+
+        aumento = tipo_de_venta.incremento * precio_de_venta
+
+        return (precio_de_venta + aumento).quantize(dot01)
+
+    def descuento(self):
+
+        tipo_de_venta = self.admision.tipo_de_venta
+
+        if not tipo_de_venta:
+            return Decimal(0)
+
+        disminucion = tipo_de_venta.disminucion * self.cantidad
+
+        return disminucion * self.cargo.precio_de_venta
 
 
 class Turno(object):
@@ -123,7 +135,13 @@ class Evolucion(models.Model):
 
 
 class Cargo(TimeStampedModel, Precio):
-    """Indica los cargos en base a aparatos que utiliza una :class:`Persona`"""
+    """Indica los cargos en base a los diversos """
+
+    class Meta:
+        permissions = (
+            ('enfermeria', 'Permite al usuario gestionar hospitalizaciones'),
+            ('enfermeria_ver', 'Permite al usuario ver datos'),
+        )
 
     admision = models.ForeignKey(Admision, related_name='cargos')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
@@ -138,17 +156,22 @@ class Cargo(TimeStampedModel, Precio):
 
         return reverse('enfermeria-cargo-agregar', args=[self.admision.id])
 
+    def subtotal(self):
+
+        return (self.cantidad * self.precio_unitario()).quantize(dot01)
+
     def valor(self):
-        return (self.cantidad * self.precio_unitario()).quantize(
-            Decimal("0.01"))
+        return (self.subtotal() - self.descuento()).quantize(dot01)
 
 
 class OrdenMedica(models.Model):
     """Registra las indicaciones a seguir por el personal de enfermeria"""
 
     admision = models.ForeignKey(Admision, related_name='ordenes_medicas')
+    evolucion = models.TextField(blank=True)
     orden = models.TextField(blank=True)
     fecha_y_hora = models.DateTimeField(default=timezone.now)
+    doctor = models.CharField(blank=True, null=True, max_length=255)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='ordenes_medicas')
 
@@ -279,11 +302,16 @@ class Sumario(TimeStampedModel):
     recomendaciones = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='sumarios')
+    fecha = models.DateTimeField(blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
         return reverse('nightingale-view-id', args=[self.admision.id])
+
+    def save(self, **kwargs):
+        self.admision.dar_alta(self.fecha)
+        super(Sumario, self).save(**kwargs)
 
 
 Admision.sumario = property(
@@ -438,8 +466,9 @@ class OxigenoTerapia(TimeStampedModel, Precio):
     admision = models.ForeignKey(Admision, related_name='oxigeno_terapias')
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                               related_name='oxigeno_terapias')
-    unidades_por_minuto = models.IntegerField(default=1)
     terminada = models.BooleanField(default=False)
+    inicio = models.DateTimeField(null=True, blank=True)
+    fin = models.DateTimeField(null=True, blank=True)
     facturada = models.NullBooleanField(default=False)
 
     def get_absolute_url(self):
@@ -450,24 +479,38 @@ class OxigenoTerapia(TimeStampedModel, Precio):
     def tiempo(self):
         """Calcula el tiempo que la :class:`Persona` ha utilizado Oxigeno"""
 
-        return ((self.final() - self.created).seconds / Decimal(60)).quantize(
-            Decimal("0.01"))
+        if self.fin is None or self.inicio is None:
+            return 0
+
+        delta = self.fin - self.inicio
+        return delta.days * 24 + (delta.seconds / 3600)
 
     def litros(self):
         """Calcula el volumen de Oxigeno utilizado"""
 
-        return (self.tiempo() * self.unidades_por_minuto).quantize(
-            Decimal("0.01"))
+        return self.tiempo() * 180
+
+    def subtotal(self):
+
+        return (self.litros() * self.precio_unitario()).quantize(dot01)
+
+    def descuento(self):
+
+        if not self.admision.tipo_de_venta:
+            return Decimal(0)
+
+        disminucion = self.admision.tipo_de_venta.disminucion * self.litros()
+
+        return disminucion * self.precio_unitario()
 
     def valor(self):
-        return (self.litros() * self.precio_unitario()).quantize(
-            Decimal("0.01"))
+        return self.subtotal() - self.descuento()
 
     def final(self):
         if self.created >= self.modified:
             return timezone.now()
 
-        return self.modified
+        return self.fin
 
 
 class Honorario(TimeStampedModel):
@@ -477,6 +520,7 @@ class Honorario(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, blank=True, null=True,
                              related_name='honorarios')
     monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    medico = models.CharField(max_length=200, blank=True)
     facturada = models.NullBooleanField(default=False)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='honorarios')

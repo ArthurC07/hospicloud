@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, url
+
 from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
                                CargoCreateView, EvolucionCreateView,
                                GlicemiaCreateView,
@@ -24,8 +25,8 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
                                NotaCreateView, SignoVitalCreateView,
                                SignosDetailView, ExcretaCreateView,
                                MedicamentoCreateView, DosisSuministrarView,
-                               NotaUpdateView, AdmisionListView,
-                               ResumenDetailView, DosisCreateView,
+                               NotaUpdateView, ResumenDetailView,
+                               DosisCreateView,
                                MedicamentoSuspenderView,
                                DevolucionCreateView, NotaCerrarView,
                                SumarioCreateView, CargoDeleteView,
@@ -34,6 +35,7 @@ from nightingale.views import (NightingaleIndexView, NightingaleDetailView,
                                OxigenoTerapiaUpdateView, HonorarioCreateView,
                                HonorarioUpdateView, ChosenCargoCreateView,
                                HonorarioDeleteView, CargoUpdateView)
+
 
 urlpatterns = patterns('',
 
@@ -50,14 +52,12 @@ urlpatterns = patterns('',
                            name='enfermeria-admisiones'),
 
                        url(
-                           r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-['
-                           r'a-z0-9]{4}-[a-z0-9]{12})/resumen$',
+                           r'^(?P<pk>\d+)/resumen$',
                            ResumenDetailView.as_view(),
                            name='nightingale-resume'),
 
                        url(
-                           r'^(?P<slug>[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-['
-                           r'a-z0-9]{4}-[a-z0-9]{12})/devoluciones$',
+                           r'^(?P<pk>\d+)/devoluciones$',
                            NightingaleDetailView.as_view(
                                template_name='enfermeria/devoluciones.html'),
                            name='enfermeria-devoluciones'),

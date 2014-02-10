@@ -19,14 +19,15 @@ from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
                               Tratamiento, Hallazgo, Cobro, Diagnostico,
                               ExamenFisico)
-from chosen import forms as chosenforms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Fieldset
+
+from select2.fields import ModelChoiceField
+from crispy_forms.layout import Fieldset
+from persona.forms import FieldSetModelFormMixin
 from persona.models import Persona
 from django.contrib.auth.models import User
 from inventory.models import ItemTemplate
 
-class EmergenciaForm(forms.ModelForm):
+class EmergenciaForm(FieldSetModelFormMixin):
     
     """Formulario para agregar :class:`Emergencia`s"""
     
@@ -41,7 +42,7 @@ class EmergenciaForm(forms.ModelForm):
                                   queryset=User.objects.all(),
                                   widget=forms.HiddenInput(), required=False)
 
-class EmergenciaBaseForm(forms.ModelForm):
+class EmergenciaBaseForm(FieldSetModelFormMixin):
     
     emergencia = forms.ModelChoiceField(label="",
                                   queryset=Emergencia.objects.all(),
@@ -53,10 +54,6 @@ class EmergenciaBaseForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         
         super(EmergenciaBaseForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
 
 class RemisionInternaForm(EmergenciaBaseForm):
     
@@ -144,7 +141,8 @@ class CobroForm(EmergenciaBaseForm):
         
         model = Cobro
     
-    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    cargo =  ModelChoiceField(name="", model="",
+                              queryset=ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
     
     def __init__(self, *args, **kwargs):
         

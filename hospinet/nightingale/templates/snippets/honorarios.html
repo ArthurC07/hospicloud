@@ -5,6 +5,7 @@
       <th>C&oacute;digo</th>
       <th>Cargo</th>
       <th>Valor</th>
+      <th>Médico</th>
       <th>Usuario</th>
       <th>Acciones</th>
     </tr>
@@ -12,7 +13,7 @@
   <tbody>
     {% if admision.honorarios.count == 0%}
     <tr>
-      <td colspan="5">No hay honorarios registrados</td>
+      <td colspan="5">No hay otros cargos registrados</td>
     </tr>
     {% endif%}
     {% for honorario in admision.honorarios.all %}
@@ -21,6 +22,7 @@
             <td data-title="Código">{{ honorario.item.id }}</td>
             <td data-title="Cargo">{{ honorario.item }}</td>
             <td data-title="Precio Unitario">{{ honorario.monto }}</td>
+            <td data-title="Médico">{{ honorario.medico }}</td>
             <td data-title="Usuario">{{ honorario.usuario.full_name }}</td>
             <td data-title="Acciones">
                 <a class="btn btn-danger" href="{% url 'enfermeria-honorario-eliminar' honorario.id %}"><i class="icon-trash"></i> Eliminar</a>

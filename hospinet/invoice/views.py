@@ -19,27 +19,34 @@ from collections import defaultdict
 from datetime import datetime, time
 from decimal import Decimal
 
+from constance import config
 from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
-                                  DetailView, ListView, RedirectView)
+                                  DetailView, ListView, RedirectView,
+                                  DeleteView)
 from django.forms.models import inlineformset_factory
+from django.contrib.auth.decorators import permission_required
+from spital.forms import DepositoForm
 
-from users.mixins import LoginRequiredMixin
-from spital.models import Admision
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
+from spital.models import Admision, Deposito
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
-from persona.forms import PersonaForm
-from invoice.models import Recibo, Venta
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, TipoPago, \
+    dot01
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
-                           CorteForm, ExamenFacturarForm, ReciboNewForm,
-                           InventarioForm)
+                           CorteForm, ExamenFacturarForm, InventarioForm,
+                           PagoForm, PersonaForm,
+                           TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm,
+                           VentaPeriodoForm)
 from inventory.models import ItemTemplate
 
 
@@ -67,7 +74,8 @@ class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
         return super(ReciboPersonaCreateView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(ReciboPersonaCreateView, self).get_context_data(**kwargs)
+        context = super(ReciboPersonaCreateView, self).get_context_data(
+            **kwargs)
         context['persona'] = self.persona
         return context
 
@@ -78,7 +86,8 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
 
         self.persona = Persona()
-        self.ReciboFormset = inlineformset_factory(Persona, Recibo, form=ReciboNewForm,
+        self.ReciboFormset = inlineformset_factory(Persona, Recibo,
+                                                   form=ReciboForm,
                                                    fk_name='cliente', extra=1)
         return super(CreateView, self).dispatch(request, *args, **kwargs)
 
@@ -96,15 +105,28 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
         return context
 
     def post(self, request, *args, **kwargs):
-        self.form = PersonaForm(request.POST, request.FILES, instance=self.persona,
+        self.form = PersonaForm(request.POST, request.FILES,
+                                instance=self.persona,
                                 prefix='persona')
         self.formset = self.ReciboFormset(request.POST, request.FILES,
-                                          instance=self.persona, prefix='recibo')
+                                          instance=self.persona,
+                                          prefix='recibo')
 
         if self.form.is_valid() and self.formset.is_valid():
+            self.form.save()
+            instances = self.formset.save()
+            for instance in instances:
+                self.recibo = instance
+                self.recibo.cajero = self.request.user
+                self.recibo.save()
+
             return self.form_valid(self.formset)
         else:
             return self.form_invalid(self.formset)
+
+    def get_success_url(self):
+
+        return reverse('invoice-view-id', args=[self.recibo.id])
 
 
 class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
@@ -136,34 +158,63 @@ class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
         context['persona'] = self.examen.persona
         return context
 
+    def form_valid(self, form):
+        self.object = form.save()
 
-class VentaCreateView(CreateView, LoginRequiredMixin):
+        venta = Venta()
+        venta.item = self.examen.tipo_de_examen.item
+        venta.recibo = self.object
+        venta.cantidad = 1
+        venta.precio = venta.item.precio_de_venta
+        venta.impuesto = venta.item.impuestos
+
+        venta.save()
+        self.object.ventas.add(venta)
+        self.examen.facturado = True
+        self.examen.save()
+
+        self.object.save()
+
+        return HttpResponseRedirect(self.object.get_absolute_url())
+
+
+class VentaDeleteView(DeleteView, LoginRequiredMixin):
+    model = Venta
+
+    def get_object(self, queryset=None):
+        obj = super(VentaDeleteView, self).get_object(queryset)
+        self.recibo = obj.recibo
+        return obj
+
+    def get_success_url(self):
+        return self.recibo.get_absolute_url()
+
+
+class ReciboFormMixin(CreateView):
+    def dispatch(self, *args, **kwargs):
+        self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
+        return super(ReciboFormMixin, self).dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        initial = super(ReciboFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['recibo'] = self.recibo.id
+        return initial
+
+
+class VentaCreateView(ReciboFormMixin, LoginRequiredMixin):
     """Permite agregar :class:`Venta`s a un :class:`Recibo`"""
 
     model = Venta
     form_class = VentaForm
-
-    def get_form_kwargs(self):
-        """Agrega el :class:`Recibo` obtenida como el valor a utilizar en el
-        formulario que será llenado posteriormente"""
-
-        kwargs = super(VentaCreateView, self).get_form_kwargs()
-        kwargs.update({'initial': {'recibo': self.recibo.id}})
-        return kwargs
-
-    def dispatch(self, *args, **kwargs):
-        """Obtiene el :class:`Recibo` que se entrego como argumento en la
-        url"""
-
-        self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
-        return super(VentaCreateView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         """Guarda el objeto generado espeficando precio obtenido directamente
         del :class:`Producto`"""
 
         self.object = form.save(commit=False)
-        self.object.precio = self.object.item.precio_de_venta
+        if self.object.precio == Decimal(0):
+            self.object.precio = self.object.item.precio_de_venta
         self.object.impuesto = self.object.item.impuestos * self.object.monto()
         self.object.save()
 
@@ -187,7 +238,13 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
 
         context = super(ReciboDetailView, self).get_context_data(**kwargs)
         context['form'] = VentaForm(initial={'recibo': context['recibo'].id})
-        context['form'].helper.form_action = reverse('venta-add', args=[context['recibo'].id])
+        context['form'].helper.form_action = reverse('venta-add', args=[
+            context['recibo'].id])
+
+        context['pago_form'] = PagoForm(
+            initial={'recibo': context['recibo'].id})
+        context['pago_form'].helper.form_action = reverse('pago-add', args=[
+            context['recibo'].id])
 
         return context
 
@@ -232,7 +289,8 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['reciboperiodoform'].set_action('invoice-periodo')
 
         context['recibodetailform'] = PeriodoForm(prefix='recibodetail')
-        context['recibodetailform'].set_legend(u'Detalle de Recibos de un Periodo')
+        context['recibodetailform'].set_legend(
+            u'Detalle de Recibos de un Periodo')
         context['recibodetailform'].set_action('invoice-periodo-detail')
 
         context['tipoform'] = PeriodoForm(prefix='tipo')
@@ -240,7 +298,8 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['tipoform'].set_action('invoice-tipo')
 
         context['productoperiodoform'] = PeriodoForm(prefix='producto')
-        context['productoperiodoform'].set_legend(u'Productos Facturados en un Periodo')
+        context['productoperiodoform'].set_legend(
+            u'Productos Facturados en un Periodo')
         context['productoperiodoform'].set_action('invoice-periodo-producto')
 
         context['remiteperiodoform'] = PeriodoForm(prefix='remite')
@@ -261,6 +320,16 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['inventarioform'] = InventarioForm(prefix='inventario')
         context['inventarioform'].set_action('invoice-inventario')
 
+        context['examenes'] = Examen.objects.filter(facturado=False).order_by('-id')
+        context['admisiones'] = Admision.objects.filter(facturada=False)
+        context['emergencias'] = Emergencia.objects.filter(facturada=False)
+
+        context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
+                                                     finalizado=False).all()
+
+        context['ventaperiodoform'] = VentaPeriodoForm(prefix='venta')
+        context['ventaperiodoform'].set_action('periodo-venta')
+
         return context
 
 
@@ -278,7 +347,7 @@ class ReciboPeriodoView(TemplateView):
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.recibos = Recibo.objects.filter(
                 created__gte=self.inicio,
-                created__lte=self.fin
+                created__lte=self.fin,
             )
 
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
@@ -328,7 +397,8 @@ class ReporteReciboDetailView(ReciboPeriodoView):
     def get_context_data(self, **kwargs):
         """Agrega el formulario de :class:`Recibo`"""
 
-        context = super(ReporteReciboDetailView, self).get_context_data(**kwargs)
+        context = super(ReporteReciboDetailView, self).get_context_data(
+            **kwargs)
 
         context['recibos'] = self.recibos
         context['inicio'] = self.inicio
@@ -365,14 +435,8 @@ class ReporteTipoView(ReciboPeriodoView):
         for recibo in self.recibos.all():
 
             for venta in recibo.ventas.all():
-
                 monto = venta.total()
-
-                #TODO: Remove on django 1.6 update 
-                try:
-                    categoria = venta.item.item_type.all()[0]
-                except IndexError:
-                    categoria = None
+                categoria = venta.item.item_type.first()
 
                 categorias[categoria]['monto'] += monto
                 categorias[categoria]['cantidad'] += 1
@@ -430,6 +494,38 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
         return context
 
 
+class VentaListView(ListView):
+    context_object_name = 'ventas'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        self.form = VentaPeriodoForm(request.GET, prefix='venta')
+        if self.form.is_valid():
+            print(self.form.cleaned_data)
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.item = self.form.cleaned_data['item']
+
+        return super(VentaListView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+
+        return Venta.objects.filter(
+            recibo__created__gte=self.inicio,
+            recibo__created__lte=self.fin,
+            recibo__nulo=False,
+            item=self.item,
+        )
+
+    def get_context_data(self, **kwargs):
+
+        context = super(VentaListView, self).get_context_data(**kwargs)
+        context['item'] = self.item
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        return context
+
+
 class ReciboRemiteView(ReciboPeriodoView, LoginRequiredMixin):
     """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
     los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
@@ -455,7 +551,8 @@ class ReciboRemiteView(ReciboPeriodoView, LoginRequiredMixin):
         for recibo in self.recibos.all():
             doctores[recibo.remite.upper()]['monto'] += recibo.total()
             doctores[recibo.remite.upper()]['cantidad'] += 1
-            doctores[recibo.remite.upper()]['comision'] += recibo.comision_doctor()
+            doctores[recibo.remite.upper()][
+                'comision'] += recibo.comision_doctor()
 
         context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
 
@@ -489,9 +586,15 @@ class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
         doctores = defaultdict(lambda: defaultdict(Decimal))
 
         for recibo in self.recibos.all():
-            doctores[recibo.radiologo.upper()]['monto'] += recibo.total()
-            doctores[recibo.radiologo.upper()]['cantidad'] += 1
-            doctores[recibo.radiologo.upper()]['comision'] += recibo.comision_radiologo()
+            radiologo = recibo.radiologo.upper()
+
+            if not radiologo in doctores:
+                doctores[radiologo]['recibos'] = list()
+
+            doctores[radiologo]['recibos'].append(recibo)
+            doctores[radiologo]['monto'] += recibo.total()
+            doctores[radiologo]['cantidad'] += 1
+            doctores[radiologo]['comision'] += recibo.comision_radiologo()
 
         context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
         context['costo'] = sum(r.total() for r in self.recibos.all())
@@ -565,7 +668,7 @@ class ExamenView(ListView, LoginRequiredMixin):
         return Examen.objects.filter(facturado=False)
 
 
-def crear_ventas(items, recibo):
+def crear_ventas(items, recibo, examen=False):
     """Permite convertir un :class:`dict` de :class:`ItemTemplate` y sus
     cantidades en una las :class:`Venta`s de un :class:`Recibo`"""
 
@@ -574,7 +677,13 @@ def crear_ventas(items, recibo):
         venta.item = item
         venta.recibo = recibo
         venta.cantidad = items[item]
-        venta.precio = item.precio_de_venta
+
+        precio = item.precio_de_venta
+
+        if examen:
+            venta.precio = precio - precio * item.comision * dot01
+        else:
+            venta.precio = precio
         venta.impuesto = item.impuestos
 
         venta.save()
@@ -591,6 +700,10 @@ class EmergenciaFacturarView(UpdateView, LoginRequiredMixin):
     context_object_name = 'emergencia'
     template_name = 'invoice/emergency_form.html'
 
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(EmergenciaFacturarView, self).dispatch(*args, **kwargs)
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
@@ -599,6 +712,7 @@ class EmergenciaFacturarView(UpdateView, LoginRequiredMixin):
         recibo = Recibo()
         recibo.cajero = self.request.user
         recibo.cliente = self.object.persona
+        recibo.tipo_de_venta = self.object.tipo_de_venta
 
         recibo.save()
 
@@ -619,6 +733,10 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
     context_object_name = 'admision'
     form_class = AdmisionFacturarForm
     template_name = 'invoice/admision_form.html'
+
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(AdmisionFacturarView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -646,6 +764,13 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
             venta.save()
             recibo.ventas.add(venta)
 
+        for deposito in self.object.depositos.all():
+            pago = Pago()
+            pago.recibo = recibo
+            pago.monto = deposito.monto
+            pago.tipo = TipoPago.objects.get(pk=config.DEPOSIT_PAYMENT)
+            pago.save()
+
         self.object.ultimo_cobro = timezone.now()
         self.object.save()
 
@@ -662,6 +787,10 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
     form_class = ExamenFacturarForm
     template_name = 'invoice/examen_form.html'
 
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(ExamenFacturarView, self).dispatch(*args, **kwargs)
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
@@ -669,11 +798,21 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
 
         recibo = Recibo()
         recibo.cajero = self.request.user
-        recibo.cliente = self.object.paciente
+        recibo.cliente = self.object.persona
         recibo.radiologo = self.object.radiologo
+        recibo.tipo_de_venta = self.object.tipo_de_venta
         recibo.save()
 
-        crear_ventas(items, recibo)
+        crear_ventas(items, recibo, True)
+
+        honorarios = sum(i.precio_de_venta * i.comision * dot01 for i in items)
+        venta = Venta()
+        venta.recibo = recibo
+        venta.precio = honorarios
+        venta.cantidad = 1
+        venta.item = self.object.radiologo.item
+        venta.impuesto = self.object.radiologo.item.impuestos
+        venta.save()
 
         self.object.save()
 
@@ -718,7 +857,8 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
 
         self.form = InventarioForm(request.GET, prefix='inventario')
 
-        return super(ReciboInventarioView, self).dispatch(request, *args, **kwargs)
+        return super(ReciboInventarioView, self).dispatch(request, *args,
+                                                          **kwargs)
 
     def get_context_data(self, **kwargs):
 
@@ -732,15 +872,87 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
         for venta in ventas.all():
             items[venta.item]['cantidad'] += venta.cantidad
 
-        queryset = ItemTemplate.objects.annotate(total=models.Sum('items__cantidad'))
+        queryset = ItemTemplate.objects.annotate(
+            total=models.Sum('items__cantidad'))
 
         for item in queryset.all():
 
             if item in items:
-
                 items[item]['inventario'] = item.total
 
         context['inicio'] = self.inicio
         context['items'] = items.items()
         context['fin'] = self.fin
         return context
+
+
+class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
+    """"""
+    model = Pago
+    form_class = PagoForm
+
+
+class TurnoCajaDetailView(DetailView, LoginRequiredMixin):
+    model = TurnoCaja
+    context_object_name = "turno"
+
+
+class TurnoCajaCreateView(CreateView, CurrentUserFormMixin):
+    model = TurnoCaja
+    form_class = TurnoCajaForm
+
+
+class TurnoCajaUpdateView(UpdateView, LoginRequiredMixin):
+    model = TurnoCaja
+    form_class = TurnoCajaForm
+
+
+class TurnoCajaFormMixin(CreateView, LoginRequiredMixin):
+    def dispatch(self, *args, **kwargs):
+        self.turno = get_object_or_404(TurnoCaja, pk=kwargs['turno'])
+        return super(TurnoCajaFormMixin, self).dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        initial = super(TurnoCajaFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['turno'] = self.turno.id
+        return initial
+
+
+class CierreTurnoCreateView(TurnoCajaFormMixin):
+    model = CierreTurno
+    form_class = CierreTurnoForm
+
+
+class TurnoCajaUpdateView(UpdateView, LoginRequiredMixin):
+    model = TurnoCaja
+    form_class = TurnoCajaCierreForm
+
+
+class DepositoDetailView(DetailView, LoginRequiredMixin):
+    model = Deposito
+    context_object_name = 'deposito'
+
+
+class DepositoFacturarView(UpdateView, LoginRequiredMixin):
+    model = Deposito
+    form_class = DepositoForm
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        recibo = Recibo()
+        recibo.cajero = self.request.user
+        recibo.cliente = self.object.admision.paciente
+        recibo.save()
+
+        venta = Venta()
+        venta.item = ItemTemplate.objects.get(pk=config.DEPOSIT_ACCOUNT)
+        venta.recibo = recibo
+        venta.cantidad = 1
+        venta.precio = self.object.monto
+        venta.impuesto = 0
+        venta.descontable = False
+        venta.save()
+
+        return HttpResponseRedirect(recibo.get_absolute_url())

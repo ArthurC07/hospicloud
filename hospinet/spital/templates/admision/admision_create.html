@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-<form class="styled" method="post">
-  {% csrf_token %} <h1>Ingresar los datos de la Admisi&oacute;n</h1>
-  <div id="messages"></div>
-  {% include 'snippets/form.html' with form=form %}
-  <p>
-    <input type="submit" value="Guardar" />
-  </p>
-</form>
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-stacked nav-tabs">
+                </ul>
+            </nav>
+        </aside>
+        <section class="col-md-6">
+            {% crispy form %}
+        </section>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
 {% endblock %}

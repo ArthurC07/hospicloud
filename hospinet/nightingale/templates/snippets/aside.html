@@ -1,20 +1,20 @@
 {% load static %}
-<aside class="span3 no-print">
+<aside class="col-md-3 no-print">
 <nav class="sidebar-nav no-print">
   <ul class="nav nav-tabs nav-stacked no-print">
       <li><a href="{% url 'nightingale-view-id' admision.id %}">Paciente</a></li>
-      <li><a href="{% url 'nightingale-resume' admision.uuid %}">Resumen</a></li>
+      <li><a href="{% url 'nightingale-resume' admision.id %}">Resumen</a></li>
       <li><a href="{% url 'enfermeria-cuenta' admision.id %}">Estado de Cuenta</a></li>
+      <li><a href="{% url 'admision-deposito-agregar' admision.id %}">Agregar Dep&oacute;sito</a></li>
       <li><a href="{% url 'enfermeria-cargos' admision.id %}">Cargos y Medicamentos</a></li>
       <li><a href="{% url 'enfermeria-oxigeno' admision.id %}">Ox&iacute;geno-Terapia</a></li>
-      <li><a href="{% url 'enfermeria-honorarios' admision.id %}">Honorarios y Examenes</a></li>
+      <li><a href="{% url 'enfermeria-honorarios' admision.id %}">Honorarios y Ex&aacute;menes</a></li>
       <li><a href="{% url 'enfermeria-signos' admision.id %}">Signos Vitales</a></li>
-      <li><a href="{% url 'enfermeria-ordenes' admision.id %}">Ordenes M&eacute;dicas</a></li>
-      <li><a href="{% url 'enfermeria-evolucion' admision.id %}">Evoluci&oacute;n</a></li>
+      <li><a href="{% url 'enfermeria-ordenes' admision.id %}">Evoluci&oacute;n y Ordenes M&eacute;dicas</a></li>
       <li><a href="{% url 'enfermeria-ingestas-excretas' admision.id %}">Ingestas y Excretas</a></li>
       <li><a href="{% url 'enfermeria-glucometria' admision.id %}">Glucometr&iacute;a</a></li>
       <li><a href="{% url 'enfermeria-notas' admision.id %}">Notas de Enfermer&iacute;a</a></li>
-      <li><a href="{% url 'enfermeria-devoluciones' admision.uuid %}">Devoluciones</a></li>
+      <li><a href="{% url 'enfermeria-devoluciones' admision.id %}">Devoluciones</a></li>
       <li><a href="{% url 'enfermeria-dar-alta' admision.id %}">Dar de Alta</a></li>
       <li><a href="{% url 'examen-programar' admision.paciente.id %}">Programar Estudio</a></li>
       <li><a href="{% url 'persona-view-id' admision.paciente.id %}">Personal</a></li>

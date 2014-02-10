@@ -19,23 +19,36 @@ from django.contrib.auth.models import User
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
-from chosen import forms as chosenforms
+from django.utils import timezone
+from select2.fields import ModelChoiceField
 
-from invoice.models import Recibo, Venta
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno
+from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
-from inventory.forms import FieldSetFormMixin
+from inventory.forms import FieldSetModelFormMixin
 from emergency.models import Emergencia
 from spital.models import Admision
 from imaging.models import Examen
 from inventory.models import ItemTemplate
+from users.mixins import HiddenUserForm
 
 
-class ReciboForm(forms.ModelForm):
+class PersonaForm(FieldSetModelFormMixinNoButton):
+    class Meta:
+        model = Persona
+        fields = ('nombre', 'apellido')
+
+    def __init__(self, *args, **kwargs):
+        super(PersonaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Datos del Cliente', *self.field_names)
+
+
+class ReciboForm(FieldSetModelFormMixin):
     """Genera un formulario para :class:`Recibo`:"""
 
     class Meta:
         model = Recibo
-        exclude = ('nulo', 'cerrado')
+        exclude = ('nulo', 'cerrado', 'discount', 'radiologo', 'remite')
 
     cajero = forms.ModelChoiceField(label="",
                                     queryset=User.objects.all(),
@@ -45,36 +58,27 @@ class ReciboForm(forms.ModelForm):
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
-
-class ReciboNewForm(ReciboForm):
     def __init__(self, *args, **kwargs):
-        super(ReciboNewForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
+        super(ReciboForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Datos del Recibo', *self.field_names)
 
 
-class VentaForm(FieldSetFormMixin):
+class VentaForm(FieldSetModelFormMixin):
     """Genera un formulario para :class:`Venta`"""
 
     class Meta:
         model = Venta
-        exclude = ('precio', 'impuesto',)
+        exclude = ('impuesto', 'descuento', 'descripcion', 'placas', )
 
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
                                     widget=forms.HiddenInput(), required=False)
-    cargo = chosenforms.ChosenModelChoiceField(ItemTemplate.objects.filter(activo=True).order_by('descripcion').all())
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Agregar'))
         self.helper.layout = Fieldset(u'Agregar un Cargo', *self.field_names)
 
 
@@ -103,7 +107,7 @@ class PeriodoForm(forms.Form):
         self.helper.form_action = action
 
 
-class EmergenciaFacturarForm(FieldSetFormMixin):
+class EmergenciaFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Emergencia
         fields = ('facturada', )
@@ -114,7 +118,7 @@ class EmergenciaFacturarForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class AdmisionFacturarForm(FieldSetFormMixin):
+class AdmisionFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Admision
         fields = ('facturada', )
@@ -125,7 +129,7 @@ class AdmisionFacturarForm(FieldSetFormMixin):
                                       *self.field_names)
 
 
-class ExamenFacturarForm(FieldSetFormMixin):
+class ExamenFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Examen
         fields = ('facturado', 'radiologo', 'remitio')
@@ -143,8 +147,75 @@ class CorteForm(PeriodoForm):
         super(CorteForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Corte de Caja', *self.field_names)
 
-class InventarioForm(PeriodoForm):
 
+class InventarioForm(PeriodoForm):
     def __init__(self, *args, **kwargs):
         super(InventarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Relación entre Ventas e Inventario', *self.field_names)
+        self.helper.layout = Fieldset(u'Relación entre Ventas e Inventario',
+                                      *self.field_names)
+
+
+class PagoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Pago
+
+    recibo = forms.ModelChoiceField(label="",
+                                    queryset=Recibo.objects.all(),
+                                    widget=forms.HiddenInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(PagoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar un método de Pago',
+                                      *self.field_names)
+
+
+class TurnoCajaForm(HiddenUserForm):
+    class Meta:
+        model = TurnoCaja
+        exclude = ('finalizado', 'fin')
+
+    inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                 initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(TurnoCajaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Iniciar un Turno', *self.field_names)
+
+
+class CierreTurnoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = CierreTurno
+
+    turno = forms.ModelChoiceField(label="",
+                                   queryset=TurnoCaja.objects.all(),
+                                   widget=forms.HiddenInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(CierreTurnoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar cierre de Turno',
+                                      *self.field_names)
+
+
+class TurnoCajaCierreForm(FieldSetModelFormMixin):
+    class Meta:
+        model = TurnoCaja
+        fields = ('finalizado', 'fin',)
+
+    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                              initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(TurnoCajaCierreForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Cerrar Turno',
+                                      *self.field_names)
+
+
+class VentaPeriodoForm(PeriodoForm):
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
+
+    def __init__(self, *args, **kwargs):
+        super(VentaPeriodoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Detalle de Ventas de un Periodo',
+                                      *self.field_names)

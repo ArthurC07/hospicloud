@@ -16,7 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from collections import defaultdict
-from decimal import Decimal, getcontext
+from decimal import Decimal
 
 from django.db import models
 from django.utils import timezone
@@ -29,22 +29,24 @@ from persona.models import Persona
 from emergency.models import Emergencia
 from inventory.models import ItemTemplate, TipoVenta
 
+dot01 = Decimal("0.01")
+
+
 class CargoAdapter(object):
-
     def __init__(self):
-
         self.cantidad = 0
         self.detalles = list()
         self.precio_unitario = Decimal(0)
         self.valor = Decimal(0)
+        self.descuento = Decimal(0)
+        self.subtotal = Decimal(0)
 
     def __unicode__(self):
-
         return u'{0} {1}'.format(self.precio_unitario, self.valor)
 
     def __str__(self):
-
         return '{0} {1}'.format(self.precio_unitario, self.valor)
+
 
 class Habitacion(models.Model):
     """Permite llevar control acerca de las :class:`Habitacion`es que se
@@ -94,6 +96,7 @@ class Admision(models.Model):
         ('H', 'Hospitalizar'),
         ('I', 'Ingresado'),
         ('C', 'Alta'),
+        ('Q', 'Cancelada'),
     )
 
     ARANCELES = (
@@ -187,15 +190,13 @@ class Admision(models.Model):
         """Permite que registrar el momento en que una :class:`Admision` ha
         sido enviada a enfermeria para ingresar al hospital"""
 
-        if self.hospitalizacion == None or self.hospitalizacion <= self.momento:
-            self.hospitalizacion = timezone.now()
+        if self.hospitalizacion is None or self.hospitalizacion <= self.momento:
             self.estado = 'H'
             self.save()
 
     def ingresar(self):
 
-        if self.ingreso == None or self.ingreso <= self.momento:
-            self.ingreso = timezone.now()
+        if self.ingreso is None or self.ingreso <= self.momento:
             self.estado = 'I'
             self.save()
 
@@ -224,7 +225,7 @@ class Admision(models.Model):
         """Calcula el tiempo que se tarda una :class:`Persona` para ser
         ingresada en el :class:`Hospital`"""
 
-        if self.ingreso == None or self.ingreso <= self.hospitalizacion:
+        if self.ingreso is None or self.ingreso <= self.hospitalizacion:
             return (timezone.now() - self.hospitalizacion).total_seconds() / 60
 
         return (self.ingreso - self.hospitalizacion).total_seconds() / 60
@@ -235,32 +236,39 @@ class Admision(models.Model):
         centro hospitalario"""
         dias = 0
         fraccion_dias = 0
-        if self.hospitalizacion == None:
+        if self.hospitalizacion is None:
             dias = (timezone.now() - self.momento).days
-            fraccion_dias = (timezone.now() - self.momento).total_seconds() / 3600 / 24
+            fraccion_dias = (
+                            timezone.now() - self.momento).total_seconds() / 3600 / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
 
         if self.fecha_alta > self.hospitalizacion:
             dias = (self.fecha_alta - self.hospitalizacion).days
-            fraccion_dias = (self.fecha_alta - self.hospitalizacion).seconds / 3600 / 24
+            fraccion_dias = (
+                            self.fecha_alta - self.hospitalizacion).seconds / 3600 / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
 
-        if self.ingreso == None or self.ingreso <= self.hospitalizacion:
+        if self.ingreso is None or self.ingreso <= self.hospitalizacion:
             dias = (timezone.now() - self.hospitalizacion).days
-            fraccion_dias = divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[0] / 24
+            fraccion_dias = \
+            divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[
+                0] / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
 
         if self.fecha_alta <= self.hospitalizacion:
-            return divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[0] / 24
+            return \
+            divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[
+                0] / 24
 
         dias = (self.fecha_alta - self.hospitalizacion).days
-        fraccion_dias = divmod((self.fecha_alta - self.hospitalizacion).seconds, 3600)[0] / 24
+        fraccion_dias = \
+        divmod((self.fecha_alta - self.hospitalizacion).seconds, 3600)[0] / 24
         if dias < 0:
             dias = 0
         return Decimal(dias + fraccion_dias)
@@ -270,47 +278,77 @@ class Admision(models.Model):
         """Permite calcular el tiempo que hace falta por facturar"""
 
         ahora = timezone.now()
-        if self.ultimo_cobro >= ahora:
+        ultimo = self.hospitalizacion
+        if ultimo is None:
+            ultimo = self.admision
+
+        if ultimo >= ahora:
             return 0
 
-        dias = (ahora - self.ultimo_cobro).days
+        dias = (ahora - ultimo).days
         if dias < 1:
             return 1
-        return (ahora - self.ultimo_cobro).days
+
+        if self.estado == 'C':
+            return (self.fecha_alta - ultimo).days
+
+        return (ahora - ultimo).days
 
     def precio_diario(self):
 
+        precio = self.habitacion.item.precio_de_venta
+
         if not self.tipo_de_venta:
-            return self.habitacion.item.precio_de_venta
+            return precio
 
-        aumento = self.tipo_de_venta.incremento * self.habitacion.item.precio_de_venta / Decimal(100)
-        disminucion = self.tipo_de_venta.disminucion * self.habitacion.item.precio_de_venta / Decimal(100)
+        aumento = self.tipo_de_venta.incremento * precio
+        return (precio + aumento).quantize(Decimal("0.01"))
 
-        return (self.habitacion.item.precio_de_venta + aumento - disminucion).quantize(Decimal("0.01"))
+    def descuento_diario(self):
+
+        if not self.tipo_de_venta:
+            return Decimal(0)
+        precio = self.habitacion.item.precio_de_venta
+
+        return self.tipo_de_venta.disminucion * precio
+
+    def descuento_hospitalizacion(self):
+
+        return self.descuento_diario() * self.tiempo_cobro()
 
     def debido(self):
 
         """Calcula el monto que aún se debe por conceptio de hospitalización"""
+
+        dias = self.tiempo_cobro()
+
         if not self.tipo_de_venta:
-            return self.tiempo_cobro() * self.habitacion.item.precio_de_venta
+            return dias * self.habitacion.item.precio_de_venta
 
-        return (self.tiempo_cobro() * self.precio_diario()).quantize(Decimal("0.01"))
+        subtotal = (dias * self.precio_diario()).quantize(dot01)
+        return subtotal
 
-    def dar_alta(self):
+    def descontado(self):
 
+        return self.debido() - self.descuento_hospitalizacion()
+
+    def dar_alta(self, day):
+
+        self.fecha_alta = day
         self.estado = 'C'
         self.fecha_alta = timezone.now()
-        medicamentos = (m.suspender() for m in self.medicamentos.all())
+        (m.suspender() for m in self.medicamentos.all())
+        self.save()
 
     def actualizar_tiempo(self):
 
         """Actualiza el tiempo transcurrido desde el ingreso hasta el momento
         en que se dio de alta"""
 
-        if self.ingreso == None:
+        if self.ingreso is None:
             return
 
-        if not self.fecha_alta == None:
+        if not self.fecha_alta is None:
             self.tiempo = (self.fecha_alta - self.ingreso).total_seconds() / 60
         else:
             self.tiempo = self.tiempo_ahora()
@@ -335,7 +373,8 @@ class Admision(models.Model):
 
         items[self.habitacion.item] += self.tiempo_cobro()
 
-        for cargo in self.cargos.filter(facturada=False):
+        for cargo in self.cargos.all():
+            print(cargo)
             items[cargo.cargo] += cargo.cantidad
             cargo.facturada = True
             cargo.save()
@@ -345,7 +384,7 @@ class Admision(models.Model):
             oxigeno.facturada = True
             oxigeno.save()
 
-        return sorted(items)
+        return items
 
     def __unicode__(self):
 
@@ -364,30 +403,48 @@ class Admision(models.Model):
 
         return (ahora - self.momento).total_seconds() / 60
 
-    def estado_de_cuenta(self):
+    def estado_de_cuenta(self, total=False, honorarios=True):
 
-        cargos = sum(c.valor() for c in self.cargos.filter(facturada=False).all())
-        oxigeno = sum(o.valor() for o in self.oxigeno_terapias.all())
-        honorarios = self.honorarios.aggregate(models.Sum('monto'))
+        total = Decimal()
+        total += sum(c.valor() for c in self.cargos.all())
+        total += self.debido() - self.descuento_hospitalizacion()
 
-        if not honorarios['monto__sum']:
-            honorarios['monto__sum'] = 0
+        total += sum(h.monto for h in self.honorarios.all())
+        total += sum(o.valor() for o in self.oxigeno_terapias.all())
 
-        return (cargos + oxigeno + Decimal(honorarios['monto__sum'])
-                + self.debido()).quantize(Decimal("0.01"))
+        return total.quantize(dot01)
 
     def agrupar_cargos(self):
 
         agrupados = defaultdict(CargoAdapter)
 
         for cargo in self.cargos.all():
-
             agrupados[cargo.cargo].cantidad += cargo.cantidad
             agrupados[cargo.cargo].detalles.append(cargo)
             agrupados[cargo.cargo].precio_unitario = cargo.precio_unitario()
             agrupados[cargo.cargo].valor += cargo.valor()
+            agrupados[cargo.cargo].descuento += cargo.descuento()
+            agrupados[cargo.cargo].subtotal += cargo.subtotal()
 
         return dict(agrupados)
+
+    def subtotal(self):
+
+        total = Decimal(0)
+        total += sum(c.subtotal() for c in self.cargos.all())
+        total += self.debido()
+        total += sum(h.monto for h in self.honorarios.all())
+        total += sum(o.subtotal() for o in self.oxigeno_terapias.all())
+
+        return total.quantize(dot01)
+
+    def descuento(self):
+
+        return sum(c.descuento() for c in self.cargos.all()) + self.descuento_hospitalizacion()
+
+    def total(self):
+
+        return self.estado_de_cuenta(True)
 
 
 class PreAdmision(TimeStampedModel):
@@ -402,3 +459,36 @@ class PreAdmision(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('admision-index')
+
+    def __unicode__(self):
+        return u"Preadmision de {0} {1}".format(
+            self.emergencia.persona.nombre_completo(), self.completada)
+
+
+class Especialidad(TimeStampedModel):
+    nombre = models.CharField(max_length=50)
+
+
+class Doctor(TimeStampedModel):
+    nombre = models.CharField(max_length=50)
+
+
+class Laboratorio(TimeStampedModel):
+    nombre = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.nombre
+
+
+class Deposito(TimeStampedModel):
+
+    admision = models.ForeignKey(Admision, related_name='depositos')
+    monto = models.DecimalField(blank=True, null=True, max_digits=7,
+                                decimal_places=2)
+    fecha = models.DateTimeField(default=timezone.now, null=True, blank=True)
+
+    def get_absolute_url(self):
+
+        """Obtiene la URL absoluta"""
+
+        return reverse('admision-view-id', args=[self.admision.id])

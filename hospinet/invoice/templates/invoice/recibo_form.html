@@ -2,7 +2,7 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <div class="row">
-  <aside class="span3">
+  <aside class="col-md-3">
     <nav class="sidebar-nav">
       <ul class="nav nav-stacked nav-tabs">
         <li>
@@ -11,8 +11,9 @@
       </ul>
     </nav>
   </aside>
-  <section class="span9">
+  <section class="col-md-9">
     <form method="post" class="form-horizontal">
+      {{ form.management_form }}
       {% crispy persona_form %}
       {% for subform in form %}
         {% crispy subform %}

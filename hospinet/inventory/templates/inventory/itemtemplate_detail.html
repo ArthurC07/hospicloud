@@ -2,33 +2,33 @@
 {% load staticfiles %}
 {% block content %}
 <div class="row">
-  <div class="span12">
+  <div class="col-md-12">
     <section class="page-header">
       <h1>{{ item_template.descripcion }} <small>Producto</small></h1>
     </section>
   </div>
 </div>
 <div class="row">
-  <aside class="span3">
+  <aside class="col-md-3">
     <nav class="sidebar-nav">
       <ul class="nav nav-stacked nav-tabs">
           <li>
-              <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar</a>
+              <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar {{ item_template.descripcion }}</a>
           </li>
       </ul>
     </nav>
   </aside>
-  <section class="span9">
+  <section class="col-md-9">
     <div class="row">
-        <section class="span6">
+        <section class="col-md-6">
             <ul>
                 <li>Marca: {{ item_template.marca }}</li>
                 <li>Modelo: {{ item_template.modelo }}</li>
-                <li>Marca: {{ item_template.notas }}</li>
-                <li>Marca: {{ item_template.precio_de_venta }}</li>
-                <li>Marca: {{ item_template.costo }}</li>
-                <li>Marca: {{ item_template.impuestos }}</li>
-                <li>Marca: {{ item_template.activo }}</li>
+                <li>Notas: {{ item_template.notas }}</li>
+                <li>Precio de venta: {{ item_template.precio_de_venta }}</li>
+                <li>Precio de Costo: {{ item_template.costo }}</li>
+                <li>Impuestos: {{ item_template.impuestos }}</li>
+                <li>Activo: {{ item_template.activo|yesno }}</li>
                 <li>Grupos:
                     <ul>
                         {% for grupo in item_template.item_type.all %}

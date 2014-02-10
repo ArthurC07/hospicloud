@@ -1,37 +1,13 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block header %}
-<script type="text/javascript" src="{% static 'js/spital.js' %}"></script>
-<script type="text/javascript">
-  $(document).ready(function()
-  {
-    data_source = new Spital("{% url 'home' %}");
-    var resultados = $('#resultados');
-    $('#persona-form').submit(function()
-    {
-      resultados.empty();
-      data_source.search_person($('#persona-search').val(), resultados);
-      return false;
-    });
-  });
-</script>
-{% endblock %}
+{% load crispy_forms_tags %}
 {% block content %}
-<form id="persona-form">
-  <div>
-    <h1>Buscar una Paciente</h1>
-    <label>Nombre o Identidad:</label>
-    <input id="persona-search" />
-    <input type="submit" value="Buscar" />
-  </div>
-</form>
-<div id="resultados"></div>
-<form enctype="multipart/form-data" action="{% url 'admision-ingresar-persona' %}" class="styled" method="post">
-  {% csrf_token %} <h1>Ingresar una nuevo Paciente</h1>
-  <div id="messages"></div>
-  {% include 'snippets/form.html' with form=persona_form %}
-  <p>
-    <input type="submit" value="Guardar" />
-  </p>
-</form>
+    <div class="row">
+        <div class="col-md-6">
+            {% crispy persona_search_form %}
+        </div>
+        <div class="col-md-6">
+            {% crispy persona_form %}
+        </div>
+    </div>
 {% endblock %}

@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-<aside class="span3 toolbox">
+<aside class="col-md-3 toolbox">
   <nav>
     <ul>
       {% if user.profile.doctor %}
       <li class="clearfix">
-        <a class="span3" href="{% url 'consultorio-agregar' %}"><img src="{% static 'images/agregar.png' %}" /> Agregar Consultorio</a>
+        <a class="col-md-3" href="{% url 'consultorio-agregar' %}"><img src="{% static 'images/agregar.png' %}" /> Agregar Consultorio</a>
       </li>
       {% endif %}
     </ul>
@@ -18,13 +18,13 @@
   </div>
   {% if user.profile.doctor %}
   {% for consultorio in user.profile.consultorios.all %}
-    <section class="span3">
+    <section class="col-md-3">
       <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
     </section>
   {% endfor %}
   {% else %}
   {% for consultorio in user.profile.secretariados.all %}
-    <section class="span3">
+    <section class="col-md-3">
       <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
     </section>
   {% endfor %}

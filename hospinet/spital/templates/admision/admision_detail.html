@@ -1,35 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-  <div class="span12">
+  <div class="col-md-12">
     <section class="page-header">
-      <h1>{{ admision.paciente.nombre_completo }} <small>Admisi&oacute;n</small></h1>
+      <h1>{{ admision.paciente.nombre_completo }} <small>Admisi&oacute;n {{ admision.get_estado_display }}</small></h1>
     </section>
   </div>
 </div>
 <div class="row">
-<aside class="span3">
-  <nav class="sidebar-nav">
-    <ul class="nav nav-stacked nav-tabs">
-      <li>
-        <a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a>
-      </li>
-      <li>
-        <a href="{% url 'admision-hospitalizar' admision.id %}">Hospitalizar</a>
-      </li>
-      <li>
-        <a href="{% url 'admision-pagar' admision.id %}">Marcar como Pagada</a>
-      </li>
-      <li>
-        <a href="{% url 'admision-referencias' admision.id %}">Referencias</a>
-      </li>
-      <li>
-        <a href="{% url 'admision-fiadores' admision.id %}">Fiadores</a>
-      </li>
-    </ul>
-  </nav>
+<aside class="col-md-3">
+    {% include 'snippets/admision_aside.html' %}
 </aside>
-<section class="span9">
+<section class="col-md-9">
   <div class="row">
     
   </div>
@@ -42,6 +24,7 @@
   <div class="info">
     {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %} <a href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
   </div>
+    {% include 'snippets/depositos_list.html' %}
 </section>
 </div>
 {% endblock %}

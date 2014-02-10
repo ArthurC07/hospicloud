@@ -1,23 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
-<div class="row">
-<aside class="span3">
-<nav class="sidebar-nav">
-  <ul class="nav nav-stacked nav-tabs">
-  </ul>
-</nav>
-</aside>
-<section class="span6">
-  {% crispy form %}
-</section>
-</div>
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-stacked nav-tabs">
+                </ul>
+            </nav>
+        </aside>
+        <section class="col-md-6">
+            {% crispy form %}
+        </section>
+    </div>
 {% endblock %}
 {% block scripts %}
-    {{ form.media }}
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $(".chzn-select").chosen();
-        });
-    </script>
+    {{ form.media.js }}
 {% endblock %}

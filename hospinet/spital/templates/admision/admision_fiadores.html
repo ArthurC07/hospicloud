@@ -1,14 +1,14 @@
 {% extends 'base.html' %}{% load thumbnail %}
 {% block content %}
 <div class="row">
-  <section class="span12">
+  <section class="col-md-12">
     <div class="page-header">
       <h1>{{ admision.paciente.nombre_completo }} <small>Fiadores</small></h1>
     </div>
   </section>
 </div>
 <div class="row">
-  <aside class="span3">
+  <aside class="col-md-3">
     <nav class="sidebar-nav">
       <ul class="nav nav-tabs nav-stacked no-print">
         <li>
@@ -29,7 +29,7 @@
       </ul>
     </nav>
   </aside>
-  <section class="span9">
+  <section class="col-md-9">
     {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
     {% for fiador in admision.fiadores.all %}
     <div class="page-header">

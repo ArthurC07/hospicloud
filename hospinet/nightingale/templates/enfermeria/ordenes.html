@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="row">
-        <section class="span12">
+        <section class="col-md-12">
             <div class="page-header">
                 <h1>{{ admision.paciente.nombre_completo }} <br />
                     <small>
@@ -11,9 +11,9 @@
         </section>
     </div>
 <div class="row">
-{% include 'snippets/aside.html' %}<section id="ordenes-medicas" class="span9">
+{% include 'snippets/aside.html' %}<section id="ordenes-medicas" class="col-md-9">
     <div class="page-header">
-      <h2>Ordenes M&eacute;dicas</h2>
+      <h2>Evoluci&oacute;n y Ordenes M&eacute;dicas</h2>
     </div>
     {% include 'snippets/orden_table.html' %}
     <a href="{% url 'enfermeria-orden-agregar' admision.id %}" class="btn btn-primary">Agregar Orden M&eacute;dica</a>

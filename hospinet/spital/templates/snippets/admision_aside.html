@@ -1,9 +1,11 @@
-<nav class="span3 sidebar-nav">
+<nav class="sidebar-nav">
   <ul class="nav nav-stacked nav-tabs">
     <li><a href="{% url 'admision-view-id' admision.id %}">Regresar a la Admisi&oacute;n</a></li>
-    <li><a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a></li>
+      <li><a href="{% url 'admision-hospitalizar' admision.id %}">Hospitalizar</a></li>
+      <li><a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a></li>
     <li><a href="{% url 'admision-referencias' admision.id %}">Referencias</a></li>
     <li><a href="{% url 'admision-fiadores' admision.id %}">Fiadores</a></li>
+    <li><a href="{% url 'admision-deposito-agregar' admision.id %}">Agregar Dep&oacute;sito</a></li>
     <li><a href="{% url 'admision-index' %}">Regresar a Admisiones</a></li>
   </ul>
 </nav>

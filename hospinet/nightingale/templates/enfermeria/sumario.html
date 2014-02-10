@@ -1,14 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="col-md-12">
+            <section class="page-header">
+                <h1>Dar Alta</h1>
+            </section>
+        </div>
+    </div>
 <div class="row">
   {% include 'snippets/aside.html' with admision=admision %}
-
-<section class="span6">
-  <h2 class="warning">Llenar este formulario significa que el paciente
+    <section class="col-md-6">
+        {% crispy form %}
+    </section>
+<section class="col-md-3">
+  <p class="warning">Llenar este formulario significa que el paciente
     ser&aacute; dado de alta y que el sistema lo colocar&aacute; en modo de
-    solo lectura para evitar que se editen los datos posteriormente</h2>
-  {% crispy form %}
+    solo lectura para evitar que se editen los datos posteriormente</p>
 </section>
 </div>
 {% endblock %}

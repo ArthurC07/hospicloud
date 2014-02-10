@@ -3,126 +3,249 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="row">
-        <div class="span12">
+        <div class="col-md-12">
             <div class="page-header">
-                <h1>Estad&iacute;stica Descriptiva</h1>
+                <h1>Estad&iacute;sticas</h1>
             </div>
         </div>
     </div>
+    <div class="row action-nav-normal">
+        <section class="col-md-3 action-nav-button">
+            <a href="#">
+                <table class="table table-striped table-bordered">
+                    <caption>Admisiones por Habitación</caption>
+                    <thead>
+                    <tr>
+                        <th>Habitaci&oacute;n</th>
+                        <th>Cantidad</th>
+                        <th>D&iacute;as</th>
+                    </tr>
+                    <thead>
+                    <tbody>
+                    {% for habitacion, detalle in habitaciones %}
+                        <tr>
+                            <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
+                            <td>{{ detalle.admisiones }}</td>
+                            <td>{{ detalle.dias|floatformat:0 }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <td>Totales</td>
+                    <td>{{ total }}</td>
+                    <td>{{ dias|floatformat:0 }}</td>
+                    </tfoot>
+                </table>
+            </a>
+        </section>
+        <section class="col-md-6 action-nav-button">
+            <canvas width="600" height="400" id="meses"></canvas>
+        </section>
+        <section class=" col-md-3 action-nav-button">
+            <a href="#">
+                <table class="table table-striped table-bordered">
+                    <caption>Admisiones Especialista</caption>
+                    <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th></th>
+                    </tr>
+                    <thead>
+                    <tbody>
+                    {% for doctor, cantidad in doctores %}
+                        <tr>
+                            <td>{{ doctor }}</td>
+                            <td>{{ cantidad }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <td>Total</td>
+                    <td colspan="2">{{ total_doctores }}</td>
+                    </tfoot>
+                </table>
+            </a>
+        </section>
+    </div>
     <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="page-header">
-                    <h1>Ocupación de Habitaciones del Último Mes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span6">
-                    <canvas width="400" height="400" id="habitacion"></canvas>
-                </div>
-                <div class="span6">
-                    {% crispy habitacion_popular %}
-                </div>
-            </div>
+    <article class="col-md-3">
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Doctor</th>
+                <th>Emergencias</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for doctor, cantidad in emergencia_doctores %}
+                <tr>
+                    <td>{{ doctor.get_full_name }}</td>
+                    <td>{{ cantidad }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>{{ emergencia_total }}</th>
+                </tr>
+            </tfoot>
+        </table>
+    </article>
+    <div class="col-md-offset-1 col-md-4">
+        <canvas id="emergencia" width="400" height="400"></canvas>
+    </div>
+        <article class="col-md-offset-1 col-md-3">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Emergencias</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for doctor, cantidad in preadmision_doctores %}
+                    <tr>
+                        <td>{{ doctor.get_full_name }}</td>
+                        <td>{{ cantidad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>{{ preadmision_total }}</th>
+                </tr>
+                </tfoot>
+            </table>
+        </article>
+    </div>
+    <div class="row">
+        <article class="col-md-3">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>T&eacute;cnico</th>
+                    <th>Examenes</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tecnico, cantidad in examenes_tecnicos %}
+                    <tr>
+                        <td>{{ tecnico }}</td>
+                        <td>{{ cantidad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>{{ examenes_total }}</th>
+                </tr>
+                </tfoot>
+            </table>
+        </article>
+        <div class="col-md-offset-1 col-md-4">
+            <canvas id="examenes" width="400" height="400"></canvas>
+        </div>
+        <article class="col-md-offset-1 col-md-3">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Tipo de Examen</th>
+                    <th>Cantidad</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tipo, cantidad in examenes_tipo %}
+                    <tr>
+                        <td>{{ tipo }}</td>
+                        <td>{{ cantidad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>{{ examenes_total }}</th>
+                </tr>
+                </tfoot>
+            </table>
+        </article>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {% crispy habitacion_popular %}
+        </div>
+        <div class="col-md-4">
+            {% crispy diagnostico %}
+        </div>
+        <div class="col-md-4">
+            {% crispy doctor %}
         </div>
     </div>
     <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="page-header">
-                    <h1>Admisiones por Diagnóstico del Último Mes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span6">
-                    <canvas width="400" height="400" id="diagnostico"></canvas>
-                </div>
-                <div class="span6">
-                    {% crispy diagnostico %}
-                </div>
-            </div>
+        <div class="col-md-4">
+            {% crispy cargo %}
         </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="page-header">
-                    <h1>Admisiones por Doctor del Último Mes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span6">
-                    <canvas width="400" height="400" id="doctor"></canvas>
-                </div>
-                <div class="span6">
-                    {% crispy doctor %}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <div class="row">
-                <div class="page-header">
-                    <h1>Cargos del Último Mes</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="span6">
-                    <canvas width="400" height="400" id="cargo"></canvas>
-                </div>
-                <div class="span6">
-                    {% crispy cargo %}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-    <div class="span12">
-    <div class="row">
-        <div class="span4">
+        <div class="col-md-4">
             {% crispy admision_periodo %}
         </div>
-        <div class="span4">
+        <div class="col-md-4">
             {% crispy emergencia_periodo %}
         </div>
-        <div class="span4">
-        </div>
-    </div>
-    </div>
     </div>
 {% endblock %}
 {% block scripts %}
-{% localize off %}
-    <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
-    <script type="text/javascript">
-        $(document).ready(function()
-        {
-            var data = {
-                labels : [ {% for habitacion, detalle in habitaciones %} '{{ habitacion }}', {% endfor %} '' ],
-                datasets : [
-                    {
-                        fillColor : "rgba(151,187,205,0.5)",
-                        strokeColor : "rgba(151,187,205,1)",
-                        data : [ {% for habitacion, detalle in habitaciones %} {{ detalle.admisiones }}, {% endfor %} 0 ]
-                    }
-                ]
-            };
-            var ctx = $("#habitacion").get(0).getContext("2d");
-            var grafico = new Chart(ctx).Bar(data);
-            data = {
-                labels : [ {% for diagnostico, cantidad in diagnosticos %} '{{ diagnostico }}', {% endfor %} '' ],
-                datasets : [
-                    {
-                        fillColor : "rgba(151,187,205,0.5)",
-                        strokeColor : "rgba(151,187,205,1)",
-                        data : [ {% for diagnostico, cantidad in diagnosticos %} {{ cantidad }}, {% endfor %} 0 ]
-                    }
-                ]
-            };
-            ctx = $("#diagnostico").get(0).getContext("2d");
-            grafico = new Chart(ctx).Bar(data);
-        });
-    </script>
-{% endlocalize %}
+    {% localize off %}
+        <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function()
+            {
+                var data = {
+                    labels : [ {% for mes, cantidad in meses %} '{{ mes }}', {% endfor %} ],
+                    datasets : [
+                        {
+                            fillColor : "rgba(151,187,205,0.5)",
+                            strokeColor : "rgba(151,187,205,1)",
+                            data : [ {% for mes, cantidad in meses %} {{ cantidad }}, {% endfor %} ]
+                        }
+                    ]
+                };
+                var ctx = $("#meses").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data, {
+                    scaleShowLabels: true
+                });
+                var data = {
+                    labels : [ {% for doctor, cantidad in emergencia_grafico %} '{{ doctor.get_full_name }}', {% endfor %} ],
+                    datasets : [
+                        {
+                            fillColor : "rgba(151,187,205,0.5)",
+                            strokeColor : "rgba(151,187,205,1)",
+                            data : [ {% for doctor, cantidad in emergencia_grafico2 %} {{ cantidad }}, {% endfor %} ]
+                        }
+                    ]
+                };
+                var ctx = $("#emergencia").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data, {
+                    scaleShowLabels: true
+                });
+                var data = {
+                    labels : [ {% for tipo, cantidad in examenes_grafico %} '{{ tipo }}', {% endfor %} ],
+                    datasets : [
+                        {
+                            fillColor : "rgba(151,187,205,0.5)",
+                            strokeColor : "rgba(151,187,205,1)",
+                            data : [ {% for tipo, cantidad in examenes_grafico2 %} {{ cantidad }}, {% endfor %} ]
+                        }
+                    ]
+                };
+                var ctx = $("#examenes").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data, {
+                    scaleShowLabels: true
+                });
+            });
+
+        </script>
+    {% endlocalize %}
 {% endblock %}

@@ -16,74 +16,87 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from spital.models import Admision, Habitacion, PreAdmision
+from crispy_forms.layout import Fieldset
+from django.utils import timezone
+
+from spital.models import Admision, Habitacion, PreAdmision, Deposito
 from emergency.models import Emergencia
 from persona.models import Persona
-from django.utils.translation.trans_null import _
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Fieldset
+from persona.forms import DateTimeWidget, FieldSetModelFormMixin
 
-class AdmisionForm(forms.ModelForm):
-    
+
+class AdmisionForm(FieldSetModelFormMixin):
     """Permite ingresar una :class:`Admision` al Hospital"""
 
     class Meta:
-        
         model = Admision
         fields = ('paciente', 'diagnostico', 'doctor',
                   'arancel', 'pago', 'poliza', 'certificado', 'aseguradora',
-                  'deposito', 'tipo_de_ingreso', 'tipo_de_venta')
-    
+                  'tipo_de_ingreso', 'tipo_de_venta')
+
     paciente = forms.ModelChoiceField(label="",
-                                  queryset=Persona.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
+                                      queryset=Persona.objects.all(),
+                                      widget=forms.HiddenInput(),
+                                      required=False)
 
     doctor = forms.CharField(label="Medico Tratante", required=True)
     diagnostico = forms.CharField(required=True)
 
-class HabitacionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AdmisionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Datos de la Admisión', *self.field_names)
 
+
+class HabitacionForm(FieldSetModelFormMixin):
     """Permite gestionar los datos de una :class:`Habitacion`"""
 
     class Meta:
-
         model = Habitacion
 
-class PreAdmisionForm(forms.ModelForm):
-    
+
+class PreAdmisionForm(FieldSetModelFormMixin):
     class Meta:
-        
         model = PreAdmision
         exclude = ('completada', )
-    
+
     emergencia = forms.ModelChoiceField(label="",
-                                  queryset=Emergencia.objects.all(),
-                                  widget=forms.HiddenInput(), required=False)
+                                        queryset=Emergencia.objects.all(),
+                                        widget=forms.HiddenInput(),
+                                        required=False)
 
     def __init__(self, *args, **kwargs):
-
         super(PreAdmisionForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
 
-class IngresarForm(forms.ModelForm):
-    
+
+class IngresarForm(FieldSetModelFormMixin):
     """Muestra un formulario que permite ingresar a una :class:`Persona`
     al :class:`Hospital`"""
 
     class Meta:
-        
         model = Admision
-        fields = ('habitacion',)
+        fields = ('habitacion', 'ingreso', 'hospitalizacion')
+
+    ingreso = forms.DateTimeField(widget=DateTimeWidget(), required=True,
+                                  initial=timezone.now)
+    hospitalizacion = forms.DateTimeField(widget=DateTimeWidget(),
+                                          required=True,
+                                          initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
-
         super(IngresarForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
         self.helper.layout = Fieldset(u'Hospitalizar Paciente',
                                       *self.field_names)
+
+
+class DepositoForm(FieldSetModelFormMixin):
+
+    class Meta:
+        model = Deposito
+
+    fecha = forms.DateTimeField(widget=DateTimeWidget(),
+                                required=False,
+                                initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(DepositoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Deposito', *self.field_names)
