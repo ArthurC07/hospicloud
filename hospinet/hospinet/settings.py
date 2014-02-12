@@ -198,6 +198,7 @@ INSTALLED_APPS = (
     'emergency',
     'inventory',
     'statistics',
+    'contracts',
     # Third party apps go here
     'django_extensions',
     'treemenus',

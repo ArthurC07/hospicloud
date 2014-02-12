@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+
+from django.db import models
+from django.utils import timezone
+from django_extensions.db.models import TimeStampedModel
+from persona.models import Persona
+
+
+class Plan(TimeStampedModel):
+    """Indica los limites que presenta cada :class:`Contrato`"""
+
+    nombre = models.CharField(max_length=255, null=True, blank=True)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    eventos_maximos = models.IntegerField()
+    edad_maxima = models.IntegerField()
+    adicionales = models.IntegerField()
+    medicamentos = models.DecimalField(max_digits=10, decimal_places=2,
+                                       default=0)
+
+
+class Contrato(TimeStampedModel):
+    """Almacena el estado de cada contrato que se ha celebrado"""
+
+    class Meta:
+
+        permissions = (
+            ('contrato', 'Permite al usuario gestionar hospitalizaciones'),
+        )
+
+    titular = models.ForeignKey(Persona, related_name='contratos')
+    plan = models.ForeignKey(Plan, related_name='contratos')
+    inicio = models.DateField()
+    vencimiento = models.DateField()
+    ultimo_pago = models.DateTimeField(default=timezone.now())
+    beneficiarios = models.ManyToManyField(Persona, related_name='beneficios')
+    administrador = models.ForeignKey(User, related_name='contratos')
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return reverse('contracts-contract', args=[self.id])
+
+
+class Pago(TimeStampedModel):
+    """Registra los montos y las fechas en las que se efectuaron los pagos
+    de un :class:`Contrato`"""
+    contrato = models.ForeignKey(Contrato, related_name='pagos')
+    fecha = models.DateTimeField(default=timezone.now())
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return reverse('contracts-contract', args=[self.contrato.id])
+
+
+class TipoEvento(TimeStampedModel):
+    nombre = models.CharField(max_length=255, null=True, blank=True)
+
+
+class Evento(TimeStampedModel):
+    """Registra el uso de los beneficios del :class:`Contrato`"""
+    contrato = models.ForeignKey(Contrato, related_name='eventos')
+    tipo = models.ForeignKey(TipoEvento, related_name='eventos')
+    fecha = models.DateTimeField(default=timezone.now())
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return reverse('contracts-contract', args=[self.contrato.id])
