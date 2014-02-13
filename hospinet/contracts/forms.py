@@ -17,8 +17,9 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from crispy_forms.layout import Fieldset
 from django import forms
-from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago
-from persona.forms import FieldSetModelFormMixin
+from django.utils import timezone
+from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago, Vendedor
+from persona.forms import FieldSetModelFormMixin, DateTimeWidget, DateWidget
 
 
 class PlanForm(FieldSetModelFormMixin):
@@ -33,6 +34,11 @@ class PlanForm(FieldSetModelFormMixin):
 class ContratoForm(FieldSetModelFormMixin):
     class Meta:
         model = Contrato
+        exclude = ('vencimiento',)
+
+    ultimo_pago = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                      initial=timezone.now)
+    inicio = forms.DateField(widget=DateWidget)
 
     def __init__(self, *args, **kwargs):
         super(ContratoForm, self).__init__(*args, **kwargs)
@@ -75,3 +81,18 @@ class PagoForm(ContratoMixin):
         super(ContratoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Registro de Pago',
                                       *self.field_names)
+
+
+class VendedorForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Vendedor
+
+    def __init__(self, *args, **kwargs):
+        super(VendedorForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Vendedor',
+                                      *self.field_names)
+
+
+class VendedorChoiceForm(FieldSetModelFormMixin):
+
+    vendedor = forms.ModelChoiceField(queryset=Vendedor.objects.all())

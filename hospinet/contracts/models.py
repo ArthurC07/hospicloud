@@ -24,6 +24,16 @@ from django_extensions.db.models import TimeStampedModel
 from persona.models import Persona
 
 
+class Vendedor(TimeStampedModel):
+    """Indica quien realizo una venta de un :clas:`Contrato`"""
+    usuario = models.ForeignKey(User, related_name="vendedores")
+    habilitado = models.BooleanField(default=True)
+
+    def __unicode__(self):
+
+        return self.usuario.get_full_name()
+
+
 class Plan(TimeStampedModel):
     """Indica los limites que presenta cada :class:`Contrato`"""
 
@@ -42,21 +52,37 @@ class Contrato(TimeStampedModel):
     class Meta:
 
         permissions = (
-            ('contrato', 'Permite al usuario gestionar hospitalizaciones'),
+            ('contrato', 'Permite al usuario gestionar contratos'),
         )
 
-    titular = models.ForeignKey(Persona, related_name='contratos')
+    persona = models.ForeignKey(Persona, related_name='contratos')
+    numero = models.IntegerField()
+    vendedor = models.ForeignKey(Vendedor, related_name='contratos')
     plan = models.ForeignKey(Plan, related_name='contratos')
     inicio = models.DateField()
     vencimiento = models.DateField()
     ultimo_pago = models.DateTimeField(default=timezone.now())
-    beneficiarios = models.ManyToManyField(Persona, related_name='beneficios')
-    administrador = models.ForeignKey(User, related_name='contratos')
+    administradores = models.ManyToManyField(User, related_name='contratos')
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return reverse('contracts-contract', args=[self.id])
+
+    def __unicode__(self):
+
+        return u"Contrato {0} de {1}".format(self.numero,
+                                             self.persona.nombre_completo())
+
+
+class Beneficiario(TimeStampedModel):
+    persona = models.ForeignKey(Persona, related_name='beneficiarios')
+    contrato = models.ForeignKey(Contrato, related_name='beneficiarios')
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return reverse('contracts-contract', args=[self.contrato.id])
 
 
 class Pago(TimeStampedModel):

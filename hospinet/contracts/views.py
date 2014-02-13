@@ -18,21 +18,39 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView, DeleteView, \
-    TemplateView, UpdateView
-from contracts.forms import PlanForm, ContratoForm, PagoForm, EventoForm
-from contracts.models import Contrato, Plan, Pago, Evento
-from users.mixins import LoginRequiredMixin
+from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
+                                  TemplateView, UpdateView)
 from guardian.decorators import permission_required
+
+from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
+                             VendedorForm)
+from contracts.models import Contrato, Plan, Pago, Evento, Vendedor
+from persona.views import PersonaFormMixin
+from users.mixins import LoginRequiredMixin
 
 
 class IndexView(TemplateView, LoginRequiredMixin):
     template_name = 'contracts/index.html'
 
+    def get_context_data(self, **kwargs):
+
+        context = super(IndexView, self).get_context_data(**kwargs)
+        return context
+
 
 class PlanCreateView(CreateView, LoginRequiredMixin):
     model = Plan
     form_class = PlanForm
+
+
+class PlanUpdateView(UpdateView, LoginRequiredMixin):
+    model = Plan
+    form_class = PlanForm
+
+
+class PlanDetailView(DetailView, LoginRequiredMixin):
+    model = Plan
+    context_object_name = 'plan'
 
 
 class PlanListView(ListView, LoginRequiredMixin):
@@ -65,7 +83,7 @@ class ContratoFormMixin(CreateView, LoginRequiredMixin):
         return super(ContratoFormMixin, self).dispatch(*args, **kwargs)
 
 
-class ContratoCreateView(CreateView, LoginRequiredMixin):
+class ContratoCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
     model = Contrato
     form_class = ContratoForm
 
@@ -125,3 +143,17 @@ class EventoDeleteView(DeleteView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.contrato.get_absolute_url()
+
+
+class VendedorCreateView(CreateView, LoginRequiredMixin):
+    model = Vendedor
+    form_class = VendedorForm
+
+
+class VendedorDetailView(DetailView, LoginRequiredMixin):
+    model = Vendedor
+    context_object_name = 'vendedor'
+
+
+class VendedorUpdateView(UpdateView, LoginRequiredMixin):
+    model = Vendedor
