@@ -12,35 +12,22 @@
             </section>
         </div>
     </div>
+
+
     <div class="row">
-        <div class="col-md-12">
-            <nav class="navbar navbar-default" role="navigation">
-                <div class="navbar-header">
-                    <a class="navbar-brand">Pendiente de Facturaci&oacute;n</a>
-                    <ul class="nav navbar-nav">
-                        <li>
-                            <a href="{% url 'invoice-dia-emergencia' %}">Emergencias</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'invoice-dia-altas' %}">Admisiones</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'invoice-imaging' %}">Estudios
-                                de Im&aacute;genes</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'invoice-new' %}">Crear
-                                Recibo</a>
-                        </li>
-                        <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
-                            Turno</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-tabs nav-stacked">
+                <li>
+                    <a href="{% url 'invoice-new' %}">Crear
+                        Recibo</a>
+                </li>
+                <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
+                    Turno</a></li>
+            </ul>
+        </nav>
+    </aside>
+        <div class="col-md-9">
             <section class="tabbable">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#turno" data-toggle="tab">Turno</a></li>
