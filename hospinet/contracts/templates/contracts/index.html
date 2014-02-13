@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block header %}
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <h1>Contratos <small>Pagina principal</small></h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <aside class="col-md-3">
+    <nav class="sidebar-nav">
+      <ul class="nav nav-tabs nav-stacked">
+        <li>
+          <a href="{% url 'emergency-ingresar' %}">Crear Contrato</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <section class="col-md-9">
+          <div class="row">
+              <section class="col-md-4">
+                  {% crispy remiteperiodoform %}
+              </section>
+              <section class="col-md-4">
+                  {% crispy ventaperiodoform %}
+              </section>
+              <section class="col-md-4">
+                  {% crispy corteform %}
+              </section>
+          </div>
+  </section>
+</div>
+{% endblock %}
