@@ -55,6 +55,7 @@ urlpatterns = patterns('',
     url(r'^caja/', include('invoice.urls')),
     url(r'^emergencia/', include('emergency.urls')),
     url(r'^bussiness/', include('statistics.urls')),
+    url(r'^contracts/', include('contracts.urls')),
     url(r'^api/', include(v1_api.urls)),
     url(r'^select2/', include('select2.urls')),
 )

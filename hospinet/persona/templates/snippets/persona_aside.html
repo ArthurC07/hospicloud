@@ -22,6 +22,9 @@
                         Paciente a Consultorio {{ consultorio }}</a>
                 {% endfor %}
             </li>
+            <li>
+                <a href="{% url 'contrato-add' persona.id %}">Crear un Contrato</a>
+            </li>
         </ul>
     </nav>
 </aside>
