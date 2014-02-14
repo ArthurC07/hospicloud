@@ -15,10 +15,6 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from crispy_forms.layout import Fieldset, Submit
-from django import forms
-from django.utils import timezone
-from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago, Vendedor
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin)
 
