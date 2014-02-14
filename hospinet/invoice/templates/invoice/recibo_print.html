@@ -9,13 +9,6 @@
         thead {
             border-bottom: 2px dashed;
         }
-        th{
-            font-weight: normal;
-        }
-        .negrita th
-        {
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -29,6 +22,7 @@
                     <th>Cajero: {{ cajero.turno }}</th>
                     <th class="text-right">
                         <p>Factura {{ recibo.numero }}</p>
+
                         <p>Fecha: {{ recibo.created }}</p>
                     </th>
                 </tr>
@@ -43,14 +37,14 @@
                                 <th>Concepto</th>
                                 <th>Precio unitario</th>
                                 <th>Subtotal</th>
-                                <th>Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
+                                <th>
+                                    Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
                                 <th>Total</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for venta in recibo.ventas.all %}
                                 <tr>
-
                                     <td>{{ venta.cantidad }}</td>
                                     <td>{{ venta.item }}</td>
                                     <td>{{ venta.precio_unitario }}</td>
@@ -61,52 +55,44 @@
 
                             {% endfor %}
                             <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th></th>
-                                <th></th>
+                                <td colspan="4">&nbsp;</td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Subtotal:</th>
-                                <th>{{ recibo.subtotal }}</th>
-                            </tr>
-
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Descuento:</th>
-                                <th>{{ recibo.descuento }}</th>
-                            </tr>
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Total:</th>
-                                <th>{{ recibo.total }}</th>
+                                <td colspan="4">&nbsp;</td>
+                                <td>Subtotal:</td>
+                                <td>{{ recibo.subtotal }}</td>
                             </tr>
 
                             <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th></th>
-                                <th></th>
+                                <td colspan="4">&nbsp;</td>
+                                <td>Descuento:</td>
+                                <td>{{ recibo.descuento }}</td>
                             </tr>
                             <tr>
-
-                                <th colspan="4">&nbsp;</th>
+                                <td colspan="4">&nbsp;</td>
+                                <td>Total:</td>
+                                <td>{{ recibo.total }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
                                 {% for pago in recibo.pagos.all %}
-
-                                    <th>{{ pago.tipo }}</th>
-                                    <th>{{ pago.monto }}</th>
+                                    <td>{{ pago.tipo }}</td>
+                                    <td>{{ pago.monto }}</td>
                                 {% endfor %}
                             </tr>
                             <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Total Pagado</th>
-                                <th>{{ recibo.pagado }}</th>
+                                <td colspan="4">&nbsp;</td>
+                                <td>Total Pagado</td>
+                                <td>{{ recibo.pagado }}</td>
                             </tr>
                             <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Monto Debido</th>
-                                <th>{{ recibo.debido }}</th>
+                                <td colspan="4">&nbsp;</td>
+                                <td>Monto Debido</td>
+                                <td>{{ recibo.debido }}</td>
                             </tr>
-                            </tbody >
+                            </tbody>
                         </table>
                     </td>
                 </tr>
@@ -114,18 +100,19 @@
         </div>
         <div class="row">
             <div class="offset4 col-md-12">
-                <br />
-                <br />
-                <br />
-                <p style="text-align: center;">_________________________________________</p>
-                <p style="text-align: center;">Firma Cliente</p>
-
+                <br/>
+                <br/>
+                <br/>
+                <p class="text-center">_________________________________________</p>
+                <p class="text-center">Firma Cliente</p>
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-    window.onload = function() { window.print(); }
+    window.onload = function () {
+        window.print();
+    }
 </script>
 </body>
 </html>
