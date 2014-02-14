@@ -16,8 +16,6 @@
         {
             font-weight: bold;
         }
-
-
     </style>
 </head>
 <body>
@@ -31,14 +29,14 @@
                     <th>Cajero: {{ cajero.turno }}</th>
                     <th class="text-right">
                         <p>Factura {{ recibo.numero }}</p>
-                       <p> Fecha: {{ recibo.created }}</p>
+                        <p>Fecha: {{ recibo.created }}</p>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td colspan="3">
-                        <table style="width: 100%;font-size:16px;">
+                        <table style="width: 100%;">
                             <thead>
                             <tr class="negrita">
                                 <th>Cantidad</th>
@@ -94,15 +92,12 @@
                                 <th colspan="4">&nbsp;</th>
                                 {% for pago in recibo.pagos.all %}
 
-                                <th>{{ pago.tipo }}</th>
-                                <th>{{ pago.monto }}</th>
+                                    <th>{{ pago.tipo }}</th>
+                                    <th>{{ pago.monto }}</th>
                                 {% endfor %}
                             </tr>
                             <tr>
-
                                 <th colspan="4">&nbsp;</th>
-
-
                                 <th>Total Pagado</th>
                                 <th>{{ recibo.pagado }}</th>
                             </tr>
@@ -112,7 +107,9 @@
                                 <th>{{ recibo.debido }}</th>
                             </tr>
                             </tbody >
-
+                        </table>
+                    </td>
+                </tr>
             </table>
         </div>
         <div class="row">
