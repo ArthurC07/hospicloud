@@ -19,7 +19,8 @@ from django.conf.urls import patterns, url
 
 from contracts.views import (ContratoDetailView, PagoCreateView,
                              EventoDeleteView, PagoDeleteView, EventoCreateView,
-                             ContratoUpdateView, IndexView, ContratoCreateView)
+                             ContratoUpdateView, IndexView, ContratoCreateView,
+                             VendedorSearchView, VendedorDetailView)
 
 
 urlpatterns = patterns('',
@@ -56,4 +57,12 @@ urlpatterns = patterns('',
                        url(r'^evento/(?P<pk>\d+)/delete$',
                            EventoDeleteView.as_view(),
                            name='contrato'),
+
+                       url(r'^vendedor/buscar$',
+                           VendedorSearchView.as_view(),
+                           name='vendedor-search'),
+
+                       url(r'^vendedor/(?P<pk>\d+)$',
+                           VendedorDetailView.as_view(),
+                           name='vendedor'),
 )
