@@ -32,6 +32,10 @@ class Vendedor(TimeStampedModel):
     def __unicode__(self):
 
         return self.usuario.get_full_name()
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return reverse('contracts-vendedor', args=[self.id])
 
 
 class Plan(TimeStampedModel):

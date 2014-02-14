@@ -15,11 +15,14 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from crispy_forms.layout import Fieldset
+
+from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
+
 from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago, Vendedor
-from persona.forms import FieldSetModelFormMixin, DateTimeWidget, DateWidget
+from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
+                           FieldSetFormMixin)
 
 
 class PlanForm(FieldSetModelFormMixin):
@@ -42,7 +45,8 @@ class ContratoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ContratoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Contrato', *self.field_names)
+        self.helper.layout = Fieldset(u'Formulario de Contrato',
+                                      *self.field_names)
 
 
 class TipoEventoForm(FieldSetModelFormMixin):
@@ -56,7 +60,6 @@ class TipoEventoForm(FieldSetModelFormMixin):
 
 
 class ContratoMixin(FieldSetModelFormMixin):
-
     admision = forms.ModelChoiceField(label="",
                                       queryset=Contrato.objects.all(),
                                       widget=forms.HiddenInput(),
@@ -93,6 +96,19 @@ class VendedorForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class VendedorChoiceForm(FieldSetModelFormMixin):
-
+class VendedorChoiceForm(FieldSetFormMixin):
     vendedor = forms.ModelChoiceField(queryset=Vendedor.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(VendedorForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Buscar Vendedor', *self.field_names)
+        self.helper.add_input(Submit('submit', u'Buscar'))
+
+
+class ContratoSearchForm(FieldSetFormMixin):
+    numero = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        super(ContratoSearchForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Buscar Contrato', *self.field_names)
+        self.helper.add_input(Submit('submit', u'Buscar'))

@@ -15,16 +15,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from datetime import datetime, time
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
-                                  TemplateView, UpdateView)
+                                  TemplateView, UpdateView, FormView)
 from guardian.decorators import permission_required
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
-                             VendedorForm)
+                             VendedorForm, VendedorChoiceForm,
+                             ContratoSearchForm)
 from contracts.models import Contrato, Plan, Pago, Evento, Vendedor
+from invoice.forms import PeriodoForm
 from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin
 
@@ -33,7 +37,6 @@ class IndexView(TemplateView, LoginRequiredMixin):
     template_name = 'contracts/index.html'
 
     def get_context_data(self, **kwargs):
-
         context = super(IndexView, self).get_context_data(**kwargs)
         return context
 
@@ -99,6 +102,45 @@ class ContratoUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'contrato'
 
 
+class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los contratos de un periodo"""
+    template_name = 'contracts/periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm()
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.contratos = Contrato.objects.filter(
+                inicio__gte=self.inicio,
+                inicio__lte=self.fin,
+            )
+        return super(ContratoPeriodoView, self).dispatch(request, *args,
+                                                         **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ContratoPeriodoView, self).get_context_data(**kwargs)
+
+        context['contratos'] = self.contratos
+
+        return context
+
+
+class ContratoSearchView(FormView, LoginRequiredMixin):
+    """Obtiene el primer :class:`Contrato` con el número especificado en el
+    formulario"""
+    form_class = ContratoSearchForm
+
+    def form_valid(self, form):
+        self.contrato = Contrato.objects.filter(
+            numero=form.cleaned_data['numero']).first()
+        return super(ContratoSearchView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.contrato.get_absolute_url()
+
+
 class PagoCreateView(ContratoFormMixin):
     model = Pago
     form_class = PagoForm
@@ -157,3 +199,14 @@ class VendedorDetailView(DetailView, LoginRequiredMixin):
 
 class VendedorUpdateView(UpdateView, LoginRequiredMixin):
     model = Vendedor
+
+
+class VendedorSearchView(FormView, LoginRequiredMixin):
+    form_class = VendedorChoiceForm
+
+    def form_valid(self, form):
+        self.vendedor = Vendedor.objects.get(pk=form.cleaned_data['vendedor'])
+        return super(VendedorSearchView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.vendedor.get_absolute_url()
