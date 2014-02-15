@@ -1,37 +1,28 @@
-<table class="table table-striped no-more-tables">
-  <caption>Hospitalizaciones</caption>
-  <thead>
-    <tr>
-      <th>Habitaci&oacute;n</th>
-      <th>Identificaci&oacute;n</th>
-      <th>Nombre</th>
-      <th>Edad</th>
-      <th>Diagn&oacute;stico</th>
-      <th>M&eacute;dico Tratante</th>
-      <th>Sexo</th>
-      <th>Hora de Ingreso</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for admision in admisiones %}
-    <tr>
-      <td>{{ admision.habitacion }}</td>
-      <td>{{ admision.paciente.identificacion }}</td>
-      <td>{{ admision.paciente.nombre_completo }}</td>
-      <td>{{ admision.paciente.obtener_edad }}</td>
-      <td>{{ admision.diagnostico }}</td>
-      <td>{{ admision.doctor }}</td>
-      <td>{{ admision.paciente.get_sexo_display }}</td>
-      <td>{{ admision.momento|date:"d/m/Y H:i" }}</td>
-      <td><a class="btn btn-primary btn-block" href="{% url 'nightingale-view-id' admision.id %}">Ver</a></td>
-    </tr>
-    {% endfor %}
-    <tfoot>
-      <tr>
-        <th colspan="5">Total de Hospitalizaciones:</th>
-        <th colspan="4">{{ admisiones.count }}</th>
-      </tr>
-    </tfoot>
-  </tbody>
-</table>
+{% load staticfiles %}{% load thumbnail %}
+{% for admision in admisiones %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-2">
+                {% if not persona.fotografia == None %}
+                    {% thumbnail persona.fotografia "100x100" crop="center" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}"
+                             height="{{ im.height }}">
+                    {% endthumbnail %}
+                {% else %}
+                    <img src="{% static 'images/face.jpg' %}" width="100"
+                         height="100"/>
+                {% endif %}
+            </div>
+            <div class="col-md-9">
+                <h3>{{ admision.paciente }} <small>{{ admision.paciente.obtener_edad }} a&ntilde;os</small></h3>
+                <p>
+                    {{ admision.paciente.get_sexo_display }}, Ingresado el {{ admision.ingreso }}, {{ admision.doctor }}
+                </p>
+                <a class="btn btn-warning">{{ admision.diagnostico }}</a>
+                <a class="btn btn-success">{{ admision.habitacion }}</a>
+                <a class="btn btn-primary" href="{% url 'nightingale-view-id' admision.id %}">Ver <i class="fa fa-arrow-right"></i></a>
+            </div>
+        </div>
+        <hr>
+    </div>
+{% endfor %}
