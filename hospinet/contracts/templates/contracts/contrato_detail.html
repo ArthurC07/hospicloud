@@ -1,65 +1,108 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% block title %}{{ emergencia.persona.nombre_completo }}{% endblock %}
 {% block content %}
     <div class="row">
         <div class="page-header">
-            <h1>{{ examen.persona.nombre_completo }}
-                <small>
-                    ID: {{ examen.persona.id }} &bull; {{ examen.tipo_de_examen.nombre }}</small>
-            </h1>
+            <h1>Contrato<small></h1>
+            <h2>alexis emanuel flores manueles<small>titular</small></h2>
+            <h2>Vendedor<small>Juan perez</small></h2>
         </div>
     </div>
     <div class="row">
         <aside class="col-md-3">
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
-                    <li>
-                        <a href="{% url 'examen-adjuntar-imagen' examen.id %}">Adjuntar
-                            una Fotograf&Iacute;a o Escaneo</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'examen-adjuntar-archivo' examen.id %}">Adjuntar
-                            un Documento</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'examen-adjuntar-dicom' examen.id %}">Adjuntar
-                            Imagen DICOM</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'examen-notificar' examen.id %}">Notificar
-                            por correo</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'examen-estudio-create' examen.id %}">Agregar
-                            otro Examen</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'invoice-create' examen.persona.id %}">Crear
-                            Recibo</a>
-                    </li>
+                    <li><a href="#">Agregar Beneficioiosar</a></li>
+                    <li><a href="#">Agregar medicamentos</a></li>
+                    <li><a href="#">Agregar Pago</a></li>
+                    <li><a href="#">Agregar Eventos</a></li>
+
                 </ul>
             </nav>
+            <nav class="sidebar-nav">
+                {% include 'snippets/persona_menu.html' with persona=emergencia.persona %}
+            </nav>
         </aside>
-        <article id="examen" class="col-md-9">
-            {% include 'snippets/persona.html' with persona=examen.persona %}
-            {% include 'snippets/examen.html' with examen=examen %}
-            <section id="imagenes">
-                {% for imagen in examen.imagenes.all %}
-                    {% include 'snippets/imagen.html' with imagen=imagen %}
-                {% endfor %}
+        <section class="col-md-9">
+            <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
+            <section>
+                <div class="row">
+                       <h1>Plan Platino</h1>
+                </div>
+
+                <div class="row">
+                    <section id="Detalles_contrato">
+                        <table class="table table-striped table-bordered">
+                            <caption>Detalles del Contrato</caption>
+                            <thead class="gradient">
+                            <tr>
+                                <th>Mensualidad</th>
+                                <th>Eventos Minimos</th>
+                                <th>Medicamentos</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody> </tbody>
+                        </table>
+                    </section>
+                </div>
+               <div class="row">
+                   <section id="cargos">
+                       <table class="table table-striped table-bordered">
+                           <caption>Pagos</caption>
+                           <thead class="gradient">
+                           <tr>
+                               <th>Fecha</th>
+                               <th>Monto</th>
+                           </tr>
+                           </thead>
+                           <tbody>
+                           <th>1950 20:00</th>
+                           <th>octasiaestilefct</th></tbody>
+                       </table>
+                   </section>
+               </div>
+                <div class="row">
+                    <section id="cargos">
+                        <table class="table table-striped table-bordered">
+                            <caption>Eventos</caption>
+                            <thead class="gradient">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripcion</th>
+                            </tr>
+                            </thead>
+                            <tbody> <tr>
+                                <th>1950 20:00</th>
+                                <th>Corte Brazo/th>
+                            </tr></tbody>
+                        </table>
+                    </section>
+                </div>
+                <div class="row">
+                    <section id="cargos">
+                        <table class="table table-striped table-bordered">
+                            <caption>Beneficiarioss</caption>
+                            <thead class="gradient">
+                            <tr>
+                                <th>Fecha inscripcion</th>
+                                <th>Nombre</th>
+                                <th>Accione</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th>1950 20:00</th>
+                                <th>Juan Manueles ezequieles/th>
+                                    <td>
+                                        <a class="btn btn-danger" href="/emergencia/cobro/11275/eliminar">Editar</a>
+                                    </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
             </section>
-            <section id="adjuntos">
-                {% for adjunto in examen.adjuntos.all %}
-                    {% include 'snippets/adjunto.html' with adjunto=adjunto %}
-                {% endfor %}
-            </section>
-            <section id="dicoms">
-                {% if examen.dicoms.all.count > 0 %}
-                    <h2>DICOMs Agregados</h2>{% endif %}
-                {% for dicom in examen.dicoms.all %}
-                    {% include 'snippets/dicom.html' with dicom=dicom %}
-                {% endfor %}
-            </section>
-        </article>
+        </section>
     </div>
 {% endblock %}
