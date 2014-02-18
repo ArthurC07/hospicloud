@@ -34,8 +34,15 @@
             -webkit-flex-align: center;
             -ms-flex-align: center;
             -webkit-align-items: center;
+            justify-content: center;
             align-items: center;
             min-height: 720px;
+        }
+        #v-center img
+        {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .full { width: 100%; }
         .full a
@@ -61,7 +68,7 @@
 <div id="v-center" class="container">
     <div class="row full">
         <div class="col-md-4">
-            <img class="text-center" src="{% static 'images/hospinet.svg' %}"/>
+            <img class="center" src="{% static 'images/hospinet.svg' %}"/>
         </div>
         <div class="col-md-8 flex-center">
             <div class="col-md-6">
