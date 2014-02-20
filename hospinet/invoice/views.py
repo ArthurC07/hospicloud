@@ -39,13 +39,13 @@ from spital.models import Admision, Deposito
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
-from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, TipoPago, \
-    dot01
+from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
+                            TipoPago, dot01)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            EmergenciaFacturarForm, AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
-                           PagoForm, PersonaForm,
-                           TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm,
+                           PagoForm, PersonaForm, TurnoCajaForm,
+                           CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm)
 from inventory.models import ItemTemplate
 

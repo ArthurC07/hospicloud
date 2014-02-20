@@ -21,20 +21,22 @@ se utilizarán a lo largo de todo el sistema
 """
 import re
 from datetime import date
+
 from django.db import models
 from django.core.urlresolvers import reverse
-from persona.fields import OrderedCountryField
 from sorl.thumbnail import ImageField #@UnresolvedImport
 
+from persona.fields import OrderedCountryField
+
+
 class Persona(models.Model):
-    
     """Representación de una :class:`Persona` en la aplicación"""
-    
+
     GENEROS = (
         ('M', u'Masculino'),
         ('F', u'Femenino'),
     )
-    
+
     ESTADOS_CIVILES = (
         ('S', u'Soltero/a'),
         ('D', u'Divorciado/a'),
@@ -47,9 +49,9 @@ class Persona(models.Model):
         ("L", u"Licencia"),
         ("N", u"Ninguno"),
     )
-    
+
     __expresion__ = re.compile(r'\d{4}-\d{4}-\d{5}')
-    
+
     tipo_identificacion = models.CharField(max_length=1,
                                            choices=TIPOS_IDENTIDAD, blank=True)
     identificacion = models.CharField(max_length=20, blank=True, unique=False)
@@ -67,18 +69,18 @@ class Persona(models.Model):
     fax = models.CharField(max_length=200, blank=True)
     fotografia = ImageField(upload_to='persona/foto//%Y/%m/%d', blank=True)
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
-    
+
     @staticmethod
     def validar_identidad(identidad):
-        
+
         """Permite validar la identidad ingresada antes de asignarla a una
         :class:`Persona`
         
         :param identidad: Número de identidad a validar
         """
-        
+
         return Persona.__expresion__.match(identidad)
-    
+
     def __unicode__(self):
 
         """Muestra el nombre completo de la persona"""
@@ -86,24 +88,24 @@ class Persona(models.Model):
         return self.nombre_completo()
 
     def get_absolute_url(self):
-        
+
         """Obtiene la URL absoluta"""
-        
+
         return reverse('persona-view-id', args=[self.id])
-    
+
     def nombre_completo(self):
-        
+
         """Obtiene el nombre completo de la :class:`Persona`"""
-        
+
         return u'{0} {1}'.format(self.nombre, self.apellido).upper()
-    
+
     def obtener_edad(self):
-        
+
         """Obtiene la edad de la :class:`Persona`"""
-        
+
         if self.nacimiento == None:
             return None
-        
+
         today = date.today()
         born = date(self.nacimiento.year,
                     self.nacimiento.month,
@@ -114,23 +116,23 @@ class Persona(models.Model):
             birthday = born.replace(year=today.year)
         except ValueError:
             birthday = born.replace(year=today.year, day=born.day - 1)
-        
+
         if birthday > today:
             return today.year - born.year - 1
         else:
             return today.year - born.year
 
+
 class Fisico(models.Model):
-    
     """Describe el estado fisico de una :class:`Persona`"""
-    
+
     TIPOS_SANGRE = (
         ('A', u'A'),
         ('B', u'B'),
         ('AB', u'AB'),
         ('O', u'O'),
     )
-    
+
     FACTOR_RH = (
         ('+', u'+'),
         ('-', u'-'),
@@ -140,7 +142,7 @@ class Fisico(models.Model):
         ('D', u'Derecha'),
         ('I', u'Izquierda'),
     )
-    
+
     persona = models.OneToOneField(Persona, primary_key=True)
     peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
     lateralidad = models.CharField(max_length=1, choices=LATERALIDAD,
@@ -152,58 +154,56 @@ class Fisico(models.Model):
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
     tipo_de_sangre = models.CharField(max_length=2, blank=True,
                                       choices=TIPOS_SANGRE)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('persona-view-id', args=[self.persona.id])
 
+
 class EstiloVida(models.Model):
-    
     """Resumen del estilo de vida de una :class:`Persona`"""
-    
+
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='estilo_vida')
     consume_tabaco = models.BooleanField(default=False, blank=True)
     inicio_consumo_tabaco = models.CharField(max_length=30, blank=True)
     tipo_de_tabaco = models.CharField(max_length=30, blank=True)
     consumo_diario_tabaco = models.IntegerField(null=True)
-    
+
     # consume_alcohol = models.BooleanField(default=False, blank=True)
     vino = models.BooleanField(default=False, blank=True)
     cerveza = models.BooleanField(default=False, blank=True)
     licor = models.BooleanField(default=False, blank=True)
-    
+
     cafe = models.BooleanField(default=False, blank=True)
     cantidad_cafe = models.CharField(max_length=200, blank=True)
-    
+
     dieta = models.CharField(max_length=200, blank=True)
     cantidad = models.CharField(max_length=200, blank=True)
     numero_comidas = models.IntegerField(null=True)
     tipo_de_comidas = models.CharField(max_length=200, blank=True)
-    
+
     consume_drogas = models.BooleanField(default=False, blank=True)
     drogas = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('persona-view-id', args=[self.persona.id])
 
+
 class Antecedente(models.Model):
-    
     """Describe el historial clínico de una :class:`Persona` al llegar a
     consulta por primera vez
     """
-    
+
     persona = models.OneToOneField(Persona, primary_key=True)
-    
+
     # complete = models.BooleanField(default=False, blank=True)
     # reaction = models.BooleanField(default=False, blank=True)
-    
+
     cardiopatia = models.BooleanField(default=False, blank=True)
     hipertension = models.BooleanField(default=False, blank=True)
     diabetes = models.BooleanField(default=False, blank=True)
@@ -217,48 +217,51 @@ class Antecedente(models.Model):
     sinusitis = models.BooleanField(default=False, blank=True)
     hipertrigliceridemia = models.BooleanField(default=False, blank=True)
     colelitiasis = models.BooleanField(default=False, blank=True)
-    migrana = models.BooleanField(default=False, blank=True)
-    alergias = models.CharField(max_length=200, blank=True)
-    
+    migrana = models.NullBooleanField(default=False, blank=True)
+    obesidad = models.NullBooleanField(default=False, blank=True)
+    colesterol = models.NullBooleanField(default=False, blank=True)
+    trigliceridos = models.NullBooleanField(default=False, blank=True)
+    alcoholismo = models.NullBooleanField(default=False, blank=True)
+    cancer = models.NullBooleanField(default=False, blank=True)
+    alergias = models.CharField(max_length=200, blank=True, null=True)
+
     congenital = models.CharField(max_length=200, blank=True)
-    
+
     general = models.CharField(max_length=200, blank=True)
     nutricional = models.CharField(max_length=200, blank=True)
-    
+
     otros = models.CharField(max_length=200, blank=True)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('persona-view-id', args=[self.persona.id])
 
+
 class AntecedenteFamiliar(models.Model):
-    
     """Registra los antecedentes familiares de una :class:`Persona`"""
-    
+
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='antecedente_familiar')
-    
+
     carcinogenico = models.BooleanField(default=False, blank=True)
     cardiovascular = models.BooleanField(default=False, blank=True)
     endocrinologico = models.BooleanField(default=False, blank=True)
     respiratorio = models.BooleanField(default=False, blank=True)
     otros = models.CharField(max_length=200, blank=True)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('persona-view-id', args=[self.persona.id])
 
+
 class AntecedenteObstetrico(models.Model):
-    
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
-    
+
     persona = models.ForeignKey(Persona, primary_key=True,
-                                   related_name='antecedente_quirurgico')
-    
+                                related_name='antecedente_quirurgico')
+
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)
     displasia = models.BooleanField(default=False, blank=True)
@@ -268,23 +271,22 @@ class AntecedenteObstetrico(models.Model):
     a = models.CharField(max_length=200, blank=True)
     c = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('persona-view-id', args=[self.persona.id])
 
+
 class AntecedenteQuirurgico(models.Model):
-    
     """Registra los antecendentes quirurgicos de una :class:`Persona`"""
-    
-    persona = models.ForeignKey(Persona, primary_key=True, related_name="antecedentes_quirurgicos")
+
+    persona = models.ForeignKey(Persona, primary_key=True,
+                                related_name="antecedentes_quirurgicos")
     procedimiento = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
-    
+
     def get_absolute_url(self):
-        
         """Obtiene la URL absoluta"""
-        
+
         return reverse('persona-view-id', args=[self.persona.id])
