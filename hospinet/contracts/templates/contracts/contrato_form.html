@@ -5,14 +5,18 @@
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-stacked nav-tabs">
-                </ul>
-            </nav>
-        </aside>
-        <section class="col-md-6">
-            {% crispy form %}
+        <section class="col-md-12">
+            <form method="post" class="form-horizontal">
+                {{ form.management_form }}
+            <div class="col-md-6">
+                {% crispy persona_form %}
+            </div>
+                {% for subform in form %}
+                    <div class="col-md-6">
+                    {% crispy subform %}
+                    </div>
+                {% endfor %}
+            </form>
         </section>
     </div>
 {% endblock %}
