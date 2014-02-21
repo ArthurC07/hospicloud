@@ -475,3 +475,8 @@ class AdmisionDeleteView(DeleteView, LoginRequiredMixin):
 class DepositoCreateView(AdmisionFormMixin):
     model = Deposito
     form_class = DepositoForm
+
+
+class DepositoUpdateView(UpdateView, LoginRequiredMixin):
+    model = Deposito
+    form_class = DepositoForm

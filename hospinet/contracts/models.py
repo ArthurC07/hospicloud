@@ -17,10 +17,10 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-
 from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
+
 from persona.models import Persona
 
 
@@ -30,8 +30,8 @@ class Vendedor(TimeStampedModel):
     habilitado = models.BooleanField(default=True)
 
     def __unicode__(self):
-
         return self.usuario.get_full_name()
+
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
@@ -49,12 +49,19 @@ class Plan(TimeStampedModel):
     medicamentos = models.DecimalField(max_digits=10, decimal_places=2,
                                        default=0)
 
+    def __unicode__(self):
+        return self.nombre
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Plan`"""
+
+        return reverse('contracts-plan', args=[self.id])
+
 
 class Contrato(TimeStampedModel):
     """Almacena el estado de cada contrato que se ha celebrado"""
 
     class Meta:
-
         permissions = (
             ('contrato', 'Permite al usuario gestionar contratos'),
         )
@@ -66,15 +73,15 @@ class Contrato(TimeStampedModel):
     inicio = models.DateField()
     vencimiento = models.DateField()
     ultimo_pago = models.DateTimeField(default=timezone.now())
-    administradores = models.ManyToManyField(User, related_name='contratos')
+    administradores = models.ManyToManyField(User, related_name='contratos',
+                                             blank=True, null=True)
 
     def get_absolute_url(self):
-        """Obtiene la url relacionada con un :class:`Paciente`"""
+        """Obtiene la url relacionada con un :class:`Contrato`"""
 
-        return reverse('contracts-contract', args=[self.id])
+        return reverse('contrato', args=[self.id])
 
     def __unicode__(self):
-
         return u"Contrato {0} de {1}".format(self.numero,
                                              self.persona.nombre_completo())
 
@@ -82,11 +89,15 @@ class Contrato(TimeStampedModel):
 class Beneficiario(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='beneficiarios')
     contrato = models.ForeignKey(Contrato, related_name='beneficiarios')
+    inscripcion = models.DateTimeField(default=timezone.now())
+
+    def __unicode__(self):
+        return self.persona.nombre_completo()
 
     def get_absolute_url(self):
-        """Obtiene la url relacionada con un :class:`Paciente`"""
+        """Obtiene la url relacionada con un :class:`Beneficiario`"""
 
-        return reverse('contracts-contract', args=[self.contrato.id])
+        return reverse('contrato', args=[self.contrato.id])
 
 
 class Pago(TimeStampedModel):
@@ -97,17 +108,24 @@ class Pago(TimeStampedModel):
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def get_absolute_url(self):
-        """Obtiene la url relacionada con un :class:`Paciente`"""
+        """Obtiene la url relacionada con un :class:`Pago`"""
 
-        return reverse('contracts-contract', args=[self.contrato.id])
+        return reverse('contrato', args=[self.contrato.id])
 
 
 class TipoEvento(TimeStampedModel):
     nombre = models.CharField(max_length=255, null=True, blank=True)
 
+    def __unicode__(self):
+        return self.nombre
+
+    def get_absolute_url(self):
+
+        return reverse('contrato-index')
+
 
 class Evento(TimeStampedModel):
-    """Registra el uso de los beneficios del :class:`Contrato`"""
+    """Registra el uso de los beneficios del :class:`Evento`"""
     contrato = models.ForeignKey(Contrato, related_name='eventos')
     tipo = models.ForeignKey(TipoEvento, related_name='eventos')
     fecha = models.DateTimeField(default=timezone.now())
@@ -115,4 +133,9 @@ class Evento(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('contracts-contract', args=[self.contrato.id])
+        return reverse('contrato', args=[self.contrato.id])
+
+    def __unicode__(self):
+        return "Evento {0} de {1} de {2}".format(self.tipo,
+                                                 self.contrato.numero,
+                                                 self.contrato.persona.nombre_completo())

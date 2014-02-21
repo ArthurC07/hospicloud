@@ -29,8 +29,8 @@ from guardian.decorators import permission_required
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
-                             ContratoSearchForm, PersonaForm)
-from contracts.models import Contrato, Plan, Pago, Evento, Vendedor
+                             ContratoSearchForm, PersonaForm, TipoEventoForm)
+from contracts.models import Contrato, Plan, Pago, Evento, Vendedor, TipoEvento
 from invoice.forms import PeriodoForm
 from persona.models import Persona
 from persona.views import PersonaFormMixin
@@ -110,23 +110,25 @@ class ContratoCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
 
 class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
     model = Contrato
+    template_name = 'contracts/contrato_create.html'
 
     def dispatch(self, request, *args, **kwargs):
 
         self.persona = Persona()
+
         self.ContratoFormset = inlineformset_factory(Persona, Contrato,
                                                      form=ContratoForm,
                                                      fk_name='persona', extra=1)
         return super(CreateView, self).dispatch(request, *args, **kwargs)
 
     def get_form(self, form_class):
-
-        self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
-        self.persona_form.helper.form_tag = False
         formset = self.ContratoFormset(instance=self.persona, prefix='contrato')
         return formset
 
     def get_context_data(self, **kwargs):
+
+        self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
+        self.persona_form.helper.form_tag = False
 
         context = super(ContratoPersonaCreateView, self).get_context_data(
             **kwargs)
@@ -134,15 +136,15 @@ class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
         return context
 
     def post(self, request, *args, **kwargs):
-        self.form = PersonaForm(request.POST, request.FILES,
-                                instance=self.persona,
-                                prefix='persona')
+        self.persona_form = PersonaForm(request.POST, request.FILES,
+                                        instance=self.persona,
+                                        prefix='persona')
         self.formset = self.ContratoFormset(request.POST, request.FILES,
                                             instance=self.persona,
                                             prefix='contrato')
 
-        if self.form.is_valid() and self.formset.is_valid():
-            self.form.save()
+        if self.persona_form.is_valid() and self.formset.is_valid():
+            self.persona_form.save()
             instances = self.formset.save()
             for instance in instances:
                 self.contrato = instance
@@ -150,6 +152,7 @@ class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
 
             return self.form_valid(self.formset)
         else:
+            self.object = None
             return self.form_invalid(self.formset)
 
     def get_success_url(self):
@@ -278,3 +281,9 @@ class VendedorSearchView(FormView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.vendedor.get_absolute_url()
+
+
+class TipoEventoCreateView(CreateView, LoginRequiredMixin):
+    model = TipoEvento
+    form_class = TipoEventoForm
+
