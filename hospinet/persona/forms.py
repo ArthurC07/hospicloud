@@ -61,7 +61,7 @@ class FieldSetModelFormMixin(forms.ModelForm):
 
 class DateWidget(forms.DateInput):
     """Permite mostrar un input preparado para fecha y hora utilizando
-    JQuery UI DateTimePicker"""
+    JQuery UI DatePicker"""
 
     def __init__(self, attrs=None):
         super(DateWidget, self).__init__(attrs)
@@ -69,6 +69,21 @@ class DateWidget(forms.DateInput):
             self.attrs = attrs.copy()
         else:
             self.attrs = {'class': 'datepicker'}
+
+        if not 'format' in self.attrs:
+            self.attrs['format'] = '%d/%m/%Y'
+
+
+class FutureDateWidget(forms.DateInput):
+    """Permite mostrar un input preparado para fecha y hora utilizando
+    JQuery UI DatePicker"""
+
+    def __init__(self, attrs=None):
+        super(FutureDateWidget, self).__init__(attrs)
+        if attrs is not None:
+            self.attrs = attrs.copy()
+        else:
+            self.attrs = {'class': 'future-datepicker'}
 
         if not 'format' in self.attrs:
             self.attrs['format'] = '%d/%m/%Y'
