@@ -71,7 +71,7 @@ urlpatterns = patterns('',
 
                        url(r'^evento/(?P<pk>\d+)/delete$',
                            EventoDeleteView.as_view(),
-                           name='contrato'),
+                           name='contrato-evento-delete'),
 
                        url(r'^vendedor/buscar$',
                            VendedorSearchView.as_view(),
