@@ -1,139 +1,43 @@
 {% extends 'base.html' %}
-
-{% load staticfiles %}
-
-{% block header %}
-{% endblock %}
+{% block title %}Contratos{% endblock %}
+{% load crispy_forms_tags %}
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="page-header">
-            <h1>Contratos <small>Pagina principal</small></h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h1>Contratos
+                    <small>P&aacute;gina Principal</small>
+                </h1>
+            </div>
         </div>
     </div>
-</div>
     <div class="row">
-        <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked">
-                    <li>
-                        <a href="{% url 'emergency-ingresar' %}">Crear Contrato</a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-        <section class="col-md-9">
-            <div class="row">
-
-                <section class="col-md-4">
-                    <fieldset>
-                        <legend>Busqueda de Contratos</legend>
-                        <div id="div_id_recibo-inicio" class="form-group">
-                            <label class="control-label requiredField" for="id_recibo-inicio">
-                                Codigo Contrato
-                                <span class="asteriskField">*</span>
-                            </label>
-                            <div class="controls ">
-                                <input id="id_recibo-inicio" class="datepicker dateinput form-control hasDatepicker" type="text" required="required" name="recibo-inicio">
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <input id="submit-id-submit" class="btn btn-primary" type="submit" value="Mostrar" name="submit">
-                        </div>
-                        </fieldset>
-
-
-                </section>
-
-                <section class="col-md-4">
-                    <form method="get" action="/caja/periodo/producto">
-                        <fieldset>
-                            <legend>Contratos de un periodo</legend>
-                            <div id="div_id_producto-inicio" class="form-group">
-                                <label class="control-label requiredField" for="id_producto-inicio">
-                                    Inicio
-                                    <span class="asteriskField">*</span>
-                                </label>
-                                <div class="controls ">
-                                    <input id="id_producto-inicio" class="datepicker dateinput form-control hasDatepicker" type="text" required="required" name="producto-inicio">
-                                </div>
-                            </div>
-                            <div id="div_id_producto-fin" class="form-group">
-                                <label class="control-label requiredField" for="id_producto-fin">
-                                    <div class="controls ">
-                                        <div class="controls ">
-                                            <input id="id_producto-fin" class="datepicker dateinput form-control hasDatepicker" type="text" required="required" name="producto-fin">
-                                        </div>
-                                    </div>
-                        </fieldset>
-                        <div class="form-actions">
-                            <input id="submit-id-submit" class="btn btn-primary" type="submit" value="Mostrar" name="submit">
-                        </div>
-                    </form>
-
-                </section
-    <section class="col-md-4">
-                <form method="get" action="/caja/corte">
-                    <fieldset>
-                        <legend>Corte de Caja</legend>
-                        <div id="div_id_corte-inicio" class="form-group">
-                            <label class="control-label requiredField" for="id_corte-inicio">
-                                Inicio
-                                <span class="asteriskField">*</span>
-                            </label>
-                            <div class="controls ">
-                                <input id="id_corte-inicio" class="datepicker dateinput form-control hasDatepicker" type="text" required="required" name="corte-inicio">
-                            </div>
-                        </div>
-                        <div id="div_id_corte-fin" class="form-group">
-                            <label class="control-label requiredField" for="id_corte-fin">
-                                Fin
-                                <span class="asteriskField">*</span>
-                            </label>
-                            <div class="controls ">
-                                <input id="id_corte-fin" class="datepicker dateinput form-control hasDatepicker" type="text" required="required" name="corte-fin">
-                            </div>
-                        </div>
-                        <div id="div_id_corte-usuario" class="form-group">
-                            <label class="control-label requiredField" for="id_corte-usuario">
-                                Usuario
-                                <span class="asteriskField">*</span>
-                            </label>
-                            <div class="controls ">
-                                <select id="id_corte-usuario" class="select form-control" required="required" name="corte-usuario">
-                                    <option selected="selected" value="">---------</option>
-                                    <option value="-1">AnonymousUser</option>
-                                    <option value="4">admin</option>
-                                    <option value="30">oscar</option>
-                                    <option value="15">lourdes</option>
-                                    <option value="45">aracely</option>
-                                    <option value="43">leo</option>
-                                    <option value="24">ruth</option>
-                                    <option value="32">vanessa</option>
-                                    <option value="8">almendarez</option>
-                                    <option value="9">marinaflores</option>
-                                    <option value="11">martha</option>
-                                    <option value="12">natalia</option>
-                                    <option value="13">marialopez</option>
-                                    <option value="17">alba</option>
-                                    <option value="18">francisco</option>
-                                    <option value="21">edis</option>
-                                    <option value="23">mannor</option>
-                                    <option value="56">roxana</option>
-                                    <option value="3">emergencia</option>
-                                    <option value="22">navis</option>
-                                    <option value="14">azucena</option>
-                                    <option value="51">viviana</option>
-
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <input id="submit-id-submit" class="btn btn-primary" type="submit" value="Mostrar" name="submit">
-                        </div>
-                </form>
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-tabs nav-stacked">
+                <li>
+                    <a href="{% url 'contrato-add' %}">Crear Contrato</a>
+                </li>
+                <li>
+                    <a href="{% url 'vendedor-add' %}">Agregar Vendedor</a>
+                </li>
+                <li>
+                    <a href="{% url 'contrato-tipoevento-add' %}">Agregar Tipo de Evento</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    <section class="col-md-9">
+    <div class="row">
+        <section class="col-md-4">
+            {% crispy contrato-search %}
+        </section>
+        <section class="col-md-4">
+            {% crispy contrato-periodo %}
+        </section>
+        <section class="col-md-4">
+            {% crispy vendedor-search %}
+        </section>
+    </div>
     </section>
-                    </fieldset>
-
-
 {% endblock %}

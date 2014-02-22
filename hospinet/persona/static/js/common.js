@@ -12,4 +12,10 @@ $(document).ready(function($)
             {
                 dateFormat : 'dd/mm/yy'
             });
+    $('input.future-datepicker').datepicker(
+        {
+            dateFormat : 'dd/mm/yy',
+            changeMonth : true,
+            changeYear : true
+        });
 });

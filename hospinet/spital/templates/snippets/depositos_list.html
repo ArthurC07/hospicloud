@@ -2,6 +2,7 @@
     <caption>Dep&oacute;sitos</caption>
     <thead>
         <tr>
+            <th>Recibo</th>
             <th>Fecha</th>
             <th>Monto</th>
         </tr>
@@ -9,6 +10,7 @@
     <tbody>
     {% for deposito in admision.depositos.all %}
         <tr>
+            <td><a href="{% url 'deposito-edit' %}"><i class="fa fa-edit"></i></a>{{ deposito.recibo }}</td>
             <td>{{ deposito.fecha }}</td>
             <td>{{ deposito.monto }}</td>
         </tr>

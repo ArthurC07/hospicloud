@@ -23,6 +23,8 @@
               <tr>
                   <th>Código</th>
                   <th>Descripción</th>
+                  <th>Precio</th>
+                  <th>activo</th>
                   <th>Marca</th>
                   <th>Módelo</th>
                   <th>Grupos</th>
@@ -34,6 +36,8 @@
                   <tr>
                       <td>{{ item.id }}</td>
                       <td>{{ item.descripcion }}</td>
+                      <td>{{ item.precio_de_venta }}</td>
+                      <td>{{ item.activo|yesno }}</td>
                       <td>{{ item.marca }}</td>
                       <td>{{ item.modelo }}</td>
                       <td>

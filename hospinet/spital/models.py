@@ -486,6 +486,7 @@ class Deposito(TimeStampedModel):
     monto = models.DecimalField(blank=True, null=True, max_digits=7,
                                 decimal_places=2)
     fecha = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    recibo = models.IntegerField(null=True, blank=True)
 
     def get_absolute_url(self):
 

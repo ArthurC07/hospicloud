@@ -17,6 +17,9 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from datetime import datetime, time
 
+from crispy_forms.layout import Fieldset
+from django.core.urlresolvers import reverse
+from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -26,9 +29,10 @@ from guardian.decorators import permission_required
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
-                             ContratoSearchForm)
-from contracts.models import Contrato, Plan, Pago, Evento, Vendedor
+                             ContratoSearchForm, PersonaForm, TipoEventoForm)
+from contracts.models import Contrato, Plan, Pago, Evento, Vendedor, TipoEvento
 from invoice.forms import PeriodoForm
+from persona.models import Persona
 from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin
 
@@ -38,6 +42,19 @@ class IndexView(TemplateView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
+
+        context['vendedor-search'] = VendedorChoiceForm(
+            prefix='vendedor-search')
+        context['vendedor-search'].helper.form_action = 'vendedor-search'
+        context['contrato-periodo'] = PeriodoForm(prefix='contrato-periodo')
+        context['contrato-periodo'].helper.layout = Fieldset(
+            "Contratos de un Periodo",
+            *context['contrato-periodo'].field_names)
+        context['contrato-periodo'].helper.form_action = 'contrato-periodo'
+        context['contrato-search'] = ContratoSearchForm(
+            prefix='contrato-search')
+        context['contrato-search'].helper.form_action = 'contrato-search'
+
         return context
 
 
@@ -91,6 +108,58 @@ class ContratoCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
     form_class = ContratoForm
 
 
+class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
+    model = Contrato
+    template_name = 'contracts/contrato_create.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        self.persona = Persona()
+
+        self.ContratoFormset = inlineformset_factory(Persona, Contrato,
+                                                     form=ContratoForm,
+                                                     fk_name='persona', extra=1)
+        return super(CreateView, self).dispatch(request, *args, **kwargs)
+
+    def get_form(self, form_class):
+        formset = self.ContratoFormset(instance=self.persona, prefix='contrato')
+        return formset
+
+    def get_context_data(self, **kwargs):
+
+        self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
+        self.persona_form.helper.form_tag = False
+
+        context = super(ContratoPersonaCreateView, self).get_context_data(
+            **kwargs)
+        context['persona_form'] = self.persona_form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.persona_form = PersonaForm(request.POST, request.FILES,
+                                        instance=self.persona,
+                                        prefix='persona')
+        self.formset = self.ContratoFormset(request.POST, request.FILES,
+                                            instance=self.persona,
+                                            prefix='contrato')
+
+        if self.persona_form.is_valid() and self.formset.is_valid():
+            self.persona_form.save()
+            instances = self.formset.save()
+            for instance in instances:
+                self.contrato = instance
+                self.contrato.save()
+
+            return self.form_valid(self.formset)
+        else:
+            self.object = None
+            return self.form_invalid(self.formset)
+
+    def get_success_url(self):
+
+        return reverse('contrato', args=[self.contrato.id])
+
+
 class ContratoDetailView(DetailView, LoginRequiredMixin):
     model = Contrato
     context_object_name = 'contrato'
@@ -131,6 +200,7 @@ class ContratoSearchView(FormView, LoginRequiredMixin):
     """Obtiene el primer :class:`Contrato` con el número especificado en el
     formulario"""
     form_class = ContratoSearchForm
+    prefix = 'contrato-search'
 
     def form_valid(self, form):
         self.contrato = Contrato.objects.filter(
@@ -203,6 +273,7 @@ class VendedorUpdateView(UpdateView, LoginRequiredMixin):
 
 class VendedorSearchView(FormView, LoginRequiredMixin):
     form_class = VendedorChoiceForm
+    prefix = 'vendedor-search'
 
     def form_valid(self, form):
         self.vendedor = Vendedor.objects.get(pk=form.cleaned_data['vendedor'])
@@ -210,3 +281,9 @@ class VendedorSearchView(FormView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.vendedor.get_absolute_url()
+
+
+class TipoEventoCreateView(CreateView, LoginRequiredMixin):
+    model = TipoEvento
+    form_class = TipoEventoForm
+
