@@ -8,7 +8,7 @@ django-constance[database]
 django-countries
 django-crispy-forms
 django-extensions
--e git://github.com/SpectralAngel/django-select2-forms.git
+-e git://github.com/SpectralAngel/django-select2-forms.git#egg=django-select2-forms-master
 django-tastypie
 django-templated-email
 django-userena
