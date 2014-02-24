@@ -23,7 +23,9 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              VendedorSearchView, VendedorDetailView,
                              VendedorCreateView, ContratoPeriodoView,
                              ContratoSearchView, ContratoPersonaCreateView,
-                             TipoEventoCreateView)
+                             TipoEventoCreateView,
+                             BeneficiarioPersonaCreateView,
+                             BeneficiarioCreateView)
 
 
 urlpatterns = patterns('',
@@ -36,8 +38,7 @@ urlpatterns = patterns('',
                            ContratoDetailView.as_view(),
                            name='contrato'),
 
-                       url(
-                           r'^(?P<persona>\d+)/contrato/agregar$',
+                       url(r'^(?P<persona>\d+)/contrato/agregar$',
                            ContratoCreateView.as_view(),
                            name='contrato-persona-add'),
 
@@ -89,4 +90,13 @@ urlpatterns = patterns('',
                        url(r'^evento/tipo/add$',
                            TipoEventoCreateView.as_view(),
                            name='contrato-tipoevento-add'),
+
+                       url(r'^contrato/(?P<contrato>\d+)/beneficiario/add$',
+                           BeneficiarioPersonaCreateView.as_view(),
+                           name='contrato-beneficiario-add'),
+
+
+                       url(r'^(?P<persona>\d+)/beneficiario/agregar$',
+                           BeneficiarioCreateView.as_view(),
+                           name='persona-beneficiario-add'),
 )

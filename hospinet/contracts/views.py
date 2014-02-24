@@ -29,8 +29,10 @@ from guardian.decorators import permission_required
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
-                             ContratoSearchForm, PersonaForm, TipoEventoForm)
-from contracts.models import Contrato, Plan, Pago, Evento, Vendedor, TipoEvento
+                             ContratoSearchForm, PersonaForm, TipoEventoForm,
+                             BeneficiarioForm, BeneficiarioPersonaForm)
+from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
+                              TipoEvento, Beneficiario)
 from invoice.forms import PeriodoForm
 from persona.models import Persona
 from persona.views import PersonaFormMixin
@@ -119,7 +121,8 @@ class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
         self.ContratoFormset = inlineformset_factory(Persona, Contrato,
                                                      form=ContratoForm,
                                                      fk_name='persona', extra=1)
-        return super(CreateView, self).dispatch(request, *args, **kwargs)
+        return super(ContratoPersonaCreateView, self).dispatch(request, *args,
+                                                               **kwargs)
 
     def get_form(self, form_class):
         formset = self.ContratoFormset(instance=self.persona, prefix='contrato')
@@ -203,8 +206,8 @@ class ContratoSearchView(FormView, LoginRequiredMixin):
     prefix = 'contrato-search'
 
     def form_valid(self, form):
-        self.contrato = Contrato.objects.filter(
-            numero=form.cleaned_data['numero']).first()
+        self.contrato = get_object_or_404(Contrato,
+                                          numero=form.cleaned_data['numero'])
         return super(ContratoSearchView, self).form_valid(form)
 
     def get_success_url(self):
@@ -287,3 +290,75 @@ class TipoEventoCreateView(CreateView, LoginRequiredMixin):
     model = TipoEvento
     form_class = TipoEventoForm
 
+
+class BeneficiarioCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
+    model = Beneficiario
+    form_class = BeneficiarioPersonaForm
+
+
+class BeneficiarioPersonaCreateView(ContratoFormMixin):
+    model = Beneficiario
+    template_name = 'contracts/beneficiario_create.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        self.persona = Persona()
+
+        self.BeneficiarioFormset = inlineformset_factory(Persona, Beneficiario,
+                                                         form=BeneficiarioForm,
+                                                         fk_name='persona',
+                                                         extra=1)
+        return super(BeneficiarioPersonaCreateView, self).dispatch(request,
+                                                                   *args,
+                                                                   **kwargs)
+
+    def get_form(self, form_class):
+        formset = self.BeneficiarioFormset(instance=self.persona,
+                                           prefix='beneficiario')
+
+        for form in formset:
+            form.initial['contrato'] = self.contrato
+        return formset
+
+    def get_context_data(self, **kwargs):
+
+        self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
+        self.persona_form.helper.form_tag = False
+
+        context = super(BeneficiarioPersonaCreateView, self).get_context_data(
+            **kwargs)
+        context['persona_form'] = self.persona_form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.persona_form = PersonaForm(request.POST, request.FILES,
+                                        instance=self.persona,
+                                        prefix='persona')
+        self.formset = self.BeneficiarioFormset(request.POST, request.FILES,
+                                                instance=self.persona,
+                                                prefix='beneficiario')
+
+        if self.persona_form.is_valid() and self.formset.is_valid():
+            self.persona_form.save()
+            instances = self.formset.save()
+
+            return self.form_valid(self.formset)
+        else:
+            self.object = None
+            return self.form_invalid(self.formset)
+
+    def get_success_url(self):
+
+        return reverse('contrato', args=[self.contrato.id])
+
+
+class BeneficiarioDeleteView(DeleteView, LoginRequiredMixin):
+    model = Beneficiario
+
+    def get_object(self, queryset=None):
+        obj = super(BeneficiarioDeleteView, self).get_object(queryset)
+        self.contrato = obj.contrato
+        return obj
+
+    def get_success_url(self):
+        return self.contrato.get_absolute_url()
