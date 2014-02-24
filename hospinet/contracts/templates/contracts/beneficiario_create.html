@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+        <section class="col-md-12">
+            <form method="post" class="form-horizontal">
+                {{ form.management_form }}
+            <div class="col-md-6">
+                {% crispy persona_form %}
+            </div>
+                {% for subform in form %}
+                    <div class="col-md-6">
+                    {% crispy subform %}
+                    </div>
+                {% endfor %}
+            </form>
+        </section>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
+{% endblock %}
