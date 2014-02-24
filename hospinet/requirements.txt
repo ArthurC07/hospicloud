@@ -1,5 +1,4 @@
 Django>=1.6
-MySQL-python
 Pillow
 South
 django-bootstrap-pagination
