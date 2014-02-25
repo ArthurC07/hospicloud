@@ -51,7 +51,7 @@ class OrderedCountryField(CountryField):
         kwargs.setdefault('max_length', 2)
         kwargs.setdefault('choices', choices)
 
-        super(CharField, self).__init__(*args, **kwargs)
+        super(OrderedCountryField, self).__init__(*args, **kwargs)
 
 
 add_introspection_rules([
