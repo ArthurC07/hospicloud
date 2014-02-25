@@ -24,7 +24,6 @@ from datetime import date
 
 from django.db import models
 from django.core.urlresolvers import reverse
-from sorl.thumbnail import ImageField #@UnresolvedImport
 
 from persona.fields import OrderedCountryField
 
@@ -67,7 +66,8 @@ class Persona(models.Model):
     domicilio = models.CharField(max_length=200, blank=True)
     email = models.CharField(max_length=200, blank=True)
     fax = models.CharField(max_length=200, blank=True)
-    fotografia = ImageField(upload_to='persona/foto//%Y/%m/%d', blank=True)
+    fotografia = models.ImageField(upload_to='persona/foto//%Y/%m/%d',
+                                   blank=True, null=True)
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
 
     @staticmethod
@@ -103,7 +103,7 @@ class Persona(models.Model):
 
         """Obtiene la edad de la :class:`Persona`"""
 
-        if self.nacimiento == None:
+        if self.nacimiento is None:
             return None
 
         today = date.today()
@@ -265,11 +265,10 @@ class AntecedenteObstetrico(models.Model):
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)
     displasia = models.BooleanField(default=False, blank=True)
-    # what the hell does these means?
-    g = models.CharField(max_length=200, blank=True)
-    p = models.CharField(max_length=200, blank=True)
-    a = models.CharField(max_length=200, blank=True)
-    c = models.CharField(max_length=200, blank=True)
+    gestas = models.CharField(max_length=200, blank=True)
+    partos = models.CharField(max_length=200, blank=True)
+    anticoncepcion = models.CharField(max_length=200, blank=True)
+    cesareas = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
 
     def get_absolute_url(self):
@@ -284,6 +283,7 @@ class AntecedenteQuirurgico(models.Model):
     persona = models.ForeignKey(Persona, primary_key=True,
                                 related_name="antecedentes_quirurgicos")
     procedimiento = models.CharField(max_length=200, blank=True)
+    hospitalizacion = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
 
     def get_absolute_url(self):
