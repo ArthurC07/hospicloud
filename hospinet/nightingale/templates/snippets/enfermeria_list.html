@@ -3,24 +3,31 @@
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-2">
-                {% if not persona.fotografia == None %}
-                    {% thumbnail persona.fotografia "100x100" crop="center" as im %}
-                        <img src="{{ im.url }}" width="{{ im.width }}"
-                             height="{{ im.height }}">
-                    {% endthumbnail %}
-                {% else %}
-                    <img src="{% static 'images/face.jpg' %}" width="100"
-                         height="100"/>
-                {% endif %}
+                {% with photo=admision.paciente.fotografia|thumbnailer %}
+                    {% if photo %}
+                        <img src="{{ photo.small.url }}"
+                             width="{{ photo.small.width }}"
+                             height="{{ photo.small.height }}">
+                    {% else %}
+                        <img src="{% static 'images/face.jpg' %}" width="100"
+                             height="100"/>
+                    {% endif %}
+                {% endwith %}
             </div>
             <div class="col-md-9">
-                <h3>{{ admision.paciente }} <small>{{ admision.paciente.obtener_edad }} a&ntilde;os</small></h3>
+                <h3>{{ admision.paciente }}
+                    <small>{{ admision.paciente.obtener_edad }} a&ntilde;os
+                    </small>
+                </h3>
                 <p>
-                    {{ admision.paciente.get_sexo_display }}, Ingresado el {{ admision.ingreso }}, {{ admision.doctor }}
+                    {{ admision.paciente.get_sexo_display }}, Ingresado
+                    el {{ admision.ingreso }}, {{ admision.doctor }}
                 </p>
                 <a class="btn btn-warning">{{ admision.diagnostico }}</a>
                 <a class="btn btn-success">{{ admision.habitacion }}</a>
-                <a class="btn btn-primary" href="{% url 'nightingale-view-id' admision.id %}">Ver <i class="fa fa-arrow-right"></i></a>
+                <a class="btn btn-primary"
+                   href="{% url 'nightingale-view-id' admision.id %}">Ver <i
+                        class="fa fa-arrow-right"></i></a>
             </div>
         </div>
         <hr>

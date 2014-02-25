@@ -13,4 +13,3 @@ django-templated-email
 django-userena
 simplejson
 six
-sorl-thumbnail
