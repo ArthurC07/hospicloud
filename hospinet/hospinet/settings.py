@@ -248,6 +248,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
+    'hospinet.context_processors.chat'
 )
 
 AUTH_PROFILE_MODULE = 'users.Profile'
@@ -279,6 +280,8 @@ CONSTANCE_CONFIG = {
     'EXTRA_EMERGENCIA': (
     1, u'Cuenta utilizada para agregar tiempo extra de emergencias'),
     'DEPOSIT_PAYMENT': (1, u'Tipo de Pago para Abonos a cuenta'),
+    'CHAT': (u'http://www.example.com', u'Url para el chat interno'),
+    'ONLINE_HELP': (u'http://www.example.com', u'Url para ayuda en línea'),
 }
 
 

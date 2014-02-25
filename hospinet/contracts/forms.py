@@ -21,8 +21,8 @@ from django import forms
 from django.utils import timezone
 from select2.fields import ModelChoiceField
 
-from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago, Vendedor, \
-    Beneficiario
+from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
+                              Vendedor,  Beneficiario)
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
                            FutureDateWidget)

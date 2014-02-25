@@ -340,7 +340,7 @@ class BeneficiarioPersonaCreateView(ContratoFormMixin):
 
         if self.persona_form.is_valid() and self.formset.is_valid():
             self.persona_form.save()
-            instances = self.formset.save()
+            self.formset.save()
 
             return self.form_valid(self.formset)
         else:
