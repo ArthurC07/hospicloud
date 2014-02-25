@@ -1,108 +1,121 @@
 {% extends 'base.html' %}
-{% block title %}{{ emergencia.persona.nombre_completo }}{% endblock %}
+{% load staticfiles %}{% load thumbnail %}
+{% block title %} Contrato {{ contrato.numero }}{% endblock %}
 {% block content %}
     <div class="row">
         <div class="page-header">
-            <h1>Contrato<small></h1>
-            <h2>alexis emanuel flores manueles<small>titular</small></h2>
-            <h2>Vendedor<small>Juan perez</small></h2>
+            <h1>{{ contrato }}
+                <small>Plan {{ contrato.plan }}</small>
+            </h1>
         </div>
     </div>
     <div class="row">
         <aside class="col-md-3">
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
-                    <li><a href="#">Agregar Beneficioiosar</a></li>
-                    <li><a href="#">Agregar medicamentos</a></li>
-                    <li><a href="#">Agregar Pago</a></li>
-                    <li><a href="#">Agregar Eventos</a></li>
 
+                    <li><a href="{% url 'contrato-pago-add' contrato.id %}">Agregar Pago</a></li>
+                    <li><a href="{% url 'contrato-evento-add' contrato.id %}">Agregar Evento</a></li>
+                    <li><a href="{% url 'contrato-beneficiario-add' contrato.id %}">Agregar Beneficiario</a></li>
+                    <li><a href="{% url 'contrato-edit' contrato.id %}">Editar Contrato</a></li>
                 </ul>
-            </nav>
-            <nav class="sidebar-nav">
-                {% include 'snippets/persona_menu.html' with persona=emergencia.persona %}
             </nav>
         </aside>
         <section class="col-md-9">
-            <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
-            <section>
-                <div class="row">
-                       <h1>Plan Platino</h1>
-                </div>
-
-                <div class="row">
-                    <section id="Detalles_contrato">
-                        <table class="table table-striped table-bordered">
-                            <caption>Detalles del Contrato</caption>
-                            <thead class="gradient">
-                            <tr>
-                                <th>Mensualidad</th>
-                                <th>Eventos Minimos</th>
-                                <th>Medicamentos</th>
-                                <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody> </tbody>
-                        </table>
+            <div class="row">
+                <article class="col-md-12">
+                    <section class="tabbable">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#contrato"
+                                                  data-toggle="tab">Contrato</a>
+                            </li>
+                            <li><a href="#beneficiarios" data-toggle="tab">Beneficiarios</a>
+                            </li>
+                            <li><a href="#pagos" data-toggle="tab">Pagos</a>
+                            </li>
+                            <li><a href="#eventos"
+                                   data-toggle="tab">Eventos</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <article id="contrato" class="tab-pane active">
+                                <h1>{{ contrato.plan }}</h1>
+                                <h2>{{ contrato.vendedor }} <small>Vendedor</small>
+                                </h2>
+                                <ul>
+                                    <li>Fecha de
+                                        Inicio: {{ contrato.inicio|date:"d/m/Y" }}</li>
+                                    <li>Fecha de
+                                        Vencimiento: {{ contrato.vencimiento|date:"d/m/Y" }}</li>
+                                    <li></li>
+                                </ul>
+                            </article>
+                            <article id="beneficiarios" class="tab-pane">
+                                <br />
+                                {% for beneficiario in contrato.beneficiarios.all %}
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            {% if beneficiario.persona.fotografia == None %}
+                                                {% thumbnail beneficiario.persona.fotografia "100x100" crop="center" as im %}
+                                                    <img src="{{ im.url }}" width="{{ im.width }}"
+                                                         height="{{ im.height }}">
+                                                {% endthumbnail %}
+                                            {% else %}
+                                                <img src="{% static 'images/face.jpg' %}" width="100"
+                                                     height="100"/>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h3>{{ beneficiario.persona }} <small>{{ beneficiario.persona.obtener_edad }} a&ntilde;os</small></h3>
+                                            <a class="btn btn-primary" href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver <i class="fa fa-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                {% endfor %}
+                            </article>
+                            <article id="pagos" class="tab-pane">
+                                <table class="table table-striped">
+                                    <caption>Pagos</caption>
+                                    <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for pago in contrato.pagos.all %}
+                                        <tr>
+                                            <td>{{ pago.fecha }}</td>
+                                            <td>{{ pago.monto }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </article>
+                            <article id="eventos" class="tab-pane">
+                                <table class="table table-striped">
+                                    <caption>Eventos</caption>
+                                    <thead class="gradient">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        {% for evento in contrato.eventos.all %}
+                                            <tr>
+                                                <td>{{ evento.fecha }}</td>
+                                                <td>{{ evento.monto }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </article>
+                        </div>
                     </section>
-                </div>
-               <div class="row">
-                   <section id="cargos">
-                       <table class="table table-striped table-bordered">
-                           <caption>Pagos</caption>
-                           <thead class="gradient">
-                           <tr>
-                               <th>Fecha</th>
-                               <th>Monto</th>
-                           </tr>
-                           </thead>
-                           <tbody>
-                           <th>1950 20:00</th>
-                           <th>octasiaestilefct</th></tbody>
-                       </table>
-                   </section>
-               </div>
-                <div class="row">
-                    <section id="cargos">
-                        <table class="table table-striped table-bordered">
-                            <caption>Eventos</caption>
-                            <thead class="gradient">
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Descripcion</th>
-                            </tr>
-                            </thead>
-                            <tbody> <tr>
-                                <th>1950 20:00</th>
-                                <th>Corte Brazo/th>
-                            </tr></tbody>
-                        </table>
-                    </section>
-                </div>
-                <div class="row">
-                    <section id="cargos">
-                        <table class="table table-striped table-bordered">
-                            <caption>Beneficiarioss</caption>
-                            <thead class="gradient">
-                            <tr>
-                                <th>Fecha inscripcion</th>
-                                <th>Nombre</th>
-                                <th>Accione</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <th>1950 20:00</th>
-                                <th>Juan Manueles ezequieles/th>
-                                    <td>
-                                        <a class="btn btn-danger" href="/emergencia/cobro/11275/eliminar">Editar</a>
-                                    </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </section>
-                </div>
-            </section>
+                </article>
+            </div>
         </section>
     </div>
 {% endblock %}

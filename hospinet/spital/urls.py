@@ -22,7 +22,7 @@ from spital.views import (AdmisionIndexView, PersonaAdmisionCreateView,
     PersonaReferenciaCreateView, HospitalizarView, PagarView,
     HabitacionCreateView, HabitacionDetailView, HabitacionUpdateView,
     HabitacionListView, PreAdmisionCreateView, AdmisionPreCreateView, AdmisionDeleteView,
-    DepositoCreateView)
+    DepositoCreateView, DepositoUpdateView)
 
 urlpatterns = patterns('',
     
@@ -121,4 +121,8 @@ urlpatterns = patterns('',
     url(r'^(?P<admision>\d+)/deposito/agregar$',
         DepositoCreateView.as_view(),
         name='admision-deposito-agregar'),
+
+    url(r'^deposito/(?P<pk>\d+)/editar$',
+        DepositoUpdateView.as_view(),
+        name='deposito-edit'),
 )

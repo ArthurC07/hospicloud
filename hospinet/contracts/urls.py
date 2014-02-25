@@ -22,7 +22,10 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              ContratoUpdateView, IndexView, ContratoCreateView,
                              VendedorSearchView, VendedorDetailView,
                              VendedorCreateView, ContratoPeriodoView,
-                             ContratoSearchView, ContratoPersonaCreateView)
+                             ContratoSearchView, ContratoPersonaCreateView,
+                             TipoEventoCreateView,
+                             BeneficiarioPersonaCreateView,
+                             BeneficiarioCreateView)
 
 
 urlpatterns = patterns('',
@@ -35,8 +38,7 @@ urlpatterns = patterns('',
                            ContratoDetailView.as_view(),
                            name='contrato'),
 
-                       url(
-                           r'^(?P<persona>\d+)/contrato/agregar$',
+                       url(r'^(?P<persona>\d+)/contrato/agregar$',
                            ContratoCreateView.as_view(),
                            name='contrato-persona-add'),
 
@@ -57,11 +59,11 @@ urlpatterns = patterns('',
                            ContratoSearchView.as_view(),
                            name='contrato-search'),
 
-                       url(r'^contrato/(?P<pk>\d+)/pago/add$',
+                       url(r'^contrato/(?P<contrato>\d+)/pago/add$',
                            PagoCreateView.as_view(),
                            name='contrato-pago-add'),
 
-                       url(r'^contrato/(?P<pk>\d+)/evento/add$',
+                       url(r'^contrato/(?P<contrato>\d+)/evento/add$',
                            EventoCreateView.as_view(),
                            name='contrato-evento-add'),
 
@@ -71,7 +73,7 @@ urlpatterns = patterns('',
 
                        url(r'^evento/(?P<pk>\d+)/delete$',
                            EventoDeleteView.as_view(),
-                           name='contrato'),
+                           name='contrato-evento-delete'),
 
                        url(r'^vendedor/buscar$',
                            VendedorSearchView.as_view(),
@@ -84,4 +86,17 @@ urlpatterns = patterns('',
                        url(r'^vendedor/(?P<pk>\d+)$',
                            VendedorDetailView.as_view(),
                            name='vendedor'),
+
+                       url(r'^evento/tipo/add$',
+                           TipoEventoCreateView.as_view(),
+                           name='contrato-tipoevento-add'),
+
+                       url(r'^contrato/(?P<contrato>\d+)/beneficiario/add$',
+                           BeneficiarioPersonaCreateView.as_view(),
+                           name='contrato-beneficiario-add'),
+
+
+                       url(r'^(?P<persona>\d+)/beneficiario/agregar$',
+                           BeneficiarioCreateView.as_view(),
+                           name='persona-beneficiario-add'),
 )

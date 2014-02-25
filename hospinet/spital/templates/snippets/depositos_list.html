@@ -10,7 +10,7 @@
     <tbody>
     {% for deposito in admision.depositos.all %}
         <tr>
-        <td>{{ deposito.recibo }}</td>
+            <td><a href="{% url 'deposito-edit' deposito.id %}"><i class="fa fa-edit"></i></a>{{ deposito.recibo }}</td>
             <td>{{ deposito.fecha }}</td>
             <td>{{ deposito.monto }}</td>
         </tr>

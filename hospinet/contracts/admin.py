@@ -16,10 +16,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
-from contracts.models import TipoEvento, Plan, Contrato, Evento, Pago
+from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago,
+                              Beneficiario, Vendedor)
 
 admin.site.register(Plan)
 admin.site.register(Contrato)
 admin.site.register(TipoEvento)
 admin.site.register(Evento)
 admin.site.register(Pago)
+admin.site.register(Vendedor)
+admin.site.register(Beneficiario)

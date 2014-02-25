@@ -19,10 +19,13 @@
 from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
+from select2.fields import ModelChoiceField
 
-from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago, Vendedor
+from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago, Vendedor, \
+    Beneficiario
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
-                           FieldSetFormMixin, FieldSetModelFormMixinNoButton)
+                           FieldSetFormMixin, FieldSetModelFormMixinNoButton,
+                           FutureDateWidget)
 from persona.models import Persona
 
 
@@ -47,7 +50,8 @@ class PlanForm(FieldSetModelFormMixin):
 class ContratoForm(FieldSetModelFormMixin):
     class Meta:
         model = Contrato
-        exclude = ('vencimiento',)
+
+    vencimiento = forms.DateField(widget=FutureDateWidget)
 
     ultimo_pago = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)
@@ -70,7 +74,7 @@ class TipoEventoForm(FieldSetModelFormMixin):
 
 
 class ContratoMixin(FieldSetModelFormMixin):
-    admision = forms.ModelChoiceField(label="",
+    contrato = forms.ModelChoiceField(label="",
                                       queryset=Contrato.objects.all(),
                                       widget=forms.HiddenInput(),
                                       required=False)
@@ -81,7 +85,7 @@ class EventoForm(ContratoMixin):
         model = Evento
 
     def __init__(self, *args, **kwargs):
-        super(ContratoForm, self).__init__(*args, **kwargs)
+        super(EventoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Evento',
                                       *self.field_names)
 
@@ -91,7 +95,7 @@ class PagoForm(ContratoMixin):
         model = Pago
 
     def __init__(self, *args, **kwargs):
-        super(ContratoForm, self).__init__(*args, **kwargs)
+        super(PagoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Registro de Pago',
                                       *self.field_names)
 
@@ -122,3 +126,32 @@ class ContratoSearchForm(FieldSetFormMixin):
         super(ContratoSearchForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Buscar Contrato', *self.field_names)
         self.helper.add_input(Submit('submit', u'Buscar'))
+
+
+class BeneficiarioForm(ContratoMixin):
+    class Meta:
+        model = Beneficiario
+
+    inscripcion = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                      initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(BeneficiarioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Registro de Beneficiario',
+                                      *self.field_names)
+
+
+class BeneficiarioPersonaForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Beneficiario
+
+    contrato = ModelChoiceField(
+        queryset=Contrato.objects.filter(vencimiento__lte=timezone.now()),
+        name="nombre", model="")
+    inscripcion = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                      initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(BeneficiarioPersonaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Registro de Beneficiario',
+                                      *self.field_names)

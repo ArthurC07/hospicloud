@@ -1,18 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
-<div class="row">
-<form class="styled" method="post">
-  <fieldset>
-  {% csrf_token %} <h1>Describir la Emergencia de {{ persona.nombre_completo }}</h1>
-  <section id="messages"></section>
-  <ul>
-  {% crispy form %}
-  </ul>
-  <p>
-    <input type="submit" value="Guardar" />
-  </p>
-  </fieldset>
-</form>
-</div>
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+    <div class="col-md-12">
+    <div class="page-header">
+
+        <h1>{{ persona.nombre_completo }}<small>Descripcion de Emergencia</small></h1>
+
+    </div>
+    <div class="row">
+        <aside class="col-md-3">
+
+        </aside>
+        <section class="col-md-6">
+
+            {% crispy form %}
+        </section>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
 {% endblock %}
