@@ -6,7 +6,6 @@
       <img alt="thumbnail" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="align-left frame" />
     </a>
   </div>
-  {% endthumbnail %}
   <h3>{{ dicom.descripcion }}</h3>
   {% if dicom.imagen %}
   <a href="{{ dicom.imagen.url }}" class="btn btn-primary">Visor DICOM</a>

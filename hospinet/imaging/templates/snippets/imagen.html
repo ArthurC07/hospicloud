@@ -1,8 +1,8 @@
-{% load thumbnail %}<div class="imagen">
+{% load thumbnail %}
+<div class="imagen">
   {% thumbnail imagen.imagen "200x200" crop="center" as im %}
   <a class="thumbnail" href="{{ imagen.imagen.url }}">
     <img alt="thumbnail" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
   </a>
   <p>{{ imagen.descripcion }}</p>
-  {% endthumbnail %}
 </div>
