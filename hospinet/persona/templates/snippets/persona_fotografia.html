@@ -1,12 +1,8 @@
 {% load staticfiles %}
 {% load thumbnail %}
-{% with photo=admision.paciente.fotografia|thumbnailer %}
-    {% if photo %}
-        <img src="{{ photo.small.url }}"
-             width="{{ photo.small.width }}"
-             height="{{ photo.small.height }}">
-    {% else %}
-        <img src="{% static 'images/face.jpg' %}" width="100"
-             height="100"/>
-    {% endif %}
-{% endwith %}
+{% ifnotequal persona.fotografia None %}
+{% thumbnail persona.fotografia "100x100" crop="center" as im %}
+    <img class="fotografia alinear-derecha" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+{% else %}
+<img class="fotografia alinear-derecha" src="{% static 'images/face.jpg' %}" width="100" height="100" />
+{% endifnotequal %}
