@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %} Admisiones{% endblock %}
-{% load staticfiles %}
+{% load staticfiles %}{% load thumbnail %}
 {% block content %}
 <div class="row">
   <div class="col-md-12">
@@ -9,41 +9,66 @@
     </section>
   </div>
 </div>
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-inner">
+                    <a href="#" class="navbar-brand">Acciones</a>
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="{% url 'admision-iniciar' %}">Admitir Paciente</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
 <section class="row">
-  <section class="col-md-12">
-    <a class="btn btn-success" href="{% url 'admision-iniciar' %}">Admitir Paciente</a>
-    <table class="table no-more-tables table-striped">
-      <caption>
-        Pacientes Remitidos por Emergencias
-      </caption>
-      <thead class="gradient">
-        <tr>
-          <th>Identidad</th>
-          <th>Nombre</th>
-          <th>Edad</th>
-          <th>Sexo</th>
-          <th>Hora de Ingreso</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for preadmision in preadmisiones %}
-        <tr>
-          <td>{{ preadmision.emergencia.persona.identificacion }}</td>
-          <td>{{ preadmision.emergencia.persona.nombre_completo }}</td>
-          <td>{{ preadmision.emergencia.persona.obtener_edad }}</td>
-          <td>{{ preadmision.emergencia.persona.get_sexo_display }}</td>
-          <td>{{ preadmision.created|date:"d/m/Y H:i" }}</td>
-          <td><a class="btn btn-primary btn-block" href="{% url 'admitir-preadmision' preadmision.id %}">Iniciar Admisi&oacute;n</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <section class="col-md-6">
+      <section class="page-header">
+          <h1>Remitidos por Emergencias</h1>
+      </section>
+      {% for preadmision in preadmisiones %}
+          <div class="col-md-12">
+              <div class="row">
+                  <div class="col-md-3">
+                      {% with photo=preadmision.emergencia.persona.fotografia|thumbnailer %}
+                          {% if photo %}
+                              <img src="{{ photo.small.url }}"
+                                   width="{{ photo.small.width }}"
+                                   height="{{ photo.small.height }}">
+                          {% else %}
+                              <img src="{% static 'images/face.jpg' %}" width="100"
+                                   height="100"/>
+                          {% endif %}
+                      {% endwith %}
+                  </div>
+                  <div class="col-md-8">
+                      <h3>{{ preadmision.emergencia.persona }}
+                          <small>{{ preadmision.emergencia.persona.obtener_edad }} a&ntilde;os
+                          </small>
+                      </h3>
+                      <p>
+                          {{ preadmision.emergencia.persona.get_sexo_display }}
+                      </p>
+                      <a class="btn btn-danger" href="{% url 'preadmision-delete' preadmision.id %}">
+                          <i class="fa fa-trash-o"></i> Eliminar
+                      </a>
+                      <a class="btn btn-primary"
+                         href="{% url 'admitir-preadmision' preadmision.id %}">
+                          Iniciar Admisi&oacute;n
+                          <i class="fa fa-arrow-right"></i></a>
+                  </div>
+              </div>
+              <hr>
+          </div>
+      {% endfor %}
   </section>
-</section>
-<section class="row">
-  <article class="col-md-12">
-    {% include 'snippets/admision_list.html' with admisiones=admisiones %}
+  <article class="col-md-6">
+      <section class="page-header">
+          <h1>Pacientes en Proceso de Admisi&oacute;n</h1>
+      </section>
+    {% include 'snippets/admision_list.html' with admisiones=admisiones eliminar=True %}
   </article>
 </section>
 {% endblock %}
