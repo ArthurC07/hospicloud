@@ -451,6 +451,14 @@ class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
         return context
 
 
+class PreAdmisionDeleteView(DeleteView, LoginRequiredMixin):
+    model = PreAdmision
+
+    def get_success_url(self):
+
+        return reverse('admision-index')
+
+
 class HospitalizarView(UpdateView, LoginRequiredMixin):
     """Permite actualizar los datos de ingreso en la central de enfermeria"""
 

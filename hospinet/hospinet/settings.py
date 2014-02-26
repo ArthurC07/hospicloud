@@ -201,7 +201,6 @@ INSTALLED_APPS = (
     'contracts',
     # Third party apps go here
     'django_extensions',
-    'sorl.thumbnail',
     'django_countries',
     'tastypie',
     'south',
