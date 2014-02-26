@@ -44,10 +44,24 @@ class TipoExamen(models.Model):
 
 
 class Radiologo(TimeStampedModel):
+    """Especifica el especialista que efectua el diagnóstico del estudio
+    realizado"""
+
     nombre = models.CharField(max_length=255, blank=True)
     item = models.ForeignKey(ItemTemplate, blank=True, null=True)
+    porcentaje = models.IntegerField(default=30)
 
     def __unicode__(self):
+        return self.nombre
+
+
+class Tecnico(TimeStampedModel):
+    nombre = models.CharField(max_length=255, blank=True)
+    item = models.ForeignKey(ItemTemplate, blank=True, null=True)
+    porcentaje = models.IntegerField(default=10)
+
+    def __unicode__(self):
+
         return self.nombre
 
 
@@ -66,6 +80,8 @@ class EstudioProgramado(models.Model):
     remitio = models.CharField(max_length=200)
     efectuado = models.NullBooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='estudios')
+    tecnico = models.ForeignKey(Tecnico, blank=True, null=True,
+                                related_name='estudios')
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -111,6 +127,8 @@ class Examen(models.Model):
     remitio = models.CharField(max_length=200, null=True)
     facturado = models.NullBooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='examenes')
+    tecnico = models.ForeignKey(Tecnico, blank=True, null=True,
+                                related_name='examenes')
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

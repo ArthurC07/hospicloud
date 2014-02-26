@@ -681,7 +681,9 @@ def crear_ventas(items, recibo, examen=False):
         precio = item.precio_de_venta
 
         if examen:
-            venta.precio = precio - precio * item.comision * dot01
+            comisiones = precio * item.comision * dot01
+            comisiones += precio * item.comision2 * dot01
+            venta.precio = precio - comisiones
         else:
             venta.precio = precio
         venta.impuesto = item.impuestos
@@ -812,6 +814,15 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         venta.cantidad = 1
         venta.item = self.object.radiologo.item
         venta.impuesto = self.object.radiologo.item.impuestos
+        venta.save()
+
+        tecnico = sum(i.precio_de_venta * i.comision2 * dot01 for i in items)
+        venta = Venta()
+        venta.recibo = recibo
+        venta.precio = tecnico
+        venta.cantidad = 1
+        venta.item = self.object.tecnico.item
+        venta.impuesto = self.object.tecnico.item.impuestos
         venta.save()
 
         self.object.save()

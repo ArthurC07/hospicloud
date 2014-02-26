@@ -86,6 +86,8 @@ class ItemTemplate(TimeStampedModel):
                                        null=True, blank=True)
     comision = models.DecimalField(decimal_places=2, max_digits=4,
                                    default=Decimal("30.00"))
+    comision2 = models.DecimalField(decimal_places=2, max_digits=4,
+                                    default=Decimal("10.00"))
 
     def __unicode__(self):
         return self.descripcion
