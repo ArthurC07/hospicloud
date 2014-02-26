@@ -17,7 +17,7 @@
 
 from django.contrib import admin
 from imaging.models import (Examen, Imagen, Adjunto, Dicom, EstudioProgramado,
-                            TipoExamen, Estudio, Radiologo)
+                            TipoExamen, Estudio, Radiologo, Tecnico)
 
 admin.site.register(Examen)
 admin.site.register(Imagen)
@@ -27,3 +27,4 @@ admin.site.register(EstudioProgramado)
 admin.site.register(TipoExamen)
 admin.site.register(Estudio)
 admin.site.register(Radiologo)
+admin.site.register(Tecnico)

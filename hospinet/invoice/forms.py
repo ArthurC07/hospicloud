@@ -132,7 +132,7 @@ class AdmisionFacturarForm(FieldSetModelFormMixin):
 class ExamenFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Examen
-        fields = ('facturado', 'radiologo', 'remitio')
+        fields = ('facturado', 'radiologo', 'tecnico', 'remitio')
 
     def __init__(self, *args, **kwargs):
         super(ExamenFacturarForm, self).__init__(*args, **kwargs)
