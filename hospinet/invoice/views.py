@@ -32,8 +32,8 @@ from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DeleteView)
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
-from spital.forms import DepositoForm
 
+from spital.forms import DepositoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from spital.models import Admision, Deposito
 from emergency.models import Emergencia
@@ -81,6 +81,11 @@ class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
 
 
 class ReciboCreateView(CreateView, LoginRequiredMixin):
+    """Permite crear un :class:`Recibo` al mismo tiempo que se crea una
+    :class:`Persona`, utiliza un formulario simplificado que requiere
+    unicamente indicar el nombre y apellidos del cliente, que aún así son
+    opcionales.
+    """
     model = Recibo
 
     def dispatch(self, request, *args, **kwargs):
@@ -179,6 +184,8 @@ class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
 
 
 class VentaDeleteView(DeleteView, LoginRequiredMixin):
+    """Permite eliminar una :class:`Venta` que sea incorrecta en el
+    :class:`Recibo`"""
     model = Venta
 
     def get_object(self, queryset=None):
@@ -191,6 +198,9 @@ class VentaDeleteView(DeleteView, LoginRequiredMixin):
 
 
 class ReciboFormMixin(CreateView):
+    """Especifica una interfaz común para la creación de Entidades que requieran
+    un :class:`Recibo` como parte de los campos requeridos por su formulario"""
+
     def dispatch(self, *args, **kwargs):
         self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
         return super(ReciboFormMixin, self).dispatch(*args, **kwargs)
@@ -320,7 +330,8 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['inventarioform'] = InventarioForm(prefix='inventario')
         context['inventarioform'].set_action('invoice-inventario')
 
-        context['examenes'] = Examen.objects.filter(facturado=False).order_by('-id')
+        context['examenes'] = Examen.objects.filter(facturado=False).order_by(
+            '-id')
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(facturada=False)
 
@@ -498,7 +509,6 @@ class VentaListView(ListView):
     context_object_name = 'ventas'
 
     def dispatch(self, request, *args, **kwargs):
-
         self.form = VentaPeriodoForm(request.GET, prefix='venta')
         if self.form.is_valid():
             print(self.form.cleaned_data)
@@ -509,7 +519,6 @@ class VentaListView(ListView):
         return super(VentaListView, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-
         return Venta.objects.filter(
             recibo__created__gte=self.inicio,
             recibo__created__lte=self.fin,
@@ -518,7 +527,6 @@ class VentaListView(ListView):
         )
 
     def get_context_data(self, **kwargs):
-
         context = super(VentaListView, self).get_context_data(**kwargs)
         context['item'] = self.item
         context['inicio'] = self.inicio
@@ -564,9 +572,10 @@ class ReciboRemiteView(ReciboPeriodoView, LoginRequiredMixin):
 
 
 class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
-    """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
-    los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
-    cuenta el periodo especificado"""
+    """Legacy - Muestra los honorarios médicos de los radiologos
+
+    Obsoleto
+    """
 
     template_name = 'invoice/radiologo_list.html'
 
@@ -807,6 +816,7 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
 
         crear_ventas(items, recibo, True)
 
+        # Crear los honorarios de los radiologos
         honorarios = sum(i.precio_de_venta * i.comision * dot01 for i in items)
         venta = Venta()
         venta.recibo = recibo
@@ -816,6 +826,7 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         venta.impuesto = self.object.radiologo.item.impuestos
         venta.save()
 
+        # Crear los honorarios de los tecnicos
         tecnico = sum(i.precio_de_venta * i.comision2 * dot01 for i in items)
         venta = Venta()
         venta.recibo = recibo
@@ -898,7 +909,7 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
 
 
 class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
-    """"""
+    """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`"""
     model = Pago
     form_class = PagoForm
 
