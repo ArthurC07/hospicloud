@@ -2,7 +2,7 @@ Django>=1.6
 Pillow
 South
 django-bootstrap-pagination
--e git://github.com/comoga/django-constance@dc89ec294f67ae620ca2dc6d4019e1ecbe339917#egg=django_constance-master
+-e git://github.com/comoga/django-constance#egg=django-constance
 django-constance[database]
 django-countries
 django-crispy-forms
