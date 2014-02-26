@@ -826,15 +826,16 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         venta.impuesto = self.object.radiologo.item.impuestos
         venta.save()
 
-        # Crear los honorarios de los tecnicos
-        tecnico = sum(i.precio_de_venta * i.comision2 * dot01 for i in items)
-        venta = Venta()
-        venta.recibo = recibo
-        venta.precio = tecnico
-        venta.cantidad = 1
-        venta.item = self.object.tecnico.item
-        venta.impuesto = self.object.tecnico.item.impuestos
-        venta.save()
+        if not self.object.tecnico is None:
+            # Crear los honorarios de los tecnicos
+            tecnico = sum(i.precio_de_venta * i.comision2 * dot01 for i in items)
+            venta = Venta()
+            venta.recibo = recibo
+            venta.precio = tecnico
+            venta.cantidad = 1
+            venta.item = self.object.tecnico.item
+            venta.impuesto = self.object.tecnico.item.impuestos
+            venta.save()
 
         self.object.save()
 
