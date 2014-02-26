@@ -1,30 +1,42 @@
-<table class="table table-striped no-more-tables">
-  <caption>Admisiones en Espera de Hospitalizaci&oacute;n</caption>
-  <thead>
-    <tr>
-      <th>C&oacute;digo</th>
-      <th>Habitaci&oacute;n</th>
-      <th>Nombre</th>
-      <th>Edad</th>
-      <th>Sexo</th>
-      <th>Hora de Ingreso</th>
-      <th class="no-print">Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for admision in admisiones%}
-    <tr>
-      <td>{{ admision.paciente.codigo }}</td>
-      <td>{{ admision.habitacion.get_tipo_display }} {{ admision.habitacion.numero }}</td>
-      <td>{{ admision.paciente.nombre_completo }}</td>
-      <td>{{ admision.paciente.obtener_edad }}</td>
-      <td>{{ admision.paciente.get_sexo_display }}</td>
-      <td>{{ admision.momento|date:"d/m/Y H:i" }}</td>
-      <td>
-          <a class="btn btn-block btn-primary no-print" href="{% url 'admision-view-id' admision.id %}">Ver</a>
-          <a class="btn btn-block btn-primary no-print" href="{% url 'admision-delete' admision.id %}">Eliminar</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% load staticfiles %}{% load thumbnail %}
+{% for admision in admisiones %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-3">
+                {% with photo=admision.paciente.fotografia|thumbnailer %}
+                    {% if photo %}
+                        <img src="{{ photo.small.url }}"
+                             width="{{ photo.small.width }}"
+                             height="{{ photo.small.height }}">
+                    {% else %}
+                        <img src="{% static 'images/face.jpg' %}" width="100"
+                             height="100"/>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div class="col-md-8">
+                <h3>{{ admision.paciente }}
+                    <small>{{ admision.paciente.obtener_edad }} a&ntilde;os
+                    </small>
+                </h3>
+                <p>
+                    {{ admision.paciente.get_sexo_display }}, Ingresado
+                    el {{ admision.ingreso }}, {{ admision.doctor }}
+                </p>
+            <p>
+                <a class="btn btn-warning">{{ admision.diagnostico }}</a>
+                <a class="btn btn-success">{{ admision.habitacion }}</a>
+            </p>
+                {% ifequal eliminar True %}
+                    <a class="btn btn-danger" href="{% url 'admision-delete' admision.id %}">
+                        <i class="fa fa-trash-o"></i> Eliminar
+                    </a>
+                {% endifequal %}
+                <a class="btn btn-primary"
+                   href="{% url 'admision-view-id' admision.id %}">Ver <i
+                        class="fa fa-arrow-right"></i></a>
+            </div>
+        </div>
+        <hr>
+    </div>
+{% endfor %}
