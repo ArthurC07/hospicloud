@@ -83,13 +83,9 @@ class VentaForm(FieldSetModelFormMixin):
 
 
 class PeriodoForm(forms.Form):
-    inicio = forms.DateTimeField(widget=forms.DateInput(
-        attrs={'class': 'datepicker'}, format='%d/%m/%Y'),
-                                 input_formats=('%d/%m/%Y',))
+    inicio = forms.DateTimeField(widget=DateTimeWidget)
 
-    fin = forms.DateTimeField(widget=forms.DateInput(
-        attrs={'class': 'datepicker'}, format='%d/%m/%Y'),
-                              input_formats=('%d/%m/%Y',))
+    fin = forms.DateTimeField(widget=DateTimeWidget)
 
     def __init__(self, *args, **kwargs):
         super(PeriodoForm, self).__init__(*args, **kwargs)
