@@ -677,7 +677,7 @@ class ExamenView(ListView, LoginRequiredMixin):
         return Examen.objects.filter(facturado=False)
 
 
-def crear_ventas(items, recibo, examen=False):
+def crear_ventas(items, recibo, examen=False, tecnico=False):
     """Permite convertir un :class:`dict` de :class:`ItemTemplate` y sus
     cantidades en una las :class:`Venta`s de un :class:`Recibo`"""
 
@@ -691,7 +691,8 @@ def crear_ventas(items, recibo, examen=False):
 
         if examen:
             comisiones = precio * item.comision * dot01
-            comisiones += precio * item.comision2 * dot01
+            if tecnico:
+                comisiones += precio * item.comision2 * dot01
             venta.precio = precio - comisiones
         else:
             venta.precio = precio
@@ -814,8 +815,6 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         recibo.tipo_de_venta = self.object.tipo_de_venta
         recibo.save()
 
-        crear_ventas(items, recibo, True)
-
         # Crear los honorarios de los radiologos
         honorarios = sum(i.precio_de_venta * i.comision * dot01 for i in items)
         venta = Venta()
@@ -826,6 +825,7 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         venta.impuesto = self.object.radiologo.item.impuestos
         venta.save()
 
+        venta_tecnico = False
         if not self.object.tecnico is None:
             # Crear los honorarios de los tecnicos
             tecnico = sum(i.precio_de_venta * i.comision2 * dot01 for i in items)
@@ -836,6 +836,9 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
             venta.item = self.object.tecnico.item
             venta.impuesto = self.object.tecnico.item.impuestos
             venta.save()
+            venta_tecnico = True
+
+        crear_ventas(items, recibo, True, venta_tecnico)
 
         self.object.save()
 
