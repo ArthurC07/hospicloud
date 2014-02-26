@@ -355,7 +355,7 @@ class ReciboPeriodoView(TemplateView):
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
-            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.fin = self.form.cleaned_data['fin']
             self.recibos = Recibo.objects.filter(
                 created__gte=self.inicio,
                 created__lte=self.fin,
@@ -679,7 +679,10 @@ class ExamenView(ListView, LoginRequiredMixin):
 
 def crear_ventas(items, recibo, examen=False, tecnico=False):
     """Permite convertir un :class:`dict` de :class:`ItemTemplate` y sus
-    cantidades en una las :class:`Venta`s de un :class:`Recibo`"""
+    cantidades en una las :class:`Venta`s de un :class:`Recibo`
+
+    Toma en consideración las indicaciones acerca de los cobros de comisiones
+    indicados por los examenes"""
 
     for item in items:
         venta = Venta()
