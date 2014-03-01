@@ -34,6 +34,8 @@ class Consultorio(TimeStampedModel):
     nombre = models.CharField(max_length=50, blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='consultorios')
     secretaria = models.ForeignKey(User, related_name='secretarias')
+    administradores = models.ManyToManyField(User, blank=True, null=True,
+                                             related_name='consultorios_administrados')
 
     def __unicode__(self):
         return self.nombre
@@ -56,7 +58,7 @@ class Paciente(TimeStampedModel):
 
     def __unicode__(self):
         return u"Paciente {0} de {1}".format(self.persona.nombre_completo(),
-                                     self.consultorio.usuario.get_full_name())
+                                             self.consultorio.usuario.get_full_name())
 
     def identificacion(self):
         return self.persona.identificacion

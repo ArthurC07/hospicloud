@@ -24,7 +24,6 @@ from django.db import models
 from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
 from django_extensions.db.models import TimeStampedModel
-from sorl.thumbnail import ImageField
 
 from persona.models import Persona
 from inventory.models import ItemTemplate, TipoVenta
@@ -151,7 +150,7 @@ class Imagen(models.Model):
 
     examen = models.ForeignKey(Examen, on_delete=models.CASCADE,
                                related_name='imagenes')
-    imagen = ImageField(upload_to="examen/imagen/%Y/%m/%d")
+    imagen = models.ImageField(upload_to="examen/imagen/%Y/%m/%d")
     descripcion = models.CharField(max_length=255, blank=True)
 
     def get_absolute_url(self):
@@ -185,7 +184,7 @@ class Dicom(models.Model):
     archivo = models.FileField(upload_to='examen/dicom/%Y/%m/%d')
     descripcion = models.CharField(max_length=255, blank=True)
     convertido = models.BooleanField(default=False)
-    imagen = ImageField(upload_to='examen/dicom/imagen/%Y/%m/%d',
+    imagen = models.ImageField(upload_to='examen/dicom/imagen/%Y/%m/%d',
                         blank=True)
     uuid = UUIDField(version=4)
 

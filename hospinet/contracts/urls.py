@@ -85,7 +85,7 @@ urlpatterns = patterns('',
 
                        url(r'^vendedor/(?P<pk>\d+)$',
                            VendedorDetailView.as_view(),
-                           name='vendedor'),
+                           name='contracts-vendedor'),
 
                        url(r'^evento/tipo/add$',
                            TipoEventoCreateView.as_view(),
