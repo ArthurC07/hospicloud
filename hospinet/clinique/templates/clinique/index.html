@@ -29,13 +29,18 @@
             </div>
         </div>
     {% endfor %}
+    {% for consultorio in user.consultorios_administrados.all %}
+        <div class="row">
+            <div class="col-md-9">
+                <div class="page-header">
+                    <h2>
+                        {{ consultorio }}
+                        <a class="pull-right btn btn-primary" href="{% url 'consultorio' consultorio.id %}">Ver</a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
     </div>
 </div>
-
-
-
-
-
-
-
 {% endblock %}
