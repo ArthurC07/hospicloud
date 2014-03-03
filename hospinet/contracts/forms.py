@@ -146,7 +146,7 @@ class BeneficiarioPersonaForm(FieldSetModelFormMixin):
         model = Beneficiario
 
     contrato = ModelChoiceField(
-        queryset=Contrato.objects.filter(vencimiento__gte=timezone.now()),
+        queryset=Contrato.objects.all(),
         name="nombre", model="")
     inscripcion = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)
