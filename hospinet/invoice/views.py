@@ -531,6 +531,7 @@ class VentaListView(ListView):
         context['item'] = self.item
         context['inicio'] = self.inicio
         context['fin'] = self.fin
+        context['total'] = sum(v.total() for v in self.object_list)
         return context
 
 
