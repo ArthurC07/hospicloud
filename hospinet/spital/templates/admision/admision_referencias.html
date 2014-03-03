@@ -10,14 +10,14 @@
 <div class="row">
 {% include 'snippets/admision_aside.html' %}
 <div id="informacion" class="col-md-9">
-  {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
+  {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
   {% for referencia in admision.referencias.all %}
     <div class="page-header">
       <h3>Referencia: {{ referencia.nombre_completo }}</h3>
     </div>
-    {% thumbnail referencia.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
+    {% thumbnail referencia.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
     {% include 'snippets/persona.html' with persona=referencia %}
-    <a href="{% url 'persona-editar' persona.id %}" class="btn btn-primary">Editar Datos</a>
+    <a href="{% url 'persona-editar' fiador.id %}" class="btn btn-primary">Editar Datos</a>
   {% endfor %}
   <a href="{% url 'admision-referencia' admision.id %}" class="btn btn-primary">Agregar Referencia</a>
 </div>

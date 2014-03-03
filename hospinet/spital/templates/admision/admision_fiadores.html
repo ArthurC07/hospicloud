@@ -30,13 +30,12 @@
     </nav>
   </aside>
   <section class="col-md-9">
-    {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
+    {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
     {% for fiador in admision.fiadores.all %}
     <div class="page-header">
       <h3> Fiador: {{ fiador.nombre_completo }}</h3>
     </div>
-    {% thumbnail fiador.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">{% endthumbnail %}
-    {% include 'snippets/persona.html' with persona=fiador %}
+    {% thumbnail fiador.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
     <a href="{% url 'persona-editar' fiador.id %}" class="btn btn-primary">Editar Datos</a>
     {% endfor %}
     <a href="{% url 'admision-fiador' admision.id %}" class="btn btn-primary">Agregar Fiador</a>
