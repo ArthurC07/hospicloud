@@ -14,6 +14,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib.auth.decorators import permission_required
+from django.utils.decorators import method_decorator
 
 from django.views.generic import (DetailView, CreateView, View,
                                   ListView)
@@ -36,6 +38,10 @@ class ConsultorioIndexView(ListView, LoginRequiredMixin):
     template_name = 'clinique/index.html'
     paginate_by = 20
     context_object_name = 'pacientes'
+
+    @method_decorator(permission_required('clinique.consultorio'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(ConsultorioIndexView, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
         return Paciente.objects.filter(

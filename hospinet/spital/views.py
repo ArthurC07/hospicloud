@@ -16,12 +16,14 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime, time
+from django.contrib.auth.decorators import permission_required
 
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, TemplateView,
                                   DeleteView,
                                   DetailView, RedirectView, UpdateView)
@@ -47,6 +49,10 @@ class AdmisionIndexView(ListView, LoginRequiredMixin):
     queryset = Admision.objects.filter(~Q(estado='H') & ~Q(estado='C')
                                        & ~Q(estado='I'))
     template_name = 'admision/index.html'
+
+    @method_decorator(permission_required('spital.admision'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(AdmisionIndexView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
 

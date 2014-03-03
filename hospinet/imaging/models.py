@@ -114,6 +114,11 @@ class Examen(models.Model):
     """Permite almacenar los datos de un estudio médico realizado a una
     :class:`Persona`"""
 
+    class Meta:
+        permissions = (
+            ('examen', 'Permite al usuario gestionar examenes'),
+        )
+
     persona = models.ForeignKey(Persona, on_delete=models.CASCADE,
                                 related_name="examenes")
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,

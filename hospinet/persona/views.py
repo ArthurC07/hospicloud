@@ -15,8 +15,10 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 
 from django.http import HttpResponseRedirect
+from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView,
                                   ListView, View)
 from django.views.generic.edit import FormMixin
@@ -38,6 +40,10 @@ class PersonaIndexView(ListView, LoginRequiredMixin):
     model = Persona
     template_name = 'persona/index.html'
     paginate_by = 10
+
+    @method_decorator(permission_required('persona.persona'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(PersonaIndexView, self).dispatch(*args, **kwargs)
 
 
 class PersonaDetailView(DetailView, LoginRequiredMixin):

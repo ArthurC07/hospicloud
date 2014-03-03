@@ -14,7 +14,9 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib.auth.decorators import permission_required
 from django.db.models import Q
+from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
                                   DeleteView)
 from django.views.generic.detail import SingleObjectMixin
@@ -49,6 +51,10 @@ class InventarioFormMixin(CreateView):
 
 class IndexView(TemplateView, LoginRequiredMixin):
     template_name = 'inventory/index.html'
+
+    @method_decorator(permission_required('inventory.inventario'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(IndexView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)

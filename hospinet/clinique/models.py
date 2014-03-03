@@ -31,6 +31,12 @@ class TipoConsulta(models.Model):
 
 
 class Consultorio(TimeStampedModel):
+
+    class Meta:
+        permissions = (
+            ('consultorio', 'Permite al usuario gestionar consultorios'),
+        )
+
     nombre = models.CharField(max_length=50, blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='consultorios')
     secretaria = models.ForeignKey(User, related_name='secretarias')

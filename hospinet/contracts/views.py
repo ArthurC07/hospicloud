@@ -42,6 +42,10 @@ from users.mixins import LoginRequiredMixin
 class IndexView(TemplateView, LoginRequiredMixin):
     template_name = 'contracts/index.html'
 
+    @method_decorator(permission_required('contracts.contrato'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(IndexView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 

@@ -14,10 +14,12 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib.auth.decorators import permission_required
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
                                   TemplateView, RedirectView, FormView)
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
@@ -31,6 +33,7 @@ from django.contrib import messages
 from templated_email import send_templated_mail
 from users.mixins import LoginRequiredMixin
 
+
 class ExamenListView(ListView, LoginRequiredMixin):
     
     """Muestra un listado de los ultimos 20 :class:`Examen`es que se han
@@ -39,6 +42,10 @@ class ExamenListView(ListView, LoginRequiredMixin):
     template_name = 'examen/index.html'
     context_object_name = 'examenes'
     paginate_by = 20
+
+    @method_decorator(permission_required('imaging.examen'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(ExamenListView, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
         

@@ -215,3 +215,8 @@ class VentaPeriodoForm(PeriodoForm):
         super(VentaPeriodoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Detalle de Ventas de un Periodo',
                                       *self.field_names)
+
+
+class PeriodoAreaForm(PeriodoForm):
+    area = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.all())

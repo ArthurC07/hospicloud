@@ -26,6 +26,13 @@ from django.contrib.auth.models import User
 
 
 class Inventario(models.Model):
+
+
+    class Meta:
+        permissions = (
+            ('inventario', 'Permite al usuario gestionar inventario'),
+        )
+
     lugar = models.CharField(max_length=255, default='Bodega')
     puede_comprar = models.NullBooleanField(default=False, blank=True,
                                             null=True)

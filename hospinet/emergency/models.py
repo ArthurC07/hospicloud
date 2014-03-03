@@ -32,6 +32,11 @@ class Emergencia(TimeStampedModel):
     """Representa una visita de una :class:`Persona` a la consulta de
     emergencia"""
 
+    class Meta:
+        permissions = (
+            ('emergencia', 'Permite al usuario gestionar emergencia'),
+        )
+
     persona = models.ForeignKey(Persona, related_name='emergencias')
     historia_enfermedad_actual = models.TextField(blank=True, null=True)
     frecuencia_respiratoria = models.IntegerField(blank=True, null=True)

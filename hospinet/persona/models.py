@@ -31,6 +31,11 @@ from persona.fields import OrderedCountryField
 class Persona(models.Model):
     """Representación de una :class:`Persona` en la aplicación"""
 
+    class Meta:
+        permissions = (
+            ('persona', 'Permite al usuario gestionar persona'),
+        )
+
     GENEROS = (
         ('M', u'Masculino'),
         ('F', u'Femenino'),
