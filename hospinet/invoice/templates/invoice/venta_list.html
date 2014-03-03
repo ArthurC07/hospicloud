@@ -19,6 +19,8 @@
                         <tr>
                             <th>Recibo</th>
                             <th>Fecha</th>
+                            <th>Nombre</th>
+
                             <th>Concepto</th>
 
                             <th>Cantidad</th>
@@ -30,6 +32,8 @@
                             <tr>
                                 <td><a href="{% url 'invoice-view-id' venta.recibo.id %}">{{ venta.recibo.numero }}</a></td>
                                 <td>{{ venta.recibo.created}}</td>
+                                <td>{{ venta.recibo}}</td>
+
                                 <td>{{ venta.item }}</td>
 
                                 <td>{{ venta.cantidad }}</td>
