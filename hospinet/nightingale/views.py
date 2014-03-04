@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
@@ -24,6 +23,7 @@ from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView, FormView)
 from django.contrib import messages
 from django.utils import timezone
+from guardian.decorators import permission_required
 
 from inventory.models import ItemTemplate
 from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
@@ -44,17 +44,19 @@ from spital.views import AdmisionFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
-class NightingaleIndexView(ListView, LoginRequiredMixin):
+class EnfermeriaPermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('nightingale.enfermeria'))
+    def dispatch(self, *args, **kwargs):
+        return super(EnfermeriaPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class NightingaleIndexView(ListView, EnfermeriaPermissionMixin):
     """Permite ingresar al lobby de Admisiones que estan siendo atendidas en
     una institucion hospitalaria"""
 
     queryset = Admision.objects.filter(Q(estado='H'))
     context_object_name = 'admitidos'
     template_name = 'enfermeria/index.html'
-
-    @method_decorator(permission_required('nightingale.enfermeria'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(NightingaleIndexView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
 
@@ -237,7 +239,6 @@ class CargoCreateView(AdmisionFormMixin, LoginRequiredMixin):
     model = Cargo
     form_class = CargoForm
     template_name = 'enfermeria/cargo_create.html'
-
 
     def form_valid(self, form):
         """Guarda el objeto generado espeficando la :class:`Admision` obtenida

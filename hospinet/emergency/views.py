@@ -14,8 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
-from django.contrib.auth.decorators import permission_required
+from guardian.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -40,6 +39,23 @@ from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
                              RemisionInternaForm, RemisionExternaForm,
                              CobroForm, DiagnosticoForm, ExamenFisicoForm)
 from users.mixins import LoginRequiredMixin
+
+
+class EmergenciaPermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('emergency.emergencia'))
+    def dispatch(self, *args, **kwargs):
+        return super(EmergenciaPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class EmergenciaIndexView(ListView, EmergenciaPermissionMixin):
+    model = Emergencia
+    context_object_name = 'emergencias'
+    template_name = 'emergency/index.html'
+    paginate_by = 20
+
+    def get_queryset(self):
+        """Obtiene las :class:`Emergencia`s atendidas el día de hoy"""
+        return Emergencia.objects.order_by('-created')
 
 
 class EmergenciaPreCreateView(TemplateView, LoginRequiredMixin):
@@ -246,21 +262,6 @@ class DiagnosticoCreateView(BaseCreateView):
 
     model = Diagnostico
     form_class = DiagnosticoForm
-
-
-class EmergenciaListView(ListView, LoginRequiredMixin):
-    model = Emergencia
-    context_object_name = 'emergencias'
-    template_name = 'emergency/index.html'
-    paginate_by = 20
-
-    @method_decorator(permission_required('emergency.emergencia'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(EmergenciaListView, self).dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        """Obtiene las :class:`Emergencia`s atendidas el día de hoy"""
-        return Emergencia.objects.order_by('-created')
 
 
 class EmergenciaFisicoUpdateView(FisicoUpdateView):

@@ -14,14 +14,13 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
-
 from django.views.generic import (DetailView, CreateView, View,
                                   ListView)
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin
+from guardian.decorators import permission_required
 
 from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             ConsultaForm, SeguimientoForm, LecturaSignosForm,
@@ -34,14 +33,16 @@ from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
-class ConsultorioIndexView(ListView, LoginRequiredMixin):
+class ConsultorioPermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('clinique.consultorio'))
+    def dispatch(self, *args, **kwargs):
+        return super(ConsultorioPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
     template_name = 'clinique/index.html'
     paginate_by = 20
     context_object_name = 'pacientes'
-
-    @method_decorator(permission_required('clinique.consultorio'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(ConsultorioIndexView, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
         return Paciente.objects.filter(
@@ -61,6 +62,7 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     def get_queryset(self):
         self.object = self.get_object(Consultorio.objects.all())
         return self.object.pacientes.all()
+
 
 class ConsultorioCreateView(CurrentUserFormMixin, CreateView):
     model = Consultorio

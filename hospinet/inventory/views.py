@@ -37,6 +37,25 @@ from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm,
                              ItemCompradoForm, ProveedorForm)
 
 
+class InventarioPermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('inventory.inventario'))
+    def dispatch(self, *args, **kwargs):
+        return super(InventarioPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class IndexView(TemplateView, InventarioPermissionMixin):
+    template_name = 'inventory/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+
+        context['inventarios'] = Inventario.objects.all()
+        context['productoform'] = ItemTemplateSearchForm()
+        context['productoform'].helper.form_tag = False
+
+        return context
+
+
 class InventarioFormMixin(CreateView):
     def dispatch(self, *args, **kwargs):
         self.inventario = get_object_or_404(Inventario, pk=kwargs['inventario'])
@@ -47,23 +66,6 @@ class InventarioFormMixin(CreateView):
         initial = initial.copy()
         initial['inventario'] = self.inventario.id
         return initial
-
-
-class IndexView(TemplateView, LoginRequiredMixin):
-    template_name = 'inventory/index.html'
-
-    @method_decorator(permission_required('inventory.inventario'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(IndexView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-
-        context['inventarios'] = Inventario.objects.all()
-        context['productoform'] = ItemTemplateSearchForm()
-        context['productoform'].helper.form_tag = False
-
-        return context
 
 
 class ItemTemplateDetailView(DetailView, LoginRequiredMixin):

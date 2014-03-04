@@ -42,17 +42,19 @@ from users.mixins import LoginRequiredMixin
 from invoice.forms import PeriodoForm
 
 
-class AdmisionIndexView(ListView, LoginRequiredMixin):
+class AdmisionPermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('spital.admision'))
+    def dispatch(self, *args, **kwargs):
+        return super(AdmisionPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class AdmisionIndexView(ListView, AdmisionPermissionMixin):
     """Muestra la pagina principal de el Centro de :class:`Admisiones`"""
 
     context_object_name = 'admisiones'
     queryset = Admision.objects.filter(~Q(estado='H') & ~Q(estado='C')
                                        & ~Q(estado='I'))
     template_name = 'admision/index.html'
-
-    @method_decorator(permission_required('spital.admision'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(AdmisionIndexView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
 

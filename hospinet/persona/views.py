@@ -35,15 +35,17 @@ from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
 from users.mixins import LoginRequiredMixin
 
 
-class PersonaIndexView(ListView, LoginRequiredMixin):
+class PersonaPermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('persona.persona'))
+    def dispatch(self, *args, **kwargs):
+        return super(PersonaPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class PersonaIndexView(ListView, PersonaPermissionMixin):
     context_object_name = 'personas'
     model = Persona
     template_name = 'persona/index.html'
     paginate_by = 10
-
-    @method_decorator(permission_required('persona.persona'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(PersonaIndexView, self).dispatch(*args, **kwargs)
 
 
 class PersonaDetailView(DetailView, LoginRequiredMixin):

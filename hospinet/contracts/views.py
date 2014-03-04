@@ -39,12 +39,14 @@ from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin
 
 
-class IndexView(TemplateView, LoginRequiredMixin):
-    template_name = 'contracts/index.html'
-
+class ContratoPermissionMixin(LoginRequiredMixin):
     @method_decorator(permission_required('contracts.contrato'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(IndexView, self).dispatch(*args, **kwargs)
+    def dispatch(self, *args, **kwargs):
+        return super(ContratoPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class IndexView(TemplateView, ContratoPermissionMixin):
+    template_name = 'contracts/index.html'
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
