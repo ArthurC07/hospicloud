@@ -138,6 +138,8 @@ class Cita(TimeStampedModel):
     en una fecha determinada"""
 
     usuario = models.ForeignKey(User, related_name='citas')
+    paciente = models.ForeignKey(Paciente, related_name='citas',
+                                 blank=True, null=True)
     nombre = models.CharField(max_length=200)
     fecha = models.DateField(blank=True, null=True)
 
