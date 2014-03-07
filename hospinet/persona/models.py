@@ -248,11 +248,27 @@ class AntecedenteFamiliar(models.Model):
 
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='antecedente_familiar')
+    sindrome_coronario_agudo = models.BooleanField(default=False, blank=True)
+    hipertension = models.BooleanField(default=False, blank=True)
+    tabaquismo = models.BooleanField(default=False, blank=True)
+    epoc = models.NullBooleanField(default=False, blank=True)
+    diabetes = models.BooleanField(default=False, blank=True)
+    tuberculosis = models.BooleanField(default=False, blank=True)
+    asma = models.BooleanField(default=False, blank=True)
+    colitis = models.BooleanField(default=False, blank=True)
+    sinusitis = models.BooleanField(default=False, blank=True)
+    colelitiasis = models.BooleanField(default=False, blank=True)
+    migrana = models.NullBooleanField(default=False, blank=True)
+    obesidad = models.NullBooleanField(default=False, blank=True)
+    dislipidemias = models.NullBooleanField(default=False, blank=True)
+    alcoholismo = models.NullBooleanField(default=False, blank=True)
+    cancer = models.NullBooleanField(default=False, blank=True)
+    alergias = models.CharField(max_length=200, blank=True, null=True)
 
-    carcinogenico = models.BooleanField(default=False, blank=True)
-    cardiovascular = models.BooleanField(default=False, blank=True)
-    endocrinologico = models.BooleanField(default=False, blank=True)
-    respiratorio = models.BooleanField(default=False, blank=True)
+    congenital = models.CharField(max_length=200, blank=True)
+
+    general = models.CharField(max_length=200, blank=True)
+    nutricional = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
 
     def get_absolute_url(self):
