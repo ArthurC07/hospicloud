@@ -82,6 +82,7 @@
                                         Obstetricos</a>
                                 {% endifequal %}
                             </div>
+                            {% include 'snippets/antecedente_quirurgico.html' with antecedente=paciente.persona %}
                         </div>
                     </article>
                     <article id="consulta_inicio" class="tab-pane">
@@ -101,7 +102,6 @@
                                     <td>{{ consulta.created }}</td>
                                     <td>{{ consulta.padecimiento }}</td>
                                     <td>{{ consulta.tipo }}</td>
-
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -112,7 +112,6 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>descripcion</th>
-
                             </tr>
                             </thead>
                             <tbody>
@@ -120,8 +119,6 @@
                                 <tr>
                                     <td>{{ seguimiento.created }}</td>
                                     <td>{{ seguimiento.observaciones }}</td>
-
-
                                 </tr>
                             {% endfor %}
                             </tbody>
