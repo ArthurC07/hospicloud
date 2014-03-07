@@ -26,7 +26,8 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             CliniqueAntecedenteUpdateView,
                             CliniqueAntecedenteFamiliarUpdateView,
                             CliniqueAntecedenteQuirurgicoUpdateView,
-                            CliniqueAntecedenteObstetricoUpdateView)
+                            CliniqueAntecedenteObstetricoUpdateView,
+                            CliniqueAntecedenteQuirurgicoCreateView)
 
 urlpatterns = patterns('',
 
@@ -102,4 +103,8 @@ urlpatterns = patterns('',
                        url(r'^(?P<pk>\d+)/antecedente/obstetrico/editar$',
                            CliniqueAntecedenteObstetricoUpdateView.as_view(),
                            name='clinique-antecedente-obstetrico-editar'),
+
+                       url(r'^(?P<paciente>\d+)/(?P<persona>\d+)/antecedente/quirurgico/agregar$',
+                           CliniqueAntecedenteQuirurgicoCreateView.as_view(),
+                           name='clinique-antecedente-quirurgico-agregar'),
 )

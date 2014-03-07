@@ -83,6 +83,8 @@
                                 {% endifequal %}
                             </div>
                             {% include 'snippets/antecedente_quirurgico.html' with antecedente=paciente.persona %}
+                            <a href="{% url 'clinique-antecedente-quirurgico-agregar' paciente.id paciente.persona.id %}"
+                               class="btn btn-primary">Agregar Antecedente Quir&uacute;rgico</a>
                         </div>
                     </article>
                     <article id="consulta_inicio" class="tab-pane">

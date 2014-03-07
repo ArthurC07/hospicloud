@@ -117,7 +117,7 @@ class PacienteMixin(View):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
-        self.persona = get_object_or_404(Paciente, pk=kwargs['paciente'])
+        self.paciente = get_object_or_404(Paciente, pk=kwargs['paciente'])
         return super(PacienteMixin, self).dispatch(*args, **kwargs)
 
 
@@ -239,6 +239,17 @@ class CliniqueAntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
 
         return reverse('clinique-antecedente-editar',
                        args=[self.object.persona.id])
+
+
+class CliniqueAntecedenteQuirurgicoCreateView(CreateView, PersonaFormMixin,
+                                              PacienteMixin, LoginRequiredMixin):
+    model = AntecedenteQuirurgico
+    form_class = AntecedenteQuirurgicoForm
+    template_name = 'clinique/antecedente_quirurgico_create.html'
+
+    def get_success_url(self):
+
+        return reverse('clinique-paciente', args=[self.paciente.id])
 
 
 class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
