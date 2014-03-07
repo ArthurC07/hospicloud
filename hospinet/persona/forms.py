@@ -156,7 +156,7 @@ class EstiloVidaForm(BasePersonaForm):
         model = EstiloVida
 
     def __init__(self, *args, **kwargs):
-        super(FisicoForm, self).__init__(*args, **kwargs)
+        super(EstiloVidaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Editar Fisico', *self.field_names)
 
 

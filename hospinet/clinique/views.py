@@ -14,9 +14,10 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
-                                  ListView)
+                                  ListView, UpdateView)
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin
@@ -28,7 +29,11 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico)
-from persona.forms import PersonaSearchForm
+from persona.forms import PersonaSearchForm, FisicoForm, AntecedenteForm, \
+    AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
+    AntecedenteQuirurgicoForm, EstiloVidaForm, PersonaForm
+from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
+    AntecedenteObstetrico, AntecedenteQuirurgico, EstiloVida, Persona
 from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
@@ -158,3 +163,88 @@ class LecturaSignosCreateView(PacienteFormMixin, LoginRequiredMixin,
 class DiagnosticoCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
+
+
+class CliniquePersonaUpdateView(UpdateView, LoginRequiredMixin):
+    model = Persona
+    form_class = PersonaForm
+    template_name = 'clinique/persona_update.html'
+
+    def get_success_url(self):
+
+        return reverse('clinique-fisico-editar', args=[self.object.id])
+
+
+class CliniqueFisicoUpdateView(UpdateView, LoginRequiredMixin):
+    """
+    Permite actualizar los datos del :class:`Fisico` de una :class:`Persona`
+    """
+
+    model = Fisico
+    form_class = FisicoForm
+    template_name = 'clinique/fisico_update.html'
+
+    def get_success_url(self):
+
+        return reverse('clinique-antecedente-editar',
+                       args=[self.object.persona.id])
+
+
+class CliniqueAntecedenteUpdateView(UpdateView, LoginRequiredMixin):
+    """Permite actualizar los datos del :class:`Antecedente` de una
+    :class:`Persona`"""
+
+    model = Antecedente
+    form_class = AntecedenteForm
+    template_name = 'clinique/antecedente_update.html'
+
+    def get_success_url(self):
+
+        return reverse('clinique-antecedente-familiar-editar',
+                       args=[self.object.persona.id])
+
+
+class CliniqueAntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
+    """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
+    :class:`Persona`"""
+
+    model = AntecedenteFamiliar
+    form_class = AntecedenteFamiliarForm
+    template_name = 'clinique/antecedente_familiar_update.html'
+
+    def get_success_url(self):
+
+        return reverse('clinique-estilovida-editar',
+                       args=[self.object.persona.id])
+
+
+class CliniqueAntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
+    """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
+    :class:`Persona`"""
+
+    model = AntecedenteObstetrico
+    form_class = AntecedenteObstetricoForm
+    template_name = 'clinique/antecedente_obstetrico_update.html'
+
+
+class CliniqueAntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
+    """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
+    :class:`Persona`"""
+
+    model = AntecedenteQuirurgico
+    form_class = AntecedenteQuirurgicoForm
+    template_name = 'clinique/antecedente_quirurgico_update.html'
+
+    def get_success_url(self):
+
+        return reverse('clinique-antecedente-editar',
+                       args=[self.object.persona.id])
+
+
+class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
+    """Permite actualizar los datos del :class:`EstiloVida` de una
+    :class:`Persona`"""
+
+    model = EstiloVida
+    form_class = EstiloVidaForm
+    template_name = 'clinique/estilo_vida_update.html'

@@ -20,7 +20,13 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             ConsultorioIndexView, LecturaSignosCreateView,
                             EvaluacionCreateView, SeguimientoCreateView,
                             CitaCreateView, ConsultorioDetailView,
-                            DiagnosticoCreateView, ConsultorioCreateView, ConsultaCreateView)
+                            DiagnosticoCreateView, ConsultorioCreateView, ConsultaCreateView,
+                            CliniquePersonaUpdateView, CliniqueFisicoUpdateView,
+                            CliniqueEstiloVidaUpdateView,
+                            CliniqueAntecedenteUpdateView,
+                            CliniqueAntecedenteFamiliarUpdateView,
+                            CliniqueAntecedenteQuirurgicoUpdateView,
+                            CliniqueAntecedenteObstetricoUpdateView)
 
 urlpatterns = patterns('',
 
@@ -68,4 +74,32 @@ urlpatterns = patterns('',
                        url(r'^diagnostico/(?P<paciente>\d+)/agregar',
                            DiagnosticoCreateView.as_view(),
                            name='consultorio-diagnostico-agregar'),
+
+                       url(r'^profile/persona/(?P<pk>\d+)/editar$',
+                           CliniquePersonaUpdateView.as_view(),
+                           name='clinique-persona-edit'),
+
+                       url(r'^(?P<pk>\d+)/fisico/editar$',
+                           CliniqueFisicoUpdateView.as_view(),
+                           name='clinique-fisico-editar'),
+
+                       url(r'^(?P<pk>\d+)/estilovida/editar$',
+                           CliniqueEstiloVidaUpdateView.as_view(),
+                           name='clinique-estilovida-editar'),
+
+                       url(r'^(?P<pk>\d+)/antecedente/editar$',
+                           CliniqueAntecedenteUpdateView.as_view(),
+                           name='clinique-antecedente-editar'),
+
+                       url(r'^(?P<pk>\d+)/antecedente/familiar/editar$',
+                           CliniqueAntecedenteFamiliarUpdateView.as_view(),
+                           name='clinique-antecedente-familiar-editar'),
+
+                       url(r'^(?P<pk>\d+)/antecedente/quirurgico/editar$',
+                           CliniqueAntecedenteQuirurgicoUpdateView.as_view(),
+                           name='clinique-antecedente-quirurgico-editar'),
+
+                       url(r'^(?P<pk>\d+)/antecedente/obstetrico/editar$',
+                           CliniqueAntecedenteObstetricoUpdateView.as_view(),
+                           name='clinique-antecedente-obstetrico-editar'),
 )
