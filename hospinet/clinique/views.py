@@ -48,6 +48,14 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         return Paciente.objects.filter(
             consultorio__usuario=self.request.user).all()
 
+    def get_context_data(self, **kwargs):
+        context = super(ConsultorioIndexView, self).get_context_data(**kwargs)
+
+        if self.request.user.is_staff:
+            context['consultorios'] = Consultorio.objects.all()
+
+        return context
+
 
 class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     paginate_by = 20
