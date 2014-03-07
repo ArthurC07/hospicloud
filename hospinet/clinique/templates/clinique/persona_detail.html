@@ -28,9 +28,9 @@
         <article id="paciente" class="tab-pane active">
           {% include 'snippets/persona_fotografia.html'  with persona=persona %}
           {% include 'snippets/persona.html' with persona=persona %}
-          <a href="{% url 'persona-editar' persona.id %}" class="btn btn-primary">Editar Datos</a>
+          <a href="{% url 'clinique-persona-editar' persona.id %}" class="btn btn-primary">Editar Datos</a>
           {% include 'snippets/fisico.html' with fisico=persona.fisico %}
-          <a href="{% url 'persona-fisico-editar' persona.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
+          <a href="{% url 'clinique-fisico-editar' persona.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
         <table class="table table-striped table-bordered">
             <caption>Antecedentes Patol&oacute;gicos Personales</caption>
             <tr>

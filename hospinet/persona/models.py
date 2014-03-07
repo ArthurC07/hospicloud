@@ -304,7 +304,6 @@ class AntecedenteQuirurgico(models.Model):
     persona = models.ForeignKey(Persona, primary_key=True,
                                 related_name="antecedentes_quirurgicos")
     procedimiento = models.CharField(max_length=200, blank=True)
-    hospitalizacion = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
 
     def get_absolute_url(self):

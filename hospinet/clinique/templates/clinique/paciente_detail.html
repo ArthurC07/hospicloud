@@ -32,10 +32,10 @@
         <div class="col-md-9">
             <section class="tabbable">
                 <ul class="nav nav-tabs">
-                    <li><a href="#paciente" data-toggle="tab">Datos
+                    <li class="active"><a href="#paciente" data-toggle="tab">Datos
                         Personales</a>
                     </li>
-                    <li class="active"><a href="#consulta_inicio"
+                    <li><a href="#consulta_inicio"
                                           data-toggle="tab">Consultas</a>
                     </li>
                     <li><a href="#examen_fisico" data-toggle="tab">Examen
@@ -47,7 +47,7 @@
                     </li>
                 </ul>
                 <div class="tab-content">
-                    <article id="paciente" class="tab-pane">
+                    <article id="paciente" class="tab-pane active">
                         <div id="paciente">
                             <div class="info">
 
@@ -74,7 +74,7 @@
                                     Familiares</a>
                             </div>
                             <div class="info">
-                                {% ifequal persona.sexo 'F' %}
+                                {% ifequal paciente.persona.sexo 'F' %}
                                     {% include 'snippets/antecedente_obstetrico.html' with antecedente=paciente.persona.antecedente_obstetrico %}
                                     <a href="{% url 'clinique-antecedente-obstetrico-editar' paciente.persona.id %}"
                                        class="btn btn-primary">Editar
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                     </article>
-                    <article id="consulta_inicio" class="tab-pane active">
+                    <article id="consulta_inicio" class="tab-pane">
                         {% load l10n %}
                         <table class="table table-striped table-bordered">
                             <caption>consulta Inicial</caption>
