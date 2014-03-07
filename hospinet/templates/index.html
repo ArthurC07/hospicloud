@@ -72,35 +72,17 @@
         </div>
         <div class="col-md-8 flex-center">
             <div class="col-md-6">
-                {% if perms.persona.persona %}
                 <a href="{% url 'persona-index' %}" class="btn btn-primary btn-block">Pacientes</a>
-                {% endif %}
-                {% if perms.spital.admision %}
                 <a href="{% url 'admision-index' %}" class="btn btn-primary btn-block">Admisiones</a>
-                {% endif %}
-                {% if perms.imaging.examen %}
                 <a href="{% url 'examen-index' %}" class="btn btn-primary btn-block">Centro de Im&aacute;genes</a>
-                {% endif %}
-                {% if perms.nightingale.enfermeria %}
                 <a href="{% url 'nightingale-index' %}" class="btn btn-primary btn-block">Hospitalizaci&oacute;n</a>
-                {% endif %}
-                {% if perms.inventory.inventario %}
                 <a href="{% url 'inventario-index' %}" class="btn btn-primary btn-block">Inventario</a>
-                {% endif %}
             </div>
             <div class="col-md-6">
-                {% if perms.emergency.emergencia %}
                 <a href="{% url 'emergency-index' %}" class="btn btn-primary btn-block">Emergencia</a>
-                {% endif %}
-                {% if perms.clinique.consultorio %}
                 <a href="{% url 'consultorio-index' %}" class="btn btn-primary btn-block">Consultorios</a>
-                {% endif %}
-                {% if perms.contracts.contrato %}
                 <a href="{% url 'invoice-index' %}" class="btn btn-primary btn-block">Caja</a>
-                {% endif %}
-                {% if perms.contracts.contrato %}
                 <a href="{% url 'contrato-index' %}" class="btn btn-primary btn-block">Contratos</a>
-                {% endif %}
             </div>
         </div>
     </div>
