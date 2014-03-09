@@ -15,7 +15,7 @@
 </div>
 <div class="row">
   <aside class="col-md-3">
-    <nav class="sidebar-nav">  
+    <nav class="sidebar-nav">
     {% block profile_navigation %}
       {% comment %}Dirty hack. Will use django-guardian in the future.{% endcomment %}
       {% if user.username == profile.user.username %}
@@ -32,41 +32,68 @@
     </nav>
   </aside>
   <section class="col-md-9">
-      {% block profile_details %}
-          <img class="mugshot pull-right" src="{{ profile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
-        <dl>
-          {% block profile_definition_list %}
-            {% if profile.user.get_full_name %}
-              <dt>{% trans 'Name' %}</dt>
-              <dd>{{ profile.user.get_full_name }}</dd>
-            {% endif %}
-            {% if profile.user.email and not hide_email %}
-              <dt>{% trans 'Email' %}</dt>
-              <dd>{{ profile.user.email }}</dd>
-            {% endif %}
-            {% if profile.age %}
-              <dt>{% trans 'Age' %}</dt>
-              <dd>{{ profile.age }}</dd>
-            {% endif %}
-            {% if profile.website %}
-              <dt>{% trans 'Website' %}</dt>
-              <dd>{{ profile.website|urlize }}</dd>
-            {% endif %}
-            {% if profile.location %}
-              <dt>{% trans 'Location' %}</dt>
-              <dd>{{ profile.location }}</dd>
-            {% endif %}
-            {% if profile.about_me %}
-              <dt>{% trans 'About me' %}</dt>
-              <dd>{{ profile.about_me }}</dd>
-            {% endif %}
-          {% endblock %}
-          {% if profile.inventario %}
-            <dt>Inventantario</dt>
-            <dd>{{ profile.inventario }}</dd>
-          {% endif %}
-        </dl>
-      {% endblock %}
+    <section class="tabbable">
+        <div class="tab-content">
+            <ul class="nav nav-tabs">
+                <li><a class="active" href="#profile" data-toggle="tab">Perfil de Usuario</a></li>
+                <li><a href="#persona" data-toggle="tab">Datos Personales</a></li>
+            </ul>
+            <article id="profile" class="tab-pane active">
+                {% block profile_details %}
+                    <img class="mugshot pull-right" src="{{ profile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
+                    <dl>
+                        {% block profile_definition_list %}
+                            {% if profile.user.get_full_name %}
+                                <dt>{% trans 'Name' %}</dt>
+                                <dd>{{ profile.user.get_full_name }}</dd>
+                            {% endif %}
+                            {% if profile.user.email and not hide_email %}
+                                <dt>{% trans 'Email' %}</dt>
+                                <dd>{{ profile.user.email }}</dd>
+                            {% endif %}
+                            {% if profile.age %}
+                                <dt>{% trans 'Age' %}</dt>
+                                <dd>{{ profile.age }}</dd>
+                            {% endif %}
+                            {% if profile.website %}
+                                <dt>{% trans 'Website' %}</dt>
+                                <dd>{{ profile.website|urlize }}</dd>
+                            {% endif %}
+                            {% if profile.location %}
+                                <dt>{% trans 'Location' %}</dt>
+                                <dd>{{ profile.location }}</dd>
+                            {% endif %}
+                            {% if profile.about_me %}
+                                <dt>{% trans 'About me' %}</dt>
+                                <dd>{{ profile.about_me }}</dd>
+                            {% endif %}
+                        {% endblock %}
+                        {% if profile.inventario %}
+                            <dt>Inventantario</dt>
+                            <dd>{{ profile.inventario }}</dd>
+                        {% endif %}
+                    </dl>
+                {% endblock %}
+            </article>
+            <article id="persona" class="tab-pane">
+                {% include 'snippets/persona_fotografia.html'  with persona=profile.persona %}
+                {% include 'snippets/persona.html' with persona=profile.persona %}
+                <a href="{% url 'user-persona-editar' profile.persona.id %}" class="btn btn-primary">Editar Datos</a>
+                {% include 'snippets/fisico.html' with fisico=profile.persona.fisico %}
+                <a href="{% url 'user-fisico-editar' profile.persona.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
+                {% include 'snippets/antecedente.html' with antecedente=profile.persona.antecedente %}
+                <a href="{% url 'user-antecedente-editar' profile.persona.id %}" class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
+                {% include 'snippets/antecedente.html' with antecedente=persona.antecedente_familiar %}
+                <a href="{% url 'user-antecedente-familiar-editar' profile.persona.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
+                {% include 'snippets/antecedente_quirurgico.html' with persona=profile.persona %}
+                <a href="{% url 'user-antecedente-quirurgico-agregar' profile.persona.id %}" class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
+                {% ifequal profile.persona.sexo 'F' %}
+                    {% include 'snippets/antecedente_obstetrico.html' with antecedente=persona.antecedente_obstetrico %}
+                    <a href="{% url 'user-antecedente-obstetrico-editar' profile.persona.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
+                {% endifequal %}
+            </article>
+        </div>
+    </section>
   </section>
 </div>
 {% endblock %}

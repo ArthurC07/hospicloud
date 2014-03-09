@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW X6 -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xml:space="preserve"
+   width="267.09445"
+   height="352.48816"
+   version="1.1"
+   style="fill-rule:evenodd;clip-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision"
+   viewBox="0 0 7537.9996 9947.9998"
+   id="svg3262"
+   inkscape:version="0.48+devel r13012"
+   sodipodi:docname="hospinet-logo.svg"><metadata
+   id="metadata3349"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1467"
+   inkscape:window-height="942"
+   id="namedview3347"
+   showgrid="false"
+   inkscape:showpageshadow="false"
+   fit-margin-top="0"
+   fit-margin-left="0"
+   fit-margin-right="0"
+   fit-margin-bottom="0"
+   inkscape:zoom="2.1759596"
+   inkscape:cx="133.89861"
+   inkscape:cy="190.43971"
+   inkscape:window-x="197"
+   inkscape:window-y="25"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="svg3262" />
+ <defs
+   id="defs3264"><style
+     type="text/css"
+     id="style3327">
+   <![CDATA[
+    @font-face { font-family:"Arial";src:url("#FontID0") format(svg)}
+    .fil0 {fill:#023BA6}
+    .fil2 {fill:#030303}
+    .fil1 {fill:#FEFEFE}
+    .fil3 {fill:white}
+    .fnt1 {font-weight:normal;font-size:683.62px;font-family:'Arial'}
+    .fnt0 {font-weight:normal;font-size:1615.99px;font-family:'Arial'}
+   ]]>
+  </style><filter
+     style="color-interpolation-filters:sRGB;"
+     inkscape:label="Blur"
+     id="filter3547"><feGaussianBlur
+       stdDeviation="70 70"
+       result="blur"
+       id="feGaussianBlur3549" /></filter><filter
+     style="color-interpolation-filters:sRGB;"
+     inkscape:label="Blur"
+     id="filter3553"><feGaussianBlur
+       stdDeviation="70 70"
+       result="blur"
+       id="feGaussianBlur3555" /></filter></defs>
+ <rect
+   style="fill:#023ba6"
+   id="rect3331"
+   height="7537.9868"
+   width="7537.9868"
+   y="-120.4936"
+   x="-6.0674419"
+   class="fil0"
+   inkscape:export-filename="C:\Users\Carlos\Desktop\hospinet.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90" /><path
+   style="fill:#fefefe"
+   inkscape:connector-curvature="0"
+   id="path3333"
+   d="m 1232.4256,3432.9997 24,0 2330.0004,0 0,-2366 c -121,-61 -204,-184.99995 -204,-327.99995 0,-202 167,-367 373,-367 159,0 294,97 348,234 1335,173 2506,1214.99995 2670,2698.99995 l 0,0 c 142,52 243,187 243,344 0,203 -167,367 -374,367 -164,0 -304,-105 -354,-251 l -2351,0 0,2493 c 97,66 160,176 160,300 0,203 -167,367 -374,367 -162,0 -300,-102 -351,-244 -1320.0004,-187 -2470.0004,-1222 -2635.0004,-2692 -134,-55 -228,-186 -228,-338 0,-203 167,-367 373,-367 159,0 246,84 293,147 z m 2198.0004,2899 c 41,-51 94,-91 156,-115 l 0,-2452 -2349.0004,0 c -28,83 -85,153 -159,198 156,1320 1221,2219 2352.0004,2369 z m 626,-5374.99995 c -32,42 -72,76.99995 -119,102.99995 l 0,0 0,2373 2361,0 c 41.926,-51.379 76.119,-70.316 136,-89 -150,-1337 -1234,-2246 -2378,-2386.99995 z"
+   class="fil1"
+   sodipodi:nodetypes="ccccsscccsscccssccssccccccccccccccc"
+   inkscape:export-filename="C:\Users\Carlos\Desktop\hospinet.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90" />
+
+<path
+   sodipodi:nodetypes="ccccsscccsscccssccssccccccccccccccc"
+   class="fil1"
+   d="m 1232.4256,3432.9997 24,0 2330.0004,0 0,-2366 c -121,-61 -204,-184.99995 -204,-327.99995 0,-202 167,-367 373,-367 159,0 294,97 348,234 1335,173 2506,1214.99995 2670,2698.99995 l 0,0 c 142,52 243,187 243,344 0,203 -167,367 -374,367 -164,0 -304,-105 -354,-251 l -2351,0 0,2493 c 97,66 160,176 160,300 0,203 -167,367 -374,367 -162,0 -300,-102 -351,-244 -1320.0004,-187 -2470.0004,-1222 -2635.0004,-2692 -134,-55 -228,-186 -228,-338 0,-203 167,-367 373,-367 159,0 246,84 293,147 z m 2198.0004,2899 c 41,-51 94,-91 156,-115 l 0,-2452 -2349.0004,0 c -28,83 -85,153 -159,198 156,1320 1221,2219 2352.0004,2369 z m 626,-5374.99995 c -32,42 -72,76.99995 -119,102.99995 l 0,0 0,2373 2361,0 c 41.926,-51.379 76.119,-70.316 136,-89 -150,-1337 -1234,-2246 -2378,-2386.99995 z"
+   id="path3375"
+   inkscape:connector-curvature="0"
+   style="fill:#fefefe"
+   inkscape:export-filename="C:\Users\Carlos\Desktop\hospinet.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90" />
+<path
+   style="fill:#fefefe;filter:url(#filter3553)"
+   inkscape:connector-curvature="0"
+   id="path3551"
+   d="m 1232.4256,3432.9997 24,0 2330.0004,0 0,-2366 c -121,-61 -204,-184.99995 -204,-327.99995 0,-202 167,-367 373,-367 159,0 294,97 348,234 1335,173 2506,1214.99995 2670,2698.99995 l 0,0 c 142,52 243,187 243,344 0,203 -167,367 -374,367 -164,0 -304,-105 -354,-251 l -2351,0 0,2493 c 97,66 160,176 160,300 0,203 -167,367 -374,367 -162,0 -300,-102 -351,-244 -1320.0004,-187 -2470.0004,-1222 -2635.0004,-2692 -134,-55 -228,-186 -228,-338 0,-203 167,-367 373,-367 159,0 246,84 293,147 z m 2198.0004,2899 c 41,-51 94,-91 156,-115 l 0,-2452 -2349.0004,0 c -28,83 -85,153 -159,198 156,1320 1221,2219 2352.0004,2369 z m 626,-5374.99995 c -32,42 -72,76.99995 -119,102.99995 l 0,0 0,2373 2361,0 c 41.926,-51.379 76.119,-70.316 136,-89 -150,-1337 -1234,-2246 -2378,-2386.99995 z"
+   class="fil1"
+   sodipodi:nodetypes="ccccsscccsscccssccssccccccccccccccc"
+   inkscape:export-filename="C:\Users\Carlos\Desktop\hospinet.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90" /></svg>
