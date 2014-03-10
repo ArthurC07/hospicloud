@@ -44,7 +44,8 @@ class UserPersonaCreateView(CreateView, UserRedirectMixin):
         self.request.user.profile.persona = self.object
         self.request.user.profile.save()
         self.request.user.first_name = self.object.nombre
-        self.request.user.last_name = self.object.appel
+        self.request.user.last_name = self.object.apellido
+        self.request.user.save()
 
         return HttpResponseRedirect(self.get_success_url())
 
