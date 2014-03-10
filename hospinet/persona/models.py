@@ -24,6 +24,7 @@ from datetime import date
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
 
 from persona.fields import OrderedCountryField
 
@@ -310,3 +311,22 @@ class AntecedenteQuirurgico(models.Model):
         """Obtiene la URL absoluta"""
 
         return reverse('persona-view-id', args=[self.persona.id])
+
+
+def create_persona(sender, instance, created, **kwargs):
+    if created:
+        fisico = Fisico(persona=instance)
+        fisico.save()
+        estilo_vida = EstiloVida(persona=instance)
+        estilo_vida.save()
+        antecedente = Antecedente(persona=instance)
+        antecedente.save()
+        antecedente_familiar = AntecedenteFamiliar(persona=instance)
+        antecedente_familiar.save()
+
+        if instance.sexo == 'F':
+            antecedente_obstetrico = AntecedenteObstetrico(persona=instance)
+            antecedente_obstetrico.save()
+
+
+post_save.connect(create_persona, sender=Persona)

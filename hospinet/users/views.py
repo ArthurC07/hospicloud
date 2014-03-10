@@ -22,6 +22,7 @@ from persona.forms import (PersonaForm, AntecedenteForm, FisicoForm,
 from persona.models import (Persona, Antecedente, AntecedenteFamiliar,
                             AntecedenteObstetrico, Fisico, EstiloVida,
                             AntecedenteQuirurgico)
+from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin
 
 
@@ -41,18 +42,36 @@ class UserPersonaCreateView(CreateView, UserRedirectMixin):
 
         self.object = form.save()
         self.request.user.profile.persona = self.object
+        self.request.user.profile.save()
+        self.request.user.first_name = self.object.nombre
+        self.request.user.last_name = self.object.appel
 
         return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
 
 
 class UserPersonaDetailView(DetailView, LoginRequiredMixin):
     model = Persona
     context_object_name = 'persona'
 
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
+
 
 class UserPersonaUpdateView(UpdateView, UserRedirectMixin):
     model = Persona
     form_class = PersonaForm
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
 
 
 class UserFisicoUpdateView(UpdateView, UserRedirectMixin):
@@ -62,7 +81,11 @@ class UserFisicoUpdateView(UpdateView, UserRedirectMixin):
 
     model = Fisico
     form_class = FisicoForm
-    template_name = 'users/fisico_update.html'
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
 
 
 class UserAntecedenteUpdateView(UpdateView, UserRedirectMixin):
@@ -71,7 +94,11 @@ class UserAntecedenteUpdateView(UpdateView, UserRedirectMixin):
 
     model = Antecedente
     form_class = AntecedenteForm
-    template_name = 'users/antecedente_update.html'
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
 
 
 class UserAntecedenteFamiliarUpdateView(UpdateView, UserRedirectMixin):
@@ -80,7 +107,11 @@ class UserAntecedenteFamiliarUpdateView(UpdateView, UserRedirectMixin):
 
     model = AntecedenteFamiliar
     form_class = AntecedenteFamiliarForm
-    template_name = 'users/antecedente_familiar_update.html'
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
 
 
 class UserAntecedenteObstetricoUpdateView(UpdateView, UserRedirectMixin):
@@ -89,7 +120,24 @@ class UserAntecedenteObstetricoUpdateView(UpdateView, UserRedirectMixin):
 
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
-    template_name = 'users/antecedente_obstetrico_update.html'
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
+
+
+class UserAntecedenteQuirurgicoCreateView(CreateView, PersonaFormMixin):
+    """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
+    :class:`Persona`"""
+
+    model = AntecedenteQuirurgico
+    form_class = AntecedenteQuirurgicoForm
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
 
 
 class UserAntecedenteQuirurgicoUpdateView(UpdateView, UserRedirectMixin):
@@ -98,7 +146,11 @@ class UserAntecedenteQuirurgicoUpdateView(UpdateView, UserRedirectMixin):
 
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
-    template_name = 'users/antecedente_quirurgico_update.html'
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
 
 
 class UserEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
@@ -107,4 +159,8 @@ class UserEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
 
     model = EstiloVida
     form_class = EstiloVidaForm
-    template_name = 'users/estilo_vida_update.html'
+
+    def get_success_url(self):
+
+        return reverse('userena_profile_detail',
+                       args=[self.request.user.username])
