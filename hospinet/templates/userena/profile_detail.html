@@ -82,19 +82,16 @@
                     {% include 'snippets/persona.html' with persona=profile.persona %}
                     <a href="{% url 'user-persona-edit' profile.persona.id %}" class="btn btn-primary">Editar Datos</a>
                     {% include 'snippets/fisico.html' with fisico=profile.persona.fisico %}
-                    <a href="{% url 'user-fisico-edit' profile.persona.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
                     {% include 'snippets/antecedente.html' with antecedente=profile.persona.antecedente %}
-                    <a href="{% url 'user-antecedente-edit' profile.persona.id %}" class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
                     {% include 'snippets/antecedente.html' with antecedente=persona.antecedente_familiar %}
-                    <a href="{% url 'user-antecedente-familiar-edit' profile.persona.id %}" class="btn btn-primary">Editar Antecedentes Familiares</a>
                     {% include 'snippets/antecedente_quirurgico.html' with persona=profile.persona %}
-                    <a href="{% url 'user-antecedente-quirurgico-agregar' profile.persona.id %}" class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
                         {% ifequal profile.persona.sexo 'F' %}
                             {% include 'snippets/antecedente_obstetrico.html' with antecedente=persona.antecedente_obstetrico %}
-                            <a href="{% url 'user-antecedente-obstetrico-editar' profile.persona.id %}" class="btn btn-primary">Editar Antecedentes Obstetricos</a>
                         {% endifequal %}
                         {% else %}
-                        <a class="btn btn-primary" href="{% url 'user-persona-create' %}">Crear Mi Perfil</a>
+                        <p>
+                            <a class="btn btn-primary" href="{% url 'user-persona-create' %}">Crear Mi Perfil</a>
+                        </p>
                     {% endifnotequal %}
                 {% endif %}
             </article>

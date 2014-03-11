@@ -66,7 +66,7 @@ class EmergenciaPreCreateView(TemplateView, LoginRequiredMixin):
     template_name = 'emergency/emergencia_agregar.html'
 
     def get_context_data(self, **kwargs):
-        context = super(EmergenciaPreCreateView, self).get_context_data()
+        context = super(EmergenciaPreCreateView, self).get_context_data(**kwargs)
         context['persona_form'] = PersonaForm()
         context['persona_form'].helper.form_action = 'emergency-persona-create'
         return context

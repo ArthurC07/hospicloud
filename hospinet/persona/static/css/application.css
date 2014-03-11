@@ -7,10 +7,6 @@ html {
     position: relative;
     min-height: 100%;
 }
-body {
-    padding-top: 60px;
-    padding-bottom: 60px;
-}
 
 footer {
     position: absolute;
@@ -36,11 +32,11 @@ footer {
     max-width: 300px;
     padding: 19px 29px 29px;
     margin: 20px auto 20px;
-    background-color: #fff;
     border: 1px solid #e5e5e5;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    background-color: rgba(255,255,255, 0.75);
 }
 
 .form-signin .form-signin-heading, .form-signin .checkbox {
