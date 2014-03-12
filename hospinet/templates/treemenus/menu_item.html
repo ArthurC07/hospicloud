@@ -1,9 +1,0 @@
-{% load tree_menu_tags %}{% if menu_item.has_children %}<li>
-  {% if menu_item.named_url != '' %}<a href="{% reverse_named_url menu_item.named_url %}">{{ menu_item.caption }}</a>
-  {% else %}<a href="{{ menu_item.named_url }}">{{ menu_item.caption }}</a>{% endif %}
-  <ul>{% for child in menu_item.children %}{% show_menu_item child %}{% endfor %}
-  </ul>
-</li>{% else %}<li>
-  {% if menu_item.named_url != '' %}<a href="{% reverse_named_url menu_item.named_url %}">{{ menu_item.caption }}</a>
-  {% else %}<a href="{{ menu_item.named_url }}">{{ menu_item.caption }}</a>{% endif %}</li>{% endif %}
-  

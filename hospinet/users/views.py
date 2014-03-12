@@ -37,6 +37,7 @@ class UserRedirectMixin(LoginRequiredMixin):
 class UserPersonaCreateView(CreateView, UserRedirectMixin):
     model = Persona
     form_class = PersonaForm
+    template_name = 'users/persona_form.html'
 
     def form_valid(self, form):
 
@@ -68,6 +69,7 @@ class UserPersonaDetailView(DetailView, LoginRequiredMixin):
 class UserPersonaUpdateView(UpdateView, UserRedirectMixin):
     model = Persona
     form_class = PersonaForm
+    template_name = 'users/persona_form.html'
 
     def get_success_url(self):
 
