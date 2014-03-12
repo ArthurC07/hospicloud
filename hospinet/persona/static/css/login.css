@@ -3,7 +3,7 @@
  Login Form
 ===============================================================================
 */
-.form-signin {
+form {
     max-width: 300px;
     padding: 19px 29px 29px;
     margin: 20px auto 20px;
@@ -14,13 +14,16 @@
     background-color: rgba(255,255,255, 0.75);
 }
 
-.form-signin .form-signin-heading, .form-signin .checkbox {
+form .form-signin-heading, .form-signin .checkbox {
     margin-bottom: 10px;
 }
 
-.form-signin input[type="text"], .form-signin input[type="password"] {
+form input[type="text"], .form-signin input[type="password"] {
     font-size: 16px;
     height: auto;
     margin-bottom: 15px;
     padding: 7px 9px;
+}
+.translucent {
+    background-color: rgba(255,255,255, 0.75);
 }

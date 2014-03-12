@@ -1,15 +1,8 @@
-* {
-    margin: 0;
-    padding: 0;
-}
 html, body, .Override.container, .Override .col-md-4, .Override .col-md-8 {
     height: 100%;
 }
 .Override {
     width: 100%;
-}
-.Override *:before, .Override *:after {
-    display: none;
 }
 .Override.container:before {
     content: '';
