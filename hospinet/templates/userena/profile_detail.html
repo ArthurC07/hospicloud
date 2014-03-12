@@ -83,17 +83,6 @@
                     {% include 'snippets/persona_fotografia.html'  with persona=profile.persona %}
                     {% include 'snippets/persona.html' with persona=profile.persona %}
                     <a href="{% url 'user-persona-edit' profile.persona.id %}" class="btn btn-primary">Editar Datos</a>
-                    {% include 'snippets/fisico.html' with fisico=profile.persona.fisico %}
-                    {% include 'snippets/antecedente.html' with antecedente=profile.persona.antecedente %}
-                    {% include 'snippets/antecedente.html' with antecedente=persona.antecedente_familiar %}
-                    {% include 'snippets/antecedente_quirurgico.html' with persona=profile.persona %}
-                        {% ifequal profile.persona.sexo 'F' %}
-                            {% include 'snippets/antecedente_obstetrico.html' with antecedente=persona.antecedente_obstetrico %}
-                        {% endifequal %}
-                        {% else %}
-                        <p>
-                            <a class="btn btn-primary" href="{% url 'user-persona-create' %}">Crear Mi Perfil</a>
-                        </p>
                     {% endifnotequal %}
                 {% endif %}
             </article>
