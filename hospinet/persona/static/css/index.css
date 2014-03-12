@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+html, body, .Override.container, .Override .col-md-4, .Override .col-md-8 {
+    height: 100%;
+}
+.Override {
+    width: 100%;
+}
+.Override *:before, .Override *:after {
+    display: none;
+}
+.Override.container:before {
+    content: '';
+    display: block;
+    float: left;
+    height: 100%;
+}
+.Override .fill {
+    position: relative;
+}
+.Override .fill:after {
+    content: '';
+    display: block;
+    clear: left;
+}
+.Override .wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.Override .col-md-4 {
+    float: left;
+    position: static;
+}
+.Override .col-md-8 {
+    position: static;
+    overflow: auto;
+}
+#index-aside {
+    background: transparent url("../images/logo.png");
+    background-size: cover;
+}
+#main-content {
+    background: transparent url("../images/slider1.jpg");
+    background-size: cover;
+}
