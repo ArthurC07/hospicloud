@@ -270,6 +270,7 @@ AUTH_PROFILE_MODULE = 'users.UserProfile'
 USE_THOUSAND_SEPARATOR = True
 LANGUAGE_CODE = 'es-HN'
 TIME_ZONE = 'America/Tegucigalpa'
+USERENA_ACTIVATION_REQUIRED = False
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_CONFIG = {
