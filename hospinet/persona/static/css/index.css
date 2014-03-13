@@ -1,4 +1,4 @@
-html, body, .Override.container, .Override .col-md-4, .Override .col-md-8 {
+html, body, .Override.container, #index-aside, #main-content {
     height: 100%;
 }
 .Override {
@@ -24,7 +24,7 @@ html, body, .Override.container, .Override .col-md-4, .Override .col-md-8 {
     height: 100%;
 }
 #index-aside {
-    background: transparent url("../images/logo.jpg");
+    background: transparent url("../images/logo.jpg") right center;
     background-size: cover;
     float: left;
     position: static;

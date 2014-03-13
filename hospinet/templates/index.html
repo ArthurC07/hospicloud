@@ -25,10 +25,10 @@
 <div class="container Override">
     <div class="row fill">
         <div class="wrapper">
-            <aside class="col-md-4" id="index-aside">
+            <aside class="col-md-5" id="index-aside">
                 &nbsp;
             </aside>
-            <div class="col-md-8" id="main-content">
+            <div class="col-md-7" id="main-content">
             {% if user.is_authenticated %}
                     {% if user.is_staff %}
                         <div class="col-md-6">
@@ -96,19 +96,31 @@
                         <input type="hidden" name="next" value="{{ next }}"/>
                     {% endif %}
                 </form>
-                {% block scripts %}
-                    <script type="text/javascript"
-                            src="{% static 'js/jquery.placeholder.js' %}"></script>
-                    <script type="text/javascript">
-                        $(document).ready(function () {
-                            $('input, textarea').placeholder();
-                        });
-                    </script>
-                {% endblock %}
             {% endif %}
             </div>
         </div>
     </div>
 </div>
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'js/jquery-ui-timepicker.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'js/jquery.pnotify.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.backstretch.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/common.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.placeholder.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input, textarea').placeholder();
+        $("#main-content").backstretch([
+            "{% static 'images/slider1.jpg' %}",
+            "{% static 'images/slider2.jpg' %}",
+            "{% static 'images/slider3.jpg' %}"
+        ], {duration: 10000, fade: 'slow'});
+    });
+</script>
 </body>
 </html>

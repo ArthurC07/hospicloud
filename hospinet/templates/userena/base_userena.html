@@ -11,87 +11,79 @@
     <link href="{% static 'css/bootstrap-glyphicons.css' %}" rel="stylesheet"/>
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet"/>
-    <link href="{% static 'css/login.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/index.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/login.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/index.css' %}" rel="stylesheet"/>
     {% block header %}{% endblock %}
     <!-- Fav and touch icons -->
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
-    <script type="text/javascript"
-            src="{% static 'js/jquery.min.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'js/bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
 </head>
 <body>
 {% if user.is_staff %}
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle"
-                    data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{% url 'home' %}">Hospinet</a>
-        </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'home' %}">Hospinet</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
                     <li><a href="{% url 'admision-index' %}">Admisiones</a></li>
                     <li><a href="{% url 'nightingale-index' %}">Hospitalizaci&oacute;n</a></li>
                     <li><a href="{% url 'emergency-index' %}">Emergencias</a></li>
                     <li><a href="{% url 'consultorio-index' %}">Consultorio</a></li>
                     <li><a href="{% url 'invoice-index' %}">Caja</a></li>
-            </ul>
-            <div class="navbar-right">
-                <form class="navbar-form navbar-left" method="get"
-                      action="{% url 'persona-search' %}">
-                    <div class="form-group">
-                        <input type="text" name="query" class="form-control"
-                               placeholder="Buscar Persona">
-                    </div>
-                    <button type="submit" class="btn btn-default">Buscar
-                    </button>
-                </form>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        {% if user.is_authenticated %}
-                            <a class="btn-default btn-block dropdown-toggle"
-                               data-toggle="dropdown" href="#"> <i
-                                    class="glyphicon glyphicon-user"></i> {{ user }}
-                                <span class="caret"></span> </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{% url 'userena_profile_detail' user.username %}">{% trans 'View profile' %}</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'userena_signout' %}"
-                                       class="navbar-link">Cerrar
-                                        Sesi&oacute;n</a>
-                                </li>
-                            </ul>
-                        {% else %}
-                            <a href="{% url 'userena_signin' %}"
-                               class="navbar-link">Iniciar Sesi&oacute;n</a>
-                        {% endif %}
-                    </li>
                 </ul>
-            </div>
-            <div class="btn-group pull-right">
-
+                <div class="navbar-right">
+                    <form class="navbar-form navbar-left" method="get"
+                          action="{% url 'persona-search' %}">
+                        <div class="form-group">
+                            <input type="text" name="query" class="form-control"
+                                   placeholder="Buscar Persona">
+                        </div>
+                        <button type="submit" class="btn btn-default">Buscar
+                        </button>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            {% if user.is_authenticated %}
+                                <a class="btn-default btn-block dropdown-toggle"
+                                   data-toggle="dropdown" href="#"> <i
+                                        class="glyphicon glyphicon-user"></i> {{ user }}
+                                    <span class="caret"></span> </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{% url 'userena_profile_detail' user.username %}">{% trans 'View profile' %}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'userena_signout' %}" class="navbar-link">Cerrar Sesi&oacute;n</a>
+                                    </li>
+                                </ul>
+                            {% else %}
+                                <a href="{% url 'userena_signin' %}" class="navbar-link">Iniciar Sesi&oacute;n</a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</nav>
-<br>
+    </nav>
+    <br>
 {% endif %}
 <div class="container Override">
     <div class="row fill">
         <div class="wrapper">
-            <aside class="col-md-4" id="index-aside">
+            <aside class="col-md-5" id="index-aside">
                 &nbsp;
             </aside>
-            <div class="col-md-8 {% block extra_classes %}{% endblock %}" id="main-content">
+            <div class="col-md-7 {% block extra_classes %}{% endblock %}"
+                 id="main-content">
                 {% block content %}{% endblock %}
             </div>
         </div>
@@ -105,7 +97,15 @@
         src="{% static 'js/jquery-ui-timepicker.js' %}"></script>
 <script type="text/javascript"
         src="{% static 'js/jquery.pnotify.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.backstretch.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/common.js' %}"></script>
+<script type="text/javascript">
+    $("#main-content").backstretch([
+        "{% static 'images/slider1.jpg' %}",
+        "{% static 'images/slider2.jpg' %}",
+        "{% static 'images/slider3.jpg' %}"
+    ], {duration: 4000});
+</script>
 {% block scripts %}{% endblock %}
 </body>
 </html>
