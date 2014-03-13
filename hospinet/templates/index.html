@@ -82,7 +82,7 @@
                             {% endif %}
                         {% endfor %}
                     </fieldset>
-                    <input class="btn btn-large btn-primary text-center btn-block"
+                    <input class="btn btn-large btn-success text-center btn-block"
                            type="submit" value="{% trans 'Signin' %}"/>
                     <hr/>
                     <p class="forgot-password text-center">
@@ -90,7 +90,7 @@
                            title="{% trans 'Forgot your password?' %}"> {% trans 'Forgot your password?' %} </a>
                     </p>
                     <p class="register text-center">
-                        <a href="{% url 'userena_signup' %}">
+                        <a class="btn btn-primary btn-block" href="{% url 'userena_signup' %}">
                             {% trans 'Signup' %}
                         </a>
                     </p>
