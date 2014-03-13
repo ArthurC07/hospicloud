@@ -24,7 +24,7 @@ html, body, .Override.container, .Override .col-md-4, .Override .col-md-8 {
     height: 100%;
 }
 #index-aside {
-    background: transparent url("../images/logo.png");
+    background: transparent url("../images/logo.jpg");
     background-size: cover;
     float: left;
     position: static;
