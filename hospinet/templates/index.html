@@ -29,6 +29,8 @@
                 &nbsp;
             </aside>
             <div class="col-md-7" id="main-content">
+                <div class="flex-container">
+                    <div class="flex-item">
             {% if user.is_authenticated %}
                     {% if user.is_staff %}
                         <div class="col-md-6">
@@ -97,6 +99,8 @@
                     {% endif %}
                 </form>
             {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

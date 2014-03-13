@@ -14,14 +14,15 @@
             <form class="fill wide" method="post" enctype="multipart/form-data">{% csrf_token %}
                 <fieldset>
                     <legend>Informaci&oacute;n Personal</legend>
+                    <div class="row">
                     <div class="col-md-6">
-                        <p>
-                            {{ form.tipo_identificacion.errors }}
-                        {{ form.tipo_identificacion.label_tag }} {{ form.tipo_identificacion }}
-                        </p>
                         <p>
                             {{ form.nombre.errors }}
                         {{ form.nombre.label_tag }} {{ form.nombre }}
+                        </p>
+                        <p>
+                            {{ form.apellido.errors }}
+                            {{ form.apellido.label_tag }} {{ form.apellido }}
                         </p>
                         <p>
                             {{ form.sexo.errors }}
@@ -50,12 +51,12 @@
                     </div>
                     <div class="col-md-6">
                         <p>
-                            {{ form.identificacion.errors }}
-                        {{ form.identificacion.label_tag }} {{ form.identificacion }}
+                            {{ form.tipo_identificacion.errors }}
+                            {{ form.tipo_identificacion.label_tag }} {{ form.tipo_identificacion }}
                         </p>
                         <p>
-                            {{ form.apellido.errors }}
-                        {{ form.apellido.label_tag }} {{ form.apellido }}
+                            {{ form.identificacion.errors }}
+                        {{ form.identificacion.label_tag }} {{ form.identificacion }}
                         </p>
                         <p>
                             {{ form.nacimiento.errors }}
@@ -73,6 +74,7 @@
                             {{ form.fotografia.errors }}
                             {{ form.fotografia.label_tag }} {{ form.fotografia }}
                         </p>
+                    </div>
                     </div>
                     <input class="btn btn-primary" type="submit" value="Guardar" />
                 </fieldset>
