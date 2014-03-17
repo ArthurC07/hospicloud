@@ -71,7 +71,7 @@ class CitaForm(FieldSetModelFormMixin):
 
     consultorio = ModelChoiceField(name="", model="",
                                    queryset=Consultorio.objects.all())
-    persona = ModelChoiceField(queryset=Consultorio.objects.all(), name="",
+    persona = ModelChoiceField(queryset=Persona.objects.all(), name="",
                                model="")
     fecha = forms.DateField(widget=FutureDateWidget(), required=False,
                             initial=timezone.now)
