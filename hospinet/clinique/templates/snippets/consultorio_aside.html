@@ -5,26 +5,26 @@
         <a href="{% url 'consultorio-index' %}">Mis Consultorios</a>
       </li>
       <li>
-        <a href="{% url 'consultorio-pacientes" consultorio.uuid %}">Mis Pacientes</a>
+        <a href="{% url 'consultorio-pacientes' consultorio.uuid %}">Mis Pacientes</a>
       </li>
       <li>
-        <a href="{% url 'consultorio-citas" consultorio.uuid %}">Mostrar Citas</a>
+        <a href="{% url 'consultorio-citas' consultorio.uuid %}">Mostrar Citas</a>
       </li>
       <li>
-        <a href="{% url 'consultorio-espera" consultorio.id %}">Sala de Espera</a>
+        <a href="{% url 'consultorio-espera' consultorio.id %}">Sala de Espera</a>
       </li>
     </ul>
   </nav><nav>
     <ul>
       <li>
-        <a href="{% url 'consultorio-paciente-nuevo" consultorio.id %}">Agregar Paciente</a>
+        <a href="{% url 'consultorio-paciente-nuevo' consultorio.id %}">Agregar Paciente</a>
       </li>
       <li>
-        <a href="{% url 'consultorio-cita-nueva" consultorio.id %}">Agregar Cita</a>
+        <a href="{% url 'consultorio-cita-nueva' %}">Agregar Cita</a>
       </li>
       {% if request.user.id == consultorio.doctor.user.id %}
       <li>
-        <a href="{% url 'consultorio-secretaria-agregar" consultorio.id %}">Agregar Secretaria</a>
+        <a href="{% url 'consultorio-secretaria-agregar' consultorio.id %}">Agregar Secretaria</a>
       </li>
       {% endif %}
     </ul>

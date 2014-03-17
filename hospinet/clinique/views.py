@@ -25,7 +25,8 @@ from guardian.decorators import permission_required
 
 from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             ConsultaForm, SeguimientoForm, LecturaSignosForm,
-                            DiagnosticoClinicoForm, ConsultorioForm)
+                            DiagnosticoClinicoForm, ConsultorioForm,
+                            CitaPersonaForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico)
@@ -131,10 +132,14 @@ class PacienteFormMixin(FormMixin, PacienteMixin):
         return initial
 
 
-class CitaCreateView(PacienteFormMixin, CurrentUserFormMixin, CreateView,
-                     LoginRequiredMixin):
+class CitaCreateView(CreateView, LoginRequiredMixin):
     model = Cita
     form_class = CitaForm
+
+
+class CitaPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
+    model = Cita
+    form_class = CitaPersonaForm
 
 
 class EvaluacionCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):

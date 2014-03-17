@@ -26,6 +26,9 @@
                     <li>
                         <a href="{% url 'consultorio-diagnostico-agregar' paciente.id %}">Agregar
                             Diagnóstico</a></li>
+                    <li>
+                        <a href="{% url 'consultorio-citapersona-agregar' paciente.persona.id %}">Crear Cita</a>
+                    </li>
                 </ul>
             </nav>
         </aside>

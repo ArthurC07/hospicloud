@@ -8,7 +8,7 @@
   </div>
   <p>Secretaria: {{ consultorio.secretaria.user.get_full_name }}</p>
 </article>
-<form class="styled" method="get" action="{% url 'consultorio-pago-diario" consultorio.uuid %}">
+<form class="styled" method="get" action="{% url 'consultorio-pago-diario' consultorio.uuid %}">
     <h1>Reporte de Pagos Diarios</h1>
     {% include 'snippets/form.html' with form=formulario_diario %}
     <p>

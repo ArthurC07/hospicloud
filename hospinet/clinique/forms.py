@@ -17,12 +17,14 @@
 
 from crispy_forms.layout import Fieldset
 from django import forms
-from django.contrib.auth.models import User
+from django.utils import timezone
+from select2.fields import ModelChoiceField
 
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico)
-from persona.forms import FieldSetModelFormMixin
+from persona.forms import FieldSetModelFormMixin, DateWidget
+from persona.models import Persona
 from users.mixins import HiddenUserForm, UserForm
 
 
@@ -63,13 +65,24 @@ class EvaluacionForm(HiddenUserForm, PacienteFormMixin):
                                       *self.field_names)
 
 
-class CitaForm(UserForm):
+class CitaForm(FieldSetModelFormMixin):
     class Meta:
         model = Cita
+
+    consultorio = ModelChoiceField(name="", model="",
+                                   queryset=Consultorio.objects.all())
+    fecha = forms.DateField(widget=DateWidget(), required=False,
+                            initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(CitaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar una Cita', *self.field_names)
+
+
+class CitaPersonaForm(CitaForm):
+
+    persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
+                                     widget=forms.HiddenInput(), required=False)
 
 
 class SeguimientoForm(PacienteFormMixin, HiddenUserForm):

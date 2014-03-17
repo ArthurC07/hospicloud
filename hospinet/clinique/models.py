@@ -136,16 +136,16 @@ class Cita(TimeStampedModel):
     """Permite registrar las posibles :class:`Personas`s que serán atendidas
     en una fecha determinada"""
 
-    usuario = models.ForeignKey(User, related_name='citas')
-    paciente = models.ForeignKey(Paciente, related_name='citas',
-                                 blank=True, null=True)
-    nombre = models.CharField(max_length=200)
+    consultorio = models.ForeignKey(Consultorio, related_name='citas',
+                                    blank=True, null=True)
+    persona = models.ForeignKey(Persona, related_name='citas', blank=True,
+                                null=True)
     fecha = models.DateField(blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('clinique-citas', args=[self.usuario.id])
+        return reverse('consultorio-index')
 
 
 class Seguimiento(TimeStampedModel):
