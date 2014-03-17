@@ -23,9 +23,9 @@ from select2.fields import ModelChoiceField
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico)
-from persona.forms import FieldSetModelFormMixin, DateWidget
+from persona.forms import FieldSetModelFormMixin, FutureDateWidget
 from persona.models import Persona
-from users.mixins import HiddenUserForm, UserForm
+from users.mixins import HiddenUserForm
 
 
 class PacienteFormMixin(FieldSetModelFormMixin):
@@ -71,7 +71,9 @@ class CitaForm(FieldSetModelFormMixin):
 
     consultorio = ModelChoiceField(name="", model="",
                                    queryset=Consultorio.objects.all())
-    fecha = forms.DateField(widget=DateWidget(), required=False,
+    persona = ModelChoiceField(queryset=Consultorio.objects.all(), name="",
+                               model="")
+    fecha = forms.DateField(widget=FutureDateWidget(), required=False,
                             initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
@@ -80,7 +82,6 @@ class CitaForm(FieldSetModelFormMixin):
 
 
 class CitaPersonaForm(CitaForm):
-
     persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
@@ -103,6 +104,7 @@ class LecturaSignosForm(PacienteFormMixin):
         super(LecturaSignosForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar una Lectura de Signos',
                                       *self.field_names)
+
 
 class DiagnosticoClinicoForm(PacienteFormMixin):
     class Meta:
