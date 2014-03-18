@@ -99,6 +99,10 @@ class SeguimientoForm(PacienteFormMixin, HiddenUserForm):
 class LecturaSignosForm(PacienteFormMixin):
     class Meta:
         model = LecturaSignos
+        exclude = ('presion_arterial_media', )
+    
+    persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
+                                     widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(LecturaSignosForm, self).__init__(*args, **kwargs)

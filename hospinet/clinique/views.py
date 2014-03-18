@@ -178,7 +178,7 @@ class SeguimientoCreateView(PacienteFormMixin, CurrentUserFormMixin, CreateView,
     form_class = SeguimientoForm
 
 
-class LecturaSignosCreateView(PacienteFormMixin, LoginRequiredMixin,
+class LecturaSignosCreateView(PersonaFormMixin, LoginRequiredMixin,
                               CreateView):
     model = LecturaSignos
     form_class = LecturaSignosForm

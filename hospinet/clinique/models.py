@@ -89,7 +89,8 @@ class Consulta(TimeStampedModel):
 
 
 class LecturaSignos(TimeStampedModel):
-    paciente = models.ForeignKey(Paciente, related_name='signos_vitales')
+    persona = models.ForeignKey(Persona, related_name='lecturas_signos',
+                                null=True)
     pulso = models.IntegerField()
     temperatura = models.DecimalField(decimal_places=2, max_digits=8,
                                       null=True)

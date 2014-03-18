@@ -21,7 +21,7 @@
                         <a href="{% url 'consultorio-segumiento-agregar' paciente.id %}">Agregar
                             Consulta de Segumiento</a></li>
                     <li>
-                        <a href="{% url 'consultorio-lectura-agregar' paciente.id %}">Agregar
+                        <a href="{% url 'consultorio-lectura-agregar' paciente.persona.id %}">Agregar
                             Lectura de Signos</a></li>
                     <li>
                         <a href="{% url 'consultorio-diagnostico-agregar' paciente.id %}">Agregar
@@ -195,7 +195,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for signos_vitales in paciente.signos_vitales.all %}
+                            {% for signos_vitales in paciente.persona.lecturas_signos.all %}
                                 <tr>
                                     <td>{{ signos_vitales.created }}</td>
                                     <td>{{ signos_vitales.pulso }}</td>

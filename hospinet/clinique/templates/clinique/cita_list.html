@@ -33,6 +33,10 @@
                                     {{ cita.persona.get_sexo_display }}, Programada para
                                     el {{ cita.fecha }}, {{ cita.consultorio }}
                                 </p>
+                                <p>
+                                    <a class="btn btn-success" href="{% url 'consultorio-lectura-agregar' cita.persona.id %}">Agregar
+                                        Lectura de Signos</a>
+                                </p>
                             </div>
                         </div>
                         <hr>
