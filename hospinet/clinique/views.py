@@ -190,7 +190,7 @@ class LecturaSignosCreateView(PersonaFormMixin, ConsultorioMixin,
             paciente = Paciente()
             paciente.persona = self.object.persona
             paciente.consultorio = self.consultorio
-            paciente.self()
+            paciente.save()
 
         return paciente.get_absolute_url()
 
