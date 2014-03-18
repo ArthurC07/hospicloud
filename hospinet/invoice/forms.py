@@ -29,7 +29,7 @@ from inventory.forms import FieldSetModelFormMixin
 from emergency.models import Emergencia
 from spital.models import Admision
 from imaging.models import Examen
-from inventory.models import ItemTemplate
+from inventory.models import ItemTemplate, ItemType
 from users.mixins import HiddenUserForm
 
 
@@ -215,3 +215,8 @@ class VentaPeriodoForm(PeriodoForm):
         super(VentaPeriodoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Detalle de Ventas de un Periodo',
                                       *self.field_names)
+
+
+class PeriodoAreaForm(PeriodoForm):
+    area = ModelChoiceField(name="", model="",
+                            queryset=ItemType.objects.all())

@@ -46,8 +46,78 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
                            PagoForm, PersonaForm, TurnoCajaForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
-                           VentaPeriodoForm)
+                           VentaPeriodoForm, PeriodoAreaForm)
 from inventory.models import ItemTemplate
+
+
+class InvoicePermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(InvoicePermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class IndexView(TemplateView, LoginRequiredMixin):
+    """Muestra las opciones disponibles para la aplicación"""
+
+    template_name = 'invoice/index.html'
+
+    def create_periodo_form(self, context, object_name, prefix, legend, action):
+        context[object_name] = PeriodoForm(prefix=prefix)
+        context[object_name].set_legend(legend)
+        context[object_name].set_action(action)
+
+    def get_context_data(self, **kwargs):
+        """Agrega el formulario de :class:`Recibo`"""
+
+        context = super(IndexView, self).get_context_data(**kwargs)
+        self.create_periodo_form(context, 'reciboperiodoform', 'recibo',
+                                 u'Recibos de un Periodo', 'invoice-periodo')
+
+        self.create_periodo_form(context, 'recibodetailform', 'recibodetail',
+                                 u'Detalle de Recibos de un Periodo',
+                                 'invoice-periodo-detail')
+
+        self.create_periodo_form(context, 'tipoform', 'tipo',
+                                 u'Productos por Área y Periodo',
+                                 'invoice-tipo')
+
+        self.create_periodo_form(context, 'productoperiodoform', 'producto',
+                                 u'Productos Facturados en un Periodo',
+                                 'invoice-periodo-producto')
+
+        self.create_periodo_form(context, 'remiteperiodoform', 'remite',
+                                 u'Referencias de un Periodo',
+                                 'invoice-periodo-remite')
+
+        self.create_periodo_form(context, 'radperiodoform', 'rad',
+                                 u'Comisiones de un Periodo',
+                                 'invoice-periodo-radiologo')
+
+        self.create_periodo_form(context, 'emerperiodoform', 'emergencia',
+                                 u'Emergencias de un Periodo',
+                                 'invoice-periodo-emergencia')
+
+        context['corteform'] = CorteForm(prefix='corte')
+        context['corteform'].set_action('invoice-corte')
+
+        context['inventarioform'] = InventarioForm(prefix='inventario')
+        context['inventarioform'].set_action('invoice-inventario')
+
+        context['examenes'] = Examen.objects.filter(facturado=False).order_by(
+            '-id')
+        context['admisiones'] = Admision.objects.filter(facturada=False)
+        context['emergencias'] = Emergencia.objects.filter(facturada=False)
+
+        context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
+                                                     finalizado=False).all()
+
+        context['ventaperiodoform'] = VentaPeriodoForm(prefix='venta')
+        context['ventaperiodoform'].set_action('periodo-venta')
+
+        context['ventaareaperiodoform'] = PeriodoAreaForm(prefix='venta-area')
+        context['ventaareaperiodoform'].set_action('periodo-venta-area')
+
+        return context
 
 
 class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
@@ -285,65 +355,6 @@ class ReciboCerrarView(RedirectView, LoginRequiredMixin):
         return reverse('invoice-view-id', args=[recibo.id])
 
 
-class IndexView(TemplateView, LoginRequiredMixin):
-    """Muestra las opciones disponibles para la aplicación"""
-
-    template_name = 'invoice/index.html'
-
-    def get_context_data(self, **kwargs):
-        """Agrega el formulario de :class:`Recibo`"""
-
-        context = super(IndexView, self).get_context_data(**kwargs)
-        context['reciboperiodoform'] = PeriodoForm(prefix='recibo')
-        context['reciboperiodoform'].set_legend(u'Recibos de un Periodo')
-        context['reciboperiodoform'].set_action('invoice-periodo')
-
-        context['recibodetailform'] = PeriodoForm(prefix='recibodetail')
-        context['recibodetailform'].set_legend(
-            u'Detalle de Recibos de un Periodo')
-        context['recibodetailform'].set_action('invoice-periodo-detail')
-
-        context['tipoform'] = PeriodoForm(prefix='tipo')
-        context['tipoform'].set_legend(u'Productos por Área y Periodo')
-        context['tipoform'].set_action('invoice-tipo')
-
-        context['productoperiodoform'] = PeriodoForm(prefix='producto')
-        context['productoperiodoform'].set_legend(
-            u'Productos Facturados en un Periodo')
-        context['productoperiodoform'].set_action('invoice-periodo-producto')
-
-        context['remiteperiodoform'] = PeriodoForm(prefix='remite')
-        context['remiteperiodoform'].set_legend(u'Referencias de un Periodo')
-        context['remiteperiodoform'].set_action('invoice-periodo-remite')
-
-        context['radperiodoform'] = PeriodoForm(prefix='rad')
-        context['radperiodoform'].set_legend(u'Comisiones de un Periodo')
-        context['radperiodoform'].set_action('invoice-periodo-radiologo')
-
-        context['emerperiodoform'] = PeriodoForm(prefix='emergencia')
-        context['emerperiodoform'].set_legend(u'Emergencias de un Periodo')
-        context['emerperiodoform'].set_action('invoice-periodo-emergencia')
-
-        context['corteform'] = CorteForm(prefix='corte')
-        context['corteform'].set_action('invoice-corte')
-
-        context['inventarioform'] = InventarioForm(prefix='inventario')
-        context['inventarioform'].set_action('invoice-inventario')
-
-        context['examenes'] = Examen.objects.filter(facturado=False).order_by(
-            '-id')
-        context['admisiones'] = Admision.objects.filter(facturada=False)
-        context['emergencias'] = Emergencia.objects.filter(facturada=False)
-
-        context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
-                                                     finalizado=False).all()
-
-        context['ventaperiodoform'] = VentaPeriodoForm(prefix='venta')
-        context['ventaperiodoform'].set_action('periodo-venta')
-
-        return context
-
-
 class ReciboPeriodoView(TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
@@ -511,7 +522,7 @@ class VentaListView(ListView):
     def dispatch(self, request, *args, **kwargs):
         self.form = VentaPeriodoForm(request.GET, prefix='venta')
         if self.form.is_valid():
-            print(self.form.cleaned_data)
+
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.item = self.form.cleaned_data['item']
@@ -986,3 +997,32 @@ class DepositoFacturarView(UpdateView, LoginRequiredMixin):
         venta.save()
 
         return HttpResponseRedirect(recibo.get_absolute_url())
+
+
+class VentaAreaListView(ListView):
+    context_object_name = 'ventas'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoAreaForm(request.GET, prefix='venta-area')
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+            self.item_type = self.form.cleaned_data['area']
+
+        return super(VentaAreaListView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Venta.objects.filter(
+            recibo__created__gte=self.inicio,
+            recibo__created__lte=self.fin,
+            recibo__nulo=False,
+            item__item_type=self.item_type,
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super(VentaAreaListView, self).get_context_data(**kwargs)
+        context['item_type'] = self.item_type
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = sum(v.total() for v in self.object_list)
+        return context
