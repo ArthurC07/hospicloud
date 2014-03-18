@@ -16,11 +16,13 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls import patterns, url
+
 from clinique.views import (PacienteCreateView, PacienteDetailView,
                             ConsultorioIndexView, LecturaSignosCreateView,
                             EvaluacionCreateView, SeguimientoCreateView,
                             CitaCreateView, ConsultorioDetailView,
-                            DiagnosticoCreateView, ConsultorioCreateView, ConsultaCreateView,
+                            DiagnosticoCreateView, ConsultorioCreateView,
+                            ConsultaCreateView,
                             CliniquePersonaUpdateView, CliniqueFisicoUpdateView,
                             CliniqueEstiloVidaUpdateView,
                             CliniqueAntecedenteUpdateView,
@@ -28,7 +30,9 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             CliniqueAntecedenteQuirurgicoUpdateView,
                             CliniqueAntecedenteObstetricoUpdateView,
                             CliniqueAntecedenteQuirurgicoCreateView,
-                            CitaPersonaCreateView, CitaListView)
+                            CitaPersonaCreateView, CitaListView,
+                            OrdenMedicaCreateView, CargoCreateView)
+
 
 urlpatterns = patterns('',
 
@@ -113,7 +117,16 @@ urlpatterns = patterns('',
                            CliniqueAntecedenteObstetricoUpdateView.as_view(),
                            name='clinique-antecedente-obstetrico-editar'),
 
-                       url(r'^(?P<paciente>\d+)/(?P<persona>\d+)/antecedente/quirurgico/agregar$',
+                       url(
+                           r'^(?P<paciente>\d+)/(?P<persona>\d+)/antecedente/quirurgico/agregar$',
                            CliniqueAntecedenteQuirurgicoCreateView.as_view(),
                            name='clinique-antecedente-quirurgico-agregar'),
+
+                       url(r'^(?P<paciente>\d+)/ordenmedica/agregar$',
+                           OrdenMedicaCreateView.as_view(),
+                           name='consultorio-om-agregar'),
+
+                       url(r'^(?P<paciente>\d+)/cargo/agregar$',
+                           CargoCreateView.as_view(),
+                           name='consultorio-cargo-agregar'),
 )

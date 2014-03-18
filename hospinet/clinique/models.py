@@ -20,6 +20,7 @@ from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+from inventory.models import ItemTemplate
 from persona.models import Persona
 
 
@@ -31,7 +32,6 @@ class TipoConsulta(models.Model):
 
 
 class Consultorio(TimeStampedModel):
-
     class Meta:
         permissions = (
             ('consultorio', 'Permite al usuario gestionar consultorios'),
@@ -166,6 +166,41 @@ class Seguimiento(TimeStampedModel):
 class DiagnosticoClinico(TimeStampedModel):
     paciente = models.ForeignKey(Paciente, related_name='diagnosticos_clinicos')
     diagnostico = models.TextField()
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return reverse('clinique-paciente', args=[self.paciente.id])
+
+
+class OrdenMedica(TimeStampedModel):
+    """Registra las indicaciones dadas al paciente de parte del
+    :class:`Doctor`"""
+
+    paciente = models.ForeignKey(Paciente, related_name='ordenes_medicas')
+    evolucion = models.TextField(blank=True)
+    orden = models.TextField(blank=True)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('clinique-paciente', args=[self.paciente.id])
+
+
+class TipoCargo(TimeStampedModel):
+    """Permite Diferenciar entre los distintos tipos de :class:`Cargo` que se
+    pueden agregar a un :class:`Paciente`"""
+
+    nombre = models.CharField(max_length=200, blank=True)
+    descontable = models.BooleanField(default=True)
+
+
+class Cargo(TimeStampedModel):
+    """Permite registrar diversos cobros a un :class:`Paciente`"""
+
+    paciente = models.ForeignKey(Paciente, related_name='cargos')
+    tipo = models.ForeignKey(TipoCargo, related_name='cargos')
+    item = models.ForeignKey(ItemTemplate, related_name='consultorio_cargos')
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""

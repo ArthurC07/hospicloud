@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load l10n %}
 {% block content %}
     <div class="row">
         <div class="col-md-12">
@@ -28,6 +29,12 @@
                             Diagnóstico</a></li>
                     <li>
                         <a href="{% url 'consultorio-citapersona-agregar' paciente.persona.id %}">Crear Cita</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'consultorio-om-agregar' paciente.id %}">Agregar Orden M&eacute;dica</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'consultorio-cargo-agregar' paciente.id %}">Agregar Cargos y Honorarios</a>
                     </li>
                 </ul>
             </nav>
@@ -179,7 +186,6 @@
                         </table>
                     </article>
                     <article id="signos_vitales" class="tab-pane">
-                        {% load l10n %}
                         <table class="table table-striped table-bordered">
                             <caption>Signos Vitales</caption>
                             <thead>

@@ -27,10 +27,10 @@ from guardian.decorators import permission_required
 from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             ConsultaForm, SeguimientoForm, LecturaSignosForm,
                             DiagnosticoClinicoForm, ConsultorioForm,
-                            CitaPersonaForm)
+                            CitaPersonaForm, CargoForm, OrdenMedicaForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
-                             DiagnosticoClinico)
+                             DiagnosticoClinico, Cargo, OrdenMedica)
 from persona.forms import PersonaSearchForm, FisicoForm, AntecedenteForm, \
     AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
     AntecedenteQuirurgicoForm, EstiloVidaForm, PersonaForm
@@ -278,3 +278,13 @@ class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     model = EstiloVida
     form_class = EstiloVidaForm
     template_name = 'clinique/estilo_vida_update.html'
+
+
+class CargoCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+    model = Cargo
+    form_class = CargoForm
+
+
+class OrdenMedicaCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+    model = OrdenMedica
+    form_class = OrdenMedicaForm
