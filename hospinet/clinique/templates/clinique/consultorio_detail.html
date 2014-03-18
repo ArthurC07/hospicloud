@@ -18,6 +18,11 @@
                                 <li>
                                     <a href="{% url 'consultorio-cita-agregar' %}">Crear
                                         una Cita</a></li>
+                                <li>
+                                    <a href="{% url 'consultorio-cita-list' consultorio.id %}">
+                                        Citas Pendientes
+                                    </a>
+                                </li>
                             </ul>
                         </nav>
                     </section>

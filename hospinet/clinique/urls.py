@@ -28,7 +28,7 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             CliniqueAntecedenteQuirurgicoUpdateView,
                             CliniqueAntecedenteObstetricoUpdateView,
                             CliniqueAntecedenteQuirurgicoCreateView,
-                            CitaPersonaCreateView)
+                            CitaPersonaCreateView, CitaListView)
 
 urlpatterns = patterns('',
 
@@ -53,19 +53,19 @@ urlpatterns = patterns('',
                            PacienteCreateView.as_view(),
                            name='consultorio-paciente-agregar'),
 
-                       url(r'^consulta/(?P<paciente>\d+)/agregar',
+                       url(r'^consulta/(?P<paciente>\d+)/agregar$',
                            ConsultaCreateView.as_view(),
                            name='consultorio-consulta-agregar'),
 
-                       url(r'^lectura/(?P<paciente>\d+)/agregar',
+                       url(r'^lectura/(?P<paciente>\d+)/agregar$',
                            LecturaSignosCreateView.as_view(),
                            name='consultorio-lectura-agregar'),
 
-                       url(r'^evaluacion/(?P<paciente>\d+)/agregar',
+                       url(r'^evaluacion/(?P<paciente>\d+)/agregar$',
                            EvaluacionCreateView.as_view(),
                            name='consultorio-evaluacion-agregar'),
 
-                       url(r'^seguimiento/(?P<paciente>\d+)/agregar',
+                       url(r'^seguimiento/(?P<paciente>\d+)/agregar$',
                            SeguimientoCreateView.as_view(),
                            name='consultorio-segumiento-agregar'),
 
@@ -77,7 +77,11 @@ urlpatterns = patterns('',
                            CitaPersonaCreateView.as_view(),
                            name='consultorio-citapersona-agregar'),
 
-                       url(r'^diagnostico/(?P<paciente>\d+)/agregar',
+                       url(r'^cita/(?P<consultorio>\d+)$',
+                           CitaListView.as_view(),
+                           name='consultorio-cita-list'),
+
+                       url(r'^diagnostico/(?P<paciente>\d+)/agregar$',
                            DiagnosticoCreateView.as_view(),
                            name='consultorio-diagnostico-agregar'),
 

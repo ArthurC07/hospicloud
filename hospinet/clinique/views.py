@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
                                   ListView, UpdateView)
@@ -142,6 +143,24 @@ class CitaPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
     form_class = CitaPersonaForm
 
 
+class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
+    model = Cita
+    context_object_name = 'citas'
+
+    def get_queryset(self):
+        self.citas = Cita.objects.filter(consultorio=self.consultorio,
+                                         fecha__gte=timezone.now())
+
+        return self.citas.all()
+
+    def get_context_data(self, **kwargs):
+
+        context = super(CitaListView, self).get_context_data(**kwargs)
+        context['consultorio'] = self.consultorio
+
+        return context
+
+
 class EvaluacionCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
     model = Evaluacion
     form_class = EvaluacionForm
@@ -176,7 +195,6 @@ class CliniquePersonaUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/persona_update.html'
 
     def get_success_url(self):
-
         return reverse('clinique-fisico-editar', args=[self.object.id])
 
 
@@ -190,7 +208,6 @@ class CliniqueFisicoUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/fisico_update.html'
 
     def get_success_url(self):
-
         return reverse('clinique-antecedente-editar',
                        args=[self.object.persona.id])
 
@@ -204,7 +221,6 @@ class CliniqueAntecedenteUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/antecedente_update.html'
 
     def get_success_url(self):
-
         return reverse('clinique-antecedente-familiar-editar',
                        args=[self.object.persona.id])
 
@@ -218,7 +234,6 @@ class CliniqueAntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/antecedente_familiar_update.html'
 
     def get_success_url(self):
-
         return reverse('clinique-estilovida-editar',
                        args=[self.object.persona.id])
 
@@ -241,19 +256,18 @@ class CliniqueAntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/antecedente_quirurgico_update.html'
 
     def get_success_url(self):
-
         return reverse('clinique-antecedente-editar',
                        args=[self.object.persona.id])
 
 
 class CliniqueAntecedenteQuirurgicoCreateView(CreateView, PersonaFormMixin,
-                                              PacienteMixin, LoginRequiredMixin):
+                                              PacienteMixin,
+                                              LoginRequiredMixin):
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
     template_name = 'clinique/antecedente_quirurgico_create.html'
 
     def get_success_url(self):
-
         return reverse('clinique-paciente', args=[self.paciente.id])
 
 

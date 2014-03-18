@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block header %}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>Citas Pendientes de {{ consultorio }}</h1>
+        </div>
+        <div class="row">
+            <section class="col-md-12">
+                {% for cita in citas %}
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-2">
+                                {% with photo=cita.persona.fotografia|thumbnailer %}
+                                    {% if photo %}
+                                        <img src="{{ photo.small.url }}"
+                                             width="{{ photo.small.width }}"
+                                             height="{{ photo.small.height }}">
+                                    {% else %}
+                                        <img src="{% static 'images/face.jpg' %}" width="100"
+                                             height="100"/>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="col-md-9">
+                                <h3>{{ cita.persona }}
+                                    <small>{{ cita.persona.obtener_edad }} a&ntilde;os
+                                    </small>
+                                </h3>
+                                <p>
+                                    {{ cita.persona.get_sexo_display }}, Programada para
+                                    el {{ cita.fecha }}, {{ cita.consultorio }}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                {% endfor %}
+            </section>
+        </div>
+    </div>
+{% endblock %}
