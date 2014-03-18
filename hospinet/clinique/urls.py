@@ -44,6 +44,22 @@ urlpatterns = patterns('',
                            PacienteDetailView.as_view(),
                            name='clinique-paciente'),
 
+                       url(r'^paciente/(?P<pk>\d+)/resume$',
+                           PacienteDetailView.as_view(template_name='clinique/clinique_detail.html'),
+                           name='clinique-paciente-resume'),
+
+                       url(r'^paciente/(?P<pk>\d+)/cargos',
+                           PacienteDetailView.as_view(template_name='clinique/cargo_list.html'),
+                           name='clinique-cargos'),
+
+                       url(r'^paciente/(?P<pk>\d+)/ordenes',
+                           PacienteDetailView.as_view(template_name='clinique/ordenes_list.html'),
+                           name='clinique-ordenes'),
+
+                       url(r'^paciente/(?P<pk>\d+)/signos',
+                           PacienteDetailView.as_view(template_name='clinique/signos_list.html'),
+                           name='clinique-signos'),
+
                        url(r'^(?P<pk>\d+)$',
                            ConsultorioDetailView.as_view(),
                            name='consultorio'),

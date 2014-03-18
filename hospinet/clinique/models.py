@@ -75,7 +75,7 @@ class Paciente(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.id])
+        return reverse('clinique-paciente-resume', args=[self.id])
 
 
 class Consulta(TimeStampedModel):
@@ -130,7 +130,7 @@ class Evaluacion(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return self.paciente.get_absolute_url()
 
 
 class Cita(TimeStampedModel):
@@ -160,7 +160,7 @@ class Seguimiento(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return self.paciente.get_absolute_url()
 
 
 class DiagnosticoClinico(TimeStampedModel):
@@ -182,9 +182,9 @@ class OrdenMedica(TimeStampedModel):
     orden = models.TextField(blank=True)
 
     def get_absolute_url(self):
-        """Obtiene la URL absoluta"""
+        """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return self.paciente.get_absolute_url()
 
 
 class TipoCargo(TimeStampedModel):
@@ -208,4 +208,4 @@ class Cargo(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return self.paciente.get_absolute_url()
