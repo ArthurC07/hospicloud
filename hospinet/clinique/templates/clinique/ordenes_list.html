@@ -13,6 +13,7 @@
         {% include 'snippets/paciente_aside.html' %}
     </aside>
     <div class="col-md-9">
+        <a class="btn btn-primary" href="{% url 'consultorio-om-agregar' paciente.id %}">Agregar Orden M&eacute;dica</a>
         <table class="table table-striped">
             <caption>Ordenes M&eacute;dicas</caption>
             <thead>

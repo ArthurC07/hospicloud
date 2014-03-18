@@ -3,7 +3,13 @@
     <div class="row">
         <section class="col-md-12">
             <div class="page-header">
-                <h1>{{ paciente.persona.nombre_completo }} <br/></h1>
+                <h1>{{ paciente.persona.nombre_completo }} <br/>
+                    <small>Consultorio {{ paciente.consultorio }}
+                        {% for contrato in paciente.persona.contratos.all %}
+                            {{ contrato }}
+                        {% endfor %}
+                    </small>
+                </h1>
             </div>
         </section>
     </div>
@@ -29,4 +35,4 @@
 
         </section>
     </div>
-{% endblock %}
+{% endblock content %}

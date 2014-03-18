@@ -13,6 +13,7 @@
         {% include 'snippets/paciente_aside.html' %}
     </aside>
     <div class="col-md-9">
+        <a class="btn btn-primary" href="{% url 'consultorio-cargo-agregar' paciente.id %}">Agregar Cargos y Honorarios</a>
         <table class="table table-striped">
             <caption>Cargos y Honorarios</caption>
             <thead>
