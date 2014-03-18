@@ -34,7 +34,7 @@
                                     el {{ cita.fecha }}, {{ cita.consultorio }}
                                 </p>
                                 <p>
-                                    <a class="btn btn-success" href="{% url 'consultorio-lectura-agregar' cita.persona.id %}">Agregar
+                                    <a class="btn btn-success" href="{% url 'consultorio-lectura-agregar' cita.persona.id consultorio.id %}">Agregar
                                         Lectura de Signos</a>
                                 </p>
                             </div>

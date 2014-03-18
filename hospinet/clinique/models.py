@@ -195,7 +195,6 @@ class TipoCargo(TimeStampedModel):
     descontable = models.BooleanField(default=True)
 
     def __unicode__(self):
-
         return self.nombre
 
 

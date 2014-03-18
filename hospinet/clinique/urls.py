@@ -61,7 +61,7 @@ urlpatterns = patterns('',
                            ConsultaCreateView.as_view(),
                            name='consultorio-consulta-agregar'),
 
-                       url(r'^lectura/(?P<persona>\d+)/agregar$',
+                       url(r'^lectura/(?P<persona>\d+)/(?P<consultorio>\d+)/agregar$',
                            LecturaSignosCreateView.as_view(),
                            name='consultorio-lectura-agregar'),
 

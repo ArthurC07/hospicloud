@@ -22,7 +22,7 @@
                         <a href="{% url 'consultorio-segumiento-agregar' paciente.id %}">Agregar
                             Consulta de Segumiento</a></li>
                     <li>
-                        <a href="{% url 'consultorio-lectura-agregar' paciente.persona.id %}">Agregar
+                        <a href="{% url 'consultorio-lectura-agregar' paciente.persona.id paciente.consultorio.id %}">Agregar
                             Lectura de Signos</a></li>
                     <li>
                         <a href="{% url 'consultorio-diagnostico-agregar' paciente.id %}">Agregar
@@ -49,11 +49,10 @@
                                           data-toggle="tab">Consultas</a>
                     </li>
                     <li><a href="#examen_fisico" data-toggle="tab">Examen
-                        Fisico</a>
+                        F&iacute;sico</a>
                     </li>
-                    <li><a href="#signos_vitales" data-toggle="tab">Signos
-                        vitales</a></li>
-                    <li><a href="#diagnostico" data-toggle="tab">Diagnostico</a>
+                    <li><a href="#clinico" data-toggle="tab">Datos Cl&iacute;nicos</a></li>
+                    <li><a href="#diagnostico" data-toggle="tab">Diagn&oacute;stico</a>
                     </li>
                 </ul>
                 <div class="tab-content">
@@ -100,7 +99,7 @@
                     <article id="consulta_inicio" class="tab-pane">
                         {% load l10n %}
                         <table class="table table-striped table-bordered">
-                            <caption>consulta Inicial</caption>
+                            <caption>Consulta Inicial</caption>
                             <thead>
                             <tr>
                                 <th>Fecha</th>
@@ -185,19 +184,18 @@
                             </tbody>
                         </table>
                     </article>
-                    <article id="signos_vitales" class="tab-pane">
+                    <article id="clinico" class="tab-pane">
                         <table class="table table-striped table-bordered">
                             <caption>Signos Vitales</caption>
                             <thead>
                             <tr>
                                 <th>Fecha</th>
                                 <th>Pulso</th>
-                                <th> Frecuencia Respiratoria</th>
                                 <th>Temperatura</th>
-                                <th> Presi&oacute;n</th>
-                                <th>Frecuencia Cardiacas</th>
+                                <th>Presi&oacute;n Sist&oacute;lica</th>
+                                <th>Presi&oacute;n Diast&oacute;lica</th>
+                                <th>Presi&oacute;n Arterial Media</th>
                                 <th>Respiraci&oacute;n</th>
-                                <th>Saturacion de ox&iacute;geno</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -205,12 +203,11 @@
                                 <tr>
                                     <td>{{ signos_vitales.created }}</td>
                                     <td>{{ signos_vitales.pulso }}</td>
-                                    <td>{{ signos_vitales.frecuencia_respiratoria }}</td>
                                     <td>{{ signos_vitales.temperatura }}</td>
-                                    <td>{{ signos_vitales.presion }}</td>
-                                    <td> {{ signos_vitales.frecuencia_cardiaca }}</td>
+                                    <td>{{ signos_vitales.presion_sistolica }}</td>
+                                    <td>{{ signos_vitales.presion_diastolica }}</td>
+                                    <td> {{ signos_vitales.presion_arterial_media }}</td>
                                     <td> {{ signos_vitales.respiracion }}</td>
-                                    <td> {{ signos_vitales.saturacion_de_oxigeno }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
