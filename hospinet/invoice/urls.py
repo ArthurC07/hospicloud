@@ -32,7 +32,7 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            TurnoCajaDetailView, CierreTurnoCreateView,
                            DepositoDetailView, TurnoCajaUpdateView,
                            ExamenFacturarView, DepositoFacturarView,
-                           VentaDeleteView, VentaListView)
+                           VentaDeleteView, VentaListView, VentaAreaListView)
 
 
 urlpatterns = patterns('',
@@ -94,31 +94,35 @@ urlpatterns = patterns('',
            ReporteProductoView.as_view(),
            name='invoice-periodo-producto'),
 
-       url(r'^periodo/remite',
+       url(r'^periodo/remite$',
            ReciboRemiteView.as_view(),
            name='invoice-periodo-remite'),
 
-       url(r'^periodo/radiologo',
+       url(r'^periodo/radiologo$',
            ReciboRadView.as_view(),
            name='invoice-periodo-radiologo'),
 
-       url(r'^periodo/emergencia',
+       url(r'^periodo/emergencia$',
            EmergenciaPeriodoView.as_view(),
            name='invoice-periodo-emergencia'),
 
-       url(r'^periodo/venta',
+       url(r'^periodo/venta$',
            VentaListView.as_view(),
            name='periodo-venta'),
 
-       url(r'^dia/emergencia',
+       url(r'^periodo/venta/area$',
+           VentaAreaListView.as_view(),
+           name='periodo-venta-area'),
+
+       url(r'^dia/emergencia$',
            EmergenciaDiaView.as_view(),
            name='invoice-dia-emergencia'),
 
-       url(r'^examenes',
+       url(r'^examenes$',
            ExamenView.as_view(),
            name='invoice-imaging'),
 
-       url(r'^corte',
+       url(r'^corte$',
            CorteView.as_view(),
            name='invoice-corte'),
 
@@ -126,7 +130,7 @@ urlpatterns = patterns('',
            ReciboInventarioView.as_view(),
            name='invoice-inventario'),
 
-       url(r'^dia/altas',
+       url(r'^dia/altas$',
            AdmisionAltaView.as_view(),
            name='invoice-dia-altas'),
 

@@ -114,6 +114,9 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['ventaperiodoform'] = VentaPeriodoForm(prefix='venta')
         context['ventaperiodoform'].set_action('periodo-venta')
 
+        context['ventaareaperiodoform'] = PeriodoAreaForm(prefix='venta-area')
+        context['ventaareaperiodoform'].set_action('periodo-venta-area')
+
         return context
 
 
@@ -519,7 +522,7 @@ class VentaListView(ListView):
     def dispatch(self, request, *args, **kwargs):
         self.form = VentaPeriodoForm(request.GET, prefix='venta')
         if self.form.is_valid():
-            print(self.form.cleaned_data)
+
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.item = self.form.cleaned_data['item']
@@ -1005,7 +1008,7 @@ class VentaAreaListView(ListView):
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = self.form.cleaned_data['fin']
-            self.item_type = self.form.cleaned_data['item_type']
+            self.item_type = self.form.cleaned_data['area']
 
         return super(VentaAreaListView, self).dispatch(request, *args, **kwargs)
 
@@ -1014,7 +1017,6 @@ class VentaAreaListView(ListView):
             recibo__created__gte=self.inicio,
             recibo__created__lte=self.fin,
             recibo__nulo=False,
-            item=self.item,
             item__item_type=self.item_type,
         )
 
