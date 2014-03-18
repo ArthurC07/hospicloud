@@ -22,7 +22,8 @@ from select2.fields import ModelChoiceField
 
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
-                             DiagnosticoClinico, Cargo, OrdenMedica)
+                             DiagnosticoClinico, Cargo, OrdenMedica,
+                             NotaEnfermeria)
 from persona.forms import FieldSetModelFormMixin, FutureDateWidget
 from persona.models import Persona
 from users.mixins import HiddenUserForm
@@ -146,4 +147,14 @@ class OrdenMedicaForm(PacienteFormMixin):
     def __init__(self, *args, **kwargs):
         super(OrdenMedicaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Orden Médica',
+                                      *self.field_names)
+
+
+class NotaEnfermeriaForm(PacienteFormMixin, HiddenUserForm):
+    class Meta:
+        model = NotaEnfermeria
+
+    def __init__(self, *args, **kwargs):
+        super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Nota de Enfermeria',
                                       *self.field_names)

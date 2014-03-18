@@ -209,3 +209,17 @@ class Cargo(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return self.paciente.get_absolute_url()
+
+
+class NotaEnfermeria(TimeStampedModel):
+    """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
+
+    paciente = models.ForeignKey(Paciente, related_name='notas_enfermeria')
+    nota = models.TextField(blank=True)
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                related_name='consultorio_notas_enfermeria')
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return self.paciente.get_absolute_url()
