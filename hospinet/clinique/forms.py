@@ -100,7 +100,7 @@ class LecturaSignosForm(PacienteFormMixin):
     class Meta:
         model = LecturaSignos
         exclude = ('presion_arterial_media', )
-    
+
     persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
