@@ -194,6 +194,10 @@ class TipoCargo(TimeStampedModel):
     nombre = models.CharField(max_length=200, blank=True)
     descontable = models.BooleanField(default=True)
 
+    def __unicode__(self):
+
+        return self.nombre
+
 
 class Cargo(TimeStampedModel):
     """Permite registrar diversos cobros a un :class:`Paciente`"""
