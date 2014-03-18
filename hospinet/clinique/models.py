@@ -145,7 +145,7 @@ class Cita(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('consultorio-index')
+        return reverse('consultorio-cita-list', args=[self.consultorio.id])
 
 
 class Seguimiento(TimeStampedModel):
