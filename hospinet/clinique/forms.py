@@ -75,7 +75,7 @@ class CitaForm(FieldSetModelFormMixin):
                                    queryset=Consultorio.objects.all())
     persona = ModelChoiceField(queryset=Persona.objects.all(), name="",
                                model="")
-    fecha = forms.DateField(widget=DateTimeWidget(), required=False,
+    fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                             initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
