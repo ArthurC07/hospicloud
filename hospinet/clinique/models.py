@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
+from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -141,7 +142,7 @@ class Cita(TimeStampedModel):
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='citas', blank=True,
                                 null=True)
-    fecha = models.DateField(blank=True, null=True)
+    fecha = models.DateTimeField(blank=True, null=True, default=timezone.now)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
