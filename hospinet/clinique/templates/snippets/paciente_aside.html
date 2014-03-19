@@ -13,6 +13,9 @@
             <a href="{% url 'clinique-signos' paciente.id %}"><i class="fa fa-heart"></i> Signos Vitales</a>
         </li>
         <li>
+            <a href="{% url 'clinique-notas' paciente.id %}"><i class="fa fa-pencil"></i> Notas de Enfermeria</a>
+        </li>
+        <li>
             <a href="{% url 'consultorio-consulta-agregar' paciente.id %}">Agregar
                 Consulta Inicial</a>
         </li>
