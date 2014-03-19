@@ -307,3 +307,6 @@ class NotaEnfermeriaCreateView(PacienteFormMixin, CreateView,
                                CurrentUserFormMixin):
     model = NotaEnfermeria
     form_class = NotaEnfermeriaForm
+
+
+

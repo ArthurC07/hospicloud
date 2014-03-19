@@ -224,3 +224,16 @@ class NotaEnfermeria(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return self.paciente.get_absolute_url()
+
+
+class Examen(TimeStampedModel):
+    """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
+
+    paciente = models.ForeignKey(Paciente, related_name='consultorio_examenes')
+    descripcion = models.TextField(blank=True)
+    adjunto = models.FileField(upload_to="clinique/examen/%Y/%m/%d")
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return self.paciente.get_absolute_url()
