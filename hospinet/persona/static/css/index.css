@@ -1,40 +1,46 @@
 html, body, .Override.container, #index-aside, #main-content {
     height: 100%;
 }
-.Override {
-    width: 100%;
-}
-.Override.container:before {
-    content: '';
-    display: block;
-    float: left;
+#navigation {
+    float: right;
+    z-index: 1000;
     height: 100%;
+    background-color: rgba(128, 156, 210, 0.75);
 }
-.Override .fill {
-    position: relative;
-}
-.Override .fill:after {
-    content: '';
+#navigation a {
     display: block;
-    clear: left;
+    height: 10%;
+    color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+    padding-left: 20px;
+    padding-right: 20px;
 }
-.Override .wrapper {
-    position: absolute;
-    width: 100%;
+aside.sidebar ul {
+    list-style: none;
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
-#index-aside {
-    background: transparent url("../images/logo.jpg") right center;
-    background-size: cover;
-    float: left;
-    position: static;
+aside.sidebar ul li {
+    height: 10%;
+    border: 1px #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-#main-content {
-    background: transparent url("../images/slider1.jpg");
-    background-size: cover;
-    position: static;
-    overflow: auto;
+aside.sidebar ul li a {
+    color: #ffffff;
+    display: block;
+    height: 100%;
+    width: 100%;
+    padding-right: 20px;
+    padding-left: 20px;
+    border: 1px solid #ffffff;
 }
+.fill {
+     min-height: 100%;
+     height: 100%;
+ }
 .flex-container {
     height: 100%;
     padding: 0;
@@ -47,6 +53,6 @@ html, body, .Override.container, #index-aside, #main-content {
     align-items: center;
     justify-content: center;
 }
-.flex-item {
-    width: 90%;
+.flex-container .row {
+    width: 80%;
 }

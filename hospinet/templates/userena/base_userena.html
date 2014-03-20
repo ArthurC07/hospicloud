@@ -76,20 +76,13 @@
     </nav>
     <br>
 {% endif %}
-<div class="container Override">
-    <div class="row fill">
-        <div class="wrapper">
-            <aside class="col-md-5" id="index-aside">
-                &nbsp;
-            </aside>
-            <div class="col-md-7" id="main-content">
-                <div class="flex-container">
-                    <div class="flex-item">
-                    {% block content %}{% endblock %}
-                    </div>
-                </div>
-            </div>
+<div class="container fill">
+    <div class="flex-container">
+    <div class="row translucent">
+        <div class="col-md-12">
+            {% block content %}{% endblock content %}
         </div>
+    </div>
     </div>
 </div>
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
@@ -103,10 +96,14 @@
 <script type="text/javascript" src="{% static 'js/jquery.backstretch.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/common.js' %}"></script>
 <script type="text/javascript">
-    $("#main-content").backstretch([
-        "{% static 'images/slider1.jpg' %}",
-        "{% static 'images/slider2.jpg' %}",
-        "{% static 'images/slider3.jpg' %}"
+    $.backstretch([
+        "{% static 'images/slide1.jpg' %}",
+        "{% static 'images/slide2.jpg' %}",
+        "{% static 'images/slide3.jpg' %}",
+        "{% static 'images/slide4.jpg' %}",
+        "{% static 'images/slide5.jpg' %}",
+        "{% static 'images/slide6.jpg' %}",
+        "{% static 'images/slide7.jpg' %}"
     ], {duration: 10000, fade: 'slow'});
 </script>
 {% block scripts %}{% endblock %}
