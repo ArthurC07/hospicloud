@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from collections import defaultdict
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -159,6 +160,12 @@ class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
         context = super(CitaListView, self).get_context_data(**kwargs)
         context['consultorio'] = self.consultorio
 
+        fechas = defaultdict(list)
+
+        for cita in self.citas.all():
+            fechas[cita.fecha.date()].append(cita)
+
+        context['fechas'] = fechas.iteritems()
         return context
 
 
