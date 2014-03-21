@@ -22,6 +22,9 @@
             src="{% static 'js/bootstrap.js' %}"></script>
 </head>
 <body>
+<div id="logo">
+    <img src="{% static 'images/hospinet.svg' %}" width="70%" height="50%"/>
+</div>
 {% if user.is_staff %}
     <aside id="navigation">
         <a href="#">&nbsp;</a>
