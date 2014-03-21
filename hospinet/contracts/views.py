@@ -191,7 +191,7 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
     template_name = 'contracts/periodo.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.form = PeriodoForm()
+        self.form = PeriodoForm(prefix='contrato-periodo')
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
