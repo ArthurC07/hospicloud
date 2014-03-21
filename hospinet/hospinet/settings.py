@@ -268,8 +268,9 @@ CACHES = {
 ANONYMOUS_USER_ID = -1
 AUTH_PROFILE_MODULE = 'users.UserProfile'
 USE_THOUSAND_SEPARATOR = True
-LANGUAGE_CODE = 'es-NI'
+LANGUAGE_CODE = 'es-HN'
 TIME_ZONE = 'America/Tegucigalpa'
+USERENA_ACTIVATION_REQUIRED = False
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_CONFIG = {
@@ -289,6 +290,4 @@ CONSTANCE_CONFIG = {
 #EMAIL_HOST_USER = 'me@gmail.com'
 #EMAIL_HOST_PASSWORD = 'password'
 
-#HAYSTACK_SIGNAL_PROCESSOR = 'queued_search.signals.QueuedSignalProcessor'
-QUEUE_BACKEND = 'dummy'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

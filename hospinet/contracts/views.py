@@ -19,8 +19,9 @@ from datetime import datetime, time
 
 from crispy_forms.layout import Fieldset
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.forms.models import inlineformset_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
@@ -34,12 +35,19 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario)
 from invoice.forms import PeriodoForm
+from persona.forms import PersonaSearchForm
 from persona.models import Persona
 from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin
 
 
-class IndexView(TemplateView, LoginRequiredMixin):
+class ContratoPermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('contracts.contrato'))
+    def dispatch(self, *args, **kwargs):
+        return super(ContratoPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class IndexView(TemplateView, ContratoPermissionMixin):
     template_name = 'contracts/index.html'
 
     def get_context_data(self, **kwargs):
@@ -56,6 +64,10 @@ class IndexView(TemplateView, LoginRequiredMixin):
         context['contrato-search'] = ContratoSearchForm(
             prefix='contrato-search')
         context['contrato-search'].helper.form_action = 'contrato-search'
+        context['contrato-persona-search'] = PersonaSearchForm(
+            prefix='contrato-persona-search')
+        context[
+            'contrato-persona-search'].helper.form_action = 'contrato-persona-search'
 
         return context
 
@@ -359,6 +371,31 @@ class BeneficiarioDeleteView(DeleteView, LoginRequiredMixin):
         obj = super(BeneficiarioDeleteView, self).get_object(queryset)
         self.contrato = obj.contrato
         return obj
+
+    def get_success_url(self):
+        return self.contrato.get_absolute_url()
+
+
+class ContratoPersonaSearchView(FormView, LoginRequiredMixin):
+    """Obtiene el primer :class:`Contrato` con el número especificado en el
+    formulario"""
+    form_class = PersonaSearchForm
+    prefix = 'contrato-persona-search'
+
+    def form_valid(self, form):
+        query = form.cleaned_data['query']
+        queryset = Persona.objects.filter(
+            Q(persona__nombre__icontains=query) |
+            Q(persona__apellido__icontains=query) |
+            Q(persona__identificacion__icontains=query)
+        )
+
+        self.contrato = queryset.first()
+
+        if self.contrato is None:
+            raise Http404
+
+        return super(ContratoPersonaSearchView, self).form_valid(form)
 
     def get_success_url(self):
         return self.contrato.get_absolute_url()

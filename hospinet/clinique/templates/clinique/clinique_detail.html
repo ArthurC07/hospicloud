@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row">
+        <section class="col-md-12">
+            <div class="page-header">
+                <h1>{{ paciente.persona.nombre_completo }} <br/>
+                    <small>Consultorio {{ paciente.consultorio }}
+                        {% for contrato in paciente.persona.contratos.all %}
+                            {{ contrato }}
+                        {% endfor %}
+                    </small>
+                </h1>
+            </div>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="col-md-2 col-md-offset-3 action-nav-button">
+            <a href="{% url 'clinique-paciente' paciente.id %}"><i class="fa fa-list-ol"></i><span>Resumen</span></a>
+        </section>
+        <section class="col-md-2 action-nav-button">
+            <a href="{% url 'clinique-cargos' paciente.id %}"><i class="fa fa-medkit"></i><span>Medicamentos</span></a>
+        </section>
+        <section class="col-md-2 action-nav-button">
+            <a href="{% url 'clinique-ordenes' paciente.id %}"><i class="fa fa-stethoscope"></i><span>Ordenes M&eacute;dicas</span></a>
+        </section>
+    </div>
+    <div class="row action-nav-normal">
+        <section class="col-md-2 col-md-offset-3 action-nav-button">
+            <a href="{% url 'clinique-signos' paciente.id %}"><i class="fa fa-heart"></i><span>Signos Vitales</span></a>
+        </section>
+        <section class="col-md-2 action-nav-button">
+            <a href="{% url 'clinique-cargos' paciente.id %}"><i class="fa fa-user-md"></i><span>Honorarios</span></a>
+        </section>
+        <section class="col-md-2 action-nav-button">
+            <a href="{% url 'clinique-notas' paciente.id %}"><i class="fa fa-pencil"></i><span>Notas de Enfermeria</span></a>
+        </section>
+    </div>
+{% endblock content %}

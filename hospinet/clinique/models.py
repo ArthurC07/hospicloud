@@ -16,10 +16,12 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
+from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+from inventory.models import ItemTemplate
 from persona.models import Persona
 
 
@@ -31,6 +33,11 @@ class TipoConsulta(models.Model):
 
 
 class Consultorio(TimeStampedModel):
+    class Meta:
+        permissions = (
+            ('consultorio', 'Permite al usuario gestionar consultorios'),
+        )
+
     nombre = models.CharField(max_length=50, blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='consultorios')
     secretaria = models.ForeignKey(User, related_name='secretarias')
@@ -69,13 +76,12 @@ class Paciente(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.id])
+        return reverse('clinique-paciente-resume', args=[self.id])
 
 
 class Consulta(TimeStampedModel):
     paciente = models.ForeignKey(Paciente, related_name='consultas')
     tipo = models.ForeignKey(TipoConsulta, related_name='consultas')
-    padecimiento = models.TextField()
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -84,7 +90,8 @@ class Consulta(TimeStampedModel):
 
 
 class LecturaSignos(TimeStampedModel):
-    paciente = models.ForeignKey(Paciente, related_name='signos_vitales')
+    persona = models.ForeignKey(Persona, related_name='lecturas_signos',
+                                null=True)
     pulso = models.IntegerField()
     temperatura = models.DecimalField(decimal_places=2, max_digits=8,
                                       null=True)
@@ -98,7 +105,7 @@ class LecturaSignos(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return reverse('persona-view-id', args=[self.persona.id])
 
     def save(self, *args, **kwargs):
         """Permite guardar los datos mientras calcula algunos campos
@@ -124,21 +131,23 @@ class Evaluacion(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return self.paciente.get_absolute_url()
 
 
 class Cita(TimeStampedModel):
     """Permite registrar las posibles :class:`Personas`s que serán atendidas
     en una fecha determinada"""
 
-    usuario = models.ForeignKey(User, related_name='citas')
-    nombre = models.CharField(max_length=200)
-    fecha = models.DateField(blank=True, null=True)
+    consultorio = models.ForeignKey(Consultorio, related_name='citas',
+                                    blank=True, null=True)
+    persona = models.ForeignKey(Persona, related_name='citas', blank=True,
+                                null=True)
+    fecha = models.DateTimeField(blank=True, null=True, default=timezone.now)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('clinique-citas', args=[self.usuario.id])
+        return reverse('consultorio-cita-list', args=[self.consultorio.id])
 
 
 class Seguimiento(TimeStampedModel):
@@ -152,7 +161,7 @@ class Seguimiento(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return self.paciente.get_absolute_url()
 
 
 class DiagnosticoClinico(TimeStampedModel):
@@ -163,3 +172,68 @@ class DiagnosticoClinico(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return reverse('clinique-paciente', args=[self.paciente.id])
+
+
+class OrdenMedica(TimeStampedModel):
+    """Registra las indicaciones dadas al paciente de parte del
+    :class:`Doctor`"""
+
+    paciente = models.ForeignKey(Paciente, related_name='ordenes_medicas')
+    evolucion = models.TextField(blank=True)
+    orden = models.TextField(blank=True)
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return self.paciente.get_absolute_url()
+
+
+class TipoCargo(TimeStampedModel):
+    """Permite Diferenciar entre los distintos tipos de :class:`Cargo` que se
+    pueden agregar a un :class:`Paciente`"""
+
+    nombre = models.CharField(max_length=200, blank=True)
+    descontable = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.nombre
+
+
+class Cargo(TimeStampedModel):
+    """Permite registrar diversos cobros a un :class:`Paciente`"""
+
+    paciente = models.ForeignKey(Paciente, related_name='cargos')
+    tipo = models.ForeignKey(TipoCargo, related_name='cargos')
+    item = models.ForeignKey(ItemTemplate, related_name='consultorio_cargos')
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return self.paciente.get_absolute_url()
+
+
+class NotaEnfermeria(TimeStampedModel):
+    """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
+
+    paciente = models.ForeignKey(Paciente, related_name='notas_enfermeria')
+    nota = models.TextField(blank=True)
+    usuario = models.ForeignKey(User, blank=True, null=True,
+                                related_name='consultorio_notas_enfermeria')
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return self.paciente.get_absolute_url()
+
+
+class Examen(TimeStampedModel):
+    """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
+
+    paciente = models.ForeignKey(Paciente, related_name='consultorio_examenes')
+    descripcion = models.TextField(blank=True)
+    adjunto = models.FileField(upload_to="clinique/examen/%Y/%m/%d")
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`Paciente`"""
+
+        return self.paciente.get_absolute_url()

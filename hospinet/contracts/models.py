@@ -129,6 +129,7 @@ class Evento(TimeStampedModel):
     contrato = models.ForeignKey(Contrato, related_name='eventos')
     tipo = models.ForeignKey(TipoEvento, related_name='eventos')
     fecha = models.DateTimeField(default=timezone.now())
+    descripcion = models.TextField(blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""

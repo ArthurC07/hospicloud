@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load l10n %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>{{ paciente }}
+            <small>{{ paciente.consultorio }}</small>
+        </h1>
+    </div>
+</div>
+<div class="row">
+    <aside class="col-md-3">
+        {% include 'snippets/paciente_aside.html' %}
+    </aside>
+    <div class="col-md-9">
+        <a class="btn btn-primary" href="{% url 'consultorio-om-agregar' paciente.id %}">Agregar Orden M&eacute;dica</a>
+        <table class="table table-striped">
+            <caption>Ordenes M&eacute;dicas</caption>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Orden</th>
+                <th>Evoluci&oacute;n</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for orden in paciente.ordenes_medicas.all %}
+                <tr>
+                    <td>{{ orden.created }}</td>
+                    <td>{{ orden.orden }}</td>
+                    <td>{{ orden.evolucion }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

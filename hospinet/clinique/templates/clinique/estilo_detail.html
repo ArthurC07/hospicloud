@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'snippets/persona_aside.html' with persona=persona %}
+<div id="informacion" class="col-md-9">
+  <div>
+    <h1>
+        {{ persona.nombre_completo }}
+        {% include 'snippets/persona_fotografia.html' with persona=persona %}
+    </h1>
+  </div>
+  <br />
+  <br />
+  <div class="info">
+    {% include 'snippets/estilo_vida.html' with estilo_vida=persona.estilo_vida %} <a href="{% url 'persona-estilovida-editar' persona.id %}" class="btn btn-primary">Editar Estilo de Vida</a>
+  </div>
+</div>
+{% endblock %}

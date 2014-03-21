@@ -56,7 +56,7 @@ class InvoicePermissionMixin(LoginRequiredMixin):
         return super(InvoicePermissionMixin, self).dispatch(*args, **kwargs)
 
 
-class IndexView(TemplateView, LoginRequiredMixin):
+class IndexView(TemplateView, InvoicePermissionMixin):
     """Muestra las opciones disponibles para la aplicación"""
 
     template_name = 'invoice/index.html'
@@ -843,7 +843,8 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         venta_tecnico = False
         if not self.object.tecnico is None:
             # Crear los honorarios de los tecnicos
-            tecnico = sum(i.precio_de_venta * i.comision2 * dot01 for i in items)
+            tecnico = sum(
+                i.precio_de_venta * i.comision2 * dot01 for i in items)
             venta = Venta()
             venta.recibo = recibo
             venta.precio = tecnico

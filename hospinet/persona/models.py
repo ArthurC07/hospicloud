@@ -24,12 +24,18 @@ from datetime import date
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
 
 from persona.fields import OrderedCountryField
 
 
 class Persona(models.Model):
     """Representación de una :class:`Persona` en la aplicación"""
+
+    class Meta:
+        permissions = (
+            ('persona', 'Permite al usuario gestionar persona'),
+        )
 
     GENEROS = (
         ('M', u'Masculino'),
@@ -243,11 +249,27 @@ class AntecedenteFamiliar(models.Model):
 
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='antecedente_familiar')
+    sindrome_coronario_agudo = models.BooleanField(default=False, blank=True)
+    hipertension = models.BooleanField(default=False, blank=True)
+    tabaquismo = models.BooleanField(default=False, blank=True)
+    epoc = models.NullBooleanField(default=False, blank=True)
+    diabetes = models.BooleanField(default=False, blank=True)
+    tuberculosis = models.BooleanField(default=False, blank=True)
+    asma = models.BooleanField(default=False, blank=True)
+    colitis = models.BooleanField(default=False, blank=True)
+    sinusitis = models.BooleanField(default=False, blank=True)
+    colelitiasis = models.BooleanField(default=False, blank=True)
+    migrana = models.BooleanField(default=False, blank=True)
+    obesidad = models.BooleanField(default=False, blank=True)
+    dislipidemias = models.BooleanField(default=False, blank=True)
+    alcoholismo = models.BooleanField(default=False, blank=True)
+    cancer = models.BooleanField(default=False, blank=True)
+    alergias = models.CharField(max_length=200, blank=True, null=True)
 
-    carcinogenico = models.BooleanField(default=False, blank=True)
-    cardiovascular = models.BooleanField(default=False, blank=True)
-    endocrinologico = models.BooleanField(default=False, blank=True)
-    respiratorio = models.BooleanField(default=False, blank=True)
+    congenital = models.CharField(max_length=200, blank=True)
+
+    general = models.CharField(max_length=200, blank=True)
+    nutricional = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
 
     def get_absolute_url(self):
@@ -283,10 +305,28 @@ class AntecedenteQuirurgico(models.Model):
     persona = models.ForeignKey(Persona, primary_key=True,
                                 related_name="antecedentes_quirurgicos")
     procedimiento = models.CharField(max_length=200, blank=True)
-    hospitalizacion = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
         return reverse('persona-view-id', args=[self.persona.id])
+
+
+def create_persona(sender, instance, created, **kwargs):
+    if created:
+        fisico = Fisico(persona=instance)
+        fisico.save()
+        estilo_vida = EstiloVida(persona=instance)
+        estilo_vida.save()
+        antecedente = Antecedente(persona=instance)
+        antecedente.save()
+        antecedente_familiar = AntecedenteFamiliar(persona=instance)
+        antecedente_familiar.save()
+
+        if instance.sexo == 'F':
+            antecedente_obstetrico = AntecedenteObstetrico(persona=instance)
+            antecedente_obstetrico.save()
+
+
+post_save.connect(create_persona, sender=Persona)

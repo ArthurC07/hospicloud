@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load l10n %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>{{ paciente }}
+            <small>{{ paciente.consultorio }}</small>
+        </h1>
+    </div>
+</div>
+<div class="row">
+    <aside class="col-md-3">
+        {% include 'snippets/paciente_aside.html' %}
+    </aside>
+    <div class="col-md-9">
+        <a class="btn btn-primary" href="{% url 'consultorio-cargo-agregar' paciente.id %}">Agregar Cargos y Honorarios</a>
+        <table class="table table-striped">
+            <caption>Cargos y Honorarios</caption>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Cargo</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for cargo in paciente.cargos.all %}
+                <tr>
+                    <td>{{ cargo.created }}</td>
+                    <td>{{ cargo.tipo }}</td>
+                    <td>{{ cargo.item }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -48,6 +48,7 @@ urlpatterns = patterns('',
     url(r'^contracts/', include('contracts.urls')),
     url(r'^api/', include(v1_api.urls)),
     url(r'^select2/', include('select2.urls')),
+    url(r'^users/', include('users.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

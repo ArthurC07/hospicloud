@@ -17,7 +17,7 @@
       <td>{{ paciente.persona.nombre }}</td>
       <td>{{ paciente.persona.obtener_edad }}</td>
       <td>{{ paciente.persona.get_sexo_display }}</td>
-      <td><a href="{% url 'consultorio-paciente" paciente.uuid %}">Ver</a></td>
+      <td><a href="{% url 'consultorio-paciente' paciente.id %}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

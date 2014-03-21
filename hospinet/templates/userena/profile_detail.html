@@ -6,16 +6,16 @@
 {% block content_title %}<h2>{{ profile.user.username }} {% if profile.user.get_full_name %}({{ profile.user.get_full_name }}){% endif %}</h2>{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row translucent">
   <div class="col-md-12">
     <section class="page-header">
       <h1>{{ user.get_full_name }} <small>{{ user.username }}</small></h1>
     </section>
   </div>
 </div>
-<div class="row">
+<div class="row translucent">
   <aside class="col-md-3">
-    <nav class="sidebar-nav">  
+    <nav class="sidebar-nav">
     {% block profile_navigation %}
       {% comment %}Dirty hack. Will use django-guardian in the future.{% endcomment %}
       {% if user.username == profile.user.username %}
@@ -32,41 +32,68 @@
     </nav>
   </aside>
   <section class="col-md-9">
-      {% block profile_details %}
-          <img class="mugshot pull-right" src="{{ profile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
-        <dl>
-          {% block profile_definition_list %}
-            {% if profile.user.get_full_name %}
-              <dt>{% trans 'Name' %}</dt>
-              <dd>{{ profile.user.get_full_name }}</dd>
-            {% endif %}
-            {% if profile.user.email and not hide_email %}
-              <dt>{% trans 'Email' %}</dt>
-              <dd>{{ profile.user.email }}</dd>
-            {% endif %}
-            {% if profile.age %}
-              <dt>{% trans 'Age' %}</dt>
-              <dd>{{ profile.age }}</dd>
-            {% endif %}
-            {% if profile.website %}
-              <dt>{% trans 'Website' %}</dt>
-              <dd>{{ profile.website|urlize }}</dd>
-            {% endif %}
-            {% if profile.location %}
-              <dt>{% trans 'Location' %}</dt>
-              <dd>{{ profile.location }}</dd>
-            {% endif %}
-            {% if profile.about_me %}
-              <dt>{% trans 'About me' %}</dt>
-              <dd>{{ profile.about_me }}</dd>
-            {% endif %}
-          {% endblock %}
-          {% if profile.inventario %}
-            <dt>Inventantario</dt>
-            <dd>{{ profile.inventario }}</dd>
-          {% endif %}
-        </dl>
-      {% endblock %}
+    <section class="tabbable">
+        <div class="tab-content">
+            <ul class="nav nav-tabs">
+                <li><a href="#profile" data-toggle="tab">Perfil de Usuario</a></li>
+                <li><a class="active" href="#persona" data-toggle="tab">Datos Personales</a></li>
+            </ul>
+            <article id="profile" class="tab-pane">
+                {% block profile_details %}
+                    <img class="mugshot pull-right" src="{{ profile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
+                    <dl>
+                        {% block profile_definition_list %}
+                            {% if profile.user.get_full_name %}
+                                <dt>{% trans 'Name' %}</dt>
+                                <dd>{{ profile.user.get_full_name }}</dd>
+                            {% endif %}
+                            {% if profile.user.email and not hide_email %}
+                                <dt>{% trans 'Email' %}</dt>
+                                <dd>{{ profile.user.email }}</dd>
+                            {% endif %}
+                            {% if profile.age %}
+                                <dt>{% trans 'Age' %}</dt>
+                                <dd>{{ profile.age }}</dd>
+                            {% endif %}
+                            {% if profile.website %}
+                                <dt>{% trans 'Website' %}</dt>
+                                <dd>{{ profile.website|urlize }}</dd>
+                            {% endif %}
+                            {% if profile.location %}
+                                <dt>{% trans 'Location' %}</dt>
+                                <dd>{{ profile.location }}</dd>
+                            {% endif %}
+                            {% if profile.about_me %}
+                                <dt>{% trans 'About me' %}</dt>
+                                <dd>{{ profile.about_me }}</dd>
+                            {% endif %}
+                        {% endblock %}
+                        {% if user.is_staff %}
+                            {% if profile.inventario %}
+                                <dt>Inventario</dt>
+                                <dd>{{ profile.inventario }}</dd>
+                            {% endif %}
+                        {% endif %}
+                    </dl>
+                {% endblock %}
+            </article>
+            <article id="persona" class="tab-pane active">
+                <div class="row">
+                    <div class="col-md-12">
+                    {% if user.username == profile.user.username %}
+                        {% ifnotequal profile.persona None %}
+                        {% include 'snippets/persona_fotografia.html'  with persona=profile.persona %}
+                        {% include 'snippets/persona.html' with persona=profile.persona %}
+                        <a href="{% url 'user-persona-edit' profile.persona.id %}" class="btn btn-primary">Editar Datos</a>
+                            {% else %}
+                        <a class="btn btn-lg btn-primary" href="{% url 'user-persona-create' %}">Agregar Mis Datos Personales</a>
+                        {% endifnotequal %}
+                    {% endif %}
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
   </section>
 </div>
 {% endblock %}

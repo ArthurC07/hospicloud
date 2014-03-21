@@ -90,6 +90,11 @@ class Admision(models.Model):
     enfermería, diversos cargos y otra información adecuada
     """
 
+    class Meta:
+        permissions = (
+            ('admision', 'Permite al usuario gestionar admision'),
+        )
+
     ESTADOS = (
         ('A', 'Admitido'),
         ('B', 'Autorizado'),

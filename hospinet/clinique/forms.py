@@ -17,13 +17,17 @@
 
 from crispy_forms.layout import Fieldset
 from django import forms
-from django.contrib.auth.models import User
+from django.utils import timezone
+from select2.fields import ModelChoiceField
 
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
-                             DiagnosticoClinico)
-from persona.forms import FieldSetModelFormMixin
-from users.mixins import HiddenUserForm, UserForm
+                             DiagnosticoClinico, Cargo, OrdenMedica,
+                             NotaEnfermeria)
+from persona.forms import FieldSetModelFormMixin, FutureDateWidget, \
+    DateTimeWidget
+from persona.models import Persona
+from users.mixins import HiddenUserForm
 
 
 class PacienteFormMixin(FieldSetModelFormMixin):
@@ -63,13 +67,25 @@ class EvaluacionForm(HiddenUserForm, PacienteFormMixin):
                                       *self.field_names)
 
 
-class CitaForm(UserForm):
+class CitaForm(FieldSetModelFormMixin):
     class Meta:
         model = Cita
+
+    consultorio = ModelChoiceField(name="", model="",
+                                   queryset=Consultorio.objects.all())
+    persona = ModelChoiceField(queryset=Persona.objects.all(), name="",
+                               model="")
+    fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                            initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(CitaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar una Cita', *self.field_names)
+
+
+class CitaPersonaForm(CitaForm):
+    persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
+                                     widget=forms.HiddenInput(), required=False)
 
 
 class SeguimientoForm(PacienteFormMixin, HiddenUserForm):
@@ -85,11 +101,16 @@ class SeguimientoForm(PacienteFormMixin, HiddenUserForm):
 class LecturaSignosForm(PacienteFormMixin):
     class Meta:
         model = LecturaSignos
+        exclude = ('presion_arterial_media', )
+
+    persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
+                                     widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(LecturaSignosForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar una Lectura de Signos',
                                       *self.field_names)
+
 
 class DiagnosticoClinicoForm(PacienteFormMixin):
     class Meta:
@@ -108,4 +129,33 @@ class ConsultorioForm(HiddenUserForm):
     def __init__(self, *args, **kwargs):
         super(ConsultorioForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Crear Consultorio',
+                                      *self.field_names)
+
+
+class CargoForm(PacienteFormMixin):
+    class Meta:
+        model = Cargo
+
+    def __init__(self, *args, **kwargs):
+        super(CargoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
+
+
+class OrdenMedicaForm(PacienteFormMixin):
+    class Meta:
+        model = OrdenMedica
+
+    def __init__(self, *args, **kwargs):
+        super(OrdenMedicaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Orden Médica',
+                                      *self.field_names)
+
+
+class NotaEnfermeriaForm(PacienteFormMixin, HiddenUserForm):
+    class Meta:
+        model = NotaEnfermeria
+
+    def __init__(self, *args, **kwargs):
+        super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Nota de Enfermeria',
                                       *self.field_names)

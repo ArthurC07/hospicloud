@@ -2,45 +2,53 @@
 {% load staticfiles %}{% load i18n %}{% load url from future %}
 {% block title %}{% trans 'Signin' %}{% endblock %}
 {% block content %}
-<form method="post" class="form-signin">
-  {% if error %}
-  {% endif %}
-  {% csrf_token %}
-  <fieldset>
-    <legend>
-      {% trans 'Signin' %}
-    </legend>
-    {{ form.non_field_errors }}
-    {% for field in form %}
-    {{ field.errors }}
-    {% comment %} Displaying checkboxes differently {% endcomment %}
-    {% if field.name == 'remember_me' %}
-    <p class="checkbox">
-      <label for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
-    </p>
-    {% else %}
-    <p>
-      {{ field.label_tag }}
-      {{ field }}
-    </p>
-    {% endif %}
-    {% endfor %}
-  </fieldset>
-  <input class="btn btn-large btn-primary text-center btn-block" type="submit" value="{% trans 'Signin' %}" />
-  <hr />
-  <p class="forgot-password text-center">
-    <a href="{% url 'userena_password_reset' %}" title="{% trans 'Forgot your password?' %}"> {% trans 'Forgot your password?' %} </a>
-  </p>
-  {% if next %}
-  <input type="hidden" name="next" value="{{ next }}" />
-  {% endif %}
-</form>
+    <form method="post" class="form-signin">
+        {% if error %}
+        {% endif %}
+        {% csrf_token %}
+        <fieldset>
+            <legend>
+                {% trans 'Signin' %}
+            </legend>
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                {{ field.errors }}
+                {% comment %} Displaying checkboxes differently {% endcomment %}
+                {% if field.name == 'remember_me' %}
+                    <p class="checkbox">
+                        <label for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
+                    </p>
+                {% else %}
+                    <p>
+                        {{ field.label_tag }}
+                        {{ field }}
+                    </p>
+                {% endif %}
+            {% endfor %}
+        </fieldset>
+        <input class="btn btn-large btn-success text-center btn-block"
+               type="submit" value="{% trans 'Signin' %}"/>
+        <hr/>
+        <p class="forgot-password text-center">
+            <a href="{% url 'userena_password_reset' %}"
+               title="{% trans 'Forgot your password?' %}"> {% trans 'Forgot your password?' %} </a>
+        </p>
+        <p class="register text-center">
+            <a class="btn btn-primary btn-block" href="{% url 'userena_signup' %}">
+                {% trans 'Signup' %}
+            </a>
+        </p>
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+        {% endif %}
+    </form>
 {% endblock %}
 {% block scripts %}
-<script type="text/javascript" src="{% static 'js/jquery.placeholder.js' %}"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-		$('input, textarea').placeholder();
-	}); 
-</script>
+    <script type="text/javascript"
+            src="{% static 'js/jquery.placeholder.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input, textarea').placeholder();
+        });
+    </script>
 {% endblock %}

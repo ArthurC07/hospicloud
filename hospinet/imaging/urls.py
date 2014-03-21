@@ -17,7 +17,7 @@
 
 from django.conf.urls import patterns, url
 from imaging.views import (ExamenDetailView, ExamenCreateView,
-    ExamenUpdateView, ImagenCreateView, AdjuntoCreateView, ExamenListView,
+    ExamenUpdateView, ImagenCreateView, AdjuntoCreateView, ExamenIndexView,
     ExamenPersonaListView, PersonaExamenCreateView, ExamenPreCreateView,
     DicomDetailView, DicomCreateView, EstudioProgramadoListView,
     EstudioProgramadoCreateView, EstudioProgramadoEfectuarView,
@@ -27,7 +27,7 @@ from imaging.views import (ExamenDetailView, ExamenCreateView,
 urlpatterns = patterns('',
     
     url(r'^$',
-        ExamenListView.as_view(),
+        ExamenIndexView.as_view(),
         name='examen-index'),
     
     url(r'^(?P<pk>\d+)/notificar$',
@@ -47,7 +47,7 @@ urlpatterns = patterns('',
         name='examen-efectuar'),
     
     url(r'^examenes$',
-        ExamenListView.as_view(),
+        ExamenIndexView.as_view(),
         name='examen-list'),
     
     url(r'^nuevo$',

@@ -56,7 +56,6 @@ class UserResource(ModelResource):
                     # Create key if user doesn't have one (not tested yet)
                     api_key = ApiKey.objects.create(user=user)
                 return self.create_response(request, {
-                    'success': True,
                     'api_key': api_key.key
                 })
             else:

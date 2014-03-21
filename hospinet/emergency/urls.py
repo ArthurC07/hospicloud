@@ -19,7 +19,7 @@ from django.conf.urls import patterns, url
 from emergency.views import (PersonaEmergenciaCreateView, EmergenciaDetailView,
                              EmergenciaCreateView, RemisionInternaCreateView,
                              TratamientoCreateView, RemisionExternaCreateView,
-                             EmergenciaListView, ExamenFisicoCreateView,
+                             EmergenciaIndexView, ExamenFisicoCreateView,
                              CobroCreateView, HallazgoCreateView, 
                              EmergenciaPreCreateView, DiagnosticoCreateView,
                              EmergenciaFisicoUpdateView, CobroDeleteView,
@@ -34,7 +34,7 @@ from persona.views import PersonaDetailView
 urlpatterns = patterns('',
     
     url(r'^$',
-        EmergenciaListView.as_view(),
+        EmergenciaIndexView.as_view(),
         name='emergency-index'),
     
     url(r'^ingresar$',

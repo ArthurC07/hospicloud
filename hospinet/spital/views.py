@@ -16,12 +16,14 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime, time
+from django.contrib.auth.decorators import permission_required
 
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, TemplateView,
                                   DeleteView,
                                   DetailView, RedirectView, UpdateView)
@@ -40,7 +42,13 @@ from users.mixins import LoginRequiredMixin
 from invoice.forms import PeriodoForm
 
 
-class AdmisionIndexView(ListView, LoginRequiredMixin):
+class AdmisionPermissionMixin(LoginRequiredMixin):
+    @method_decorator(permission_required('spital.admision'))
+    def dispatch(self, *args, **kwargs):
+        return super(AdmisionPermissionMixin, self).dispatch(*args, **kwargs)
+
+
+class AdmisionIndexView(ListView, AdmisionPermissionMixin):
     """Muestra la pagina principal de el Centro de :class:`Admisiones`"""
 
     context_object_name = 'admisiones'
