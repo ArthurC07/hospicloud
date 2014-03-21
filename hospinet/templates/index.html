@@ -27,7 +27,14 @@
 </div>
 {% if user.is_staff %}
     <aside id="navigation">
-        <a href="#">&nbsp;</a>
+        <a href="{% url 'userena_profile_detail' user.username %}">
+            <div class="image-holder flex-container">
+                <i class="fa fa-user"></i>
+            </div>
+            <div class="flex-container">
+                <div>{{ user }}</div>
+            </div>
+        </a>
         <a href="{% url 'persona-index' %}" >
             <div class="image-holder flex-container">
                 <img src="{% static 'images/icon4.png' %}">
