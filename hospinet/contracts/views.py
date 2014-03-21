@@ -291,7 +291,7 @@ class VendedorSearchView(FormView, LoginRequiredMixin):
     prefix = 'vendedor-search'
 
     def form_valid(self, form):
-        self.vendedor = Vendedor.objects.get(pk=form.cleaned_data['vendedor'])
+        self.vendedor = form.cleaned_data['vendedor']
         return super(VendedorSearchView, self).form_valid(form)
 
     def get_success_url(self):
