@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block title %} Contratos{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>Contratos
+                <small>de {{ inicio }} al {{ fin }}</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-9">
+            <ul>
+                {% for contrato in contratos.all %}
+                    <li>
+                        <a href="{% url 'contrato' contrato.id %}">{{ contrato }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+{% endblock %}

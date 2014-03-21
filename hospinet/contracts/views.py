@@ -191,7 +191,7 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
     template_name = 'contracts/periodo.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.form = PeriodoForm(prefix='contrato-periodo')
+        self.form = PeriodoForm(request.GET, prefix='contrato-periodo')
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
@@ -207,6 +207,8 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
         context = super(ContratoPeriodoView, self).get_context_data(**kwargs)
 
         context['contratos'] = self.contratos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
 
         return context
 
