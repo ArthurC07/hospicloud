@@ -13,6 +13,7 @@ html, body, .Override.container, #index-aside, #main-content {
     height: 10%;
     color: #ffffff;
     border-bottom: 1px solid #ffffff;
+    border-top: 1px solid #ffffff;
     padding-left: 20px;
     padding-right: 20px;
     background-color: rgba(128, 156, 210, 0.75);
@@ -20,6 +21,8 @@ html, body, .Override.container, #index-aside, #main-content {
 #navigation a:hover {
     margin-left: -80px;
     text-decoration: none;
+    background-color: rgba(64, 64, 255, 0.75);
+    border: none;
 }
 aside.sidebar ul {
     list-style: none;
