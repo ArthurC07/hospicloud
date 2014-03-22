@@ -23,7 +23,7 @@
 </head>
 <body>
 <div id="logo">
-    <img src="{% static 'images/hospinet.svg' %}" width="70%" height="50%"/>
+    <img src="{% static 'images/hospinet.svg' %}" width="40%" height="40%"/>
 </div>
 {% if user.is_staff %}
     <aside id="navigation">
@@ -181,7 +181,6 @@
     $(document).ready(function () {
         $('input, textarea').placeholder();
         $.backstretch([
-            "{% static 'images/slide1.jpg' %}",
             "{% static 'images/slide2.jpg' %}",
             "{% static 'images/slide3.jpg' %}",
             "{% static 'images/slide4.jpg' %}",
