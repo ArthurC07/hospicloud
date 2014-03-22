@@ -106,7 +106,8 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['examenes'] = Examen.objects.filter(facturado=False).order_by(
             '-id')
         context['admisiones'] = Admision.objects.filter(facturada=False)
-        context['emergencias'] = Emergencia.objects.filter(facturada=False)
+        context['emergencias'] = Emergencia.objects.filter(
+            facturada=False).order_by('id')
 
         context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
                                                      finalizado=False).all()
@@ -522,7 +523,6 @@ class VentaListView(ListView):
     def dispatch(self, request, *args, **kwargs):
         self.form = VentaPeriodoForm(request.GET, prefix='venta')
         if self.form.is_valid():
-
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.item = self.form.cleaned_data['item']
