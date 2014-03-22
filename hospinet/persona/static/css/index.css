@@ -5,6 +5,7 @@ html, body, .Override.container, #index-aside, #main-content {
     float: right;
     z-index: 1000;
     height: 100%;
+    width: 220px;
     background-color: rgba(128, 156, 210, 0.75);
 }
 #navigation a {
@@ -12,8 +13,16 @@ html, body, .Override.container, #index-aside, #main-content {
     height: 10%;
     color: #ffffff;
     border-bottom: 1px solid #ffffff;
+    border-top: 1px solid #ffffff;
     padding-left: 20px;
     padding-right: 20px;
+    background-color: rgba(128, 156, 210, 0.75);
+}
+#navigation a:hover {
+    margin-left: -80px;
+    text-decoration: none;
+    background-color: rgba(64, 64, 255, 0.75);
+    border: none;
 }
 aside.sidebar ul {
     list-style: none;
@@ -56,7 +65,13 @@ aside.sidebar ul li a {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-flow: column;
 }
 .flex-container .row {
     width: 80%;
+}
+.image-holder {
+    float: left;
+    height: 100%;
+    padding: 5px;
 }

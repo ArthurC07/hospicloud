@@ -191,7 +191,7 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
     template_name = 'contracts/periodo.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.form = PeriodoForm()
+        self.form = PeriodoForm(request.GET, prefix='contrato-periodo')
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
@@ -207,6 +207,8 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
         context = super(ContratoPeriodoView, self).get_context_data(**kwargs)
 
         context['contratos'] = self.contratos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
 
         return context
 
@@ -291,7 +293,7 @@ class VendedorSearchView(FormView, LoginRequiredMixin):
     prefix = 'vendedor-search'
 
     def form_valid(self, form):
-        self.vendedor = Vendedor.objects.get(pk=form.cleaned_data['vendedor'])
+        self.vendedor = form.cleaned_data['vendedor']
         return super(VendedorSearchView, self).form_valid(form)
 
     def get_success_url(self):
