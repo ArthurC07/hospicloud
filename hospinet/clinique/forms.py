@@ -23,7 +23,7 @@ from select2.fields import ModelChoiceField
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
-                             NotaEnfermeria)
+                             NotaEnfermeria, Examen)
 from persona.forms import FieldSetModelFormMixin, FutureDateWidget, \
     DateTimeWidget
 from persona.models import Persona
@@ -159,3 +159,12 @@ class NotaEnfermeriaForm(PacienteFormMixin, HiddenUserForm):
         super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Nota de Enfermeria',
                                       *self.field_names)
+
+
+class ExamenForm(PacienteFormMixin):
+    class Meta:
+        model = Examen
+
+    def __init__(self, *args, **kwargs):
+        super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Examen', *self.field_names)
