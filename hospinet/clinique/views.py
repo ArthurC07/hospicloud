@@ -29,7 +29,7 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             ConsultaForm, SeguimientoForm, LecturaSignosForm,
                             DiagnosticoClinicoForm, ConsultorioForm,
                             CitaPersonaForm, CargoForm, OrdenMedicaForm,
-                            NotaEnfermeriaForm)
+                            NotaEnfermeriaForm, ExamenForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
@@ -318,3 +318,4 @@ class NotaEnfermeriaCreateView(PacienteFormMixin, CreateView,
 
 class ExamenCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     model = Examen
+    form_class = ExamenForm
