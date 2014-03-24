@@ -23,10 +23,11 @@ from select2.fields import ModelChoiceField
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
-                             NotaEnfermeria, Examen)
+                             NotaEnfermeria, Examen, Espera)
 from persona.forms import FieldSetModelFormMixin, FutureDateWidget, \
     DateTimeWidget
 from persona.models import Persona
+from persona.views import PersonaFormMixin
 from users.mixins import HiddenUserForm
 
 
@@ -46,6 +47,11 @@ class PacienteForm(FieldSetModelFormMixin):
         super(PacienteForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Convertir en Paciente',
                                       *self.field_names)
+
+
+class ConsultorioFormMixin(FieldSetModelFormMixin):
+    consultorio = ModelChoiceField(queryset=Consultorio.objects.all(),
+                                   name="", model="",)
 
 
 class ConsultaForm(PacienteFormMixin):
@@ -71,8 +77,6 @@ class CitaForm(FieldSetModelFormMixin):
     class Meta:
         model = Cita
 
-    consultorio = ModelChoiceField(name="", model="",
-                                   queryset=Consultorio.objects.all())
     persona = ModelChoiceField(queryset=Persona.objects.all(), name="",
                                model="")
     fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
@@ -168,3 +172,13 @@ class ExamenForm(PacienteFormMixin):
     def __init__(self, *args, **kwargs):
         super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Examen', *self.field_names)
+
+
+class EsperaForm(PersonaFormMixin, ConsultorioFormMixin):
+    class Meta:
+        model = Espera
+
+    def __init__(self, *args, **kwargs):
+        super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Persona a la Sala de Espera',
+                                      *self.field_names)

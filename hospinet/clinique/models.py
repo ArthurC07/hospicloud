@@ -237,3 +237,10 @@ class Examen(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return self.paciente.get_absolute_url()
+
+
+class Espera(TimeStampedModel):
+    consultorio = models.ForeignKey(Consultorio, related_name='espera',
+                                    blank=True, null=True)
+    persona = models.ForeignKey(Persona, related_name='espera')
+    fecha = models.DateField(default=timezone.now)
