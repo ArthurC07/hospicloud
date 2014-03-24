@@ -325,3 +325,7 @@ class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin, CreateView,
                        LoginRequiredMixin):
     model = Espera
     form_class = EsperaForm
+
+
+class EsperaListView(ConsultorioMixin, LoginRequiredMixin, ListView):
+    model = Espera
