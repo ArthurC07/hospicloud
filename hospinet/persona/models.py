@@ -25,6 +25,7 @@ from datetime import date
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
+from django_extensions.db.models import TimeStampedModel
 
 from persona.fields import OrderedCountryField
 
@@ -330,3 +331,20 @@ def create_persona(sender, instance, created, **kwargs):
 
 
 post_save.connect(create_persona, sender=Persona)
+
+
+class Empleador(TimeStampedModel):
+    nombre = models.CharField(max_length=200, blank=True)
+    direccion = models.TextField()
+
+
+class Empleo(TimeStampedModel):
+    empleador = models.ForeignKey(Empleador, null=True, blank=True,
+                                   related_name='empleos')
+    persona = models.ForeignKey(Persona, related_name='empleos')
+    direccion = models.TextField()
+    telefono = models.CharField(max_length=200, blank=True)
+
+    def get_absolute_url(self):
+
+        return self.persona.get_absolute_url()

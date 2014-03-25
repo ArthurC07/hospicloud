@@ -15,8 +15,11 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+
 from persona.models import (Persona, EstiloVida, Fisico, Antecedente,
-    AntecedenteQuirurgico, AntecedenteObstetrico, AntecedenteFamiliar)
+                            AntecedenteQuirurgico, AntecedenteObstetrico,
+                            AntecedenteFamiliar, Empleador, Empleo)
+
 
 admin.site.register(Persona)
 admin.site.register(Fisico)
@@ -25,3 +28,5 @@ admin.site.register(Antecedente)
 admin.site.register(AntecedenteQuirurgico)
 admin.site.register(AntecedenteObstetrico)
 admin.site.register(AntecedenteFamiliar)
+admin.site.register(Empleador)
+admin.site.register(Empleo)
