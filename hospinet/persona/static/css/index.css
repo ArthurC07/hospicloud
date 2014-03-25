@@ -21,8 +21,13 @@ html, body, .Override.container, #index-aside, #main-content {
 #navigation a:hover {
     margin-left: -80px;
     text-decoration: none;
-    background-color: rgba(64, 64, 255, 0.75);
+    background-color: rgba(2, 22, 104, 0.5);
     border: none;
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -ms-transition: 0.5s;
+    -o-transition: 0.5s;
+    transition: 0.5s;
 }
 aside.sidebar ul {
     list-style: none;
