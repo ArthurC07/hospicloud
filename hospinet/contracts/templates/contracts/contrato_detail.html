@@ -13,11 +13,15 @@
         <aside class="col-md-3">
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
-
-                    <li><a href="{% url 'contrato-pago-add' contrato.id %}">Agregar Pago</a></li>
-                    <li><a href="{% url 'contrato-evento-add' contrato.id %}">Agregar Evento</a></li>
-                    <li><a href="{% url 'contrato-beneficiario-add' contrato.id %}">Agregar Beneficiario</a></li>
-                    <li><a href="{% url 'contrato-edit' contrato.id %}">Editar Contrato</a></li>
+                    <li><a href="{% url 'contrato-pago-add' contrato.id %}">Agregar
+                        Pago</a></li>
+                    <li><a href="{% url 'contrato-evento-add' contrato.id %}">Agregar
+                        Evento</a></li>
+                    <li>
+                        <a href="{% url 'contrato-beneficiario-add' contrato.id %}">Agregar
+                            Beneficiario</a></li>
+                    <li><a href="{% url 'contrato-edit' contrato.id %}">Editar
+                        Contrato</a></li>
                 </ul>
             </nav>
         </aside>
@@ -38,34 +42,73 @@
                         </ul>
                         <div class="tab-content">
                             <article id="contrato" class="tab-pane active">
-                                <h1>{{ contrato.plan }}</h1>
-                                <h2>{{ contrato.vendedor }} <small>Vendedor</small>
-                                </h2>
+                                <div class="row">
+                                    <section class="page-header">
+                                        <h2>Titular</h2>
+                                    </section>
+                                    <div class="col-md-2">
+                                        {% if contrato.persona.fotografia == None %}
+                                            {% thumbnail contrato.persona.fotografia "100x100" crop="center" as im %}
+                                            <img src="{{ im.url }}"
+                                                 width="{{ im.width }}"
+                                                 height="{{ im.height }}">
+                                        {% else %}
+                                            <img src="{% static 'images/face.jpg' %}"
+                                                 width="100"
+                                                 height="100"/>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h3>{{ contrato.persona }}
+                                            <small>{{ contrato.persona.obtener_edad }}
+                                                a&ntilde;os
+                                            </small>
+                                        </h3>
+                                        <a class="btn btn-primary"
+                                           href="{% url 'persona-view-id' contrato.persona.id %}">Ver
+                                            <i class="fa fa-arrow-right"></i></a>
+                                    </div>
+                                </div>
+                                <hr>
+                                <section class="page-header">
+                                    <h2>Informaci&oacute;n del Contrato</h2>
+                                </section>
                                 <ul>
+                                    <li>Vendedor: {{ contrato.vendedor }}</li>
                                     <li>Fecha de
                                         Inicio: {{ contrato.inicio|date:"d/m/Y" }}</li>
                                     <li>Fecha de
                                         Vencimiento: {{ contrato.vencimiento|date:"d/m/Y" }}</li>
-                                    <li></li>
+                                    <li>&Uacute;ltima renovaci&oacute;n {{ contrato.renovacion|date:"d/m/Y" }}</li>
+                                    <li>Consultas
+                                        utilizadas: {{ contrato.total_consultas }}</li>
                                 </ul>
                             </article>
                             <article id="beneficiarios" class="tab-pane">
-                                <br />
+                                <br/>
                                 {% for beneficiario in contrato.beneficiarios.all %}
                                     <div class="row">
                                         <div class="col-md-2">
                                             {% if beneficiario.persona.fotografia == None %}
                                                 {% thumbnail beneficiario.persona.fotografia "100x100" crop="center" as im %}
-                                                    <img src="{{ im.url }}" width="{{ im.width }}"
-                                                         height="{{ im.height }}">
+                                                <img src="{{ im.url }}"
+                                                     width="{{ im.width }}"
+                                                     height="{{ im.height }}">
                                             {% else %}
-                                                <img src="{% static 'images/face.jpg' %}" width="100"
+                                                <img src="{% static 'images/face.jpg' %}"
+                                                     width="100"
                                                      height="100"/>
                                             {% endif %}
                                         </div>
                                         <div class="col-md-9">
-                                            <h3>{{ beneficiario.persona }} <small>{{ beneficiario.persona.obtener_edad }} a&ntilde;os</small></h3>
-                                            <a class="btn btn-primary" href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver <i class="fa fa-arrow-right"></i></a>
+                                            <h3>{{ beneficiario.persona }}
+                                                <small>{{ beneficiario.persona.obtener_edad }}
+                                                    a&ntilde;os
+                                                </small>
+                                            </h3>
+                                            <a class="btn btn-primary"
+                                               href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver
+                                                <i class="fa fa-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <hr>

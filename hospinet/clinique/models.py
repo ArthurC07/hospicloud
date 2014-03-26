@@ -21,7 +21,7 @@ from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-from inventory.models import ItemTemplate
+from inventory.models import ItemTemplate, Inventario
 from persona.models import Persona
 
 
@@ -41,6 +41,8 @@ class Consultorio(TimeStampedModel):
     nombre = models.CharField(max_length=50, blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='consultorios')
     secretaria = models.ForeignKey(User, related_name='secretarias')
+    inventario = models.ForeignKey(Inventario, related_name='consultorios',
+                                   blank=True, null=True)
     administradores = models.ManyToManyField(User, blank=True, null=True,
                                              related_name='consultorios_administrados')
 
@@ -205,6 +207,7 @@ class Cargo(TimeStampedModel):
     paciente = models.ForeignKey(Paciente, related_name='cargos')
     tipo = models.ForeignKey(TipoCargo, related_name='cargos')
     item = models.ForeignKey(ItemTemplate, related_name='consultorio_cargos')
+    cantidad = models.IntegerField(default=1)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
@@ -237,3 +240,15 @@ class Examen(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return self.paciente.get_absolute_url()
+
+
+class Espera(TimeStampedModel):
+    consultorio = models.ForeignKey(Consultorio, related_name='espera',
+                                    blank=True, null=True)
+    persona = models.ForeignKey(Persona, related_name='espera')
+    fecha = models.DateField(default=timezone.now)
+    atendido = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+
+        return self.consultorio.get_absolute_url()

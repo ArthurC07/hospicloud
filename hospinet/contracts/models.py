@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
@@ -75,6 +75,7 @@ class Contrato(TimeStampedModel):
     ultimo_pago = models.DateTimeField(default=timezone.now())
     administradores = models.ManyToManyField(User, related_name='contratos',
                                              blank=True, null=True)
+    renovacion = models.DateField(null=True, blank=True)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""
@@ -84,6 +85,23 @@ class Contrato(TimeStampedModel):
     def __unicode__(self):
         return u"Contrato {0} de {1}".format(self.numero,
                                              self.persona.nombre_completo())
+
+    def total_consultas(self):
+        total = 0
+        for paciente in self.persona.pacientes.all():
+            total += paciente.consultas.filter(
+                created__gte=self.renovacion).count()
+            total += paciente.seguimientos.filter(
+                created__gte=self.renovacion).count()
+
+        for beneficiario in self.beneficiarios.all():
+            for paciente in beneficiario.persona.pacientes.all():
+                total += paciente.consultas.filter(
+                    created__gte=self.renovacion).count()
+                total += paciente.seguimientos.filter(
+                    created__gte=self.renovacion).count()
+
+        return total
 
 
 class Beneficiario(TimeStampedModel):
@@ -120,7 +138,6 @@ class TipoEvento(TimeStampedModel):
         return self.nombre
 
     def get_absolute_url(self):
-
         return reverse('contrato-index')
 
 

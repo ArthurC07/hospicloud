@@ -29,11 +29,11 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             ConsultaForm, SeguimientoForm, LecturaSignosForm,
                             DiagnosticoClinicoForm, ConsultorioForm,
                             CitaPersonaForm, CargoForm, OrdenMedicaForm,
-                            NotaEnfermeriaForm)
+                            NotaEnfermeriaForm, ExamenForm, EsperaForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
-                             NotaEnfermeria)
+                             NotaEnfermeria, Examen, Espera)
 from persona.forms import PersonaSearchForm, FisicoForm, AntecedenteForm, \
     AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
     AntecedenteQuirurgicoForm, EstiloVidaForm, PersonaForm
@@ -79,7 +79,9 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         self.object = self.get_object(Consultorio.objects.all())
-        return self.object.pacientes.all()
+        queryset = self.object.espera.filter(fecha__gte=timezone.now().date(),
+                                             atendido=False)
+        return queryset
 
 
 class ConsultorioCreateView(CurrentUserFormMixin, CreateView):
@@ -304,6 +306,16 @@ class CargoCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     model = Cargo
     form_class = CargoForm
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        item = self.object.paciente.consultorio.inventario.buscar_item(
+            self.object.item)
+        item.disminuir(self.object.cantidad)
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class OrdenMedicaCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     model = OrdenMedica
@@ -314,3 +326,18 @@ class NotaEnfermeriaCreateView(PacienteFormMixin, CreateView,
                                CurrentUserFormMixin):
     model = NotaEnfermeria
     form_class = NotaEnfermeriaForm
+
+
+class ExamenCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+    model = Examen
+    form_class = ExamenForm
+
+
+class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin, CreateView,
+                       LoginRequiredMixin):
+    model = Espera
+    form_class = EsperaForm
+
+
+class EsperaListView(ConsultorioMixin, LoginRequiredMixin, ListView):
+    model = Espera

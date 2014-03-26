@@ -20,10 +20,11 @@
                             <th>Recibo</th>
                             <th>Fecha</th>
                             <th>Nombre</th>
-
                             <th>Concepto</th>
                             <th>Cantidad</th>
                             <th>Monto</th>
+                            <th>Descuento</th>
+                            <th>Total</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -32,16 +33,17 @@
                                 <td><a href="{% url 'invoice-view-id' venta.recibo.id %}">{{ venta.recibo.numero }}</a></td>
                                 <td>{{ venta.recibo.created}}</td>
                                 <td>{{ venta.recibo}}</td>
-
                                 <td>{{ venta.item }}</td>
                                 <td>{{ venta.cantidad }}</td>
                                 <td>{{ venta.monto }}</td>
+                                <td>{{ venta.discount }}</td>
+                                <td>{{ venta.total }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th colspan="4">Total:</th>
+                            <th colspan="7">Total:</th>
                             <th>{{ total }}</th>
                         </tr>
                         </tfoot>

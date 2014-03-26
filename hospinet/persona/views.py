@@ -28,10 +28,11 @@ from django.db.models.query_utils import Q
 from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
                            AntecedenteForm, AntecedenteFamiliarForm,
                            AntecedenteObstetricoForm,
-                           AntecedenteQuirurgicoForm, PersonaSearchForm)
+                           AntecedenteQuirurgicoForm, PersonaSearchForm,
+                           EmpleadorForm, EmpleoForm)
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
                             AntecedenteFamiliar, AntecedenteObstetrico,
-                            AntecedenteQuirurgico)
+                            AntecedenteQuirurgico, Empleo, Empleador)
 from users.mixins import LoginRequiredMixin
 
 
@@ -202,3 +203,13 @@ class PersonaFormMixin(FormMixin, PersonaMixin):
         initial = initial.copy()
         initial['persona'] = self.persona.id
         return initial
+
+
+class EmpleadorCreateView(CreateView, LoginRequiredMixin):
+    model = Empleador
+    form_class = EmpleadorForm
+
+
+class EmpleoCreateView(PersonaFormMixin, CreateView):
+    model = Empleo
+    form_class = EmpleoForm

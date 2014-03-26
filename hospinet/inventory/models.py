@@ -41,10 +41,11 @@ class Inventario(models.Model):
         return u"Inventario de {0}".format(self.lugar)
 
     def buscar_item(self, item_template):
-        qs = self.items.filter(plantilla=item_template)
-        r = list(qs[:1])
-        if r:
-            return r[0]
+        item = self.items.filter(plantilla=item_template).first()
+
+        if item:
+            return item
+
         return Item(inventario=self, plantilla=item_template)
 
     def get_absolute_url(self):
