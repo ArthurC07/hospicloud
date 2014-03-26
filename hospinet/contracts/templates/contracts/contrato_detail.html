@@ -43,8 +43,10 @@
                         <div class="tab-content">
                             <article id="contrato" class="tab-pane active">
                                 <div class="row">
+                                    <section class="page-header">
+                                        <h2>Titular</h2>
+                                    </section>
                                     <div class="col-md-2">
-                                        <br />
                                         {% if contrato.persona.fotografia == None %}
                                             {% thumbnail contrato.persona.fotografia "100x100" crop="center" as im %}
                                             <img src="{{ im.url }}"
@@ -68,14 +70,16 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <h2>{{ contrato.vendedor }}
-                                    <small>Vendedor</small>
-                                </h2>
+                                <section class="page-header">
+                                    <h2>Informaci&oacute;n del Contrato</h2>
+                                </section>
                                 <ul>
+                                    <li>Vendedor: {{ contrato.vendedor }}</li>
                                     <li>Fecha de
                                         Inicio: {{ contrato.inicio|date:"d/m/Y" }}</li>
                                     <li>Fecha de
                                         Vencimiento: {{ contrato.vencimiento|date:"d/m/Y" }}</li>
+                                    <li>&Uacute;ltima renovaci&oacute;n {{ contrato.renovacion|date:"d/m/Y" }}</li>
                                     <li>Consultas
                                         utilizadas: {{ contrato.total_consultas }}</li>
                                 </ul>
