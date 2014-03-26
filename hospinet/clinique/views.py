@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
