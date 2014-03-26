@@ -140,6 +140,9 @@ class CargoForm(PacienteFormMixin):
     class Meta:
         model = Cargo
 
+    item = ModelChoiceField(queryset=ItemTemplate.objects.all(), name="",
+                            model="")
+
     def __init__(self, *args, **kwargs):
         super(CargoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
