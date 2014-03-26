@@ -25,7 +25,7 @@
 <div id="logo">
     <img src="{% static 'images/hospinet.svg' %}" width="40%" height="40%"/>
 </div>
-{% if user.is_staff %}
+{% if user.is_authenticated %}
     <aside id="navigation">
         <a href="{% url 'userena_profile_detail' user.username %}">
             <div class="image-holder flex-container">
@@ -35,6 +35,7 @@
                 <div>{{ user }}</div>
             </div>
         </a>
+        {% if user.is_staff %}
         <a href="{% url 'persona-index' %}" >
             <div class="image-holder flex-container">
                 <img src="{% static 'images/icon4.png' %}">
@@ -107,15 +108,14 @@
                 <div>Contratos</div>
             </div>
         </a>
+            {% endif %}
     </aside>
 {% endif %}
 <div class="container fill">
     <div class="flex-container">
         <div class="row">
             <div class="col-md-4 col-md-offset-8">
-                {% if user.is_authenticated %}
-                    &nbsp;
-                {% else %}
+                {% if not user.is_authenticated %}
                     <form method="post" class="form-signin" action="{% url 'userena_signin' %}">
                         {% if error %}
                         {% endif %}
