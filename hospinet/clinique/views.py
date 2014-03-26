@@ -80,7 +80,7 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     def get_queryset(self):
         self.object = self.get_object(Consultorio.objects.all())
         queryset = self.object.espera.filter(fecha__gte=timezone.now().date(),
-                                             atentido=False)
+                                             atendido=False)
         return queryset
 
 
