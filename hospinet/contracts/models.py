@@ -92,14 +92,14 @@ class Contrato(TimeStampedModel):
             total += paciente.consultas.filter(
                 created__gte=self.renovacion).count()
             total += paciente.seguimientos.filter(
-                created_gte=self.renovacion).count()
+                created__gte=self.renovacion).count()
 
         for beneficiario in self.beneficiarios.all():
             for paciente in beneficiario.persona.pacientes.all():
                 total += paciente.consultas.filter(
                     created__gte=self.renovacion).count()
                 total += paciente.seguimientos.filter(
-                    created_gte=self.renovacion).count()
+                    created__gte=self.renovacion).count()
 
         return total
 
