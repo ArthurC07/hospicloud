@@ -29,6 +29,7 @@ from persona.forms import FieldSetModelFormMixin, FutureDateWidget, \
 from persona.models import Persona
 from persona.views import PersonaFormMixin
 from users.mixins import HiddenUserForm
+from inventory.models import ItemTemplate
 
 
 class PacienteFormMixin(FieldSetModelFormMixin):
