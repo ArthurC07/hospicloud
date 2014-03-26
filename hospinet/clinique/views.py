@@ -306,6 +306,16 @@ class CargoCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     model = Cargo
     form_class = CargoForm
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        item = self.object.paciente.consultorio.inventario.buscar_item(
+            self.object.item)
+        item.disminuir(self.object.cantidad)
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class OrdenMedicaCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     model = OrdenMedica
