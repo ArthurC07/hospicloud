@@ -72,8 +72,9 @@ aside.sidebar ul li a {
     justify-content: center;
     flex-flow: column;
 }
-.flex-container .row {
-    width: 80%;
+.flex-container .row
+{
+    width: 100%;
 }
 .image-holder {
     float: left;

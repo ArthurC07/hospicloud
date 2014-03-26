@@ -6,14 +6,14 @@
 {% block content_title %}<h2>{{ profile.user.username }} {% if profile.user.get_full_name %}({{ profile.user.get_full_name }}){% endif %}</h2>{% endblock %}
 
 {% block content %}
-<div class="row translucent">
+<div class="row">
   <div class="col-md-12">
     <section class="page-header">
       <h1>{{ user.get_full_name }} <small>{{ user.username }}</small></h1>
     </section>
   </div>
 </div>
-<div class="row translucent">
+<div class="row">
   <aside class="col-md-3">
     <nav class="sidebar-nav">
     {% block profile_navigation %}
