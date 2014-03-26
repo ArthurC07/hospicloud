@@ -340,11 +340,10 @@ class Empleador(TimeStampedModel):
 
 class Empleo(TimeStampedModel):
     empleador = models.ForeignKey(Empleador, null=True, blank=True,
-                                   related_name='empleos')
+                                  related_name='empleos')
     persona = models.ForeignKey(Persona, related_name='empleos')
     direccion = models.TextField()
     telefono = models.CharField(max_length=200, blank=True)
 
     def get_absolute_url(self):
-
         return self.persona.get_absolute_url()

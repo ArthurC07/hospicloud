@@ -86,16 +86,20 @@ class Contrato(TimeStampedModel):
         return u"Contrato {0} de {1}".format(self.numero,
                                              self.persona.nombre_completo())
 
-    def total_citas(self):
+    def total_consultas(self):
         total = 0
         for paciente in self.persona.pacientes.all():
             total += paciente.consultas.filter(
                 created__gte=self.renovacion).count()
+            total += paciente.seguimientos.filter(
+                created_gte=self.renovacion).count()
 
         for beneficiario in self.beneficiarios.all():
-            for paciente in beneficiario.pacientes.all():
+            for paciente in beneficiario.persona.pacientes.all():
                 total += paciente.consultas.filter(
                     created__gte=self.renovacion).count()
+                total += paciente.seguimientos.filter(
+                    created_gte=self.renovacion).count()
 
         return total
 
