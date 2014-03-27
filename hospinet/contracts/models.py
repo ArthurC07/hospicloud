@@ -141,18 +141,18 @@ class TipoEvento(TimeStampedModel):
 
 
 class LimiteEvento(TimeStampedModel):
-    contrato = models.ForeignKey(Contrato, related_name='limites')
+    """Especifica la cantidad máxima de :class:`Evento` por cada
+    :class:`TipoEvento` que son cubiertos por un :class:`Plan`"""
+    plan = models.ForeignKey(Plan, related_name='limites')
     tipo_evento = models.ForeignKey(TipoEvento, related_name='limites')
     cantidad = models.IntegerField(default=0)
 
     def get_absolute_url(self):
-
         return self.contrato.get_absolute_url()
 
     def __unicode__(self):
-
-        return u"Límite {0} de contrato {1}".format(self.tipo_evento,
-                                                    self.contrato)
+        return u"Límite {0} de plan {1}".format(self.tipo_evento,
+                                                self.plan.nombre)
 
 
 class Evento(TimeStampedModel):
