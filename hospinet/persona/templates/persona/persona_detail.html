@@ -23,6 +23,9 @@
         {% if persona.examenes %}
         <li><a href="#examenes" data-toggle="tab">Im&aacute;genes</a></li>
         {% endif %}
+          {% if persona.contratos %}
+              <li><a href="#contratos" data-toggle="tab">Contratos</a></li>
+          {% endif %}
       </ul>
       <div class="tab-content">
         <article id="paciente" class="tab-pane active">
@@ -57,8 +60,24 @@
         {% include 'snippets/examen_list.html' with examenes=persona.examenes.all %}
       </article>
       {% endif %}
+      {% if persona.contratos %}
+      <article id="contratos">
+          <ul>
+              {% for contrato in persona.contratos.all %}
+                  <li>
+                      <a href="{% url 'contrato' contrato.id %}">{{ contrato }}</a>
+                  </li>
+              {% endfor %}
+              {% for beneficiario in persona.beneficiarios.all %}
+                  <li>
+                      <a href="{% url 'contrato' beneficiario.contrato.id %}">{{ beneficiario.contrato }}</a>
+                  </li>
+              {% endfor %}
+          </ul>
+      </article>
+      {% endif %}
     </div>
    </section>
   </section>
 </div>
-{% endblock %}
+{% endblock content %}
