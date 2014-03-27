@@ -43,7 +43,6 @@ class Plan(TimeStampedModel):
 
     nombre = models.CharField(max_length=255, null=True, blank=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    eventos_maximos = models.IntegerField()
     edad_maxima = models.IntegerField()
     adicionales = models.IntegerField()
     medicamentos = models.DecimalField(max_digits=10, decimal_places=2,
@@ -141,12 +140,29 @@ class TipoEvento(TimeStampedModel):
         return reverse('contrato-index')
 
 
+class LimiteEvento(TimeStampedModel):
+    contrato = models.ForeignKey(Contrato, related_name='limites')
+    tipo_evento = models.ForeignKey(TipoEvento, related_name='limites')
+    cantidad = models.IntegerField(default=0)
+
+    def get_absolute_url(self):
+
+        return self.contrato.get_absolute_url()
+
+    def __unicode__(self):
+
+        return u"Límite {0} de contrato {1}".format(self.tipo_evento,
+                                                    self.contrato)
+
+
 class Evento(TimeStampedModel):
     """Registra el uso de los beneficios del :class:`Evento`"""
     contrato = models.ForeignKey(Contrato, related_name='eventos')
     tipo = models.ForeignKey(TipoEvento, related_name='eventos')
     fecha = models.DateTimeField(default=timezone.now())
     descripcion = models.TextField(blank=True, null=True)
+    adjunto = models.FileField(upload_to='evento/%Y/%m/%d', blank=True,
+                               null=True)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
