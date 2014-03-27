@@ -1,54 +1,98 @@
-{% extends 'userena/base_userena.html' %}
-{% load staticfiles %}{% load i18n %}{% load url from future %}
-{% block title %}{% trans 'Signin' %}{% endblock %}
-{% block content %}
-    <form method="post" class="form-signin">
-        {% if error %}
-        {% endif %}
-        {% csrf_token %}
-        <fieldset>
-            <legend>
-                {% trans 'Signin' %}
-            </legend>
-            {{ form.non_field_errors }}
-            {% for field in form %}
-                {{ field.errors }}
-                {% comment %} Displaying checkboxes differently {% endcomment %}
-                {% if field.name == 'remember_me' %}
-                    <p class="checkbox">
-                        <label for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    {% load staticfiles %}{% load url from future %}{% load tz %}{% load l10n %}{% load i18n %}
+    <title>HospiNet :: {% trans 'Signin' %}}</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/bootstrap-glyphicons.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/login.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/index.css' %}" rel="stylesheet"/>
+    {% block header %}{% endblock %}
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+</head>
+<body>
+{% if user.is_staff %}
+    {% include 'snippets/navbar.html' %}
+{% endif %}
+<div class="container fill">
+    <div class="flex-container">
+        <div class="row">
+            <div class="col-md-12">
+                <form method="post" class="form-signin">
+                    {% if error %}
+                    {% endif %}
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>
+                            {% trans 'Signin' %}
+                        </legend>
+                        {{ form.non_field_errors }}
+                        {% for field in form %}
+                            {{ field.errors }}
+                            {% comment %} Displaying checkboxes differently {% endcomment %}
+                            {% if field.name == 'remember_me' %}
+                                <p class="checkbox">
+                                    <label for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
+                                </p>
+                            {% else %}
+                                <p>
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                </p>
+                            {% endif %}
+                        {% endfor %}
+                    </fieldset>
+                    <input class="btn btn-large btn-success text-center btn-block"
+                           type="submit" value="{% trans 'Signin' %}"/>
+                    <hr/>
+                    <p class="forgot-password text-center">
+                        <a href="{% url 'userena_password_reset' %}"
+                           title="{% trans 'Forgot your password?' %}"> {% trans 'Forgot your password?' %} </a>
                     </p>
-                {% else %}
-                    <p>
-                        {{ field.label_tag }}
-                        {{ field }}
+                    <p class="register text-center">
+                        <a class="btn btn-primary btn-block" href="{% url 'userena_signup' %}">
+                            {% trans 'Signup' %}
+                        </a>
                     </p>
-                {% endif %}
-            {% endfor %}
-        </fieldset>
-        <input class="btn btn-large btn-success text-center btn-block"
-               type="submit" value="{% trans 'Signin' %}"/>
-        <hr/>
-        <p class="forgot-password text-center">
-            <a href="{% url 'userena_password_reset' %}"
-               title="{% trans 'Forgot your password?' %}"> {% trans 'Forgot your password?' %} </a>
-        </p>
-        <p class="register text-center">
-            <a class="btn btn-primary btn-block" href="{% url 'userena_signup' %}">
-                {% trans 'Signup' %}
-            </a>
-        </p>
-        {% if next %}
-            <input type="hidden" name="next" value="{{ next }}"/>
-        {% endif %}
-    </form>
-{% endblock %}
-{% block scripts %}
-    <script type="text/javascript"
-            src="{% static 'js/jquery.placeholder.js' %}"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('input, textarea').placeholder();
-        });
-    </script>
-{% endblock %}
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}"/>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-ui-timepicker.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.pnotify.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.backstretch.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/common.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.placeholder.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input, textarea').placeholder();
+        $.backstretch([
+            "{% static 'images/slide1.jpg' %}",
+            "{% static 'images/slide2.jpg' %}",
+            "{% static 'images/slide3.jpg' %}",
+            "{% static 'images/slide4.jpg' %}",
+            "{% static 'images/slide5.jpg' %}",
+            "{% static 'images/slide6.jpg' %}",
+            "{% static 'images/slide7.jpg' %}"
+        ], {duration: 10000, fade: 'slow'});
+    });
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
