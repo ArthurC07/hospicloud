@@ -155,7 +155,7 @@ class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         self.citas = Cita.objects.filter(consultorio=self.consultorio,
-                                         fecha__gte=timezone.now())
+                                         fecha__gte=timezone.now().date())
 
         return self.citas.all()
 

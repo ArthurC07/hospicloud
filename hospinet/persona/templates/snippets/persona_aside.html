@@ -23,6 +23,12 @@
                 {% endfor %}
             </li>
             <li>
+                {% for consultorio in user.consultorios.all %}
+                    <a href="{% url 'consultorio-espera-agregar' persona.id consultorio.id %}">Agregar
+                        Paciente a Sala de Espera de {{ consultorio }}</a>
+                {% endfor %}
+            </li>
+            <li>
                 <a href="{% url 'contrato-persona-add' persona.id %}">Crear un Contrato</a>
             </li>
         <li>

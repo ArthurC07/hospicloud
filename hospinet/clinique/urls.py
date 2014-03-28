@@ -49,22 +49,22 @@ urlpatterns = patterns('',
                                template_name='clinique/clinique_detail.html'),
                            name='clinique-paciente-resume'),
 
-                       url(r'^paciente/(?P<pk>\d+)/cargos',
+                       url(r'^paciente/(?P<pk>\d+)/cargos$',
                            PacienteDetailView.as_view(
                                template_name='clinique/cargo_list.html'),
                            name='clinique-cargos'),
 
-                       url(r'^paciente/(?P<pk>\d+)/ordenes',
+                       url(r'^paciente/(?P<pk>\d+)/ordenes$',
                            PacienteDetailView.as_view(
                                template_name='clinique/ordenes_list.html'),
                            name='clinique-ordenes'),
 
-                       url(r'^paciente/(?P<pk>\d+)/signos',
+                       url(r'^paciente/(?P<pk>\d+)/signos$',
                            PacienteDetailView.as_view(
                                template_name='clinique/signos_list.html'),
                            name='clinique-signos'),
 
-                       url(r'^paciente/(?P<pk>\d+)/notas',
+                       url(r'^paciente/(?P<pk>\d+)/notas$',
                            PacienteDetailView.as_view(
                                template_name='clinique/nota_list.html'),
                            name='clinique-notas'),
@@ -72,6 +72,10 @@ urlpatterns = patterns('',
                        url(r'^(?P<pk>\d+)$',
                            ConsultorioDetailView.as_view(),
                            name='consultorio'),
+
+                       url(r'^(?P<pk>\d+)/pacientes$',
+                           ConsultorioDetailView.as_view(template_name='clinique/consultorio_pacientes.html'),
+                           name='consultorio-pacientes'),
 
                        url(r'^agregar$',
                            ConsultorioCreateView.as_view(),
@@ -107,7 +111,7 @@ urlpatterns = patterns('',
                            CitaCreateView.as_view(),
                            name='consultorio-cita-agregar'),
 
-                       url(r'^cita/(?P<persona>\d+)/agregar',
+                       url(r'^cita/(?P<persona>\d+)/agregar$',
                            CitaPersonaCreateView.as_view(),
                            name='consultorio-citapersona-agregar'),
 

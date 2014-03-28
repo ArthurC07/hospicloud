@@ -25,9 +25,8 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera)
 from persona.forms import FieldSetModelFormMixin, FutureDateWidget, \
-    DateTimeWidget
+    DateTimeWidget, BasePersonaForm
 from persona.models import Persona
-from persona.views import PersonaFormMixin
 from users.mixins import HiddenUserForm
 from inventory.models import ItemTemplate
 
@@ -178,11 +177,11 @@ class ExamenForm(PacienteFormMixin):
         self.helper.layout = Fieldset(u'Agregar Examen', *self.field_names)
 
 
-class EsperaForm(PersonaFormMixin, ConsultorioFormMixin):
+class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
     class Meta:
         model = Espera
 
     def __init__(self, *args, **kwargs):
-        super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
+        super(EsperaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Persona a la Sala de Espera',
                                       *self.field_names)
