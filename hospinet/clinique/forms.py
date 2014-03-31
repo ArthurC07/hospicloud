@@ -179,6 +179,8 @@ class ExamenForm(PacienteFormMixin):
 class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
     class Meta:
         model = Espera
+    fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
+                                initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(EsperaForm, self).__init__(*args, **kwargs)

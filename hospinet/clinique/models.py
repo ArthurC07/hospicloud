@@ -246,9 +246,15 @@ class Espera(TimeStampedModel):
     consultorio = models.ForeignKey(Consultorio, related_name='espera',
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='espera')
-    fecha = models.DateField(default=timezone.now)
+    fecha = models.DateTimeField(default=timezone.now)
     atendido = models.BooleanField(default=False)
 
     def get_absolute_url(self):
 
         return self.consultorio.get_absolute_url()
+
+    def tiempo(self):
+
+        delta = timezone.now() - self.created
+
+        return delta.seconds
