@@ -248,6 +248,7 @@ class Espera(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='espera')
     fecha = models.DateTimeField(default=timezone.now)
     atendido = models.BooleanField(default=False)
+    ausente = models.BooleanField(default=False)
 
     def get_absolute_url(self):
 

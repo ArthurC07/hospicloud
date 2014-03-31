@@ -33,7 +33,8 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             ConsultaForm, SeguimientoForm, LecturaSignosForm,
                             DiagnosticoClinicoForm, ConsultorioForm,
                             CitaPersonaForm, CargoForm, OrdenMedicaForm,
-                            NotaEnfermeriaForm, ExamenForm, EsperaForm)
+                            NotaEnfermeriaForm, ExamenForm, EsperaForm,
+                            EsperaAusenteForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
@@ -86,13 +87,13 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         queryset = self.object.espera.filter(fecha__gte=self.inicio,
                                              fecha__lte=self.fin)
 
-        context['total'] = sum(e.tiempo for e in queryset.all())
+        context['total'] = sum(e.tiempo() for e in queryset.all())
         return context
 
     def get_queryset(self):
         self.object = self.get_object(Consultorio.objects.all())
         queryset = self.object.espera.filter(fecha__gte=timezone.now().date(),
-                                             atendido=False)
+                                             atendido=False, ausente=False)
         return queryset
 
     def get_fechas(self):
@@ -362,3 +363,8 @@ class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin, CreateView,
 
 class EsperaListView(ConsultorioMixin, LoginRequiredMixin, ListView):
     model = Espera
+
+
+class EsperaAusenteView(UpdateView, LoginRequiredMixin):
+    model = Espera
+    form_class = EsperaAusenteForm

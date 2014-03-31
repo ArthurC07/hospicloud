@@ -186,3 +186,14 @@ class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
         super(EsperaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Persona a la Sala de Espera',
                                       *self.field_names)
+
+
+class EsperaAusenteForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Espera
+        fields = ('ausente',)
+
+    def __init__(self, *args, **kwargs):
+        super(EsperaAusenteForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Marcar Espera como Ausente',
+                                      *self.field_names)
