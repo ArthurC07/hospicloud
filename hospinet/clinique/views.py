@@ -14,10 +14,13 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+import calendar
 from collections import defaultdict
+from datetime import time
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils import timezone
+from django.utils.datetime_safe import date, datetime
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
                                   ListView, UpdateView)
@@ -73,16 +76,33 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     template_name = 'clinique/consultorio_detail.html'
 
     def get_context_data(self, **kwargs):
-        kwargs['consultorio'] = self.object
-        kwargs['buscar'] = PersonaSearchForm()
-        kwargs['buscar'].helper.form_action = 'persona-search'
-        return super(ConsultorioDetailView, self).get_context_data(**kwargs)
+        context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
+
+        context['consultorio'] = self.object
+        context['buscar'] = PersonaSearchForm()
+        context['buscar'].helper.form_action = 'persona-search'
+
+        self.get_fechas()
+        queryset = self.object.espera.filter(fecha__gte=self.inicio,
+                                             fecha__lte=self.fin)
+
+        context['total'] = sum(e.tiempo for e in queryset.all())
+        return context
 
     def get_queryset(self):
         self.object = self.get_object(Consultorio.objects.all())
         queryset = self.object.espera.filter(fecha__gte=timezone.now().date(),
                                              atendido=False)
         return queryset
+
+    def get_fechas(self):
+
+        now = date.today()
+        self.fin = date(now.year, now.month,
+                        calendar.monthrange(now.year, now.month)[1])
+        self.inicio = date(now.year, now.month, 1)
+        self.inicio = datetime.combine(self.inicio, time.min)
+        self.fin = datetime.combine(self.fin, time.max)
 
 
 class ConsultorioCreateView(CurrentUserFormMixin, CreateView):

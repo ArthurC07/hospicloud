@@ -37,7 +37,10 @@
                 </aside>
                 <section class="col-md-9">
                     <section class="page-header">
-                        <h2>Sala de Espera</h2>
+                        <h2>
+                            Sala de Espera
+                            <small>Promedio de Espera Ultimo mes {{ total }}</small>
+                        </h2>
                     </section>
                     {% load staticfiles %}{% load thumbnail %}
                     {% for espera in page_obj %}
