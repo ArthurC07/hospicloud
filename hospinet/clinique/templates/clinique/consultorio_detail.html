@@ -87,32 +87,37 @@
                             </section>
                             {% for cita in citas.all %}
                                 <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <img src="{% static 'images/face.jpg' %}"
-                                             width="100" height="100"/>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img src="{% static 'images/face.jpg' %}"
+                                                 width="100" height="100"/>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h3>{{ cita.persona }}
+                                                <small>{{ cita.persona.obtener_edad }}
+                                                    a&ntilde;os
+                                                </small>
+                                            </h3>
+                                            <p>
+                                                {{ cita.persona.get_sexo_display }}
+                                                Programado para
+                                                el {{ cita.fecha }}
+                                            </p>
+                                            <p>
+                                                <a class="btn btn-success"
+                                                   href="{% url 'consultorio-lectura-agregar' cita.persona.id consultorio.id %}">Agregar
+                                                    Lectura de Signos</a>
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-9">
-                                        <h3>{{ cita.persona }}
-                                            <small>{{ cita.persona.obtener_edad }}
-                                                a&ntilde;os
-                                            </small>
-                                        </h3>
-                                        <p>
-                                            {{ cita.persona.get_sexo_display }}
-                                            Programado para
-                                            el {{ cita.fecha }}
-                                        </p>
-                                    </div>
-                                </div>
                                     <hr>
                                 </div>
                             {% endfor %}
-                            </div>
                         </div>
                     </div>
-                </section>
             </div>
+            </section>
         </div>
+    </div>
     </div>
 {% endblock %}
