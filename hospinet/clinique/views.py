@@ -17,6 +17,7 @@
 import calendar
 from collections import defaultdict
 from datetime import time
+
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils import timezone
@@ -88,8 +89,8 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
                                              fecha__lte=self.fin)
 
         context['total'] = sum(e.tiempo() for e in queryset.all())
-        context['citas'] = self.object.citas.filter(fecha__gte=self.inicio,
-                                                    fecha__lte=self.fin)
+        context['citas'] = Cita.objects.filter(fecha__gte=timezone.now().date(),
+                                               fecha__lte=self.fin)
 
         return context
 
@@ -100,7 +101,6 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         return queryset
 
     def get_fechas(self):
-
         now = date.today()
         self.fin = date(now.year, now.month,
                         calendar.monthrange(now.year, now.month)[1])
@@ -219,7 +219,6 @@ class LecturaSignosCreateView(PersonaFormMixin, ConsultorioMixin,
     form_class = LecturaSignosForm
 
     def get_success_url(self):
-
         paciente = Paciente.objects.filter(persona=self.object.persona,
                                            consultorio=self.consultorio).first()
         if paciente is None:

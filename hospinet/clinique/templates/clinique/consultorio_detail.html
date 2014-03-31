@@ -80,12 +80,12 @@
                         {% load bootstrap_pagination %}
                         {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
                     {% endif %}
-                    <div class="tow">
+                    <div class="row">
                         <div class="col-md-12">
                             <section class="page-header">
                                 <h1>Citas de Hoy</h1>
                             </section>
-                            {% for espera in page_obj %}
+                            {% for cita in citas.all %}
                                 <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-2">
@@ -105,7 +105,8 @@
                                         </p>
                                     </div>
                                 </div>
-                                <hr>
+                                    <hr>
+                                </div>
                             {% endfor %}
                             </div>
                         </div>
