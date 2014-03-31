@@ -1,6 +1,9 @@
 <nav class="sidebar-nav">
     <ul class="nav nav-tabs nav-stacked">
         <li>
+            <a href="{% url 'persona-view-id' paciente.persona.id %}">Ficha Personal</a>
+        </li>
+        <li>
             <a href="{% url 'clinique-paciente' paciente.id %}"><i class="fa fa-list-ol"></i> Resumen de Paciente</a>
         </li>
         <li>
@@ -33,6 +36,11 @@
         </li>
         <li>
             <a href="{% url 'consultorio-citapersona-agregar' paciente.persona.id %}">Crear Cita</a>
+        </li>
+        <li>
+            <a href="{% url 'consultorio-espera-agregar' paciente.persona.id paciente.consultorio.id %}">
+                Agregar Paciente a Sala de Espera de {{ paciente.consultorio }}
+            </a>
         </li>
     </ul>
 </nav>

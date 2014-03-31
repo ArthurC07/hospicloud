@@ -88,6 +88,9 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
                                              fecha__lte=self.fin)
 
         context['total'] = sum(e.tiempo() for e in queryset.all())
+        context['citas'] = self.object.citas.filter(fecha__gte=self.inicio,
+                                                    fecha__lte=self.fin)
+
         return context
 
     def get_queryset(self):

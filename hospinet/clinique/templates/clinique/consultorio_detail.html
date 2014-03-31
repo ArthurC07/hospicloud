@@ -36,40 +36,80 @@
                     </section>
                 </aside>
                 <section class="col-md-9">
-                    <section class="page-header">
-                        <h2>
-                            Sala de Espera
-                            <small>Promedio de Espera Ultimo mes {{ total }}</small>
-                        </h2>
-                    </section>
-                    {% load staticfiles %}{% load thumbnail %}
-                    {% for espera in page_obj %}
+                    <div class="row">
                         <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <img src="{% static 'images/face.jpg' %}" width="100" height="100"/>
+                            <section class="page-header">
+                                <h2>
+                                    Sala de Espera
+                                    <small>Promedio de Espera Ultimo
+                                        mes {{ total }}</small>
+                                </h2>
+                            </section>
+                            {% load staticfiles %}{% load thumbnail %}
+                            {% for espera in page_obj %}
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img src="{% static 'images/face.jpg' %}"
+                                                 width="100" height="100"/>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h3>{{ espera.persona }}
+                                                <small>{{ espera.persona.obtener_edad }}
+                                                    a&ntilde;os
+                                                </small>
+                                            </h3>
+                                            <p>
+                                                {{ espera.persona.get_sexo_display }}
+                                                Programado para
+                                                el {{ espera.fecha }}
+                                                Tiempo en
+                                                espera: {{ espera.tiempo }}
+                                            </p>
+                                            <a class="btn btn-success"
+                                               href="{% url 'clinique-espera-ausente' espera.id %}">No
+                                                se Present&oacute;</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-9">
-                                    <h3>{{ espera.persona }}
-                                        <small>{{ espera.persona.obtener_edad }}
-                                            a&ntilde;os
-                                        </small>
-                                    </h3>
-                                    <p>
-                                        {{ espera.persona.get_sexo_display }}
-                                        Programado para el {{ espera.fecha }}
-                                        Tiempo en espera: {{ espera.tiempo }}
-                                    </p>
-                                    <a class="btn btn-success" href="{% url 'clinique-espera-ausente' espera.id %}">No se Present&oacute;</a>
-                                </div>
-                            </div>
-                            <hr>
+                                <hr>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    </div>
                     {% if is_paginated %}
                         {% load bootstrap_pagination %}
                         {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
                     {% endif %}
+                    <div class="tow">
+                        <div class="col-md-12">
+                            <section class="page-header">
+                                <h1>Citas de Hoy</h1>
+                            </section>
+                            {% for espera in page_obj %}
+                                <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <img src="{% static 'images/face.jpg' %}"
+                                             width="100" height="100"/>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h3>{{ cita.persona }}
+                                            <small>{{ cita.persona.obtener_edad }}
+                                                a&ntilde;os
+                                            </small>
+                                        </h3>
+                                        <p>
+                                            {{ cita.persona.get_sexo_display }}
+                                            Programado para
+                                            el {{ cita.fecha }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr>
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
                 </section>
             </div>
         </div>
