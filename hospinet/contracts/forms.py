@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
@@ -22,7 +22,7 @@ from django.utils import timezone
 from select2.fields import ModelChoiceField
 
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
-                              Vendedor,  Beneficiario)
+                              Vendedor, Beneficiario, LimiteEvento)
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
                            FutureDateWidget)
@@ -155,3 +155,29 @@ class BeneficiarioPersonaForm(FieldSetModelFormMixin):
         super(BeneficiarioPersonaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Registro de Beneficiario',
                                       *self.field_names)
+
+
+class PlanFormMixin(FieldSetModelFormMixin):
+
+    plan = forms.ModelChoiceField(label="", queryset=Plan.objects.all(),
+                                  widget=forms.HiddenInput(),
+                                  required=False)
+
+
+class LimiteEventoForm(PlanFormMixin):
+    class Meta:
+        model = LimiteEvento
+
+    def __init__(self, *args, **kwargs):
+        super(LimiteEventoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Limite de Evento',
+                                      *self.field_names)
+
+
+class PlanChoiceForm(FieldSetFormMixin):
+    plan = forms.ModelChoiceField(queryset=Plan.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(PlanChoiceForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Buscar Plan', *self.field_names)
+        self.helper.add_input(Submit('submit', u'Buscar'))

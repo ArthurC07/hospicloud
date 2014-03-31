@@ -25,15 +25,16 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
-                                  TemplateView, UpdateView, FormView)
+                                  TemplateView, UpdateView, FormView, View)
 from guardian.decorators import permission_required
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
                              ContratoSearchForm, PersonaForm, TipoEventoForm,
-                             BeneficiarioForm, BeneficiarioPersonaForm)
+                             BeneficiarioForm, BeneficiarioPersonaForm,
+                             LimiteEventoForm, PlanChoiceForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
-                              TipoEvento, Beneficiario)
+                              TipoEvento, Beneficiario, LimiteEvento)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona
@@ -56,6 +57,10 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['vendedor-search'] = VendedorChoiceForm(
             prefix='vendedor-search')
         context['vendedor-search'].helper.form_action = 'vendedor-search'
+
+        context['plan-search'] = PlanChoiceForm(prefix='plan-search')
+        context['plan-search'].helper.form_action = 'plan-search'
+
         context['contrato-periodo'] = PeriodoForm(prefix='contrato-periodo')
         context['contrato-periodo'].helper.layout = Fieldset(
             "Contratos de un Periodo",
@@ -90,6 +95,42 @@ class PlanDetailView(DetailView, LoginRequiredMixin):
 class PlanListView(ListView, LoginRequiredMixin):
     model = Plan
     context_object_name = 'planes'
+
+
+class PlanMixin(View):
+    def dispatch(self, *args, **kwargs):
+        self.plan = get_object_or_404(Plan, pk=kwargs['plan'])
+        return super(PlanMixin, self).dispatch(*args, **kwargs)
+
+
+class PlanFormMixin(PlanMixin, LoginRequiredMixin):
+    def get_context_data(self, **kwargs):
+        context = super(PlanFormMixin, self).get_context_data(**kwargs)
+        context['plan'] = self.plan
+        return context
+
+    def get_initial(self):
+        initial = super(PlanFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['plan'] = self.plan.id
+        return initial
+
+
+class PlanSearchView(FormView, LoginRequiredMixin):
+    form_class = PlanChoiceForm
+    prefix = 'plan-search'
+
+    def form_valid(self, form):
+        self.plan = form.cleaned_data['plan']
+        return super(PlanSearchView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.plan.get_absolute_url()
+
+
+class LimiteEventoCreateView(PlanFormMixin, CreateView):
+    model = LimiteEvento
+    form_class = LimiteEventoForm
 
 
 class ContratoFormMixin(CreateView, LoginRequiredMixin):

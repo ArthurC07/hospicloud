@@ -25,7 +25,9 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              ContratoSearchView, ContratoPersonaCreateView,
                              TipoEventoCreateView,
                              BeneficiarioPersonaCreateView,
-                             BeneficiarioCreateView, ContratoPersonaSearchView)
+                             BeneficiarioCreateView, ContratoPersonaSearchView,
+                             PlanDetailView, LimiteEventoCreateView,
+                             PlanSearchView)
 
 
 urlpatterns = patterns('',
@@ -37,6 +39,18 @@ urlpatterns = patterns('',
                        url(r'^contrato/(?P<pk>\d+)$',
                            ContratoDetailView.as_view(),
                            name='contrato'),
+
+                       url(r'^plan/(?P<pk>\d+)$',
+                           PlanDetailView.as_view(),
+                           name='contracts-plan'),
+
+                       url(r'^plan/buscar$',
+                           PlanSearchView.as_view(),
+                           name='plan-search'),
+
+                       url(r'^(?P<plan>\d+)/limite/agregar$',
+                           LimiteEventoCreateView.as_view(),
+                           name='contracts-limite-add'),
 
                        url(r'^(?P<persona>\d+)/contrato/agregar$',
                            ContratoCreateView.as_view(),

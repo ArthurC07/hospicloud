@@ -24,8 +24,7 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera)
-from persona.forms import FieldSetModelFormMixin, FutureDateWidget, \
-    DateTimeWidget, BasePersonaForm
+from persona.forms import FieldSetModelFormMixin, DateTimeWidget, BasePersonaForm
 from persona.models import Persona
 from users.mixins import HiddenUserForm
 from inventory.models import ItemTemplate
@@ -51,7 +50,7 @@ class PacienteForm(FieldSetModelFormMixin):
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
     consultorio = ModelChoiceField(queryset=Consultorio.objects.all(),
-                                   name="", model="",)
+                                   name="", model="", )
 
 
 class ConsultaForm(PacienteFormMixin):
@@ -80,7 +79,7 @@ class CitaForm(FieldSetModelFormMixin):
     persona = ModelChoiceField(queryset=Persona.objects.all(), name="",
                                model="")
     fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
-                            initial=timezone.now)
+                                initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(CitaForm, self).__init__(*args, **kwargs)

@@ -148,11 +148,12 @@ class LimiteEvento(TimeStampedModel):
     cantidad = models.IntegerField(default=0)
 
     def get_absolute_url(self):
-        return self.contrato.get_absolute_url()
+        return self.plan.get_absolute_url()
 
     def __unicode__(self):
-        return u"Límite {0} de plan {1}".format(self.tipo_evento,
-                                                self.plan.nombre)
+        return u"Límite {0} de {1} en plan {2}".format(self.tipo_evento,
+                                                       self.cantidad,
+                                                       self.plan.nombre)
 
 
 class Evento(TimeStampedModel):
