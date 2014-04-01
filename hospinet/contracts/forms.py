@@ -179,5 +179,5 @@ class PlanChoiceForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PlanChoiceForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Buscar Plan', *self.field_names)
+        self.helper.layout = Fieldset(u'Buscar Vendedor', *self.field_names)
         self.helper.add_input(Submit('submit', u'Buscar'))
