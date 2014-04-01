@@ -20,6 +20,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
+from inventory.models import ItemTemplate
 
 from persona.models import Persona
 
@@ -117,12 +118,23 @@ class Beneficiario(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
 
+class TipoPago(TimeStampedModel):
+    item = models.ForeignKey(ItemTemplate, related_name='tipos_pago')
+
+    def __unicode__(self):
+
+        return self.item.descripcion
+
+
 class Pago(TimeStampedModel):
     """Registra los montos y las fechas en las que se efectuaron los pagos
     de un :class:`Contrato`"""
     contrato = models.ForeignKey(Contrato, related_name='pagos')
+    tipo_de_pago = models.ForeignKey(TipoPago, related_name='pagos', null=True)
     fecha = models.DateTimeField(default=timezone.now())
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    descripcion = models.TextField(null=True, blank=True)
+    facturar = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Pago`"""

@@ -121,6 +121,8 @@
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Monto</th>
+                                        <th>Tipo de Pago</th>
+                                        <th>Descripci&oacute;n</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -128,6 +130,8 @@
                                         <tr>
                                             <td>{{ pago.fecha }}</td>
                                             <td>{{ pago.monto }}</td>
+                                            <td>{{ pago.tipo_de_pago }}</td>
+                                            <td>{{ pago.descripcion }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
