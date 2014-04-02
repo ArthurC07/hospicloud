@@ -87,6 +87,8 @@ class Contrato(TimeStampedModel):
                                              self.persona.nombre_completo())
 
     def total_consultas(self):
+        """"Obtiene el total de :class:`Consulta` que los usuarios del contrato
+        han efectuado"""
         total = 0
         for paciente in self.persona.pacientes.all():
             total += paciente.consultas.filter(
@@ -102,6 +104,27 @@ class Contrato(TimeStampedModel):
                     created__gte=self.renovacion).count()
 
         return total
+
+    def dias_mora(self):
+        """Dias extra que pasaron desde el ultimo pago"""
+        ahora = timezone.now().date()
+        pago = self.ultimo_pago.date()
+        delta = ahora - pago
+        dias = delta.days
+        if dias < 0:
+            dias = 0
+
+        return dias
+
+    def mora(self):
+        """Obtiene la cantidad moentaria debida en este :class:`Contrato`"""
+        dias = self.dias_mora()
+        mora = 0
+        while dias > 30:
+            mora += 1
+            dias -= 30
+        print(mora)
+        return mora * self.plan.precio
 
 
 class Beneficiario(TimeStampedModel):

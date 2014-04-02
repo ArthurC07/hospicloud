@@ -74,14 +74,25 @@
                                     <h2>Informaci&oacute;n del Contrato</h2>
                                 </section>
                                 <ul>
+                                    <li>
+                                        D&iacute;as en Mora: {{ contrato.dias_mora }}
+                                    </li>
+                                    <li>
+                                        Monto en Mora: {{ contrato.mora }}
+                                    </li>
                                     <li>Vendedor: {{ contrato.vendedor }}</li>
                                     <li>Fecha de
                                         Inicio: {{ contrato.inicio|date:"d/m/Y" }}</li>
                                     <li>Fecha de
                                         Vencimiento: {{ contrato.vencimiento|date:"d/m/Y" }}</li>
-                                    <li>&Uacute;ltima renovaci&oacute;n {{ contrato.renovacion|date:"d/m/Y" }}</li>
-                                    <li>Consultas
-                                        utilizadas: {{ contrato.total_consultas }}</li>
+                                    <li>
+                                        &Uacute;ltima renovaci&oacute;n {{ contrato.renovacion|date:"d/m/Y" }}
+                                    </li>
+                                    <li>
+                                        &Uacute;ltimo Pago {{ contrato.ultimo_pago|date:"d/m/Y" }}
+                                    </li>
+                                    <li>Consultas utilizadas: {{ contrato.total_consultas }}
+                                    </li>
                                 </ul>
                             </article>
                             <article id="beneficiarios" class="tab-pane">
