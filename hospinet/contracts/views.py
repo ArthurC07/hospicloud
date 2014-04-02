@@ -230,7 +230,7 @@ class ContratoUpdateView(UpdateView, LoginRequiredMixin):
 
 class ContratoListView(ListView, LoginRequiredMixin):
     model = Contrato
-    context_object_name = 'contrato'
+    context_object_name = 'contratos'
 
 
 class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
