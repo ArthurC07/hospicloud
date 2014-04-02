@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
@@ -23,6 +23,7 @@ from django.db.models import Q
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
@@ -225,6 +226,15 @@ class ContratoUpdateView(UpdateView, LoginRequiredMixin):
     model = Contrato
     form_class = ContratoForm
     context_object_name = 'contrato'
+
+
+class ContratoListView(ListView, LoginRequiredMixin):
+    model = Contrato
+    context_object_name = 'contrato'
+
+    def get_queryset(self):
+        return Contrato.objects.filter(
+            vencimiento__gte=timezone.now().date).all()
 
 
 class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
