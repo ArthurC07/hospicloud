@@ -34,7 +34,8 @@ from inventory.views import (IndexView, ItemTemplateCreateView,
                              HistorialCreateView,
                              HistorialDetailView, ProveedorDetailView,
                              ProveedorListView,
-                             ProveedorCreateView, ProveedorUpdateView)
+                             ProveedorCreateView, ProveedorUpdateView,
+                             ItemInventarioListView)
 
 
 urlpatterns = patterns('',
@@ -78,6 +79,10 @@ urlpatterns = patterns('',
                        url(r'^(?P<inventario>\d+)/item/agregar$',
                            ItemCreateView.as_view(),
                            name='item-create'),
+
+                       url(r'^(?P<inventario>\d+)/item/list$',
+                           ItemInventarioListView.as_view(),
+                           name='inventario-item-list'),
 
                        url(r'^(?P<inventario>\d+)/requisicion/agregar$',
                            RequisicionCreateView.as_view(),

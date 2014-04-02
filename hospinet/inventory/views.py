@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import permission_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
-                                  DeleteView)
+                                  DeleteView, View)
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.base import TemplateView
 from django.shortcuts import get_object_or_404
@@ -113,6 +113,16 @@ class InventarioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         return self.object.items.all()
 
 
+class InventarioMixin(View):
+    def dispatch(self, *args, **kwargs):
+        self.inventario = get_object_or_404(Inventario, pk=kwargs['inventario'])
+        return super(InventarioMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs['inventario'] = self.inventario
+        return super(InventarioMixin, self).get_context_data(**kwargs)
+
+
 class InventarioCreateView(CreateView, LoginRequiredMixin):
     model = Inventario
     form_class = InventarioForm
@@ -122,6 +132,16 @@ class ItemListView(ListView, LoginRequiredMixin):
     model = Item
     context_object_name = 'items'
     paginate_by = 10
+
+
+class ItemInventarioListView(InventarioMixin, ListView, LoginRequiredMixin):
+    model = Item
+    context_object_name = 'items'
+    paginate_by = 10
+
+    def get_queryset(self):
+
+        return Item.objects.filter(inventario=self.inventario).all()
 
 
 class ItemCreateView(InventarioFormMixin, LoginRequiredMixin):
