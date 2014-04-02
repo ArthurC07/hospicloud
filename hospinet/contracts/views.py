@@ -232,6 +232,10 @@ class ContratoListView(ListView, LoginRequiredMixin):
     model = Contrato
     context_object_name = 'contratos'
 
+    def get_queryset(self):
+        return Contrato.objects.filter(
+            vencimiento__gte=timezone.now().date).all()
+
 
 class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
     """Muestra los contratos de un periodo"""
