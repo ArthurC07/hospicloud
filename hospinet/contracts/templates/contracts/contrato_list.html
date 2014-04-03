@@ -16,6 +16,7 @@
               <th>N&uacute;mero</th>
               <th>Titular</th>
               <th>Plan</th>
+              <th>Vendedor</th>
               <th>D&iacute;as en Mora</th>
               <th>Mora</th>
           </tr>
@@ -26,6 +27,7 @@
                   <td><a class="btn btn-default" href="{% url 'contrato' contrato.id %}">{{ contrato.numero }}</a></td>
                   <td>{{ contrato.persona }}</td>
                   <td>{{ contrato.plan }}</td>
+                  <td>{{ contrato.vendedor }}</td>
                   <td>{{ contrato.dias_mora }}</td>
                   <td>{{ contrato.mora }}</td>
               </tr>
