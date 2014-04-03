@@ -17,6 +17,8 @@
               <th>Titular</th>
               <th>Plan</th>
               <th>Vendedor</th>
+              <th>Inicio</th>
+              <th>Vencimiento</th>
               <th>D&iacute;as en Mora</th>
               <th>Mora</th>
           </tr>
@@ -28,6 +30,8 @@
                   <td>{{ contrato.persona }}</td>
                   <td>{{ contrato.plan }}</td>
                   <td>{{ contrato.vendedor }}</td>
+                  <td>{{ contrato.inicio|date:"d/m/Y" }}</td>
+                  <td>{{ contrato.vencimiento|date:"d/m/Y" }}</td>
                   <td>{{ contrato.dias_mora }}</td>
                   <td>{{ contrato.mora }}</td>
               </tr>
