@@ -429,26 +429,22 @@ class BeneficiarioDeleteView(DeleteView, LoginRequiredMixin):
         return self.contrato.get_absolute_url()
 
 
-class ContratoPersonaSearchView(FormView, LoginRequiredMixin):
-    """Obtiene el primer :class:`Contrato` con el número especificado en el
-    formulario"""
-    form_class = PersonaSearchForm
-    prefix = 'contrato-persona-search'
+class ContratoPersonaSearchView(ListView, LoginRequiredMixin):
+    context_object_name = 'contratos'
+    model = Contrato
+    template_name = 'contracts/contrato_list.html'
 
-    def form_valid(self, form):
+    def get_queryset(self):
+        form = PersonaSearchForm(self.request.GET,
+                                 prefix='contrato-persona-search')
+        form.is_valid()
+
         query = form.cleaned_data['query']
-        queryset = Persona.objects.filter(
+
+        queryset = Contrato.objects.filter(
             Q(persona__nombre__icontains=query) |
             Q(persona__apellido__icontains=query) |
             Q(persona__identificacion__icontains=query)
         )
 
-        self.contrato = queryset.first()
-
-        if self.contrato is None:
-            raise Http404
-
-        return super(ContratoPersonaSearchView, self).form_valid(form)
-
-    def get_success_url(self):
-        return self.contrato.get_absolute_url()
+        return queryset.all()
