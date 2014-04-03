@@ -30,7 +30,7 @@
           <tbody>
           {% for contrato in contratos %}
               <tr>
-                  <td><a class="btn btn-default" href="{% url 'contrato' contrato.id %}">{{ contrato.numero }}</a></td>
+                  <td><a class="btn btn-success" href="{% url 'contrato' contrato.id %}">{{ contrato.numero }}</a></td>
                   <td>{{ contrato.persona }}</td>
                   <td>{{ contrato.plan }}</td>
                   <td>{{ contrato.vendedor }}</td>
