@@ -15,13 +15,18 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+import operator
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
-from inventory.models import ItemTemplate
 
+from clinique.models import Consulta, Seguimiento, Cita
+
+from inventory.models import ItemTemplate
 from persona.models import Persona
 
 
@@ -89,20 +94,46 @@ class Contrato(TimeStampedModel):
     def total_consultas(self):
         """"Obtiene el total de :class:`Consulta` que los usuarios del contrato
         han efectuado"""
-        total = 0
-        for paciente in self.persona.pacientes.all():
-            total += paciente.consultas.filter(
-                created__gte=self.renovacion).count()
-            total += paciente.seguimientos.filter(
-                created__gte=self.renovacion).count()
+        consultas = Consulta.objects.filter(
+            paciente__persona=self.persona,
+            created__gte=self.renovacion).count()
+        seguimientos = Seguimiento.objects.filter(
+            paciente__persona=self.persona,
+            created__gte=self.renovacion).count()
+        total = seguimientos + consultas
+        predicates = []
 
         for beneficiario in self.beneficiarios.all():
-            for paciente in beneficiario.persona.pacientes.all():
-                total += paciente.consultas.filter(
-                    created__gte=self.renovacion).count()
-                total += paciente.seguimientos.filter(
-                    created__gte=self.renovacion).count()
+            predicates.append(Q(paciente__persona=beneficiario.persona))
 
+        seguimientos = Seguimiento.objects.filter(
+            created__gte=self.renovacion).filter(reduce(operator.or_,
+                                                        predicates)).count()
+        consultas = Consulta.objects.filter(
+            created__gte=self.renovacion).filter(reduce(operator.or_,
+                                                        predicates)).count()
+        total += seguimientos + consultas
+
+        return total
+
+    def total_citas(self):
+        """Obtiene el total de :class:`Cita`s de un periodo"""
+        total = self.persona.citas.count()
+        predicates = []
+
+        for beneficiario in self.beneficiarios.all():
+            predicates.append(Q(paciente__persona=beneficiario.persona))
+
+        total += Cita.objects.filter(created__gte=self.renovacion).filter(
+            reduce(operator.or_, predicates)).count()
+
+        return total
+
+    def total_hospitalizaciones(self):
+        total = self.persona.admisiones.filter(ingresado__isnull=False).count()
+        total += sum(
+            b.persona.admisiones.filter(ingresado__isnull=False).count()
+            for b in self.beneficiarios.all())
         return total
 
     def dias_mora(self):
@@ -145,7 +176,6 @@ class TipoPago(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, related_name='tipos_pago')
 
     def __unicode__(self):
-
         return self.item.descripcion
 
 

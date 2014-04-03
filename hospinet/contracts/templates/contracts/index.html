@@ -33,6 +33,34 @@
         </aside>
         <section class="col-md-9">
             <div class="row">
+                <div class="col-md-12">
+                    <section class="page-header">
+                        <h2>Estad&iacute;sticas</h2>
+                    </section>
+                    <ul>
+                        <li>
+                            Mejor vendedor del mes: {{ seller }}
+                        </li>
+                        <li>
+                            Mora del Mes: {{ mora }}
+                        </li>
+                        <li>
+                            Citas del Mes: {{ citas }}
+                        </li>
+                        <li>
+                            Nuevos Contratos del Mes: {{ contratos }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <section class="page-header">
+                        <h2>Consultar</h2>
+                    </section>
+                </div>
+            </div>
+            <div class="row">
                 <section class="col-md-4">
                     {% crispy contrato-search %}
                 </section>

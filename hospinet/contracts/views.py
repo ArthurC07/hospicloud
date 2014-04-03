@@ -15,19 +15,23 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from datetime import datetime, time
+import calendar
+from datetime import datetime, time, date
+import operator
 
 from crispy_forms.layout import Fieldset
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms.models import inlineformset_factory
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
 from guardian.decorators import permission_required
+
+from clinique.models import Cita
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
@@ -52,16 +56,12 @@ class ContratoPermissionMixin(LoginRequiredMixin):
 class IndexView(TemplateView, ContratoPermissionMixin):
     template_name = 'contracts/index.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-
+    def create_forms(self, context):
         context['vendedor-search'] = VendedorChoiceForm(
             prefix='vendedor-search')
         context['vendedor-search'].helper.form_action = 'vendedor-search'
-
         context['plan-search'] = PlanChoiceForm(prefix='plan-search')
         context['plan-search'].helper.form_action = 'plan-search'
-
         context['contrato-periodo'] = PeriodoForm(prefix='contrato-periodo')
         context['contrato-periodo'].helper.layout = Fieldset(
             "Contratos de un Periodo",
@@ -74,6 +74,38 @@ class IndexView(TemplateView, ContratoPermissionMixin):
             prefix='contrato-persona-search')
         context[
             'contrato-persona-search'].helper.form_action = 'contrato-persona-search'
+
+    def get_fechas(self):
+        now = date.today()
+        self.fin = date(now.year, now.month,
+                        calendar.monthrange(now.year, now.month)[1])
+        self.inicio = date(now.year, now.month, 1)
+        self.inicio = datetime.combine(self.inicio, time.min)
+        self.fin = datetime.combine(self.fin, time.max)
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+
+        self.get_fechas()
+        self.create_forms(context)
+        contratos = Contrato.objects.filter(inicio=self.inicio)
+        vendedores = Vendedor.objects.all()
+
+        salesmen = {}
+
+        for vendedor in vendedores:
+            salesmen[vendedor] = contratos.filter(vendedor=vendedor).count()
+
+        context['seller'] = max(salesmen.iteritems(),
+                                key=operator.itemgetter(1))[0]
+
+        context['citas'] = Cita.objects.filter(fecha__gte=self.inicio,
+                                               fecha__lte=self.fin).count()
+
+        context['mora'] = sum(c.mora() for c in Contrato.objects.filter(
+            vencimiento__lte=self.fin).all())
+
+        context['contratos'] = contratos.count()
 
         return context
 
