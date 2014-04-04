@@ -22,7 +22,8 @@ from django.utils import timezone
 from select2.fields import ModelChoiceField
 
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
-                              Vendedor, Beneficiario, LimiteEvento, Meta)
+                              Vendedor, Beneficiario, LimiteEvento, Meta,
+                              Cancelacion)
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
                            FutureDateWidget)
@@ -194,3 +195,16 @@ class MetaForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(MetaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Meta', *self.field_names)
+
+
+class CancelacionForm(ContratoMixin):
+    class Meta:
+        model = Cancelacion
+
+    fecha = forms.DateField(widget=FutureDateWidget(), required=False,
+                            initial=timezone.now().date())
+
+    def __init__(self, *args, **kwargs):
+        super(CancelacionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Cancelar Contrato', *self.field_names)
+

@@ -28,7 +28,7 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              BeneficiarioCreateView, ContratoPersonaSearchView,
                              PlanDetailView, LimiteEventoCreateView,
                              PlanSearchView, ContratoListView, MetaDetailView,
-                             MetaCreateView)
+                             MetaCreateView, CancelacionCreateView)
 
 
 urlpatterns = patterns('',
@@ -131,4 +131,8 @@ urlpatterns = patterns('',
                        url(r'^meta/add$',
                            MetaCreateView.as_view(),
                            name='contracts-meta-add'),
+
+                       url(r'^contrato/(?P<contrato>\d+)/cancelar$',
+                           CancelacionCreateView.as_view(),
+                           name='contrato-cancelar'),
 )

@@ -14,14 +14,22 @@
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
                     <li><a href="{% url 'contrato-pago-add' contrato.id %}">Agregar
-                        Pago</a></li>
+                        Pago</a>
+                    </li>
                     <li><a href="{% url 'contrato-evento-add' contrato.id %}">Agregar
-                        Evento</a></li>
+                        Evento</a>
+                    </li>
                     <li>
                         <a href="{% url 'contrato-beneficiario-add' contrato.id %}">Agregar
-                            Beneficiario</a></li>
-                    <li><a href="{% url 'contrato-edit' contrato.id %}">Editar
-                        Contrato</a></li>
+                            Beneficiario</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-edit' contrato.id %}">Editar
+                        Contrato</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-cancelar' contrato.id %}">Cancelar Contrato</a>
+                    </li>
                 </ul>
             </nav>
         </aside>

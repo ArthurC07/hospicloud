@@ -81,6 +81,7 @@ class Contrato(TimeStampedModel):
     administradores = models.ManyToManyField(User, related_name='contratos',
                                              blank=True, null=True)
     renovacion = models.DateField(null=True, blank=True)
+    cancelado = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""
@@ -249,3 +250,15 @@ class Meta(TimeStampedModel):
         """Obtiene la url relacionada con una :class:`Meta`"""
 
         return reverse('contracts-meta', args=[self.id])
+
+
+class Cancelacion(TimeStampedModel):
+    """Registra las condiciones en las cuales se termina un :class:`Contrato`"""
+    contrato = models.ForeignKey(Contrato, related_name='cancelaciones')
+    fecha = fecha = models.DateField(default=timezone.now())
+    motivo = models.TextField()
+    pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def get_absolute_url(self):
+
+        return self.contrato.get_absolute_url()

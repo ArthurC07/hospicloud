@@ -32,14 +32,15 @@ from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
 from guardian.decorators import permission_required
 
 from clinique.models import Cita
-
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
                              ContratoSearchForm, PersonaForm, TipoEventoForm,
                              BeneficiarioForm, BeneficiarioPersonaForm,
-                             LimiteEventoForm, PlanChoiceForm, MetaForm)
+                             LimiteEventoForm, PlanChoiceForm, MetaForm,
+                             CancelacionForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
-                              TipoEvento, Beneficiario, LimiteEvento, Meta)
+                              TipoEvento, Beneficiario, LimiteEvento, Meta,
+                              Cancelacion)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona
@@ -107,6 +108,8 @@ class IndexView(TemplateView, ContratoPermissionMixin):
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
+        context['cancelaciones '] = Cancelacion.objects.filter(
+            fecha__gte=self.inicio).count()
 
         return context
 
@@ -497,3 +500,17 @@ class MetaUpdateView(UpdateView, LoginRequiredMixin):
 class MetaDetailView(DetailView, LoginRequiredMixin):
     model = Meta
     context_object_name = 'meta'
+
+
+class CancelacionCreateView(ContratoFormMixin, CreateView, LoginRequiredMixin):
+    model = Cancelacion
+    form_class = CancelacionForm
+
+    def form_valid(self, form):
+        """Ademas de registrar la """
+
+        self.object = form.save(commit=False)
+        self.object.contrato.cancelado = True
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
