@@ -42,9 +42,6 @@
                     </section>
                     <ul>
                         <li>
-                            Mejor vendedor del mes: {{ seller }}
-                        </li>
-                        <li>
                             Mora del Mes: {{ mora }}
                         </li>
                         <li>
@@ -66,6 +63,11 @@
                         <li>
                             Contratos: {{ meta.contratos }}
                         </li>
+                        {% for vendedor in vendedores %}
+                        <li>
+                            {{ vendedor }}: {{ vendedor.get_contratos_mes }} contratos
+                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>

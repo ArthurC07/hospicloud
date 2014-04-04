@@ -90,21 +90,13 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         self.get_fechas()
         self.create_forms(context)
         contratos = Contrato.objects.filter(inicio=self.inicio)
-        vendedores = Vendedor.objects.all()
-
-        salesmen = {}
-
-        for vendedor in vendedores:
-            salesmen[vendedor] = contratos.filter(vendedor=vendedor).count()
-
-        context['seller'] = max(salesmen.iteritems(),
-                                key=operator.itemgetter(1))[0]
+        context['vendedores'] = Vendedor.objects.filter(habilitado=True).all()
 
         context['citas'] = Cita.objects.filter(fecha__gte=self.inicio,
                                                fecha__lte=self.fin).count()
 
-        context['mora'] = sum(c.mora() for c in Contrato.objects.filter(
-            vencimiento__lte=self.fin).all())
+        context['mora'] = len([c for c in Contrato.objects.filter(
+            vencimiento__lte=self.fin).all() if c.dias_mora() > 0])
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()

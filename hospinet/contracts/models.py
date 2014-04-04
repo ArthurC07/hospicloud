@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from datetime import date
 import operator
 
 from django.contrib.auth.models import User
@@ -38,10 +39,20 @@ class Vendedor(TimeStampedModel):
     def __unicode__(self):
         return self.usuario.get_full_name()
 
+    def get_contratos_vendidos(self, fecha):
+
+        return self.contratos.filter(inicio__gte=fecha, cancelado=False)
+
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return reverse('contracts-vendedor', args=[self.id])
+
+    def get_contratos_mes(self):
+
+        now = date.today()
+        inicio = date(now.year, now.month, 1)
+        return self.get_contratos_vendidos(inicio).count()
 
 
 class Plan(TimeStampedModel):
