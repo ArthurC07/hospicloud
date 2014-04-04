@@ -17,7 +17,8 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
 from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago,
-                              Beneficiario, Vendedor, LimiteEvento, TipoPago)
+                              Beneficiario, Vendedor, LimiteEvento, TipoPago,
+                              Meta)
 
 admin.site.register(Plan)
 admin.site.register(Contrato)
@@ -28,3 +29,4 @@ admin.site.register(Pago)
 admin.site.register(Vendedor)
 admin.site.register(Beneficiario)
 admin.site.register(TipoPago)
+admin.site.register(Meta)

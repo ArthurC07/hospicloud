@@ -22,7 +22,7 @@ from django.utils import timezone
 from select2.fields import ModelChoiceField
 
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
-                              Vendedor, Beneficiario, LimiteEvento)
+                              Vendedor, Beneficiario, LimiteEvento, Meta)
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
                            FutureDateWidget)
@@ -182,3 +182,15 @@ class PlanChoiceForm(FieldSetFormMixin):
         self.helper.layout = Fieldset(u'Buscar Contrato por Nombre',
                                       *self.field_names)
         self.helper.add_input(Submit('submit', u'Buscar'))
+
+
+class MetaForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Meta
+
+    fecha = forms.DateField(widget=FutureDateWidget(), required=False,
+                            initial=timezone.now().date())
+
+    def __init__(self, *args, **kwargs):
+        super(MetaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Meta', *self.field_names)

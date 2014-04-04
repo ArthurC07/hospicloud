@@ -37,9 +37,9 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
                              ContratoSearchForm, PersonaForm, TipoEventoForm,
                              BeneficiarioForm, BeneficiarioPersonaForm,
-                             LimiteEventoForm, PlanChoiceForm)
+                             LimiteEventoForm, PlanChoiceForm, MetaForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
-                              TipoEvento, Beneficiario, LimiteEvento)
+                              TipoEvento, Beneficiario, LimiteEvento, Meta)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona
@@ -106,6 +106,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
             vencimiento__lte=self.fin).all())
 
         context['contratos'] = contratos.count()
+        context['meta'] = Meta.objects.last()
 
         return context
 
@@ -369,6 +370,7 @@ class VendedorDetailView(DetailView, LoginRequiredMixin):
 
 class VendedorUpdateView(UpdateView, LoginRequiredMixin):
     model = Vendedor
+    form_class = VendedorForm
 
 
 class VendedorSearchView(FormView, LoginRequiredMixin):
@@ -480,3 +482,18 @@ class ContratoPersonaSearchView(ListView, LoginRequiredMixin):
         )
 
         return queryset.all()
+
+
+class MetaCreateView(CreateView, LoginRequiredMixin):
+    model = Meta
+    form_class = MetaForm
+
+
+class MetaUpdateView(UpdateView, LoginRequiredMixin):
+    model = Meta
+    form_class = MetaForm
+
+
+class MetaDetailView(DetailView, LoginRequiredMixin):
+    model = Meta
+    context_object_name = 'meta'

@@ -27,7 +27,8 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              BeneficiarioPersonaCreateView,
                              BeneficiarioCreateView, ContratoPersonaSearchView,
                              PlanDetailView, LimiteEventoCreateView,
-                             PlanSearchView, ContratoListView)
+                             PlanSearchView, ContratoListView, MetaDetailView,
+                             MetaCreateView)
 
 
 urlpatterns = patterns('',
@@ -122,4 +123,12 @@ urlpatterns = patterns('',
                        url(r'^contrato/persona/buscar$',
                            ContratoPersonaSearchView.as_view(),
                            name='contrato-persona-search'),
+
+                       url(r'^meta/(?P<pk>\d+)$',
+                           MetaDetailView.as_view(),
+                           name='contracts-meta'),
+
+                       url(r'^meta/add$',
+                           MetaCreateView.as_view(),
+                           name='contracts-meta-add'),
 )

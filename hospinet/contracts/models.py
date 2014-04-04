@@ -231,7 +231,7 @@ class Evento(TimeStampedModel):
                                null=True)
 
     def get_absolute_url(self):
-        """Obtiene la url relacionada con un :class:`Paciente`"""
+        """Obtiene la url relacionada con un :class:`Evento`"""
 
         return reverse('contrato', args=[self.contrato.id])
 
@@ -239,3 +239,13 @@ class Evento(TimeStampedModel):
         return "Evento {0} de {1} de {2}".format(self.tipo,
                                                  self.contrato.numero,
                                                  self.contrato.persona.nombre_completo())
+
+
+class Meta(TimeStampedModel):
+    fecha = models.DateField(default=timezone.now())
+    contratos = models.IntegerField()
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con una :class:`Meta`"""
+
+        return reverse('contracts-meta', args=[self.id])
