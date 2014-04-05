@@ -56,7 +56,7 @@ class ContratoForm(FieldSetModelFormMixin):
 
     ultimo_pago = forms.DateTimeField(widget=FutureDateWidget(), required=False,
                                       initial=timezone.now)
-    inicio = forms.DateField(widget=DateWidget)
+    inicio = forms.DateField(widget=FutureDateWidget())
 
     def __init__(self, *args, **kwargs):
         super(ContratoForm, self).__init__(*args, **kwargs)
