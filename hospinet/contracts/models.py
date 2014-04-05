@@ -106,6 +106,11 @@ class Contrato(TimeStampedModel):
     def total_consultas(self):
         """"Obtiene el total de :class:`Consulta` que los usuarios del contrato
         han efectuado"""
+        if self.renovacion is None:
+            self.renovacion = date(self.inicio.year + 1, self.inicio.month,
+                                   self.inicio.day)
+            self.save()
+
         consultas = Consulta.objects.filter(
             paciente__persona=self.persona,
             created__gte=self.renovacion).count()
@@ -241,6 +246,7 @@ class Evento(TimeStampedModel):
     descripcion = models.TextField(blank=True, null=True)
     adjunto = models.FileField(upload_to='evento/%Y/%m/%d', blank=True,
                                null=True)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Evento`"""
