@@ -107,8 +107,7 @@ class Contrato(TimeStampedModel):
         """"Obtiene el total de :class:`Consulta` que los usuarios del contrato
         han efectuado"""
         if self.renovacion is None:
-            self.renovacion = date(self.inicio.year + 1, self.inicio.month,
-                                   self.inicio.day)
+            self.renovacion = self.inicio
             self.save()
 
         consultas = Consulta.objects.filter(
