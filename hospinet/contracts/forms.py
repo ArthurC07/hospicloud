@@ -54,7 +54,7 @@ class ContratoForm(FieldSetModelFormMixin):
 
     vencimiento = forms.DateField(widget=FutureDateWidget)
 
-    ultimo_pago = forms.DateTimeField(widget=FutureDateWidget(), required=False,
+    ultimo_pago = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)
     inicio = forms.DateField(widget=FutureDateWidget())
 
