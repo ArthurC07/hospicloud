@@ -341,6 +341,11 @@ class EventoCreateView(ContratoFormMixin):
     form_class = EventoForm
 
 
+class EventoUpdateView(UpdateView, LoginRequiredMixin):
+    model = Evento
+    form_class = EventoForm
+
+
 class EventoDeleteView(DeleteView, LoginRequiredMixin):
     model = Evento
 

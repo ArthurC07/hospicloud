@@ -165,6 +165,7 @@
                                         <th>Tipo</th>
                                         <th>Descripci&oacute;n</th>
                                         <th>Precion</th>
+                                        <th>Acciones</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -175,6 +176,7 @@
                                                 <td>{{ evento.monto }}</td>
                                                 <td>{{ evento.descripcion }}</td>
                                                 <td>{{ evento.precio }}</td>
+                                                <td><a class="btn btn-primary" href="{% url 'contrato-evento-update' evento.id %}">Editar</a></td>
                                             </tr>
                                         {% endfor %}
                                     </tr>
