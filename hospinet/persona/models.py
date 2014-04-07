@@ -283,7 +283,7 @@ class AntecedenteObstetrico(models.Model):
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
 
     persona = models.ForeignKey(Persona, primary_key=True,
-                                related_name='antecedente_quirurgico')
+                                related_name='antecedente_obstetrico')
 
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)
