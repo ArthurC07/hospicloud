@@ -96,7 +96,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
                                                fecha__lte=self.fin).count()
 
         context['mora'] = len([c for c in Contrato.objects.filter(
-            vencimiento__lte=self.fin).all() if c.dias_mora() > 0])
+            vencimiento__lte=self.fin).all() if c.dias_mora() > 30])
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
