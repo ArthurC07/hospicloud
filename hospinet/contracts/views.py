@@ -20,7 +20,7 @@ from datetime import datetime, time, date
 
 from crispy_forms.layout import Fieldset
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -99,6 +99,10 @@ class IndexView(TemplateView, ContratoPermissionMixin):
                    c.dias_mora() > 30]
         context['mora'] = len(morosos)
         context['monto_mora'] = sum(c.mora() for c in morosos)
+        context['ingresos'] = Contrato.objects.filter(
+            vencimiento__lte=self.fin,
+            inicio__lte=self.inicio,
+            cancelado=False).aggregate(Sum('plan__precio'))
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
