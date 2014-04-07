@@ -29,13 +29,20 @@
                 {% endfor %}
             </li>
             <li>
-                <a href="{% url 'contrato-persona-add' persona.id %}">Crear un Contrato</a>
+                <a href="{% url 'contrato-persona-add' persona.id %}">Crear un
+                    Contrato</a>
             </li>
-        <li>
-            <a href="{% url 'persona-beneficiario-add' persona.id %}">Convertir en Beneficiario</a>
-        </li>
             <li>
-                <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">Crear una Cita</a>
+                <a href="{% url 'persona-beneficiario-add' persona.id %}">Convertir
+                    en Beneficiario</a>
+            </li>
+            <li>
+                <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">Crear
+                    una Cita</a>
+            </li>
+            <li>
+                <a href="{% url 'persona-empleo-add' persona.id %}">Agregar
+                    Empleo</a>
             </li>
         </ul>
     </nav>

@@ -235,5 +235,5 @@ class EmpleoForm(BasePersonaForm):
         model = Empleo
 
     def __init__(self, *args, **kwargs):
-        super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)
+        super(EmpleoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Datos de Empleo', *self.field_names)

@@ -18,7 +18,7 @@ from django.contrib import admin
 
 from persona.models import (Persona, EstiloVida, Fisico, Antecedente,
                             AntecedenteQuirurgico, AntecedenteObstetrico,
-                            AntecedenteFamiliar, Empleador, Empleo)
+                            AntecedenteFamiliar, Empleador, Empleo, Sede)
 
 
 admin.site.register(Persona)
@@ -30,3 +30,4 @@ admin.site.register(AntecedenteObstetrico)
 admin.site.register(AntecedenteFamiliar)
 admin.site.register(Empleador)
 admin.site.register(Empleo)
+admin.site.register(Sede)

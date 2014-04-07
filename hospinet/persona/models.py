@@ -304,13 +304,29 @@ class Empleador(TimeStampedModel):
     nombre = models.CharField(max_length=200, blank=True)
     direccion = models.TextField()
 
+    def __unicode__(self):
+
+        return self.nombre
+
+
+class Sede(TimeStampedModel):
+    empleador = models.ForeignKey(Empleador, null=True, blank=True,
+                                  related_name='sedes')
+    lugar = models.CharField(max_length=200, blank=True)
+    direccion = models.TextField()
+
+    def __unicode__(self):
+
+        return u'{0} de {1}'.format(self.lugar, self.empleador.nombre)
+
 
 class Empleo(TimeStampedModel):
     empleador = models.ForeignKey(Empleador, null=True, blank=True,
                                   related_name='empleos')
+    sede = models.ForeignKey(Sede, related_name='empleos', null=True,
+                             blank=True)
     persona = models.ForeignKey(Persona, related_name='empleos')
-    direccion = models.TextField()
-    telefono = models.CharField(max_length=200, blank=True)
+    numero_empleado = models.CharField(max_length=200, blank=True, null=True)
 
     def get_absolute_url(self):
         return self.persona.get_absolute_url()
