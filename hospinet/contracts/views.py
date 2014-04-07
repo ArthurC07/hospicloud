@@ -100,8 +100,6 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['mora'] = len(morosos)
         context['monto_mora'] = sum(c.mora() for c in morosos)
         context['ingresos'] = Contrato.objects.filter(
-            vencimiento__lte=self.fin,
-            inicio__lte=self.inicio,
             cancelado=False).aggregate(Sum('plan__precio'))
 
         context['contratos'] = contratos.count()
