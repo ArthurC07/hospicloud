@@ -165,7 +165,7 @@ class Fisico(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return self.persona.get_absolute_url()
+        return reverse('persona-view-id', args=[self.persona.id])
 
 
 class EstiloVida(models.Model):
@@ -198,7 +198,7 @@ class EstiloVida(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return self.persona.get_absolute_url()
+        return reverse('persona-view-id', args=[self.persona.id])
 
 
 class Antecedente(models.Model):
@@ -224,12 +224,12 @@ class Antecedente(models.Model):
     sinusitis = models.BooleanField(default=False, blank=True)
     hipertrigliceridemia = models.BooleanField(default=False, blank=True)
     colelitiasis = models.BooleanField(default=False, blank=True)
-    migrana = models.BooleanField(default=False, blank=True)
-    obesidad = models.BooleanField(default=False, blank=True)
-    colesterol = models.BooleanField(default=False, blank=True)
-    trigliceridos = models.BooleanField(default=False, blank=True)
-    alcoholismo = models.BooleanField(default=False, blank=True)
-    cancer = models.BooleanField(default=False, blank=True)
+    migrana = models.NullBooleanField(default=False, blank=True)
+    obesidad = models.NullBooleanField(default=False, blank=True)
+    colesterol = models.NullBooleanField(default=False, blank=True)
+    trigliceridos = models.NullBooleanField(default=False, blank=True)
+    alcoholismo = models.NullBooleanField(default=False, blank=True)
+    cancer = models.NullBooleanField(default=False, blank=True)
     alergias = models.CharField(max_length=200, blank=True, null=True)
 
     congenital = models.CharField(max_length=200, blank=True)
@@ -242,7 +242,7 @@ class Antecedente(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return self.persona.get_absolute_url()
+        return reverse('persona-view-id', args=[self.persona.id])
 
 
 class AntecedenteFamiliar(models.Model):
@@ -253,7 +253,7 @@ class AntecedenteFamiliar(models.Model):
     sindrome_coronario_agudo = models.BooleanField(default=False, blank=True)
     hipertension = models.BooleanField(default=False, blank=True)
     tabaquismo = models.BooleanField(default=False, blank=True)
-    epoc = models.BooleanField(default=False, blank=True)
+    epoc = models.NullBooleanField(default=False, blank=True)
     diabetes = models.BooleanField(default=False, blank=True)
     tuberculosis = models.BooleanField(default=False, blank=True)
     asma = models.BooleanField(default=False, blank=True)
@@ -276,7 +276,7 @@ class AntecedenteFamiliar(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return self.persona.get_absolute_url()
+        return reverse('persona-view-id', args=[self.persona.id])
 
 
 class AntecedenteObstetrico(models.Model):
@@ -297,7 +297,7 @@ class AntecedenteObstetrico(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return self.persona.get_absolute_url()
+        return reverse('persona-view-id', args=[self.persona.id])
 
 
 class Empleador(TimeStampedModel):
@@ -327,7 +327,7 @@ class AntecedenteQuirurgico(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return self.persona.get_absolute_url()
+        return reverse('persona-view-id', args=[self.persona.id])
 
 
 def create_persona(sender, instance, created, **kwargs):
