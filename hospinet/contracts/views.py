@@ -17,7 +17,6 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
 from datetime import datetime, time, date
-import operator
 
 from crispy_forms.layout import Fieldset
 from django.core.urlresolvers import reverse
@@ -95,8 +94,11 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['citas'] = Cita.objects.filter(fecha__gte=self.inicio,
                                                fecha__lte=self.fin).count()
 
-        context['mora'] = len([c for c in Contrato.objects.filter(
-            vencimiento__lte=self.fin).all() if c.dias_mora() > 30])
+        morosos = [c for c in
+                   Contrato.objects.filter(vencimiento__lte=self.fin).all() if
+                   c.dias_mora() > 30]
+        context['mora'] = len(morosos)
+        context['monto_mora'] = sum(c.mora() for c in morosos)
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
