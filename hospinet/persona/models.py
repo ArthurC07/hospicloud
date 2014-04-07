@@ -282,7 +282,7 @@ class AntecedenteFamiliar(models.Model):
 class AntecedenteObstetrico(models.Model):
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
 
-    persona = models.ForeignKey(Persona, primary_key=True,
+    persona = models.OneToOneField(Persona, primary_key=True,
                                 related_name='antecedente_obstetrico')
 
     menarca = models.DateField(default=date.today)
