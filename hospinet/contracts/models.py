@@ -64,6 +64,7 @@ class Plan(TimeStampedModel):
     adicionales = models.IntegerField()
     medicamentos = models.DecimalField(max_digits=10, decimal_places=2,
                                        default=0)
+    empresarial = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.nombre
