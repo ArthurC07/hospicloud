@@ -96,17 +96,20 @@ class IndexView(TemplateView, ContratoPermissionMixin):
                                                fecha__lte=self.fin).count()
 
         morosos = [c for c in
-                   Contrato.objects.filter(vencimiento__lte=self.fin).all() if
+                   Contrato.objects.filter(vencimiento__lte=self.fin,
+                                           plan__empresarial=False).all() if
                    c.dias_mora() > 30]
         context['mora'] = len(morosos)
         context['monto_mora'] = sum(c.mora() for c in morosos)
         context['ingresos'] = Contrato.objects.filter(
-            cancelado=False).aggregate(Sum('plan__precio'))
+            cancelado=False,
+            plan__empresarial=False).aggregate(Sum('plan__precio'))
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
         context['cancelaciones '] = Cancelacion.objects.filter(
-            fecha__gte=self.inicio).count()
+            fecha__gte=self.inicio,
+            plan__empresarial=False).count()
 
         return context
 
