@@ -28,7 +28,7 @@ from django_extensions.db.models import TimeStampedModel
 from clinique.models import Consulta, Seguimiento, Cita
 
 from inventory.models import ItemTemplate
-from persona.models import Persona
+from persona.models import Persona, Empleador
 
 
 class Vendedor(TimeStampedModel):
@@ -93,6 +93,8 @@ class Contrato(TimeStampedModel):
                                              blank=True, null=True)
     renovacion = models.DateField(null=True, blank=True)
     cancelado = models.BooleanField(default=False)
+    empresa = models.ForeignKey(Empleador, blank=True, null=True,
+                                related_name='contratos')
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""

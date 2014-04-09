@@ -51,15 +51,26 @@ class PlanForm(FieldSetModelFormMixin):
 class ContratoForm(FieldSetModelFormMixin):
     class Meta:
         model = Contrato
+        exclude = ('cancelado', 'empresa',)
 
     vencimiento = forms.DateField(widget=FutureDateWidget)
-
     ultimo_pago = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)
     inicio = forms.DateField(widget=FutureDateWidget())
 
     def __init__(self, *args, **kwargs):
         super(ContratoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Contrato',
+                                      *self.field_names)
+
+
+class ContratoEmpresarialForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Contrato
+        exclude = ('cancelado', )
+
+    def __init__(self, *args, **kwargs):
+        super(ContratoEmpresarialForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Contrato',
                                       *self.field_names)
 
