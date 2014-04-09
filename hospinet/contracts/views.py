@@ -276,7 +276,7 @@ class ContratoEmpresarialPersonaCreateView(CreateView, LoginRequiredMixin):
         self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
         self.persona_form.helper.form_tag = False
 
-        context = super(ContratoPersonaCreateView, self).get_context_data(
+        context = super(ContratoEmpresarialPersonaCreateView, self).get_context_data(
             **kwargs)
         context['persona_form'] = self.persona_form
         return context

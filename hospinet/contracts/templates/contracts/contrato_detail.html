@@ -5,7 +5,7 @@
     <div class="row">
         <div class="page-header">
             <h1>{{ contrato }}
-                <small>Plan {{ contrato.plan }}</small>
+                <small>Plan {{ contrato.plan }} {{ contrato.empresa }}</small>
             </h1>
         </div>
     </div>
@@ -74,6 +74,9 @@
                                         </h3>
                                         <a class="btn btn-primary"
                                            href="{% url 'persona-view-id' contrato.persona.id %}">Ver
+                                            <i class="fa fa-arrow-right"></i></a>
+                                        <a class="btn btn-success"
+                                           href="{% url 'persona-empleo-add' contrato.persona.id %}">Agregar Empresa
                                             <i class="fa fa-arrow-right"></i></a>
                                     </div>
                                 </div>
