@@ -108,8 +108,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
         context['cancelaciones '] = Cancelacion.objects.filter(
-            fecha__gte=self.inicio,
-            plan__empresarial=False).count()
+            fecha__gte=self.inicio).count()
 
         return context
 
