@@ -45,6 +45,7 @@ from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona
 from persona.views import PersonaFormMixin
+from spital.models import Admision
 from users.mixins import LoginRequiredMixin
 
 
@@ -110,6 +111,8 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['meta'] = Meta.objects.last()
         context['cancelaciones '] = Cancelacion.objects.filter(
             fecha__gte=self.inicio).count()
+        context['hospitalizaciones'] = Admision.objects.filter(
+            ingresado__gte=self.inicio).count()
 
         return context
 

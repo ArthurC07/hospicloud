@@ -63,25 +63,37 @@
                                     <section class="page-header">
                                         <h2>Estad&iacute;sticas</h2>
                                     </section>
-                                    <ul>
-                                        <li>
-                                            Mora del Mes: {{ mora }} contratos,
-                                            valor: {{ monto_mora }}
-                                        </li>
-                                        <li>
-                                            Citas del Mes: {{ citas }}
-                                        </li>
-                                        <li>
-                                            Contratos del Mes: {{ contratos }}
-                                        </li>
-                                        <li>
-                                            Cancelaciones: {{ cancelaciones }}
-                                        </li>
-                                        <li>
-                                            Ingresos proyectados para el mes
-                                            actual: {{ ingresos.plan__precio__sum }}
-                                        </li>
-                                    </ul>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li>
+                                                    Citas del Mes: {{ citas }}
+                                                </li>
+                                                <li>
+                                                    Contratos del Mes: {{ contratos }}
+                                                </li>
+                                                <li>
+                                                    Ingresos proyectados para el mes
+                                                    actual: {{ ingresos.plan__precio__sum }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li>
+                                                    Mora del Mes: {{ mora }} contratos,
+                                                    valor: {{ monto_mora }}
+                                                </li>
+                                                <li>
+                                                    Cancelaciones: {{ cancelaciones }}
+                                                </li>
+                                                <li>
+                                                    Hospitalizaciones: {{ hospitalizaciones }}
+                                                </li>
+                                                <li>Cirugias: {{ cirugias }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <section class="page-header">
