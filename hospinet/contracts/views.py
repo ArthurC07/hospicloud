@@ -326,6 +326,7 @@ class ContratoListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         return Contrato.objects.filter(
+            plan__empresarial=False,
             vencimiento__gte=timezone.now().date).all()
 
 
@@ -342,6 +343,7 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
             self.contratos = Contrato.objects.filter(
                 inicio__gte=self.inicio,
                 inicio__lte=self.fin,
+                plan__empresarial=False
             )
         return super(ContratoPeriodoView, self).dispatch(request, *args,
                                                          **kwargs)
