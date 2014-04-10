@@ -108,7 +108,7 @@
                             </article>
                             <article id="beneficiarios" class="tab-pane">
                                 <br/>
-                                {% for beneficiario in contrato.beneficiarios.all %}
+                                {% for beneficiario in page_obj %}
                                     <div class="row">
                                         <div class="col-md-2">
                                             {% if beneficiario.persona.fotografia == None %}
@@ -135,6 +135,10 @@
                                     </div>
                                     <hr>
                                 {% endfor %}
+                                {% if is_paginated %}
+                                    {% load bootstrap_pagination %}
+                                    {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+                                {% endif %}
                             </article>
                             <article id="pagos" class="tab-pane">
                                 <table class="table table-striped">

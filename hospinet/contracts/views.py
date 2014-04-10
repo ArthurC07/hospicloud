@@ -28,6 +28,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
+from django.views.generic.detail import SingleObjectMixin
 from guardian.decorators import permission_required
 
 from clinique.models import Cita
@@ -309,9 +310,17 @@ class ContratoEmpresarialPersonaCreateView(CreateView, LoginRequiredMixin):
         return reverse('contrato', args=[self.contrato.id])
 
 
-class ContratoDetailView(DetailView, LoginRequiredMixin):
-    model = Contrato
-    context_object_name = 'contrato'
+class ContratoDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+    paginate_by = 10
+    template_name = 'contracts/contrato_detail.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['contrato'] = self.object
+        return super(ContratoDetailView, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        self.object = self.get_object(Contrato.objects.all())
+        return self.object.beneficiarios.all()
 
 
 class ContratoUpdateView(UpdateView, LoginRequiredMixin):
