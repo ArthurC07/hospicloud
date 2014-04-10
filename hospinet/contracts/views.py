@@ -112,7 +112,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['cancelaciones '] = Cancelacion.objects.filter(
             fecha__gte=self.inicio).count()
         context['hospitalizaciones'] = Admision.objects.filter(
-            ingresado__gte=self.inicio).count()
+            ingreso__gte=self.inicio).count()
 
         return context
 
