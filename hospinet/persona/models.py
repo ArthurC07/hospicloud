@@ -76,6 +76,7 @@ class Persona(models.Model):
     fotografia = models.ImageField(upload_to='persona/foto//%Y/%m/%d',
                                    blank=True, null=True)
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
+    duplicado = models.BooleanField(default=False)
 
     @staticmethod
     def validar_identidad(identidad):

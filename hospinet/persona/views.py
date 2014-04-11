@@ -29,7 +29,7 @@ from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
                            AntecedenteForm, AntecedenteFamiliarForm,
                            AntecedenteObstetricoForm,
                            AntecedenteQuirurgicoForm, PersonaSearchForm,
-                           EmpleadorForm, EmpleoForm)
+                           EmpleadorForm, EmpleoForm, PersonaDuplicateForm)
 from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
                             AntecedenteFamiliar, AntecedenteObstetrico,
                             AntecedenteQuirurgico, Empleo, Empleador)
@@ -213,3 +213,8 @@ class EmpleadorCreateView(CreateView, LoginRequiredMixin):
 class EmpleoCreateView(PersonaFormMixin, CreateView):
     model = Empleo
     form_class = EmpleoForm
+
+
+class PersonaDuplicateView(UpdateView, LoginRequiredMixin):
+    model = Persona
+    form_class = PersonaDuplicateForm

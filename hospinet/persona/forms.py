@@ -237,3 +237,13 @@ class EmpleoForm(BasePersonaForm):
     def __init__(self, *args, **kwargs):
         super(EmpleoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Datos de Empleo', *self.field_names)
+
+
+class PersonaDuplicateForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Persona
+        fields = ('duplicado', )
+
+    def __init__(self, *args, **kwargs):
+        super(PersonaDuplicateForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Reportar Persona Duplicada', *self.field_names)
