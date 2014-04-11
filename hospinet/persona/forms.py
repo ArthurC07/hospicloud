@@ -113,6 +113,7 @@ class PersonaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Persona
+        exclude = ('duplicado', )
 
     nacimiento = forms.DateField(widget=DateWidget(), required=False,
                                  initial=timezone.now)
