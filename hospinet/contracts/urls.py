@@ -30,7 +30,8 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              PlanSearchView, ContratoListView, MetaDetailView,
                              MetaCreateView, CancelacionCreateView,
                              EventoUpdateView,
-                             ContratoEmpresarialPersonaCreateView)
+                             ContratoEmpresarialPersonaCreateView,
+                             ContratoEmpresarialListView)
 
 
 urlpatterns = patterns('',
@@ -73,6 +74,11 @@ urlpatterns = patterns('',
                            r'^contratos$',
                            ContratoListView.as_view(),
                            name='contrato-list'),
+
+                       url(
+                           r'^contratos/empresariales$',
+                           ContratoEmpresarialListView.as_view(),
+                           name='contrato-empresarial-list'),
 
                        url(r'^contrato/(?P<pk>\d+)/edit$',
                            ContratoUpdateView.as_view(),

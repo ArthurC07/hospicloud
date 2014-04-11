@@ -271,8 +271,9 @@ class ContratoEmpresarialPersonaCreateView(CreateView, LoginRequiredMixin):
         self.ContratoFormset = inlineformset_factory(Persona, Contrato,
                                                      form=ContratoEmpresarialForm,
                                                      fk_name='persona', extra=1)
-        return super(ContratoEmpresarialPersonaCreateView, self).dispatch(request, *args,
-                                                               **kwargs)
+        return super(ContratoEmpresarialPersonaCreateView, self).dispatch(
+            request, *args,
+            **kwargs)
 
     def get_form(self, form_class):
         formset = self.ContratoFormset(instance=self.persona, prefix='contrato')
@@ -283,7 +284,8 @@ class ContratoEmpresarialPersonaCreateView(CreateView, LoginRequiredMixin):
         self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
         self.persona_form.helper.form_tag = False
 
-        context = super(ContratoEmpresarialPersonaCreateView, self).get_context_data(
+        context = super(ContratoEmpresarialPersonaCreateView,
+                        self).get_context_data(
             **kwargs)
         context['persona_form'] = self.persona_form
         return context
@@ -339,6 +341,16 @@ class ContratoListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         return Contrato.objects.filter(
             plan__empresarial=False,
+            vencimiento__gte=timezone.now().date).all()
+
+
+class ContratoEmpresarialListView(ListView, LoginRequiredMixin):
+    model = Contrato
+    context_object_name = 'contratos'
+
+    def get_queryset(self):
+        return Contrato.objects.filter(
+            plan__empresarial=True,
             vencimiento__gte=timezone.now().date).all()
 
 
