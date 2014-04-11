@@ -37,7 +37,8 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              ContratoSearchForm, PersonaForm, TipoEventoForm,
                              BeneficiarioForm, BeneficiarioPersonaForm,
                              LimiteEventoForm, PlanChoiceForm, MetaForm,
-                             CancelacionForm, ContratoEmpresarialForm)
+                             CancelacionForm, ContratoEmpresarialForm,
+                             EmpleadorChoiceForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
                               Cancelacion)
@@ -76,6 +77,9 @@ class IndexView(TemplateView, ContratoPermissionMixin):
             prefix='contrato-persona-search')
         context[
             'contrato-persona-search'].helper.form_action = 'contrato-persona-search'
+
+        context['empresa-search'] = EmpleadorChoiceForm(prefix='empresa-search')
+        context['empresa-search'].helper.form_action = 'empresa-search'
 
     def get_fechas(self):
         now = date.today()
@@ -166,6 +170,19 @@ class PlanSearchView(FormView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.plan.get_absolute_url()
+
+
+class EmpresaSearchView(FormView, LoginRequiredMixin):
+    form_class = EmpleadorChoiceForm
+    prefix = 'empleador-search'
+    template_name = 'contracts/empresa_form.html'
+
+    def form_valid(self, form):
+        self.empresa = form.cleaned_data['empresa']
+        return super(EmpresaSearchView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.empresa.get_absolute_url()
 
 
 class LimiteEventoCreateView(PlanFormMixin, CreateView):

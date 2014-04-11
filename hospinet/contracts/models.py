@@ -66,6 +66,8 @@ class Plan(TimeStampedModel):
     medicamentos = models.DecimalField(max_digits=10, decimal_places=2,
                                        default=0)
     empresarial = models.BooleanField(default=False)
+    empresa = models.ForeignKey(Empleador, null=True, blank=True,
+                                related_name='planes')
 
     def __unicode__(self):
         return self.nombre

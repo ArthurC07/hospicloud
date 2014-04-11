@@ -309,6 +309,10 @@ class Empleador(TimeStampedModel):
 
         return self.nombre
 
+    def get_absolute_url(self):
+
+        return reverse('empresa', args=[self.id])
+
 
 class Sede(TimeStampedModel):
     empleador = models.ForeignKey(Empleador, null=True, blank=True,

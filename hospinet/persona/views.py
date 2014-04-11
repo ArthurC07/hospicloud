@@ -210,6 +210,11 @@ class EmpleadorCreateView(CreateView, LoginRequiredMixin):
     form_class = EmpleadorForm
 
 
+class EmpleadorDetailView(DetailView, LoginRequiredMixin):
+    model = Empleador
+    context_object_name = 'empleador'
+
+
 class EmpleoCreateView(PersonaFormMixin, CreateView):
     model = Empleo
     form_class = EmpleoForm

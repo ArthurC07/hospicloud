@@ -27,7 +27,7 @@ from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
                            FutureDateWidget)
-from persona.models import Persona
+from persona.models import Persona, Empleador
 
 
 class PersonaForm(FieldSetModelFormMixinNoButton):
@@ -197,6 +197,16 @@ class PlanChoiceForm(FieldSetFormMixin):
     def __init__(self, *args, **kwargs):
         super(PlanChoiceForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Buscar Contrato por Nombre',
+                                      *self.field_names)
+        self.helper.add_input(Submit('submit', u'Buscar'))
+
+
+class EmpleadorChoiceForm(FieldSetFormMixin):
+    empresa = forms.ModelChoiceField(queryset=Empleador.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(EmpleadorChoiceForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Buscar Contratos Empresariales',
                                       *self.field_names)
         self.helper.add_input(Submit('submit', u'Buscar'))
 
