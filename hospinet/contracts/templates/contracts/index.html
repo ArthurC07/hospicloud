@@ -48,7 +48,10 @@
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#estadisticas" data-toggle="tab">Estad&iacute;sticas</a>
+                            <a href="#estadisticas" data-toggle="tab">Contratos Privados</a>
+                        </li>
+                        <li>
+                            <a href="#privados" data-toggle="tab">Contratos Empresariales</a>
                         </li>
                         <li>
                             <a href="#busqueda" data-toggle="tab">B&uacute;squeda</a>
@@ -111,6 +114,22 @@
                                                 {{ vendedor }}: {{ vendedor.get_contratos_mes }}
                                                 contratos
                                             </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="privados" class="tab-pane">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <section class="page-header">Contratos Empresariales</section>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <ul>
+                                        {% for empresa in empresas %}
+                                            <li><a href="{% url 'empresa' empresa.id %}">{{ empresa }}</a></li>
                                         {% endfor %}
                                     </ul>
                                 </div>
