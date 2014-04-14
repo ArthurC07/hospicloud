@@ -170,6 +170,7 @@
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Tipo</th>
+                                        <th>Monto</th>
                                         <th>Descripci&oacute;n</th>
                                         <th>Precion</th>
                                         <th>Acciones</th>
@@ -180,6 +181,7 @@
                                         {% for evento in contrato.eventos.all %}
                                             <tr>
                                                 <td>{{ evento.fecha }}</td>
+                                                <td>{{ evento.tipo }}</td>
                                                 <td>{{ evento.monto }}</td>
                                                 <td>{{ evento.descripcion }}</td>
                                                 <td>{{ evento.precio }}</td>
