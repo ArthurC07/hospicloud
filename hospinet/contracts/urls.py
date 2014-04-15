@@ -31,7 +31,8 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              MetaCreateView, CancelacionCreateView,
                              EventoUpdateView,
                              ContratoEmpresarialPersonaCreateView,
-                             ContratoEmpresarialListView, EmpresaSearchView)
+                             ContratoEmpresarialListView, EmpresaSearchView,
+                             ContratoBeneficiarioListView)
 
 
 urlpatterns = patterns('',
@@ -73,6 +74,11 @@ urlpatterns = patterns('',
                            r'^contrato/empresarial/agregar$',
                            ContratoEmpresarialPersonaCreateView.as_view(),
                            name='contrato-empresarial-add'),
+
+                       url(
+                           r'^contratos/beneficiarios$',
+                           ContratoBeneficiarioListView.as_view(),
+                           name='contrato-beneficiario-list'),
 
                        url(
                            r'^contratos$',

@@ -363,6 +363,12 @@ class ContratoUpdateView(UpdateView, LoginRequiredMixin):
     context_object_name = 'contrato'
 
 
+class ContratoBeneficiarioListView(ListView, LoginRequiredMixin):
+    model = Contrato
+    context_object_name = 'contratos'
+    template_name = 'contracts/contrato_beneficiarios_list.html'
+
+
 class ContratoListView(ListView, LoginRequiredMixin):
     model = Contrato
     context_object_name = 'contratos'
@@ -370,6 +376,7 @@ class ContratoListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         return Contrato.objects.filter(
             plan__empresarial=False,
+            cancelado=False,
             vencimiento__gte=timezone.now().date).all()
 
 
@@ -380,6 +387,7 @@ class ContratoEmpresarialListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         return Contrato.objects.filter(
             plan__empresarial=True,
+            cancelado=False,
             vencimiento__gte=timezone.now().date).all()
 
 
