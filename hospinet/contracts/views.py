@@ -112,7 +112,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
                 fecha__gte=self.inicio,
                 fecha__lte=self.fin).count()
             for beneficiario in contrato.beneficiarios.all():
-                context['citas'] += beneficiario.citas.filter(
+                context['citas'] += beneficiario.persona.citas.filter(
                     fecha__gte=self.inicio,
                     fecha__lte=self.fin).count()
 
@@ -122,7 +122,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
                 fecha__gte=self.inicio,
                 fecha__lte=self.fin).count()
             for beneficiario in contrato.beneficiarios.all():
-                context['citasp'] += beneficiario.citas.filter(
+                context['citasp'] += beneficiario.persona.citas.filter(
                     fecha__gte=self.inicio,
                     fecha__lte=self.fin).count()
 
