@@ -124,10 +124,9 @@ class ConsultorioMixin(View):
         return super(ConsultorioMixin, self).dispatch(*args, **kwargs)
 
 
-class ConsultorioFormMixin(ConsultorioMixin):
+class ConsultorioFormMixin(ConsultorioMixin, FormMixin):
     def get_initial(self):
         initial = super(ConsultorioFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['consultorio'] = self.consultorio.id
         return initial
 
