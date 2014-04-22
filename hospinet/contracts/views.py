@@ -104,7 +104,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         morosos = [c for c in
                    Contrato.objects.filter(vencimiento__lte=self.fin,
                                            plan__empresarial=False).all() if
-                   c.dias_mora() > 30]
+                   c.dias_mora() > 0]
         context['mora'] = len(morosos)
         context['monto_mora'] = sum(c.mora() for c in morosos)
         context['ingresos'] = Contrato.objects.filter(
@@ -124,7 +124,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         morosos = [c for c in
                    Contrato.objects.filter(vencimiento__lte=self.fin,
                                            plan__empresarial=True).all() if
-                   c.dias_mora() > 30]
+                   c.dias_mora() > 0]
         context['mora_empresa'] = len(morosos)
         context['monto_mora_empresa'] = sum(c.mora() for c in morosos)
         context['cancelaciones_empresa'] = Cancelacion.objects.filter(
