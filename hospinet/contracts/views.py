@@ -31,7 +31,6 @@ from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
 from django.views.generic.detail import SingleObjectMixin
 from guardian.decorators import permission_required
 
-from clinique.models import Cita
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
                              ContratoSearchForm, PersonaForm, TipoEventoForm,
@@ -95,11 +94,37 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         self.get_fechas()
         self.create_forms(context)
         contratos = Contrato.objects.filter(inicio__gte=self.inicio,
-                                            plan__empresarial=False).filter(inicio__lte=self.fin)
+                                            plan__empresarial=False).filter(
+            inicio__lte=self.fin)
         context['vendedores'] = Vendedor.objects.filter(habilitado=True).all()
 
-        context['citas'] = Cita.objects.filter(fecha__gte=self.inicio,
-                                               fecha__lte=self.fin).count()
+        privados = Contrato.objects.filter(inicio__gte=self.inicio,
+                                           plan__empresarial=False,
+                                           cancelado=False).all()
+        empresariales = Contrato.objects.filter(inicio__gte=self.inicio,
+                                                plan__empresarial=True,
+                                                cancelado=False).all()
+
+        # TODO Optimize using a map or a process pool
+        context['citas'] = 0
+        for contrato in privados:
+            context['citas'] += contrato.persona.citas.filter(
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin).count()
+            for beneficiario in contrato.beneficiarios.all():
+                context['citas'] += beneficiario.citas.filter(
+                    fecha__gte=self.inicio,
+                    fecha__lte=self.fin).count()
+
+        context['citasp'] = 0
+        for contrato in empresariales:
+            context['citasp'] += contrato.persona.citas.filter(
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin).count()
+            for beneficiario in contrato.beneficiarios.all():
+                context['citasp'] += beneficiario.citas.filter(
+                    fecha__gte=self.inicio,
+                    fecha__lte=self.fin).count()
 
         morosos = [c for c in
                    Contrato.objects.filter(vencimiento__gte=self.fin,
