@@ -102,7 +102,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
                                                fecha__lte=self.fin).count()
 
         morosos = [c for c in
-                   Contrato.objects.filter(vencimiento__lte=self.fin,
+                   Contrato.objects.filter(vencimiento__gte=self.fin,
                                            plan__empresarial=False).all() if
                    c.dias_mora() > 0]
         context['mora'] = len(morosos)

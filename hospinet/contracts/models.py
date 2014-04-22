@@ -54,7 +54,7 @@ class Vendedor(TimeStampedModel):
 
         now = date.today()
         inicio = date(now.year, now.month, 1)
-        fin = fin = date(now.year, now.month,
+        fin = date(now.year, now.month,
                          calendar.monthrange(now.year, now.month)[1])
         return self.get_contratos_vendidos(inicio, fin).count()
 
@@ -184,7 +184,6 @@ class Contrato(TimeStampedModel):
             mora += 1
             dias -= 30
 
-        print(mora)
         return mora * self.plan.precio
 
 
