@@ -25,7 +25,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import date, datetime
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
-                                  ListView, UpdateView)
+                                  ListView, UpdateView, TemplateView)
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin
@@ -41,6 +41,7 @@ from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera)
+from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm, FisicoForm, AntecedenteForm, \
     AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
     AntecedenteQuirurgicoForm, EstiloVidaForm, PersonaForm
@@ -67,6 +68,9 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
 
     def get_context_data(self, **kwargs):
         context = super(ConsultorioIndexView, self).get_context_data(**kwargs)
+        context['citaperiodoform'] = PeriodoForm(prefix='cita-periodo')
+        context['citaperiodoform'].helper.form_action = 'cita-periodo'
+        context['citaperiodoform'].set_legend(u'Citas por Periodo')
 
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
@@ -124,15 +128,14 @@ class ConsultorioMixin(View):
         return super(ConsultorioMixin, self).dispatch(*args, **kwargs)
 
 
-class ConsultorioFormMixin(ConsultorioMixin, FormMixin):
+class ConsultorioFormMixin(ConsultorioMixin):
     def get_initial(self):
         initial = super(ConsultorioFormMixin, self).get_initial()
         initial['consultorio'] = self.consultorio.id
         return initial
 
 
-class PacienteCreateView(CreateView, PersonaFormMixin, ConsultorioFormMixin,
-                         LoginRequiredMixin):
+class PacienteCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
     """Permite agregar una :class:`Persona` como un :class:`Paciente` de un
     doctor que tiene un :class:`User` en el sistema"""
 
@@ -140,8 +143,7 @@ class PacienteCreateView(CreateView, PersonaFormMixin, ConsultorioFormMixin,
     form_class = PacienteForm
 
 
-class PacientePersonaCreateView(CreateView, ConsultorioFormMixin,
-                                LoginRequiredMixin):
+class PacientePersonaCreateView(CreateView, LoginRequiredMixin, ConsultorioFormMixin):
     model = Paciente
     template_name = 'clinique/paciente_create.html'
 
@@ -228,6 +230,32 @@ class CitaCreateView(CreateView, LoginRequiredMixin):
 class CitaPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
     model = Cita
     form_class = CitaPersonaForm
+
+
+class CitaPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los contratos de un periodo"""
+    template_name = 'clinique/cita_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='cita-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.citas = Cita.objects.filter(
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin
+            )
+        return super(CitaPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CitaPeriodoView, self).get_context_data(**kwargs)
+
+        context['citas'] = self.citas
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
 
 
 class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
