@@ -140,6 +140,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['meta'] = Meta.objects.last()
         context['cancelaciones'] = Cancelacion.objects.filter(
             fecha__gte=self.inicio).count()
+        #TODO Hospitalizaciones y cirugias empresariales
         context['hospitalizaciones'] = Admision.objects.filter(
             ingreso__gte=self.inicio).count()
         context['empresas'] = Empleador.objects.all()
