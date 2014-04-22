@@ -94,8 +94,8 @@ class IndexView(TemplateView, ContratoPermissionMixin):
 
         self.get_fechas()
         self.create_forms(context)
-        contratos = Contrato.objects.filter(inicio=self.inicio,
-                                            plan__empresarial=False)
+        contratos = Contrato.objects.filter(inicio__gte=self.inicio,
+                                            plan__empresarial=False).filter(inicio__lte=self.fin)
         context['vendedores'] = Vendedor.objects.filter(habilitado=True).all()
 
         context['citas'] = Cita.objects.filter(fecha__gte=self.inicio,

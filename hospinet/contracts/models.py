@@ -43,7 +43,7 @@ class Vendedor(TimeStampedModel):
     def get_contratos_vendidos(self, fecha, fin):
 
         return self.contratos.filter(inicio__gte=fecha, cancelado=False,
-                                     plan__empresarial=False).filter(inicio__gte=fin)
+                                     plan__empresarial=False).filter(inicio__lte=fin)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
