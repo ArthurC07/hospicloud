@@ -141,6 +141,10 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['cancelaciones'] = Cancelacion.objects.filter(
             fecha__gte=self.inicio).count()
         #TODO Hospitalizaciones y cirugias empresariales
+        contratos_e = Contrato.objects.filter(inicio__gte=self.inicio,
+                                              plan__empresarial=True).filter(
+            inicio__lte=self.fin)
+        context['contratos_empresariales'] = contratos_e.count()
         context['hospitalizaciones'] = Admision.objects.filter(
             ingreso__gte=self.inicio).count()
         context['empresas'] = Empleador.objects.all()
