@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+import calendar
 from datetime import date
 import operator
 
@@ -39,10 +40,10 @@ class Vendedor(TimeStampedModel):
     def __unicode__(self):
         return self.usuario.get_full_name()
 
-    def get_contratos_vendidos(self, fecha):
+    def get_contratos_vendidos(self, fecha, fin):
 
         return self.contratos.filter(inicio__gte=fecha, cancelado=False,
-                                     plan__empresarial=False)
+                                     plan__empresarial=False).filter(inicio__gte=fin)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
@@ -53,7 +54,9 @@ class Vendedor(TimeStampedModel):
 
         now = date.today()
         inicio = date(now.year, now.month, 1)
-        return self.get_contratos_vendidos(inicio).count()
+        fin = fin = date(now.year, now.month,
+                         calendar.monthrange(now.year, now.month)[1])
+        return self.get_contratos_vendidos(inicio, fin).count()
 
 
 class Plan(TimeStampedModel):
@@ -173,9 +176,14 @@ class Contrato(TimeStampedModel):
         """Obtiene la cantidad moentaria debida en este :class:`Contrato`"""
         dias = self.dias_mora()
         mora = 0
+
+        if dias >= 1:
+            mora = 1
+
         while dias > 30:
             mora += 1
             dias -= 30
+
         print(mora)
         return mora * self.plan.precio
 
