@@ -13,7 +13,7 @@
                     <section>
                         <nav class="sidebar-nav">
                             <ul class="nav nav-stacked nav-tabs">
-                                <li><a href="{% url 'persona-create' %}">Agregar
+                                <li><a href="{% url 'consultorio-persona-agregar' consultorio.id %}">Agregar
                                     Paciente</a></li>
                                 <li>
                                     <a href="{% url 'consultorio-cita-agregar' %}">Crear
@@ -116,6 +116,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                </section>
             </div>
             </section>
         </div>

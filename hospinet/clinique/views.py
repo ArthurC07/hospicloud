@@ -19,6 +19,7 @@ from collections import defaultdict
 from datetime import time
 
 from django.core.urlresolvers import reverse
+from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.utils.datetime_safe import date, datetime
@@ -138,6 +139,61 @@ class PacienteCreateView(CreateView, PersonaFormMixin, ConsultorioFormMixin,
 
     model = Paciente
     form_class = PacienteForm
+
+
+class PacientePersonaCreateView(CreateView, ConsultorioFormMixin,
+                                LoginRequiredMixin):
+    model = Paciente
+    template_name = 'clinique/paciente_create.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        self.persona = Persona()
+
+        self.PacienteFormset = inlineformset_factory(Persona, Paciente,
+                                                     form=PacienteForm,
+                                                     fk_name='persona', extra=1)
+        return super(PacientePersonaCreateView, self).dispatch(request, *args,
+                                                               **kwargs)
+
+    def get_form(self, form_class):
+        formset = self.PacienteFormset(instance=self.persona, prefix='paciente',
+                                       initial=[{'consultorio': self.consultorio.id}])
+        return formset
+
+    def get_context_data(self, **kwargs):
+
+        self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
+        self.persona_form.helper.form_tag = False
+
+        context = super(PacientePersonaCreateView, self).get_context_data(
+            **kwargs)
+        context['persona_form'] = self.persona_form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.persona_form = PersonaForm(request.POST, request.FILES,
+                                        instance=self.persona,
+                                        prefix='persona')
+        self.formset = self.PacienteFormset(request.POST, request.FILES,
+                                            instance=self.persona,
+                                            prefix='paciente')
+
+        if self.persona_form.is_valid() and self.formset.is_valid():
+            self.persona_form.save()
+            instances = self.formset.save()
+            for instance in instances:
+                self.paciente = instance
+                self.paciente.save()
+
+            return self.form_valid(self.formset)
+        else:
+            self.object = None
+            return self.form_invalid(self.formset)
+
+    def get_success_url(self):
+
+        return self.paciente.get_absolute_url()
 
 
 class PacienteDetailView(DetailView, LoginRequiredMixin):
