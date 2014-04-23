@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="row">
+  <section class="col-md-12">
+    <div class="page-header">
+      <h1>Pacientes</h1>
+    </div>
+  </section>
+</div>
+<div class="row">
+  <aside class="col-md-3">
+    <nav class="sidebar-nav">
+    </nav>
+  </aside>
+  <div class="col-md-9 table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Identidad</th>
+                <th>Nombre</th>
+                <th>Edad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paciente in pacientes %}
+            <tr>
+                <td>{{ paciente.identificacion }}</td>
+                <td><a href="{% url 'clinique-paciente' paciente.id %}">{{ paciente }}</a></td>
+                <td>{{ paciente.persona.obtener_edad }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

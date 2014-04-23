@@ -33,7 +33,7 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             CitaPersonaCreateView, OrdenMedicaCreateView,
                             EsperaCreateView, EsperaAusenteView,
                             CitaAusenteView, PacientePersonaCreateView,
-                            CitaPeriodoView)
+                            CitaPeriodoView, PacienteSearchView)
 
 
 urlpatterns = patterns('',
@@ -187,4 +187,8 @@ urlpatterns = patterns('',
                        url(r'^cita/periodo',
                            CitaPeriodoView.as_view(),
                            name='cita-periodo'),
+
+                       url(r'^paciente/search',
+                           PacienteSearchView.as_view(),
+                           name='clinique-paciente-search'),
 )

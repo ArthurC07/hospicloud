@@ -19,6 +19,7 @@ from collections import defaultdict
 from datetime import time
 
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.utils import timezone
@@ -36,15 +37,16 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             DiagnosticoClinicoForm, ConsultorioForm,
                             CitaPersonaForm, CargoForm, OrdenMedicaForm,
                             NotaEnfermeriaForm, ExamenForm, EsperaForm,
-                            EsperaAusenteForm, CitaAusenteForm)
+                            EsperaAusenteForm, CitaAusenteForm,
+                            PacienteSearchForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera)
 from invoice.forms import PeriodoForm
-from persona.forms import PersonaSearchForm, FisicoForm, AntecedenteForm, \
-    AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
-    AntecedenteQuirurgicoForm, EstiloVidaForm, PersonaForm
+from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
+    AntecedenteFamiliarForm, AntecedenteObstetricoForm, EstiloVidaForm, \
+    AntecedenteQuirurgicoForm
 from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
     AntecedenteObstetrico, AntecedenteQuirurgico, EstiloVida, Persona
 from persona.views import PersonaFormMixin
@@ -86,8 +88,8 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
 
         context['consultorio'] = self.object
-        context['buscar'] = PersonaSearchForm()
-        context['buscar'].helper.form_action = 'persona-search'
+        context['buscar'] = PacienteSearchForm(
+            initial={'consultorio': self.object.id})
 
         self.get_fechas()
         queryset = self.object.espera.filter(fecha__gte=self.inicio,
@@ -114,6 +116,32 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         self.inicio = date(now.year, now.month, 1)
         self.inicio = datetime.combine(self.inicio, time.min)
         self.fin = datetime.combine(self.fin, time.max)
+
+
+class PacienteSearchView(ListView, LoginRequiredMixin):
+    context_object_name = 'pacientes'
+    model = Paciente
+    template_name = 'clinique/paciente_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        form = PacienteSearchForm(self.request.GET)
+
+        # if not form.is_valid():
+        # redirect('admision-estadisticas')
+        form.is_valid()
+
+        query = form.cleaned_data['query']
+        consultorio = form.cleaned_data['consultorio']
+
+        queryset = Paciente.objects.filter(
+            Q(persona__nombre__icontains=query) |
+            Q(persona__apellido__icontains=query) |
+            Q(persona__identificacion__icontains=query),
+            consultorio=consultorio,
+        )
+
+        return queryset.all()
 
 
 class ConsultorioCreateView(CurrentUserFormMixin, CreateView):
@@ -143,7 +171,8 @@ class PacienteCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
     form_class = PacienteForm
 
 
-class PacientePersonaCreateView(CreateView, LoginRequiredMixin, ConsultorioFormMixin):
+class PacientePersonaCreateView(CreateView, LoginRequiredMixin,
+                                ConsultorioFormMixin):
     model = Paciente
     template_name = 'clinique/paciente_create.html'
 
@@ -159,7 +188,9 @@ class PacientePersonaCreateView(CreateView, LoginRequiredMixin, ConsultorioFormM
 
     def get_form(self, form_class):
         formset = self.PacienteFormset(instance=self.persona, prefix='paciente',
-                                       initial=[{'consultorio': self.consultorio.id}])
+                                       initial=[{
+                                                    'consultorio':
+                                                        self.consultorio.id}])
         return formset
 
     def get_context_data(self, **kwargs):

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from crispy_forms.layout import Fieldset
+from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
 from select2.fields import ModelChoiceField
@@ -24,7 +24,9 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera)
-from persona.forms import FieldSetModelFormMixin, DateTimeWidget, BasePersonaForm
+from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
+    BasePersonaForm, \
+    FieldSetFormMixin
 from persona.models import Persona
 from users.mixins import HiddenUserForm
 from inventory.models import ItemTemplate
@@ -172,13 +174,14 @@ class ExamenForm(PacienteFormMixin):
         model = Examen
 
     def __init__(self, *args, **kwargs):
-        super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
+        super(ExamenForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Examen', *self.field_names)
 
 
 class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
     class Meta:
         model = Espera
+
     fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                 initial=timezone.now)
 
@@ -208,3 +211,15 @@ class CitaAusenteForm(FieldSetModelFormMixin):
         super(CitaAusenteForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Marcar Cita como Ausente',
                                       *self.field_names)
+
+
+class PacienteSearchForm(FieldSetFormMixin):
+    query = forms.CharField(label=u"Nombre o Identidad")
+    consultorio = forms.ModelChoiceField(queryset=Consultorio.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(PacienteSearchForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', u'Buscar'))
+        self.helper.layout = Fieldset(u'Buscar Paciente', *self.field_names)
+        self.helper.form_method = 'GET'
+        self.helper.form_action = 'clinique-paciente-search'
