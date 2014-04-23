@@ -2,7 +2,8 @@ html, body, .Override.container, #index-aside, #main-content {
     height: 100%;
 }
 #navigation {
-    float: right;
+    position: absolute;
+    right: 0;
     z-index: 1000;
     height: 100%;
     width: 220px;
