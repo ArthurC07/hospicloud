@@ -33,7 +33,9 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             CitaPersonaCreateView, OrdenMedicaCreateView,
                             EsperaCreateView, EsperaAusenteView,
                             CitaAusenteView, PacientePersonaCreateView,
-                            CitaPeriodoView, PacienteSearchView)
+                            CitaPeriodoView, PacienteSearchView,
+                            LecturaSignosUpdateView, DiagnosticoUpdateView,
+                            ExamenUpdateView)
 
 
 urlpatterns = patterns('',
@@ -65,6 +67,18 @@ urlpatterns = patterns('',
                            PacienteDetailView.as_view(
                                template_name='clinique/signos_list.html'),
                            name='clinique-signos'),
+
+                       url(r'^signos/(?P<pk>\d+)/editar$',
+                           LecturaSignosUpdateView.as_view(),
+                           name='clinique-signos-edit'),
+
+                       url(r'^diagnostico/(?P<pk>\d+)/editar$',
+                           DiagnosticoUpdateView.as_view(),
+                           name='clinique-diagnostico-edit'),
+
+                       url(r'^examen/(?P<pk>\d+)/editar$',
+                           ExamenUpdateView.as_view(),
+                           name='clinique-examen-edit'),
 
                        url(r'^paciente/(?P<pk>\d+)/notas$',
                            PacienteDetailView.as_view(
