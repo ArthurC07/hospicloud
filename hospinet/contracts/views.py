@@ -64,11 +64,15 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['vendedor-search'].helper.form_action = 'vendedor-search'
         context['plan-search'] = PlanChoiceForm(prefix='plan-search')
         context['plan-search'].helper.form_action = 'plan-search'
+
         context['contrato-periodo'] = PeriodoForm(prefix='contrato-periodo')
-        context['contrato-periodo'].helper.layout = Fieldset(
-            "Contratos de un Periodo",
-            *context['contrato-periodo'].field_names)
+        context['contrato-periodo'].set_legend('Contratos de un Periodo')
         context['contrato-periodo'].helper.form_action = 'contrato-periodo'
+
+        context['evento-periodo'] = PeriodoForm(prefix='evento-periodo')
+        context['evento-periodo'].set_legend('Eventos de un Periodo')
+        context['evento-periodo'].helper.form_action = 'evento-periodo'
+
         context['contrato-search'] = ContratoSearchForm(
             prefix='contrato-search')
         context['contrato-search'].helper.form_action = 'contrato-search'
@@ -513,6 +517,32 @@ class EventoDeleteView(DeleteView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.contrato.get_absolute_url()
+
+
+class EventoPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los :class:`Evento`s de un periodo"""
+    template_name = 'contracts/periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='evento-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.eventos = Evento.objects.filter(
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin,
+            )
+        return super(EventoPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(EventoPeriodoView, self).get_context_data(**kwargs)
+
+        context['contratos'] = self.contratos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
 
 
 class VendedorCreateView(CreateView, LoginRequiredMixin):
