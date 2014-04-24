@@ -154,7 +154,7 @@
                                 <tr>
                                     <td>{{ diagnostico.created }}</td>
                                     <td>{{ diagnostico.diagnostico }}</td>
-                                    <td><a class="btn btn-success" href="{% url 'clinique-diagnostico-edit' %}"><i class="fa fa-edit"></i> Editar</a> </td>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i class="fa fa-edit"></i> Editar</a> </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -185,7 +185,7 @@
                                     <td>{{ signos_vitales.presion_diastolica }}</td>
                                     <td>{{ signos_vitales.presion_arterial_media }}</td>
                                     <td>{{ signos_vitales.respiracion }}</td>
-                                    <td><a class="btn btn-success" href="{% url 'clinique-signos-edit' %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-signos-edit' signos_vitales.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
