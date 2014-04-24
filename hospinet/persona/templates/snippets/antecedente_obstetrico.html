@@ -10,22 +10,22 @@
   </tr>
   <tr>
     <td class="data-label">Displasia</td>
-    <td class="patient-data">{{ antecedente.displasia }}</td>
+    <td class="patient-data">{{ antecedente.displasia|yesno:"Sí,No" }}</td>
     <td class="data-label">Otros</td>
-    <td class="patient-data">{{ antecedente.dysplasia }}</td>
+    <td class="patient-data">{{ antecedente.otros }}</td>
   </tr>
 </table>
-<table class="table table-striped table-bordered">
+<table class="table table-striped">
   <tr>
-    <td class="data-label">G.</td>
-    <td class="patient-data">{{ antecedente.g }}</td>
-    <td class="data-label">P.</td>
-    <td class="patient-data">{{ antecedente.p }}</td>
+    <td class="data-label">Gestas</td>
+    <td class="patient-data">{{ antecedente.gestas }}</td>
+    <td class="data-label">Partos</td>
+    <td class="patient-data">{{ antecedente.partos }}</td>
   </tr>
   <tr>
-    <td class="data-label">A.</td>
-    <td class="patient-data">{{ antecedente.a }}</td>
-    <td class="data-label">C.</td>
-    <td class="patient-data">{{ antecedente.c }}</td>
+    <td class="data-label">Anticoncepcion</td>
+    <td class="patient-data">{{ antecedente.anticoncepcion }}</td>
+    <td class="data-label">Cesareas</td>
+    <td class="patient-data">{{ antecedente.cesareas }}</td>
   </tr>
 </table>

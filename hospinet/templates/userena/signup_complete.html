@@ -6,8 +6,8 @@
 {% block content_title %}<h2>{% trans 'Signup' %}</h2>{% endblock %}
 
 {% block content %}
-    <div class="form-signin">
-
+    <div class="row">
+        <div class="col-md-12">
         <p>{% trans 'Thank you for signing up with us!' %}</p>
 
         {% if userena_activation_required %}
@@ -16,6 +16,7 @@
         {% else %}
             <p>{% blocktrans %}You can now use the supplied credentials to signin.{% endblocktrans %}</p>
             <a class="btn btn-primary btn-block" href="{% url 'userena_signin' %}">{% trans 'Signin' %}</a>
-            </div>
         {% endif %}
+        </div>
+    </div>
 {% endblock %}

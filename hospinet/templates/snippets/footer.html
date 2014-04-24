@@ -1,0 +1,29 @@
+<footer>
+    <div class="container">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a onclick="if(navigator.userAgent.toLowerCase().indexOf('opera') != -1 &amp;&amp; window.event.preventDefault) window.event.preventDefault();this.newWindow = window.open('{{ online_help }}', 'mibew', 'toolbar=0,scrollbars=0,location=0,status=1,menubar=0,width=640,height=480,resizable=1');this.newWindow.focus();this.newWindow.opener=window;return false;"
+                   href="{{ online_help }}" target="_blank">
+                    Ayuda en L&iacute;nea
+                </a>
+            </li>
+            {% if user.is_staff %}
+            <li>
+                <a onclick="if(navigator.userAgent.toLowerCase().indexOf('opera') != -1 &amp;&amp; window.event.preventDefault) window.event.preventDefault();this.newWindow = window.open('{{ bug_report }}', 'report', 'toolbar=0,scrollbars=0,location=0,status=1,menubar=0,width=640,height=480,resizable=1');this.newWindow.focus();this.newWindow.opener=window;return false;"
+                   href="{{ bug_report }}" target="_blank">
+                    Reportar un Error
+                </a>
+            </li>
+            <li>
+                <a onclick="if(navigator.userAgent.toLowerCase().indexOf('opera') != -1 &amp;&amp; window.event.preventDefault) window.event.preventDefault();this.newWindow = window.open('{{ chat }}', 'mibew', 'toolbar=0,scrollbars=0,location=0,status=1,menubar=0,width=640,height=480,resizable=1');this.newWindow.focus();this.newWindow.opener=window;return false;"
+                   href="{{ chat }}" target="_blank">
+                    Chat Interno
+                </a>
+            </li>
+            {% endif %}
+            <li>
+                <a class="text-muted">Copyright &copy; Know How Honduras</a>
+            </li>
+        </ul>
+    </div>
+</footer>

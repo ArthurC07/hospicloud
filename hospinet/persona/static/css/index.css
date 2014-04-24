@@ -2,7 +2,8 @@ html, body, .Override.container, #index-aside, #main-content {
     height: 100%;
 }
 #navigation {
-    float: right;
+    position: absolute;
+    right: 0;
     z-index: 1000;
     height: 100%;
     width: 220px;
@@ -54,6 +55,8 @@ aside.sidebar ul li a {
 #logo {
     position: absolute;
     left: 100px;
+    top: -5px;
+    z-index: 500;
 }
 .fill {
      min-height: 100%;
@@ -79,5 +82,11 @@ aside.sidebar ul li a {
 .image-holder {
     float: left;
     height: 100%;
+    padding: 5px;
+}
+#help {
+    position: absolute;
+    left: 0;
+    bottom: 0;
     padding: 5px;
 }

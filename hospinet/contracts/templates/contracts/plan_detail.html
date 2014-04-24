@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block title %} Vendedor {{ vendedor }}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>{{ plan }}
+                <small>Plan</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <aside class="col-md-3">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li>
+                        <a href="{% url 'contracts-limite-add' plan.id %}">Agregar L&iacute;mite</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <section class="col-md-9">
+            <section class="tabbable">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#contratos" data-toggle="tab">Contratos</a>
+                    </li>
+                    <li>
+                        <a href="#limites" data-toggle="tab">L&iacute;mites</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <article id="contrato" class="tab-pane active">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul>
+                                    {% for contrato in plan.contratos.all %}
+                                        <li>
+                                            <a href="{% url 'contrato' contrato.id %}">{{ contrato }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                    <article id="limites" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul>
+                                    {% for limite in plan.limites.all %}
+                                        <li>{{ limite }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </section>
+    </div>
+{% endblock %}

@@ -19,25 +19,188 @@
                         <a href="{% url 'contrato-add' %}">Crear Contrato</a>
                     </li>
                     <li>
+                        <a href="{% url 'contrato-empresarial-add' %}">Crear
+                            Contrato Empresarial</a>
+                    </li>
+                    <li>
                         <a href="{% url 'vendedor-add' %}">Agregar Vendedor</a>
                     </li>
                     <li>
                         <a href="{% url 'contrato-tipoevento-add' %}">Agregar
                             Tipo de Evento</a>
                     </li>
+                    <li>
+                        <a href="{% url 'contrato-list' %}">Lista de
+                            Contratos</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-beneficiario-list' %}">Contratos y Beneficiarios</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-empresarial-list' %}">Contratos Empresariales</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contracts-meta-add' %}">Agregar
+                            Meta</a>
+                    </li>
                 </ul>
             </nav>
         </aside>
         <section class="col-md-9">
             <div class="row">
-                <section class="col-md-4">
-                    {% crispy contrato-search %}
-                </section>
-                <section class="col-md-4">
-                    {% crispy contrato-periodo %}
-                </section>
-                <section class="col-md-4">
-                    {% crispy vendedor-search %}
+                <section class="tabbable">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#estadisticas" data-toggle="tab">Contratos Privados</a>
+                        </li>
+                        <li>
+                            <a href="#privados" data-toggle="tab">Contratos Empresariales</a>
+                        </li>
+                        <li>
+                            <a href="#busqueda" data-toggle="tab">B&uacute;squeda</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <article id="estadisticas" class="tab-pane active">
+                            <div class="row">
+                                <section class="col-md-12 page-header">
+                                    <h1>Contratos Privados</h1>
+                                </section>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <section class="page-header">
+                                        <h2>Estad&iacute;sticas</h2>
+                                    </section>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li>
+                                                    Citas del Mes: {{ citas }}
+                                                </li>
+                                                <li>
+                                                    Contratos del Mes: {{ contratos }}
+                                                </li>
+                                                <li>
+                                                    Ingresos proyectados para el mes
+                                                    actual: {{ ingresos.plan__precio__sum }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li>
+                                                    Mora del Mes: {{ mora }} contratos,
+                                                    valor: {{ monto_mora }}
+                                                </li>
+                                                <li>
+                                                    Cancelaciones: {{ cancelaciones }}
+                                                </li>
+                                                <li>
+                                                    Hospitalizaciones: {{ hospitalizaciones }}
+                                                </li>
+                                                <li>Cirugias: {{ cirugias }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <section class="page-header">
+                                        <h2>Meta al {{ meta.fecha }}</h2>
+                                    </section>
+                                    <ul>
+                                        <li>
+                                            Contratos: {{ meta.contratos }}
+                                        </li>
+                                        {% for vendedor in vendedores %}
+                                            <li>
+                                                {{ vendedor }}: {{ vendedor.get_contratos_mes }}
+                                                contratos
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="privados" class="tab-pane">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <section class="page-header">
+                                        <h1>Contratos Empresariales</h1>
+                                    </section>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h2>Empresas</h2>
+                                    <ul>
+                                        {% for empresa in empresas %}
+                                            <li><a href="{% url 'empresa' empresa.id %}">{{ empresa }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h2>Estad&iacute;sticas</h2>
+                                    <ul>
+                                        <li>
+                                            Citas del Mes: {{ citasp }}
+                                        </li>
+                                        <li>
+                                            Contratos del Mes: {{ contratos_empresariales }}
+                                        </li>
+                                        <li>
+                                            Hospitalizaciones: {{ hospitalizaciones }}
+                                        </li>
+                                        <li>Cirugias: {{ cirugias }}</li>
+                                        <li>
+                                            Mora del Mes: {{ mora_empresa }} contratos,
+                                            valor: {{ monto_mora_empresa }}
+                                        </li>
+                                        <li>
+                                            Ingresos proyectados para el mes
+                                            actual: {{ ingresos_empresa.plan__precio__sum }}
+                                        </li>
+                                        <li>
+                                            Cancelaciones: {{ cancelaciones_empresa }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="busqueda" class="tab-pane">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <section class="page-header">
+                                        <h2>Consultar</h2>
+                                    </section>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <section class="col-md-4">
+                                    {% crispy contrato-search %}
+                                </section>
+                                <section class="col-md-4">
+                                    {% crispy contrato-periodo %}
+                                </section>
+                                <section class="col-md-4">
+                                    {% crispy vendedor-search %}
+                                </section>
+                            </div>
+                            <br/>
+
+                            <div class="row">
+                                <section class="col-md-4">
+                                    {% crispy plan-search %}
+                                </section>
+                                <section class="col-md-4">
+                                    {% crispy contrato-persona-search %}
+                                </section>
+                                <section class="col-md-4">
+                                    {% crispy empresa-search %}
+                                </section>
+                            </div>
+                        </article>
+                    </div>
                 </section>
             </div>
         </section>

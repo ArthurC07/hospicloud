@@ -145,6 +145,7 @@ class Cita(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='citas', blank=True,
                                 null=True)
     fecha = models.DateTimeField(blank=True, null=True, default=timezone.now)
+    ausente = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -246,9 +247,16 @@ class Espera(TimeStampedModel):
     consultorio = models.ForeignKey(Consultorio, related_name='espera',
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='espera')
-    fecha = models.DateField(default=timezone.now)
+    fecha = models.DateTimeField(default=timezone.now)
     atendido = models.BooleanField(default=False)
+    ausente = models.BooleanField(default=False)
 
     def get_absolute_url(self):
 
         return self.consultorio.get_absolute_url()
+
+    def tiempo(self):
+
+        delta = timezone.now() - self.created
+
+        return delta.seconds

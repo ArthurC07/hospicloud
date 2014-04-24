@@ -18,9 +18,8 @@
 import calendar
 from datetime import date
 from decimal import Decimal
-from datetime import datetime, time, timedelta
+from datetime import datetime, time
 from collections import defaultdict
-from operator import attrgetter
 
 from django.views.generic.base import TemplateView
 from django.shortcuts import redirect

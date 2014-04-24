@@ -113,6 +113,7 @@ class PersonaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Persona
+        exclude = ('duplicado', )
 
     nacimiento = forms.DateField(widget=DateWidget(), required=False,
                                  initial=timezone.now)
@@ -235,5 +236,15 @@ class EmpleoForm(BasePersonaForm):
         model = Empleo
 
     def __init__(self, *args, **kwargs):
-        super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)
+        super(EmpleoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Datos de Empleo', *self.field_names)
+
+
+class PersonaDuplicateForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Persona
+        fields = ('duplicado', )
+
+    def __init__(self, *args, **kwargs):
+        super(PersonaDuplicateForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Reportar Persona Duplicada', *self.field_names)

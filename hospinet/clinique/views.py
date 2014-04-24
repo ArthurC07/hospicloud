@@ -14,12 +14,19 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+import calendar
 from collections import defaultdict
+from datetime import time
+
 from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.forms.models import inlineformset_factory
+from django.http import HttpResponseRedirect
 from django.utils import timezone
+from django.utils.datetime_safe import date, datetime
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
-                                  ListView, UpdateView)
+                                  ListView, UpdateView, TemplateView)
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin
@@ -29,14 +36,17 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             ConsultaForm, SeguimientoForm, LecturaSignosForm,
                             DiagnosticoClinicoForm, ConsultorioForm,
                             CitaPersonaForm, CargoForm, OrdenMedicaForm,
-                            NotaEnfermeriaForm, ExamenForm, EsperaForm)
+                            NotaEnfermeriaForm, ExamenForm, EsperaForm,
+                            EsperaAusenteForm, CitaAusenteForm,
+                            PacienteSearchForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera)
-from persona.forms import PersonaSearchForm, FisicoForm, AntecedenteForm, \
-    AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
-    AntecedenteQuirurgicoForm, EstiloVidaForm, PersonaForm
+from invoice.forms import PeriodoForm
+from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
+    AntecedenteFamiliarForm, AntecedenteObstetricoForm, EstiloVidaForm, \
+    AntecedenteQuirurgicoForm
 from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
     AntecedenteObstetrico, AntecedenteQuirurgico, EstiloVida, Persona
 from persona.views import PersonaFormMixin
@@ -60,6 +70,9 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
 
     def get_context_data(self, **kwargs):
         context = super(ConsultorioIndexView, self).get_context_data(**kwargs)
+        context['citaperiodoform'] = PeriodoForm(prefix='cita-periodo')
+        context['citaperiodoform'].helper.form_action = 'cita-periodo'
+        context['citaperiodoform'].set_legend(u'Citas por Periodo')
 
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
@@ -72,16 +85,63 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     template_name = 'clinique/consultorio_detail.html'
 
     def get_context_data(self, **kwargs):
-        kwargs['consultorio'] = self.object
-        kwargs['buscar'] = PersonaSearchForm()
-        kwargs['buscar'].helper.form_action = 'persona-search'
-        return super(ConsultorioDetailView, self).get_context_data(**kwargs)
+        context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
+
+        context['consultorio'] = self.object
+        context['buscar'] = PacienteSearchForm(
+            initial={'consultorio': self.object.id})
+
+        self.get_fechas()
+        queryset = self.object.espera.filter(fecha__gte=self.inicio,
+                                             fecha__lte=self.fin)
+
+        context['total'] = sum(e.tiempo() for e in queryset.all())
+        context['citas'] = Cita.objects.filter(consultorio=self.object,
+                                               fecha__gte=timezone.now().date(),
+                                               fecha__lte=self.fin,
+                                               ausente=False)
+
+        return context
 
     def get_queryset(self):
         self.object = self.get_object(Consultorio.objects.all())
         queryset = self.object.espera.filter(fecha__gte=timezone.now().date(),
-                                             atendido=False)
+                                             atendido=False, ausente=False)
         return queryset
+
+    def get_fechas(self):
+        now = date.today()
+        self.fin = date(now.year, now.month,
+                        calendar.monthrange(now.year, now.month)[1])
+        self.inicio = date(now.year, now.month, 1)
+        self.inicio = datetime.combine(self.inicio, time.min)
+        self.fin = datetime.combine(self.fin, time.max)
+
+
+class PacienteSearchView(ListView, LoginRequiredMixin):
+    context_object_name = 'pacientes'
+    model = Paciente
+    template_name = 'clinique/paciente_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        form = PacienteSearchForm(self.request.GET)
+
+        # if not form.is_valid():
+        # redirect('admision-estadisticas')
+        form.is_valid()
+
+        query = form.cleaned_data['query']
+        consultorio = form.cleaned_data['consultorio']
+
+        queryset = Paciente.objects.filter(
+            Q(persona__nombre__icontains=query) |
+            Q(persona__apellido__icontains=query) |
+            Q(persona__identificacion__icontains=query),
+            consultorio=consultorio,
+        )
+
+        return queryset.all()
 
 
 class ConsultorioCreateView(CurrentUserFormMixin, CreateView):
@@ -99,18 +159,73 @@ class ConsultorioMixin(View):
 class ConsultorioFormMixin(ConsultorioMixin):
     def get_initial(self):
         initial = super(ConsultorioFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['consultorio'] = self.consultorio.id
         return initial
 
 
-class PacienteCreateView(CreateView, PersonaFormMixin, ConsultorioFormMixin,
-                         LoginRequiredMixin):
+class PacienteCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
     """Permite agregar una :class:`Persona` como un :class:`Paciente` de un
     doctor que tiene un :class:`User` en el sistema"""
 
     model = Paciente
     form_class = PacienteForm
+
+
+class PacientePersonaCreateView(CreateView, LoginRequiredMixin,
+                                ConsultorioFormMixin):
+    model = Paciente
+    template_name = 'clinique/paciente_create.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        self.persona = Persona()
+
+        self.PacienteFormset = inlineformset_factory(Persona, Paciente,
+                                                     form=PacienteForm,
+                                                     fk_name='persona', extra=1)
+        return super(PacientePersonaCreateView, self).dispatch(request, *args,
+                                                               **kwargs)
+
+    def get_form(self, form_class):
+        formset = self.PacienteFormset(instance=self.persona, prefix='paciente',
+                                       initial=[{
+                                                    'consultorio':
+                                                        self.consultorio.id}])
+        return formset
+
+    def get_context_data(self, **kwargs):
+
+        self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
+        self.persona_form.helper.form_tag = False
+
+        context = super(PacientePersonaCreateView, self).get_context_data(
+            **kwargs)
+        context['persona_form'] = self.persona_form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.persona_form = PersonaForm(request.POST, request.FILES,
+                                        instance=self.persona,
+                                        prefix='persona')
+        self.formset = self.PacienteFormset(request.POST, request.FILES,
+                                            instance=self.persona,
+                                            prefix='paciente')
+
+        if self.persona_form.is_valid() and self.formset.is_valid():
+            self.persona_form.save()
+            instances = self.formset.save()
+            for instance in instances:
+                self.paciente = instance
+                self.paciente.save()
+
+            return self.form_valid(self.formset)
+        else:
+            self.object = None
+            return self.form_invalid(self.formset)
+
+    def get_success_url(self):
+
+        return self.paciente.get_absolute_url()
 
 
 class PacienteDetailView(DetailView, LoginRequiredMixin):
@@ -148,13 +263,40 @@ class CitaPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
     form_class = CitaPersonaForm
 
 
+class CitaPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los contratos de un periodo"""
+    template_name = 'clinique/cita_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='cita-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.citas = Cita.objects.filter(
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin
+            )
+        return super(CitaPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CitaPeriodoView, self).get_context_data(**kwargs)
+
+        context['citas'] = self.citas
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
+
+
 class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
     model = Cita
     context_object_name = 'citas'
 
     def get_queryset(self):
         self.citas = Cita.objects.filter(consultorio=self.consultorio,
-                                         fecha__gte=timezone.now())
+                                         fecha__gte=timezone.now().date(),
+                                         ausente=False)
 
         return self.citas.all()
 
@@ -169,6 +311,11 @@ class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
 
         context['fechas'] = fechas.iteritems()
         return context
+
+
+class CitaAusenteView(UpdateView, LoginRequiredMixin):
+    model = Cita
+    form_class = CitaAusenteForm
 
 
 class EvaluacionCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
@@ -194,7 +341,22 @@ class LecturaSignosCreateView(PersonaFormMixin, ConsultorioMixin,
     form_class = LecturaSignosForm
 
     def get_success_url(self):
+        paciente = Paciente.objects.filter(persona=self.object.persona,
+                                           consultorio=self.consultorio).first()
+        if paciente is None:
+            paciente = Paciente()
+            paciente.persona = self.object.persona
+            paciente.consultorio = self.consultorio
+            paciente.save()
 
+        return paciente.get_absolute_url()
+
+
+class LecturaSignosUpdateView(UpdateView, LoginRequiredMixin):
+    model = LecturaSignos
+    form_class = LecturaSignosForm
+
+    def get_success_url(self):
         paciente = Paciente.objects.filter(persona=self.object.persona,
                                            consultorio=self.consultorio).first()
         if paciente is None:
@@ -207,6 +369,11 @@ class LecturaSignosCreateView(PersonaFormMixin, ConsultorioMixin,
 
 
 class DiagnosticoCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+    model = DiagnosticoClinico
+    form_class = DiagnosticoClinicoForm
+
+
+class DiagnosticoUpdateView(UpdateView, LoginRequiredMixin):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
@@ -322,6 +489,11 @@ class OrdenMedicaCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     form_class = OrdenMedicaForm
 
 
+class OrdenMedicaUpdateView(UpdateView, LoginRequiredMixin):
+    model = OrdenMedica
+    form_class = OrdenMedicaForm
+
+
 class NotaEnfermeriaCreateView(PacienteFormMixin, CreateView,
                                CurrentUserFormMixin):
     model = NotaEnfermeria
@@ -329,6 +501,11 @@ class NotaEnfermeriaCreateView(PacienteFormMixin, CreateView,
 
 
 class ExamenCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+    model = Examen
+    form_class = ExamenForm
+
+
+class ExamenUpdateView(UpdateView, LoginRequiredMixin):
     model = Examen
     form_class = ExamenForm
 
@@ -341,3 +518,8 @@ class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin, CreateView,
 
 class EsperaListView(ConsultorioMixin, LoginRequiredMixin, ListView):
     model = Espera
+
+
+class EsperaAusenteView(UpdateView, LoginRequiredMixin):
+    model = Espera
+    form_class = EsperaAusenteForm

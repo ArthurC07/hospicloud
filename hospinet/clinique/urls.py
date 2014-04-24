@@ -31,7 +31,9 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             CliniqueAntecedenteObstetricoUpdateView,
                             CliniqueAntecedenteQuirurgicoCreateView,
                             CitaPersonaCreateView, OrdenMedicaCreateView,
-                            EsperaCreateView)
+                            EsperaCreateView, EsperaAusenteView,
+                            CitaAusenteView, PacientePersonaCreateView,
+                            CitaPeriodoView, PacienteSearchView)
 
 
 urlpatterns = patterns('',
@@ -49,22 +51,22 @@ urlpatterns = patterns('',
                                template_name='clinique/clinique_detail.html'),
                            name='clinique-paciente-resume'),
 
-                       url(r'^paciente/(?P<pk>\d+)/cargos',
+                       url(r'^paciente/(?P<pk>\d+)/cargos$',
                            PacienteDetailView.as_view(
                                template_name='clinique/cargo_list.html'),
                            name='clinique-cargos'),
 
-                       url(r'^paciente/(?P<pk>\d+)/ordenes',
+                       url(r'^paciente/(?P<pk>\d+)/ordenes$',
                            PacienteDetailView.as_view(
                                template_name='clinique/ordenes_list.html'),
                            name='clinique-ordenes'),
 
-                       url(r'^paciente/(?P<pk>\d+)/signos',
+                       url(r'^paciente/(?P<pk>\d+)/signos$',
                            PacienteDetailView.as_view(
                                template_name='clinique/signos_list.html'),
                            name='clinique-signos'),
 
-                       url(r'^paciente/(?P<pk>\d+)/notas',
+                       url(r'^paciente/(?P<pk>\d+)/notas$',
                            PacienteDetailView.as_view(
                                template_name='clinique/nota_list.html'),
                            name='clinique-notas'),
@@ -73,9 +75,18 @@ urlpatterns = patterns('',
                            ConsultorioDetailView.as_view(),
                            name='consultorio'),
 
+                       url(r'^(?P<pk>\d+)/pacientes$',
+                           ConsultorioDetailView.as_view(template_name='clinique/consultorio_pacientes.html'),
+                           name='consultorio-pacientes'),
+
                        url(r'^agregar$',
                            ConsultorioCreateView.as_view(),
                            name='consultorio-agregar'),
+
+                       url(
+                           r'^consultorio/(?P<consultorio>\d+)/paciente/agregar$',
+                           PacientePersonaCreateView.as_view(),
+                           name='consultorio-persona-agregar'),
 
                        url(
                            r'^(?P<persona>\d+)/(?P<consultorio>\d+)/paciente/agregar$',
@@ -107,13 +118,17 @@ urlpatterns = patterns('',
                            CitaCreateView.as_view(),
                            name='consultorio-cita-agregar'),
 
-                       url(r'^cita/(?P<persona>\d+)/agregar',
+                       url(r'^cita/(?P<persona>\d+)/agregar$',
                            CitaPersonaCreateView.as_view(),
                            name='consultorio-citapersona-agregar'),
 
                        url(r'^cita/(?P<consultorio>\d+)$',
                            CitaListView.as_view(),
                            name='consultorio-cita-list'),
+
+                       url(r'^(?P<pk>\d+)/cita/ausente',
+                           CitaAusenteView.as_view(),
+                           name='clinique-cita-ausente'),
 
                        url(r'^diagnostico/(?P<paciente>\d+)/agregar$',
                            DiagnosticoCreateView.as_view(),
@@ -164,4 +179,16 @@ urlpatterns = patterns('',
                            r'^(?P<persona>\d+)/(?P<consultorio>\d+)/espera/agregar$',
                            EsperaCreateView.as_view(),
                            name='consultorio-espera-agregar'),
+
+                       url(r'^(?P<pk>\d+)/espera/ausente',
+                           EsperaAusenteView.as_view(),
+                           name='clinique-espera-ausente'),
+
+                       url(r'^cita/periodo',
+                           CitaPeriodoView.as_view(),
+                           name='cita-periodo'),
+
+                       url(r'^paciente/search',
+                           PacienteSearchView.as_view(),
+                           name='clinique-paciente-search'),
 )

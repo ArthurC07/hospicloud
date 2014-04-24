@@ -25,7 +25,14 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              ContratoSearchView, ContratoPersonaCreateView,
                              TipoEventoCreateView,
                              BeneficiarioPersonaCreateView,
-                             BeneficiarioCreateView, ContratoPersonaSearchView)
+                             BeneficiarioCreateView, ContratoPersonaSearchView,
+                             PlanDetailView, LimiteEventoCreateView,
+                             PlanSearchView, ContratoListView, MetaDetailView,
+                             MetaCreateView, CancelacionCreateView,
+                             EventoUpdateView,
+                             ContratoEmpresarialPersonaCreateView,
+                             ContratoEmpresarialListView, EmpresaSearchView,
+                             ContratoBeneficiarioListView)
 
 
 urlpatterns = patterns('',
@@ -38,6 +45,22 @@ urlpatterns = patterns('',
                            ContratoDetailView.as_view(),
                            name='contrato'),
 
+                       url(r'^plan/(?P<pk>\d+)$',
+                           PlanDetailView.as_view(),
+                           name='contracts-plan'),
+
+                       url(r'^plan/buscar$',
+                           PlanSearchView.as_view(),
+                           name='plan-search'),
+
+                       url(r'^empresa/buscar$',
+                           EmpresaSearchView.as_view(),
+                           name='empresa-search'),
+
+                       url(r'^(?P<plan>\d+)/limite/agregar$',
+                           LimiteEventoCreateView.as_view(),
+                           name='contracts-limite-add'),
+
                        url(r'^(?P<persona>\d+)/contrato/agregar$',
                            ContratoCreateView.as_view(),
                            name='contrato-persona-add'),
@@ -46,6 +69,26 @@ urlpatterns = patterns('',
                            r'^contrato/agregar$',
                            ContratoPersonaCreateView.as_view(),
                            name='contrato-add'),
+
+                       url(
+                           r'^contrato/empresarial/agregar$',
+                           ContratoEmpresarialPersonaCreateView.as_view(),
+                           name='contrato-empresarial-add'),
+
+                       url(
+                           r'^contratos/beneficiarios$',
+                           ContratoBeneficiarioListView.as_view(),
+                           name='contrato-beneficiario-list'),
+
+                       url(
+                           r'^contratos$',
+                           ContratoListView.as_view(),
+                           name='contrato-list'),
+
+                       url(
+                           r'^contratos/empresariales$',
+                           ContratoEmpresarialListView.as_view(),
+                           name='contrato-empresarial-list'),
 
                        url(r'^contrato/(?P<pk>\d+)/edit$',
                            ContratoUpdateView.as_view(),
@@ -75,6 +118,10 @@ urlpatterns = patterns('',
                            EventoDeleteView.as_view(),
                            name='contrato-evento-delete'),
 
+                       url(r'^evento/(?P<pk>\d+)/update$',
+                           EventoUpdateView.as_view(),
+                           name='contrato-evento-update'),
+
                        url(r'^vendedor/buscar$',
                            VendedorSearchView.as_view(),
                            name='vendedor-search'),
@@ -103,4 +150,16 @@ urlpatterns = patterns('',
                        url(r'^contrato/persona/buscar$',
                            ContratoPersonaSearchView.as_view(),
                            name='contrato-persona-search'),
+
+                       url(r'^meta/(?P<pk>\d+)$',
+                           MetaDetailView.as_view(),
+                           name='contracts-meta'),
+
+                       url(r'^meta/add$',
+                           MetaCreateView.as_view(),
+                           name='contracts-meta-add'),
+
+                       url(r'^contrato/(?P<contrato>\d+)/cancelar$',
+                           CancelacionCreateView.as_view(),
+                           name='contrato-cancelar'),
 )

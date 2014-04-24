@@ -18,7 +18,10 @@
       <td>{{ persona.nombre }}</td>
       <td>{{ persona.obtener_edad }}</td>
       <td>{{ persona.get_sexo_display }}</td>
-      <td><a class="btn btn-default" href="{% url 'persona-view-id' persona.id %}">Ver</a></td>
+      <td>
+          <a class="btn btn-success" href="{% url 'persona-view-id' persona.id %}">Ver</a>
+          <a class="btn btn-danger" href="{% url 'persona-duplicate' persona.id %}">Reportar Duplicado</a>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

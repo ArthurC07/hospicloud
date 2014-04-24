@@ -22,7 +22,9 @@ from persona.views import (PersonaDetailView, PersonaCreateView,
                            AntecedenteObstetricoUpdateView,
                            PersonaIndexView, FisicoUpdateView,
                            AntecedenteQuirurgicoUpdateView,
-                           AntecedenteQuirurgicoCreateView, PersonaSearchView)
+                           AntecedenteQuirurgicoCreateView, PersonaSearchView,
+                           EmpleoCreateView, PersonaDuplicateView,
+                           EmpleadorDetailView)
 
 urlpatterns = patterns('',
 
@@ -43,6 +45,10 @@ urlpatterns = patterns('',
                            PersonaCreateView.as_view(),
                            name='persona-create'),
 
+                       url(r'^empresa/(?P<pk>\d+)$',
+                           EmpleadorDetailView.as_view(),
+                           name='empresa'),
+
                        url(r'^buscar$',
                            PersonaSearchView.as_view(),
                            name='persona-search'),
@@ -50,6 +56,14 @@ urlpatterns = patterns('',
                        url(r'^(?P<pk>\d+)/editar$',
                            PersonaUpdateView.as_view(),
                            name='persona-editar'),
+
+                       url(r'^(?P<pk>\d+)/duplicada$',
+                           PersonaDuplicateView.as_view(),
+                           name='persona-duplicate'),
+
+                       url(r'^(?P<persona>\d+)/empleo/add$',
+                           EmpleoCreateView.as_view(),
+                           name='persona-empleo-add'),
 
                        url(r'^(?P<pk>\d+)/fisico/editar$',
                            FisicoUpdateView.as_view(),

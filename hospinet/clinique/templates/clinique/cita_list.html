@@ -45,9 +45,8 @@
                                     </p>
 
                                     <p>
-                                        <a class="btn btn-success"
-                                           href="{% url 'consultorio-lectura-agregar' cita.persona.id consultorio.id %}">Agregar
-                                            Lectura de Signos</a>
+                                        <a class="btn btn-success" href="{% url 'consultorio-lectura-agregar' cita.persona.id consultorio.id %}">Agregar Lectura de Signos</a>
+                                        <a class="btn btn-primary" href="{% url 'clinique-cita-ausente' cita.id  %}">No se Presentó a la Cita</a>
                                     </p>
                                 </div>
                             </div>

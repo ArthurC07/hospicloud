@@ -5,7 +5,7 @@
     <div class="row">
         <div class="page-header">
             <h1>{{ contrato }}
-                <small>Plan {{ contrato.plan }}</small>
+                <small>Plan {{ contrato.plan }} {{ contrato.empresa }}</small>
             </h1>
         </div>
     </div>
@@ -14,14 +14,22 @@
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
                     <li><a href="{% url 'contrato-pago-add' contrato.id %}">Agregar
-                        Pago</a></li>
+                        Pago</a>
+                    </li>
                     <li><a href="{% url 'contrato-evento-add' contrato.id %}">Agregar
-                        Evento</a></li>
+                        Evento</a>
+                    </li>
                     <li>
                         <a href="{% url 'contrato-beneficiario-add' contrato.id %}">Agregar
-                            Beneficiario</a></li>
-                    <li><a href="{% url 'contrato-edit' contrato.id %}">Editar
-                        Contrato</a></li>
+                            Beneficiario</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-edit' contrato.id %}">Editar
+                        Contrato</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-cancelar' contrato.id %}">Cancelar Contrato</a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -67,6 +75,9 @@
                                         <a class="btn btn-primary"
                                            href="{% url 'persona-view-id' contrato.persona.id %}">Ver
                                             <i class="fa fa-arrow-right"></i></a>
+                                        <a class="btn btn-success"
+                                           href="{% url 'persona-empleo-add' contrato.persona.id %}">Agregar Empresa
+                                            <i class="fa fa-arrow-right"></i></a>
                                     </div>
                                 </div>
                                 <hr>
@@ -74,19 +85,30 @@
                                     <h2>Informaci&oacute;n del Contrato</h2>
                                 </section>
                                 <ul>
+                                    <li>
+                                        D&iacute;as en Mora: {{ contrato.dias_mora }}
+                                    </li>
+                                    <li>
+                                        Monto en Mora: {{ contrato.mora }}
+                                    </li>
                                     <li>Vendedor: {{ contrato.vendedor }}</li>
                                     <li>Fecha de
                                         Inicio: {{ contrato.inicio|date:"d/m/Y" }}</li>
                                     <li>Fecha de
                                         Vencimiento: {{ contrato.vencimiento|date:"d/m/Y" }}</li>
-                                    <li>&Uacute;ltima renovaci&oacute;n {{ contrato.renovacion|date:"d/m/Y" }}</li>
-                                    <li>Consultas
-                                        utilizadas: {{ contrato.total_consultas }}</li>
+                                    <li>
+                                        &Uacute;ltima renovaci&oacute;n {{ contrato.renovacion|date:"d/m/Y" }}
+                                    </li>
+                                    <li>
+                                        &Uacute;ltimo Pago {{ contrato.ultimo_pago|date:"d/m/Y" }}
+                                    </li>
+                                    <li>Consultas utilizadas: {{ contrato.total_consultas }}
+                                    </li>
                                 </ul>
                             </article>
                             <article id="beneficiarios" class="tab-pane">
                                 <br/>
-                                {% for beneficiario in contrato.beneficiarios.all %}
+                                {% for beneficiario in page_obj %}
                                     <div class="row">
                                         <div class="col-md-2">
                                             {% if beneficiario.persona.fotografia == None %}
@@ -113,6 +135,10 @@
                                     </div>
                                     <hr>
                                 {% endfor %}
+                                {% if is_paginated %}
+                                    {% load bootstrap_pagination %}
+                                    {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+                                {% endif %}
                             </article>
                             <article id="pagos" class="tab-pane">
                                 <table class="table table-striped">
@@ -121,6 +147,8 @@
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Monto</th>
+                                        <th>Tipo de Pago</th>
+                                        <th>Descripci&oacute;n</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -128,6 +156,8 @@
                                         <tr>
                                             <td>{{ pago.fecha }}</td>
                                             <td>{{ pago.monto }}</td>
+                                            <td>{{ pago.tipo_de_pago }}</td>
+                                            <td>{{ pago.descripcion }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -140,7 +170,10 @@
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Tipo</th>
+                                        <th>Monto</th>
                                         <th>Descripci&oacute;n</th>
+                                        <th>Precion</th>
+                                        <th>Acciones</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -148,8 +181,11 @@
                                         {% for evento in contrato.eventos.all %}
                                             <tr>
                                                 <td>{{ evento.fecha }}</td>
+                                                <td>{{ evento.tipo }}</td>
                                                 <td>{{ evento.monto }}</td>
                                                 <td>{{ evento.descripcion }}</td>
+                                                <td>{{ evento.precio }}</td>
+                                                <td><a class="btn btn-primary" href="{% url 'contrato-evento-update' evento.id %}">Editar</a></td>
                                             </tr>
                                         {% endfor %}
                                     </tr>
