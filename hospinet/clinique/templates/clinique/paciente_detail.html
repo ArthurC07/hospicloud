@@ -197,6 +197,7 @@
                                     <th>Fecha</th>
                                     <th>Orden</th>
                                     <th>Evoluci&oacute;n</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -205,6 +206,7 @@
                                     <td>{{ orden.created }}</td>
                                     <td>{{ orden.orden }}</td>
                                     <td>{{ orden.evolucion }}</td>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-orden-edit' orden.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
