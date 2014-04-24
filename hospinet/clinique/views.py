@@ -352,7 +352,28 @@ class LecturaSignosCreateView(PersonaFormMixin, ConsultorioMixin,
         return paciente.get_absolute_url()
 
 
+class LecturaSignosUpdateView(UpdateView, LoginRequiredMixin):
+    model = LecturaSignos
+    form_class = LecturaSignosForm
+
+    def get_success_url(self):
+        paciente = Paciente.objects.filter(persona=self.object.persona,
+                                           consultorio=self.consultorio).first()
+        if paciente is None:
+            paciente = Paciente()
+            paciente.persona = self.object.persona
+            paciente.consultorio = self.consultorio
+            paciente.save()
+
+        return paciente.get_absolute_url()
+
+
 class DiagnosticoCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+    model = DiagnosticoClinico
+    form_class = DiagnosticoClinicoForm
+
+
+class DiagnosticoUpdateView(UpdateView, LoginRequiredMixin):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
@@ -468,6 +489,11 @@ class OrdenMedicaCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     form_class = OrdenMedicaForm
 
 
+class OrdenMedicaUpdateView(UpdateView, LoginRequiredMixin):
+    model = OrdenMedica
+    form_class = OrdenMedicaForm
+
+
 class NotaEnfermeriaCreateView(PacienteFormMixin, CreateView,
                                CurrentUserFormMixin):
     model = NotaEnfermeria
@@ -475,6 +501,11 @@ class NotaEnfermeriaCreateView(PacienteFormMixin, CreateView,
 
 
 class ExamenCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+    model = Examen
+    form_class = ExamenForm
+
+
+class ExamenUpdateView(UpdateView, LoginRequiredMixin):
     model = Examen
     form_class = ExamenForm
 
