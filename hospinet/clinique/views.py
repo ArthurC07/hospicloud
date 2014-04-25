@@ -323,6 +323,11 @@ class EvaluacionCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
     form_class = EvaluacionForm
 
 
+class EvaluacionUpdateView(UpdateView, LoginRequiredMixin):
+    model = Evaluacion
+    form_class = EvaluacionForm
+
+
 class ConsultaCreateView(PacienteFormMixin, CurrentUserFormMixin, CreateView,
                          LoginRequiredMixin):
     model = Consulta
