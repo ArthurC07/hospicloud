@@ -260,3 +260,16 @@ class Espera(TimeStampedModel):
         delta = timezone.now() - self.created
 
         return delta.seconds
+
+
+class Prescripcion(TimeStampedModel):
+    paciente = models.ForeignKey(Paciente, related_name='prescripciones')
+    nota = models.TextField(blank=True)
+
+    def __unicode__(self):
+
+        return self.paciente.persona.nombre_completo()
+
+    def get_absolute_url(self):
+
+        return self.paciente.get_absolute_url()
