@@ -119,7 +119,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
 
         personas = Persona.objects.filter(contratos__in=empresariales)
 
-        context['citas'] = Cita.objects.filter(
+        context['citasp'] = Cita.objects.filter(
             fecha__gte=self.inicio,
             fecha__lte=self.fin,
             persona__in=personas).count()
