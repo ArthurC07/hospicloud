@@ -117,15 +117,12 @@ class IndexView(TemplateView, ContratoPermissionMixin):
             fecha__lte=self.fin,
             persona__in=personas).count()
 
-        context['citasp'] = 0
-        for contrato in empresariales:
-            context['citasp'] += contrato.persona.citas.filter(
-                fecha__gte=self.inicio,
-                fecha__lte=self.fin).count()
-            for beneficiario in contrato.beneficiarios.all():
-                context['citasp'] += beneficiario.persona.citas.filter(
-                    fecha__gte=self.inicio,
-                    fecha__lte=self.fin).count()
+        personas = Persona.objects.filter(contratos__in=empresariales)
+
+        context['citasp'] = context['citas'] = Cita.objects.filter(
+            fecha__gte=self.inicio,
+            fecha__lte=self.fin,
+            persona__in=personas).count()
 
         morosos = [c for c in
                    Contrato.objects.filter(vencimiento__gte=self.fin,
