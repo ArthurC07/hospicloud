@@ -35,7 +35,7 @@
             <div class="col-md-9">
                 <div class="page-header">
                     <h2>
-                        {{ consultorio }}
+                        {{ consultorio }} <small>{{ consultorio.pacientes.count }} pacientes</small>
                         <a class="pull-right btn btn-primary" href="{% url 'consultorio' consultorio.id %}">Ver</a>
                     </h2>
                 </div>
