@@ -29,7 +29,7 @@ from django.views.generic import (DetailView, CreateView, View,
                                   ListView, UpdateView, TemplateView)
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, DeleteView
 from guardian.decorators import permission_required
 
 from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
@@ -233,6 +233,14 @@ class PacienteDetailView(DetailView, LoginRequiredMixin):
 
     model = Paciente
     context_object_name = 'paciente'
+
+
+class PacienteDeleteView(DeleteView, LoginRequiredMixin):
+    model = Paciente
+
+    def get_success_url(self):
+
+        return reverse('consultorio-index')
 
 
 class PacienteMixin(View):
