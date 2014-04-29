@@ -30,7 +30,7 @@ from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
 from django.views.generic.detail import SingleObjectMixin
 from guardian.decorators import permission_required
-from clinique.models import Cita, Consulta
+from clinique.models import Cita, Consulta, Seguimiento
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
@@ -110,6 +110,12 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         empresariales = Contrato.objects.filter(inicio__gte=self.inicio,
                                                 plan__empresarial=True,
                                                 cancelado=False).all()
+
+        context['consulta'] = Consulta.objects.filter(created__gte=self.inicio,
+                                                      created__lte=self.fin).count()
+        context['seguimientos'] = Seguimiento.objects.filter(
+            created__gte=self.inicio,
+            created__lte=self.fin).count()
 
         # TODO Optimize using a map or a process pool
         personas = Persona.objects.filter(contratos__in=privados)
