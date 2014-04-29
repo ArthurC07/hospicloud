@@ -30,7 +30,7 @@ from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
 from django.views.generic.detail import SingleObjectMixin
 from guardian.decorators import permission_required
-from clinique.models import Cita
+from clinique.models import Cita, Consulta
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
@@ -80,7 +80,8 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['contrato-persona-search'] = PersonaSearchForm(
             prefix='contrato-persona-search')
         context[
-            'contrato-persona-search'].helper.form_action = 'contrato-persona-search'
+            'contrato-persona-search'].helper.form_action = \
+            'contrato-persona-search'
 
         context['empresa-search'] = EmpleadorChoiceForm(prefix='empresa-search')
         context['empresa-search'].helper.form_action = 'empresa-search'
@@ -124,6 +125,11 @@ class IndexView(TemplateView, ContratoPermissionMixin):
             fecha__lte=self.fin,
             persona__in=personas).count()
 
+        context['consultasp'] = Consulta.objects.filter(
+            created__gte=self.inicio,
+            created__lte=self.fin,
+            paciente__persona__in=personas).count()
+
         morosos = [c for c in
                    Contrato.objects.filter(vencimiento__gte=self.fin,
                                            plan__empresarial=False).all() if
@@ -138,7 +144,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['meta'] = Meta.objects.last()
         context['cancelaciones'] = Cancelacion.objects.filter(
             fecha__gte=self.inicio).count()
-        #TODO Hospitalizaciones y cirugias empresariales
+        # TODO Hospitalizaciones y cirugias empresariales
         contratos_e = Contrato.objects.filter(inicio__gte=self.inicio,
                                               plan__empresarial=True).filter(
             inicio__lte=self.fin)
