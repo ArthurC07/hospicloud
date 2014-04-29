@@ -20,6 +20,7 @@
   {% for consultorio in user.profile.consultorios.all %}
     <section class="col-md-3">
       <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
+      <p>{{ consultorio.pacientes.count }}</p>
     </section>
   {% endfor %}
   {% else %}
