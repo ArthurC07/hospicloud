@@ -74,6 +74,10 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['citaperiodoform'].helper.form_action = 'cita-periodo'
         context['citaperiodoform'].set_legend(u'Citas por Periodo')
 
+        context['diagnosticperiodoform'] = PeriodoForm(prefix='diagnostico-periodo')
+        context['diagnosticperiodoform'].helper.form_action = 'diagnostico-periodo'
+        context['diagnosticperiodoform'].set_legend(u'Diagnosticos por Periodo')
+
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
 
@@ -291,6 +295,32 @@ class CitaPeriodoView(TemplateView, LoginRequiredMixin):
         context = super(CitaPeriodoView, self).get_context_data(**kwargs)
 
         context['citas'] = self.citas
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
+
+
+class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los :class:`DiagnosticoClinico` de un periodo"""
+    template_name = 'clinique/diagnostico_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='diagnostico-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.diagnosticos = DiagnosticoClinico.objects.filter(
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin
+            )
+        return super(DiagnosticoPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(DiagnosticoPeriodoView, self).get_context_data(**kwargs)
+
+        context['diagnosticos'] = self.diagnosticos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
 

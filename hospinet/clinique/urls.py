@@ -37,7 +37,8 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             LecturaSignosUpdateView, DiagnosticoUpdateView,
                             ExamenUpdateView, OrdenMedicaUpdateView,
                             EvaluacionUpdateView, PrescripcionUpdateView,
-                            PrescripcionCreateView, PacienteDeleteView)
+                            PrescripcionCreateView, PacienteDeleteView,
+                            DiagnosticoPeriodoView)
 
 
 urlpatterns = patterns('',
@@ -220,6 +221,10 @@ urlpatterns = patterns('',
                        url(r'^cita/periodo',
                            CitaPeriodoView.as_view(),
                            name='cita-periodo'),
+
+                       url(r'^diagnostico/periodo',
+                           DiagnosticoPeriodoView.as_view(),
+                           name='diagnostico-periodo'),
 
                        url(r'^paciente/search',
                            PacienteSearchView.as_view(),

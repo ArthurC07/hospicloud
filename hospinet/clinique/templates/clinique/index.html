@@ -56,7 +56,16 @@
     {% endfor %}
     </div>
     <div class="col-md-3">
-        {% crispy citaperiodoform %}
+        <div class="row">
+            <div class="col-md-12">
+                {% crispy citaperiodoform %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {% crispy diagnosticoperiodoform %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
