@@ -320,7 +320,7 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
             self.diagnosticos = DiagnosticoClinico.objects.filter(
                 created__gte=self.inicio,
                 created__lte=self.fin
-            )
+            ).order_by('paciente__consultorio')
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
 
