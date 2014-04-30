@@ -330,6 +330,7 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         context['diagnosticos'] = self.diagnosticos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
+        context['total'] = self.diagnosticos.count()
 
         return context
 
