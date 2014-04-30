@@ -74,9 +74,9 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['citaperiodoform'].helper.form_action = 'cita-periodo'
         context['citaperiodoform'].set_legend(u'Citas por Periodo')
 
-        context['diagnosticperiodoform'] = PeriodoForm(prefix='diagnostico-periodo')
-        context['diagnosticperiodoform'].helper.form_action = 'diagnostico-periodo'
-        context['diagnosticperiodoform'].set_legend(u'Diagnosticos por Periodo')
+        context['diagnosticoperiodoform'] = PeriodoForm(prefix='diagnostico-periodo')
+        context['diagnosticoperiodoform'].helper.form_action = 'diagnostico-periodo'
+        context['diagnosticoperiodoform'].set_legend(u'Diagnosticos por Periodo')
 
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
