@@ -78,6 +78,10 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['diagnosticoperiodoform'].helper.form_action = 'diagnostico-periodo'
         context['diagnosticoperiodoform'].set_legend(u'Diagnosticos por Periodo')
 
+        context['cargosperiodoform'] = PeriodoForm(prefix='cargo-periodo')
+        context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
+        context['cargosperiodoform'].set_legend(u'Cargos por Periodo')
+
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
 
@@ -321,6 +325,32 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         context = super(DiagnosticoPeriodoView, self).get_context_data(**kwargs)
 
         context['diagnosticos'] = self.diagnosticos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
+
+
+class CargoPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los :class:`Cargo` de un periodo"""
+    template_name = 'clinique/cargo_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='cargo-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.cargos = Cargo.objects.filter(
+                created__gte=self.inicio,
+                created__lte=self.fin
+            )
+        return super(CargoPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CargoPeriodoView, self).get_context_data(**kwargs)
+
+        context['cargos'] = self.cargos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
 
