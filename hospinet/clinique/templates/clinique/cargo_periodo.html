@@ -4,31 +4,29 @@
 {% block content %}
     <div class="row">
         <div class="page-header">
-            <h1>Citas
+            <h1>Cargos
                 <small>de {{ inicio }} al {{ fin }}</small>
             </h1>
         </div>
     </div>
     <div class="row">
         <section class="col-md-12">
-            <table class="table table-stripped">
+            <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th>Paciente</th>
-                        <th>Fecha</th>
-                        <th>Consultorio</th>
-                        <th>Tel&eacute;fono</th>
-                    </tr>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Cargo</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {% for cita in citas.all %}
+                {% for cargo in cargos.all %}
                     <tr>
-                        <td>{{ cita.persona }}</td>
-                        <td>{{ cita.fecha }}</td>
-                        <td>{{ cita.consultorio }}</td>
-                        <td>{{ cita.persona.telefono }} {{ cita.persona.celular }}</td>
+                        <td>{{ cargo.created }}</td>
+                        <td>{{ cargo.tipo }}</td>
+                        <td>{{ cargo.item }}</td>
                     </tr>
-                    {% endfor %}
+                {% endfor %}
                 </tbody>
             </table>
         </section>

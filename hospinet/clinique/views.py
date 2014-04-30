@@ -74,9 +74,12 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['citaperiodoform'].helper.form_action = 'cita-periodo'
         context['citaperiodoform'].set_legend(u'Citas por Periodo')
 
-        context['diagnosticoperiodoform'] = PeriodoForm(prefix='diagnostico-periodo')
-        context['diagnosticoperiodoform'].helper.form_action = 'diagnostico-periodo'
-        context['diagnosticoperiodoform'].set_legend(u'Diagnosticos por Periodo')
+        context['diagnosticoperiodoform'] = PeriodoForm(
+            prefix='diagnostico-periodo')
+        context[
+            'diagnosticoperiodoform'].helper.form_action = 'diagnostico-periodo'
+        context['diagnosticoperiodoform'].set_legend(
+            u'Diagnosticos por Periodo')
 
         context['cargosperiodoform'] = PeriodoForm(prefix='cargo-periodo')
         context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
@@ -196,9 +199,9 @@ class PacientePersonaCreateView(CreateView, LoginRequiredMixin,
 
     def get_form(self, form_class):
         formset = self.PacienteFormset(instance=self.persona, prefix='paciente',
-                                       initial=[{
-                                                    'consultorio':
-                                                        self.consultorio.id}])
+                                       initial=[
+                                           {'consultorio': self.consultorio.id}]
+        )
         return formset
 
     def get_context_data(self, **kwargs):
@@ -247,7 +250,6 @@ class PacienteDeleteView(DeleteView, LoginRequiredMixin):
     model = Paciente
 
     def get_success_url(self):
-
         return reverse('consultorio-index')
 
 
@@ -319,7 +321,8 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
                 created__gte=self.inicio,
                 created__lte=self.fin
             )
-        return super(DiagnosticoPeriodoView, self).dispatch(request, *args, **kwargs)
+        return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
+                                                            **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(DiagnosticoPeriodoView, self).get_context_data(**kwargs)
