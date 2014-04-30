@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block title %} Contratos{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>Citas
+                <small>de {{ inicio }} al {{ fin }}</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12">
+            <table class="table table-stripped">
+                <thead>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Fecha</th>
+                        <th>Consultorio</th>
+                        <th>Tel&eacute;fono</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in citas.all %}
+                    <tr>
+                        <td>{{ cita.persona }}</td>
+                        <td>{{ cita.fecha }}</td>
+                        <td>{{ cita.consultorio }}</td>
+                        <td>{{ cita.persona.telefono }} {{ cita.persona.celular }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+{% endblock %}
