@@ -312,8 +312,8 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.diagnosticos = DiagnosticoClinico.objects.filter(
-                fecha__gte=self.inicio,
-                fecha__lte=self.fin
+                created__gte=self.inicio,
+                created__lte=self.fin
             )
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args, **kwargs)
 
