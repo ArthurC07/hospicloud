@@ -43,6 +43,7 @@ from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion)
+from inventory.models import ItemTemplate
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
     AntecedenteFamiliarForm, AntecedenteObstetricoForm, EstiloVidaForm, \
@@ -378,8 +379,10 @@ class CargoPeriodoView(TemplateView, LoginRequiredMixin):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
 
-        context['cuenta'] = self.cargos.values('item__descripcion').annotate(
-            cargo_count=Count('item__descripcion'))
+        context['cuenta'] = ItemTemplate.objects.values('descripcion').annotate(
+            cargo_count=Count('consultorio_cargos')).filter(
+                cargo__created__gte=self.inicio,
+                cargo__created__lte=self.fin)
 
         return context
 
