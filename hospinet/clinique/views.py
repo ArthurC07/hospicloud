@@ -341,7 +341,7 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         for consultorio in consultorios:
             cons[consultorio] = DiagnosticoClinico.objects.filter(
                 created__gte=self.inicio, created__lte=self.fin,
-                consultorio=consultorio).count()
+                paciente__consultorio=consultorio).count()
 
         context['consultorios'] = reversed(
             sorted(cons.iteritems(), key=lambda x: x[1]))
