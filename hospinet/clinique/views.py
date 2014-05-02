@@ -381,8 +381,8 @@ class CargoPeriodoView(TemplateView, LoginRequiredMixin):
 
         context['cuenta'] = ItemTemplate.objects.values('descripcion').annotate(
             cargo_count=Count('consultorio_cargos')).filter(
-                cargo__created__gte=self.inicio,
-                cargo__created__lte=self.fin)
+            consultorio_cargos__created__gte=self.inicio,
+            consultorio_cargos__created__lte=self.fin)
 
         return context
 
