@@ -347,6 +347,8 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
             sorted(cons.iteritems(), key=lambda x: x[1]))
         context['consultorio_graph'] = reversed(
             sorted(cons.iteritems(), key=lambda x: x[1]))
+        context['consultorio_graph2'] = reversed(
+            sorted(cons.iteritems(), key=lambda x: x[1]))
 
         return context
 
