@@ -13,10 +13,10 @@
         <section class="col-md-6">
             <table class="table table-stripped">
                 <tbody>
-                {% for item, cantidad in cuenta %}
+                {% for item in cuenta %}
                     <tr>
-                        <td>{{ item }}</td>
-                        <td>{{ cantidad }}</td>
+                        <td>{{ item.item__descripcion }}</td>
+                        <td>{{ item.cargo_count }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
