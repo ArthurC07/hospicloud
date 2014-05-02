@@ -343,7 +343,7 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
                 created__gte=self.inicio, created__lte=self.fin,
                 paciente__consultorio=consultorio).count()
 
-        cons = {(k, v) for k, v in cons.items() if v > 0}
+        cons = dict((k, v) for k, v in cons.items() if v > 0)
 
         context['consultorios'] = reversed(
             sorted(cons.iteritems(), key=lambda x: x[1]))
