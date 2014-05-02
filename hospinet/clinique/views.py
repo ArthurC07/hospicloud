@@ -378,7 +378,7 @@ class CargoPeriodoView(TemplateView, LoginRequiredMixin):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
 
-        context['cuenta'] = self.cargos.values('item__descripcion').annotate(
+        context['cuenta'] = self.cargos.values('item').annotate(
             cargo_count=Count('tipo'))
 
         return context
