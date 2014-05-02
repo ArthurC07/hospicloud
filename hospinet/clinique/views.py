@@ -19,7 +19,7 @@ from collections import defaultdict
 from datetime import time
 
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.utils import timezone
@@ -331,6 +331,20 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = self.diagnosticos.count()
+
+        DiagnosticoClinico.objects.values('paciente__consultorio').annotate(
+            consultorio_count=Count('paciente__consultorio')
+        ).filter(created__gte=self.inicio, created__lte=self.fin)
+
+        cons = defaultdict(int)
+        consultorios = Consultorio.objects.all()
+        for consultorio in consultorios:
+            cons[consultorio] = DiagnosticoClinico.objects.filter(
+                created__gte=self.inicio, created__lte=self.fin,
+                consultorio=consultorio).count()
+
+        context['consultorios'] = reversed(
+            sorted(cons.iteritems(), key=lambda x: x[1]))
 
         return context
 

@@ -10,6 +10,23 @@
         </div>
     </div>
     <div class="row">
+        <section class="col-md-6">
+            <table class="table table-stripped">
+                <tbody>
+                {% for consultorio, cantidad in consultorios %}
+                    <tr>
+                        <td>{{ consultorio }}</td>
+                        <td>{{ cantidad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <section class="col-md-6 action-nav-button">
+            <canvas width="600" height="400" id="consultorios"></canvas>
+        </section>
+    </div>
+    <div class="row">
         <section class="col-md-12">
             <table class="table table-stripped">
                 <thead>
@@ -39,4 +56,29 @@
             </table>
         </section>
     </div>
+{% endblock %}
+{% block scripts %}
+    {% localize off %}
+        <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var data = {
+                    labels: [
+                        {% for consultorio, cantidad in consultorios %} '{{ consultorio }}', {% endfor %} ],
+                    datasets: [
+                        {
+                            fillColor: "rgba(151,187,205,0.5)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            data: [
+                                {% for consultorio, cantidad in consultorios %} {{ cantidad }}, {% endfor %} ]
+                        }
+                    ]
+                };
+                var ctx = $("#consultorio").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data, {
+                    scaleShowLabels: true
+                });
+            }
+        </script>
+    {% endlocalize %}
 {% endblock %}
