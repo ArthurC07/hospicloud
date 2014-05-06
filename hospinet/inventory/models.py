@@ -271,6 +271,11 @@ class ItemComprado(TimeStampedModel):
     ingresado = models.BooleanField(default=False)
     cantidad = models.IntegerField(default=0)
 
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return self.compra.get_absolute_url()
+
 
 class ItemAction(TimeStampedModel):
     """Crea un registro de cada movimiento efectuado por un :class:`User`
