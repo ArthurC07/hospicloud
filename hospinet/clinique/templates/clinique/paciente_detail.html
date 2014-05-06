@@ -225,7 +225,7 @@
                                 <tr>
                                     <th>{{ prescripcion.created }}</th>
                                     <th>{{ prescripcion.nota }}</th>
-                                    <td><a class="btn btn-success" href="{% url 'clinique-prescripcion-edit' %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
