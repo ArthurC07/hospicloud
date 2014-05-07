@@ -17,6 +17,9 @@
                 <a href="{% url 'admision-persona-agregar' persona.id %}">Hospitalizar</a>
             </li>
             <li>
+                <a href="{% url 'consultorio-paciente-add' persona.id %}">Agregar a un Consultorio</a>
+            </li>
+            <li>
                 {% for consultorio in user.consultorios.all %}
                     <a href="{% url 'consultorio-paciente-agregar' persona.id consultorio.id %}">Agregar
                         Paciente a Consultorio {{ consultorio }}</a>

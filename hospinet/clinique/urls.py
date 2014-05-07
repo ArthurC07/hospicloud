@@ -33,7 +33,12 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             CitaPersonaCreateView, OrdenMedicaCreateView,
                             EsperaCreateView, EsperaAusenteView,
                             CitaAusenteView, PacientePersonaCreateView,
-                            CitaPeriodoView, PacienteSearchView)
+                            CitaPeriodoView, PacienteSearchView,
+                            LecturaSignosUpdateView, DiagnosticoUpdateView,
+                            ExamenUpdateView, OrdenMedicaUpdateView,
+                            EvaluacionUpdateView, PrescripcionUpdateView,
+                            PrescripcionCreateView, PacienteDeleteView,
+                            DiagnosticoPeriodoView, CargoPeriodoView)
 
 
 urlpatterns = patterns('',
@@ -45,6 +50,10 @@ urlpatterns = patterns('',
                        url(r'^paciente/(?P<pk>\d+)$',
                            PacienteDetailView.as_view(),
                            name='clinique-paciente'),
+
+                       url(r'^paciente/(?P<pk>\d+)/delete$',
+                           PacienteDeleteView.as_view(),
+                           name='clinique-paciente-delete'),
 
                        url(r'^paciente/(?P<pk>\d+)/resume$',
                            PacienteDetailView.as_view(
@@ -65,6 +74,26 @@ urlpatterns = patterns('',
                            PacienteDetailView.as_view(
                                template_name='clinique/signos_list.html'),
                            name='clinique-signos'),
+
+                       url(r'^signos/(?P<pk>\d+)/editar$',
+                           LecturaSignosUpdateView.as_view(),
+                           name='clinique-signos-edit'),
+
+                       url(r'^diagnostico/(?P<pk>\d+)/editar$',
+                           DiagnosticoUpdateView.as_view(),
+                           name='clinique-diagnostico-edit'),
+
+                       url(r'^examen/(?P<pk>\d+)/editar$',
+                           ExamenUpdateView.as_view(),
+                           name='clinique-examen-edit'),
+
+                       url(r'^evaluacion/(?P<pk>\d+)/editar$',
+                           EvaluacionUpdateView.as_view(),
+                           name='clinique-evaluacion-edit'),
+
+                       url(r'^orden/(?P<pk>\d+)/editar$',
+                           OrdenMedicaUpdateView.as_view(),
+                           name='clinique-orden-edit'),
 
                        url(r'^paciente/(?P<pk>\d+)/notas$',
                            PacienteDetailView.as_view(
@@ -92,6 +121,11 @@ urlpatterns = patterns('',
                            r'^(?P<persona>\d+)/(?P<consultorio>\d+)/paciente/agregar$',
                            PacienteCreateView.as_view(),
                            name='consultorio-paciente-agregar'),
+
+                       url(
+                           r'^(?P<persona>\d+)/consultorio/agregar$',
+                           PacienteCreateView.as_view(),
+                           name='consultorio-paciente-add'),
 
                        url(r'^consulta/(?P<paciente>\d+)/agregar$',
                            ConsultaCreateView.as_view(),
@@ -188,7 +222,23 @@ urlpatterns = patterns('',
                            CitaPeriodoView.as_view(),
                            name='cita-periodo'),
 
+                       url(r'^diagnostico/periodo',
+                           DiagnosticoPeriodoView.as_view(),
+                           name='diagnostico-periodo'),
+
+                       url(r'^cargo/periodo',
+                           CargoPeriodoView.as_view(),
+                           name='cargo-periodo'),
+
                        url(r'^paciente/search',
                            PacienteSearchView.as_view(),
                            name='clinique-paciente-search'),
+
+                       url(r'^(?P<paciente>\d+)/prescripcion/agregar$',
+                           PrescripcionCreateView.as_view(),
+                           name='consultorio-prescripcion-agregar'),
+
+                       url(r'^prescripcion/(?P<pk>\d+)/editar$',
+                           PrescripcionUpdateView.as_view(),
+                           name='clinique-prescripcion-edit'),
 )

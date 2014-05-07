@@ -16,6 +16,7 @@
                     <tr>
                         <th>Paciente</th>
                         <th>Fecha</th>
+                        <th>Consultorio</th>
                         <th>Tel&eacute;fono</th>
                     </tr>
                 </thead>
@@ -24,6 +25,7 @@
                     <tr>
                         <td>{{ cita.persona }}</td>
                         <td>{{ cita.fecha }}</td>
+                        <td>{{ cita.consultorio }}</td>
                         <td>{{ cita.persona.telefono }} {{ cita.persona.celular }}</td>
                     </tr>
                     {% endfor %}

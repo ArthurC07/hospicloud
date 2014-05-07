@@ -131,6 +131,9 @@
                                             <a class="btn btn-primary"
                                                href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver
                                                 <i class="fa fa-arrow-right"></i></a>
+                                            <a class="btn btn-danger" href="{% url 'contrato-beneficiario-delete' beneficiario.id %}">
+                                                <i class="fa fa-trash-o"></i> Eliminar
+                                            </a>
                                         </div>
                                     </div>
                                     <hr>

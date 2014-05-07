@@ -23,7 +23,7 @@ from select2.fields import ModelChoiceField
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
-                             NotaEnfermeria, Examen, Espera)
+                             NotaEnfermeria, Examen, Espera, Prescripcion)
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, \
     FieldSetFormMixin
@@ -223,3 +223,12 @@ class PacienteSearchForm(FieldSetFormMixin):
         self.helper.layout = Fieldset(u'Buscar Paciente', *self.field_names)
         self.helper.form_method = 'GET'
         self.helper.form_action = 'clinique-paciente-search'
+
+
+class PrescripcionForm(PacienteFormMixin):
+    class Meta:
+        model = Prescripcion
+
+    def __init__(self, *args, **kwargs):
+        super(PrescripcionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Prescripcion', *self.field_names)

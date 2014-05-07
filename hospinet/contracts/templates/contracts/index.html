@@ -146,6 +146,12 @@
                                             Citas del Mes: {{ citasp }}
                                         </li>
                                         <li>
+                                            Consultas Iniciales del Mes: {{ consulta }}
+                                        </li>
+                                        <li>
+                                            Consultas de Seguimiento del Mes: {{ seguimientos }}
+                                        </li>
+                                        <li>
                                             Contratos del Mes: {{ contratos_empresariales }}
                                         </li>
                                         <li>
@@ -187,7 +193,6 @@
                                 </section>
                             </div>
                             <br/>
-
                             <div class="row">
                                 <section class="col-md-4">
                                     {% crispy plan-search %}
@@ -197,6 +202,11 @@
                                 </section>
                                 <section class="col-md-4">
                                     {% crispy empresa-search %}
+                                </section>
+                            </div>
+                            <div class="row">
+                                <section class="col-md-4">
+                                    {% crispy evento-periodo %}
                                 </section>
                             </div>
                         </article>

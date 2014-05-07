@@ -120,6 +120,7 @@
                                 <th>Gastrointestinal</th>
                                 <th>Extremidades</th>
                                 <th>Otras</th>
+                                <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -129,8 +130,9 @@
                                     <td>{{ evaluacion.orl }}</td>
                                     <td>{{ evaluacion.cardiopulmonar }}</td>
                                     <td>{{ evaluacion.gastrointestinal }}</td>
-                                    <td> {{ evaluacion.extremidades }}</td>
+                                    <td>{{ evaluacion.extremidades }}</td>
                                     <td>{{ evaluacion.otras }}</td>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-evaluacion-edit' evaluacion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -144,7 +146,7 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Consulta inicial</th>
-
+                                <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -152,6 +154,7 @@
                                 <tr>
                                     <td>{{ diagnostico.created }}</td>
                                     <td>{{ diagnostico.diagnostico }}</td>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i class="fa fa-edit"></i> Editar</a> </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -169,6 +172,7 @@
                                 <th>Presi&oacute;n Diast&oacute;lica</th>
                                 <th>Presi&oacute;n Arterial Media</th>
                                 <th>Respiraci&oacute;n</th>
+                                <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -179,8 +183,9 @@
                                     <td>{{ signos_vitales.temperatura }}</td>
                                     <td>{{ signos_vitales.presion_sistolica }}</td>
                                     <td>{{ signos_vitales.presion_diastolica }}</td>
-                                    <td> {{ signos_vitales.presion_arterial_media }}</td>
-                                    <td> {{ signos_vitales.respiracion }}</td>
+                                    <td>{{ signos_vitales.presion_arterial_media }}</td>
+                                    <td>{{ signos_vitales.respiracion }}</td>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-signos-edit' signos_vitales.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -192,6 +197,7 @@
                                     <th>Fecha</th>
                                     <th>Orden</th>
                                     <th>Evoluci&oacute;n</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -200,8 +206,28 @@
                                     <td>{{ orden.created }}</td>
                                     <td>{{ orden.orden }}</td>
                                     <td>{{ orden.evolucion }}</td>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-orden-edit' orden.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                                 </tr>
                                 {% endfor %}
+                            </tbody>
+                        </table>
+                        <table class="table table-striped">
+                            <caption>Prescripciones</caption>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Nota</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for prescripcion in paciente.prescripciones.all %}
+                                <tr>
+                                    <th>{{ prescripcion.created }}</th>
+                                    <th>{{ prescripcion.nota }}</th>
+                                    <td><a class="btn btn-success" href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                         <table class="table table-striped">

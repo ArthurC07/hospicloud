@@ -30,6 +30,7 @@ from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
 from django.views.generic.detail import SingleObjectMixin
 from guardian.decorators import permission_required
+from clinique.models import Cita, Consulta, Seguimiento
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
@@ -64,18 +65,23 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['vendedor-search'].helper.form_action = 'vendedor-search'
         context['plan-search'] = PlanChoiceForm(prefix='plan-search')
         context['plan-search'].helper.form_action = 'plan-search'
+
         context['contrato-periodo'] = PeriodoForm(prefix='contrato-periodo')
-        context['contrato-periodo'].helper.layout = Fieldset(
-            "Contratos de un Periodo",
-            *context['contrato-periodo'].field_names)
+        context['contrato-periodo'].set_legend('Contratos de un Periodo')
         context['contrato-periodo'].helper.form_action = 'contrato-periodo'
+
+        context['evento-periodo'] = PeriodoForm(prefix='evento-periodo')
+        context['evento-periodo'].set_legend('Eventos de un Periodo')
+        context['evento-periodo'].helper.form_action = 'evento-periodo'
+
         context['contrato-search'] = ContratoSearchForm(
             prefix='contrato-search')
         context['contrato-search'].helper.form_action = 'contrato-search'
         context['contrato-persona-search'] = PersonaSearchForm(
             prefix='contrato-persona-search')
         context[
-            'contrato-persona-search'].helper.form_action = 'contrato-persona-search'
+            'contrato-persona-search'].helper.form_action = \
+            'contrato-persona-search'
 
         context['empresa-search'] = EmpleadorChoiceForm(prefix='empresa-search')
         context['empresa-search'].helper.form_action = 'empresa-search'
@@ -105,26 +111,30 @@ class IndexView(TemplateView, ContratoPermissionMixin):
                                                 plan__empresarial=True,
                                                 cancelado=False).all()
 
-        # TODO Optimize using a map or a process pool
-        context['citas'] = 0
-        for contrato in privados:
-            context['citas'] += contrato.persona.citas.filter(
-                fecha__gte=self.inicio,
-                fecha__lte=self.fin).count()
-            for beneficiario in contrato.beneficiarios.all():
-                context['citas'] += beneficiario.persona.citas.filter(
-                    fecha__gte=self.inicio,
-                    fecha__lte=self.fin).count()
+        context['consulta'] = Consulta.objects.filter(created__gte=self.inicio,
+                                                      created__lte=self.fin).count()
+        context['seguimientos'] = Seguimiento.objects.filter(
+            created__gte=self.inicio,
+            created__lte=self.fin).count()
 
-        context['citasp'] = 0
-        for contrato in empresariales:
-            context['citasp'] += contrato.persona.citas.filter(
-                fecha__gte=self.inicio,
-                fecha__lte=self.fin).count()
-            for beneficiario in contrato.beneficiarios.all():
-                context['citasp'] += beneficiario.persona.citas.filter(
-                    fecha__gte=self.inicio,
-                    fecha__lte=self.fin).count()
+        # TODO Optimize using a map or a process pool
+        personas = Persona.objects.filter(contratos__in=privados)
+        context['citas'] = Cita.objects.filter(
+            fecha__gte=self.inicio,
+            fecha__lte=self.fin,
+            persona__in=personas).count()
+
+        personas = Persona.objects.filter(contratos__in=empresariales)
+
+        context['citasp'] = Cita.objects.filter(
+            fecha__gte=self.inicio,
+            fecha__lte=self.fin,
+            persona__in=personas).count()
+
+        context['consultasp'] = Consulta.objects.filter(
+            created__gte=self.inicio,
+            created__lte=self.fin,
+            paciente__persona__in=personas).count()
 
         morosos = [c for c in
                    Contrato.objects.filter(vencimiento__gte=self.fin,
@@ -140,7 +150,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['meta'] = Meta.objects.last()
         context['cancelaciones'] = Cancelacion.objects.filter(
             fecha__gte=self.inicio).count()
-        #TODO Hospitalizaciones y cirugias empresariales
+        # TODO Hospitalizaciones y cirugias empresariales
         contratos_e = Contrato.objects.filter(inicio__gte=self.inicio,
                                               plan__empresarial=True).filter(
             inicio__lte=self.fin)
@@ -513,6 +523,32 @@ class EventoDeleteView(DeleteView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.contrato.get_absolute_url()
+
+
+class EventoPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los :class:`Evento`s de un periodo"""
+    template_name = 'contracts/periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='evento-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.eventos = Evento.objects.filter(
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin,
+            )
+        return super(EventoPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(EventoPeriodoView, self).get_context_data(**kwargs)
+
+        context['contratos'] = self.contratos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
 
 
 class VendedorCreateView(CreateView, LoginRequiredMixin):
