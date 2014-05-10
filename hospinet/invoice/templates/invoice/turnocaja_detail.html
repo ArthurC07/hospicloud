@@ -3,28 +3,35 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <section class="page-header">
-                <h1>Reporte {{ turno.id }} de Cajero {{ turno.usuario }}
-                    <small>del {{ turno.inicio }} al {{ turno.fin }}</small>
-                </h1>
-            </section>
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>Reporte {{ turno.id }} de Cajero {{ turno.usuario }}
+                        <small>del {{ turno.inicio }} al {{ turno.fin }}</small>
+                    </h1>
+                </section>
+            </div>
         </div>
     </div>
     <section class="row">
         {% ifnotequal turno.finalizado True %}
-        <div class="col-md-3 no-print">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-stacked nav-tabs">
-                    <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
-                        Pago de Cierre</a></li>
-                    <li><a href="{% url 'invoice-turno-cerrar' turno.id %}">Cerrar Turno</a></li>
-                </ul>
-            </nav>
-        </div>
-        <div class="col-md-9">
+            <div class="col-md-3 no-print">
+                <div class="toolbox col-md-12">
+
+                    <nav class="sidebar-nav">
+                        <ul class="nav nav-stacked nav-tabs">
+                            <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
+                                Pago de Cierre</a></li>
+                            <li><a href="{% url 'invoice-turno-cerrar' turno.id %}">Cerrar Turno</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-md-9">
         {% else %}
-        <div class="col-md-12">
+            <div class="col-md-12">
         {% endifnotequal %}
+        <div class="main-content col-md-12">‏
+
             <h3>Total de Ventas: {{ turno.venta }}</h3>
             <table class="table table-striped table-bordered table-condensed">
                 <caption>Reporte de Facturaci&oacute;n</caption>
@@ -66,7 +73,7 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-            <tfoot>
+                <tfoot>
                 <tr>
                     <td>Menos Apertura</td>
                     <td>{{ turno.apertura }}</td>
@@ -79,8 +86,9 @@
                     <th>Dep&oacute;sitos de Admisiones</th>
                     <th>{{ turno.depositado }}</th>
                 </tr>
-            </tfoot>
+                </tfoot>
             </table>
+        </div>
         </div>
     </section>
 {% endblock %}

@@ -1,44 +1,55 @@
 {% extends 'base.html' %}{% load thumbnail %}
 {% block content %}
-<div class="row">
-  <section class="col-md-12">
-    <div class="page-header">
-      <h1>{{ admision.paciente.nombre_completo }} <small>Fiadores</small></h1>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <div class="page-header">
+                    <h1>{{ admision.paciente.nombre_completo }}
+                        <small>Fiadores</small>
+                    </h1>
+                </div>
+            </div>
+        </section>
     </div>
-  </section>
-</div>
-<div class="row">
-  <section class="col-md-9">
-    {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-    {% for fiador in admision.fiadores.all %}
-    <div class="page-header">
-      <h3> Fiador: {{ fiador.nombre_completo }}</h3>
+    <div class="row">
+        <section class="col-md-9">
+            <div class="main-content col-md-12">‏
+                {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}"
+                                                                                               width="{{ im.width }}"
+                                                                                               height="{{ im.height }}">
+                {% for fiador in admision.fiadores.all %}
+                    <div class="page-header">
+                        <h3> Fiador: {{ fiador.nombre_completo }}</h3>
+                    </div>
+                    {% thumbnail fiador.fotografia "100x100" crop="center" as im %}
+                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                    <a href="{% url 'persona-editar' fiador.id %}" class="btn btn-primary">Editar Datos</a>
+                {% endfor %}
+                <a href="{% url 'admision-fiador' admision.id %}" class="btn btn-primary">Agregar Fiador</a>
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked no-print">
+                        <li>
+                            <a href="{% url 'admision-view-id' admision.id %}">Regresar a la Admisi&oacute;n</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admision-referencias' admision.id %}">Referencias</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admision-fiadores' admision.id %}">Fiadores</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admision-index' %}">Regresar a Admisiones</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
     </div>
-    {% thumbnail fiador.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-    <a href="{% url 'persona-editar' fiador.id %}" class="btn btn-primary">Editar Datos</a>
-    {% endfor %}
-    <a href="{% url 'admision-fiador' admision.id %}" class="btn btn-primary">Agregar Fiador</a>
-  </section>
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-tabs nav-stacked no-print">
-                <li>
-                    <a href="{% url 'admision-view-id' admision.id %}">Regresar a la Admisi&oacute;n</a>
-                </li>
-                <li>
-                    <a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a>
-                </li>
-                <li>
-                    <a href="{% url 'admision-referencias' admision.id %}">Referencias</a>
-                </li>
-                <li>
-                    <a href="{% url 'admision-fiadores' admision.id %}">Fiadores</a>
-                </li>
-                <li>
-                    <a href="{% url 'admision-index' %}">Regresar a Admisiones</a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-</div>
 {% endblock %}

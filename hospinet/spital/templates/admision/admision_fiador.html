@@ -4,24 +4,31 @@
 {% endblock %}
 {% block content %}
 
-<div class="row">
-  <div class="col-md-12">
-    <section class="page-header">
-      <h1>{{ admision.paciente.nombre_completo }} <small>Fiadores</small></h1>
-    </section>
-  </div>
-</div>
-<div class="row">
-{% include 'snippets/admision_aside.html' %}
-  <section class="col-md-9">
-  <form enctype="multipart/form-data" class="styled" method="post">
-    {% csrf_token %} <h1>Ingresar una nuevo Fiador</h1>
-    <div id="messages"></div>
-    {% include 'snippets/form.html' with form=form %}
-    <p>
-      <input type="submit" value="Guardar" />
-    </p>
-  </form>
-  </section>
-</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>{{ admision.paciente.nombre_completo }}
+                        <small>Fiadores</small>
+                    </h1>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        {% include 'snippets/admision_aside.html' %}
+        <section class="col-md-9">
+            <div class="main-content col-md-12">‏
+                <form enctype="multipart/form-data" class="styled" method="post">
+                    {% csrf_token %} <h1>Ingresar una nuevo Fiador</h1>
+
+                    <div id="messages"></div>
+                    {% include 'snippets/form.html' with form=form %}
+                    <p>
+                        <input type="submit" value="Guardar"/>
+                    </p>
+                </form>
+            </div>
+        </section>
+    </div>
 {% endblock %}

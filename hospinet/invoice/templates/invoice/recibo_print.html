@@ -15,86 +15,90 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <table style="width: 100%">
-                <thead>
-                <tr>
-                    <th>Cliente: {{ recibo.cliente }}</th>
-                    <th>Cajero: {{ cajero.turno }}</th>
-                    <th class="text-right">
-                        <p>Factura {{ recibo.numero }}</p>
+            <div class="main-content col-md-12">‏
+                <table style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th>Cliente: {{ recibo.cliente }}</th>
+                        <th>Cajero: {{ cajero.turno }}</th>
+                        <th class="text-right">
+                            <p>Factura {{ recibo.numero }}</p>
 
-                        <p>Fecha: {{ recibo.created }}</p>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td colspan="3">
-                        <table style="width: 100%;">
-                            <thead>
-                            <tr class="negrita">
-                                <th>Cantidad</th>
-                                <th>Concepto</th>
-                                <th>Precio unitario</th>
-                                <th>Subtotal</th>
-                                <th>
-                                    Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
-                                <th>Total</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for venta in recibo.ventas.all %}
+                            <p>Fecha: {{ recibo.created }}</p>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <table style="width: 100%;">
+                                <thead>
+                                <tr class="negrita">
+                                    <th>Cantidad</th>
+                                    <th>Concepto</th>
+                                    <th>Precio unitario</th>
+                                    <th>Subtotal</th>
+                                    <th>
+                                        Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
+                                    <th>Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for venta in recibo.ventas.all %}
+                                    <tr>
+                                        <td>{{ venta.cantidad }}</td>
+                                        <td>{{ venta.item }}</td>
+                                        <td>{{ venta.precio_unitario }}</td>
+                                        <td>{{ venta.monto }}</td>
+                                        <td>{{ venta.descuento_tipo }}</td>
+                                        <td>{{ venta.total }}</td>
+                                    </tr>
+
+                                {% endfor %}
                                 <tr>
-                                    <td>{{ venta.cantidad }}</td>
-                                    <td>{{ venta.item }}</td>
-                                    <td>{{ venta.precio_unitario }}</td>
-                                    <td>{{ venta.monto }}</td>
-                                    <td>{{ venta.descuento_tipo }}</td>
-                                    <td>{{ venta.total }}</td>
+                                    <td colspan="4">&nbsp;</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">&nbsp;</td>
+                                    <td>Subtotal:</td>
+                                    <td>{{ recibo.subtotal }}</td>
                                 </tr>
 
-                            {% endfor %}
-                            <tr>
-                                <td colspan="4">&nbsp;</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4">&nbsp;</td>
-                                <td>Subtotal:</td>
-                                <td>{{ recibo.subtotal }}</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="4">&nbsp;</td>
+                                    <td>Descuento:</td>
+                                    <td>{{ recibo.descuento }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">&nbsp;</td>
+                                    <td>Total:</td>
+                                    <td>{{ recibo.total }}</td>
+                                </tr>
+                                {% for pago in recibo.pagos.all %}
+                                    <tr>
+                                        <td colspan="4">&nbsp;</td>
+                                        <td>{{ pago.tipo }}</td>
+                                        <td>{{ pago.monto }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="row">
+                <div class="offset4 col-md-12">
+                    <br/>
+                    <br/>
+                    <br/>
 
-                            <tr>
-                                <td colspan="4">&nbsp;</td>
-                                <td>Descuento:</td>
-                                <td>{{ recibo.descuento }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="4">&nbsp;</td>
-                                <td>Total:</td>
-                                <td>{{ recibo.total }}</td>
-                            </tr>
-                            {% for pago in recibo.pagos.all %}
-                            <tr>
-                                <td colspan="4">&nbsp;</td>
-                                    <td>{{ pago.tipo }}</td>
-                                    <td>{{ pago.monto }}</td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="row">
-            <div class="offset4 col-md-12">
-                <br/>
-                <br/>
-                <br/>
-                <p class="text-center">_________________________________________</p>
-                <p class="text-center">Firma Cliente</p>
+                    <p class="text-center">_________________________________________</p>
+
+                    <p class="text-center">Firma Cliente</p>
+                </div>
             </div>
         </div>
     </div>

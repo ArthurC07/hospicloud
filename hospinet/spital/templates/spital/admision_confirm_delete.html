@@ -1,20 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
+    {% load crispy_forms_tags %}
     <div class="row">
         <section class="page-header">
             <h1>Eliminar Admisi&oacute;n</h1>
         </section>
     </div>
-<div class="row">
-<section class="col-md-9">
-<form method="post">{% csrf_token %}
-    <fieldset>
-    <legend>Esta Seguro de Borrar la Admision?</legend>
-    <a class="btn btn-success" href="javascript:back();">No</a>
-    <input class="btn btn-danger" type="submit" value="S&iacute;">
-    </fieldset>
-</form>
-</section>
-</div>
+    <div class="row">
+        <section class="col-md-9">
+            <div class="main-content col-md-12">‏
+                <form method="post">{% csrf_token %}
+                    <fieldset>
+                        <legend>Esta Seguro de Borrar la Admision?</legend>
+                        <a class="btn btn-success" href="javascript:back();">No</a>
+                        <input class="btn btn-danger" type="submit" value="S&iacute;">
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+    </div>
 {% endblock %}

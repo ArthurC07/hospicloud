@@ -1,49 +1,53 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-  <div class="spa12">
-    <section class="page-header">
-      <h1>Recibos<small>del {{ inicio }} al {{ fin }}</small></h1>
-    </section>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <table class="table table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>N&uacute;mero</th>
-          <th>Fecha</th>
-          <th>Paciente</th>
-          <th>Total</th>
-          <th>Observaci&oacute;n</th>
-          <th>Placas</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for recibo in recibos.all %}
-        <tr>
-          <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.numero }}</a></td>
-          <td>{{ recibo.created }}</td>
-          <td>{{ recibo }}</td>
-          <td>{{ recibo.total }}</td>
-          <td>
-            {% for venta in recibo.ventas.all %}
-            {{ venta.item.descripcion }}
-            {% endfor %}
-          </td>
-          <td>{{ recibo.placas }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-      <tfoot>
-        <tr>
-          <th colspan="3">Total:</th>
-          <th>{{ total }}</th>
-          <th colspan="2">&nbsp;</th>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-</div>
+    <div class="row">
+        <div class="spa12">
+            <section class="page-header">
+                <h1>Recibos
+                    <small>del {{ inicio }} al {{ fin }}</small>
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>N&uacute;mero</th>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Total</th>
+                        <th>Observaci&oacute;n</th>
+                        <th>Placas</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for recibo in recibos.all %}
+                        <tr>
+                            <td><a href="{% url 'invoice-view-id' recibo.id %}">{{ recibo.numero }}</a></td>
+                            <td>{{ recibo.created }}</td>
+                            <td>{{ recibo }}</td>
+                            <td>{{ recibo.total }}</td>
+                            <td>
+                                {% for venta in recibo.ventas.all %}
+                                    {{ venta.item.descripcion }}
+                                {% endfor %}
+                            </td>
+                            <td>{{ recibo.placas }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="3">Total:</th>
+                        <th>{{ total }}</th>
+                        <th colspan="2">&nbsp;</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

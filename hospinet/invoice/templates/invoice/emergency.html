@@ -1,66 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-  <div class="col-md-12">
-    <section class="page-header">
-      <h1>Emergencias Sin Facturar</h1>
-    </section>
-  </div>
-</div>
-<div class="row">
-  <div id="informacion" class="col-md-9">
-    <table class="table table-striped table-bordered">
-      <thead class="gradient">
-        <tr>
-          <th>Identificaci&oacute;</th>
-          <th>Nombre</th>
-          <th>Edad</th>
-          <th>Sexo</th>
-          <th>Hora de Ingreso</th>
-          <th>Atendi&oacute;</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for emergencia in emergencias %}
-        <tr>
-          <td>
-            <a href="{% url 'persona-view-id' emergencia.persona.id %}">
-            {% if emergencia.persona.identificacion %}
-            {{ emergencia.persona.identificacion }}
-            {% else %}
-            {{ emergencia.persona.id }}
-            {% endif %}
-            </a>
-          </td>
-          <td>{{ emergencia.persona.nombre_completo }}</td>
-          <td>{{ emergencia.persona.obtener_edad }}</td>
-          <td>{{ emergencia.persona.get_sexo_display }}</td>
-          <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
-          <td>{{ emergencia.usuario }}</td>
-          <td>
-            {% if not emergencia.facturada %}
-            <a class="btn btn-block" href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
-            {% endif %}
-            <a class="btn btn-block" href="{% url 'emergency-view-id' emergencia.id %}">Ver</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-      {% if is_paginated %}
-      {% load bootstrap_pagination %}
-      {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
-      {% endif %}
-    </table>
-  </div>
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-stacked nav-tabs">
-                <li>
-                    <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>Emergencias Sin Facturar</h1>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="informacion" class="col-md-9">
+            <div class="main-content col-md-12">‏
+                <table class="table table-striped table-bordered">
+                    <thead class="gradient">
+                    <tr>
+                        <th>Identificaci&oacute;</th>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Sexo</th>
+                        <th>Hora de Ingreso</th>
+                        <th>Atendi&oacute;</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for emergencia in emergencias %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'persona-view-id' emergencia.persona.id %}">
+                                    {% if emergencia.persona.identificacion %}
+                                        {{ emergencia.persona.identificacion }}
+                                    {% else %}
+                                        {{ emergencia.persona.id }}
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td>{{ emergencia.persona.nombre_completo }}</td>
+                            <td>{{ emergencia.persona.obtener_edad }}</td>
+                            <td>{{ emergencia.persona.get_sexo_display }}</td>
+                            <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
+                            <td>{{ emergencia.usuario }}</td>
+                            <td>
+                                {% if not emergencia.facturada %}
+                                    <a class="btn btn-block"
+                                       href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
+                                {% endif %}
+                                <a class="btn btn-block" href="{% url 'emergency-view-id' emergencia.id %}">Ver</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    {% if is_paginated %}
+                        {% load bootstrap_pagination %}
+                        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li>
+                            <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
 {% endblock %}

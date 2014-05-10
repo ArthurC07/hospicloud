@@ -4,10 +4,15 @@
 {% block content %}
     <div class="row">
         <div class="col-md-6">
-            {% crispy persona_search_form %}
+            <div class="main-content col-md-12">‏
+
+                {% crispy persona_search_form %}
+            </div>
         </div>
         <div class="col-md-6">
-            {% crispy persona_form %}
+            <div class="main-content col-md-12">‏
+                {% crispy persona_form %}
+            </div>
         </div>
     </div>
 {% endblock %}

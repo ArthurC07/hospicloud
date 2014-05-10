@@ -11,55 +11,59 @@
     </div>
     <div class="row">
         <article id="examen" class="col-md-9">
-            {% include 'snippets/persona.html' with persona=examen.persona %}
-            {% include 'snippets/examen.html' with examen=examen %}
-            <section id="imagenes">
-                {% for imagen in examen.imagenes.all %}
-                    {% include 'snippets/imagen.html' with imagen=imagen %}
-                {% endfor %}
-            </section>
-            <section id="adjuntos">
-                {% for adjunto in examen.adjuntos.all %}
-                    {% include 'snippets/adjunto.html' with adjunto=adjunto %}
-                {% endfor %}
-            </section>
-            <section id="dicoms">
-                {% if examen.dicoms.all.count > 0 %}
-                    <h2>DICOMs Agregados</h2>{% endif %}
-                {% for dicom in examen.dicoms.all %}
-                    {% include 'snippets/dicom.html' with dicom=dicom %}
-                {% endfor %}
-            </section>
+            <div class="main-content col-md-12">‏
+                {% include 'snippets/persona.html' with persona=examen.persona %}
+                {% include 'snippets/examen.html' with examen=examen %}
+                <section id="imagenes">
+                    {% for imagen in examen.imagenes.all %}
+                        {% include 'snippets/imagen.html' with imagen=imagen %}
+                    {% endfor %}
+                </section>
+                <section id="adjuntos">
+                    {% for adjunto in examen.adjuntos.all %}
+                        {% include 'snippets/adjunto.html' with adjunto=adjunto %}
+                    {% endfor %}
+                </section>
+                <section id="dicoms">
+                    {% if examen.dicoms.all.count > 0 %}
+                        <h2>DICOMs Agregados</h2>{% endif %}
+                    {% for dicom in examen.dicoms.all %}
+                        {% include 'snippets/dicom.html' with dicom=dicom %}
+                    {% endfor %}
+                </section>
+            </div>
         </article>
         <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked">
-                    <li>
-                        <a href="{% url 'examen-adjuntar-imagen' examen.id %}">Adjuntar
-                            una Fotograf&Iacute;a o Escaneo</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'examen-adjuntar-archivo' examen.id %}">Adjuntar
-                            un Documento</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'examen-adjuntar-dicom' examen.id %}">Adjuntar
-                            Imagen DICOM</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'examen-notificar' examen.id %}">Notificar
-                            por correo</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'examen-estudio-create' examen.id %}">Agregar
-                            otro Examen</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'invoice-create' examen.persona.id %}">Crear
-                            Recibo</a>
-                    </li>
-                </ul>
-            </nav>
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li>
+                            <a href="{% url 'examen-adjuntar-imagen' examen.id %}">Adjuntar
+                                una Fotograf&Iacute;a o Escaneo</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'examen-adjuntar-archivo' examen.id %}">Adjuntar
+                                un Documento</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'examen-adjuntar-dicom' examen.id %}">Adjuntar
+                                Imagen DICOM</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'examen-notificar' examen.id %}">Notificar
+                                por correo</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'examen-estudio-create' examen.id %}">Agregar
+                                otro Examen</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-create' examen.persona.id %}">Crear
+                                Recibo</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </aside>
     </div>
 {% endblock %}
