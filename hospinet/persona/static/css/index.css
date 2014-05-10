@@ -56,7 +56,7 @@ aside.sidebar ul li a {
     position: absolute;
     left: 100px;
     top: -5px;
-    z-index: 500;
+    z-index: -1;
 }
 .fill {
      min-height: 100%;

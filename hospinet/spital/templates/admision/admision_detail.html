@@ -2,19 +2,18 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
+            <div class="col-md-12 main-header main-content">
             <section class="page-header">
                 <h1>{{ admision.paciente.nombre_completo }}
                     <small>Admisi&oacute;n {{ admision.get_estado_display }}</small>
                 </h1>
             </section>
+            </div>
         </div>
     </div>
     <div class="row">
         <section class="col-md-9">
             <div class="col-md-12 main-content">
-            <div class="row">
-
-            </div>
             <span>Hora de Registro: {{ admision.momento|date:"d/m/Y P" }}</span>
             <span>{{ admision.get_estado_display }}</span>
             {% include 'snippets/persona_fotografia.html' with persona=admision.paciente %}

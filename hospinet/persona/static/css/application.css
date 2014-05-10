@@ -198,15 +198,19 @@ nav.navbar-inverse .navbar-inner {
 .main-content {
     background-color: rgba(255, 255, 255, 0.75);
     border-radius: 5px;
-}
-.title {
-    margin-bottom: 10px;
+    -webkit-box-shadow: 2px 2px 10px 0 #949494;
+    box-shadow: 2px 2px 10px 0 #949494;
 }
 .toolbox {
-    background-color: #1F419B;
+    background-color: rgb(128, 156, 210);
+    background-color: rgba(128, 156, 210, 0.95);
     border-radius: 5px;
     color: #ffffff;
-    padding: 10px 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    -webkit-box-shadow: 2px 2px 10px 0 #949494;
+    box-shadow: 2px 2px 10px 0 #949494;
+    text-align: center;
 }
 .toolbox li {
     border-top: 1px solid #ffffff;
@@ -215,4 +219,20 @@ nav.navbar-inverse .navbar-inner {
 .toolbox a {
     color: #ffffff;
 }
-
+.toolbox a:hover, .toolbox li a:hover {
+    background-color: rgba(2, 22, 104, 0.5);
+}
+.main-header {
+    margin-bottom: 10px;
+    -webkit-box-shadow: 2px 2px 10px 0 #949494;
+    box-shadow: 2px 2px 10px 0 #949494;
+}
+#logo {
+    position: fixed;
+    left: 100px;
+    top: 40px;
+    z-index: -1;
+}
+.row {
+    margin-bottom: 10px;
+}
