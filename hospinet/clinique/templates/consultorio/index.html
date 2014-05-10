@@ -2,15 +2,16 @@
 {% load staticfiles %}
 {% block content %}
 <aside class="col-md-3 toolbox">
-  <nav>
-    <ul>
-      {% if user.profile.doctor %}
-      <li class="clearfix">
-        <a class="col-md-3" href="{% url 'consultorio-agregar' %}"><img src="{% static 'images/agregar.png' %}" /> Agregar Consultorio</a>
-      </li>
-      {% endif %}
-    </ul>
-  </nav>
+    <div class="toolbox col-md-12">
+        <ul>
+          {% if user.profile.doctor %}
+          <li class="clearfix">
+            <a class="col-md-3" href="{% url 'consultorio-agregar' %}"><img src="{% static 'images/agregar.png' %}" /> Agregar Consultorio</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
 </aside>
 <section id="consultorios">
   <div>
@@ -19,14 +20,18 @@
   {% if user.profile.doctor %}
   {% for consultorio in user.profile.consultorios.all %}
     <section class="col-md-3">
-      <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
+       <div class="toolbox col-md-12">
+            <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
+       </div>
       <p>{{ consultorio.pacientes.count }}</p>
     </section>
   {% endfor %}
   {% else %}
   {% for consultorio in user.profile.secretariados.all %}
     <section class="col-md-3">
-      <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
+        <div class="toolbox col-md-12">
+            <a href="{% url 'consultorio-view' consultorio.uuid %}">{{ consultorio.nombre }}</a>
+        </div>
     </section>
   {% endfor %}
   {% endif %}

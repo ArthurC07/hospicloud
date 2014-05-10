@@ -6,13 +6,17 @@
     {% endblock %}
     <div class="row">
         <section class="col-md-6">
-            {% crispy form %}
+            <div class="main-content col-md-12">‏
+                {% crispy form %}
+             </div>
         </section>
         <aside class="col-md-3">
-            <nav class="sidebar-nav">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                 </ul>
-            </nav>
+                </nav>
+            </div>
         </aside>
     </div>
 {% endblock %}

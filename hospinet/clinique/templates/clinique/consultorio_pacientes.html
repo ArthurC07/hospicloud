@@ -10,61 +10,65 @@
             </div>
             <div class="row">
                 <section class="col-md-9">
-                    {% load staticfiles %}{% load thumbnail %}
-                    {% for paciente in consultorio.pacientes.all %}
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    {% ifnotequal persona.fotografia None %}
-                                        {% thumbnail persona.fotografia|default:'images/face.jpg' "100x100" crop="center" as im %}
-                                        <img src="{{ im.url }}"
-                                             width="{{ im.width }}"
-                                             height="{{ im.height }}">
-                                    {% else %}
-                                        <img src="{% static 'images/face.jpg' %}"
-                                             width="100"
-                                             height="100"/>
-                                    {% endifnotequal %}
-                                </div>
-                                <div class="col-md-9">
-                                    <h3>{{ paciente }}
-                                        <small>{{ paciente.persona.obtener_edad }}
-                                            a&ntilde;os
-                                        </small>
-                                    </h3>
-                                    <p>
-                                        {{ paciente.get_sexo_display }}
-                                    </p>
+                    <div class="main-content col-md-12">
+                        {% load staticfiles %}{% load thumbnail %}
+                        {% for paciente in consultorio.pacientes.all %}
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        {% ifnotequal persona.fotografia None %}
+                                            {% thumbnail persona.fotografia|default:'images/face.jpg' "100x100" crop="center" as im %}
+                                            <img src="{{ im.url }}"
+                                                 width="{{ im.width }}"
+                                                 height="{{ im.height }}">
+                                        {% else %}
+                                            <img src="{% static 'images/face.jpg' %}"
+                                                 width="100"
+                                                 height="100"/>
+                                        {% endifnotequal %}
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h3>{{ paciente }}
+                                            <small>{{ paciente.persona.obtener_edad }}
+                                                a&ntilde;os
+                                            </small>
+                                        </h3>
+                                        <p>
+                                            {{ paciente.get_sexo_display }}
+                                        </p>
 
-                                    <a class="btn btn-primary"
-                                       href="{% url 'clinique-paciente' paciente.id %}">Ver</a>
+                                        <a class="btn btn-primary"
+                                           href="{% url 'clinique-paciente' paciente.id %}">Ver</a>
+                                    </div>
                                 </div>
+                                <hr>
                             </div>
-                            <hr>
-                        </div>
-                    {% endfor %}
-                    </aside>
+                        {% endfor %}
+                        </aside>
+                    </div>
                 </section>
                 <aside class="col-md-3">
-                    <section>
-                        <nav class="sidebar-nav">
-                            <ul class="nav nav-stacked nav-tabs">
-                                <li><a href="{% url 'persona-create' %}">Agregar
-                                    Paciente</a></li>
-                                <li>
-                                    <a href="{% url 'consultorio-cita-agregar' %}">Crear
-                                        una Cita</a></li>
-                                <li>
-                                    <a href="{% url 'consultorio-cita-list' consultorio.id %}">
-                                        Citas Pendientes
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </section>
-                    <section class="row">
-                        {% crispy buscar %}
-                    </section>
+                    <div class="toolbox col-md-12">
+                        <section>
+                            <nav class="sidebar-nav">
+                                <ul class="nav nav-stacked nav-tabs">
+                                    <li><a href="{% url 'persona-create' %}">Agregar
+                                        Paciente</a></li>
+                                    <li>
+                                        <a href="{% url 'consultorio-cita-agregar' %}">Crear
+                                            una Cita</a></li>
+                                    <li>
+                                        <a href="{% url 'consultorio-cita-list' consultorio.id %}">
+                                            Citas Pendientes
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </section>
+                        <section class="row">
+                            {% crispy buscar %}
+                        </section>
+                    </div>
                 </aside>
             </div>
         </div>

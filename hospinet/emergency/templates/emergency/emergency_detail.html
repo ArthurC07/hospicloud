@@ -11,64 +11,68 @@
     </div>
     <div class="row">
         <section class="col-md-9">
-            <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
-            <section class="tabbable">
-                <ul class="nav nav-tabs">
-                    <li><a class="active" href="#paciente" data-toggle="tab">Datos Personales</a></li>
-                    <li><a href="#emergencia" data-toggle="tab">Datos Emergencia</a></li>
-                </ul>
-                <div class="tab-content">
-                    <article id="paciente" class="tab-pane">
-                        {% include 'snippets/persona_fotografia.html' with persona=emergencia.persona %}
-                        {% include 'snippets/persona.html' with persona=emergencia.persona %}
-                        <a href="{% url 'persona-editar' emergencia.persona.id %}" class="btn btn-primary">Editar Datos
-                            del Paciente</a>
-                        {% include 'snippets/fisico.html' with fisico=emergencia.persona.fisico %}
-                        <a href="{% url 'emergencia-fisico-editar' emergencia.persona.id emergencia.id %}"
-                           class="btn btn-primary">Editar Fisiolog&iacute;a</a>
-                        {% include 'snippets/antecedente.html' with antecedente=emergencia.persona.antecedente %}
-                        <a href="{% url 'emergencia-antecedente-editar' emergencia.persona.id emergencia.id %}"
-                           class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
-                        {% include 'snippets/antecedente_familiar.html' with antecedente=emergencia.persona.antecedente_familiar %}
-                        <a href="{% url 'emergencia-antecedente-familiar-editar' emergencia.persona.id emergencia.id %}"
-                           class="btn btn-primary">Editar Antecedentes Familiares</a>
-                        {% include 'snippets/antecedente_quirurgico.html' with persona=emergencia.persona %}
-                        <a href="{% url 'emergencia-antecedente-quirurgico-agregar' emergencia.persona.id emergencia.id %}"
-                           class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
-                        {% ifequal emergencia.persona.sexo 'F' %}
-                            {% include 'snippets/antecedente_obstetrico.html' with antecedente=emergencia.persona.antecedente_obstetrico %}
-                            <a href="{% url 'emergencia-antecedente-obstetrico-editar' emergencia.persona.id emergencia.id %}"
-                               class="btn btn-primary">Editar Antecedentes Obstetricos</a>
-                        {% endifequal %}
-                    </article>
-                    <article id="emergencia" class="tab-pane active">
-                        {% include 'emergency/snippets/emergencia.html' with emergencia=emergencia %}
-                    </article>
-                </div>
-            </section>
+            <div class="main-content col-md-12">‏
+                    <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
+                <section class="tabbable">
+                    <ul class="nav nav-tabs">
+                        <li><a class="active" href="#paciente" data-toggle="tab">Datos Personales</a></li>
+                        <li><a href="#emergencia" data-toggle="tab">Datos Emergencia</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <article id="paciente" class="tab-pane">
+                            {% include 'snippets/persona_fotografia.html' with persona=emergencia.persona %}
+                            {% include 'snippets/persona.html' with persona=emergencia.persona %}
+                            <a href="{% url 'persona-editar' emergencia.persona.id %}" class="btn btn-primary">Editar Datos
+                                del Paciente</a>
+                            {% include 'snippets/fisico.html' with fisico=emergencia.persona.fisico %}
+                            <a href="{% url 'emergencia-fisico-editar' emergencia.persona.id emergencia.id %}"
+                               class="btn btn-primary">Editar Fisiolog&iacute;a</a>
+                            {% include 'snippets/antecedente.html' with antecedente=emergencia.persona.antecedente %}
+                            <a href="{% url 'emergencia-antecedente-editar' emergencia.persona.id emergencia.id %}"
+                               class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Personales</a>
+                            {% include 'snippets/antecedente_familiar.html' with antecedente=emergencia.persona.antecedente_familiar %}
+                            <a href="{% url 'emergencia-antecedente-familiar-editar' emergencia.persona.id emergencia.id %}"
+                               class="btn btn-primary">Editar Antecedentes Familiares</a>
+                            {% include 'snippets/antecedente_quirurgico.html' with persona=emergencia.persona %}
+                            <a href="{% url 'emergencia-antecedente-quirurgico-agregar' emergencia.persona.id emergencia.id %}"
+                               class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
+                            {% ifequal emergencia.persona.sexo 'F' %}
+                                {% include 'snippets/antecedente_obstetrico.html' with antecedente=emergencia.persona.antecedente_obstetrico %}
+                                <a href="{% url 'emergencia-antecedente-obstetrico-editar' emergencia.persona.id emergencia.id %}"
+                                   class="btn btn-primary">Editar Antecedentes Obstetricos</a>
+                            {% endifequal %}
+                        </article>
+                        <article id="emergencia" class="tab-pane active">
+                            {% include 'emergency/snippets/emergencia.html' with emergencia=emergencia %}
+                        </article>
+                    </div>
+                </section>
+            </div>
         </section>
         <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked">
-                    <li><a href="{% url 'emergencia-update' emergencia.id %}">Editar Emergencia</a></li>
-                    <li><a href="{% url 'emergencia-hallazgo-agregar' emergencia.id %}">Agregar Hallazgos</a></li>
-                    <li><a href="{% url 'emergencia-examen-fisico-agregar' emergencia.id %}">Agregar Examen F&iacute;sico</a>
-                    </li>
-                    <li><a href="{% url 'emergencia-diagnostico-agregar' emergencia.id %}">Agregar Examen
-                        Diagnostico</a></li>
-                    <li><a href="{% url 'emergencia-tratamiento-agregar' emergencia.id %}">Agregar Tratamiento</a></li>
-                    <li><a href="{% url 'emergencia-cobro-agregar' emergencia.id %}">Agregar Materiales y
-                        Medicamentos</a></li>
-                    <li><a href="{% url 'emergencia-remision-interna-agregar' emergencia.id %}">Remitir a un M&eacute;dico</a>
-                    </li>
-                    <li><a href="{% url 'emergencia-remision-externa-agregar' emergencia.id %}">Remitir otro Centro M&eacute;dico</a>
-                    </li>
-                    <li><a href="{% url 'preadmitir' emergencia.id %}">Remitir a Admisiones</a></li>
-                </ul>
-            </nav>
-            <nav class="sidebar-nav">
-                {% include 'snippets/persona_menu.html' with persona=emergencia.persona %}
-            </nav>
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li><a href="{% url 'emergencia-update' emergencia.id %}">Editar Emergencia</a></li>
+                        <li><a href="{% url 'emergencia-hallazgo-agregar' emergencia.id %}">Agregar Hallazgos</a></li>
+                        <li><a href="{% url 'emergencia-examen-fisico-agregar' emergencia.id %}">Agregar Examen F&iacute;sico</a>
+                        </li>
+                        <li><a href="{% url 'emergencia-diagnostico-agregar' emergencia.id %}">Agregar Examen
+                            Diagnostico</a></li>
+                        <li><a href="{% url 'emergencia-tratamiento-agregar' emergencia.id %}">Agregar Tratamiento</a></li>
+                        <li><a href="{% url 'emergencia-cobro-agregar' emergencia.id %}">Agregar Materiales y
+                            Medicamentos</a></li>
+                        <li><a href="{% url 'emergencia-remision-interna-agregar' emergencia.id %}">Remitir a un M&eacute;dico</a>
+                        </li>
+                        <li><a href="{% url 'emergencia-remision-externa-agregar' emergencia.id %}">Remitir otro Centro M&eacute;dico</a>
+                        </li>
+                        <li><a href="{% url 'preadmitir' emergencia.id %}">Remitir a Admisiones</a></li>
+                    </ul>
+                </nav>
+                <nav class="sidebar-nav">
+                    {% include 'snippets/persona_menu.html' with persona=emergencia.persona %}
+                </nav>
+            </div>
         </aside>
     </div>
 {% endblock %}

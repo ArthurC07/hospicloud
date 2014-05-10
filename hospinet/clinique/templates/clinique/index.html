@@ -10,58 +10,60 @@
 </div>
 <div class="row">
     <div class="col-md-6">
-    {% for consultorio in user.consultorios.all %}
-        <div class="row">
-            <div class="col-md-9">
-                <div class="page-header">
-                    <h2>
-                        {{ consultorio }}
-                        <small>{{ consultorio.pacientes.count }} pacientes</small>
-                        <a class="pull-right btn btn-primary" href="{% url 'consultorio' consultorio.id %}">Ver</a>
-                    </h2>
+        <div class="main-content col-md-12">‏
+            {% for consultorio in user.consultorios.all %}
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="page-header">
+                        <h2>
+                            {{ consultorio }}
+                            <small>{{ consultorio.pacientes.count }} pacientes</small>
+                            <a class="pull-right btn btn-primary" href="{% url 'consultorio' consultorio.id %}">Ver</a>
+                        </h2>
+                    </div>
                 </div>
             </div>
-        </div>
-    {% endfor %}
-    {% for consultorio in user.consultorios_administrados.all %}
-        <div class="row">
-            <div class="col-md-9">
-                <div class="page-header">
-                    <h2>
-                        {{ consultorio }} <small>{{ consultorio.pacientes.count }} pacientes</small>
-                        <a class="pull-right btn btn-primary" href="{% url 'consultorio' consultorio.id %}">Ver</a>
-                    </h2>
+        {% endfor %}
+        {% for consultorio in user.consultorios_administrados.all %}
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="page-header">
+                        <h2>
+                            {{ consultorio }} <small>{{ consultorio.pacientes.count }} pacientes</small>
+                            <a class="pull-right btn btn-primary" href="{% url 'consultorio' consultorio.id %}">Ver</a>
+                        </h2>
+                    </div>
                 </div>
             </div>
+        {% endfor %}
         </div>
-    {% endfor %}
+        <aside class="col-md-3">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li><a href="{% url 'consultorio-agregar' %}">Agregar Consultorio</a></li>
+                </ul>
+            </nav>
+            <div class="row">
+                <div class="col-md-12">
+                    {% crispy citaperiodoform %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {% crispy diagnosticoperiodoform %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {% crispy cargosperiodoform %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {% crispy evaluacionperiodoform %}
+                </div>
+            </div>
+        </aside>
     </div>
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-tabs nav-stacked">
-                <li><a href="{% url 'consultorio-agregar' %}">Agregar Consultorio</a></li>
-            </ul>
-        </nav>
-        <div class="row">
-            <div class="col-md-12">
-                {% crispy citaperiodoform %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                {% crispy diagnosticoperiodoform %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                {% crispy cargosperiodoform %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                {% crispy evaluacionperiodoform %}
-            </div>
-        </div>
-    </aside>
 </div>
 {% endblock %}

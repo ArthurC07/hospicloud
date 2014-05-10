@@ -6,17 +6,23 @@
     {% endblock %}
     <div class="row">
         <section class="col-md-12">
-            <form method="post" class="form-horizontal">
-                {{ form.management_form }}
-            <div class="col-md-6">
-                {% crispy persona_form %}
-            </div>
-                {% for subform in form %}
-                    <div class="col-md-6">
-                    {% crispy subform %}
+            <div class="main-content col-md-12">‏
+               <div class="main-content col-md-12">‏
+                    <div class="main-content col-md-12">‏
+                        <form method="post" class="form-horizontal">
+                            {{ form.management_form }}
+                        <div class="col-md-6">
+                            {% crispy persona_form %}
+                        </div>
+                            {% for subform in form %}
+                                <div class="col-md-6">
+                                {% crispy subform %}
+                                </div>
+                            {% endfor %}
+                        </form>
                     </div>
-                {% endfor %}
-            </form>
+                </div>
+            </div>
         </section>
     </div>
 {% endblock %}

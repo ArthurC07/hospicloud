@@ -23,8 +23,8 @@
           <td>{{ e.paciente.persona.obtener_edad }}</td>
           <td>{{ e.paciente.persona.get_sexo_display }}</td>
           <td>
-            <a href="{% url 'consultorio-paciente" e.paciente.uuid %}">Ver</a>
-          	<a href="{% url 'consultorio-esperador-atender" e.id %}">Atender</a>
+            <a href="{% url 'consultorio-paciente' e.paciente.uuid %}">Ver</a>
+          	<a href="{% url 'consultorio-esperador-atender' e.id %}">Atender</a>
           </td>
         </tr>
       {% endfor %}

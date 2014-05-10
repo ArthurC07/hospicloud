@@ -3,28 +3,30 @@
 {% block content %}
 
 <div id="informacion" class="col-md-9">
-  <h1>Consultas de {{ paciente.persona.nombre_completo }}</h1>
-  <table class="table table-striped table-bordered">
-      <thead class="gradient">
-       	<tr>
-          <th>Fecha</th>
-          <th>Medicamentos</th>
-          <th>Notas adicionales</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for receta in paciente.recetas.all %}
-        <tr>
-          <td>{{ receta.fecha_y_hora|date:"d/m/Y H:i" }}</td>
-          <td>{{ receta.medicamentos }}</td>
-          <td>{{ receta.notas_adicionales }}</td>
-          <td>
-            <a href="{% url consultorio-consulta-view consulta.id %}">Ver</a>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="main-content col-md-12">‏
+      <h1>Consultas de {{ paciente.persona.nombre_completo }}</h1>
+      <table class="table table-striped table-bordered">
+          <thead class="gradient">
+            <tr>
+              <th>Fecha</th>
+              <th>Medicamentos</th>
+              <th>Notas adicionales</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for receta in paciente.recetas.all %}
+            <tr>
+              <td>{{ receta.fecha_y_hora|date:"d/m/Y H:i" }}</td>
+              <td>{{ receta.medicamentos }}</td>
+              <td>{{ receta.notas_adicionales }}</td>
+              <td>
+                <a href="{% url consultorio-consulta-view consulta.id %}">Ver</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 </div>
 {% endblock %}

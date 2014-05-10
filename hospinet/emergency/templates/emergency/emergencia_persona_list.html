@@ -2,12 +2,16 @@
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
 {% include 'snippets/persona_aside.html' with persona=persona %}
-<section id="emergencia" class="informacion col-md-9">
-  <div>
-    <h1>Emergencias de {{ persona.nombre_completo }}</h1>
+  <div class="row">
+    <section id="emergencia" class="col-md-9">
+        <div class="main-content col-md-12">‏
+            <div>
+            <h1>Emergencias de {{ persona.nombre_completo }}</h1>
+          </div>
+          {% for emergencia in persona.emergencias.all %}
+            {% include 'snippets/emergencia.html' with emergencia=emergencia %}
+          {% endfor %}
+        </div>
+    </section>
   </div>
-  {% for emergencia in persona.emergencias.all %}
-    {% include 'snippets/emergencia.html' with emergencia=emergencia %}
-  {% endfor %}
-</section>
 {% endblock %}
