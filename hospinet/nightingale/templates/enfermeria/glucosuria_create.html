@@ -2,6 +2,9 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <div class="row">
+   <section class="col-md-9">
+        {% crispy form %}
+   </section>
     <aside class="col-md-3">
         <nav class="sidebar-nav">
             <ul class="nav nav-stacked nav-tabs">
@@ -11,9 +14,6 @@
             </ul>
         </nav>
     </aside>
-    <section class="col-md-9">
-        {% crispy form %}
-    </section>
 </div>
 {% endblock %}
 

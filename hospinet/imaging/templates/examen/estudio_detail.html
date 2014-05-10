@@ -9,14 +9,14 @@
     </div>
 </div>
 <div class="row">
-    <aside class="col-md-3 navbar">
-        {% include 'snippets/examen_aside.html' %}
-    </aside>
     <article id="examen" class="col-md-9">
         {% include 'snippets/examen.html' with examen=estudio %}
         <a href="{% url 'examen-efectuar' estudio.id %}" class="btn btn-primary">Efectuar Estudio</a>
         <a href="{% url 'invoice-create' estudio.persona.id %}" class="btn btn-primary">Crear Recibo</a>
     </article>
+    <aside class="col-md-3 navbar">
+        {% include 'snippets/examen_aside.html' %}
+    </aside>
 </div>
 
 {% endblock %}
