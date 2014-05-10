@@ -11,17 +11,17 @@
     </div>
 </div>
 <div class="row">
-  <aside class="col-md-3">
-    <nav class="sidebar-nav">
-      <ul class="nav nav-tabs nav-stacked">
-        <li>
-          <a href="{% url 'emergency-ingresar' %}">Admitir Paciente</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
   <section class="col-md-9">
     {% include 'emergency/snippets/emergencia_list.html' with emergencias=emergencias %}
   </section>
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-tabs nav-stacked">
+                <li>
+                    <a href="{% url 'emergency-ingresar' %}">Admitir Paciente</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 </div>
 {% endblock %}

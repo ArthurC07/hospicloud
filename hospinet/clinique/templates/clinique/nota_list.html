@@ -9,9 +9,6 @@
     </div>
 </div>
 <div class="row">
-    <aside class="col-md-3">
-        {% include 'snippets/paciente_aside.html' %}
-    </aside>
     <div class="col-md-9">
         <a class="btn btn-primary" href="{% url 'consultorio-nota-agregar' paciente.id %}">Agregar Nota de Enfermeria</a>
         <table class="table table-striped">
@@ -34,5 +31,8 @@
             </tbody>
         </table>
     </div>
+    <aside class="col-md-3">
+        {% include 'snippets/paciente_aside.html' %}
+    </aside>
 </div>
 {% endblock %}

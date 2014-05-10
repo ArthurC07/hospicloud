@@ -2,24 +2,30 @@
 {% block content %}
     <div class="row">
         <section class="col-md-12">
-            <div class="page-header">
-                <h1>{{ admision.paciente.nombre_completo }} <br />
-                    <small>
-                        {{ admision.habitacion }},  Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
-                    </small></h1>
+            <div class="main-content col-md-12">
+                <div class="page-header">
+                    <h1>{{ admision.paciente.nombre_completo }} <br/>
+                        <small>
+                            {{ admision.habitacion }}, Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
+                        </small>
+                    </h1>
+                </div>
             </div>
         </section>
     </div>
-<div class="row">
-  {% include 'snippets/aside.html' with admision=admision %}
-  <section class="col-md-9">
-    <div>
-      <h1>Devoluciones</h1>
+    <div class="row">
+        {% include 'snippets/aside.html' with admision=admision %}
+        <section class="col-md-9">
+            <div class="main-content col-md-12">
+                <div>
+                    <h1>Devoluciones</h1>
+                </div>
+                <p>
+                    <a href="{% url 'enfermeria-devolucion-agregar' admision.id %}" class="btn btn-primary">Agregar
+                        Devoluci&oacute;n</a>
+                </p>
+                {% include 'snippets/devolucion_table.html' %}
+            </div>
+        </section>
     </div>
-      <p>
-          <a href="{% url 'enfermeria-devolucion-agregar' admision.id %}" class="btn btn-primary">Agregar Devoluci&oacute;n</a>
-      </p>
-    {% include 'snippets/devolucion_table.html' %}
-  </section>
-</div>
 {% endblock %}

@@ -9,32 +9,6 @@
                 </h1>
             </div>
             <div class="row">
-                <aside class="col-md-3">
-                    <section>
-                        <nav class="sidebar-nav">
-                            <ul class="nav nav-stacked nav-tabs">
-                                <li><a href="{% url 'consultorio-persona-agregar' consultorio.id %}">Agregar
-                                    Paciente</a></li>
-                                <li>
-                                    <a href="{% url 'consultorio-cita-agregar' %}">Crear
-                                        una Cita</a></li>
-                                <li>
-                                    <a href="{% url 'consultorio-cita-list' consultorio.id %}">
-                                        Citas Pendientes
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'consultorio-pacientes' consultorio.id %}">
-                                        Listado de Pacientes
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </section>
-                    <section class="row">
-                        {% crispy buscar %}
-                    </section>
-                </aside>
                 <section class="col-md-9">
                     <div class="row">
                         <div class="col-md-12">
@@ -117,6 +91,32 @@
                         </div>
                     </div>
                 </section>
+                <aside class="col-md-3">
+                    <section>
+                        <nav class="sidebar-nav">
+                            <ul class="nav nav-stacked nav-tabs">
+                                <li><a href="{% url 'consultorio-persona-agregar' consultorio.id %}">Agregar
+                                    Paciente</a></li>
+                                <li>
+                                    <a href="{% url 'consultorio-cita-agregar' %}">Crear
+                                        una Cita</a></li>
+                                <li>
+                                    <a href="{% url 'consultorio-cita-list' consultorio.id %}">
+                                        Citas Pendientes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'consultorio-pacientes' consultorio.id %}">
+                                        Listado de Pacientes
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </section>
+                    <section class="row">
+                        {% crispy buscar %}
+                    </section>
+                </aside>
             </div>
             </section>
         </div>

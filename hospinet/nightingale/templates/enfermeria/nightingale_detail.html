@@ -13,54 +13,72 @@
         </section>
     </div>
     <div class="row action-nav-normal">
-        <section class="col-md-2 col-md-offset-3 action-nav-button">
-            <a href="{% url 'nightingale-resume' admision.id %}"><i class="fa fa-list-ol"></i><span>Resumen</span></a>
-        </section>
-        <section class="col-md-2 action-nav-button">
-            <a href="{% url 'enfermeria-cuenta' admision.id %}"><i class="fa fa-dollar"></i><span>Estado de Cuenta</span></a>
-        </section>
-        <section class="col-md-2 action-nav-button">
-            <a href="{% url 'enfermeria-cargos' admision.id %}"><i class="fa fa-medkit"></i><span>Cargos y Medicamentos</span></a>
-        </section>
-    </div>
-    <div class="row action-nav-normal">
-        <section class="col-md-2 col-md-offset-3 action-nav-button">
-            <a href="{% url 'enfermeria-oxigeno' admision.id %}"><i class="fa fa-dashboard"></i><span>Ox&iacute;geno-Terapia</span></a>
-        </section>
-        <section class="col-md-2 action-nav-button">
-            <a href="{% url 'enfermeria-honorarios' admision.id %}"><i class="fa fa-user-md"></i><span>Honorarios</span></a>
-        </section>
-        <section class="col-md-2 action-nav-button">
-            <a href="{% url 'enfermeria-signos' admision.id %}"><i class="fa fa-heart"></i><span>Signos Vitales</span></a>
-        </section>
-    </div>
-    <div class="row action-nav-normal">
-        <section class="col-md-2 col-md-offset-3 action-nav-button">
-            <a href="{% url 'enfermeria-ordenes' admision.id %}"><i class="fa fa-stethoscope"></i><span>Ordenes M&eacute;dicas</span></a>
-        </section>
-        <section class="col-md-2 action-nav-button">
-            <a href="{% url 'enfermeria-dar-alta' admision.id %}"><i class="fa fa-plus"></i><span>Exámenes</span></a>
-        </section>
-        <section class="col-md-2 action-nav-button">
-            <a href="{% url 'enfermeria-ingestas-excretas' admision.id %}"><i class="fa fa-unlink"></i><span>Ingestas
-                y Excretas</span></a>
-        </section>
-    </div>
-    <div class="row action-nav-normal">
-        <section class="col-md-2 col-md-offset-3 action-nav-button">
-            <a href="{% url 'enfermeria-notas' admision.id %}"><i class="fa fa-pencil"></i><span>Notas de Enfermer&iacute;a</span></a>
-        </section>
-        <section class="col-md-2 action-nav-button">
+        <div class="main-content col-md-12">
 
-        </section>
-        <section class="col-md-2 action-nav-button">
-            <a href="{% url 'enfermeria-glucometria' admision.id %}"><i class="fa fa-tint"></i><span>Glucometr&iacute;a</span></a>
-        </section>
+            <section class="col-md-2 col-md-offset-3 action-nav-button">
+                <a href="{% url 'nightingale-resume' admision.id %}"><i
+                        class="fa fa-list-ol"></i><span>Resumen</span></a>
+            </section>
+            <section class="col-md-2 action-nav-button">
+                <a href="{% url 'enfermeria-cuenta' admision.id %}"><i
+                        class="fa fa-dollar"></i><span>Estado de Cuenta</span></a>
+            </section>
+            <section class="col-md-2 action-nav-button">
+                <a href="{% url 'enfermeria-cargos' admision.id %}"><i
+                        class="fa fa-medkit"></i><span>Cargos y Medicamentos</span></a>
+            </section>
+        </div>
+    </div>
+    <div class="row action-nav-normal">
+        <div class="main-content col-md-12">
+            <section class="col-md-2 col-md-offset-3 action-nav-button">
+                <a href="{% url 'enfermeria-oxigeno' admision.id %}"><i class="fa fa-dashboard"></i><span>Ox&iacute;geno-Terapia</span></a>
+            </section>
+            <section class="col-md-2 action-nav-button">
+                <a href="{% url 'enfermeria-honorarios' admision.id %}"><i
+                        class="fa fa-user-md"></i><span>Honorarios</span></a>
+            </section>
+            <section class="col-md-2 action-nav-button">
+                <a href="{% url 'enfermeria-signos' admision.id %}"><i
+                        class="fa fa-heart"></i><span>Signos Vitales</span></a>
+            </section>
+        </div>
+    </div>
+    <div class="row action-nav-normal">
+        <div class="main-content col-md-12">
+            <section class="col-md-2 col-md-offset-3 action-nav-button">
+                <a href="{% url 'enfermeria-ordenes' admision.id %}"><i class="fa fa-stethoscope"></i><span>Ordenes M&eacute;dicas</span></a>
+            </section>
+            <section class="col-md-2 action-nav-button">
+                <a href="{% url 'enfermeria-dar-alta' admision.id %}"><i
+                        class="fa fa-plus"></i><span>Exámenes</span></a>
+            </section>
+            <section class="col-md-2 action-nav-button">
+                <a href="{% url 'enfermeria-ingestas-excretas' admision.id %}"><i class="fa fa-unlink"></i><span>Ingestas
+                y Excretas</span></a>
+            </section>
+        </div>
+    </div>
+    <div class="row action-nav-normal">
+        <div class="main-content col-md-12">
+            <section class="col-md-2 col-md-offset-3 action-nav-button">
+                <a href="{% url 'enfermeria-notas' admision.id %}"><i class="fa fa-pencil"></i><span>Notas de Enfermer&iacute;a</span></a>
+            </section>
+            <section class="col-md-2 action-nav-button">
+
+            </section>
+            <section class="col-md-2 action-nav-button">
+                <a href="{% url 'enfermeria-glucometria' admision.id %}"><i
+                        class="fa fa-tint"></i><span>Glucometr&iacute;a</span></a>
+            </section>
+        </div>
     </div>
     <div class="row action-nav-normal ">
-        <section id="dar-alta" class="col-md-2 offset5">
-            <a class="btn btn-primary btn-block" href="{% url 'enfermeria-dar-alta' admision.id %}">
-                <i class="icon-signout"></i>Dar de Alta</a>
-        </section>
+        <div class="main-content col-md-12">
+            <section id="dar-alta" class="col-md-2 offset5">
+                <a class="btn btn-primary btn-block" href="{% url 'enfermeria-dar-alta' admision.id %}">
+                    <i class="icon-signout"></i>Dar de Alta</a>
+            </section>
+        </div>
     </div>
 {% endblock %}

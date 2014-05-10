@@ -9,27 +9,6 @@
                 </h1>
             </div>
             <div class="row">
-                <aside class="col-md-3">
-                    <section>
-                        <nav class="sidebar-nav">
-                            <ul class="nav nav-stacked nav-tabs">
-                                <li><a href="{% url 'persona-create' %}">Agregar
-                                    Paciente</a></li>
-                                <li>
-                                    <a href="{% url 'consultorio-cita-agregar' %}">Crear
-                                        una Cita</a></li>
-                                <li>
-                                    <a href="{% url 'consultorio-cita-list' consultorio.id %}">
-                                        Citas Pendientes
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </section>
-                    <section class="row">
-                        {% crispy buscar %}
-                    </section>
-                </aside>
                 <section class="col-md-9">
                     {% load staticfiles %}{% load thumbnail %}
                     {% for paciente in consultorio.pacientes.all %}
@@ -66,6 +45,27 @@
                     {% endfor %}
                     </aside>
                 </section>
+                <aside class="col-md-3">
+                    <section>
+                        <nav class="sidebar-nav">
+                            <ul class="nav nav-stacked nav-tabs">
+                                <li><a href="{% url 'persona-create' %}">Agregar
+                                    Paciente</a></li>
+                                <li>
+                                    <a href="{% url 'consultorio-cita-agregar' %}">Crear
+                                        una Cita</a></li>
+                                <li>
+                                    <a href="{% url 'consultorio-cita-list' consultorio.id %}">
+                                        Citas Pendientes
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </section>
+                    <section class="row">
+                        {% crispy buscar %}
+                    </section>
+                </aside>
             </div>
         </div>
     </div>

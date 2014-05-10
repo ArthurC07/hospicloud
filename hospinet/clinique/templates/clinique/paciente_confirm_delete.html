@@ -2,13 +2,6 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <div class="row">
-<aside class="col-md-3">
-<nav class="well sidebar-nav">
-  <ul class="nav nav-list">
-    
-  </ul>
-</nav>
-</aside>
 <section class="col-md-9">
 <form method="post">{% csrf_token %}
     <fieldset>
@@ -18,5 +11,12 @@
     </fieldset>
 </form>
 </section>
+<aside class="col-md-3">
+   <nav class="well sidebar-nav">
+        <ul class="nav nav-list">
+
+        </ul>
+   </nav>
+</aside>
 </div>
 {% endblock %}

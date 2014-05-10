@@ -5,73 +5,79 @@
     <div class="row action-nav-normal">
         <section class="col-md-10">
             <div class="page-header">
-                <h1>{{ admision.paciente.nombre_completo }} <br />
+                <h1>{{ admision.paciente.nombre_completo }} <br/>
                     <small>
                         {{ admision.habitacion }}, {{ admision.doctor }}, {{ admision.diagnostico }}
-                    </small></h1>
+                    </small>
+                </h1>
             </div>
         </section>
         <section class="col-md-2 action-nav-button">
             <a href="{% url 'nightingale-view-id' admision.id %}"><i class="icon-home"></i><span>Regresar</span></a>
         </section>
     </div>
-<div class="row">
-  <div id="informacion" class="col-md-12">
-    {% include 'snippets/persona_fotografia.html' with persona=admision.paciente %}
-    {% include 'snippets/persona.html' with persona=admision.paciente %}
-    {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %}
-    <section id="signos-vitales">
-      <div class="page-header">
-        <h2>Signos Vitales</h2>
-      </div>
-      <div id="temperatura" class="grafica"></div>
-      <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
-      <div id="presion" class="grafica"></div>
-      <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }} / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
-      <div id="pulso" class="grafica"></div>
-      <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
-      {% include 'snippets/signo_table.html' %}
-    </section>
-    <section id="ingestas-excretas">
-      <div class="page-header">
-        <h2>Ingestas y Excretas</h2>
-      </div>
-      <article id="ingestas">
-        {% include 'snippets/ingesta_table.html' %}
-      </article>
-      <article id="excretas">
-        {% include 'snippets/excreta_table.html' %}
-      </article>
-    </section>
-    <section id="glicemia">
-      <div class="page-header">
-        <h2>Glucometr&iacute;a</h2>
-      </div>
-      {% include 'snippets/glicemia_table.html' %}
-      {% include 'snippets/insulina_table.html' %}
-      {% include 'snippets/glucosuria_table.html' %}
-    </section>
-    <section id="ordenes-medicas">
-      <div class="page-header">
-        <h2>Ordenes M&eacute;dicas</h2>
-      </div>
-      {% include 'snippets/orden_table.html' %}
-    </section>
-    <section id="enfermeria">
-      <div class="page-header">
-        <h2>Notas de Enfermer&iacute;a</h2>
-      </div>
-      {% include 'snippets/nota_table.html' with editable=0 %}
-    </section>
-    <section id="cargos">
-      <div class="page-header">
-        <h2>Cargos</h2>
-      </div>
-      {% include 'snippets/cargo_table.html' %}
-    </section>
-  </div>
-</div>
+    <div class="row">
+        <div id="informacion" class="col-md-12">
+            <div class="main-content col-md-12">
+                {% include 'snippets/persona_fotografia.html' with persona=admision.paciente %}
+                {% include 'snippets/persona.html' with persona=admision.paciente %}
+                {% include 'snippets/fisico.html' with fisico=admision.paciente.fisico %}
+                <section id="signos-vitales">
+                    <div class="page-header">
+                        <h2>Signos Vitales</h2>
+                    </div>
+                    <div id="temperatura" class="grafica"></div>
+                    <h3>Promedio: {{ temp_promedio|floatformat:2 }} grados</h3>
+
+                    <div id="presion" class="grafica"></div>
+                    <h3>Promedio: {{ presion_sistolica_promedio|floatformat:2 }}
+                        / {{ presion_diastolica_promedio|floatformat:2 }}</h3>
+
+                    <div id="pulso" class="grafica"></div>
+                    <h3>Promedio: {{ pulso_promedio|floatformat:2 }}</h3>
+                    {% include 'snippets/signo_table.html' %}
+                </section>
+                <section id="ingestas-excretas">
+                    <div class="page-header">
+                        <h2>Ingestas y Excretas</h2>
+                    </div>
+                    <article id="ingestas">
+                        {% include 'snippets/ingesta_table.html' %}
+                    </article>
+                    <article id="excretas">
+                        {% include 'snippets/excreta_table.html' %}
+                    </article>
+                </section>
+                <section id="glicemia">
+                    <div class="page-header">
+                        <h2>Glucometr&iacute;a</h2>
+                    </div>
+                    {% include 'snippets/glicemia_table.html' %}
+                    {% include 'snippets/insulina_table.html' %}
+                    {% include 'snippets/glucosuria_table.html' %}
+                </section>
+                <section id="ordenes-medicas">
+                    <div class="page-header">
+                        <h2>Ordenes M&eacute;dicas</h2>
+                    </div>
+                    {% include 'snippets/orden_table.html' %}
+                </section>
+                <section id="enfermeria">
+                    <div class="page-header">
+                        <h2>Notas de Enfermer&iacute;a</h2>
+                    </div>
+                    {% include 'snippets/nota_table.html' with editable=0 %}
+                </section>
+                <section id="cargos">
+                    <div class="page-header">
+                        <h2>Cargos</h2>
+                    </div>
+                    {% include 'snippets/cargo_table.html' %}
+                </section>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block scripts %}
-{% include 'snippets/signos_js.html' %}
+    {% include 'snippets/signos_js.html' %}
 {% endblock %}
