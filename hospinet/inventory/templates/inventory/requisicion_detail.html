@@ -12,85 +12,91 @@
     </div>
     <div class="row">
         <section class="col-md-9">
-            <div class="row">
-                <section class="col-md-9">
-                    <table class="table table-striped table-bordered no-more-tables">
-                        <caption>
-                            Productos en Pedidos
-                        </caption>
-                        <thead>
-                        <tr>
-                            <th>C&oacute;digo</th>
-                            <th>Descripci&oacute;n</th>
-                            <th>Cantidad</th>
-                            <th>Pendiente</th>
-                            <th>Entregado</th>
-                            <th>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for item in page_obj %}
+            <div class="main-content col-md-12">
+                <div class="row">
+                    <section class="col-md-9">
+                        <table class="table table-striped table-bordered no-more-tables">
+                            <caption>
+                                Productos en Pedidos
+                            </caption>
+                            <thead>
                             <tr>
-                                <td>{{ item.item.id }}</td>
-                                <td>{{ item.item.descripcion }}</td>
-                                <td>{{ item.cantidad }}</td>
-                                <td>{{ item.pediente }}</td>
-                                <td>{{ item.entregada|yesno }}</td>
-                                <td><a href="{% url 'itemrequisicion-delete' item.id %}"
-                                       class="btn btn-danger btn-block">Borrar</a></td>
+                                <th>C&oacute;digo</th>
+                                <th>Descripci&oacute;n</th>
+                                <th>Cantidad</th>
+                                <th>Pendiente</th>
+                                <th>Entregado</th>
+                                <th>Acciones</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </section>
-            </div>
-            <div class="row">
-                <section class="col-md-9">
-                    <table class="table table-striped table-bordered no-more-tables">
-                        <caption>
-                            Transferencias
-                        </caption>
-                        <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Nombre</th>
-                            <th>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for transferencia in requisicion.transferencias.all %}
+                            </thead>
+                            <tbody>
+                            {% for item in page_obj %}
+                                <tr>
+                                    <td>{{ item.item.id }}</td>
+                                    <td>{{ item.item.descripcion }}</td>
+                                    <td>{{ item.cantidad }}</td>
+                                    <td>{{ item.pediente }}</td>
+                                    <td>{{ item.entregada|yesno }}</td>
+                                    <td><a href="{% url 'itemrequisicion-delete' item.id %}"
+                                           class="btn btn-danger btn-block">Borrar</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+                <div class="row">
+                    <section class="col-md-9">
+                        <table class="table table-striped table-bordered no-more-tables">
+                            <caption>
+                                Transferencias
+                            </caption>
+                            <thead>
                             <tr>
-                                <td>{{ transferencia.usuario.nombre }}</td>
-                                <td>{{ transferencia }} {{ transferencia.created }}</td>
-                                <td><a class="btn btn-success" href="{% url 'transferencia' transferencia.id %}">Ver</a>
-                                </td>
+                                <th>Usuario</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </section>
+                            </thead>
+                            <tbody>
+                            {% for transferencia in requisicion.transferencias.all %}
+                                <tr>
+                                    <td>{{ transferencia.usuario.nombre }}</td>
+                                    <td>{{ transferencia }} {{ transferencia.created }}</td>
+                                    <td><a class="btn btn-success"
+                                           href="{% url 'transferencia' transferencia.id %}">Ver</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
             </div>
         </section>
         <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-stacked nav-tabs">
-                    {% if not requisicion.entregada %}
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        {% if not requisicion.entregada %}
+                            <li>
+                                <a href="{% url 'item-requisicion-create' requisicion.id %}">Agregar Producto</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'transferencia-create' requisicion.id %}">Efectuar Transferencia</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'requisicion-completar' requisicion.id %}">Completar
+                                    Requisici&oacute;n</a>
+                            </li>
+                        {% endif %}
                         <li>
-                            <a href="{% url 'item-requisicion-create' requisicion.id %}">Agregar Producto</a>
+                            <a href="{% url 'inventario' requisicion.inventario.id %}">Regresar
+                                a {{ requisicion.inventario.lugar }}</a>
                         </li>
-                        <li>
-                            <a href="{% url 'transferencia-create' requisicion.id %}">Efectuar Transferencia</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'requisicion-completar' requisicion.id %}">Completar Requisici&oacute;n</a>
-                        </li>
-                    {% endif %}
-                    <li>
-                        <a href="{% url 'inventario' requisicion.inventario.id %}">Regresar
-                            a {{ requisicion.inventario.lugar }}</a>
-                    </li>
-                </ul>
-            </nav>
+                    </ul>
+                </nav>
+            </div>
         </aside>
     </div>
 {% endblock %}

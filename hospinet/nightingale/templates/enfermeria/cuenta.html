@@ -10,6 +10,7 @@
     </div>
     <div class="row">
         <section class="col-md-12">
+            <div class="main-content col-md-12">
             <table class="col-md-12">
                 <tr>
                     <td><h1>{{ admision.paciente.nombre_completo }}</h1></td>
@@ -29,10 +30,12 @@
                     </td>
                 </tr>
             </table>
+                </div>
         </section>
     </div>
     <div class="row">
         <section class="col-md-12 full-size-print">
+            <div class="main-content col-md-12">
             <table class="table table-striped table-bordered no-more-tables">
             <thead>
                 <tr>
@@ -112,11 +115,14 @@
                 </tr>
                 </tfoot>
             </table>
+            </div>
         </section>
     </div>
     <div class="row">
         <section class="col-md-12">
+            <div class="main-content col-md-12">
             {% include 'snippets/depositos_list.html' %}
+                </div>
         </section>
     </div>
 {% endblock %}

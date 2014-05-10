@@ -14,17 +14,19 @@
     <div class="row">
         {% include 'snippets/aside.html' with admision=admision %}
         <section class="col-md-9">
-            <div class="row">
-                <article id="ingestas" class="col-md-9">
-                    {% include 'snippets/ingesta_table.html' %}
-                    <a href="{% url 'enfermeria-ingesta-agregar' admision.id %}" class="btn btn-primary">Agregar
-                        Ingesta</a>
-                </article>
-                <article id="excretas" class="col-md-9">
-                    {% include 'snippets/excreta_table.html' %}
-                    <a href="{% url 'enfermeria-excreta-agregar' admision.id %}" class="btn btn-primary">Agregar
-                        Excreta</a>
-                </article>
+            <div class="main-content col-md-12">
+                <div class="row">
+                    <article id="ingestas" class="col-md-9">
+                        {% include 'snippets/ingesta_table.html' %}
+                        <a href="{% url 'enfermeria-ingesta-agregar' admision.id %}" class="btn btn-primary">Agregar
+                            Ingesta</a>
+                    </article>
+                    <article id="excretas" class="col-md-9">
+                        {% include 'snippets/excreta_table.html' %}
+                        <a href="{% url 'enfermeria-excreta-agregar' admision.id %}" class="btn btn-primary">Agregar
+                            Excreta</a>
+                    </article>
+                </div>
             </div>
         </section>
     </div>

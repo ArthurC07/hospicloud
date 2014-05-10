@@ -1,15 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
-<div class="row">
-<section class="col-md-6">
-  {% crispy form %}
-</section>
-<aside class="col-md-3">
-    <nav class="sidebar-nav">
-        <ul class="nav nav-stacked nav-tabs">
-        </ul>
-    </nav>
-</aside>
-</div>
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <section class="col-md-6">
+            <div class="main-content col-md-12">
+                {% crispy form %}
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
 {% endblock %}

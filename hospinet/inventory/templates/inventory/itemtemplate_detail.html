@@ -1,44 +1,50 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-<div class="row">
-  <div class="col-md-12">
-    <section class="page-header">
-      <h1>{{ item_template.descripcion }} <small>Producto</small></h1>
-    </section>
-  </div>
-</div>
-<div class="row">
-  <section class="col-md-9">
     <div class="row">
-        <section class="col-md-6">
-            <ul>
-                <li>Marca: {{ item_template.marca }}</li>
-                <li>Modelo: {{ item_template.modelo }}</li>
-                <li>Notas: {{ item_template.notas }}</li>
-                <li>Precio de venta: {{ item_template.precio_de_venta }}</li>
-                <li>Precio de Costo: {{ item_template.costo }}</li>
-                <li>Impuestos: {{ item_template.impuestos }}</li>
-                <li>Activo: {{ item_template.activo|yesno }}</li>
-                <li>Grupos:
-                    <ul>
-                        {% for grupo in item_template.item_type.all %}
-                        <li>{{ grupo }}</li>
-                        {% endfor %}
-                    </ul>
-                </li>
-            </ul>
-        </section>
+        <div class="col-md-12">
+            <section class="page-header">
+                <h1>{{ item_template.descripcion }}
+                    <small>Producto</small>
+                </h1>
+            </section>
+        </div>
     </div>
-  </section>
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-stacked nav-tabs">
-                <li>
-                    <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar {{ item_template.descripcion }}</a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-</div>
+    <div class="row">
+        <section class="col-md-9">
+            <div class="main-content col-md-12">
+                <div class="row">
+                    <section class="col-md-6">
+                        <ul>
+                            <li>Marca: {{ item_template.marca }}</li>
+                            <li>Modelo: {{ item_template.modelo }}</li>
+                            <li>Notas: {{ item_template.notas }}</li>
+                            <li>Precio de venta: {{ item_template.precio_de_venta }}</li>
+                            <li>Precio de Costo: {{ item_template.costo }}</li>
+                            <li>Impuestos: {{ item_template.impuestos }}</li>
+                            <li>Activo: {{ item_template.activo|yesno }}</li>
+                            <li>Grupos:
+                                <ul>
+                                    {% for grupo in item_template.item_type.all %}
+                                        <li>{{ grupo }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li>
+                            <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar {{ item_template.descripcion }}</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
 {% endblock %}
