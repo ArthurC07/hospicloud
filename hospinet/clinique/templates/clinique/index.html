@@ -9,13 +9,6 @@
     </section>
 </div>
 <div class="row">
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-tabs nav-stacked">
-                <li><a href="{% url 'consultorio-agregar' %}">Agregar Consultorio</a></li>
-            </ul>
-        </nav>
-    </aside>
     <div class="col-md-6">
     {% for consultorio in user.consultorios.all %}
         <div class="row">
@@ -43,7 +36,12 @@
         </div>
     {% endfor %}
     </div>
-    <div class="col-md-3">
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-tabs nav-stacked">
+                <li><a href="{% url 'consultorio-agregar' %}">Agregar Consultorio</a></li>
+            </ul>
+        </nav>
         <div class="row">
             <div class="col-md-12">
                 {% crispy citaperiodoform %}
@@ -64,6 +62,6 @@
                 {% crispy evaluacionperiodoform %}
             </div>
         </div>
-    </div>
+    </aside>
 </div>
 {% endblock %}

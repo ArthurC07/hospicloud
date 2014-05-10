@@ -11,33 +11,6 @@
     </div>
 </div>
 <div class="row">
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-stacked nav-tabs">
-                <li>
-                    <a href="{% url 'item-create' inventario.id %}">Agregar
-                        Producto</a>
-                </li>
-                <li>
-                    <a href="{% url 'requisicion-create' inventario.id %}">Hacer
-                        Requisici&oacute;n</a>
-                </li>
-                <li>
-                    <a href="{% url 'compra-create' inventario.id %}">Ingresar
-                        Compra</a>
-                </li>
-                <li>
-                    <a href="{% url 'historial-create' inventario.id %}">Guardar
-                        Histórico</a>
-                </li>
-                <li>
-                    <a href="{% url 'inventario-item-list' inventario.id %}">
-                        Lista de Inventario
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
     <section class="col-md-9">
         <div class="row">
             <section class="col-md-9">
@@ -123,5 +96,32 @@
             </section>
         </div>
     </section>
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-stacked nav-tabs">
+                <li>
+                    <a href="{% url 'item-create' inventario.id %}">Agregar
+                        Producto</a>
+                </li>
+                <li>
+                    <a href="{% url 'requisicion-create' inventario.id %}">Hacer
+                        Requisici&oacute;n</a>
+                </li>
+                <li>
+                    <a href="{% url 'compra-create' inventario.id %}">Ingresar
+                        Compra</a>
+                </li>
+                <li>
+                    <a href="{% url 'historial-create' inventario.id %}">Guardar
+                        Histórico</a>
+                </li>
+                <li>
+                    <a href="{% url 'inventario-item-list' inventario.id %}">
+                        Lista de Inventario
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 </div>
 {% endblock %}
