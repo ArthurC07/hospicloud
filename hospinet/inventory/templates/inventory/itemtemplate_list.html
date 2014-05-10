@@ -1,61 +1,65 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-<div class="row">
-  <div class="col-md-12">
-    <section class="page-header">
-      <h1>Búsqueda de Productos</h1>
-    </section>
-  </div>
-</div>
-<div class="row">
-  <section class="col-md-9">
     <div class="row">
-      <section class="col-md-9">
-          <table class="table table-striped table-bordered">
-              <thead>
-              <tr>
-                  <th>Código</th>
-                  <th>Descripción</th>
-                  <th>Precio</th>
-                  <th>activo</th>
-                  <th>Marca</th>
-                  <th>Módelo</th>
-                  <th>Grupos</th>
-                  <th class="no-print">Acciones</th>
-              </tr>
-              </thead>
-              <tbody>
-              {% for item in items %}
-                  <tr>
-                      <td>{{ item.id }}</td>
-                      <td>{{ item.descripcion }}</td>
-                      <td>{{ item.precio_de_venta }}</td>
-                      <td>{{ item.activo|yesno }}</td>
-                      <td>{{ item.marca }}</td>
-                      <td>{{ item.modelo }}</td>
-                      <td>
-                          {% for grupo in item.item_type.all %}
-                           {{ grupo }}
-                          {% endfor %}
-                      </td>
-                      <td><a class="btn" href="{% url 'itemtemplate' item.id %}">Ver</a></td>
-                  </tr>
-              {% endfor %}
-              </tbody>
-          </table>
-          {% if is_paginated %}
-              {% load bootstrap_pagination %}
-              {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
-          {% endif %}
-      </section>
+        <div class="col-md-12">
+            <section class="page-header">
+                <h1>Búsqueda de Productos</h1>
+            </section>
+        </div>
     </div>
-  </section>
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-stacked nav-tabs">
-            </ul>
-        </nav>
-    </aside>
-</div>
+    <div class="row">
+        <section class="col-md-9">
+            <div class="main-content col-md-12">
+                <div class="row">
+                    <section class="col-md-9">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descripción</th>
+                                <th>Precio</th>
+                                <th>activo</th>
+                                <th>Marca</th>
+                                <th>Módelo</th>
+                                <th>Grupos</th>
+                                <th class="no-print">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.descripcion }}</td>
+                                    <td>{{ item.precio_de_venta }}</td>
+                                    <td>{{ item.activo|yesno }}</td>
+                                    <td>{{ item.marca }}</td>
+                                    <td>{{ item.modelo }}</td>
+                                    <td>
+                                        {% for grupo in item.item_type.all %}
+                                            {{ grupo }}
+                                        {% endfor %}
+                                    </td>
+                                    <td><a class="btn" href="{% url 'itemtemplate' item.id %}">Ver</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if is_paginated %}
+                            {% load bootstrap_pagination %}
+                            {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+                        {% endif %}
+                    </section>
+                </div>
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
 {% endblock %}

@@ -1,46 +1,52 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-<div class="row">
-  <div class="col-md-12">
-    <section class="page-header">
-      <h1>Histórico de {{ historial.inventario.lugar }} <small>{{ historial. }}</small></h1>
-    </section>
-  </div>
-</div>
-<div class="row">
-  <section class="col-md-9">
     <div class="row">
-      <section class="col-md-9">
-        <table class="table table-striped table-bordered no-more-tables">
-          <caption>
-            Productos en Inventario
-          </caption>
-          <thead>
-            <tr>
-              <th>C&oacute;digo</th>
-              <th>Descripci&oacute;n</th>
-              <th>Cantidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in page_obj %}
-            <tr>
-              <td>{{ item.item.id }}</td>
-              <td>{{ item.item.descripcion }}</td>
-              <td>{{ item.cantidad }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </section>
+        <div class="col-md-12">
+            <section class="page-header">
+                <h1>Histórico de {{ historial.inventario.lugar }}
+                    <small>{{ historial. }}</small>
+                </h1>
+            </section>
+        </div>
     </div>
-  </section>
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-stacked nav-tabs">
-            </ul>
-        </nav>
-    </aside>
-</div>
+    <div class="row">
+        <section class="col-md-9">
+            <div class="main-content col-md-12">
+                <div class="row">
+                    <section class="col-md-9">
+                        <table class="table table-striped table-bordered no-more-tables">
+                            <caption>
+                                Productos en Inventario
+                            </caption>
+                            <thead>
+                            <tr>
+                                <th>C&oacute;digo</th>
+                                <th>Descripci&oacute;n</th>
+                                <th>Cantidad</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in page_obj %}
+                                <tr>
+                                    <td>{{ item.item.id }}</td>
+                                    <td>{{ item.item.descripcion }}</td>
+                                    <td>{{ item.cantidad }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
 {% endblock %}

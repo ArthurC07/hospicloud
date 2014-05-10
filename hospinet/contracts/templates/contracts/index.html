@@ -12,7 +12,8 @@
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9">
+    <section class="col-md-9">
+        <div class="main-content col-md-12">
             <div class="row">
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
@@ -159,6 +160,7 @@
                                 </section>
                             </div>
                             <br/>
+
                             <div class="row">
                                 <section class="col-md-4">
                                     {% crispy plan-search %}
@@ -179,9 +181,11 @@
                     </div>
                 </section>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <aside class="col-md-3">
+    <aside class="col-md-3">
+        <div class="toolbox col-md-12">
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
                     <li>
@@ -214,6 +218,7 @@
                     </li>
                 </ul>
             </nav>
-        </aside>
+        </div>
+    </aside>
     </div>
 {% endblock %}

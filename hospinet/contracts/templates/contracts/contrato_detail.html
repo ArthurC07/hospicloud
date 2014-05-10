@@ -11,85 +11,30 @@
     </div>
     <div class="row">
         <section class="col-md-9">
-            <div class="row">
-                <article class="col-md-12">
-                    <section class="tabbable">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#contrato"
-                                                  data-toggle="tab">Contrato</a>
-                            </li>
-                            <li><a href="#beneficiarios" data-toggle="tab">Beneficiarios</a>
-                            </li>
-                            <li><a href="#pagos" data-toggle="tab">Pagos</a>
-                            </li>
-                            <li><a href="#eventos"
-                                   data-toggle="tab">Eventos</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <article id="contrato" class="tab-pane active">
-                                <div class="row">
-                                    <section class="page-header">
-                                        <h2>Titular</h2>
-                                    </section>
-                                    <div class="col-md-2">
-                                        {% if contrato.persona.fotografia == None %}
-                                            {% thumbnail contrato.persona.fotografia "100x100" crop="center" as im %}
-                                            <img src="{{ im.url }}"
-                                                 width="{{ im.width }}"
-                                                 height="{{ im.height }}">
-                                        {% else %}
-                                            <img src="{% static 'images/face.jpg' %}"
-                                                 width="100"
-                                                 height="100"/>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-md-9">
-                                        <h3>{{ contrato.persona }}
-                                            <small>{{ contrato.persona.obtener_edad }}
-                                                a&ntilde;os
-                                            </small>
-                                        </h3>
-                                        <a class="btn btn-primary"
-                                           href="{% url 'persona-view-id' contrato.persona.id %}">Ver
-                                            <i class="fa fa-arrow-right"></i></a>
-                                        <a class="btn btn-success"
-                                           href="{% url 'persona-empleo-add' contrato.persona.id %}">Agregar Empresa
-                                            <i class="fa fa-arrow-right"></i></a>
-                                    </div>
-                                </div>
-                                <hr>
-                                <section class="page-header">
-                                    <h2>Informaci&oacute;n del Contrato</h2>
-                                </section>
-                                <ul>
-                                    <li>
-                                        D&iacute;as en Mora: {{ contrato.dias_mora }}
-                                    </li>
-                                    <li>
-                                        Monto en Mora: {{ contrato.mora }}
-                                    </li>
-                                    <li>Vendedor: {{ contrato.vendedor }}</li>
-                                    <li>Fecha de
-                                        Inicio: {{ contrato.inicio|date:"d/m/Y" }}</li>
-                                    <li>Fecha de
-                                        Vencimiento: {{ contrato.vencimiento|date:"d/m/Y" }}</li>
-                                    <li>
-                                        &Uacute;ltima renovaci&oacute;n {{ contrato.renovacion|date:"d/m/Y" }}
-                                    </li>
-                                    <li>
-                                        &Uacute;ltimo Pago {{ contrato.ultimo_pago|date:"d/m/Y" }}
-                                    </li>
-                                    <li>Consultas utilizadas: {{ contrato.total_consultas }}
-                                    </li>
-                                </ul>
-                            </article>
-                            <article id="beneficiarios" class="tab-pane">
-                                <br/>
-                                {% for beneficiario in page_obj %}
+            <div class="main-content col-md-12">
+                <div class="row">
+                    <article class="col-md-12">
+                        <section class="tabbable">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#contrato"
+                                                      data-toggle="tab">Contrato</a>
+                                </li>
+                                <li><a href="#beneficiarios" data-toggle="tab">Beneficiarios</a>
+                                </li>
+                                <li><a href="#pagos" data-toggle="tab">Pagos</a>
+                                </li>
+                                <li><a href="#eventos"
+                                       data-toggle="tab">Eventos</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <article id="contrato" class="tab-pane active">
                                     <div class="row">
+                                        <section class="page-header">
+                                            <h2>Titular</h2>
+                                        </section>
                                         <div class="col-md-2">
-                                            {% if beneficiario.persona.fotografia == None %}
-                                                {% thumbnail beneficiario.persona.fotografia "100x100" crop="center" as im %}
+                                            {% if contrato.persona.fotografia == None %}
+                                                {% thumbnail contrato.persona.fotografia "100x100" crop="center" as im %}
                                                 <img src="{{ im.url }}"
                                                      width="{{ im.width }}"
                                                      height="{{ im.height }}">
@@ -100,105 +45,167 @@
                                             {% endif %}
                                         </div>
                                         <div class="col-md-9">
-                                            <h3>{{ beneficiario.persona }}
-                                                <small>{{ beneficiario.persona.obtener_edad }}
+                                            <h3>{{ contrato.persona }}
+                                                <small>{{ contrato.persona.obtener_edad }}
                                                     a&ntilde;os
                                                 </small>
                                             </h3>
                                             <a class="btn btn-primary"
-                                               href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver
+                                               href="{% url 'persona-view-id' contrato.persona.id %}">Ver
                                                 <i class="fa fa-arrow-right"></i></a>
-                                            <a class="btn btn-danger" href="{% url 'contrato-beneficiario-delete' beneficiario.id %}">
-                                                <i class="fa fa-trash-o"></i> Eliminar
-                                            </a>
+                                            <a class="btn btn-success"
+                                               href="{% url 'persona-empleo-add' contrato.persona.id %}">Agregar Empresa
+                                                <i class="fa fa-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <hr>
-                                {% endfor %}
-                                {% if is_paginated %}
-                                    {% load bootstrap_pagination %}
-                                    {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
-                                {% endif %}
-                            </article>
-                            <article id="pagos" class="tab-pane">
-                                <table class="table table-striped">
-                                    <caption>Pagos</caption>
-                                    <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Monto</th>
-                                        <th>Tipo de Pago</th>
-                                        <th>Descripci&oacute;n</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for pago in contrato.pagos.all %}
-                                        <tr>
-                                            <td>{{ pago.fecha }}</td>
-                                            <td>{{ pago.monto }}</td>
-                                            <td>{{ pago.tipo_de_pago }}</td>
-                                            <td>{{ pago.descripcion }}</td>
-                                        </tr>
+                                    <section class="page-header">
+                                        <h2>Informaci&oacute;n del Contrato</h2>
+                                    </section>
+                                    <ul>
+                                        <li>
+                                            D&iacute;as en Mora: {{ contrato.dias_mora }}
+                                        </li>
+                                        <li>
+                                            Monto en Mora: {{ contrato.mora }}
+                                        </li>
+                                        <li>Vendedor: {{ contrato.vendedor }}</li>
+                                        <li>Fecha de
+                                            Inicio: {{ contrato.inicio|date:"d/m/Y" }}</li>
+                                        <li>Fecha de
+                                            Vencimiento: {{ contrato.vencimiento|date:"d/m/Y" }}</li>
+                                        <li>
+                                            &Uacute;ltima renovaci&oacute;n {{ contrato.renovacion|date:"d/m/Y" }}
+                                        </li>
+                                        <li>
+                                            &Uacute;ltimo Pago {{ contrato.ultimo_pago|date:"d/m/Y" }}
+                                        </li>
+                                        <li>Consultas utilizadas: {{ contrato.total_consultas }}
+                                        </li>
+                                    </ul>
+                                </article>
+                                <article id="beneficiarios" class="tab-pane">
+                                    <br/>
+                                    {% for beneficiario in page_obj %}
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                {% if beneficiario.persona.fotografia == None %}
+                                                    {% thumbnail beneficiario.persona.fotografia "100x100" crop="center" as im %}
+                                                    <img src="{{ im.url }}"
+                                                         width="{{ im.width }}"
+                                                         height="{{ im.height }}">
+                                                {% else %}
+                                                    <img src="{% static 'images/face.jpg' %}"
+                                                         width="100"
+                                                         height="100"/>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-9">
+                                                <h3>{{ beneficiario.persona }}
+                                                    <small>{{ beneficiario.persona.obtener_edad }}
+                                                        a&ntilde;os
+                                                    </small>
+                                                </h3>
+                                                <a class="btn btn-primary"
+                                                   href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver
+                                                    <i class="fa fa-arrow-right"></i></a>
+                                                <a class="btn btn-danger"
+                                                   href="{% url 'contrato-beneficiario-delete' beneficiario.id %}">
+                                                    <i class="fa fa-trash-o"></i> Eliminar
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <hr>
                                     {% endfor %}
-                                    </tbody>
-                                </table>
-                            </article>
-                            <article id="eventos" class="tab-pane">
-                                <table class="table table-striped">
-                                    <caption>Eventos</caption>
-                                    <thead class="gradient">
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Tipo</th>
-                                        <th>Monto</th>
-                                        <th>Descripci&oacute;n</th>
-                                        <th>Precion</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        {% for evento in contrato.eventos.all %}
+                                    {% if is_paginated %}
+                                        {% load bootstrap_pagination %}
+                                        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+                                    {% endif %}
+                                </article>
+                                <article id="pagos" class="tab-pane">
+                                    <table class="table table-striped">
+                                        <caption>Pagos</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Monto</th>
+                                            <th>Tipo de Pago</th>
+                                            <th>Descripci&oacute;n</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for pago in contrato.pagos.all %}
                                             <tr>
-                                                <td>{{ evento.fecha }}</td>
-                                                <td>{{ evento.tipo }}</td>
-                                                <td>{{ evento.monto }}</td>
-                                                <td>{{ evento.descripcion }}</td>
-                                                <td>{{ evento.precio }}</td>
-                                                <td><a class="btn btn-primary" href="{% url 'contrato-evento-update' evento.id %}">Editar</a></td>
+                                                <td>{{ pago.fecha }}</td>
+                                                <td>{{ pago.monto }}</td>
+                                                <td>{{ pago.tipo_de_pago }}</td>
+                                                <td>{{ pago.descripcion }}</td>
                                             </tr>
                                         {% endfor %}
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </article>
-                        </div>
-                    </section>
-                </article>
+                                        </tbody>
+                                    </table>
+                                </article>
+                                <article id="eventos" class="tab-pane">
+                                    <table class="table table-striped">
+                                        <caption>Eventos</caption>
+                                        <thead class="gradient">
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Tipo</th>
+                                            <th>Monto</th>
+                                            <th>Descripci&oacute;n</th>
+                                            <th>Precion</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            {% for evento in contrato.eventos.all %}
+                                                <tr>
+                                                    <td>{{ evento.fecha }}</td>
+                                                    <td>{{ evento.tipo }}</td>
+                                                    <td>{{ evento.monto }}</td>
+                                                    <td>{{ evento.descripcion }}</td>
+                                                    <td>{{ evento.precio }}</td>
+                                                    <td><a class="btn btn-primary"
+                                                           href="{% url 'contrato-evento-update' evento.id %}">Editar</a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </article>
+                            </div>
+                        </section>
+                    </article>
+                </div>
             </div>
         </section>
         <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked">
-                    <li><a href="{% url 'contrato-pago-add' contrato.id %}">Agregar
-                        Pago</a>
-                    </li>
-                    <li><a href="{% url 'contrato-evento-add' contrato.id %}">Agregar
-                        Evento</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contrato-beneficiario-add' contrato.id %}">Agregar
-                            Beneficiario</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contrato-edit' contrato.id %}">Editar
-                            Contrato</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contrato-cancelar' contrato.id %}">Cancelar Contrato</a>
-                    </li>
-                </ul>
-            </nav>
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li><a href="{% url 'contrato-pago-add' contrato.id %}">Agregar
+                            Pago</a>
+                        </li>
+                        <li><a href="{% url 'contrato-evento-add' contrato.id %}">Agregar
+                            Evento</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contrato-beneficiario-add' contrato.id %}">Agregar
+                                Beneficiario</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contrato-edit' contrato.id %}">Editar
+                                Contrato</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contrato-cancelar' contrato.id %}">Cancelar Contrato</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </aside>
     </div>
 {% endblock %}

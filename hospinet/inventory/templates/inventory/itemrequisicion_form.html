@@ -6,9 +6,12 @@
     {% endblock %}
     <div class="row">
         <section class="col-md-6">
+            <div class="main-content col-md-12">
             {% crispy form %}
+                </div>
         </section>
         <aside class="col-md-3">
+                <div class="toolbox col-md-12">
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                     <li>
@@ -16,10 +19,12 @@
                     </li>
                 </ul>
             </nav>
+                    </div>
         </aside>
     </div>
     <div class="row">
         <section class="col-md-12">
+            <div class="main-content col-md-12">
             <table class="table table-striped table-bordered no-more-tables">
                 <caption>
                     Productos en Pedidos
@@ -47,6 +52,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
         </section>
     </div>
 {% endblock %}
