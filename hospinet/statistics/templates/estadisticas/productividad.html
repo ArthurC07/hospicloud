@@ -1,48 +1,55 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-<div id="admision" class="col-md-9">
-  <div class="top title">
-    <h1>Productividad de M&eacute;dicos por Especialidades</h1>
-  </div>
-  <div id="estadisticas" class="bloque-superior">
-    <article id="atendidos">
-      <table>
-        <thead class="gradient">
-          <tr>
-            <th>Concepto</th>
-            <th>Pacientes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Adultos Masculino</td>
-            <td>{{ adultos_m }}</td>
-          </tr>
-          <tr>
-            <td>Adultos Femenino</td>
-            <td>{{ adultos_f }}</td>
-          </tr>
-          <tr>
-            <td>Infantil Masculino</td>
-            <td>{{ infantes_m }}</td>
-          </tr>
-          <tr>
-            <td>Infantil Femenino</td>
-            <td>{{ infantes_f }}</td>
-          </tr>
-          <tr>
-            <td>Neonatos Masculino</td>
-            <td>{{ neonatos_m }}</td>
-          </tr>
-          <tr>
-            <td>Neonatos Femenino</td>
-            <td>{{ neonatos_f }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>Total de Admisiones: {{ adminisiones }}</h2>
-    </article>
-  </div>
-</div>
+
+    <div class="row">
+        <div id="admision" class="col-md-9">
+            <div class="main-content col-md-12">
+                <div class="top title">
+                    <h1>Productividad de M&eacute;dicos por Especialidades</h1>
+                </div>
+                <div id="estadisticas" class="bloque-superior">
+                    <article id="atendidos">
+                        <table>
+                            <thead class="gradient">
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Pacientes</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Adultos Masculino</td>
+                                <td>{{ adultos_m }}</td>
+                            </tr>
+                            <tr>
+                                <td>Adultos Femenino</td>
+                                <td>{{ adultos_f }}</td>
+                            </tr>
+                            <tr>
+                                <td>Infantil Masculino</td>
+                                <td>{{ infantes_m }}</td>
+                            </tr>
+                            <tr>
+                                <td>Infantil Femenino</td>
+                                <td>{{ infantes_f }}</td>
+                            </tr>
+                            <tr>
+                                <td>Neonatos Masculino</td>
+                                <td>{{ neonatos_m }}</td>
+                            </tr>
+                            <tr>
+                                <td>Neonatos Femenino</td>
+                                <td>{{ neonatos_f }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <h2>Total de Admisiones: {{ adminisiones }}</h2>
+                    </article>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 {% endblock %}

@@ -1,42 +1,50 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block header %}
-<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static 'js/excanvas.js' %}"></script><![endif]-->
-<script language="javascript" type="text/javascript" src="{% static 'js/jquery.jqplot.js' %}"></script>
-<script language="javascript" type="text/javascript" src="{% static 'js/jqplot.canvasTextRenderer.min.js' %}"></script>
-<script language="javascript" type="text/javascript" src="{% static 'js/jqplot.canvasAxisLabelRenderer.min.js' %}"></script>
-<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.jqplot.css' %}" />
-<script type="text/javascript">
-  $(document).ready(function()
-  {
-    $.jqplot('atendidos', [[{{ puntos }} ]], {
-        axes:
-        {
-	        xaxis:
-	        {
-	          label:'Meses',
-              labelRenderer: $.jqplot.CanvasAxisLabelRenderer
-	        },
-	        yaxis:
-	        {
-	          label:'Pacientes',
-              labelRenderer: $.jqplot.CanvasAxisLabelRenderer
-	        }
-	      }
-	   }
-    );
-  });
-</script>
+    <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static 'js/excanvas.js' %}"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="{% static 'js/jquery.jqplot.js' %}"></script>
+    <script language="javascript" type="text/javascript"
+            src="{% static 'js/jqplot.canvasTextRenderer.min.js' %}"></script>
+    <script language="javascript" type="text/javascript"
+            src="{% static 'js/jqplot.canvasAxisLabelRenderer.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.jqplot.css' %}"/>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.jqplot('atendidos', [
+                        [{{ puntos }} ]
+                    ], {
+                        axes: {
+                            xaxis: {
+                                label: 'Meses',
+                                labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+                            },
+                            yaxis: {
+                                label: 'Pacientes',
+                                labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+                            }
+                        }
+                    }
+            );
+        });
+    </script>
 {% endblock %}
 {% block content %}
-<div id="admision" class="col-md-9">
-    <div class="top title">
-      <h1>Atenci&oacute;n Infantil</h1>
+    <div class="row">
+        <div id="admision" class="col-md-9">
+            <div class="main-content col-md-12">
+                <div class="toolbox col-md-12">
+                    <div class="top title">
+                        <h1>Atenci&oacute;n Infantil</h1>
+                    </div>
+                    <div id="estadisticas" class="bloque-superior">
+                        <article id="atendidos">
+
+                            <div id="atendidos"></div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="estadisticas" class="bloque-superior">
-      <article id="atendidos">
-        <div id="atendidos"></div>
-      </article>
-    </div>
-</div>
+
 {% endblock %}

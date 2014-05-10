@@ -4,97 +4,107 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <div class="page-header">
-                <h1>Estad&iacute;sticas</h1>
+            <div class="main-content col-md-12"> >
+                <div class="page-header">
+                    <h1>Estad&iacute;sticas</h1>
+                </div>
             </div>
         </div>
     </div>
     <div class="row action-nav-normal">
         <section class="col-md-3 action-nav-button">
-            <a href="#">
-                <table class="table table-striped table-bordered">
-                    <caption>Admisiones por Habitación</caption>
-                    <thead>
-                    <tr>
-                        <th>Habitaci&oacute;n</th>
-                        <th>Cantidad</th>
-                        <th>D&iacute;as</th>
-                    </tr>
-                    <thead>
-                    <tbody>
-                    {% for habitacion, detalle in habitaciones %}
+            <div class="toolbox col-md-12">
+                <a href="#">
+                    <table class="table table-striped table-bordered">
+                        <caption>Admisiones por Habitación</caption>
+                        <thead>
                         <tr>
-                            <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
-                            <td>{{ detalle.admisiones }}</td>
-                            <td>{{ detalle.dias|floatformat:0 }}</td>
+                            <th>Habitaci&oacute;n</th>
+                            <th>Cantidad</th>
+                            <th>D&iacute;as</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tfoot>
-                    <td>Totales</td>
-                    <td>{{ total }}</td>
-                    <td>{{ dias|floatformat:0 }}</td>
-                    </tfoot>
-                </table>
-            </a>
+                        <thead>
+                        <tbody>
+                        {% for habitacion, detalle in habitaciones %}
+                            <tr>
+                                <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
+                                <td>{{ detalle.admisiones }}</td>
+                                <td>{{ detalle.dias|floatformat:0 }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <td>Totales</td>
+                        <td>{{ total }}</td>
+                        <td>{{ dias|floatformat:0 }}</td>
+                        </tfoot>
+                    </table>
+                </a>
+            </div>
         </section>
         <section class="col-md-6 action-nav-button">
-            <canvas width="600" height="400" id="meses"></canvas>
+            <div class="main-content col-md-12">
+                <canvas width="600" height="400" id="meses"></canvas>
+            </div>
         </section>
         <section class=" col-md-3 action-nav-button">
-            <a href="#">
-                <table class="table table-striped table-bordered">
-                    <caption>Admisiones Especialista</caption>
+            <div class="toolbox col-md-12">
+                <a href="#">
+                    <table class="table table-striped table-bordered">
+                        <caption>Admisiones Especialista</caption>
+                        <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th></th>
+                        </tr>
+                        <thead>
+                        <tbody>
+                        {% for doctor, cantidad in doctores %}
+                            <tr>
+                                <td>{{ doctor }}</td>
+                                <td>{{ cantidad }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <td>Total</td>
+                        <td colspan="2">{{ total_doctores }}</td>
+                        </tfoot>
+                    </table>
+                </a>
+            </div>
+        </section>
+    </div>
+    <div class="row">
+        <article class="col-md-3">
+            <div class="toolbox col-md-12">
+                <table class="table table-bordered table-striped">
                     <thead>
                     <tr>
                         <th>Doctor</th>
-                        <th></th>
+                        <th>Emergencias</th>
                     </tr>
-                    <thead>
+                    </thead>
                     <tbody>
-                    {% for doctor, cantidad in doctores %}
+                    {% for doctor, cantidad in emergencia_doctores %}
                         <tr>
-                            <td>{{ doctor }}</td>
+                            <td>{{ doctor.get_full_name }}</td>
                             <td>{{ cantidad }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
                     <tfoot>
-                    <td>Total</td>
-                    <td colspan="2">{{ total_doctores }}</td>
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ emergencia_total }}</th>
+                    </tr>
                     </tfoot>
                 </table>
-            </a>
-        </section>
-    </div>
-    <div class="row">
-    <article class="col-md-3">
-        <table class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th>Doctor</th>
-                <th>Emergencias</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for doctor, cantidad in emergencia_doctores %}
-                <tr>
-                    <td>{{ doctor.get_full_name }}</td>
-                    <td>{{ cantidad }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th>Total</th>
-                    <th>{{ emergencia_total }}</th>
-                </tr>
-            </tfoot>
-        </table>
-    </article>
-    <div class="col-md-offset-1 col-md-4">
-        <canvas id="emergencia" width="400" height="400"></canvas>
-    </div>
+            </div>
+        </article>
+        <div class="col-md-offset-1 col-md-4">
+            <canvas id="emergencia" width="400" height="400"></canvas>
+        </div>
         <article class="col-md-offset-1 col-md-3">
             <table class="table table-bordered table-striped">
                 <thead>
@@ -122,28 +132,30 @@
     </div>
     <div class="row">
         <article class="col-md-3">
-            <table class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th>T&eacute;cnico</th>
-                    <th>Examenes</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for tecnico, cantidad in examenes_tecnicos %}
+            <div class="toolbox col-md-12">
+                <table class="table table-bordered table-striped">
+                    <thead>
                     <tr>
-                        <td>{{ tecnico }}</td>
-                        <td>{{ cantidad }}</td>
+                        <th>T&eacute;cnico</th>
+                        <th>Examenes</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th>Total</th>
-                    <th>{{ examenes_total }}</th>
-                </tr>
-                </tfoot>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for tecnico, cantidad in examenes_tecnicos %}
+                        <tr>
+                            <td>{{ tecnico }}</td>
+                            <td>{{ cantidad }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ examenes_total }}</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
         </article>
         <div class="col-md-offset-1 col-md-4">
             <canvas id="examenes" width="400" height="400"></canvas>
@@ -200,15 +212,14 @@
     {% localize off %}
         <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
         <script type="text/javascript">
-            $(document).ready(function()
-            {
+            $(document).ready(function () {
                 var data = {
-                    labels : [ {% for mes, cantidad in meses %} '{{ mes }}', {% endfor %} ],
-                    datasets : [
+                    labels: [ {% for mes, cantidad in meses %} '{{ mes }}', {% endfor %} ],
+                    datasets: [
                         {
-                            fillColor : "rgba(151,187,205,0.5)",
-                            strokeColor : "rgba(151,187,205,1)",
-                            data : [ {% for mes, cantidad in meses %} {{ cantidad }}, {% endfor %} ]
+                            fillColor: "rgba(151,187,205,0.5)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            data: [ {% for mes, cantidad in meses %} {{ cantidad }}, {% endfor %} ]
                         }
                     ]
                 };
@@ -217,12 +228,13 @@
                     scaleShowLabels: true
                 });
                 var data = {
-                    labels : [ {% for doctor, cantidad in emergencia_grafico %} '{{ doctor.get_full_name }}', {% endfor %} ],
-                    datasets : [
+                    labels: [
+                        {% for doctor, cantidad in emergencia_grafico %} '{{ doctor.get_full_name }}', {% endfor %} ],
+                    datasets: [
                         {
-                            fillColor : "rgba(151,187,205,0.5)",
-                            strokeColor : "rgba(151,187,205,1)",
-                            data : [ {% for doctor, cantidad in emergencia_grafico2 %} {{ cantidad }}, {% endfor %} ]
+                            fillColor: "rgba(151,187,205,0.5)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            data: [ {% for doctor, cantidad in emergencia_grafico2 %} {{ cantidad }}, {% endfor %} ]
                         }
                     ]
                 };
@@ -231,12 +243,12 @@
                     scaleShowLabels: true
                 });
                 var data = {
-                    labels : [ {% for tipo, cantidad in examenes_grafico %} '{{ tipo }}', {% endfor %} ],
-                    datasets : [
+                    labels: [ {% for tipo, cantidad in examenes_grafico %} '{{ tipo }}', {% endfor %} ],
+                    datasets: [
                         {
-                            fillColor : "rgba(151,187,205,0.5)",
-                            strokeColor : "rgba(151,187,205,1)",
-                            data : [ {% for tipo, cantidad in examenes_grafico2 %} {{ cantidad }}, {% endfor %} ]
+                            fillColor: "rgba(151,187,205,0.5)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            data: [ {% for tipo, cantidad in examenes_grafico2 %} {{ cantidad }}, {% endfor %} ]
                         }
                     ]
                 };
