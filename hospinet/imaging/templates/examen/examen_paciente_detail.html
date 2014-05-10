@@ -5,11 +5,6 @@
 {% endblock %}
 {% block content %}
 <div class="row">
-  <aside class="col-md-3">
-    <nav>
-      {% load tree_menu_tags %}{% show_menu 'persona' %}
-    </nav>
-  </aside>
   <div id="examenes" class="col-md-9">
     <div>
       <h1>{{ persona.nombre_completo }}</h1>
@@ -28,5 +23,11 @@
     </article>
     {% endfor %}
   </div>
+    <aside class="col-md-3">
+        <nav>
+            {% load tree_menu_tags %}{% show_menu 'persona' %}
+        </nav>
+    </aside>
+
 </div>
 {% endblock %}
