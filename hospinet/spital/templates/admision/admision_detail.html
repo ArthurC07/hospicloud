@@ -11,6 +11,7 @@
     </div>
     <div class="row">
         <section class="col-md-9">
+            <div class="col-md-12 main-content">
             <div class="row">
 
             </div>
@@ -27,9 +28,12 @@
                     href="{% url 'persona-fisico-editar' admision.paciente.id %}" class="btn btn-primary">Editar F&iacute;sico</a>
             </div>
             {% include 'snippets/depositos_list.html' %}
+                </div>
         </section>
         <aside class="col-md-3">
+            <div class="col-md-12 toolbox">
             {% include 'snippets/admision_aside.html' %}
+            </div>
         </aside>
     </div>
 {% endblock %}

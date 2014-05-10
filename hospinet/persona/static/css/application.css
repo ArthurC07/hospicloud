@@ -11,6 +11,8 @@ html {
 body {
     padding-top: 60px;
     padding-bottom: 60px;
+    background: url("../images/slide6.jpg") no-repeat center center fixed;
+    background-size: cover;
 }
 
 
@@ -85,7 +87,9 @@ table caption {
         content: attr(data-title);
     }
 }
-
+.table tr{
+    background-color: #ffffff;
+}
 .table td {
     vertical-align: middle;
 }
@@ -187,5 +191,28 @@ nav.navbar-inverse .navbar-inner {
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
-/* Test */
+/* Custom UI style */
+.round-corners {
+    border-radius: 5px;
+}
+.main-content {
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: 5px;
+}
+.title {
+    margin-bottom: 10px;
+}
+.toolbox {
+    background-color: #1F419B;
+    border-radius: 5px;
+    color: #ffffff;
+    padding: 10px 0;
+}
+.toolbox li {
+    border-top: 1px solid #ffffff;
+    margin: 0;
+}
+.toolbox a {
+    color: #ffffff;
+}
 
