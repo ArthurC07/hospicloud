@@ -2,27 +2,32 @@
 {% block content %}
     <div class="row">
         <section class="col-md-12">
-            <div class="page-header">
-                <h1>{{ admision.paciente.nombre_completo }} <br/>
-                    <small>
-                        {{ admision.habitacion }}, Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
-                    </small>
-                </h1>
+            <div class="main-content col-md-12">
+                <div class="page-header">
+                    <h1>{{ admision.paciente.nombre_completo }} <br/>
+                        <small>
+                            {{ admision.habitacion }}, Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
+                        </small>
+                    </h1>
+                </div>
             </div>
         </section>
     </div>
     <div class="row">
         {% include 'snippets/aside.html' with admision=admision %}
         <section class="col-md-9">
-            <a class="btn btn-primary" href="{% url 'enfermeria-honorario-agregar' admision.id %}">Agregar Honorario</a>
+            <div class="main-content col-md-12">
+                <a class="btn btn-primary" href="{% url 'enfermeria-honorario-agregar' admision.id %}">Agregar
+                    Honorario</a>
 
-            <div class="row">
-                <section class="col-md-9">
-                    <div class="page-header">
-                        <h2>Honorarios, Examenes y Otros Cargos</h2>
-                    </div>
-                    {% include 'snippets/honorarios.html' %}
-                </section>
+                <div class="row">
+                    <section class="col-md-9">
+                        <div class="page-header">
+                            <h2>Honorarios, Examenes y Otros Cargos</h2>
+                        </div>
+                        {% include 'snippets/honorarios.html' %}
+                    </section>
+                </div>
             </div>
         </section>
     </div>

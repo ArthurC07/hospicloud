@@ -3,35 +3,35 @@
 {% block header %}
 {% endblock %}
 {% block content %}
-<div class="row">
-  <div class="page-header">
-    <h1>Hospitalizaci&oacute;n</h1>
-  </div>
-  <div class="row">
-    <section class="col-md-12">
-      {% include 'snippets/enfermeria_list.html' with admisiones=hospitalizados %}
-    </section>
-  </div>
-</div>
+    <div class="row">
+        <div class="page-header">
+            <h1>Hospitalizaci&oacute;n</h1>
+        </div>
+        <div class="row">
+            <section class="col-md-12">
+                {% include 'snippets/enfermeria_list.html' with admisiones=hospitalizados %}
+            </section>
+        </div>
+    </div>
 {% endblock %}
 {% block scripts %}
-<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static 'js/excanvas.js' %}"></script><![endif]-->
-<script type="text/javascript" src="{% static 'js/jquery.jqplot.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jqplot.canvasTextRenderer.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jqplot.canvasAxisLabelRenderer.min.js' %}"></script>
-<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.jqplot.css' %}" />
-<script type="text/javascript" src="{% static 'js/medicamento.js' %}"></script>
-<script type="text/javascript">
-  $(document).ready(function() {
-    data_source = new Medicamento("{% url 'home' %}", "{% url 'nightingale-index' %}");
-    data_source.notificar();
-    var interval = setInterval(function(){
-      $.pnotify_remove_all();
-      data_source.notificar();
-    }, 1000 * 60 * 5);
-    $(window).unload(function(){
-      clearInterval(interval);
-    });
-  });
-</script>
+    <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static 'js/excanvas.js' %}"></script><![endif]-->
+    <script type="text/javascript" src="{% static 'js/jquery.jqplot.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jqplot.canvasTextRenderer.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jqplot.canvasAxisLabelRenderer.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.jqplot.css' %}"/>
+    <script type="text/javascript" src="{% static 'js/medicamento.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            data_source = new Medicamento("{% url 'home' %}", "{% url 'nightingale-index' %}");
+            data_source.notificar();
+            var interval = setInterval(function () {
+                $.pnotify_remove_all();
+                data_source.notificar();
+            }, 1000 * 60 * 5);
+            $(window).unload(function () {
+                clearInterval(interval);
+            });
+        });
+    </script>
 {% endblock %}
