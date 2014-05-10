@@ -8,27 +8,6 @@
   </section>
 </div>
 <div class="row">
-  <aside class="col-md-3">
-    <nav class="sidebar-nav">
-      <ul class="nav nav-tabs nav-stacked no-print">
-        <li>
-          <a href="{% url 'admision-view-id' admision.id %}">Regresar a la Admisi&oacute;n</a>
-        </li>
-        <li>
-          <a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a>
-        </li>
-        <li>
-          <a href="{% url 'admision-referencias' admision.id %}">Referencias</a>
-        </li>
-        <li>
-          <a href="{% url 'admision-fiadores' admision.id %}">Fiadores</a>
-        </li>
-        <li>
-          <a href="{% url 'admision-index' %}">Regresar a Admisiones</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
   <section class="col-md-9">
     {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
     {% for fiador in admision.fiadores.all %}
@@ -40,5 +19,26 @@
     {% endfor %}
     <a href="{% url 'admision-fiador' admision.id %}" class="btn btn-primary">Agregar Fiador</a>
   </section>
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-tabs nav-stacked no-print">
+                <li>
+                    <a href="{% url 'admision-view-id' admision.id %}">Regresar a la Admisi&oacute;n</a>
+                </li>
+                <li>
+                    <a href="{% url 'admision-autorizacion' admision.id %}">Autorizaci&oacute;n</a>
+                </li>
+                <li>
+                    <a href="{% url 'admision-referencias' admision.id %}">Referencias</a>
+                </li>
+                <li>
+                    <a href="{% url 'admision-fiadores' admision.id %}">Fiadores</a>
+                </li>
+                <li>
+                    <a href="{% url 'admision-index' %}">Regresar a Admisiones</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 </div>
 {% endblock %}
