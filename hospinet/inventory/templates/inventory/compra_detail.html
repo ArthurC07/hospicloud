@@ -9,15 +9,6 @@
   </div>
 </div>
 <div class="row">
-  <aside class="col-md-3">
-    <nav class="sidebar-nav">
-      <ul class="nav nav-stacked nav-tabs">
-        <li>
-          <a href="{% url 'compra-item-create' compra.id %}">Agregar Producto</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
   <section class="col-md-9">
     <div class="row">
       <section class="col-md-9">
@@ -72,5 +63,14 @@
       </section>
     </div>
   </section>
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-stacked nav-tabs">
+                <li>
+                    <a href="{% url 'compra-item-create' compra.id %}">Agregar Producto</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 </div>
 {% endblock %}

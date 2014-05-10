@@ -10,14 +10,6 @@
   </div>
 </div>
 <div class="row">
-  <aside class="col-md-3">
-    <nav class="sidebar-nav">
-      <ul class="nav nav-stacked nav-tabs">
-        <li><a href="{% url 'itemtemplate-create' %}">Agregar Producto</a></li>
-        <li><a href="{% url 'inventario-create' %}">Agregar Almacen de Inventario</a></li>
-      </ul>
-    </nav>
-  </aside>
   <section class="col-md-6">
       {% for inventario in inventarios %}
       <div class="row">
@@ -28,10 +20,16 @@
       </div>
       {% endfor %}
   </section>
-    <section class="col-md-3">
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-stacked nav-tabs">
+                <li><a href="{% url 'itemtemplate-create' %}">Agregar Producto</a></li>
+                <li><a href="{% url 'inventario-create' %}">Agregar Almacen de Inventario</a></li>
+            </ul>
+        </nav>
         <form action="{% url 'itemtemplate-search' %}">
             {% crispy productoform %}
         </form>
-    </section>
+    </aside>
 </div>
 {% endblock %}

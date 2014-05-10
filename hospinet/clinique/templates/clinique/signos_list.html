@@ -9,9 +9,6 @@
     </div>
 </div>
 <div class="row">
-    <aside class="col-md-3">
-        {% include 'snippets/paciente_aside.html' %}
-    </aside>
     <div class="col-md-9">
         <table class="table table-striped">
             <a class="btn bg-primary" href="{% url 'consultorio-lectura-agregar' paciente.persona.id paciente.consultorio.id %}">Agregar
@@ -43,5 +40,8 @@
             </tbody>
         </table>
     </div>
+    <aside class="col-md-3">
+        {% include 'snippets/paciente_aside.html' %}
+    </aside>
 </div>
 {% endblock %}

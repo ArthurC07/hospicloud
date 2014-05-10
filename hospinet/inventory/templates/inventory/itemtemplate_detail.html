@@ -9,15 +9,6 @@
   </div>
 </div>
 <div class="row">
-  <aside class="col-md-3">
-    <nav class="sidebar-nav">
-      <ul class="nav nav-stacked nav-tabs">
-          <li>
-              <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar {{ item_template.descripcion }}</a>
-          </li>
-      </ul>
-    </nav>
-  </aside>
   <section class="col-md-9">
     <div class="row">
         <section class="col-md-6">
@@ -40,5 +31,14 @@
         </section>
     </div>
   </section>
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-stacked nav-tabs">
+                <li>
+                    <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar {{ item_template.descripcion }}</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 </div>
 {% endblock %}
