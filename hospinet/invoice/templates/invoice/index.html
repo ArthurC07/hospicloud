@@ -15,18 +15,6 @@
 
 
     <div class="row">
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-tabs nav-stacked">
-                <li>
-                    <a href="{% url 'invoice-new' %}">Crear
-                        Recibo</a>
-                </li>
-                <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
-                    Turno</a></li>
-            </ul>
-        </nav>
-    </aside>
         <div class="col-md-9">
             <section class="tabbable">
                 <ul class="nav nav-tabs">
@@ -261,6 +249,18 @@
                 </div>
             </section>
         </div>
+        <aside class="col-md-3">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li>
+                        <a href="{% url 'invoice-new' %}">Crear
+                            Recibo</a>
+                    </li>
+                    <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
+                        Turno</a></li>
+                </ul>
+            </nav>
+        </aside>
     </div>
 {% endblock %}
 {% block scripts %}

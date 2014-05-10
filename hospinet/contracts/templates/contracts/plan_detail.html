@@ -10,15 +10,6 @@
         </div>
     </div>
     <div class="row">
-        <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked">
-                    <li>
-                        <a href="{% url 'contracts-limite-add' plan.id %}">Agregar L&iacute;mite</a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
         <section class="col-md-9">
             <section class="tabbable">
                 <ul class="nav nav-tabs">
@@ -57,5 +48,14 @@
                 </div>
             </section>
         </section>
+        <aside class="col-md-3">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li>
+                        <a href="{% url 'contracts-limite-add' plan.id %}">Agregar L&iacute;mite</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
     </div>
 {% endblock %}

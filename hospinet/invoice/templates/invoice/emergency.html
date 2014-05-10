@@ -8,15 +8,6 @@
   </div>
 </div>
 <div class="row">
-  <aside class="col-md-3">
-    <nav class="sidebar-nav">
-      <ul class="nav nav-stacked nav-tabs">
-        <li>
-          <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
   <div id="informacion" class="col-md-9">
     <table class="table table-striped table-bordered">
       <thead class="gradient">
@@ -62,5 +53,14 @@
       {% endif %}
     </table>
   </div>
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-stacked nav-tabs">
+                <li>
+                    <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 </div>
 {% endblock %}

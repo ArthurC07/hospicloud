@@ -1,43 +1,43 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-{% load crispy_forms_tags %}
-<div class="container">
-  <section class="row">
-    <section class="col-md-12">
-      <form id="persona-form">
-        <fieldset>
-          <legend>
-            Buscar un Paciente
-          </legend>
-          <label>Nombre o Identidad:</label>
-          <input id="persona-search" />
-          <button type="submit" class="btn" >
-            Buscar
-          </button>
-        </fieldset>
-      </form>
-      <section id="resultados"></section>
-    </section>
-  </section>
-  <section class="row">
-    <section class="col-md-12">
-      {% crispy persona_form %}
-    </section>
-  </section>
-</div>
+    {% load crispy_forms_tags %}
+    <div class="container">
+        <section class="row">
+            <section class="col-md-12">
+                <form id="persona-form">
+                    <fieldset>
+                        <legend>
+                            Buscar un Paciente
+                        </legend>
+                        <label>Nombre o Identidad:</label>
+                        <input id="persona-search"/>
+                        <button type="submit" class="btn">
+                            Buscar
+                        </button>
+                    </fieldset>
+                </form>
+                <section id="resultados"></section>
+            </section>
+        </section>
+        <section class="row">
+            <section class="col-md-12">
+                {% crispy persona_form %}
+            </section>
+        </section>
+    </div>
 {% endblock %}
 {% block scripts %}
-<script type="text/javascript" src="{% static 'js/persona.js' %}"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-		data_source = new Persona("{% url 'home' %}", "{% url 'emergency-index' %}");
-		var resultados = $('#resultados');
-		$('#persona-form').submit(function() {
-			resultados.empty();
-			var personas = data_source.search_person($('#persona-search').val(), resultados);
-			return false;
-		});
-	}); 
-</script>
+    <script type="text/javascript" src="{% static 'js/persona.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            data_source = new Persona("{% url 'home' %}", "{% url 'emergency-index' %}");
+            var resultados = $('#resultados');
+            $('#persona-form').submit(function () {
+                resultados.empty();
+                var personas = data_source.search_person($('#persona-search').val(), resultados);
+                return false;
+            });
+        });
+    </script>
 {% endblock %}
