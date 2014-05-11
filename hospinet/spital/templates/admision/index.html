@@ -11,23 +11,6 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <nav class="navbar navbar-default" role="navigation">
-                    <div class="navbar-inner">
-                        <a href="#" class="navbar-brand">Acciones</a>
-                        <ul class="nav navbar-nav">
-                            <li>
-                                <a href="{% url 'admision-iniciar' %}">Admitir
-                                    Paciente</a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </div>
     <section class="row">
         <section class="col-md-6">
             <div class="main-content col-md-12">
@@ -79,6 +62,17 @@
                 <section class="page-header">
                     <h1>Pacientes en Proceso de Admisi&oacute;n</h1>
                 </section>
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="navbar-inner">
+                        <a href="#" class="navbar-brand">Acciones</a>
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="{% url 'admision-iniciar' %}">Admitir
+                                    Paciente</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
                 {% include 'snippets/admision_list.html' with admisiones=admisiones eliminar=True %}
             </div>
         </article>
