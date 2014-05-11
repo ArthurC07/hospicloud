@@ -5,7 +5,6 @@ html, body, .Override.container, #index-aside, #main-content {
     position: absolute;
     right: 0;
     z-index: 1000;
-    height: 100%;
     width: 220px;
     background-color: rgb(128, 156, 210);
     background-color: rgba(128, 156, 210, 0.75);
