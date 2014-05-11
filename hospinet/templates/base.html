@@ -16,7 +16,10 @@
     <link href="{% static 'css/print.css' %}" rel="stylesheet" media="print"/>
     {% block header %}{% endblock %}
     <link href="{% static 'css/select2-bootstrap.css' %}" rel="stylesheet"/>
-
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="{% static 'js/html5shiv.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'js/respond.min.js' %}"></script>
+    <![endif]-->
     <!-- Fav and touch icons -->
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
 </head>
@@ -39,7 +42,6 @@
     {% block content %}{% endblock %}
 </div>
 {% include 'snippets/footer.html' %}
-<script type="text/javascript" src="{% static 'js/respond.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
