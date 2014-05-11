@@ -14,7 +14,6 @@
         </section>
     </div>
     <div class="row">
-        {% include 'snippets/aside.html' with admision=admision %}
         <section class="col-md-9">
             <div class="main-content col-md-12">
                 <a class="btn btn-primary" href="{% url 'enfermeria-honorario-agregar' admision.id %}">Agregar
@@ -30,6 +29,7 @@
                 </div>
             </div>
         </section>
+        {% include 'snippets/aside.html' with admision=admision %}
     </div>
 
 {% endblock %}

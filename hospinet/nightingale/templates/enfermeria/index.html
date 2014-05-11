@@ -9,7 +9,9 @@
         </div>
         <div class="row">
             <section class="col-md-12">
-                {% include 'snippets/enfermeria_list.html' with admisiones=hospitalizados %}
+                <div class="col-md-12 main-content">
+                    {% include 'snippets/enfermeria_list.html' with admisiones=hospitalizados %}
+                </div>
             </section>
         </div>
     </div>

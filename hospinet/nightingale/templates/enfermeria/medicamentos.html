@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% include 'snippets/aside.html' %}
-    <div class="content">
+    <div class="row">
         <section id="medicamentos" class="col-md-9">
             <div class="main-content col-md-12">
                 <h1>Medicamentos de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
@@ -19,5 +18,6 @@
                     Medicamento</a>
             </div>
         </section>
+        {% include 'snippets/aside.html' %}
     </div>
 {% endblock %}

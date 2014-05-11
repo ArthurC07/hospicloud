@@ -16,7 +16,6 @@
         </section>
     </div>
     <div class="row">
-        {% include 'snippets/aside.html' with admision=admision %}
         <div id="admision" class="col-md-9">
             <div class="main-content col-md-12">
                 <div id="signos_vitales" class="bloque-superior">
@@ -44,6 +43,7 @@
                 </div>
             </div>
         </div>
+        {% include 'snippets/aside.html' with admision=admision %}
     </div>
 {% endblock %}
 {% block scripts %}
