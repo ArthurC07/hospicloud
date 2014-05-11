@@ -2,52 +2,57 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <section class="page-header">
-                <h1>{{ empleador }}</h1>
-            </section>
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>{{ empleador }}</h1>
+                </section>
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            {% for plan in empleador.planes.all %}
-            <div class="row">
-                <div class="col-md-12">
-                    <section class="page-header">
-                        <h1>{{ plan }}</h1>
-                    </section>
-                </div>
+            <div class="main-content col-md-12">‏
+                {% for plan in empleador.planes.all %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section class="page-header">
+                                <h1>{{ plan }}</h1>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-striped table-responsive">
+                                <thead>
+                                <tr>
+                                    <th>N&uacute;mero</th>
+                                    <th>Titular</th>
+                                    <th>Plan</th>
+                                    <th>Vendedor</th>
+                                    <th>Vencimiento</th>
+                                    <th>D&iacute;as en Mora</th>
+                                    <th>Mora</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for contrato in plan.contratos.all %}
+                                    <tr>
+                                        <td><a class="btn btn-success"
+                                               href="{% url 'contrato' contrato.id %}">{{ contrato.numero }}</a></td>
+                                        <td>{{ contrato.persona }}</td>
+                                        <td>{{ contrato.plan }}</td>
+                                        <td>{{ contrato.vendedor }}</td>
+                                        <td>{{ contrato.vencimiento|date:"d/m/Y" }}</td>
+                                        <td>{{ contrato.dias_mora }}</td>
+                                        <td>{{ contrato.mora }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table table-striped table-responsive">
-                        <thead>
-                        <tr>
-                            <th>N&uacute;mero</th>
-                            <th>Titular</th>
-                            <th>Plan</th>
-                            <th>Vendedor</th>
-                            <th>Vencimiento</th>
-                            <th>D&iacute;as en Mora</th>
-                            <th>Mora</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for contrato in plan.contratos.all %}
-                            <tr>
-                                <td><a class="btn btn-success" href="{% url 'contrato' contrato.id %}">{{ contrato.numero }}</a></td>
-                                <td>{{ contrato.persona }}</td>
-                                <td>{{ contrato.plan }}</td>
-                                <td>{{ contrato.vendedor }}</td>
-                                <td>{{ contrato.vencimiento|date:"d/m/Y" }}</td>
-                                <td>{{ contrato.dias_mora }}</td>
-                                <td>{{ contrato.mora }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            {% endfor %}
         </div>
     </div>
 {% endblock %}

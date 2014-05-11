@@ -1,103 +1,113 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load staticfiles %}{% load humanize %}
 {% block content %}
-<div class="row">
-  <section class="col-md-12">
-    <div class="page-header">
-      <h1>Estad&iacute;sticas de Habitaciones</h1>
-      <small>Del {{ inicio }} al {{ fin }}</small>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">
+                <div class="page-header">
+                    <h1>Estad&iacute;sticas de Habitaciones</h1>
+                    <small>Del {{ inicio }} al {{ fin }}</small>
+                </div>
+            </div>
+        </section>
     </div>
-  </section>
-</div>
-<div class="row">
- <article class="col-md-6">
-    <table class="table table-striped table-bordered">
-      <caption>Admsiones por Habitación</caption>
-      <thead>
-        <tr>
-          <th>Habitaci&oacute;n</th>
-          <th>Cantidad de Hospitalizaciones</th>
-        </tr>
-      <thead>
-      <tbody>
-       {% for habitacion, detalle in habitaciones %}
-        <tr>
-          <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
-          <td>{{ detalle.admisiones }}</td>
-        </tr>
-       {% endfor %}
-      </tbody>
+    <div class="row">
+        <article class="col-md-6">
+            <div class="main-content col-md-12">
+                <table class="table table-striped table-bordered">
+                    <caption>Admsiones por Habitación</caption>
+                    <thead>
+                    <tr>
+                        <th>Habitaci&oacute;n</th>
+                        <th>Cantidad de Hospitalizaciones</th>
+                    </tr>
+                    <thead>
+                    <tbody>
+                    {% for habitacion, detalle in habitaciones %}
+                        <tr>
+                            <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
+                            <td>{{ detalle.admisiones }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
 
-      <tfoot>
-      <td>Total de Admisiones</td>
-      <td>{{ total }}</td>
-      </tfoot>
-    </table>
-  </article>
-  <article class="col-md-6">
-      <canvas width="400" height="400" id="admisiones"></canvas>
-  </article>
-</div>
-<div class="row">
-    <article class="col-md-6">
-        <table class="table table-striped table-bordered">
-            <caption>Tiempo de Ocupación de Habitaciones</caption>
-            <thead>
-                <tr>
-                    <th>Habitación</th>
-                    <th>Días</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for habitacion, detalle in habitaciones %}
-                <tr>
-                    <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
-                    <td>{{ detalle.dias }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-            <tfoot>
-            <td>Total de D&iaacute;s</td>
-            <td>{{ total }}</td>
-            </tfoot>
-        </table>
-    </article>
-    <article class="col-md-6">
-        <canvas width="400" height="400" id="dias"></canvas>
-    </article>
-</div>
+                    <tfoot>
+                    <td>Total de Admisiones</td>
+                    <td>{{ total }}</td>
+                    </tfoot>
+                </table>
+            </div>
+        </article>
+        <article class="col-md-6">
+            <div class="main-content col-md-12">
+                <canvas width="400" height="400" id="admisiones"></canvas>
+            </div>
+        </article>
+    </div>
+    <div class="row">
+        <article class="col-md-6">
+            <div class="main-content col-md-12">
+                <table class="table table-striped table-bordered">
+                    <caption>Tiempo de Ocupación de Habitaciones</caption>
+                    <thead>
+                    <tr>
+                        <th>Habitación</th>
+                        <th>Días</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for habitacion, detalle in habitaciones %}
+                        <tr>
+                            <td>{{ habitacion.get_tipo_display }} {{ habitacion.numero }}</td>
+                            <td>{{ detalle.dias }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <td>Total de D&iaacute;s</td>
+                    <td>{{ total }}</td>
+                    </tfoot>
+                </table>
+            </div>
+        </article>
+        <article class="col-md-6">
+            <div class="main-content col-md-12">
+            <canvas width="400" height="400" id="dias"></canvas>
+                </div>
+        </article>
+    </div>
 {% endblock %}
 {% block scripts %}
-{% localize off %}
-<script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
-<script type="text/javascript">
-    $(document).ready(function()
-    {
-        var data = {
-            labels : [ {% for habitacion, detalle in habitaciones %} '{{ habitacion }}', {% endfor %} '' ],
-            datasets : [
-                {
-                    fillColor : "rgba(151,187,205,0.5)",
-                    strokeColor : "rgba(151,187,205,1)",
-                    data : [ {% for habitacion, detalle in habitaciones %} {{ detalle.admisiones }}, {% endfor %} 0 ]
-                }
-            ]
-        };
-        var ctx = $("#admisiones").get(0).getContext("2d");
-        var grafico = new Chart(ctx).Bar(data);
-        data = {
-            labels : [ {% for habitacion, detalle in habitaciones %} '{{ habitacion }}', {% endfor %} '' ],
-            datasets : [
-                {
-                    fillColor : "rgba(151,187,205,0.5)",
-                    strokeColor : "rgba(151,187,205,1)",
-                    data : [ {% for habitacion, detalle in habitaciones %} {{ detalle.dias }}, {% endfor %} 0 ]
-                }
-            ]
-        };
-        ctx = $("#dias").get(0).getContext("2d");
-        grafico = new Chart(ctx).Bar(data);
-    });
-</script>
-{% endlocalize %}
+    {% localize off %}
+        <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var data = {
+                    labels: [ {% for habitacion, detalle in habitaciones %} '{{ habitacion }}', {% endfor %} '' ],
+                    datasets: [
+                        {
+                            fillColor: "rgba(151,187,205,0.5)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            data: [
+                                {% for habitacion, detalle in habitaciones %} {{ detalle.admisiones }}, {% endfor %} 0 ]
+                        }
+                    ]
+                };
+                var ctx = $("#admisiones").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data);
+                data = {
+                    labels: [ {% for habitacion, detalle in habitaciones %} '{{ habitacion }}', {% endfor %} '' ],
+                    datasets: [
+                        {
+                            fillColor: "rgba(151,187,205,0.5)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            data: [ {% for habitacion, detalle in habitaciones %} {{ detalle.dias }}, {% endfor %} 0 ]
+                        }
+                    ]
+                };
+                ctx = $("#dias").get(0).getContext("2d");
+                grafico = new Chart(ctx).Bar(data);
+            });
+        </script>
+    {% endlocalize %}
 {% endblock %}

@@ -12,41 +12,8 @@
         </div>
     </div>
     <div class="row">
-        <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked">
-                    <li>
-                        <a href="{% url 'contrato-add' %}">Crear Contrato</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contrato-empresarial-add' %}">Crear
-                            Contrato Empresarial</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'vendedor-add' %}">Agregar Vendedor</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contrato-tipoevento-add' %}">Agregar
-                            Tipo de Evento</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contrato-list' %}">Lista de
-                            Contratos</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contrato-beneficiario-list' %}">Contratos y Beneficiarios</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contrato-empresarial-list' %}">Contratos Empresariales</a>
-                    </li>
-                    <li>
-                        <a href="{% url 'contracts-meta-add' %}">Agregar
-                            Meta</a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-        <section class="col-md-9">
+    <section class="col-md-9">
+        <div class="main-content col-md-12">
             <div class="row">
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
@@ -193,6 +160,7 @@
                                 </section>
                             </div>
                             <br/>
+
                             <div class="row">
                                 <section class="col-md-4">
                                     {% crispy plan-search %}
@@ -213,6 +181,44 @@
                     </div>
                 </section>
             </div>
-        </section>
+        </div>
+    </section>
+
+    <aside class="col-md-3">
+        <div class="toolbox col-md-12">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li>
+                        <a href="{% url 'contrato-add' %}">Crear Contrato</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-empresarial-add' %}">Crear
+                            Contrato Empresarial</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'vendedor-add' %}">Agregar Vendedor</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-tipoevento-add' %}">Agregar
+                            Tipo de Evento</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-list' %}">Lista de
+                            Contratos</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-beneficiario-list' %}">Contratos y Beneficiarios</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contrato-empresarial-list' %}">Contratos Empresariales</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contracts-meta-add' %}">Agregar
+                            Meta</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
     </div>
 {% endblock %}

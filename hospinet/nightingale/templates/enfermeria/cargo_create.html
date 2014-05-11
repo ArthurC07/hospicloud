@@ -1,22 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
-{% block header %}
-{{ form.media.css }}
-{% endblock %}
-<div class="row">
-<aside class="col-md-3">
-<nav class="well sidebar-nav">
-  <ul class="nav nav-list">
-  </ul>
-</nav>
-</aside>
-<section class="col-md-6">
-  {% crispy form %}
-    {% include 'snippets/cargo_table.html' %}
-</section>
-</div>
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+        <section class="col-md-6">
+            <div class="main-content col-md-12">
+                {% crispy form %}
+                {% include 'snippets/cargo_table.html' %}
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
 {% endblock %}
 {% block scripts %}
-{{ form.media.js }}
+    {{ form.media.js }}
 {% endblock %}

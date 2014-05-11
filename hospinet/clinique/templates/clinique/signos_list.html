@@ -9,39 +9,43 @@
     </div>
 </div>
 <div class="row">
-    <aside class="col-md-3">
-        {% include 'snippets/paciente_aside.html' %}
-    </aside>
     <div class="col-md-9">
-        <table class="table table-striped">
-            <a class="btn bg-primary" href="{% url 'consultorio-lectura-agregar' paciente.persona.id paciente.consultorio.id %}">Agregar
-                    Lectura de Signos</a>
-            <caption>Signos Vitales</caption>
-            <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Pulso</th>
-                <th>Temperatura</th>
-                <th>Presi&oacute;n Sist&oacute;lica</th>
-                <th>Presi&oacute;n Diast&oacute;lica</th>
-                <th>Presi&oacute;n Arterial Media</th>
-                <th>Respiraci&oacute;n</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for signos_vitales in paciente.persona.lecturas_signos.all %}
+        <div class="main-content col-md-12">‏
+            <table class="table table-striped">
+                <a class="btn bg-primary" href="{% url 'consultorio-lectura-agregar' paciente.persona.id paciente.consultorio.id %}">Agregar
+                        Lectura de Signos</a>
+                <caption>Signos Vitales</caption>
+                <thead>
                 <tr>
-                    <td>{{ signos_vitales.created }}</td>
-                    <td>{{ signos_vitales.pulso }}</td>
-                    <td>{{ signos_vitales.temperatura }}</td>
-                    <td>{{ signos_vitales.presion_sistolica }}</td>
-                    <td>{{ signos_vitales.presion_diastolica }}</td>
-                    <td> {{ signos_vitales.presion_arterial_media }}</td>
-                    <td> {{ signos_vitales.respiracion }}</td>
+                    <th>Fecha</th>
+                    <th>Pulso</th>
+                    <th>Temperatura</th>
+                    <th>Presi&oacute;n Sist&oacute;lica</th>
+                    <th>Presi&oacute;n Diast&oacute;lica</th>
+                    <th>Presi&oacute;n Arterial Media</th>
+                    <th>Respiraci&oacute;n</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for signos_vitales in paciente.persona.lecturas_signos.all %}
+                    <tr>
+                        <td>{{ signos_vitales.created }}</td>
+                        <td>{{ signos_vitales.pulso }}</td>
+                        <td>{{ signos_vitales.temperatura }}</td>
+                        <td>{{ signos_vitales.presion_sistolica }}</td>
+                        <td>{{ signos_vitales.presion_diastolica }}</td>
+                        <td> {{ signos_vitales.presion_arterial_media }}</td>
+                        <td> {{ signos_vitales.respiracion }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+    <aside class="col-md-3">
+        <div class="toolbox col-md-12">
+            {% include 'snippets/paciente_aside.html' %}
+        </div>
+    </aside>
 </div>
 {% endblock %}

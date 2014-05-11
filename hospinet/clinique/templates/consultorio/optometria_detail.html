@@ -2,42 +2,44 @@
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
 <div id="informacion" class="col-md-12">
-  <h1>Optometria de {{ optometria.paciente.persona.nombre_completo }}</h1>
-  <table class="table table-striped table-bordered">
-      <thead class="gradient">
-       	<tr>
-          <th>&nbsp;</th>
-          <th>Esfera</th>
-          <th>Cilindro</th>
-          <th>Eje</th>
-          <th>Prisma</th>
-          <th>Adici&oacute;n</th>
-          <th>D.P.</th>
-          <th>Altura</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Ojo Derecho</td>
-          <td>{{ optometria.esfera_ojo_derecho }}</td>
-          <td>{{ optometria.cilindro_ojo_derecho }}</td>
-          <td>{{ optometria.eje_ojo_derecho }}</td>
-          <td>{{ optometria.prisma_ojo_derecho }}</td>
-          <td>{{ optometria.adicion_ojo_derecho }}</td>
-          <td>{{ optometria.d_p_ojo_derecho }}</td>
-          <td>{{ optometria.altura_ojo_derecho }}</td>
-        </tr>
-        <tr>
-          <td>Ojo Izquierdo</td>
-          <td>{{ optometria.esfera_ojo_izquierdo }}</td>
-          <td>{{ optometria.cilindro_ojo_izquierdo }}</td>
-          <td>{{ optometria.eje_ojo_izquierdo }}</td>
-          <td>{{ optometria.prisma_ojo_izquierdo }}</td>
-          <td>{{ optometria.adicion_ojo_izquierdo }}</td>
-          <td>{{ optometria.d_p_ojo_izquierdo }}</td>
-          <td>{{ optometria.altura_ojo_derecho }}</td>
-        </tr>
-    </tbody>
-  </table>
+    <div class="main-content col-md-12">‏
+      <h1>Optometria de {{ optometria.paciente.persona.nombre_completo }}</h1>
+      <table class="table table-striped table-bordered">
+          <thead class="gradient">
+            <tr>
+              <th>&nbsp;</th>
+              <th>Esfera</th>
+              <th>Cilindro</th>
+              <th>Eje</th>
+              <th>Prisma</th>
+              <th>Adici&oacute;n</th>
+              <th>D.P.</th>
+              <th>Altura</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ojo Derecho</td>
+              <td>{{ optometria.esfera_ojo_derecho }}</td>
+              <td>{{ optometria.cilindro_ojo_derecho }}</td>
+              <td>{{ optometria.eje_ojo_derecho }}</td>
+              <td>{{ optometria.prisma_ojo_derecho }}</td>
+              <td>{{ optometria.adicion_ojo_derecho }}</td>
+              <td>{{ optometria.d_p_ojo_derecho }}</td>
+              <td>{{ optometria.altura_ojo_derecho }}</td>
+            </tr>
+            <tr>
+              <td>Ojo Izquierdo</td>
+              <td>{{ optometria.esfera_ojo_izquierdo }}</td>
+              <td>{{ optometria.cilindro_ojo_izquierdo }}</td>
+              <td>{{ optometria.eje_ojo_izquierdo }}</td>
+              <td>{{ optometria.prisma_ojo_izquierdo }}</td>
+              <td>{{ optometria.adicion_ojo_izquierdo }}</td>
+              <td>{{ optometria.d_p_ojo_izquierdo }}</td>
+              <td>{{ optometria.altura_ojo_derecho }}</td>
+            </tr>
+           </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

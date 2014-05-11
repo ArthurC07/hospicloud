@@ -13,6 +13,10 @@
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'css/login.css' %}" rel="stylesheet"/>
     <link href="{% static 'css/index.css' %}" rel="stylesheet"/>
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="{% static 'js/html5shiv.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'js/respond.min.js' %}"></script>
+    <![endif]-->
     {% block header %}{% endblock %}
     <!-- Fav and touch icons -->
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
@@ -108,8 +112,8 @@
                     <div>Contratos</div>
                 </div>
             </a>
-        {% endif %}
     </aside>
+    {% endif %}
 {% endif %}
 <div class="container fill">
     <div class="flex-container">

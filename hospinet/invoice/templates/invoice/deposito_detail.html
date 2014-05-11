@@ -10,76 +10,81 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <table style="width: 100%">
-                <thead>
-                <tr>
-                    <th>Cliente: {{ recibo.cliente }}</th>
-                    <th class="text-right">
-                        <p>Factura {{ recibo.numero }}</p>
-                        Fecha: {{ recibo.created }}
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td colspan="3">
-                        <table style="width: 100%">
-                            <thead>
-                            <tr>
-                                <th>Cantidad</th>
-                                <th>Concepto</th>
-                                <th>Precio unitario</th>
-                                <th>Subtotal</th>
-                                <th>Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
-                                <th>Total</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for venta in recibo.ventas.all %}
+            <div class="main-content col-md-12">‏
+                <table style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th>Cliente: {{ recibo.cliente }}</th>
+                        <th class="text-right">
+                            <p>Factura {{ recibo.numero }}</p>
+                            Fecha: {{ recibo.created }}
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <table style="width: 100%">
+                                <thead>
                                 <tr>
-                                    <td>{{ venta.cantidad }}</td>
-                                    <td>{{ venta.item }}</td>
-                                    <td>{{ venta.precio_unitario }}</td>
-                                    <td>{{ venta.monto }}</td>
-                                    <td>{{ venta.descuento_tipo }}</td>
-                                    <td>{{ venta.total }}</td>
+                                    <th>Cantidad</th>
+                                    <th>Concepto</th>
+                                    <th>Precio unitario</th>
+                                    <th>Subtotal</th>
+                                    <th>Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
+                                    <th>Total</th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Subtotal:</th>
-                                <th>{{ recibo.subtotal }}</th>
-                            </tr>
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Impuestos:</th>
-                                <th>{{ recibo.impuesto }}</th>
-                            </tr>
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Descuento:</th>
-                                <th>{{ recibo.descuento }}</th>
-                            </tr>
-                            <tr>
-                                <th colspan="4">&nbsp;</th>
-                                <th>Total:</th>
-                                <th>{{ recibo.total }}</th>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                                </thead>
+                                <tbody>
+                                {% for venta in recibo.ventas.all %}
+                                    <tr>
+                                        <td>{{ venta.cantidad }}</td>
+                                        <td>{{ venta.item }}</td>
+                                        <td>{{ venta.precio_unitario }}</td>
+                                        <td>{{ venta.monto }}</td>
+                                        <td>{{ venta.descuento_tipo }}</td>
+                                        <td>{{ venta.total }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th colspan="4">&nbsp;</th>
+                                    <th>Subtotal:</th>
+                                    <th>{{ recibo.subtotal }}</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">&nbsp;</th>
+                                    <th>Impuestos:</th>
+                                    <th>{{ recibo.impuesto }}</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">&nbsp;</th>
+                                    <th>Descuento:</th>
+                                    <th>{{ recibo.descuento }}</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">&nbsp;</th>
+                                    <th>Total:</th>
+                                    <th>{{ recibo.total }}</th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="row">
             <div class="offset4 col-md-6">
-                <br />
-                <br />
-                <br />
-                <p>Firma Cliente</p>
+                <div class="main-content col-md-12">‏
+                    <br/>
+                    <br/>
+                    <br/>
+
+                    <p>Firma Cliente</p>
+                </div>
             </div>
         </div>
     </div>

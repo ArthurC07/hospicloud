@@ -5,23 +5,29 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <div class="page-header">
-            <h1>Emergencias <small>Admisi&oacute;n</small></h1>
+        <div class="main-content col-md-12">‏
+            <div class="page-header">
+                <h1>Emergencias <small>Admisi&oacute;n</small></h1>
+            </div>
         </div>
     </div>
 </div>
 <div class="row">
-  <aside class="col-md-3">
-    <nav class="sidebar-nav">
-      <ul class="nav nav-tabs nav-stacked">
-        <li>
-          <a href="{% url 'emergency-ingresar' %}">Admitir Paciente</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
   <section class="col-md-9">
-    {% include 'emergency/snippets/emergencia_list.html' with emergencias=emergencias %}
+      <div class="main-content col-md-12">‏
+          {% include 'emergency/snippets/emergencia_list.html' with emergencias=emergencias %}
+      </div>
   </section>
+    <aside class="col-md-3">
+        <div class="toolbox col-md-12">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li>
+                        <a href="{% url 'emergency-ingresar' %}">Admitir Paciente</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
 </div>
 {% endblock %}

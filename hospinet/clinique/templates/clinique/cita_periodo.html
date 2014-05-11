@@ -11,26 +11,28 @@
     </div>
     <div class="row">
         <section class="col-md-12">
-            <table class="table table-stripped">
-                <thead>
-                    <tr>
-                        <th>Paciente</th>
-                        <th>Fecha</th>
-                        <th>Consultorio</th>
-                        <th>Tel&eacute;fono</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for cita in citas.all %}
-                    <tr>
-                        <td>{{ cita.persona }}</td>
-                        <td>{{ cita.fecha }}</td>
-                        <td>{{ cita.consultorio }}</td>
-                        <td>{{ cita.persona.telefono }} {{ cita.persona.celular }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="main-content col-md-12">
+                <table class="table table-stripped">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Fecha</th>
+                            <th>Consultorio</th>
+                            <th>Tel&eacute;fono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cita in citas.all %}
+                        <tr>
+                            <td>{{ cita.persona }}</td>
+                            <td>{{ cita.fecha }}</td>
+                            <td>{{ cita.consultorio }}</td>
+                            <td>{{ cita.persona.telefono }} {{ cita.persona.celular }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </section>
     </div>
 {% endblock %}

@@ -1,94 +1,108 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-  <section class="col-md-12">
-    <div class="pull-right">
-      {{ user }}
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <div class="pull-right">
+                    {{ user }}
+                </div>
+            </div>
+        </section>
     </div>
-  </section>
-</div>
-<div class="row">
-  <section class="col-md-12">
-    <section class="page-header">
-      <h2>Informaci&oacute;n del Paciente</h2>
-    </section>
-    <h3>{{ admision.paciente.nombre_completo }}</h3>
-    {% include 'snippets/persona.html' with persona=admision.paciente %}
-    {% ifnotequal admision.fiadores.count 0 %}
-    <section class="page-header">
-      <h2>Informaci&oacute;n de los Fiadores</h2>
-    </section>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h2>Informaci&oacute;n del Paciente</h2>
+                </section>
+                <h3>{{ admision.paciente.nombre_completo }}</h3>
+                {% include 'snippets/persona.html' with persona=admision.paciente %}
+                {% ifnotequal admision.fiadores.count 0 %}
+                    <section class="page-header">
+                        <h2>Informaci&oacute;n de los Fiadores</h2>
+                    </section>
+                    {% for fiador in admision.fiadores.all %}
+                        <h3>{{ fiador.nombre_completo }}</h3>
+                        {% include 'snippets/persona.html' with persona=fiador %}
+                    {% endfor %}
+                {% endifnotequal %}
+            </div>
+        </section>
+    </div>
+    <div class="row page">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <div class="page-header">
+                    <h1>Autorizaci&oacute;n</h1>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="row">
+        <section class="col-md-12 text-justify">
+            <div class="main-content col-md-12">‏
+                <ol>
+                    <li>
+                        Nosotros pacientes y fiadores DECLARÓ(MOS), OBLIGA(MOS) Y ACEPTO(MOS)
+                        en forma incondicional y solidariamente lo siguiente: Que en esta fecha
+                        y mediante este acto AUTORIZO(MOS) a HOSPIMED, que de ahora en adelante
+                        será referido como EL HOSPITAL, y damos nuestro consentimiento a todos
+                        y cualquier procedimiento, tratamiento médico, quirúrgico o tratamiento
+                        que incluyen examinación radiológica, anestesia, servicio de laboratorio
+                        y medicinas que pueden ser administradas o dadas bajo las instrucciones
+                        especificas o generales del personal médico o de cirugía durante esta
+                        hospitalización o visita como paciente externo.
+                    </li>
+                    <li>
+                        Además aceptamos las regulaciones de este centro hospitalario,
+                        regulaciones que están para facilitar el cuidado y seguridad del
+                        paciente. Es entendido que los cirujanos y doctores que me están
+                        atendiendo no son empleados de EL HOSPITAL. Yo reconozco que esto
+                        médicos de prácticas privadas incluyen Radiológicos, médicos de
+                        cuidados intensivos, cualquier medico consultado en el caso; en tal
+                        virtud liberamos de toda responsabilidad EL HOSPITAL proveniente de esta
+                        atención medico hospitalaria.
+                    </li>
+                    <li>
+                        Así también por este mismo acto y documento AUTORIZO(MOS) a EL HOSPITAL,
+                        que en el caso de no tener capacidad de pago o bien no poder pagar los
+                        costos que se estén causando por el tratamiento y hospitalización del
+                        paciente antesindicado, este pueda trasladarlo a un hospital público que
+                        designe libremente, o bien al hospital o clínica que le indique(mos),
+                        traslado que puede hacerlo al momento que estime conveniente, quedando
+                        EL HOSPITAL libre de toda responsabilidad civil, penal o administrativa
+                        presente o futura derivada de dicho traslado, dado que el mismo ocurre
+                        por responsabilidad nuestra y no de EL HOSPITAL.
+                    </li>
+                </ol>
+            </div>
+        </section>
+    </div>
+    <div class="row">
+        <br/>
+        <section class="col-md-6 col-md-offset-3">
+            <div class="main-content col-md-12">‏
+                <hr/>
+                <p class="text-center">Firma {{ admision.paciente.nombre_completo }}</p>
+            </div>
+        </section>
+    </div>
     {% for fiador in admision.fiadores.all %}
-    <h3>{{ fiador.nombre_completo }}</h3>
-    {% include 'snippets/persona.html' with persona=fiador %}
+        <div class="row">
+            <br/>
+            <section class="col-md-6 col-md-offset-3">
+                <div class="main-content col-md-12">‏
+                    <hr/>
+                    <p class="text-center">Firma {{ fiador.nombre_completo }}</p>
+                </div>
+            </section>
+        </div>
     {% endfor %}
-    {% endifnotequal %}
-  </section>
-</div>
-<div class="row page">
-  <section class="col-md-12">
-    <div class="page-header">
-      <h1>Autorizaci&oacute;n</h1>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="toolbox col-md-12">
+                <a class="no-print btn btn-primary" href="{% url 'admision-autorizar' admision.id %}">Autorizar</a>
+            </div>
+        </section>
     </div>
-  </section>
-</div>
-<div class="row">
-  <section class="col-md-12 text-justify">
-    <ol>
-      <li>
-        Nosotros pacientes y fiadores DECLARÓ(MOS), OBLIGA(MOS) Y ACEPTO(MOS)
-        en forma incondicional y solidariamente lo siguiente: Que en esta fecha
-        y mediante este acto AUTORIZO(MOS) a HOSPIMED, que de ahora en adelante
-        será referido como EL HOSPITAL, y damos nuestro consentimiento a todos
-        y cualquier procedimiento, tratamiento médico, quirúrgico o tratamiento
-        que incluyen examinación radiológica, anestesia, servicio de laboratorio
-        y medicinas que pueden ser administradas o dadas bajo las instrucciones
-        especificas o generales del personal médico o de cirugía durante esta
-        hospitalización o visita como paciente externo.
-      </li>
-      <li>
-        Además aceptamos las regulaciones de este centro hospitalario,
-        regulaciones que están para facilitar el cuidado y seguridad del
-        paciente. Es entendido que los cirujanos y doctores que me están
-        atendiendo no son empleados de EL HOSPITAL. Yo reconozco que esto
-        médicos de prácticas privadas incluyen Radiológicos, médicos de
-        cuidados intensivos, cualquier medico consultado en el caso; en tal
-        virtud liberamos de toda responsabilidad EL HOSPITAL proveniente de esta
-        atención medico hospitalaria.
-      </li>
-      <li>
-        Así también por este mismo acto y documento AUTORIZO(MOS) a EL HOSPITAL,
-        que en el caso de no tener capacidad de pago o bien no poder pagar los
-        costos que se estén causando por el tratamiento y hospitalización del
-        paciente antesindicado, este pueda trasladarlo a un hospital público que
-        designe libremente, o bien al hospital o clínica que le indique(mos),
-        traslado que puede hacerlo al momento que estime conveniente, quedando
-        EL HOSPITAL libre de toda responsabilidad civil, penal  o administrativa
-        presente o futura derivada de dicho traslado, dado que el mismo ocurre
-        por responsabilidad nuestra y no de EL HOSPITAL.
-      </li>
-    </ol>
-  </section>
-</div>
-<div class="row">
-  <br />
-  <section class="col-md-6 col-md-offset-3">
-    <hr />
-    <p class="text-center">Firma {{ admision.paciente.nombre_completo }}</p>
-  </section>
-</div>
-{% for fiador in admision.fiadores.all %}
-<div class="row">
-  <br />
-  <section class="col-md-6 col-md-offset-3">
-    <hr />
-    <p class="text-center">Firma {{ fiador.nombre_completo }}</p>
-  </section>
-</div>
-{% endfor %}
-<div class="row">
-  <section class="col-md-12">
-    <a class="no-print btn btn-primary" href="{% url 'admision-autorizar' admision.id %}">Autorizar</a>
-  </section>
-</div>
 {% endblock %}

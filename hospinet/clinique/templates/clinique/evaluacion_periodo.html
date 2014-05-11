@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}{% load l10n %}{% load humanize %}
+{% block title %} Contratos{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>Evaluaciones
+                <small>de {{ inicio }} al {{ fin }}</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <table class="table table-stripped">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Fecha</th>
+                            <th>Consultorio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for evaluacion in evaluaciones.all %}
+                        <tr>
+                            <td>{{ evaluacion.paciente.persona }}</td>
+                            <td>{{ evaluacion.created }}</td>
+                            <td>{{ evaluacion.paciente.consultorio }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">Total</th>
+                        <th>{{ total }}</th>
+                    </tr>
+                </tfoot>
+                </table>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {% localize off %}
+        <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var data = {
+                    labels: [
+                        {% for consultorio, cantidad in consultorio_graph2 %} '{{ consultorio }}', {% endfor %} ],
+                    datasets: [
+                        {
+                            fillColor: "rgba(151,187,205,0.5)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            data: [
+                                {% for consultorio, cantidad in consultorio_graph %} {{ cantidad }}, {% endfor %} ]
+                        }
+                    ]
+                };
+                var ctx = $("#consultorio").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data, {
+                    scaleShowLabels: true
+                });
+            });
+        </script>
+    {% endlocalize %}
+{% endblock %}

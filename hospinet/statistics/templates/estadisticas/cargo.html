@@ -1,57 +1,60 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load staticfiles %}{% load humanize %}
 {% block content %}
-<div class="row">
-  <section class="col-md-12">
-    <div class="page-header">
-      <h1>Cargos del Periodo</h1>
-      <small>Del {{ inicio }} al {{ fin }}</small>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">
+                <div class="page-header">
+                    <h1>Cargos del Periodo</h1>
+                    <small>Del {{ inicio }} al {{ fin }}</small>
+                </div>
+            </div>
+        </section>
     </div>
-  </section>
-</div>
-<div class="row">
- <article class="col-md-6">
-    <table class="table table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Cargo</th>
-          <th>Total</th>
-        </tr>
-      <thead>
-      <tbody>
-       {% for cargo, cantidad in cargos %}
-        <tr>
-          <td>{{ cargo }}</td>
-          <td>{{ cantidad }}</td>
-        </tr>
-       {% endfor %}
-      </tbody>
-    </table>
-  </article>
-  <article class="col-md-6">
-      <canvas width="400" height="400" id="cargo"></canvas>
-  </article>
-</div>
+    <div class="row">
+        <article class="col-md-6">
+            <div class="main-content col-md-12">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Cargo</th>
+                        <th>Total</th>
+                    </tr>
+                    <thead>
+                    <tbody>
+                    {% for cargo, cantidad in cargos %}
+                        <tr>
+                            <td>{{ cargo }}</td>
+                            <td>{{ cantidad }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </article>
+        <article class="col-md-6">
+            <canvas width="400" height="400" id="cargo"></canvas>
+        </article>
+    </div>
 {% endblock %}
 {% block scripts %}
-{% localize off %}
-<script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
-<script type="text/javascript">
-    $(document).ready(function()
-    {
-        var data = {
-            labels : [ {% for cargo, cantidad in cargos %} '{{ cargo }}', {% endfor %} '' ],
-            datasets : [
-                {
-                    fillColor : "rgba(151,187,205,0.5)",
-                    strokeColor : "rgba(151,187,205,1)",
-                    data : [ {% for cargo, cantidad in cargos %} {{ cantidad }}, {% endfor %} 0 ]
-                }
-            ]
-        };
-        var ctx = $("#cargo").get(0).getContext("2d");
-        var grafico = new Chart(ctx).Bar(data);
-    });
-</script>
-{% endlocalize %}
+    {% localize off %}
+        <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var data = {
+                    labels: [ {% for cargo, cantidad in cargos %} '{{ cargo }}', {% endfor %} '' ],
+                    datasets: [
+                        {
+                            fillColor: "rgba(151,187,205,0.5)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            data: [ {% for cargo, cantidad in cargos %} {{ cantidad }}, {% endfor %} 0 ]
+                        }
+                    ]
+                };
+                var ctx = $("#cargo").get(0).getContext("2d");
+                var grafico = new Chart(ctx).Bar(data);
+            });
+        </script>
+    {% endlocalize %}
 {% endblock %}

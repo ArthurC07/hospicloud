@@ -5,28 +5,33 @@
 {% endblock %}
 {% block content %}
 <div class="row">
-  <aside class="col-md-3">
-    <nav>
-      {% load tree_menu_tags %}{% show_menu 'persona' %}
-    </nav>
-  </aside>
   <div id="examenes" class="col-md-9">
-    <div>
-      <h1>{{ persona.nombre_completo }}</h1>
-    </div>
-    {% for examen in persona.examenes.all %}
-    <article class="examen">
-      <section class="main">
+     <div class="main-content col-md-12">‏
         <div>
-          <h2>{{ examen.nombre }}</h2>
+          <h1>{{ persona.nombre_completo }}</h1>
         </div>
-        {% include 'snippets/examen.html' with examen=examen %}
-      </section>
-      <aside class="links">
-        <a class="btn btn-primary" href="{% url 'examen-view-id' examen.uuid %}">Mostrar</a>
-      </aside>
-    </article>
-    {% endfor %}
+        {% for examen in persona.examenes.all %}
+        <article class="examen">
+          <section class="main">
+            <div>
+              <h2>{{ examen.nombre }}</h2>
+            </div>
+            {% include 'snippets/examen.html' with examen=examen %}
+          </section>
+          <aside class="links">
+            <a class="btn btn-primary" href="{% url 'examen-view-id' examen.uuid %}">Mostrar</a>
+          </aside>
+        </article>
+        {% endfor %}
+     </div>
   </div>
+    <aside class="col-md-3">
+        <div class="toolbox col-md-12">
+            <nav>
+                {% load tree_menu_tags %}{% show_menu 'persona' %}
+            </nav>
+        </div>
+    </aside>
+
 </div>
 {% endblock %}

@@ -1,17 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
-<div class="row">
-  <section class="col-md-12">
-    <div class="page-header">
-      <h1>{{ emergencia.persona.nombre_completo }}<small> Hospitalizar Emergencia</small></h1>
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <div class="page-header">
+                    <h1>{{ emergencia.persona.nombre_completo }}
+                        <small> Hospitalizar Emergencia</small>
+                    </h1>
+                </div>
+            </div>
+            {% crispy form %}
+        </section>
     </div>
-    {% crispy form %}
-  </section>
-</div>
-<div class="row">
-  <section id="emergencia" class="col-md-12">
-    {% include 'emergency/snippets/emergencia.html' with emergencia=emergencia %}
-  </section>
-</div>
+    <div class="row">
+        <section id="emergencia" class="col-md-12">
+            <div class="main-content col-md-12">‏
+                {% include 'emergency/snippets/emergencia.html' with emergencia=emergencia %}
+            </div>
+        </section>
+    </div>
 {% endblock %}

@@ -1,25 +1,34 @@
 {% extends 'base.html' %}{% load thumbnail %}
 {% block content %}
-<div class="row">
-  <div class="col-md-12">
-    <section class="page-header">
-      <h1>{{ admision.paciente.nombre_completo }} <small>Referencias</small></h1>
-    </section>
-  </div>
-</div>
-<div class="row">
-{% include 'snippets/admision_aside.html' %}
-<div id="informacion" class="col-md-9">
-  {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-  {% for referencia in admision.referencias.all %}
-    <div class="page-header">
-      <h3>Referencia: {{ referencia.nombre_completo }}</h3>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>{{ admision.paciente.nombre_completo }}
+                        <small>Referencias</small>
+                    </h1>
+                </section>
+            </div>
+        </div>
     </div>
-    {% thumbnail referencia.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-    {% include 'snippets/persona.html' with persona=referencia %}
-    <a href="{% url 'persona-editar' fiador.id %}" class="btn btn-primary">Editar Datos</a>
-  {% endfor %}
-  <a href="{% url 'admision-referencia' admision.id %}" class="btn btn-primary">Agregar Referencia</a>
-</div>
-</div>
+    <div class="row">
+        {% include 'snippets/admision_aside.html' %}
+        <div id="informacion" class="col-md-9">
+            <div class="main-content col-md-12">‏
+                {% thumbnail admision.paciente.fotografia "100x100" crop="center" as im %}<img src="{{ im.url }}"
+                                                                                               width="{{ im.width }}"
+                                                                                               height="{{ im.height }}">
+                {% for referencia in admision.referencias.all %}
+                    <div class="page-header">
+                        <h3>Referencia: {{ referencia.nombre_completo }}</h3>
+                    </div>
+                    {% thumbnail referencia.fotografia "100x100" crop="center" as im %}
+                    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                    {% include 'snippets/persona.html' with persona=referencia %}
+                    <a href="{% url 'persona-editar' fiador.id %}" class="btn btn-primary">Editar Datos</a>
+                {% endfor %}
+                <a href="{% url 'admision-referencia' admision.id %}" class="btn btn-primary">Agregar Referencia</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -11,16 +11,18 @@
     </div>
     <div class="row">
         <section class="col-md-6">
-            <table class="table table-stripped">
-                <tbody>
-                {% for item in cuenta %}
-                    <tr>
-                        <td>{{ item.descripcion }}</td>
-                        <td>{{ item.cargo_count }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <div class="main-content col-md-12">
+                <table class="table table-stripped">
+                    <tbody>
+                    {% for item in cuenta %}
+                        <tr>
+                            <td>{{ item.descripcion }}</td>
+                            <td>{{ item.cargo_count }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </section>
         <section class="col-md-6 action-nav-button">
             <canvas width="600" height="400" id="consultorio"></canvas>
@@ -28,24 +30,26 @@
     </div>
     <div class="row">
         <section class="col-md-12">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Cargo</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for cargo in cargos.all %}
+            <div class="main-content col-md-12">
+                <table class="table table-striped">
+                    <thead>
                     <tr>
-                        <td>{{ cargo.created }}</td>
-                        <td>{{ cargo.tipo }}</td>
-                        <td>{{ cargo.item }}</td>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Cargo</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for cargo in cargos.all %}
+                        <tr>
+                            <td>{{ cargo.created }}</td>
+                            <td>{{ cargo.tipo }}</td>
+                            <td>{{ cargo.item }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </section>
     </div>
 {% endblock %}

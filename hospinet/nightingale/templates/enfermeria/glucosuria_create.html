@@ -1,19 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-{% load crispy_forms_tags %}
-<div class="row">
-    <aside class="col-md-3">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-stacked nav-tabs">
-                <li>
-                    <a href="{% url 'nightingale-view-id' admision.id %}">Regresar al Paciente</a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-    <section class="col-md-9">
-        {% crispy form %}
-    </section>
-</div>
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <section class="col-md-9">
+            <div class="main-content col-md-12">
+                {% crispy form %}
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li>
+                            <a href="{% url 'nightingale-view-id' admision.id %}">Regresar al Paciente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
 {% endblock %}
 

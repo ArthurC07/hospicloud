@@ -3,23 +3,27 @@
     <div class="row">
         <section class="col-md-12">
             <div class="page-header">
-                <h1>{{ admision.paciente.nombre_completo }} <br />
+                <h1>{{ admision.paciente.nombre_completo }} <br/>
                     <small>
-                        {{ admision.habitacion }},  Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
-                    </small></h1>
+                        {{ admision.habitacion }}, Dr. {{ admision.doctor }}, {{ admision.diagnostico }}
+                    </small>
+                </h1>
             </div>
         </section>
     </div>
     <div class="row">
         {% include 'snippets/aside.html' with admision=admision %}
         <section id="evolucion" class="col-md-9">
-            <div>
-                <h2>Evoluci&oacute;n</h2>
+            <div class="main-content col-md-12">
+                <div>
+                    <h2>Evoluci&oacute;n</h2>
+                </div>
+                <p>
+                    <a href="{% url 'enfermeria-evolucion-agregar' admision.id %}" class="btn btn-primary">Agregar
+                        Evoluci&oacute;n</a>
+                </p>
+                {% include 'snippets/evolucion_table.html' %}
             </div>
-            <p>
-            <a href="{% url 'enfermeria-evolucion-agregar' admision.id %}" class="btn btn-primary">Agregar Evoluci&oacute;n</a>
-            </p>
-            {% include 'snippets/evolucion_table.html' %}
         </section>
     </div>
 {% endblock %}

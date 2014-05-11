@@ -1,19 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-{% include 'snippets/aside.html' %}
-<div class="content">
-  <section id="medicamentos" class="col-md-9">
-    <h1>Medicamentos de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
-    {% if admision.medicamentos.count == 0 %}
-      <p>No hay medicamentos indicados</p>
-    {% endif %}
-    {% for medicamento in admision.medicamentos.all %}
-      {% include 'snippets/medicamento.html' with editable=1 %}
-      <a href="{% url 'enfermeria-medicamento-suspender' medicamento.id 2 %}" class="btn btn-primary">Suspender {{ medicamento.nombre }}</a>
-      <a href="{% url 'enfermeria-medicamento-suspender' medicamento.id 3 %}" class="btn btn-primary">Terminar {{ medicamento.nombre }}</a>
-    {% endfor %}
-    <div class="clearfix">&nbsp;</div>
-    <a href="{% url 'enfermeria-medicamento-agregar' admision.id %}" class="btn btn-primary">Agregar Medicamento</a>
-  </section>
-</div>
+    {% include 'snippets/aside.html' %}
+    <div class="content">
+        <section id="medicamentos" class="col-md-9">
+            <div class="main-content col-md-12">
+                <h1>Medicamentos de {{ admision.paciente.nombre_completo }} en {{ admision.habitacion }}</h1>
+                {% if admision.medicamentos.count == 0 %}
+                    <p>No hay medicamentos indicados</p>
+                {% endif %}
+                {% for medicamento in admision.medicamentos.all %}
+                    {% include 'snippets/medicamento.html' with editable=1 %}
+                    <a href="{% url 'enfermeria-medicamento-suspender' medicamento.id 2 %}" class="btn btn-primary">Suspender {{ medicamento.nombre }}</a>
+                    <a href="{% url 'enfermeria-medicamento-suspender' medicamento.id 3 %}"
+                       class="btn btn-primary">Terminar {{ medicamento.nombre }}</a>
+                {% endfor %}
+                <div class="clearfix">&nbsp;</div>
+                <a href="{% url 'enfermeria-medicamento-agregar' admision.id %}" class="btn btn-primary">Agregar
+                    Medicamento</a>
+            </div>
+        </section>
+    </div>
 {% endblock %}

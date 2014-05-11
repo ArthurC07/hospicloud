@@ -5,16 +5,16 @@
     {{ form.media.css }}
 {% endblock %}
 <div class="row">
-<aside class="col-md-3">
-<nav class="sidebar-nav">
-  <ul class="nav nav-stacked nav-tabs">
-    <li><a href="{% url 'emergency-view-id' emergencia.id %}">Regresar a emergencia</a></li>
-  </ul>
-</nav>
-</aside>
 <section class="col-md-6">
   {% crispy form %}
 </section>
+    <aside class="col-md-3">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-stacked nav-tabs">
+                <li><a href="{% url 'emergency-view-id' emergencia.id %}">Regresar a emergencia</a></li>
+            </ul>
+        </nav>
+    </aside>
 </div>
 <div class="row">
 <section id="cargos" class="col-md-9 col-md-offset-3">

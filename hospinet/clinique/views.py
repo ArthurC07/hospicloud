@@ -86,6 +86,10 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
         context['cargosperiodoform'].set_legend(u'Cargos por Periodo')
 
+        context['evaluacionperiodoform'] = PeriodoForm(prefix='evaluacion-periodo')
+        context['evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
+        context['evaluacionperiodoform'].set_legend(u'Evaluaciones por Periodo')
+
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
 
@@ -424,6 +428,33 @@ class EvaluacionCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
 class EvaluacionUpdateView(UpdateView, LoginRequiredMixin):
     model = Evaluacion
     form_class = EvaluacionForm
+
+
+class EvaluacionPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los :class:`Evaluacion` de un periodo"""
+    template_name = 'clinique/evaluacion_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='evaluacion-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.evaluaciones = Evaluacion.objects.filter(
+                created__gte=self.inicio,
+                created__lte=self.fin
+            ).order_by('paciente__consultorio')
+        return super(EvaluacionPeriodoView, self).dispatch(request, *args,
+                                                            **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(EvaluacionPeriodoView, self).get_context_data(**kwargs)
+
+        context['evaluaciones'] = self.evaluaciones
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
 
 
 class ConsultaCreateView(PacienteFormMixin, CurrentUserFormMixin, CreateView,

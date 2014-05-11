@@ -2,46 +2,50 @@
 {% load staticfiles %}
 {% block content %}
 <div class="row">
-  <aside class="toolbox col-md-3">
-    <nav>
-      <ul>
-        <li>
-          <a href="{% url haystack_search %}"><img src="{% static 'images/busqueda.png' %}" /> Buscar</a>
-        </li>
-        <li class="clearfix">
-          <a href="{% url examen-persona-nuevo %}"><img src="{% static 'images/agregar.png' %}" /> Nuevo Paciente</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
   <div id="personas" class="col-md-9">
-    <div class="page-header">
-      <h1>Estudios Programados</h1>
-    </div>
-    <table class="data">
-      <thead class="gradient">
-        <tr>
-          <th>Fecha</th>
-          <th>Paciente</th>
-          <th>Examen</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for estudio in estudios_programados %}
-        <tr>
-          <td>{{ estudio.fecha }}</td>
-          <td>{{ estudio.persona.nombre_completo }}</td>
-          <td>{{ estudio.tipo_de_examen.nombre }}</td>
-          <td><a href="{% url 'examen-efectuar' estudio.id %}">Efectuar</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <div>
-      <h1>&Uacute;ltimos Examenes Efectuados</h1>
-    </div>
-    {% include 'snippets/examen_list.html' with examenes=examenes %}
+     <div class="main-content col-md-12">‏
+        <div class="page-header">
+              <h1>Estudios Programados</h1>
+            </div>
+            <table class="data">
+              <thead class="gradient">
+                <tr>
+                  <th>Fecha</th>
+                  <th>Paciente</th>
+                  <th>Examen</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for estudio in estudios_programados %}
+                <tr>
+                  <td>{{ estudio.fecha }}</td>
+                  <td>{{ estudio.persona.nombre_completo }}</td>
+                  <td>{{ estudio.tipo_de_examen.nombre }}</td>
+                  <td><a href="{% url 'examen-efectuar' estudio.id %}">Efectuar</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <div>
+              <h1>&Uacute;ltimos Examenes Efectuados</h1>
+            </div>
+            {% include 'snippets/examen_list.html' with examenes=examenes %}
+     </div>
   </div>
+    <aside class="toolbox col-md-3">
+        <div class="toolbox col-md-12">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="{% url haystack_search %}"><img src="{% static 'images/busqueda.png' %}" /> Buscar</a>
+                    </li>
+                    <li class="clearfix">
+                        <a href="{% url examen-persona-nuevo %}"><img src="{% static 'images/agregar.png' %}" /> Nuevo Paciente</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
 </div>
 {% endblock %}
