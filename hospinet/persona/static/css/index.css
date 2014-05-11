@@ -4,6 +4,7 @@ html, body, .Override.container, #index-aside, #main-content {
 #navigation {
     position: absolute;
     right: 0;
+    height: 100%;
     z-index: 1000;
     width: 220px;
     background-color: #809CD2;
