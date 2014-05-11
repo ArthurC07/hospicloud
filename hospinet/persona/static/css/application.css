@@ -201,6 +201,8 @@ nav.navbar-inverse .navbar-inner {
     border-radius: 5px;
     -webkit-box-shadow: 2px 2px 10px 0 #949494;
     box-shadow: 2px 2px 10px 0 #949494;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 .toolbox {
     background-color: #809CD2;
@@ -223,11 +225,14 @@ nav.navbar-inverse .navbar-inner {
 .toolbox a:hover, .toolbox li a:hover {
     background-color: #021668;
     background-color: rgba(2, 22, 104, 0.5);
+    border: none;
 }
 .main-header {
     margin-bottom: 10px;
     -webkit-box-shadow: 2px 2px 10px 0 #949494;
     box-shadow: 2px 2px 10px 0 #949494;
+    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.75);
 }
 #logo {
     position: fixed;
