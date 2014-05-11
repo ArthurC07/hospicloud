@@ -9,7 +9,7 @@
     </section>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-9">
         <div class="main-content col-md-12">‏
             {% for consultorio in user.consultorios.all %}
             <div class="row">
@@ -37,7 +37,9 @@
             </div>
         {% endfor %}
         </div>
+    </div>
         <aside class="col-md-3">
+            <div class="col-md-12 toolbox">
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
                     <li><a href="{% url 'consultorio-agregar' %}">Agregar Consultorio</a></li>
@@ -62,6 +64,7 @@
                 <div class="col-md-12">
                     {% crispy evaluacionperiodoform %}
                 </div>
+            </div>
             </div>
         </aside>
     </div>
