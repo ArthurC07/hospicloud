@@ -131,6 +131,7 @@
                                             <th>Monto</th>
                                             <th>Tipo de Pago</th>
                                             <th>Descripci&oacute;n</th>
+                                            <th>Acciones</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -140,6 +141,11 @@
                                                 <td>{{ pago.monto }}</td>
                                                 <td>{{ pago.tipo_de_pago }}</td>
                                                 <td>{{ pago.descripcion }}</td>
+                                                <td>
+                                                    <a class="btn btn-success" href="{% url 'contracts-pago-update' pago.id %}">
+                                                        <i class="fa fa-edit"></i> Editar
+                                                    </a>
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>
