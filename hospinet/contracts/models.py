@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
-from datetime import date
+from datetime import date, timedelta
 import operator
 
 from django.contrib.auth.models import User
@@ -163,9 +163,10 @@ class Contrato(TimeStampedModel):
 
     def dias_mora(self):
         """Dias extra que pasaron desde el ultimo pago"""
+        pagos = self.pagos.filter(precio=self.plan.precio).count()
         ahora = timezone.now().date()
-        pago = self.ultimo_pago.date()
-        delta = ahora - pago
+        cobertura = self.inicio + timedelta(pagos * 30)
+        delta = ahora - cobertura
         dias = delta.days
         if dias < 0:
             dias = 0
