@@ -503,6 +503,11 @@ class PagoDeleteView(DeleteView, LoginRequiredMixin):
         return self.contrato.get_absolute_url()
 
 
+class PagoUpdateView(UpdateView, LoginRequiredMixin):
+    model = Pago
+    form_class = PagoForm
+
+
 class EventoCreateView(ContratoFormMixin):
     model = Evento
     form_class = EventoForm
