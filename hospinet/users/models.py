@@ -27,8 +27,9 @@ from persona.models import Persona
 
 
 class UserProfile(UserenaBaseProfile):
-    id = models.OneToOneField(User, db_column='id', primary_key=True,
-                              related_name="profile")
+    id = models.OneToOneField(User, db_column='id', primary_key=True)
+    user = models.OneToOneField(User, related_name="profile",
+                                blank=True, null=True)
     inventario = models.ForeignKey(Inventario, related_name='usuarios',
                                    blank=True, null=True)
     honorario = models.ForeignKey(ItemTemplate, related_name='usuarios',
@@ -42,7 +43,7 @@ class UserProfile(UserenaBaseProfile):
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(id=instance)
+        UserProfile.objects.create(id=instance, user=instance)
         from guardian.shortcuts import assign_perm
 
         assign_perm('change_profile', instance, instance.get_profile())
