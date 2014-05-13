@@ -30,6 +30,9 @@
     <div class="row">
         <div class="col-md-12 translucent">
             {% block content %}{% endblock content %}
+            {% if user.is_authenticated %}
+            <a href="{% url 'userena_signout' %}" class="btn btn-success">Cerrar Sesi&oacute;n</a>
+            {% endif %}
         </div>
     </div>
     </div>

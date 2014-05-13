@@ -27,6 +27,7 @@
                         <th>Vendedor</th>
                         <th>Vencimiento</th>
                         <th>D&iacute;as en Mora</th>
+                        <th>Tel&eacute;fono</th>
                         <th>Mora</th>
                     </tr>
                     </thead>
@@ -40,6 +41,7 @@
                             <td>{{ contrato.vendedor }}</td>
                             <td>{{ contrato.vencimiento|date:"d/m/Y" }}</td>
                             <td>{{ contrato.dias_mora }}</td>
+                            <td>{{ contrato.persona.telefono }}</td>
                             <td>{{ contrato.mora }}</td>
                         </tr>
                     {% endfor %}
