@@ -13,7 +13,6 @@
         </section>
     </div>
     <div class="row">
-        {% include 'snippets/persona_aside.html' with persona=persona %}
         <section id="informacion" class="col-md-9">
             <div class="main-content col-md-12">‏
                 <section class="tabbable">
@@ -95,5 +94,6 @@
                 </section>
             </div>
         </section>
+        {% include 'snippets/persona_aside.html' with persona=persona %}
     </div>
 {% endblock content %}

@@ -217,7 +217,6 @@ nav.navbar-inverse .navbar-inner {
 }
 .toolbox li {
     border-top: 1px solid #ffffff;
-    margin: 0;
 }
 .toolbox a {
     color: #ffffff;
@@ -225,7 +224,8 @@ nav.navbar-inverse .navbar-inner {
 .toolbox a:hover, .toolbox li a:hover {
     background-color: #021668;
     background-color: rgba(2, 22, 104, 0.5);
-    border: none;
+    border-left: 0;
+    border-right: 0;
 }
 .main-header {
     margin-bottom: 10px;
