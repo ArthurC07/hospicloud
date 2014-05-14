@@ -16,7 +16,6 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from crispy_forms.layout import Fieldset
-from django import forms
 from lab.models import Resultado
 from persona.forms import BasePersonaForm
 

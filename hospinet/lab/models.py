@@ -21,6 +21,11 @@ from persona.models import Persona
 
 class Resultado(TimeStampedModel):
     """Permite registrar los :class:`Resultado`s de un examen de laboratorio"""
+
+    class Meta:
+        permissions = (
+            ('lab', 'Permite al usuario administrar laboratorios'),
+        )
     persona = models.ForeignKey(Persona, related_name='resultados')
     descripcion = models.TextField()
     archivo = models.FileField(upload_to='lab/results/%Y/%m/%d')
