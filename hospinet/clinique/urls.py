@@ -244,6 +244,11 @@ urlpatterns = patterns('',
                            PacienteSearchView.as_view(),
                            name='clinique-paciente-search'),
 
+                       url(r'^paciente/search/add$',
+                           PacienteSearchView.as_view(
+                               template_name='clinique/paciente_add_list.html'),
+                           name='clinique-paciente-search-add'),
+
                        url(r'^(?P<paciente>\d+)/prescripcion/agregar$',
                            PrescripcionCreateView.as_view(),
                            name='consultorio-prescripcion-agregar'),

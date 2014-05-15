@@ -25,6 +25,7 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
                              Incapacidad)
+from invoice.forms import PeriodoForm
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, \
     FieldSetFormMixin

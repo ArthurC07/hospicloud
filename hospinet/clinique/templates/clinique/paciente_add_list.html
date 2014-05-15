@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="row">
+  <section class="col-md-12">
+    <div class="page-header">
+      <h1>Pacientes</h1>
+    </div>
+  </section>
+</div>
+<div class="row">
+  <div class="col-md-9 table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Identidad</th>
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paciente in pacientes %}
+            <tr>
+                <td>{{ paciente.identificacion }}</td>
+                <td>{{ paciente }}</td>
+                <td>{{ paciente.persona.obtener_edad }}</td>
+                <td>
+                {% for consultorio in user.consultorios.all %}
+                    <a class="btn btn-success" href="{% url 'consultorio-paciente-agregar' paciente.persona.id consultorio.id %}">
+                        Agregar a Consultorio {{ consultorio }}
+                    </a>
+                {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+    <aside class="col-md-3">
+        <div class="toolbox col-md-12">
+            <nav class="sidebar-nav">
+            </nav>
+        </div>
+    </aside>
+</div>
+{% endblock %}

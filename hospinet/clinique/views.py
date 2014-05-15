@@ -96,6 +96,9 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['seguimientoperiodoform'].helper.form_action = 'seguimiento-periodo'
         context['seguimientoperiodoform'].set_legend(u'Seguimientos por Periodo')
 
+        context['pacientesearch'] = PacienteSearchForm()
+        context['pacientesearch'].helper.form_action = 'clinique-paciente-search-add'
+
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
 
