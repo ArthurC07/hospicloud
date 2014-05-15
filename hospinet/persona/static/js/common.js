@@ -17,4 +17,5 @@ $(document).ready(function ($) {
             changeMonth: true,
             changeYear: true
         });
+    $('.table').tablesorter();
 });
