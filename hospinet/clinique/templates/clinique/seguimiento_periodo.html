@@ -36,15 +36,16 @@
                     <tr>
                         <th>Fecha</th>
                         <th>Paciente</th>
-                        <th>Cargo</th>
+                        <th>Consultorio</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for seguimiento in seguimientos.all %}
                         <tr>
                             <td>{{ seguimiento.created }}</td>
-                            <td>{{ seguimiento.paciente }}</td>
-                            <td>{{ seguimienti.diagnostico }}</td>
+                            <td>{{ seguimiento.paciente.persona }}</td>
+                            <td>{{ seguimiento.paciente.consultorio }}</td>
+                            <td>{{ seguimiento.diagnostico }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
