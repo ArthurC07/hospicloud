@@ -499,7 +499,7 @@ class SeguimientoPeriodoView(TemplateView, LoginRequiredMixin):
         context['fin'] = self.fin
 
         context['cuenta'] = Seguimiento.objects.values(
-            'paciente__consultorio__nombre').annotate(
+            'paciente').annotate(
             seguimiento_count=Count('id'))
 
         return context
