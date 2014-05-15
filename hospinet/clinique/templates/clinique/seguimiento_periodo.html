@@ -16,7 +16,7 @@
                     <tbody>
                     {% for item in cuenta %}
                         <tr>
-                            <td>{{ item.nombre }}</td>
+                            <td>{{ item.consultorio }}</td>
                             <td>{{ item.seguimiento_count }}</td>
                         </tr>
                     {% endfor %}
@@ -35,16 +35,16 @@
                     <thead>
                     <tr>
                         <th>Fecha</th>
-                        <th>Tipo</th>
+                        <th>Paciente</th>
                         <th>Cargo</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for seguimiento in seguimientos.all %}
                         <tr>
-                            <td>{{ cargo.created }}</td>
-                            <td>{{ cargo.tipo }}</td>
-                            <td>{{ cargo.item }}</td>
+                            <td>{{ seguimiento.created }}</td>
+                            <td>{{ seguimiento.paciente }}</td>
+                            <td>{{ seguimienti.diagnostico }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
