@@ -92,6 +92,10 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
         context['evaluacionperiodoform'].set_legend(u'Evaluaciones por Periodo')
 
+        context['seguimientoperiodoform'] = PeriodoForm(prefix='seguimiento-periodo')
+        context['seguimientoperiodoform'].helper.form_action = 'seguimiento-periodo'
+        context['seguimientoperiodoform'].set_legend(u'Seguimientos por Periodo')
+
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
 
@@ -469,6 +473,37 @@ class SeguimientoCreateView(PacienteFormMixin, CurrentUserFormMixin, CreateView,
                             LoginRequiredMixin):
     model = Seguimiento
     form_class = SeguimientoForm
+
+
+class SeguimientoPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los :class:`Seguimiento`s de un periodo"""
+    template_name = 'clinique/seguimiento_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='seguimiento-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.seguimiento = Seguimiento.objects.filter(
+                created__gte=self.inicio,
+                created__lte=self.fin
+            )
+        return super(SeguimientoPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SeguimientoPeriodoView, self).get_context_data(**kwargs)
+
+        context['seguimientos'] = self.seguimiento
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        context['cuenta'] = Seguimiento.objects.values('paciente__consultorio').annotate(
+            seguimiento_count=Count('id')).filter(
+            created__gte=self.inicio,
+            created__lte=self.fin)
+
+        return context
 
 
 class LecturaSignosCreateView(PersonaFormMixin, ConsultorioMixin,
