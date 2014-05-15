@@ -17,7 +17,7 @@
                     {% for item in cuenta %}
                         <tr>
                             <td>{{ item }}</td>
-                            <td>{{ item.consultorio }}</td>
+                            <td>{{ item.paciente__consultorio__nombre }}</td>
                             <td>{{ item.seguimiento_count }}</td>
                         </tr>
                     {% endfor %}
