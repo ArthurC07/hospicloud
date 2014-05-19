@@ -92,4 +92,5 @@ aside.sidebar ul li a {
     left: 0;
     bottom: 0;
     padding: 5px;
+    z-index: -2;
 }
