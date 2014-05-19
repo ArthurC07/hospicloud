@@ -180,7 +180,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.humanize',
-    #'django.contrib.sites',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
@@ -251,8 +251,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'hospinet.context_processors.chat'
 )
 
-AUTH_PROFILE_MODULE = 'users.Profile'
-
 AUTHENTICATION_BACKENDS = (
     'userena.backends.UserenaAuthenticationBackend',
     'guardian.backends.ObjectPermissionBackend',
@@ -269,8 +267,6 @@ CACHES = {
 ANONYMOUS_USER_ID = -1
 AUTH_PROFILE_MODULE = 'users.UserProfile'
 USE_THOUSAND_SEPARATOR = True
-LANGUAGE_CODE = 'es-HN'
-TIME_ZONE = 'America/Tegucigalpa'
 USERENA_ACTIVATION_REQUIRED = False
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'

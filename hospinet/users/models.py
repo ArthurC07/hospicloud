@@ -18,7 +18,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
-from userena.models import UserenaBaseProfile
+from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 from tastypie.models import create_api_key
 
@@ -39,6 +39,9 @@ class UserProfile(UserenaBaseProfile):
 
     def __unicode__(self):
         return self.user.username
+
+
+User.userena_signup = property(lambda u: UserenaSignup.objects.get_or_create(user=u)[0])
 
 
 def create_user_profile(sender, instance, created, **kwargs):
