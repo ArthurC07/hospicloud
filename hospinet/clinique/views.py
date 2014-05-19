@@ -88,16 +88,23 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
         context['cargosperiodoform'].set_legend(u'Cargos por Periodo')
 
-        context['evaluacionperiodoform'] = PeriodoForm(prefix='evaluacion-periodo')
-        context['evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
+        context['evaluacionperiodoform'] = PeriodoForm(
+            prefix='evaluacion-periodo')
+        context[
+            'evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
         context['evaluacionperiodoform'].set_legend(u'Evaluaciones por Periodo')
 
-        context['seguimientoperiodoform'] = PeriodoForm(prefix='seguimiento-periodo')
-        context['seguimientoperiodoform'].helper.form_action = 'seguimiento-periodo'
-        context['seguimientoperiodoform'].set_legend(u'Seguimientos por Periodo')
+        context['seguimientoperiodoform'] = PeriodoForm(
+            prefix='seguimiento-periodo')
+        context[
+            'seguimientoperiodoform'].helper.form_action = 'seguimiento-periodo'
+        context['seguimientoperiodoform'].set_legend(
+            u'Seguimientos por Periodo')
 
         context['pacientesearch'] = PacienteSearchForm()
-        context['pacientesearch'].helper.form_action = 'clinique-paciente-search-add'
+        context[
+            'pacientesearch'].helper.form_action = \
+            'clinique-paciente-search-add'
 
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
@@ -285,6 +292,16 @@ class PacienteFormMixin(FormMixin, PacienteMixin):
         return initial
 
 
+class ConsultorioPacienteListView(ConsultorioMixin, ListView,
+                                  LoginRequiredMixin):
+    model = Paciente
+    context_object_name = 'pacientes'
+
+    def get_queryset(self):
+        return Paciente.objects.filter(consultorio=self.consultorio).order_by(
+            'created').all()
+
+
 class CitaCreateView(CreateView, LoginRequiredMixin):
     model = Cita
     form_class = CitaForm
@@ -454,7 +471,7 @@ class EvaluacionPeriodoView(TemplateView, LoginRequiredMixin):
                 created__lte=self.fin
             ).order_by('paciente__consultorio')
         return super(EvaluacionPeriodoView, self).dispatch(request, *args,
-                                                            **kwargs)
+                                                           **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(EvaluacionPeriodoView, self).get_context_data(**kwargs)
@@ -492,7 +509,8 @@ class SeguimientoPeriodoView(TemplateView, LoginRequiredMixin):
                 created__gte=self.inicio,
                 created__lte=self.fin
             )
-        return super(SeguimientoPeriodoView, self).dispatch(request, *args, **kwargs)
+        return super(SeguimientoPeriodoView, self).dispatch(request, *args,
+                                                            **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(SeguimientoPeriodoView, self).get_context_data(**kwargs)
