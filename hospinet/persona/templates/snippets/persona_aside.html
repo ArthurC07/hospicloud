@@ -1,52 +1,56 @@
 <aside class="col-md-3">
-    <nav class="sidebar-nav">
-        <ul class="nav nav-tabs nav-stacked">
-            <li>
-                <a href="{% url 'persona-estilo' persona.id %}">Estilo de
-                    Vida</a>
-            </li>
-            <li>
-                <a href="{% url 'examen-programar' persona.id %}">Programar
-                    Estudio</a>
-            </li>
-            <li>
-                <a href="{% url 'emergency-create' persona.id %}">Ingresar a
-                    Emergencias</a>
-            </li>
-            <li>
-                <a href="{% url 'admision-persona-agregar' persona.id %}">Hospitalizar</a>
-            </li>
-            <li>
-                <a href="{% url 'consultorio-paciente-add' persona.id %}">Agregar a un Consultorio</a>
-            </li>
-            <li>
-                {% for consultorio in user.consultorios.all %}
-                    <a href="{% url 'consultorio-paciente-agregar' persona.id consultorio.id %}">Agregar
-                        Paciente a Consultorio {{ consultorio }}</a>
-                {% endfor %}
-            </li>
-            <li>
-                {% for consultorio in user.consultorios.all %}
-                    <a href="{% url 'consultorio-espera-agregar' persona.id consultorio.id %}">Agregar
-                        Paciente a Sala de Espera de {{ consultorio }}</a>
-                {% endfor %}
-            </li>
-            <li>
-                <a href="{% url 'contrato-persona-add' persona.id %}">Crear un
-                    Contrato</a>
-            </li>
-            <li>
-                <a href="{% url 'persona-beneficiario-add' persona.id %}">Convertir
-                    en Beneficiario</a>
-            </li>
-            <li>
-                <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">Crear
-                    una Cita</a>
-            </li>
-            <li>
-                <a href="{% url 'persona-empleo-add' persona.id %}">Agregar
-                    Empresa</a>
-            </li>
-        </ul>
-    </nav>
+    <div class="col-md-12 toolbox">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-stacked">
+                <li>
+                    <a href="{% url 'persona-estilo' persona.id %}">Estilo de
+                        Vida</a>
+                </li>
+                <li>
+                    <a href="{% url 'examen-programar' persona.id %}">Programar
+                        Estudio</a>
+                </li>
+                <li>
+                    <a href="{% url 'emergency-create' persona.id %}">Ingresar a
+                        Emergencias</a>
+                </li>
+                <li>
+                    <a href="{% url 'admision-persona-agregar' persona.id %}">Hospitalizar</a>
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-paciente-add' persona.id %}">Agregar
+                        a un Consultorio</a>
+                </li>
+                <li>
+                    {% for consultorio in user.consultorios.all %}
+                        <a href="{% url 'consultorio-paciente-agregar' persona.id consultorio.id %}">Agregar
+                            Paciente a Consultorio {{ consultorio }}</a>
+                    {% endfor %}
+                </li>
+                <li>
+                    {% for consultorio in user.consultorios.all %}
+                        <a href="{% url 'consultorio-espera-agregar' persona.id consultorio.id %}">Agregar
+                            Paciente a Sala de Espera de {{ consultorio }}</a>
+                    {% endfor %}
+                </li>
+                <li>
+                    <a href="{% url 'contrato-persona-add' persona.id %}">Crear
+                        un
+                        Contrato</a>
+                </li>
+                <li>
+                    <a href="{% url 'persona-beneficiario-add' persona.id %}">Convertir
+                        en Beneficiario</a>
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">Crear
+                        una Cita</a>
+                </li>
+                <li>
+                    <a href="{% url 'persona-empleo-add' persona.id %}">Agregar
+                        Empresa</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </aside>

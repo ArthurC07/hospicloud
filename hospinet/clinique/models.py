@@ -273,3 +273,13 @@ class Prescripcion(TimeStampedModel):
     def get_absolute_url(self):
 
         return self.paciente.get_absolute_url()
+
+
+class Incapacidad(TimeStampedModel):
+    paciente = models.ForeignKey(Paciente, related_name='incapacidades')
+    consultorio = models.ForeignKey(Consultorio, related_name='incapacidades')
+    descripcion = models.TextField()
+
+    def get_absolute_url(self):
+
+        return self.paciente.get_absolute_url()

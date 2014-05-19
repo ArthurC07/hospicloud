@@ -163,7 +163,7 @@ class Contrato(TimeStampedModel):
 
     def dias_mora(self):
         """Dias extra que pasaron desde el ultimo pago"""
-        pagos = self.pagos.filter(precio=self.plan.precio).count()
+        pagos = self.pagos.filter(precio=self.plan.precio, ciclo=True).count()
         ahora = timezone.now().date()
         cobertura = self.inicio + timedelta(pagos * 30)
         delta = ahora - cobertura
@@ -218,6 +218,7 @@ class Pago(TimeStampedModel):
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     descripcion = models.TextField(null=True, blank=True)
     facturar = models.BooleanField(default=False)
+    ciclo = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Pago`"""

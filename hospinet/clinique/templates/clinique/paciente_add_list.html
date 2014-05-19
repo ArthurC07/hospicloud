@@ -10,7 +10,7 @@
 </div>
 <div class="row">
   <div class="col-md-9 table-responsive">
-    <table class="table table-striped">
+    <table class="table">
         <thead>
             <tr>
                 <th>Identidad</th>
@@ -23,9 +23,15 @@
             {% for paciente in pacientes %}
             <tr>
                 <td>{{ paciente.identificacion }}</td>
-                <td><a href="{% url 'clinique-paciente' paciente.id %}">{{ paciente }}</a></td>
+                <td>{{ paciente }}</td>
                 <td>{{ paciente.persona.obtener_edad }}</td>
-                <td><a class="btn btn-success" href="{% url 'clinique-paciente-delete' paciente.id %}"><i class="fa fa-trash-o"></i> Eliminar</a></td>
+                <td>
+                {% for consultorio in user.consultorios.all %}
+                    <a class="btn btn-success" href="{% url 'consultorio-paciente-agregar' paciente.persona.id consultorio.id %}">
+                        Agregar a Consultorio {{ consultorio }}
+                    </a>
+                {% endfor %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

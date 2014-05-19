@@ -18,7 +18,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
-from userena.models import UserenaBaseProfile
+from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 from tastypie.models import create_api_key
 
@@ -27,7 +27,9 @@ from persona.models import Persona
 
 
 class UserProfile(UserenaBaseProfile):
-    user = models.OneToOneField(User, primary_key=True, related_name="profile")
+    id = models.OneToOneField(User, db_column='id', primary_key=True)
+    user = models.OneToOneField(User, related_name="profile",
+                                blank=True, null=True)
     inventario = models.ForeignKey(Inventario, related_name='usuarios',
                                    blank=True, null=True)
     honorario = models.ForeignKey(ItemTemplate, related_name='usuarios',
@@ -39,9 +41,12 @@ class UserProfile(UserenaBaseProfile):
         return self.user.username
 
 
+User.userena_signup = property(lambda u: UserenaSignup.objects.get_or_create(user=u)[0])
+
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
+        UserProfile.objects.create(id=instance, user=instance)
         from guardian.shortcuts import assign_perm
 
         assign_perm('change_profile', instance, instance.get_profile())

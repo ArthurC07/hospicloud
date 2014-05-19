@@ -138,6 +138,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
 
         morosos = [c for c in
                    Contrato.objects.filter(vencimiento__gte=self.fin,
+                                           cancelado=False,
                                            plan__empresarial=False).all() if
                    c.dias_mora() > 0]
         context['mora'] = len(morosos)
@@ -418,6 +419,20 @@ class ContratoListView(ListView, LoginRequiredMixin):
             plan__empresarial=False,
             cancelado=False,
             vencimiento__gte=timezone.now().date).all()
+
+    def get_context_data(self, **kwargs):
+
+        """Calculates the total morarorium and makes it available to the
+        template"""
+
+        context = super(ContratoListView, self).get_context_data(**kwargs)
+
+        contratos = self.get_queryset()
+        context['morosos'] = len([c for c in contratos if c.dias_mora() > 0])
+        if contratos.count() > 0:
+            context['percentage'] = context['morosos'] / float(contratos.count()) * 100
+
+        return context
 
 
 class ContratoEmpresarialListView(ListView, LoginRequiredMixin):
@@ -707,5 +722,6 @@ class CancelacionCreateView(ContratoFormMixin, CreateView, LoginRequiredMixin):
         self.object = form.save(commit=False)
         self.object.contrato.cancelado = True
         self.object.save()
+        self.object.contrato.save()
 
         return HttpResponseRedirect(self.get_success_url())

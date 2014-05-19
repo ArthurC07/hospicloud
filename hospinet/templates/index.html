@@ -56,6 +56,14 @@
                     <div>Admisiones</div>
                 </div>
             </a>
+            <a href="{% url 'lab-index' %}">
+                <div class="image-holder flex-container">
+                    <img src="{% static 'images/icon6.png' %}">
+                </div>
+                <div class="flex-container">
+                    <div>Laboratorio</div>
+                </div>
+            </a>
             <a href="{% url 'examen-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon6.png' %}">
@@ -187,7 +195,6 @@
         src="{% static 'js/jquery.pnotify.min.js' %}"></script>
 <script type="text/javascript"
         src="{% static 'js/jquery.backstretch.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/common.js' %}"></script>
 <script type="text/javascript"
         src="{% static 'js/jquery.placeholder.js' %}"></script>
 <script type="text/javascript">

@@ -39,7 +39,8 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             EvaluacionUpdateView, PrescripcionUpdateView,
                             PrescripcionCreateView, PacienteDeleteView,
                             DiagnosticoPeriodoView, CargoPeriodoView,
-                            EvaluacionPeriodoView)
+                            EvaluacionPeriodoView, IncapacidadCreateView,
+                            SeguimientoPeriodoView, ConsultorioPacienteListView)
 
 
 urlpatterns = patterns('',
@@ -105,8 +106,8 @@ urlpatterns = patterns('',
                            ConsultorioDetailView.as_view(),
                            name='consultorio'),
 
-                       url(r'^(?P<pk>\d+)/pacientes$',
-                           ConsultorioDetailView.as_view(template_name='clinique/consultorio_pacientes.html'),
+                       url(r'^(?P<consultorio>\d+)/pacientes$',
+                           ConsultorioPacienteListView.as_view(),
                            name='consultorio-pacientes'),
 
                        url(r'^agregar$',
@@ -161,7 +162,7 @@ urlpatterns = patterns('',
                            CitaListView.as_view(),
                            name='consultorio-cita-list'),
 
-                       url(r'^(?P<pk>\d+)/cita/ausente',
+                       url(r'^(?P<pk>\d+)/cita/ausente$',
                            CitaAusenteView.as_view(),
                            name='clinique-cita-ausente'),
 
@@ -215,29 +216,38 @@ urlpatterns = patterns('',
                            EsperaCreateView.as_view(),
                            name='consultorio-espera-agregar'),
 
-                       url(r'^(?P<pk>\d+)/espera/ausente',
+                       url(r'^(?P<pk>\d+)/espera/ausente$',
                            EsperaAusenteView.as_view(),
                            name='clinique-espera-ausente'),
 
-                       url(r'^cita/periodo',
+                       url(r'^cita/periodo$',
                            CitaPeriodoView.as_view(),
                            name='cita-periodo'),
 
-                       url(r'^diagnostico/periodo',
+                       url(r'^diagnostico/periodo$',
                            DiagnosticoPeriodoView.as_view(),
                            name='diagnostico-periodo'),
 
-                       url(r'^cargo/periodo',
+                       url(r'^cargo/periodo$',
                            CargoPeriodoView.as_view(),
                            name='cargo-periodo'),
 
-                       url(r'^evaluacion/periodo',
+                       url(r'^evaluacion/periodo$',
                            EvaluacionPeriodoView.as_view(),
                            name='evaluacion-periodo'),
 
-                       url(r'^paciente/search',
+                       url(r'^seguimiento/periodo$',
+                           SeguimientoPeriodoView.as_view(),
+                           name='seguimiento-periodo'),
+
+                       url(r'^paciente/search$',
                            PacienteSearchView.as_view(),
                            name='clinique-paciente-search'),
+
+                       url(r'^paciente/search/add$',
+                           PacienteSearchView.as_view(
+                               template_name='clinique/paciente_add_list.html'),
+                           name='clinique-paciente-search-add'),
 
                        url(r'^(?P<paciente>\d+)/prescripcion/agregar$',
                            PrescripcionCreateView.as_view(),
@@ -246,4 +256,8 @@ urlpatterns = patterns('',
                        url(r'^prescripcion/(?P<pk>\d+)/editar$',
                            PrescripcionUpdateView.as_view(),
                            name='clinique-prescripcion-edit'),
+
+                       url(r'^(?P<paciente>\d+)/incapacidad/agregar$',
+                           IncapacidadCreateView.as_view(),
+                           name='consultorio-incapacidad-agregar'),
 )

@@ -38,11 +38,13 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             CitaPersonaForm, CargoForm, OrdenMedicaForm,
                             NotaEnfermeriaForm, ExamenForm, EsperaForm,
                             EsperaAusenteForm, CitaAusenteForm,
-                            PacienteSearchForm, PrescripcionForm)
+                            PacienteSearchForm, PrescripcionForm,
+                            IncapacidadForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
-                             NotaEnfermeria, Examen, Espera, Prescripcion)
+                             NotaEnfermeria, Examen, Espera, Prescripcion,
+                             Incapacidad)
 from inventory.models import ItemTemplate
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
@@ -86,9 +88,23 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
         context['cargosperiodoform'].set_legend(u'Cargos por Periodo')
 
-        context['evaluacionperiodoform'] = PeriodoForm(prefix='evaluacion-periodo')
-        context['evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
+        context['evaluacionperiodoform'] = PeriodoForm(
+            prefix='evaluacion-periodo')
+        context[
+            'evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
         context['evaluacionperiodoform'].set_legend(u'Evaluaciones por Periodo')
+
+        context['seguimientoperiodoform'] = PeriodoForm(
+            prefix='seguimiento-periodo')
+        context[
+            'seguimientoperiodoform'].helper.form_action = 'seguimiento-periodo'
+        context['seguimientoperiodoform'].set_legend(
+            u'Seguimientos por Periodo')
+
+        context['pacientesearch'] = PacienteSearchForm()
+        context[
+            'pacientesearch'].helper.form_action = \
+            'clinique-paciente-search-add'
 
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.all()
@@ -276,6 +292,16 @@ class PacienteFormMixin(FormMixin, PacienteMixin):
         return initial
 
 
+class ConsultorioPacienteListView(ConsultorioMixin, ListView,
+                                  LoginRequiredMixin):
+    model = Paciente
+    context_object_name = 'pacientes'
+
+    def get_queryset(self):
+        return Paciente.objects.filter(consultorio=self.consultorio).order_by(
+            'created').all()
+
+
 class CitaCreateView(CreateView, LoginRequiredMixin):
     model = Cita
     form_class = CitaForm
@@ -445,7 +471,7 @@ class EvaluacionPeriodoView(TemplateView, LoginRequiredMixin):
                 created__lte=self.fin
             ).order_by('paciente__consultorio')
         return super(EvaluacionPeriodoView, self).dispatch(request, *args,
-                                                            **kwargs)
+                                                           **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(EvaluacionPeriodoView, self).get_context_data(**kwargs)
@@ -467,6 +493,37 @@ class SeguimientoCreateView(PacienteFormMixin, CurrentUserFormMixin, CreateView,
                             LoginRequiredMixin):
     model = Seguimiento
     form_class = SeguimientoForm
+
+
+class SeguimientoPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra los :class:`Seguimiento`s de un periodo"""
+    template_name = 'clinique/seguimiento_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='seguimiento-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.seguimiento = Seguimiento.objects.filter(
+                created__gte=self.inicio,
+                created__lte=self.fin
+            )
+        return super(SeguimientoPeriodoView, self).dispatch(request, *args,
+                                                            **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SeguimientoPeriodoView, self).get_context_data(**kwargs)
+
+        context['seguimientos'] = self.seguimiento
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        context['cuenta'] = Seguimiento.objects.values(
+            'paciente').annotate(
+            seguimiento_count=Count('id'))
+
+        return context
 
 
 class LecturaSignosCreateView(PersonaFormMixin, ConsultorioMixin,
@@ -667,3 +724,8 @@ class PrescripcionCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
 class PrescripcionUpdateView(UpdateView, LoginRequiredMixin):
     model = Prescripcion
     form_class = PrescripcionForm
+
+
+class IncapacidadCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+    model = Incapacidad
+    form_class = IncapacidadForm

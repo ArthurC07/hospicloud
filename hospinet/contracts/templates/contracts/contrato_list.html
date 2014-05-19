@@ -9,9 +9,18 @@
         </section>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">
-                <a href="{% url 'contrato-index' %}" class="btn btn-primary">Volver a Contratos</a>
+        <div class="col-md-3">
+            <div class="col-md-12 toolbox ">
+                <a href="{% url 'contrato-index' %}"
+                   class="btn btn-primary">Volver a Contratos</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="col-md-12 main-content">
+                <ul>
+                    <li>Contratos en mora {{ morosos }}, {{ percentage }}%
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -27,6 +36,7 @@
                         <th>Vendedor</th>
                         <th>Vencimiento</th>
                         <th>D&iacute;as en Mora</th>
+                        <th>Tel&eacute;fono</th>
                         <th>Mora</th>
                     </tr>
                     </thead>
@@ -34,12 +44,14 @@
                     {% for contrato in contratos %}
                         <tr>
                             <td><a class="btn btn-success"
-                                   href="{% url 'contrato' contrato.id %}">{{ contrato.numero }}</a></td>
+                                   href="{% url 'contrato' contrato.id %}">{{ contrato.numero }}</a>
+                            </td>
                             <td>{{ contrato.persona }}</td>
                             <td>{{ contrato.plan }}</td>
                             <td>{{ contrato.vendedor }}</td>
                             <td>{{ contrato.vencimiento|date:"d/m/Y" }}</td>
                             <td>{{ contrato.dias_mora }}</td>
+                            <td>{{ contrato.persona.telefono }}</td>
                             <td>{{ contrato.mora }}</td>
                         </tr>
                     {% endfor %}

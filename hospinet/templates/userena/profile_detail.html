@@ -7,31 +7,20 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-md-12">
-    <section class="page-header">
-      <h1>{{ user.get_full_name }} <small>{{ user.username }}</small></h1>
-    </section>
-  </div>
-</div>
-<div class="row">
   <aside class="col-md-3">
     <nav class="sidebar-nav">
     {% block profile_navigation %}
-      {% comment %}Dirty hack. Will use django-guardian in the future.{% endcomment %}
-      {% if user.username == profile.user.username %}
-        <ul class="nav nav-stacked nav-tabs" id="box-nav">
-          {% block profile_navigation_items %}
-            <li><a href="{% url 'userena_profile_detail' user.username %}">{% trans 'View profile' %}</a></li>
-            <li><a href="{% url 'userena_profile_edit' user.username %}">{% trans 'Edit details' %}</a></li>
-            <li><a href="{% url 'userena_password_change' user.username %}">{% trans 'Change password' %}</a></li>
-            <li><a href="{% url 'userena_email_change' user.username %}">{% trans 'Change email' %}</a></li>
-          {% endblock %}
-        </ul>
-      {% endif %}
+        {% include 'userena/user_menu.html' %}
     {% endblock %}
     </nav>
   </aside>
   <section class="col-md-9">
+  <div class="col-md-12 main-content">
+      <div class="col-md-12">
+          <section class="page-header">
+              <h1>{{ user.get_full_name }} <small>{{ user.username }}</small></h1>
+          </section>
+      </div>
     <section class="tabbable">
         <div class="tab-content">
             <ul class="nav nav-tabs">
@@ -94,6 +83,7 @@
             </article>
         </div>
     </section>
+  </div>
   </section>
 </div>
 {% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}
+{% block title %} Contratos{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>Cargos
+                <small>de {{ inicio }} al {{ fin }}</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Consultorio</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for seguimiento in seguimientos.all %}
+                        <tr>
+                            <td>{{ seguimiento.created }}</td>
+                            <td>{{ seguimiento.paciente.persona }}</td>
+                            <td>{{ seguimiento.paciente.consultorio }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+{% endblock %}
