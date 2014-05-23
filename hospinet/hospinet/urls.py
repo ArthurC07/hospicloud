@@ -22,6 +22,8 @@ from hospinet.views import IndexView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from users.forms import CustomEditProfileForm
+
 admin.autodiscover()
 
 from api import v1_api
@@ -36,7 +38,6 @@ urlpatterns = patterns('',
     url(r'^$', IndexView.as_view(), name='home'),
     url(r'^persona/', include('persona.urls')),
     url(r'^examen/', include('imaging.urls')),
-    url(r'^accounts/', include('userena.urls')),
     url(r'^inventory/', include('inventory.urls')),
     url(r'^admision/', include('spital.urls')),
     url(r'^reportes/', include('statistics.urls')),
@@ -50,6 +51,11 @@ urlpatterns = patterns('',
     url(r'^api/', include(v1_api.urls)),
     url(r'^select2/', include('select2.urls')),
     url(r'^users/', include('users.urls')),
+    url(r'^accounts/(?P<username>[\.\w-]+)/edit/$',
+        'userena.views.profile_edit',
+        {'edit_profile_form': CustomEditProfileForm},
+        name='userena_profile_edit'),
+    url(r'^accounts/', include('userena.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
