@@ -35,7 +35,7 @@ from inventory.views import (IndexView, ItemTemplateCreateView,
                              HistorialDetailView, ProveedorDetailView,
                              ProveedorListView,
                              ProveedorCreateView, ProveedorUpdateView,
-                             ItemInventarioListView)
+                             ItemInventarioListView, CompraUpdateView)
 
 
 urlpatterns = patterns('',
@@ -129,6 +129,10 @@ urlpatterns = patterns('',
                        url(r'^compra/(?P<pk>\d+)$',
                            CompraDetailView.as_view(),
                            name='compra'),
+
+                       url(r'^compra/(?P<pk>\d+)/edit$',
+                           CompraUpdateView.as_view(),
+                           name='compra-edit'),
 
                        url(r'^historial/(?P<pk>\d+)$',
                            HistorialDetailView.as_view(),

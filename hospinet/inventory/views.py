@@ -295,6 +295,19 @@ class CompraCreateView(InventarioFormMixin, LoginRequiredMixin):
     form_class = CompraForm
 
 
+class CompraUpdateView(UpdateView, LoginRequiredMixin):
+    model = Compra
+    form_class = CompraForm
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        if self.object.ingresada:
+            self.object.transferir()
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
 class CompraDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     paginate_by = 10
     template_name = 'inventory/compra_detail.html'

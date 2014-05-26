@@ -263,6 +263,14 @@ class Compra(TimeStampedModel):
 
         return reverse('compra', args=[self.id])
 
+    def transferir(self):
+
+        for comprado in self.items.all():
+
+            item = self.inventario.buscar_item(comprado.item)
+            item.incrementar(comprado.cantidad)
+            item.save()
+
 
 class ItemComprado(TimeStampedModel):
     compra = models.ForeignKey(Compra, related_name='items')
