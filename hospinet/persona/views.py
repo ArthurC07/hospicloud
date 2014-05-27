@@ -223,3 +223,9 @@ class EmpleoCreateView(PersonaFormMixin, CreateView):
 class PersonaDuplicateView(UpdateView, LoginRequiredMixin):
     model = Persona
     form_class = PersonaDuplicateForm
+
+
+class AntecedenteObstetricoCreateView(PersonaFormMixin, CreateView,
+                                      LoginRequiredMixin):
+    model = AntecedenteObstetrico
+    form_class = AntecedenteObstetricoForm

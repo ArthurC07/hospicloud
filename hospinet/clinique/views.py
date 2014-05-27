@@ -52,7 +52,7 @@ from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
     AntecedenteQuirurgicoForm
 from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
     AntecedenteObstetrico, AntecedenteQuirurgico, EstiloVida, Persona
-from persona.views import PersonaFormMixin
+from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -602,6 +602,13 @@ class CliniqueAntecedenteUpdateView(UpdateView, LoginRequiredMixin):
 
     def get_success_url(self):
         return reverse('clinique-antecedente-familiar-editar',
+                       args=[self.object.persona.id])
+
+
+class CliniqueAntecedenteObstetricoCreateView(AntecedenteObstetricoCreateView):
+
+    def get_success_url(self):
+        return reverse('clinique-antecedente-editar',
                        args=[self.object.persona.id])
 
 
