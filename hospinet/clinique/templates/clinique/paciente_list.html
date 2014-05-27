@@ -25,7 +25,9 @@
                 <td>{{ paciente.identificacion }}</td>
                 <td><a href="{% url 'clinique-paciente' paciente.id %}">{{ paciente }}</a></td>
                 <td>{{ paciente.persona.obtener_edad }}</td>
-                <td><a class="btn btn-success" href="{% url 'clinique-paciente-delete' paciente.id %}"><i class="fa fa-trash-o"></i> Eliminar</a></td>
+                <td>
+                    <a class="btn btn-success" href="{% url 'clinique-paciente-delete' paciente.id %}"><i class="fa fa-trash-o"></i> Eliminar</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
