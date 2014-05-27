@@ -24,7 +24,7 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad)
+                             Incapacidad, Reporte)
 from invoice.forms import PeriodoForm
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, \
@@ -243,3 +243,12 @@ class IncapacidadForm(PacienteFormMixin):
     def __init__(self, *args, **kwargs):
         super(IncapacidadForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Incapacidad', *self.field_names)
+
+
+class ReporteForm(ConsultorioFormMixin):
+    class Meta:
+        model = Reporte
+
+    def __init__(self, *args, **kwargs):
+        super(ReporteForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Reporte', *self.field_names)
