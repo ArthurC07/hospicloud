@@ -39,12 +39,12 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             NotaEnfermeriaForm, ExamenForm, EsperaForm,
                             EsperaAusenteForm, CitaAusenteForm,
                             PacienteSearchForm, PrescripcionForm,
-                            IncapacidadForm)
+                            IncapacidadForm, ReporteForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad)
+                             Incapacidad, Reporte)
 from inventory.models import ItemTemplate
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
@@ -729,3 +729,8 @@ class PrescripcionUpdateView(UpdateView, LoginRequiredMixin):
 class IncapacidadCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     model = Incapacidad
     form_class = IncapacidadForm
+
+
+class ReporteCreateView(ConsultorioFormMixin, CreateView, LoginRequiredMixin):
+    model = Reporte
+    form_class = ReporteForm
