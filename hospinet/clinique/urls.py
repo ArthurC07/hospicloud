@@ -40,7 +40,8 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             PrescripcionCreateView, PacienteDeleteView,
                             DiagnosticoPeriodoView, CargoPeriodoView,
                             EvaluacionPeriodoView, IncapacidadCreateView,
-                            SeguimientoPeriodoView, ConsultorioPacienteListView)
+                            SeguimientoPeriodoView, ConsultorioPacienteListView,
+                            CliniqueAntecedenteObstetricoCreateView)
 
 
 urlpatterns = patterns('',
@@ -197,6 +198,10 @@ urlpatterns = patterns('',
                        url(r'^(?P<pk>\d+)/antecedente/obstetrico/editar$',
                            CliniqueAntecedenteObstetricoUpdateView.as_view(),
                            name='clinique-antecedente-obstetrico-editar'),
+
+                       url(r'^(?P<persona>\d+)/antecedente/obstetrico/agregar',
+                           CliniqueAntecedenteObstetricoCreateView.as_view(),
+                           name='clinique-antecedente-obstetrico-agregar'),
 
                        url(
                            r'^(?P<paciente>\d+)/(?P<persona>\d+)/antecedente/quirurgico/agregar$',
