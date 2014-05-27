@@ -199,7 +199,7 @@ urlpatterns = patterns('',
                            CliniqueAntecedenteObstetricoUpdateView.as_view(),
                            name='clinique-antecedente-obstetrico-editar'),
 
-                       url(r'^(?P<pk>\d+)/antecedente/obstetrico/agregar',
+                       url(r'^(?P<persona>\d+)/antecedente/obstetrico/agregar',
                            CliniqueAntecedenteObstetricoCreateView.as_view(),
                            name='clinique-antecedente-obstetrico-agregar'),
 
