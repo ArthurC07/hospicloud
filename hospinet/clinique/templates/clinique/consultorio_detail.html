@@ -96,7 +96,7 @@
                                 <h2>Reportes</h2>
                             </div>
                             {% for reporte in consultorio.reportes.all %}
-                                <a href="{{ reporte.archivo.url }}">Descargar Reporte {{ reporte.created }}</a>
+                                <a href="{{ reporte.archivo.url }}">Descargar Reporte {{ reporte.fecha }}</a>
                             {% endfor %}
                         </div>
                     </div>
