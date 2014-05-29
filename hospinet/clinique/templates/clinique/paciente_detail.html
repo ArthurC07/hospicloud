@@ -111,6 +111,23 @@
                                 {% endfor %}
                                 </tbody>
                             </table>
+                            <table class="table table-striped">
+                                <caption>Notas de Enfermeria</caption>
+                                <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>descripcion</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for nota in paciente.notas_enfermeria.all %}
+                                    <tr>
+                                        <td>{{ nota.created }}</td>
+                                        <td>{{ nota.nota }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </article>
                         <article id="examen_fisico" class="tab-pane">
                             {% load l10n %}
