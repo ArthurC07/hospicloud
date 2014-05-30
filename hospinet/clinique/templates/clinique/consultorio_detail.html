@@ -91,6 +91,14 @@
                                 {% endfor %}
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="page-header">
+                                <h2>Reportes</h2>
+                            </div>
+                            {% for reporte in consultorio.reportes.all %}
+                                <a href="{{ reporte.archivo.url }}">Descargar Reporte {{ reporte.created }}</a>
+                            {% endfor %}
+                        </div>
                     </div>
                 </section>
                 <aside class="col-md-3">
@@ -111,6 +119,11 @@
                                     <li>
                                         <a href="{% url 'consultorio-pacientes' consultorio.id %}">
                                             Listado de Pacientes
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'consultorio-report-agregar' consultorio.id %}">
+                                            Subir Reporte
                                         </a>
                                     </li>
                                 </ul>

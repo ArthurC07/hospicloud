@@ -39,12 +39,12 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             NotaEnfermeriaForm, ExamenForm, EsperaForm,
                             EsperaAusenteForm, CitaAusenteForm,
                             PacienteSearchForm, PrescripcionForm,
-                            IncapacidadForm)
+                            IncapacidadForm, ReporteForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad)
+                             Incapacidad, Reporte)
 from inventory.models import ItemTemplate
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
@@ -52,7 +52,7 @@ from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
     AntecedenteQuirurgicoForm
 from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
     AntecedenteObstetrico, AntecedenteQuirurgico, EstiloVida, Persona
-from persona.views import PersonaFormMixin
+from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -605,6 +605,13 @@ class CliniqueAntecedenteUpdateView(UpdateView, LoginRequiredMixin):
                        args=[self.object.persona.id])
 
 
+class CliniqueAntecedenteObstetricoCreateView(AntecedenteObstetricoCreateView):
+
+    def get_success_url(self):
+        return reverse('clinique-antecedente-editar',
+                       args=[self.object.persona.id])
+
+
 class CliniqueAntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
     """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
     :class:`Persona`"""
@@ -729,3 +736,8 @@ class PrescripcionUpdateView(UpdateView, LoginRequiredMixin):
 class IncapacidadCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
     model = Incapacidad
     form_class = IncapacidadForm
+
+
+class ReporteCreateView(ConsultorioFormMixin, CreateView, LoginRequiredMixin):
+    model = Reporte
+    form_class = ReporteForm

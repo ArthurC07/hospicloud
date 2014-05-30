@@ -283,3 +283,13 @@ class Incapacidad(TimeStampedModel):
     def get_absolute_url(self):
 
         return self.paciente.get_absolute_url()
+
+
+class Reporte(TimeStampedModel):
+    consultorio = models.ForeignKey(Consultorio, related_name='reportes',
+                                    blank=True, null=True)
+    archivo = models.FileField(upload_to='consultorio/reports/%Y/%m/%d')
+
+    def get_absolute_url(self):
+
+        return self.consultorio.get_absolute_url()

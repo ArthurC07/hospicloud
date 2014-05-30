@@ -55,11 +55,17 @@
                                 </div>
                                 <div class="info">
                                     {% ifequal paciente.persona.sexo 'F' %}
+                                        {% if paciente.persona.antecedente_obstetrico %}
                                         {% include 'snippets/antecedente_obstetrico.html' with antecedente=paciente.persona.antecedente_obstetrico %}
                                         <a href="{% url 'clinique-antecedente-obstetrico-editar' paciente.persona.id %}"
                                            class="btn btn-primary">Editar
                                             Antecedentes
                                             Obstetricos</a>
+                                        {% else %}
+                                            <a href="{% url 'clinique-antecedente-obstetrico-agregar' paciente.persona.id %}" class="btn btn-primary">
+                                            Agregar Antecedentes Obstetricos
+                                            </a>
+                                        {% endif %}
                                     {% endifequal %}
                                 </div>
                                 {% include 'snippets/antecedente_quirurgico.html' with antecedente=paciente.persona %}
@@ -101,6 +107,23 @@
                                     <tr>
                                         <td>{{ seguimiento.created }}</td>
                                         <td>{{ seguimiento.observaciones }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <table class="table table-striped">
+                                <caption>Notas de Enfermeria</caption>
+                                <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>descripcion</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for nota in paciente.notas_enfermeria.all %}
+                                    <tr>
+                                        <td>{{ nota.created }}</td>
+                                        <td>{{ nota.nota }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
