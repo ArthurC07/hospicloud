@@ -71,6 +71,7 @@ class Plan(TimeStampedModel):
     empresarial = models.BooleanField(default=False)
     empresa = models.ForeignKey(Empleador, null=True, blank=True,
                                 related_name='planes')
+    comision = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __unicode__(self):
         return self.nombre
@@ -186,6 +187,10 @@ class Contrato(TimeStampedModel):
             dias -= 30
 
         return mora * self.plan.precio
+
+    def comision(self):
+
+        return self.plan.precio * self.plan.comision
 
 
 class Beneficiario(TimeStampedModel):

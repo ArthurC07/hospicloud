@@ -24,6 +24,7 @@ from select2.fields import ModelChoiceField
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
                               Cancelacion)
+from invoice.forms import PeriodoForm
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
                            FutureDateWidget)
@@ -136,6 +137,15 @@ class VendedorChoiceForm(FieldSetFormMixin):
         self.helper.add_input(Submit('submit', u'Buscar'))
 
 
+class VendedorPeriodoForm(PeriodoForm):
+    vendedor = forms.ModelChoiceField(queryset=Vendedor.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(VendedorPeriodoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Por Vendedor y Periodo', *self.field_names)
+        self.helper.add_input(Submit('submit', u'Buscar'))
+
+
 class ContratoSearchForm(FieldSetFormMixin):
     numero = forms.IntegerField()
 
@@ -233,4 +243,3 @@ class CancelacionForm(ContratoMixin):
     def __init__(self, *args, **kwargs):
         super(CancelacionForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Cancelar Contrato', *self.field_names)
-
