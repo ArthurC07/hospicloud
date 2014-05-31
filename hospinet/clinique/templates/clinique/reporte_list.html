@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load l10n %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Reportes de Consultorios
+        </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <div class="main-content col-md-12">‏
+            <a class="btn btn-primary" href="{% url 'consultorio-nota-agregar' paciente.id %}">Agregar Nota de Enfermeria</a>
+            <table class="table table-striped">
+                <caption>Notas de Enfermeria</caption>
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Orden</th>
+                    <th>Evoluci&oacute;n</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for orden in reportes.all %}
+                    <tr>
+                        <td>{{ orden.created }}</td>
+                        <td>{{ orden.orden }}</td>
+                        <td>{{ orden.evolucion }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

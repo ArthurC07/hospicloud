@@ -741,3 +741,10 @@ class IncapacidadCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
 class ReporteCreateView(ConsultorioFormMixin, CreateView, LoginRequiredMixin):
     model = Reporte
     form_class = ReporteForm
+
+
+class ReporteListView(ListView, LoginRequiredMixin):
+    model = Reporte
+    queryset = Reporte.objects.order_by('-created')
+    context_object_name = 'reportes'
+    paginate_by = 20
