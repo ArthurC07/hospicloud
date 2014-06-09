@@ -143,7 +143,6 @@ class VendedorPeriodoForm(PeriodoForm):
     def __init__(self, *args, **kwargs):
         super(VendedorPeriodoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Por Vendedor y Periodo', *self.field_names)
-        self.helper.add_input(Submit('submit', u'Buscar'))
 
 
 class ContratoSearchForm(FieldSetFormMixin):

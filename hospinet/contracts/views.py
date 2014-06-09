@@ -626,7 +626,7 @@ class VendedorPeriodoView(TemplateView, LoginRequiredMixin):
         context['contratos'] = self.contratos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
-        context['comision'] = sum(c.comision() for c in self.contratos.all())
+        context['comision'] = self.contratos.aggregate(total=Sum('plan__comision'))['total']
 
         return context
 
