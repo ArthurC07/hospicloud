@@ -151,7 +151,7 @@
                                         </tbody>
                                     </table>
                                 </article>
-                                <article id="eventos" class="tab-pane">
+                                <article id="eventos" class="tab-pane table-responsive">
                                     <table class="table table-striped">
                                         <caption>Eventos</caption>
                                         <thead class="gradient">
@@ -181,6 +181,37 @@
                                         </tr>
                                         </tbody>
                                     </table>
+                                <table class="table table-striped">
+                                    <caption>Examenes de Laboratorio</caption>
+                                    <thead>
+                                        <tr>
+                                            <th>Paciente</th>
+                                            <th>Fecha</th>
+                                            <th>Descripci&oacute;n</th>
+                                            <th>Archivo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for resultado in contrato.persona.resultados.all %}
+                                            <tr>
+                                                <th>{{ resultado.persona }}</th>
+                                                <td>{{ resultado.created }}</td>
+                                                <td>{{ resultado.descripcion }}</td>
+                                                <td>{{ resultado.archivo }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        {% for persona in contrato.beneficiaros.all %}
+                                            {% for resultado in persona.resultados.all %}
+                                                <tr>
+                                                    <th>{{ resultado.persona }}</th>
+                                                    <td>{{ resultado.created }}</td>
+                                                    <td>{{ resultado.descripcion }}</td>
+                                                    <td>{{ resultado.archivo }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                                 </article>
                             </div>
                         </section>
