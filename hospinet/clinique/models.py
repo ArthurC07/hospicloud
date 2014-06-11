@@ -152,6 +152,11 @@ class Cita(TimeStampedModel):
 
         return reverse('consultorio-cita-list', args=[self.consultorio.id])
 
+    def __unicode__(self):
+
+        return u'{0} en {1]'.format(self.persona.nombre_completo(),
+                                    self.consultorio.nombre)
+
 
 class Seguimiento(TimeStampedModel):
     """Representa las consultas posteriores que sirven como seguimiento a la
