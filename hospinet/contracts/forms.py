@@ -23,7 +23,7 @@ from select2.fields import ModelChoiceField
 
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
-                              Cancelacion)
+                              Cancelacion, Precontrato)
 from invoice.forms import PeriodoForm
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
@@ -242,3 +242,14 @@ class CancelacionForm(ContratoMixin):
     def __init__(self, *args, **kwargs):
         super(CancelacionForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Cancelar Contrato', *self.field_names)
+
+
+class PrecontratoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Precontrato
+        exclude = ('completado',)
+
+    def __init__(self, *args, **kwargs):
+        super(PrecontratoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Preaprobar Contrato de Servicios',
+                                      *self.field_names)

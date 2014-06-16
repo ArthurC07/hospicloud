@@ -298,3 +298,36 @@ class Cancelacion(TimeStampedModel):
     def get_absolute_url(self):
 
         return self.contrato.get_absolute_url()
+
+
+class Precontrato(TimeStampedModel):
+    persona = models.ForeignKey(Persona, related_name='precontratos')
+    completado = models.BooleanField(default=False)
+    de_acuerdo = models.BooleanField(default=True)
+
+    def __unicode__(self):
+
+        return u'Precontrato de {0}'.format(self.persona.nombre_completo())
+
+    def get_absolute_url(self):
+
+        return reverse('precontrato', args=[self.id])
+
+
+class Prebeneficiario(TimeStampedModel):
+    precontrato = models.ForeignKey(Precontrato, related_name='prebeneficiarios')
+    persona = models.ForeignKey(Persona, related_name='prebeneficiarios')
+
+    def get_absolute_url(self):
+
+        return self.precontrato.get_absolute_url()
+
+
+class Autorizacion(TimeStampedModel):
+    imagen = models.FileField(upload_to='/contracts/autorizaciones/%Y/%m/%d')
+    descripcion = models.TextField(blank=True, null=True)
+    vigente = models.BooleanField(default=True)
+
+    def __unicode__(self):
+
+        return self.imagen.name

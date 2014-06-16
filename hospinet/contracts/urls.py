@@ -34,7 +34,8 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              ContratoEmpresarialListView, EmpresaSearchView,
                              ContratoBeneficiarioListView, EventoPeriodoView,
                              BeneficiarioDeleteView, PagoUpdateView,
-                             VendedorPeriodoView)
+                             VendedorPeriodoView, PrecontratoCreateView,
+                             PrecontratoDetailView, PrebeneficiarioCreateView)
 
 
 urlpatterns = patterns('',
@@ -50,6 +51,10 @@ urlpatterns = patterns('',
                        url(r'^plan/(?P<pk>\d+)$',
                            PlanDetailView.as_view(),
                            name='contracts-plan'),
+
+                       url(r'^precontrato/(?P<pk>\d+)$',
+                           PrecontratoDetailView.as_view(),
+                           name='precontrato'),
 
                        url(r'^plan/buscar$',
                            PlanSearchView.as_view(),
@@ -71,6 +76,11 @@ urlpatterns = patterns('',
                            r'^contrato/agregar$',
                            ContratoPersonaCreateView.as_view(),
                            name='contrato-add'),
+
+                       url(
+                           r'^precontrato/agregar$',
+                           PrecontratoCreateView.as_view(),
+                           name='precontrato-add'),
 
                        url(
                            r'^contrato/empresarial/agregar$',
@@ -159,6 +169,10 @@ urlpatterns = patterns('',
                        url(r'^contrato/(?P<contrato>\d+)/beneficiario/add$',
                            BeneficiarioPersonaCreateView.as_view(),
                            name='contrato-beneficiario-add'),
+
+                       url(r'^contrato/(?P<pk>\d+)/prebeneficiario/add$',
+                           PrebeneficiarioCreateView.as_view(),
+                           name='contrato-prebeneficiario-add'),
 
 
                        url(r'^(?P<persona>\d+)/beneficiario/agregar$',

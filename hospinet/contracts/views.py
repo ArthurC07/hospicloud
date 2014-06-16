@@ -18,7 +18,6 @@
 import calendar
 from datetime import datetime, time, date
 
-from crispy_forms.layout import Fieldset
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Sum
 from django.forms.models import inlineformset_factory
@@ -38,16 +37,19 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              BeneficiarioForm, BeneficiarioPersonaForm,
                              LimiteEventoForm, PlanChoiceForm, MetaForm,
                              CancelacionForm, ContratoEmpresarialForm,
-                             EmpleadorChoiceForm, VendedorPeriodoForm)
+                             EmpleadorChoiceForm, VendedorPeriodoForm,
+                             PrecontratoForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
-                              Cancelacion)
+                              Cancelacion, Precontrato, Autorizacion,
+                              Prebeneficiario)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
 from persona.views import PersonaFormMixin
 from spital.models import Admision
 from users.mixins import LoginRequiredMixin
+from persona.forms import PersonaForm as ButtonPersonaForm
 
 
 class ContratoPermissionMixin(LoginRequiredMixin):
@@ -758,3 +760,70 @@ class CancelacionCreateView(ContratoFormMixin, CreateView, LoginRequiredMixin):
         self.object.contrato.save()
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class PrecontratoCreateView(CreateView):
+    model = Persona
+    form_class = PersonaForm
+    template_name = 'contracts/precontrato_create.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        self.PreContratoFormset = inlineformset_factory(Persona, Precontrato,
+                                                        form=PrecontratoForm,
+                                                        extra=1)
+        return super(PrecontratoCreateView, self).dispatch(request, *args,
+                                                           **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        context = super(PrecontratoCreateView, self).get_context_data(**kwargs)
+        if 'form' in context:
+            context['form'].helper.form_tag = False
+
+        context['autorizaciones'] = Autorizacion.objects.filter(vigente=True)
+        if self.request.POST:
+            context['precontrato_form'] = self.PreContratoFormset(self.request.POST)
+        else:
+            context['precontrato_form'] = self.PreContratoFormset()
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        precontrato_form = context['precontrato_form']
+        if precontrato_form.is_valid():
+            self.object = form.save()
+            self.precontrato = Precontrato(persona=self.object)
+            self.precontrato.save()
+            return super(PrecontratoCreateView, self).form_valid(form)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+    def get_success_url(self):
+
+        return self.precontrato.get_absolute_url()
+
+
+class PrecontratoDetailView(DetailView):
+    model = Precontrato
+    context_object_name = 'precontrato'
+
+
+class PrecontratoMixin(View):
+    def dispatch(self, *args, **kwargs):
+        self.precontrato = get_object_or_404(Precontrato, pk=kwargs['pk'])
+        return super(PrecontratoMixin, self).dispatch(*args, **kwargs)
+
+
+class PrebeneficiarioCreateView(PrecontratoMixin, CreateView):
+    model = Persona
+    form_class = ButtonPersonaForm
+
+    def form_valid(self, form):
+        """Ademas de registrar la """
+
+        persona = form.save(commit=False)
+        prebeneficiaro = Prebeneficiario(persona=persona,
+                                         precontrato=self.precontrato)
+
+        return HttpResponseRedirect(prebeneficiaro.get_absolute_url())

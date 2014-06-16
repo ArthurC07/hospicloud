@@ -154,8 +154,7 @@ class Cita(TimeStampedModel):
 
     def __unicode__(self):
 
-        return u'{0} en {1}'.format(self.persona.nombre_completo(),
-                                    self.consultorio.nombre)
+        return u'{0}'.format(self.persona.nombre_completo())
 
 
 class Seguimiento(TimeStampedModel):
