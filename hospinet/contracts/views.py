@@ -805,7 +805,7 @@ class PrecontratoCreateView(CreateView):
                 self.precontrato.get_absolute_url())
 
             send_mail('PreContrato Registrado',
-                      u'Ir al contrato {0]'.format(url), Config.SYSTEM_EMAIL,
+                      u'Ir al contrato {0}'.format(url), Config.SYSTEM_EMAIL,
                       [Config.NOTIFICATION_EMAIL], fail_silently=True)
 
             return super(PrecontratoCreateView, self).form_valid(form)
