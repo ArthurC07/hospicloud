@@ -39,37 +39,42 @@
                         </h3>
                     </div>
                 </div>
-                {% for beneficiario in precontrato.prebeneficiarios.all %}
-                    <div class="row">
-                        <div class="col-md-2">
-                            {% if beneficiario.persona.fotografia == None %}
-                                {% thumbnail beneficiario.persona.fotografia "100x100" crop="center" as im %}
-                                <img src="{{ im.url }}"
-                                     width="{{ im.width }}"
-                                     height="{{ im.height }}">
-                            {% else %}
-                                <img src="{% static 'images/face.jpg' %}"
-                                     width="100"
-                                     height="100"/>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-9">
-                            <h3>{{ beneficiario.persona }}
-                                <small>{{ beneficiario.persona.obtener_edad }}
-                                    a&ntilde;os
-                                </small>
-                            </h3>
-                            <a class="btn btn-primary"
-                               href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver
-                                <i class="fa fa-arrow-right"></i></a>
-                            <a class="btn btn-danger"
-                               href="{% url 'contrato-beneficiario-delete' beneficiario.id %}">
-                                <i class="fa fa-trash-o"></i> Eliminar
-                            </a>
-                        </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>Beneficiarios</h2>
+                        {% for beneficiario in precontrato.prebeneficiarios.all %}
+                            <div class="row">
+                                <div class="col-md-2">
+                                    {% if beneficiario.persona.fotografia == None %}
+                                        {% thumbnail beneficiario.persona.fotografia "100x100" crop="center" as im %}
+                                        <img src="{{ im.url }}"
+                                             width="{{ im.width }}"
+                                             height="{{ im.height }}">
+                                    {% else %}
+                                        <img src="{% static 'images/face.jpg' %}"
+                                             width="100"
+                                             height="100"/>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-9">
+                                    <h3>{{ beneficiario.persona }}
+                                        <small>{{ beneficiario.persona.obtener_edad }}
+                                            a&ntilde;os
+                                        </small>
+                                    </h3>
+                                    <a class="btn btn-primary"
+                                       href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver
+                                        <i class="fa fa-arrow-right"></i></a>
+                                    <a class="btn btn-danger"
+                                       href="{% url 'contrato-beneficiario-delete' beneficiario.id %}">
+                                        <i class="fa fa-trash-o"></i> Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                            <hr>
+                        {% endfor %}
                     </div>
-                    <hr>
-                {% endfor %}
+                </div>
             </div>
         </section>
         <aside class="col-md-3">

@@ -19,6 +19,7 @@ import calendar
 from datetime import datetime, time, date
 
 from django.core.urlresolvers import reverse
+from django.core.mail import send_mail
 from django.db.models import Q, Sum
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
@@ -30,6 +31,7 @@ from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
 from django.views.generic.detail import SingleObjectMixin
 from guardian.decorators import permission_required
 from clinique.models import Cita, Consulta, Seguimiento
+from constance import Config
 
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
@@ -76,7 +78,8 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['evento-periodo'].set_legend('Eventos de un Periodo')
         context['evento-periodo'].helper.form_action = 'evento-periodo'
 
-        context['vendedor-periodo'] = VendedorPeriodoForm(prefix='vendedor-periodo')
+        context['vendedor-periodo'] = VendedorPeriodoForm(
+            prefix='vendedor-periodo')
         context['vendedor-periodo'].helper.form_action = 'vendedor-periodo'
 
         context['contrato-search'] = ContratoSearchForm(
@@ -426,7 +429,6 @@ class ContratoListView(ListView, LoginRequiredMixin):
             vencimiento__gte=timezone.now().date).all()
 
     def get_context_data(self, **kwargs):
-
         """Calculates the total morarorium and makes it available to the
         template"""
 
@@ -435,7 +437,8 @@ class ContratoListView(ListView, LoginRequiredMixin):
         contratos = self.get_queryset()
         context['morosos'] = len([c for c in contratos if c.dias_mora() > 0])
         if contratos.count() > 0:
-            context['percentage'] = context['morosos'] / float(contratos.count()) * 100
+            context['percentage'] = context['morosos'] / float(
+                contratos.count()) * 100
 
         return context
 
@@ -628,7 +631,8 @@ class VendedorPeriodoView(TemplateView, LoginRequiredMixin):
         context['contratos'] = self.contratos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
-        context['comision'] = self.contratos.aggregate(total=Sum('plan__comision'))['total']
+        context['comision'] = \
+        self.contratos.aggregate(total=Sum('plan__comision'))['total']
 
         return context
 
@@ -783,7 +787,8 @@ class PrecontratoCreateView(CreateView):
 
         context['autorizaciones'] = Autorizacion.objects.filter(vigente=True)
         if self.request.POST:
-            context['precontrato_form'] = self.PreContratoFormset(self.request.POST)
+            context['precontrato_form'] = self.PreContratoFormset(
+                self.request.POST)
         else:
             context['precontrato_form'] = self.PreContratoFormset()
         return context
@@ -795,6 +800,14 @@ class PrecontratoCreateView(CreateView):
             self.object = form.save()
             self.precontrato = Precontrato(persona=self.object)
             self.precontrato.save()
+
+            url = self.request.build_absolute_uri(
+                self.precontrato.get_absolute_url())
+
+            send_mail('PreContrato Registrado',
+                      u'Ir al contrato {0]'.format(url), Config.SYSTEM_EMAIL,
+                      [Config.NOTIFICATION_EMAIL], fail_silently=True)
+
             return super(PrecontratoCreateView, self).form_valid(form)
         else:
             return self.render_to_response(self.get_context_data(form=form))

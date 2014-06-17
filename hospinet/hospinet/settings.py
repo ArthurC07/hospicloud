@@ -279,6 +279,8 @@ CONSTANCE_CONFIG = {
     'DEPOSIT_PAYMENT': (1, u'Tipo de Pago para Abonos a cuenta'),
     'CHAT': (u'http://www.example.com', u'Url para el chat interno'),
     'ONLINE_HELP': (u'http://www.example.com', u'Url para ayuda en línea'),
+    'SYSTEM_EMAIL': (u'me@localhost', u'Email utilizado para enviar correo'),
+    'NOTIFICATION_EMAIL': (u'me@localhost', u'Email para notificar')
 }
 
 
