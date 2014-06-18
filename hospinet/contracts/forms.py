@@ -258,7 +258,9 @@ class CancelacionForm(ContratoMixin):
 class PrecontratoForm(FieldSetModelFormMixin):
     class Meta:
         model = Precontrato
-        fields = ('metodo_de_pago', 'de_acuerdo',)
+        fields = ('metodo_de_pago', 'de_acuerdo', 'plan')
+
+    plan = forms.ModelChoiceField(queryset=Plan.objects.filter(precontrato=True))
 
     def __init__(self, *args, **kwargs):
         super(PrecontratoForm, self).__init__(*args, **kwargs)

@@ -72,6 +72,7 @@ class Plan(TimeStampedModel):
     empresa = models.ForeignKey(Empleador, null=True, blank=True,
                                 related_name='planes')
     comision = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    precontrato = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.nombre
@@ -314,6 +315,8 @@ class Precontrato(TimeStampedModel):
                                        blank=True, null=True)
     completado = models.BooleanField(default=False)
     de_acuerdo = models.BooleanField(default=True)
+    plan = models.ForeignKey(Plan, related_name='precontratos',
+                             blank=True, null=True)
 
     def __unicode__(self):
 
