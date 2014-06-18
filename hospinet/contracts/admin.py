@@ -18,7 +18,7 @@
 from django.contrib import admin
 from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago,
                               Beneficiario, Vendedor, LimiteEvento, TipoPago,
-                              Meta, Autorizacion, Precontrato)
+                              Meta, Autorizacion, Precontrato, MetodoPago)
 
 admin.site.register(Plan)
 admin.site.register(Contrato)
@@ -32,3 +32,4 @@ admin.site.register(TipoPago)
 admin.site.register(Meta)
 admin.site.register(Autorizacion)
 admin.site.register(Precontrato)
+admin.site.register(MetodoPago)

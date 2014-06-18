@@ -40,6 +40,17 @@ class PersonaForm(FieldSetModelFormMixinNoButton):
         self.helper.layout = Fieldset(u'Datos del Titular', *self.field_names)
 
 
+class PersonaPrecontratoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Persona
+        fields = ('nombre', 'apellido', 'identificacion', 'sexo', 'celular',)
+
+    def __init__(self, *args, **kwargs):
+        super(PersonaPrecontratoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Datos del Titular', *self.field_names)
+        self.helper.form_tag = False
+
+
 class PlanForm(FieldSetModelFormMixin):
     class Meta:
         model = Plan
@@ -247,9 +258,10 @@ class CancelacionForm(ContratoMixin):
 class PrecontratoForm(FieldSetModelFormMixin):
     class Meta:
         model = Precontrato
-        exclude = ('completado',)
+        fields = ('metodo_de_pago', 'de_acuerdo',)
 
     def __init__(self, *args, **kwargs):
         super(PrecontratoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Preaprobar Contrato de Servicios',
                                       *self.field_names)
+        self.helper.form_tag = False

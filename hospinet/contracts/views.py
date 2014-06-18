@@ -29,6 +29,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
 from django.views.generic.detail import SingleObjectMixin
+from extra_views import InlineFormSet, CreateWithInlinesView
 from guardian.decorators import permission_required
 from clinique.models import Cita, Consulta, Seguimiento
 from constance import Config
@@ -40,7 +41,7 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              LimiteEventoForm, PlanChoiceForm, MetaForm,
                              CancelacionForm, ContratoEmpresarialForm,
                              EmpleadorChoiceForm, VendedorPeriodoForm,
-                             PrecontratoForm)
+                             PrecontratoForm, PersonaPrecontratoForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Autorizacion,
@@ -766,55 +767,30 @@ class CancelacionCreateView(ContratoFormMixin, CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class PrecontratoCreateView(CreateView):
+class PrecontratoInline(InlineFormSet):
+    model = Precontrato
+    form_class = PrecontratoForm
+    can_delete = False
+    extra = 1
+
+
+class PrecontratoCreateView(CreateWithInlinesView):
     model = Persona
-    form_class = PersonaForm
+    form_class = PersonaPrecontratoForm
     template_name = 'contracts/precontrato_create.html'
-
-    def dispatch(self, request, *args, **kwargs):
-
-        self.PreContratoFormset = inlineformset_factory(Persona, Precontrato,
-                                                        form=PrecontratoForm,
-                                                        extra=1)
-        return super(PrecontratoCreateView, self).dispatch(request, *args,
-                                                           **kwargs)
-
-    def get_context_data(self, **kwargs):
-
-        context = super(PrecontratoCreateView, self).get_context_data(**kwargs)
-        if 'form' in context:
-            context['form'].helper.form_tag = False
-
-        context['autorizaciones'] = Autorizacion.objects.filter(vigente=True)
-        if self.request.POST:
-            context['precontrato_form'] = self.PreContratoFormset(
-                self.request.POST)
-        else:
-            context['precontrato_form'] = self.PreContratoFormset()
-        return context
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        precontrato_form = context['precontrato_form']
-        if precontrato_form.is_valid():
-            self.object = form.save()
-            self.precontrato = Precontrato(persona=self.object)
-            self.precontrato.save()
-
-            url = self.request.build_absolute_uri(
-                self.precontrato.get_absolute_url())
-
-            send_mail('PreContrato Registrado',
-                      u'Ir al contrato {0}'.format(url), Config.SYSTEM_EMAIL,
-                      [Config.NOTIFICATION_EMAIL], fail_silently=True)
-
-            return super(PrecontratoCreateView, self).form_valid(form)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
+    inlines = [PrecontratoInline, ]
 
     def get_success_url(self):
 
-        return self.precontrato.get_absolute_url()
+        precontrato = self.object.precontratos.first()
+
+        url = self.request.build_absolute_uri(precontrato.get_absolute_url())
+
+        send_mail('PreContrato Registrado',
+                  u'Ir al contrato {0}'.format(url), Config.SYSTEM_EMAIL,
+                  [Config.NOTIFICATION_EMAIL], fail_silently=True)
+
+        return precontrato.get_absolute_url()
 
 
 class PrecontratoDetailView(DetailView):

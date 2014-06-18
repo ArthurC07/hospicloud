@@ -7,12 +7,13 @@
     <div class="row">
         <section class="main-content col-md-12">
             <form method="post" class="form-horizontal">
-                {{ precontrato_form.management_form }}
             <div class="col-md-6">
+                <div class="col-md-12">
+                {{ form.management_form }}
                 {% crispy form %}
+                </div>
             </div>
                 <div class="col-md-6">
-
                     <div class="row">
                         <section class="col-md-12">
                             <section class="page-header">
@@ -29,8 +30,9 @@
                             </ul>
                         </section>
                     </div>
-                {% for subform in precontrato_form %}
+                {% for subform in inlines %}
                     <div class="col-md-12">
+                    {{ subform.management_form }}
                     {% crispy subform %}
                     </div>
                 {% endfor %}

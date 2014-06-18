@@ -300,8 +300,18 @@ class Cancelacion(TimeStampedModel):
         return self.contrato.get_absolute_url()
 
 
+class MetodoPago(TimeStampedModel):
+    nombre = models.CharField(max_length=255)
+
+    def __unicode__(self):
+
+        return self.nombre
+
+
 class Precontrato(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='precontratos')
+    metodo_de_pago = models.ForeignKey(MetodoPago, related_name='precontratos',
+                                       blank=True, null=True)
     completado = models.BooleanField(default=False)
     de_acuerdo = models.BooleanField(default=True)
 
