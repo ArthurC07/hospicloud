@@ -337,7 +337,7 @@ class Prebeneficiario(TimeStampedModel):
 
 
 class Autorizacion(TimeStampedModel):
-    imagen = models.FileField(upload_to='/contracts/autorizaciones/%Y/%m/%d')
+    imagen = models.FileField(upload_to='contracts/autorizaciones/%Y/%m/%d')
     descripcion = models.TextField(blank=True, null=True)
     vigente = models.BooleanField(default=True)
 
