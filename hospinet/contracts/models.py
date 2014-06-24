@@ -41,9 +41,9 @@ class Vendedor(TimeStampedModel):
         return self.usuario.get_full_name()
 
     def get_contratos_vendidos(self, fecha, fin):
-
         return self.contratos.filter(inicio__gte=fecha, cancelado=False,
-                                     plan__empresarial=False).filter(inicio__lte=fin)
+                                     plan__empresarial=False).filter(
+            inicio__lte=fin)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
@@ -51,11 +51,10 @@ class Vendedor(TimeStampedModel):
         return reverse('contracts-vendedor', args=[self.id])
 
     def get_contratos_mes(self):
-
         now = date.today()
         inicio = date(now.year, now.month, 1)
         fin = date(now.year, now.month,
-                         calendar.monthrange(now.year, now.month)[1])
+                   calendar.monthrange(now.year, now.month)[1])
         return self.get_contratos_vendidos(inicio, fin).count()
 
 
@@ -274,9 +273,9 @@ class Evento(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
     def __unicode__(self):
-        return "Evento {0} de {1} de {2}".format(self.tipo,
-                                                 self.contrato.numero,
-                                                 self.contrato.persona.nombre_completo())
+        return u"Evento {0} de {1} de {2}".format(self.tipo,
+                                                  self.contrato.numero,
+                                                  self.contrato.persona.nombre_completo())
 
 
 class Meta(TimeStampedModel):
@@ -297,7 +296,6 @@ class Cancelacion(TimeStampedModel):
     pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def get_absolute_url(self):
-
         return self.contrato.get_absolute_url()
 
 
@@ -305,7 +303,6 @@ class MetodoPago(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
     def __unicode__(self):
-
         return self.nombre
 
 
@@ -319,20 +316,18 @@ class Precontrato(TimeStampedModel):
                              blank=True, null=True)
 
     def __unicode__(self):
-
         return u'Precontrato de {0}'.format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
-
         return reverse('precontrato', args=[self.id])
 
 
 class Prebeneficiario(TimeStampedModel):
-    precontrato = models.ForeignKey(Precontrato, related_name='prebeneficiarios')
+    precontrato = models.ForeignKey(Precontrato,
+                                    related_name='prebeneficiarios')
     persona = models.ForeignKey(Persona, related_name='prebeneficiarios')
 
     def get_absolute_url(self):
-
         return self.precontrato.get_absolute_url()
 
 
@@ -342,5 +337,4 @@ class Autorizacion(TimeStampedModel):
     vigente = models.BooleanField(default=True)
 
     def __unicode__(self):
-
         return self.imagen.name
