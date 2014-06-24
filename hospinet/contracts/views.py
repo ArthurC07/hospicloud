@@ -788,7 +788,7 @@ class PrecontratoCreateView(CreateWithInlinesView):
 
         send_mail('PreContrato Registrado',
                   u'Ir al contrato {0}'.format(url), config.SYSTEM_EMAIL,
-                  [config.NOTIFICATION_EMAIL], fail_silently=True)
+                  config.NOTIFICATION_EMAIL.split(','), fail_silently=True)
 
         return precontrato.get_absolute_url()
 
