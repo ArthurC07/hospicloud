@@ -32,6 +32,7 @@
                             </li>
                         {% endif %}
                         <li><a href="#contratos" data-toggle="tab">Contratos</a>
+                        <li><a href="#consultorios" data-toggle="tab">Consultorios</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -86,6 +87,16 @@
                                 {% for beneficiario in persona.beneficiarios.all %}
                                     <li>
                                         <a href="{% url 'contrato' beneficiario.contrato.id %}">{{ beneficiario.contrato }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </article>
+                        <article id="consultorios" class="tab-pane">
+                            <h3>Consultorios</h3>
+                            <ul>
+                                {% for paciente in persona.pacientes.all %}
+                                    <li>
+                                        <a href="{{ paciente.get_absolute_url }}">{{ paciente.consultorio }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
