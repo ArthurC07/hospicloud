@@ -1,213 +1,183 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import django.utils.timezone
+from django.conf import settings
+import django_extensions.db.fields
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Emergencia'
-        db.create_table('emergency_emergencia', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('persona', self.gf('django.db.models.fields.related.ForeignKey')(related_name='emergencias', to=orm['persona.Persona'])),
-            ('hallazgos', self.gf('django.db.models.fields.TextField')()),
-            ('diagnostico', self.gf('django.db.models.fields.TextField')()),
-            ('usuario', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='er_examenes', null=True, to=orm['auth.User'])),
-        ))
-        db.send_create_signal('emergency', ['Emergencia'])
+    dependencies = [
+        ('persona', '0001_initial'),
+        ('inventory', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding model 'Tratamiento'
-        db.create_table('emergency_tratamiento', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('emergencia', self.gf('django.db.models.fields.related.ForeignKey')(related_name='tratamientos', to=orm['emergency.Emergencia'])),
-            ('indicaciones', self.gf('django.db.models.fields.TextField')()),
-            ('usuario', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='er_tratamientos', null=True, to=orm['auth.User'])),
-        ))
-        db.send_create_signal('emergency', ['Tratamiento'])
-
-        # Adding model 'Hallazgo'
-        db.create_table('emergency_hallazgo', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('emergencia', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['emergency.Emergencia'])),
-            ('hallazgo', self.gf('django.db.models.fields.TextField')()),
-            ('usuario', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='hallazgos', null=True, to=orm['auth.User'])),
-        ))
-        db.send_create_signal('emergency', ['Hallazgo'])
-
-        # Adding model 'RemisionInterna'
-        db.create_table('emergency_remisioninterna', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('emergencia', self.gf('django.db.models.fields.related.ForeignKey')(related_name='remisiones_internas', to=orm['emergency.Emergencia'])),
-            ('doctor', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('usuario', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='er_rinternas', null=True, to=orm['auth.User'])),
-        ))
-        db.send_create_signal('emergency', ['RemisionInterna'])
-
-        # Adding model 'RemisionExterna'
-        db.create_table('emergency_remisionexterna', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('emergencia', self.gf('django.db.models.fields.related.ForeignKey')(related_name='remisiones_externas', to=orm['emergency.Emergencia'])),
-            ('destino', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('diagnostico', self.gf('django.db.models.fields.TextField')()),
-            ('notas', self.gf('django.db.models.fields.TextField')()),
-            ('usuario', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='er_rexternas', null=True, to=orm['auth.User'])),
-        ))
-        db.send_create_signal('emergency', ['RemisionExterna'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Emergencia'
-        db.delete_table('emergency_emergencia')
-
-        # Deleting model 'Tratamiento'
-        db.delete_table('emergency_tratamiento')
-
-        # Deleting model 'Hallazgo'
-        db.delete_table('emergency_hallazgo')
-
-        # Deleting model 'RemisionInterna'
-        db.delete_table('emergency_remisioninterna')
-
-        # Deleting model 'RemisionExterna'
-        db.delete_table('emergency_remisionexterna')
-
-
-    models = {
-        'actstream.action': {
-            'Meta': {'ordering': "('-timestamp',)", 'object_name': 'Action'},
-            'action_object_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'action_object'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
-            'action_object_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
-            'actor_content_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actor'", 'to': "orm['contenttypes.ContentType']"}),
-            'actor_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'target_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'target'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
-            'target_object_id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
-            'timestamp': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'verb': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        'auth.permission': {
-            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'emergency.emergencia': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'Emergencia'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'diagnostico': ('django.db.models.fields.TextField', [], {}),
-            'hallazgos': ('django.db.models.fields.TextField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'persona': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'emergencias'", 'to': "orm['persona.Persona']"}),
-            'usuario': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'er_examenes'", 'null': 'True', 'to': "orm['auth.User']"})
-        },
-        'emergency.hallazgo': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'Hallazgo'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'emergencia': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['emergency.Emergencia']"}),
-            'hallazgo': ('django.db.models.fields.TextField', [], {}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'usuario': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'hallazgos'", 'null': 'True', 'to': "orm['auth.User']"})
-        },
-        'emergency.remisionexterna': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'RemisionExterna'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'destino': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'diagnostico': ('django.db.models.fields.TextField', [], {}),
-            'emergencia': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'remisiones_externas'", 'to': "orm['emergency.Emergencia']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'notas': ('django.db.models.fields.TextField', [], {}),
-            'usuario': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'er_rexternas'", 'null': 'True', 'to': "orm['auth.User']"})
-        },
-        'emergency.remisioninterna': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'RemisionInterna'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'doctor': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'emergencia': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'remisiones_internas'", 'to': "orm['emergency.Emergencia']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'usuario': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'er_rinternas'", 'null': 'True', 'to': "orm['auth.User']"})
-        },
-        'emergency.tratamiento': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'Tratamiento'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'emergencia': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'tratamientos'", 'to': "orm['emergency.Emergencia']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'indicaciones': ('django.db.models.fields.TextField', [], {}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'usuario': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'er_tratamientos'", 'null': 'True', 'to': "orm['auth.User']"})
-        },
-        'persona.persona': {
-            'Meta': {'object_name': 'Persona'},
-            'antiguedad': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'apellido': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'cargo': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'celular': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'centro_trabajo': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'ci': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'direccion_trabajo': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'domicilio': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'email': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'estado_civil': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'}),
-            'fax': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'fotografia': ('sorl.thumbnail.fields.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'identificacion': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
-            'nacimiento': ('django.db.models.fields.DateField', [], {'default': 'datetime.date.today'}),
-            'nacionalidad': ('persona.fields.OrderedCountryField', [], {'max_length': '2', 'blank': 'True'}),
-            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'profesion': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'sexo': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'}),
-            'tel_trabajo': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'telefono': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'tipo_identificacion': ('django.db.models.fields.CharField', [], {'max_length': '1', 'blank': 'True'})
-        }
-    }
-
-    complete_apps = ['emergency']
+    operations = [
+        migrations.CreateModel(
+            name='Cobro',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('cantidad', models.IntegerField(default=1)),
+                ('facturado', models.NullBooleanField(default=False)),
+                ('cargo', models.ForeignKey(related_name='cobros', to='inventory.ItemTemplate')),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Diagnostico',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('diagnostico', models.TextField()),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Emergencia',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('historia_enfermedad_actual', models.TextField(null=True, blank=True)),
+                ('frecuencia_respiratoria', models.IntegerField(null=True, blank=True)),
+                ('temperatura', models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)),
+                ('presion', models.CharField(max_length=100, null=True, blank=True)),
+                ('frecuencia_cardiaca', models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)),
+                ('observacion', models.TextField(null=True, blank=True)),
+                ('saturacion_de_oxigeno', models.DecimalField(null=True, max_digits=8, decimal_places=2, blank=True)),
+                ('facturada', models.NullBooleanField(default=False)),
+                ('persona', models.ForeignKey(related_name='emergencias', to='persona.Persona')),
+                ('tipo_de_venta', models.ForeignKey(blank=True, to='inventory.TipoVenta', null=True)),
+                ('usuario', models.ForeignKey(related_name='emergencias', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'permissions': (('emergencia', 'Permite al usuario gestionar emergencia'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ExamenFisico',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('orl', models.TextField()),
+                ('cardiopulmonar', models.TextField()),
+                ('gastrointestinal', models.TextField()),
+                ('extremidades', models.TextField()),
+                ('otras', models.TextField()),
+                ('emergencia', models.ForeignKey(related_name='examenes_fisicos', to='emergency.Emergencia')),
+                ('usuario', models.ForeignKey(related_name='examenes_fisicos', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Hallazgo',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('hallazgo', models.TextField()),
+                ('emergencia', models.ForeignKey(related_name='hallazgos', to='emergency.Emergencia')),
+                ('usuario', models.ForeignKey(related_name='hallazgos', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='RemisionExterna',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('destino', models.CharField(max_length=100)),
+                ('diagnostico', models.TextField()),
+                ('notas', models.TextField()),
+                ('emergencia', models.ForeignKey(related_name='remisiones_externas', to='emergency.Emergencia')),
+                ('usuario', models.ForeignKey(related_name='er_rexternas', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='RemisionInterna',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('doctor', models.CharField(max_length=100)),
+                ('emergencia', models.ForeignKey(related_name='remisiones_internas', to='emergency.Emergencia')),
+                ('usuario', models.ForeignKey(related_name='er_rinternas', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Tratamiento',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('indicaciones', models.TextField()),
+                ('emergencia', models.ForeignKey(related_name='tratamientos', to='emergency.Emergencia')),
+                ('usuario', models.ForeignKey(related_name='er_tratamientos', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='diagnostico',
+            name='emergencia',
+            field=models.ForeignKey(related_name='diagnosticos', to='emergency.Emergencia'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='diagnostico',
+            name='usuario',
+            field=models.ForeignKey(related_name='er_diagnosticos', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='cobro',
+            name='emergencia',
+            field=models.ForeignKey(related_name='cobros', to='emergency.Emergencia'),
+            preserve_default=True,
+        ),
+    ]

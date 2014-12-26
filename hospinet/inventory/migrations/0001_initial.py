@@ -1,176 +1,331 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from decimal import Decimal
+import django.utils.timezone
+from django.conf import settings
+import django_extensions.db.fields
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Localidad'
-        db.create_table('inventory_localidad', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-        ))
-        db.send_create_signal('inventory', ['Localidad'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding model 'Inventario'
-        db.create_table('inventory_inventario', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('localidad', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='inventarios', null=True, to=orm['inventory.Localidad'])),
-        ))
-        db.send_create_signal('inventory', ['Inventario'])
-
-        # Adding model 'ItemTemplate'
-        db.create_table('inventory_itemtemplate', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('descripcion', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('marca', self.gf('django.db.models.fields.CharField')(max_length=32, null=True, blank=True)),
-            ('modelo', self.gf('django.db.models.fields.CharField')(max_length=32, null=True, blank=True)),
-            ('numero_de_parte', self.gf('django.db.models.fields.CharField')(max_length=32, null=True, blank=True)),
-            ('notas', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('inventory', ['ItemTemplate'])
-
-        # Adding M2M table for field suppliers on 'ItemTemplate'
-        db.create_table('inventory_itemtemplate_suppliers', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('itemtemplate', models.ForeignKey(orm['inventory.itemtemplate'], null=False)),
-            ('proveedor', models.ForeignKey(orm['inventory.proveedor'], null=False))
-        ))
-        db.create_unique('inventory_itemtemplate_suppliers', ['itemtemplate_id', 'proveedor_id'])
-
-        # Adding model 'Proveedor'
-        db.create_table('inventory_proveedor', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-        ))
-        db.send_create_signal('inventory', ['Proveedor'])
-
-        # Adding model 'Item'
-        db.create_table('inventory_item', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('plantilla', self.gf('django.db.models.fields.related.ForeignKey')(related_name='items', to=orm['inventory.ItemTemplate'])),
-            ('inventario', self.gf('django.db.models.fields.related.ForeignKey')(related_name='items', to=orm['inventory.Inventario'])),
-        ))
-        db.send_create_signal('inventory', ['Item'])
-
-        # Adding model 'Transferencia'
-        db.create_table('inventory_transferencia', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('origen', self.gf('django.db.models.fields.related.ForeignKey')(related_name='salidas', to=orm['inventory.Inventario'])),
-            ('destino', self.gf('django.db.models.fields.related.ForeignKey')(related_name='entradas', to=orm['inventory.Inventario'])),
-            ('aplicada', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('item', self.gf('django.db.models.fields.related.ForeignKey')(related_name='transferencias', to=orm['inventory.ItemTemplate'])),
-            ('cantidad', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal('inventory', ['Transferencia'])
-
-        # Adding model 'Requisicion'
-        db.create_table('inventory_requisicion', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('inventario', self.gf('django.db.models.fields.related.ForeignKey')(related_name='requisiciones', to=orm['inventory.Inventario'])),
-            ('item', self.gf('django.db.models.fields.related.ForeignKey')(related_name='requisiciones', to=orm['inventory.ItemTemplate'])),
-            ('cantidad', self.gf('django.db.models.fields.IntegerField')()),
-            ('aprobada', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('entregada', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal('inventory', ['Requisicion'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Localidad'
-        db.delete_table('inventory_localidad')
-
-        # Deleting model 'Inventario'
-        db.delete_table('inventory_inventario')
-
-        # Deleting model 'ItemTemplate'
-        db.delete_table('inventory_itemtemplate')
-
-        # Removing M2M table for field suppliers on 'ItemTemplate'
-        db.delete_table('inventory_itemtemplate_suppliers')
-
-        # Deleting model 'Proveedor'
-        db.delete_table('inventory_proveedor')
-
-        # Deleting model 'Item'
-        db.delete_table('inventory_item')
-
-        # Deleting model 'Transferencia'
-        db.delete_table('inventory_transferencia')
-
-        # Deleting model 'Requisicion'
-        db.delete_table('inventory_requisicion')
-
-
-    models = {
-        'inventory.inventario': {
-            'Meta': {'object_name': 'Inventario'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'localidad': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'inventarios'", 'null': 'True', 'to': "orm['inventory.Localidad']"})
-        },
-        'inventory.item': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'Item'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'inventario': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'items'", 'to': "orm['inventory.Inventario']"}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'plantilla': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'items'", 'to': "orm['inventory.ItemTemplate']"})
-        },
-        'inventory.itemtemplate': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'ItemTemplate'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'descripcion': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'marca': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True', 'blank': 'True'}),
-            'modelo': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True', 'blank': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'notas': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'numero_de_parte': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True', 'blank': 'True'}),
-            'suppliers': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'plantillas'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['inventory.Proveedor']"})
-        },
-        'inventory.localidad': {
-            'Meta': {'object_name': 'Localidad'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'inventory.proveedor': {
-            'Meta': {'object_name': 'Proveedor'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'inventory.requisicion': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'Requisicion'},
-            'aprobada': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'cantidad': ('django.db.models.fields.IntegerField', [], {}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'entregada': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'inventario': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'requisiciones'", 'to': "orm['inventory.Inventario']"}),
-            'item': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'requisiciones'", 'to': "orm['inventory.ItemTemplate']"}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'})
-        },
-        'inventory.transferencia': {
-            'Meta': {'ordering': "('-modified', '-created')", 'object_name': 'Transferencia'},
-            'aplicada': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'cantidad': ('django.db.models.fields.IntegerField', [], {}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'destino': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'entradas'", 'to': "orm['inventory.Inventario']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'item': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'transferencias'", 'to': "orm['inventory.ItemTemplate']"}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'origen': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'salidas'", 'to': "orm['inventory.Inventario']"})
-        }
-    }
-
-    complete_apps = ['inventory']
+    operations = [
+        migrations.CreateModel(
+            name='Compra',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('ingresada', models.BooleanField(default=False)),
+                ('proveedor', models.CharField(max_length=255, null=True, blank=True)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Historial',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('fecha', models.DateField(default=datetime.date(2014, 12, 26))),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Inventario',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('lugar', models.CharField(default=b'Bodega', max_length=255)),
+                ('puede_comprar', models.NullBooleanField(default=False)),
+            ],
+            options={
+                'permissions': (('inventario', 'Permite al usuario gestionar inventario'),),
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Item',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('cantidad', models.IntegerField(default=0)),
+                ('inventario', models.ForeignKey(related_name='items', to='inventory.Inventario')),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ItemAction',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('action', models.TextField()),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ItemComprado',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('ingresado', models.BooleanField(default=False)),
+                ('cantidad', models.IntegerField(default=0)),
+                ('compra', models.ForeignKey(related_name='items', to='inventory.Compra')),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ItemHistorial',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('cantidad', models.IntegerField(default=0)),
+                ('historial', models.ForeignKey(related_name='items', to='inventory.Historial')),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ItemRequisicion',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('cantidad', models.IntegerField()),
+                ('entregada', models.BooleanField(default=False)),
+                ('pendiente', models.IntegerField(default=0)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ItemTemplate',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('descripcion', models.CharField(max_length=255)),
+                ('marca', models.CharField(max_length=32, null=True, blank=True)),
+                ('modelo', models.CharField(max_length=32, null=True, blank=True)),
+                ('notas', models.TextField(null=True, blank=True)),
+                ('precio_de_venta', models.DecimalField(default=0, max_digits=10, decimal_places=2)),
+                ('costo', models.DecimalField(default=0, max_digits=10, decimal_places=2)),
+                ('unidad_de_medida', models.CharField(max_length=32, null=True, blank=True)),
+                ('impuestos', models.DecimalField(default=0, max_digits=10, decimal_places=2)),
+                ('activo', models.BooleanField(default=True)),
+                ('comision', models.DecimalField(default=Decimal('30.00'), max_digits=4, decimal_places=2)),
+                ('comision2', models.DecimalField(default=Decimal('10.00'), max_digits=4, decimal_places=2)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ItemType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('nombre', models.CharField(max_length=255)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Proveedor',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, verbose_name='descripci\xf3n')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Requisicion',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('aprobada', models.NullBooleanField(default=False)),
+                ('entregada', models.NullBooleanField(default=False)),
+                ('inventario', models.ForeignKey(related_name='requisiciones', blank=True, to='inventory.Inventario', null=True)),
+                ('usuario', models.ForeignKey(related_name='requisiciones', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='TipoVenta',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('descripcion', models.CharField(max_length=255, null=True, blank=True)),
+                ('incremento', models.DecimalField(default=0, max_digits=10, decimal_places=2)),
+                ('disminucion', models.DecimalField(default=0, max_digits=10, decimal_places=2)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Transferencia',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('aplicada', models.NullBooleanField(default=False)),
+                ('destino', models.ForeignKey(related_name='entradas', blank=True, to='inventory.Inventario', null=True)),
+                ('origen', models.ForeignKey(related_name='salidas', blank=True, to='inventory.Inventario', null=True)),
+                ('requisicion', models.ForeignKey(related_name='transferencias', blank=True, to='inventory.Requisicion', null=True)),
+                ('usuario', models.ForeignKey(related_name='transferencias', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Transferido',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
+                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
+                ('cantidad', models.IntegerField()),
+                ('aplicada', models.BooleanField(default=False)),
+                ('item', models.ForeignKey(related_name='transferidos', to='inventory.ItemTemplate')),
+                ('transferencia', models.ForeignKey(related_name='transferidos', to='inventory.Transferencia')),
+            ],
+            options={
+                'ordering': ('-modified', '-created'),
+                'abstract': False,
+                'get_latest_by': 'modified',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='itemtemplate',
+            name='item_type',
+            field=models.ManyToManyField(related_name='items', null=True, to='inventory.ItemType', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='itemtemplate',
+            name='suppliers',
+            field=models.ManyToManyField(related_name='plantillas', null=True, to='inventory.Proveedor', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='itemrequisicion',
+            name='item',
+            field=models.ForeignKey(related_name='requisiciones', to='inventory.ItemTemplate'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='itemrequisicion',
+            name='requisicion',
+            field=models.ForeignKey(related_name='items', to='inventory.Requisicion'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='itemhistorial',
+            name='item',
+            field=models.ForeignKey(related_name='historicos', to='inventory.ItemTemplate'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='itemcomprado',
+            name='item',
+            field=models.ForeignKey(related_name='comprado', blank=True, to='inventory.ItemTemplate', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='itemaction',
+            name='item',
+            field=models.ForeignKey(related_name='acciones', to='inventory.ItemTemplate'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='itemaction',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='item',
+            name='plantilla',
+            field=models.ForeignKey(related_name='items', to='inventory.ItemTemplate'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='historial',
+            name='inventario',
+            field=models.ForeignKey(related_name='historiales', to='inventory.Inventario'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='compra',
+            name='inventario',
+            field=models.ForeignKey(related_name='compras', blank=True, to='inventory.Inventario', null=True),
+            preserve_default=True,
+        ),
+    ]

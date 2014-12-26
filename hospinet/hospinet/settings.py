@@ -204,7 +204,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_countries',
     'tastypie',
-    'south',
+    #'south',
     'userena',
     'guardian',
     'easy_thumbnails',
