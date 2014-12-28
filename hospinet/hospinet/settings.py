@@ -204,7 +204,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_countries',
     'tastypie',
-    #'south',
     'userena',
     'guardian',
     'easy_thumbnails',
@@ -213,6 +212,7 @@ INSTALLED_APPS = (
     'select2',
     'constance',
     'constance.backends.database',
+    'csvimport.app.CSVImportConf',
 )
 
 # A sample logging configuration. The only tangible logging
