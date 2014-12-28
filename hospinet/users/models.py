@@ -46,10 +46,10 @@ User.userena_signup = property(lambda u: UserenaSignup.objects.get_or_create(use
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(id=instance, user=instance)
+        profile = UserProfile.objects.create(id=instance, user=instance)
         from guardian.shortcuts import assign_perm
 
-        assign_perm('change_profile', instance, instance.get_profile())
+        assign_perm('change_profile', instance, profile)
 
 
 post_save.connect(create_user_profile, sender=User)
