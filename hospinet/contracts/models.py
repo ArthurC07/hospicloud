@@ -27,7 +27,6 @@ from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 
 from clinique.models import Consulta, Seguimiento, Cita
-
 from inventory.models import ItemTemplate
 from persona.models import Persona, Empleador
 
@@ -127,31 +126,28 @@ class Contrato(TimeStampedModel):
             paciente__persona=self.persona,
             created__gte=self.renovacion).count()
         total = seguimientos + consultas
-        predicates = []
 
-        for beneficiario in self.beneficiarios.all():
-            predicates.append(Q(paciente__persona=beneficiario.persona))
+        predicates = [Q(paciente__persona=beneficiario.persona) for beneficiario
+                      in self.beneficiarios.all()]
+
+        query = reduce(operator.or_, predicates, Q())
 
         seguimientos = Seguimiento.objects.filter(
-            created__gte=self.renovacion).filter(reduce(operator.or_,
-                                                        predicates)).count()
+            created__gte=self.renovacion).filter(query).count()
         consultas = Consulta.objects.filter(
-            created__gte=self.renovacion).filter(reduce(operator.or_,
-                                                        predicates)).count()
-        total += seguimientos + consultas
+            created__gte=self.renovacion).filter(query).count()
 
-        return total
+        return total + seguimientos + consultas
 
     def total_citas(self):
         """Obtiene el total de :class:`Cita`s de un periodo"""
         total = self.persona.citas.count()
-        predicates = []
 
-        for beneficiario in self.beneficiarios.all():
-            predicates.append(Q(paciente__persona=beneficiario.persona))
+        predicates = [Q(paciente__persona=beneficiario.persona) for beneficiario
+                      in self.beneficiarios.all()]
 
         total += Cita.objects.filter(created__gte=self.renovacion).filter(
-            reduce(operator.or_, predicates)).count()
+            reduce(operator.or_, predicates, Q())).count()
 
         return total
 
