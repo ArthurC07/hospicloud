@@ -307,7 +307,7 @@ class TipoVenta(TimeStampedModel):
 
 class Historial(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='historiales')
-    fecha = models.DateField(default=date.today())
+    fecha = models.DateField(default=date.today)
 
     def __unicode__(self):
         return u'{0} el {1}'.format(self.inventario.lugar,

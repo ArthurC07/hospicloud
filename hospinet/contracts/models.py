@@ -95,7 +95,7 @@ class Contrato(TimeStampedModel):
     plan = models.ForeignKey(Plan, related_name='contratos')
     inicio = models.DateField()
     vencimiento = models.DateField()
-    ultimo_pago = models.DateTimeField(default=timezone.now())
+    ultimo_pago = models.DateTimeField(default=timezone.now)
     administradores = models.ManyToManyField(User, related_name='contratos',
                                              blank=True, null=True)
     renovacion = models.DateField(null=True, blank=True)
@@ -192,7 +192,7 @@ class Contrato(TimeStampedModel):
 class Beneficiario(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='beneficiarios')
     contrato = models.ForeignKey(Contrato, related_name='beneficiarios')
-    inscripcion = models.DateTimeField(default=timezone.now())
+    inscripcion = models.DateTimeField(default=timezone.now)
 
     def __unicode__(self):
         return self.persona.nombre_completo()
@@ -215,7 +215,7 @@ class Pago(TimeStampedModel):
     de un :class:`Contrato`"""
     contrato = models.ForeignKey(Contrato, related_name='pagos')
     tipo_de_pago = models.ForeignKey(TipoPago, related_name='pagos', null=True)
-    fecha = models.DateTimeField(default=timezone.now())
+    fecha = models.DateTimeField(default=timezone.now)
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     descripcion = models.TextField(null=True, blank=True)
     facturar = models.BooleanField(default=False)
@@ -257,7 +257,7 @@ class Evento(TimeStampedModel):
     """Registra el uso de los beneficios del :class:`Evento`"""
     contrato = models.ForeignKey(Contrato, related_name='eventos')
     tipo = models.ForeignKey(TipoEvento, related_name='eventos')
-    fecha = models.DateTimeField(default=timezone.now())
+    fecha = models.DateTimeField(default=timezone.now)
     descripcion = models.TextField(blank=True, null=True)
     adjunto = models.FileField(upload_to='evento/%Y/%m/%d', blank=True,
                                null=True)
@@ -275,7 +275,7 @@ class Evento(TimeStampedModel):
 
 
 class Meta(TimeStampedModel):
-    fecha = models.DateField(default=timezone.now())
+    fecha = models.DateField(default=timezone.now)
     contratos = models.IntegerField()
 
     def get_absolute_url(self):
@@ -287,7 +287,7 @@ class Meta(TimeStampedModel):
 class Cancelacion(TimeStampedModel):
     """Registra las condiciones en las cuales se termina un :class:`Contrato`"""
     contrato = models.ForeignKey(Contrato, related_name='cancelaciones')
-    fecha = fecha = models.DateField(default=timezone.now())
+    fecha = fecha = models.DateField(default=timezone.now)
     motivo = models.TextField()
     pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
