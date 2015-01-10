@@ -21,6 +21,7 @@ from django.db.models.signals import post_save
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 from tastypie.models import create_api_key
+from guardian.shortcuts import assign_perm
 
 from inventory.models import Inventario, ItemTemplate
 from persona.models import Persona
@@ -47,9 +48,8 @@ User.userena_signup = property(lambda u: UserenaSignup.objects.get_or_create(use
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         profile = UserProfile.objects.create(id=instance, user=instance)
-        from guardian.shortcuts import assign_perm
-
-        assign_perm('change_profile', instance, profile)
+        profile.save()
+        assign_perm('change_profile', instance, instance.profile)
 
 
 post_save.connect(create_user_profile, sender=User)
