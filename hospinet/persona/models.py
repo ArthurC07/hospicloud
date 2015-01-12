@@ -74,7 +74,8 @@ class Persona(models.Model):
     email = models.CharField(max_length=200, blank=True)
     fax = models.CharField(max_length=200, blank=True)
     fotografia = models.ImageField(upload_to='persona/foto//%Y/%m/%d',
-                                   blank=True, null=True)
+                                   blank=True, null=True,
+                                   help_text="El archivo debe estar en formato jpg o png y no pesar mas de 120kb")
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
     duplicado = models.BooleanField(default=False)
 
