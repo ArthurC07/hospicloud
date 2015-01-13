@@ -52,7 +52,7 @@ class PacienteForm(FieldSetModelFormMixin):
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
-    consultorio = ModelChoiceField(queryset=Consultorio.objects.filter(activo=True).all(),
+    consultorio = ModelChoiceField(queryset=Consultorio.objects.filter(activo=True).order_by('nombre').all(),
                                    name="", model="", )
 
 
