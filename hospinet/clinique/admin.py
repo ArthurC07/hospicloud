@@ -20,11 +20,16 @@ from clinique.models import (Paciente, Cita, Consulta, TipoConsulta,
                              Consultorio, Evaluacion, Seguimiento, LecturaSignos,
                              TipoCargo, Cargo, OrdenMedica)
 
+
+class ConsultorioAdmin(admin.ModelAdmin):
+    filter_horizontal = ('administradores',)
+
+
 admin.site.register(Paciente)
 admin.site.register(Cita)
 admin.site.register(Consulta)
 admin.site.register(TipoConsulta)
-admin.site.register(Consultorio)
+admin.site.register(Consultorio, ConsultorioAdmin)
 admin.site.register(Seguimiento)
 admin.site.register(Evaluacion)
 admin.site.register(LecturaSignos)
