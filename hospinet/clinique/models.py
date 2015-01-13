@@ -45,6 +45,7 @@ class Consultorio(TimeStampedModel):
                                    blank=True, null=True)
     administradores = models.ManyToManyField(User, blank=True, null=True,
                                              related_name='consultorios_administrados')
+    activo = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.nombre

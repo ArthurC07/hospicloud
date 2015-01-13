@@ -25,7 +25,6 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
                              Incapacidad, Reporte)
-from invoice.forms import PeriodoForm
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, \
     FieldSetFormMixin
@@ -53,7 +52,7 @@ class PacienteForm(FieldSetModelFormMixin):
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
-    consultorio = ModelChoiceField(queryset=Consultorio.objects.all(),
+    consultorio = ModelChoiceField(queryset=Consultorio.objects.filter(activo=True).all(),
                                    name="", model="", )
 
 
