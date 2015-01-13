@@ -50,9 +50,10 @@ class Persona(models.Model):
         ('U', u'Union Libre')
     )
     TIPOS_IDENTIDAD = (
-        ("T", u"Tarjeta de Identidad"),
-        ("P", u"Pasaporte"),
+        ("R", u"Carnet de Residencia"),
         ("L", u"Licencia"),
+        ("P", u"Pasaporte"),
+        ("T", u"Tarjeta de Identidad"),
         ("N", u"Ninguno"),
     )
 
