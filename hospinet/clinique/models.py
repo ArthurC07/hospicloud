@@ -85,7 +85,7 @@ class Paciente(TimeStampedModel):
 class Consulta(TimeStampedModel):
     paciente = models.ForeignKey(Paciente, related_name='consultas')
     tipo = models.ForeignKey(TipoConsulta, related_name='consultas')
-    motivo_de_consulta = models.TextField(default=None)
+    motivo_de_consulta = models.TextField(default=None, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
