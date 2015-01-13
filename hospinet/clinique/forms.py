@@ -52,8 +52,10 @@ class PacienteForm(FieldSetModelFormMixin):
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
-    consultorio = ModelChoiceField(queryset=Consultorio.objects.filter(activo=True).order_by('nombre').all(),
-                                   name="", model="", )
+    consultorio = ModelChoiceField(
+        queryset=Consultorio.objects.filter(activo=True).order_by(
+            'nombre').all(),
+        name="", model="", )
 
 
 class ConsultaForm(PacienteFormMixin):
@@ -232,7 +234,8 @@ class PrescripcionForm(PacienteFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Prescripcion', *self.field_names)
+        self.helper.layout = Fieldset(u'Agregar Prescripcion',
+                                      *self.field_names)
 
 
 class IncapacidadForm(PacienteFormMixin):
