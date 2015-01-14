@@ -23,6 +23,7 @@ from clinique.models import (Paciente, Cita, Consulta, TipoConsulta,
 
 class ConsultorioAdmin(admin.ModelAdmin):
     filter_horizontal = ('administradores',)
+    list_display = ('nombre', 'activo')
 
 
 admin.site.register(Paciente)
