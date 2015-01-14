@@ -77,7 +77,7 @@ class EvaluacionForm(HiddenUserForm, PacienteFormMixin):
                                       *self.field_names)
 
 
-class CitaForm(FieldSetModelFormMixin):
+class CitaForm(ConsultorioFormMixin):
     class Meta:
         model = Cita
 
@@ -238,7 +238,7 @@ class PrescripcionForm(PacienteFormMixin):
                                       *self.field_names)
 
 
-class IncapacidadForm(PacienteFormMixin):
+class IncapacidadForm(PacienteFormMixin, ConsultorioFormMixin):
     class Meta:
         model = Incapacidad
 
