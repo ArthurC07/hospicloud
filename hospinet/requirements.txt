@@ -11,5 +11,6 @@ django-csvimport
 django-tastypie
 django-templated-email
 django-userena
+django-extra-views
 simplejson
 six
