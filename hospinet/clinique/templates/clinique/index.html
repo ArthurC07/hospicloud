@@ -45,6 +45,22 @@
                         </div>
                     </div>
                 {% endfor %}
+                {% for consultorio in user.secretarias.all %}
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="page-header">
+                                <h2>
+                                    {{ consultorio }}
+                                    <small>{{ consultorio.pacientes.count }}
+                                        pacientes
+                                    </small>
+                                    <a class="pull-right btn btn-primary"
+                                       href="{% url 'consultorio' consultorio.id %}">Ver</a>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
             <div class="main-content col-md-12">
                 <div class="row">
