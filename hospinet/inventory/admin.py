@@ -19,7 +19,14 @@ from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType,
                               TipoVenta, Item, ItemComprado, ItemRequisicion,
                               Transferencia, Transferido, Proveedor, Compra)
 
-admin.site.register(ItemTemplate)
+
+class ItemTemplateAdmin(admin.ModelAdmin):
+    list_display = ('descripcion', 'activo')
+    list_filter = ('descripcion', 'activo')
+    ordering = ('decripcion', 'activo')
+
+
+admin.site.register(ItemTemplate, ItemTemplateAdmin)
 admin.site.register(Requisicion)
 admin.site.register(Inventario)
 admin.site.register(ItemType)
