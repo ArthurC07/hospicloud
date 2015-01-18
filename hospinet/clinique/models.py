@@ -265,7 +265,7 @@ class Espera(TimeStampedModel):
 
         delta = timezone.now() - self.created
 
-        return delta.seconds
+        return delta.seconds / 60
 
 
 class Prescripcion(TimeStampedModel):
