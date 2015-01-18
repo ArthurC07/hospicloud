@@ -26,8 +26,6 @@ from django.contrib.auth.models import User
 
 
 class Inventario(models.Model):
-
-
     class Meta:
         permissions = (
             ('inventario', 'Permite al usuario gestionar inventario'),
@@ -114,7 +112,8 @@ class Proveedor(models.Model):
 
 
 class Item(TimeStampedModel):
-    plantilla = models.ForeignKey(ItemTemplate, related_name='items')
+    plantilla = models.ForeignKey(ItemTemplate, related_name='items',
+                                  verbose_name='item')
     inventario = models.ForeignKey(Inventario, related_name='items')
     cantidad = models.IntegerField(default=0)
 
@@ -264,9 +263,7 @@ class Compra(TimeStampedModel):
         return reverse('compra', args=[self.id])
 
     def transferir(self):
-
         for comprado in self.items.all():
-
             item = self.inventario.buscar_item(comprado.item)
             item.incrementar(comprado.cantidad)
             item.save()
