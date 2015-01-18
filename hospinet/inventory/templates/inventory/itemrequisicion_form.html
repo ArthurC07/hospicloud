@@ -7,51 +7,54 @@
     <div class="row">
         <section class="col-md-6">
             <div class="main-content col-md-12">
-            {% crispy form %}
-                </div>
+                {% crispy form %}
+            </div>
         </section>
         <aside class="col-md-3">
-                <div class="toolbox col-md-12">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-stacked nav-tabs">
-                    <li>
-                        <a href="{% url 'requisicion' requisicion.id %}">Regresar a Requisic&oacute;n</a>
-                    </li>
-                </ul>
-            </nav>
-                    </div>
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li>
+                            <a href="{% url 'requisicion' requisicion.id %}">Regresar
+                                a Requisic&oacute;n</a>
+                        </li>
+                        <li><a onclick="return !window.open(this.href, 'Agregar Producto', 'width=500,height=500')"
+                               target="_blank" href="{% url 'itemtemplate-create' %}">Agregar Producto</a></li>
+                    </ul>
+                </nav>
+            </div>
         </aside>
     </div>
     <div class="row">
         <section class="col-md-12">
             <div class="main-content col-md-12">
-            <table class="table table-striped table-bordered no-more-tables">
-                <caption>
-                    Productos en Pedidos
-                </caption>
-                <thead>
-                <tr>
-                    <th>C&oacute;digo</th>
-                    <th>Descripci&oacute;n</th>
-                    <th>Cantidad</th>
-                    <th>Pendiente</th>
-                    <th>Entregado</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in requisicion.items.all %}
+                <table class="table table-striped table-bordered no-more-tables">
+                    <caption>
+                        Productos en Pedidos
+                    </caption>
+                    <thead>
                     <tr>
-                        <td>{{ item.item.id }}</td>
-                        <td>{{ item.item.descripcion }}</td>
-                        <td>{{ item.cantidad }}</td>
-                        <td>{{ item.pediente }}</td>
-                        <td>{{ item.entregada|yesno }}</td>
-                        <td></td>
+                        <th>C&oacute;digo</th>
+                        <th>Descripci&oacute;n</th>
+                        <th>Cantidad</th>
+                        <th>Pendiente</th>
+                        <th>Entregado</th>
+                        <th>Acciones</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for item in requisicion.items.all %}
+                        <tr>
+                            <td>{{ item.item.id }}</td>
+                            <td>{{ item.item.descripcion }}</td>
+                            <td>{{ item.cantidad }}</td>
+                            <td>{{ item.pediente }}</td>
+                            <td>{{ item.entregada|yesno }}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </section>
     </div>
