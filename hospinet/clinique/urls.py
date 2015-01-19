@@ -42,7 +42,7 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             EvaluacionPeriodoView, IncapacidadCreateView,
                             SeguimientoPeriodoView, ConsultorioPacienteListView,
                             CliniqueAntecedenteObstetricoCreateView,
-                            ReporteCreateView)
+                            ReporteCreateView, CitaEsperaRedirectView)
 
 
 urlpatterns = patterns('',
@@ -172,6 +172,10 @@ urlpatterns = patterns('',
                        url(r'^(?P<pk>\d+)/cita/ausente$',
                            CitaAusenteView.as_view(),
                            name='clinique-cita-ausente'),
+
+                       url(r'^cita/(?P<pk>\d+)/espera$',
+                           CitaEsperaRedirectView.as_view(),
+                           name='clinique-cita-espera'),
 
                        url(r'^diagnostico/(?P<paciente>\d+)/agregar$',
                            DiagnosticoCreateView.as_view(),

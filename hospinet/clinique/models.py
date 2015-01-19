@@ -158,6 +158,12 @@ class Cita(TimeStampedModel):
 
         return u'{0}'.format(self.persona.nombre_completo())
 
+    def to_espera(self):
+
+        espera = Espera()
+        espera.consultorio = self.consultorio
+        espera.persona = self.persona
+
 
 class Seguimiento(TimeStampedModel):
     """Representa las consultas posteriores que sirven como seguimiento a la

@@ -17,6 +17,7 @@
 import calendar
 from collections import defaultdict
 from datetime import time
+from django.contrib import messages
 
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
@@ -26,7 +27,8 @@ from django.utils import timezone
 from django.utils.datetime_safe import date, datetime
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
-                                  ListView, UpdateView, TemplateView)
+                                  ListView, UpdateView, TemplateView,
+                                  RedirectView)
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormMixin, DeleteView
@@ -748,3 +750,18 @@ class ReporteListView(ListView, LoginRequiredMixin):
     queryset = Reporte.objects.order_by('-created')
     context_object_name = 'reportes'
     paginate_by = 20
+
+
+class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
+    """Crea una :class:´Espera´ a partir de una :class:´Cita´ y redirige al
+    usuario al :class:´Consultorio´ asociado"""
+    
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        cita = get_object_or_404(Cita, pk=kwargs['pk'])
+        espera = cita.to_espera()
+        espera.save()
+        messages.info(self.request, u'¡Se envio el paciente a salada de espera!')
+        return espera.get_absolute_url()
+
