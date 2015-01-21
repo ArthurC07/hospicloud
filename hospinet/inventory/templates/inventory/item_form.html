@@ -5,17 +5,30 @@
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="col-md-6">
-            <div class="main-content col-md-12">
-                {% crispy form %}
+        <section class="col-md-9 main-content">
+            <div class="row">
+                <div class="col-md-12">
+                    {% crispy form %}
+                </div>
+            </div>
+            <div class="modal" role="dialog" id="add-product">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <a class="close" data-dismiss="modal">×</a>
+                        </div>
+                        <div class="modal-body">
+                            {% crispy itemTemplateForm %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
-                        <li><a onclick="return !window.open(this.href, 'Agregar Producto', 'width=500,height=500')"
-                               target="_blank" href="{% url 'itemtemplate-create' %}">Agregar Producto</a></li>
+                        <li><a href="#add-product" data-toggle="modal">Agregar Producto</a></li>
                     </ul>
                 </nav>
             </div>
@@ -24,4 +37,19 @@
 {% endblock %}
 {% block scripts %}
     {{ form.media.js }}
+    <script type="text/javascript">
+    jQuery(document).ready(function() {
+        jQuery("#add-item-form").submit(function(e){
+            var form = jQuery(this);
+            jQuery.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function(response) {
+                    location.reload();
+                }
+            });
+        });
+    });
+    </script>
 {% endblock %}

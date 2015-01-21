@@ -23,6 +23,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.base import TemplateView
 from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from inventory.models import (Inventario, Item, ItemTemplate, Transferencia,
@@ -148,6 +149,13 @@ class ItemCreateView(InventarioFormMixin, LoginRequiredMixin):
     model = Item
     form_class = ItemForm
 
+    def get_context_data(self, **kwargs):
+        extra_form = ItemTemplateForm()
+        extra_form.helper.form_action = reverse('itemtemplate-create')
+        extra_form.helper.form_id = 'add-item-form'
+        kwargs['itemTemplateForm'] = extra_form
+        return super(ItemCreateView, self).get_context_data(**kwargs)
+
 
 class ItemDetailView(ListView, LoginRequiredMixin):
     model = Item
@@ -211,6 +219,13 @@ class ItemRequisicionCreateView(RequisicionFormMixin, LoginRequiredMixin):
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
+
+    def get_context_data(self, **kwargs):
+        extra_form = ItemTemplateForm()
+        extra_form.helper.form_action = reverse('itemtemplate-create')
+        extra_form.helper.form_id = 'add-item-form'
+        kwargs['itemTemplateForm'] = extra_form
+        return super(ItemRequisicionCreateView, self).get_context_data(**kwargs)
 
 
 class ItemRequisicionDeleteView(DeleteView, LoginRequiredMixin):
@@ -341,6 +356,13 @@ class CompraListView(ListView, LoginRequiredMixin):
 class ItemCompradoCreateView(CompraFormMixin, LoginRequiredMixin):
     model = ItemComprado
     form_class = ItemCompradoForm
+
+    def get_context_data(self, **kwargs):
+        extra_form = ItemTemplateForm()
+        extra_form.helper.form_action = reverse('itemtemplate-create')
+        extra_form.helper.form_id = 'add-item-form'
+        kwargs['itemTemplateForm'] = extra_form
+        return super(ItemCompradoCreateView, self).get_context_data(**kwargs)
 
 
 class ItemTemplateSearchView(ListView, LoginRequiredMixin):

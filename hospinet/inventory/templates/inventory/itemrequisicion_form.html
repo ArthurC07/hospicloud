@@ -5,60 +5,51 @@
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="col-md-6">
-            <div class="main-content col-md-12">
-                {% crispy form %}
+        <section class="col-md-9 main-content">
+            <div class="row">
+                <div class="col-md-12">
+                    {% crispy form %}
+                </div>
+            </div>
+            <div class="modal" role="dialog" id="add-product">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <a class="close" data-dismiss="modal">×</a>
+                        </div>
+                        <div class="modal-body">
+                            {% crispy itemTemplateForm %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
-                        <li>
-                            <a href="{% url 'requisicion' requisicion.id %}">Regresar
-                                a Requisic&oacute;n</a>
-                        </li>
-                        <li><a onclick="return !window.open(this.href, 'Agregar Producto', 'width=500,height=500')"
-                               target="_blank" href="{% url 'itemtemplate-create' %}">Agregar Producto</a></li>
+                        <li><a href="#add-product" data-toggle="modal">Agregar Producto</a></li>
                     </ul>
                 </nav>
             </div>
         </aside>
     </div>
-    <div class="row">
-        <section class="col-md-12">
-            <div class="main-content col-md-12">
-                <table class="table table-striped table-bordered no-more-tables">
-                    <caption>
-                        Productos en Pedidos
-                    </caption>
-                    <thead>
-                    <tr>
-                        <th>C&oacute;digo</th>
-                        <th>Descripci&oacute;n</th>
-                        <th>Cantidad</th>
-                        <th>Pendiente</th>
-                        <th>Entregado</th>
-                        <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in requisicion.items.all %}
-                        <tr>
-                            <td>{{ item.item.id }}</td>
-                            <td>{{ item.item.descripcion }}</td>
-                            <td>{{ item.cantidad }}</td>
-                            <td>{{ item.pediente }}</td>
-                            <td>{{ item.entregada|yesno }}</td>
-                            <td></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </div>
 {% endblock %}
 {% block scripts %}
     {{ form.media.js }}
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            jQuery("#add-item-form").submit(function(e){
+                var form = jQuery(this);
+                jQuery.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}
