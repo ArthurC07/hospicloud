@@ -17,7 +17,7 @@
                                     <h2>
                                         Sala de Espera
                                         <small>Promedio de Espera Ultimo
-                                            mes {{ total }}</small>
+                                            mes {{ total }} minutos</small>
                                     </h2>
                                 </section>
                                 {% load staticfiles %}{% load thumbnail %}
@@ -39,7 +39,7 @@
                                                     Programado para
                                                     el {{ espera.fecha }}
                                                     Tiempo en
-                                                    espera: {{ espera.tiempo }}
+                                                    espera: {{ espera.tiempo }} minutos
                                                 </p>
                                                 <a class="btn btn-success"
                                                    href="{% url 'clinique-espera-ausente' espera.id %}">No
