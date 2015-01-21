@@ -50,13 +50,11 @@ class InventarioForm(FieldSetModelFormMixin):
 class ItemForm(FieldSetModelFormMixin):
     class Meta:
         model = Item
+        fields = ("inventario", "plantilla", "cantidad")
 
-    inventario = ModelChoiceField(name="", model="",
-                                  queryset=Inventario.objects.all())
-    plantilla = ModelChoiceField(name="", model="",
+    plantilla = ModelChoiceField(name="", model="", label="Item",
                                  queryset=ItemTemplate.objects.filter(
                                      activo=True).order_by('descripcion').all())
-    cantidad = forms.IntegerField()
 
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)

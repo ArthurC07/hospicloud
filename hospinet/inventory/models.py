@@ -113,7 +113,7 @@ class Proveedor(models.Model):
 
 class Item(TimeStampedModel):
     plantilla = models.ForeignKey(ItemTemplate, related_name='items',
-                                  verbose_name='item')
+                                  verbose_name='Item')
     inventario = models.ForeignKey(Inventario, related_name='items')
     cantidad = models.IntegerField(default=0)
 
