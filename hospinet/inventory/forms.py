@@ -205,6 +205,6 @@ class ProveedorForm(FieldSetModelFormMixin):
         model = Proveedor
 
     def __init__(self, *args, **kwargs):
-        super(ItemTemplateSearchForm, self).__init__(*args, **kwargs)
+        super(ProveedorForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Proveedor',
                                       *self.field_names)
