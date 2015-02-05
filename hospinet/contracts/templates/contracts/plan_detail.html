@@ -15,6 +15,9 @@
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
                         <li class="active">
+                            <a href="#beneficios" data-toggle="tab">Beneficios</a>
+                        </li>
+                        <li>
                             <a href="#contratos" data-toggle="tab">Contratos</a>
                         </li>
                         <li>
@@ -22,7 +25,40 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <article id="contrato" class="tab-pane active">
+                        <article id="beneficios" class="tab-pane active">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <section class="page-header">
+                                            <h2>Beneficios</h2>
+                                        </section>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-striped table-responsive">
+                                            <thead>
+                                                <tr>
+                                                    <th>Beneficio</th>
+                                                    <th>Precio</th>
+                                                    <th>Descuento</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for beneficio in plan.beneficios.all %}
+                                                    <tr>
+                                                        <td>{{ beneficio.nombre }}</td>
+                                                        <td>{{ beneficio.valor }}</td>
+                                                        <td>{{ beneficio.descuento }}%</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="contrato" class="tab-pane">
                             <div class="row">
                                 <div class="col-md-12">
                                     <ul>
@@ -56,6 +92,9 @@
                     <ul class="nav nav-tabs nav-stacked">
                         <li>
                             <a href="{% url 'contracts-limite-add' plan.id %}">Agregar L&iacute;mite</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contracts-beneficio-add' plan.id %}">Agregar Beneficio</a>
                         </li>
                     </ul>
                 </nav>

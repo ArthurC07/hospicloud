@@ -29,6 +29,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
 from guardian.decorators import permission_required
 from clinique.models import Cita, Consulta, Seguimiento
@@ -41,11 +42,12 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              LimiteEventoForm, PlanChoiceForm, MetaForm,
                              CancelacionForm, ContratoEmpresarialForm,
                              EmpleadorChoiceForm, VendedorPeriodoForm,
-                             PrecontratoForm, PersonaPrecontratoForm)
+                             PrecontratoForm, PersonaPrecontratoForm,
+                             BeneficioForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Autorizacion,
-                              Prebeneficiario)
+                              Prebeneficiario, Beneficio)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
@@ -180,6 +182,8 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['cancelaciones_empresa'] = Cancelacion.objects.filter(
             fecha__gte=self.inicio, contrato__plan__empresarial=True).count()
 
+        context['planes'] = Plan.objects.all()
+
         return context
 
 
@@ -209,7 +213,7 @@ class PlanMixin(View):
         return super(PlanMixin, self).dispatch(*args, **kwargs)
 
 
-class PlanFormMixin(PlanMixin, LoginRequiredMixin):
+class PlanFormMixin(PlanMixin, FormMixin, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super(PlanFormMixin, self).get_context_data(**kwargs)
         context['plan'] = self.plan
@@ -232,6 +236,11 @@ class PlanSearchView(FormView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.plan.get_absolute_url()
+
+
+class BeneficioCreateView(CreateView, PlanFormMixin):
+    model = Beneficio
+    form_class = BeneficioForm
 
 
 class EmpresaSearchView(FormView, LoginRequiredMixin):
@@ -264,7 +273,7 @@ class ContratoFormMixin(CreateView, LoginRequiredMixin):
     def get_initial(self):
         """Agrega el :class:`Contrato` obtenido como el valor a utilizar en el
         formulario que será llenado posteriormente"""
-        initial = super(ContratoFormMixin, self).get_initial()
+        initial = super(ContratoFormMixin, self).get_initial
         initial = initial.copy()
         initial['contrato'] = self.contrato.id
         return initial

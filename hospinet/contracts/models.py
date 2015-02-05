@@ -57,6 +57,13 @@ class Vendedor(TimeStampedModel):
         return self.get_contratos_vendidos(inicio, fin).count()
 
 
+class Aseguradora(TimeStampedModel):
+    nombre = models.CharField(max_length=255, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.nombre
+
+
 class Plan(TimeStampedModel):
     """Indica los limites que presenta cada :class:`Contrato`"""
 
@@ -79,6 +86,23 @@ class Plan(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Plan`"""
 
         return reverse('contracts-plan', args=[self.id])
+
+
+class Beneficio(TimeStampedModel):
+    """Permite listar los posibles cobros a efectuar dentro de un :class`Plan`
+    de :class:`contrato`"""
+
+    plan = models.ForeignKey(Plan, related_name='beneficios')
+    nombre = models.CharField(max_length=255, null=True, blank=True)
+    valor = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __unicode__(self):
+
+        return u"{0} de plan {}".format(self.nombre, self.plan.nombre)
+
+    def get_absolute_url(self):
+        return self.plan.get_absolute_url()
 
 
 class Contrato(TimeStampedModel):

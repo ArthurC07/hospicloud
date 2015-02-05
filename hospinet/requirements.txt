@@ -14,3 +14,4 @@ django-userena
 django-extra-views
 simplejson
 six
+unicodecsv

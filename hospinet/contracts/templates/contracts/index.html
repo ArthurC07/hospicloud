@@ -28,6 +28,9 @@
                         <li>
                             <a href="#busqueda" data-toggle="tab">B&uacute;squeda</a>
                         </li>
+                        <li>
+                            <a href="#planes" data-toggle="tab">Planes</a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <article id="estadisticas" class="tab-pane active">
@@ -196,6 +199,28 @@
                                     <section class="col-md-4">
                                         {% crispy vendedor-periodo %}
                                     </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="planes" class="tab-pane active">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <section class="page-header">
+                                            <h1>Planes</h1>
+                                        </section>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul>
+                                            {% for plan in planes.all %}
+                                                <li>
+                                                    <a href="{% url 'contracts-plan' plan.id %}">Plan {{ plan }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </article>

@@ -23,7 +23,7 @@ from select2.fields import ModelChoiceField
 
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
-                              Cancelacion, Precontrato)
+                              Cancelacion, Precontrato, Beneficio)
 from invoice.forms import PeriodoForm
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
@@ -58,6 +58,16 @@ class PlanForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(PlanForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Plan', *self.field_names)
+
+
+class BeneficioForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Beneficio
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(BeneficioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar un Beneficio', *self.field_names)
 
 
 class ContratoForm(FieldSetModelFormMixin):
@@ -209,6 +219,16 @@ class LimiteEventoForm(PlanFormMixin):
         super(LimiteEventoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Limite de Evento',
                                       *self.field_names)
+
+
+class BeneficioForm(PlanFormMixin):
+    class Meta:
+        model = Beneficio
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(BeneficioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar un Beneficio', *self.field_names)
 
 
 class PlanChoiceForm(FieldSetFormMixin):
