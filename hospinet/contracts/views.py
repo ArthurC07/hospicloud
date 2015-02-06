@@ -43,11 +43,11 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              CancelacionForm, ContratoEmpresarialForm,
                              EmpleadorChoiceForm, VendedorPeriodoForm,
                              PrecontratoForm, PersonaPrecontratoForm,
-                             BeneficioForm)
+                             BeneficioForm, MasterContractForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Autorizacion,
-                              Prebeneficiario, Beneficio)
+                              Prebeneficiario, Beneficio, MasterContract)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
@@ -825,3 +825,13 @@ class PrebeneficiarioCreateView(PrecontratoMixin, CreateView):
                                          precontrato=self.precontrato)
 
         return HttpResponseRedirect(prebeneficiaro.get_absolute_url())
+
+
+class MasterContractDetailView(DetailView, LoginRequiredMixin):
+    model = MasterContract
+    context_object_name = 'master_contract'
+
+
+class MasterContractCreateView(CreateView, LoginRequiredMixin):
+    model = MasterContract
+    form_class = MasterContractForm

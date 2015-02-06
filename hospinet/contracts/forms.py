@@ -23,7 +23,8 @@ from select2.fields import ModelChoiceField
 
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
-                              Cancelacion, Precontrato, Beneficio)
+                              Cancelacion, Precontrato, Beneficio,
+                              MasterContract)
 from invoice.forms import PeriodoForm
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
@@ -249,6 +250,17 @@ class EmpleadorChoiceForm(FieldSetFormMixin):
         self.helper.layout = Fieldset(u'Buscar Contratos Empresariales',
                                       *self.field_names)
         self.helper.add_input(Submit('submit', u'Buscar'))
+
+
+class MasterContractForm(FieldSetModelFormMixin):
+    class Meta:
+        model = MasterContract
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(MasterContractForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Crear un Contrato Maestro',
+                                      *self.field_names)
 
 
 class MetaForm(FieldSetModelFormMixin):

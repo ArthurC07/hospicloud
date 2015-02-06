@@ -99,10 +99,33 @@ class Beneficio(TimeStampedModel):
 
     def __unicode__(self):
 
-        return u"{0} de plan {}".format(self.nombre, self.plan.nombre)
+        return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
 
     def get_absolute_url(self):
         return self.plan.get_absolute_url()
+
+
+class MasterContract(TimeStampedModel):
+    vendedor = models.ForeignKey(Vendedor, related_name='master_contracts')
+    plan = models.ForeignKey(Plan, related_name='master_contracts')
+    aseguradora = models.ForeignKey(Aseguradora, related_name='master_contracts')
+    inicio = models.DateField(default=timezone.now)
+    vencimiento = models.DateField(default=timezone.now)
+    contratante = models.ForeignKey(Empleador, blank=True, null=True,
+                                    related_name='master_contracts')
+    archivo = models.FileField(upload_to='contracts/csv//%Y/%m/%d',
+                               blank=True, null=True)
+
+    def __unicode__(self):
+
+        return u"{1} de {2}".format(self.plan.nombre,
+                                                self.contratante.nombre,
+                                                self.aseguradora.nombre)
+
+    def get_absolute_url(self):
+        """Obtiene la url relacionada con un :class:`MasterContract`"""
+
+        return reverse('contract-master', args=[self.id])
 
 
 class Contrato(TimeStampedModel):
