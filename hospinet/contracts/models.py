@@ -20,11 +20,13 @@ from datetime import date, timedelta
 import operator
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
+import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
 from inventory.models import ItemTemplate
@@ -98,7 +100,6 @@ class Beneficio(TimeStampedModel):
     descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __unicode__(self):
-
         return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
 
     def get_absolute_url(self):
@@ -108,24 +109,54 @@ class Beneficio(TimeStampedModel):
 class MasterContract(TimeStampedModel):
     vendedor = models.ForeignKey(Vendedor, related_name='master_contracts')
     plan = models.ForeignKey(Plan, related_name='master_contracts')
-    aseguradora = models.ForeignKey(Aseguradora, related_name='master_contracts')
+    aseguradora = models.ForeignKey(Aseguradora,
+                                    related_name='master_contracts')
     inicio = models.DateField(default=timezone.now)
     vencimiento = models.DateField(default=timezone.now)
     contratante = models.ForeignKey(Empleador, blank=True, null=True,
                                     related_name='master_contracts')
     archivo = models.FileField(upload_to='contracts/csv//%Y/%m/%d',
                                blank=True, null=True)
+    processed = models.BooleanField(default=False)
 
     def __unicode__(self):
 
         return u"{1} de {2}".format(self.plan.nombre,
-                                                self.contratante.nombre,
-                                                self.aseguradora.nombre)
+                                    self.contratante.nombre,
+                                    self.aseguradora.nombre)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`MasterContract`"""
 
         return reverse('contract-master', args=[self.id])
+
+    def assign_contracts(self):
+        """Creates :class:`Contract`s for existing :class:`Persona`"""
+        if self.processed:
+            return
+
+        archivo = open(self.archivo.path, 'rU')
+        data = unicodecsv.reader(archivo)
+
+        # Create a :class:`Contract` for each identificacion on the file
+        for line in data:
+            identificacion = line[0]
+            try:
+                persona = Persona.objects.get(identificacion=identificacion)
+                contrato = Contrato(persona=persona, plan=self.plan,
+                                    vendedor=self.vendedor,
+                                    vencimiento=self.vencimiento,
+                                    inicio=self.inicio,
+                                    empresa=self.contratante)
+                contrato.save()
+            except ObjectDoesNotExist:
+                pass
+            except MultipleObjectsReturned:
+                pass
+
+        # Mark the :class:`MasterContract` as processed
+        self.processed = True
+        self.save()
 
 
 class Contrato(TimeStampedModel):
