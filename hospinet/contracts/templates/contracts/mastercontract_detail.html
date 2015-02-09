@@ -11,13 +11,26 @@
     </div>
     <div class="row">
         <section class="col-md-9">
-
+            <div class="main-content col-md-12">
+                <ul>
+                    <li>{{ master_contract.vendedor }}</li>
+                    <li>{{ master_contract.plan }}</li>
+                    <li>{{ master_contract.aseguradora }}</li>
+                    <li>{{ master_contract.inicio }}</li>
+                    <li>{{ master_contract.vencimiento }}</li>
+                    <li>{{ master_contract.contratante }}</li>
+                    <li>{{ master_contract.archivo }}</li>
+                    <li>{{ master_contract.processed }}</li>
+                </ul>
+            </div>
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked">
-
+                        <li>
+                            <a href="{% url 'contracts-master-process' master_contract.id %}">Crear Contratos</a>
+                        </li>
                     </ul>
                 </nav>
             </div>

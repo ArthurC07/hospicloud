@@ -37,7 +37,8 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              VendedorPeriodoView, PrecontratoCreateView,
                              PrecontratoDetailView, PrebeneficiarioCreateView,
                              PlanCreateView, BeneficioCreateView,
-                             MasterContractDetailView, MasterContractCreateView)
+                             MasterContractDetailView, MasterContractCreateView,
+                             MasterContractProcessView)
 
 
 urlpatterns = patterns('',
@@ -216,4 +217,8 @@ urlpatterns = patterns('',
                        url(r'^contrato/maestro/agregar$',
                            MasterContractCreateView.as_view(),
                            name='contracts-master-add'),
+
+                       url(r'^contrato/maestro/(?P<pk>\d+)/procesar$',
+                           MasterContractProcessView.as_view(),
+                           name='contracts-master-process'),
 )

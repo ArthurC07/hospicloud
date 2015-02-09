@@ -764,4 +764,3 @@ class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
         espera.save()
         messages.info(self.request, u'¡Se envio el paciente a salada de espera!')
         return espera.get_absolute_url()
-

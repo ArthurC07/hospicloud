@@ -17,6 +17,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
 from datetime import datetime, time, date
+from django.contrib import messages
 
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
@@ -28,6 +29,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
+from django.views.generic.base import RedirectView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
@@ -835,3 +837,15 @@ class MasterContractDetailView(DetailView, LoginRequiredMixin):
 class MasterContractCreateView(CreateView, LoginRequiredMixin):
     model = MasterContract
     form_class = MasterContractForm
+
+
+class MasterContractProcessView(RedirectView, LoginRequiredMixin):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        master = get_object_or_404(MasterContract, pk=kwargs['pk'])
+        master.assign_contracts()
+
+        messages.info(self.request, u'¡Creados los contratos!')
+        return master.get_absolute_url()
