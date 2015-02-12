@@ -19,6 +19,8 @@
                     <ul class="nav nav-tabs">
                         <li><a class="active" href="#paciente" data-toggle="tab">Datos
                             Personales</a></li>
+                        <li><a href="#clinico"
+                               data-toggle="tab">Antecedentes</a></li>
                         {% if persona.emergencias %}
                             <li><a href="#emergencias"
                                    data-toggle="tab">Emergencias</a></li>
@@ -31,14 +33,64 @@
                             <li><a href="#examenes" data-toggle="tab">Im&aacute;genes</a>
                             </li>
                         {% endif %}
-                        <li><a href="#contratos" data-toggle="tab">Contratos</a>
                         <li><a href="#consultorios" data-toggle="tab">Consultorios</a>
                         </li>
                     </ul>
                     <div class="tab-content">
                         <article id="paciente" class="tab-pane active">
-                            {% include 'snippets/persona_fotografia.html'  with persona=persona %}
-                            {% include 'snippets/persona.html' with persona=persona %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                {% include 'snippets/persona_fotografia.html'  with persona=persona %}
+                                {% include 'snippets/persona.html' with persona=persona %}
+                                </div>
+                            </div>
+                            {% for contrato in persona.contratos.all %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <section class="page-header">
+                                                <h3>{{ contrato }}</h3>
+                                            </section>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-striped table-responsive">
+                                                <thead>
+                                                <tr>
+                                                    <th>Beneficio</th>
+                                                    <th>Precio</th>
+                                                    <th>Descuento</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for beneficio in contrato.plan.beneficios.all %}
+                                                    <tr>
+                                                        <td>{{ beneficio.nombre }}</td>
+                                                        <td>{{ beneficio.valor }}</td>
+                                                        <td>{{ beneficio.descuento }}%</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'contrato' contrato.id %}" class="btn btn-primary">Ver</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                {% for beneficiario in persona.beneficiarios.all %}
+                                    <li>
+                                        <a href="{% url 'contrato' beneficiario.contrato.id %}">{{ beneficiario.contrato }}</a>
+                                    </li>
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </article>
+                        <article id="clinico" class="tab-pane">
                             <a href="{% url 'persona-editar' persona.id %}"
                                class="btn btn-primary">Editar Datos</a>
                             {% include 'snippets/fisico.html' with fisico=persona.fisico %}
@@ -77,20 +129,6 @@
                                 {% include 'snippets/examen_list.html' with examenes=persona.examenes.all %}
                             </article>
                         {% endif %}
-                        <article id="contratos" class="tab-pane">
-                            <ul>
-                                {% for contrato in persona.contratos.all %}
-                                    <li>
-                                        <a href="{% url 'contrato' contrato.id %}">{{ contrato }}</a>
-                                    </li>
-                                {% endfor %}
-                                {% for beneficiario in persona.beneficiarios.all %}
-                                    <li>
-                                        <a href="{% url 'contrato' beneficiario.contrato.id %}">{{ beneficiario.contrato }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </article>
                         <article id="consultorios" class="tab-pane">
                             <h3>Consultorios</h3>
                             <ul>
