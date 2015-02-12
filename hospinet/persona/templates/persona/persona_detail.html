@@ -100,7 +100,7 @@
                             <a href="{% url 'persona-antecedente-editar' persona.id %}"
                                class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos
                                 Personales</a>
-                            {% include 'snippets/antecedente.html' with antecedente=persona.antecedente_familiar %}
+                            {% include 'snippets/antecedente_familiar.html' with antecedente=persona.antecedente_familiar %}
                             <a href="{% url 'persona-antecedente-familiar-editar' persona.id %}"
                                class="btn btn-primary">Editar Antecedentes
                                 Familiares</a>
