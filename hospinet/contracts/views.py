@@ -275,7 +275,7 @@ class ContratoFormMixin(CreateView, LoginRequiredMixin):
     def get_initial(self):
         """Agrega el :class:`Contrato` obtenido como el valor a utilizar en el
         formulario que será llenado posteriormente"""
-        initial = super(ContratoFormMixin, self).get_initial
+        initial = super(ContratoFormMixin, self).get_initial()
         initial = initial.copy()
         initial['contrato'] = self.contrato.id
         return initial
