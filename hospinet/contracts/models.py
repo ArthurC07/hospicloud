@@ -93,6 +93,8 @@ class Plan(TimeStampedModel):
 class Beneficio(TimeStampedModel):
     """Permite listar los posibles cobros a efectuar dentro de un :class`Plan`
     de :class:`contrato`"""
+    class Meta:
+        ordering = ["nombre"]
 
     plan = models.ForeignKey(Plan, related_name='beneficios')
     nombre = models.CharField(max_length=255, null=True, blank=True)

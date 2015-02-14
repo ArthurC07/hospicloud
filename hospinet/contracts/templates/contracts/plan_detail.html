@@ -18,9 +18,6 @@
                             <a href="#beneficios" data-toggle="tab">Beneficios</a>
                         </li>
                         <li>
-                            <a href="#contratos" data-toggle="tab">Contratos</a>
-                        </li>
-                        <li>
                             <a href="#limites" data-toggle="tab">L&iacute;mites</a>
                         </li>
                     </ul>
@@ -44,6 +41,7 @@
                                                     <th>Descuento</th>
                                                     <th>Observaci&oacute;n</th>
                                                     <th>Activo</th>
+                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -54,24 +52,12 @@
                                                         <td>{{ beneficio.descuento }}%</td>
                                                         <td>{{ beneficio.observacion }}</td>
                                                         <td>{{ beneficio.activo|yesno:"Sí,No" }}</td>
+                                                        <td><a class="btn btn-primary" href="{% url 'contracts-beneficio-edit' beneficio.id %}">Editar</a> </td>
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-                        </article>
-                        <article id="contrato" class="tab-pane">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <ul>
-                                        {% for contrato in plan.contratos.all %}
-                                            <li>
-                                                <a href="{% url 'contrato' contrato.id %}">{{ contrato }}</a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
                                 </div>
                             </div>
                         </article>

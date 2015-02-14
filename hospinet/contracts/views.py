@@ -244,6 +244,10 @@ class BeneficioCreateView(CreateView, PlanFormMixin):
     model = Beneficio
     form_class = BeneficioForm
 
+class BeneficioUpdateView(UpdateView, LoginRequiredMixin):
+    model = Beneficio
+    form_class = BeneficioForm
+
 
 class EmpresaSearchView(FormView, LoginRequiredMixin):
     form_class = EmpleadorChoiceForm

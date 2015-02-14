@@ -38,7 +38,7 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              PrecontratoDetailView, PrebeneficiarioCreateView,
                              PlanCreateView, BeneficioCreateView,
                              MasterContractDetailView, MasterContractCreateView,
-                             MasterContractProcessView)
+                             MasterContractProcessView, BeneficioUpdateView)
 
 
 urlpatterns = patterns('',
@@ -74,6 +74,10 @@ urlpatterns = patterns('',
                        url(r'^plan/(?P<plan>\d+)/beneficio/agregar$',
                            BeneficioCreateView.as_view(),
                            name='contracts-beneficio-add'),
+
+                       url(r'^plan/beneficio/(?P<pk>\d+)/edit$',
+                           BeneficioUpdateView.as_view(),
+                           name='contracts-beneficio-edit'),
 
                        url(r'^(?P<plan>\d+)/limite/agregar$',
                            LimiteEventoCreateView.as_view(),
