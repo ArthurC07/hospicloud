@@ -54,6 +54,8 @@
                                                 <th>Beneficio</th>
                                                 <th>Precio</th>
                                                 <th>Descuento</th>
+                                                <th>Observaci&oacute;n</th>
+                                                <th>Activo</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -62,6 +64,8 @@
                                                     <td>{{ beneficio.nombre }}</td>
                                                     <td>{{ beneficio.valor }}</td>
                                                     <td>{{ beneficio.descuento }}%</td>
+                                                    <td>{{ beneficio.observacion }}</td>
+                                                    <td>{{ beneficio.activo|yesno:"Sí,No" }}</td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
