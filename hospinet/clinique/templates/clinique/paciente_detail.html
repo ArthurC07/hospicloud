@@ -39,6 +39,11 @@
                             {% if paciente.persona.contratos %}
                                 {% include 'contracts/snippets/contracts.html' with persona=paciente.persona %}
                             {% endif %}
+                            {% if paciente.persona.beneficiarios %}
+                                {% for beneficiario in paciente.persona.beneficiarios.all %}
+                                    {% include 'contracts/snippets/contracts.html' with persona=beneficiario.contrato.persona %}
+                                {% endfor %}
+                            {% endif %}
                         </article>
                         <article id="clinico" class="tab-pane">
                                 <div class="info">
