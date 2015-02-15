@@ -21,8 +21,12 @@ from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago,
                               Meta, Autorizacion, Precontrato, MetodoPago,
                               Beneficio, Aseguradora, MasterContract)
 
+
+class BeneficioAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'activo')
+
+
 admin.site.register(Plan)
-admin.site.register(Beneficio)
 admin.site.register(Contrato)
 admin.site.register(TipoEvento)
 admin.site.register(Evento)
@@ -37,3 +41,4 @@ admin.site.register(Precontrato)
 admin.site.register(MetodoPago)
 admin.site.register(Aseguradora)
 admin.site.register(MasterContract)
+admin.site.register(Beneficio, BeneficioAdmin)

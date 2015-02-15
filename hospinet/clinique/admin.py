@@ -27,11 +27,6 @@ class ConsultorioAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'activo')
 
 
-class BeneficioAdmin(admin.ModelAdmin):
-    filter_horizontal = ('administradores',)
-    list_display = ('nombre', 'activo')
-
-
 admin.site.register(Paciente)
 admin.site.register(Cita)
 admin.site.register(Consulta)
@@ -43,4 +38,3 @@ admin.site.register(LecturaSignos)
 admin.site.register(OrdenMedica)
 admin.site.register(Cargo)
 admin.site.register(TipoCargo)
-admin.site.register(Beneficio, BeneficioAdmin)
