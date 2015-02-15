@@ -36,45 +36,9 @@
                                 <a href="{% url 'clinique-persona-edit' paciente.persona.id %}"
                                    class="btn btn-primary">Editar Datos</a>
                             </div>
-                            {% for contrato in paciente.persona.contratos.all %}
-                            <div class="row">
-                                <div class="col-md-12">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <section class="page-header">
-                                            <h3>{{ contrato }}</h3>
-                                        </section>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-striped table-responsive">
-                                            <thead>
-                                            <tr>
-                                                <th>Beneficio</th>
-                                                <th>Precio</th>
-                                                <th>Descuento</th>
-                                                <th>Observaci&oacute;n</th>
-                                                <th>Activo</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for beneficio in contrato.plan.beneficios.all %}
-                                                <tr>
-                                                    <td>{{ beneficio.nombre }}</td>
-                                                    <td>{{ beneficio.valor }}</td>
-                                                    <td>{{ beneficio.descuento }}%</td>
-                                                    <td>{{ beneficio.observacion }}</td>
-                                                    <td>{{ beneficio.activo|yesno:"Sí,No" }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <a href="{% url 'contrato' contrato.id %}" class="btn btn-primary">Ver</a>
-                            </div>
-                            {% endfor %}
+                            {% if paciente.persona.contratos %}
+                                {% include 'contracts/snippets/contracts.html' with persona=paciente.persona %}
+                            {% endif %}
                         </article>
                         <article id="clinico" class="tab-pane">
                                 <div class="info">
