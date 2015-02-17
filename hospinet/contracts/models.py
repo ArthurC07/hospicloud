@@ -126,9 +126,7 @@ class MasterContract(TimeStampedModel):
 
     def __unicode__(self):
 
-        return u"{1} de {2}".format(self.plan.nombre,
-                                    self.contratante.nombre,
-                                    self.aseguradora.nombre)
+        return self.plan.nombre + self.contratante.nombre + self.aseguradora.nombre
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`MasterContract`"""
