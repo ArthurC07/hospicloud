@@ -125,8 +125,12 @@ class MasterContract(TimeStampedModel):
     processed = models.BooleanField(default=False)
 
     def __unicode__(self):
-
-        return self.plan.nombre + self.contratante.nombre + self.aseguradora.nombre
+        nombre = self.plan.nombre
+        if self.contratante:
+            nombre += self.contratante.nombre
+        if self.aseguradora:
+            nombre += self.aseguradora.nombre
+        return nombre
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`MasterContract`"""
