@@ -46,7 +46,7 @@
                                 <a href="{% url 'persona-editar' persona.id %}"
                                    class="btn btn-primary">Editar Datos</a>
                             </div>
-                            {% if persona.contracts %}
+                            {% if persona.contratos %}
                                 {% include 'contracts/snippets/contracts.html' %}
                             {% endif %}
                             {% if persona.beneficiarios %}
