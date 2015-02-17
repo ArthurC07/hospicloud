@@ -79,7 +79,7 @@ class Paciente(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente-resume', args=[self.id])
+        return reverse('clinique-paciente', args=[self.id])
 
 
 class Consulta(TimeStampedModel):
