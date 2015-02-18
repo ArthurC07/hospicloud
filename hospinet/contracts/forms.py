@@ -255,7 +255,7 @@ class EmpleadorChoiceForm(FieldSetFormMixin):
 class MasterContractForm(FieldSetModelFormMixin):
     class Meta:
         model = MasterContract
-        fields = '__all__'
+        exclude = ('processed', )
 
     def __init__(self, *args, **kwargs):
         super(MasterContractForm, self).__init__(*args, **kwargs)
