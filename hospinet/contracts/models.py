@@ -120,8 +120,10 @@ class MasterContract(TimeStampedModel):
     vencimiento = models.DateField(default=timezone.now)
     contratante = models.ForeignKey(Empleador, blank=True, null=True,
                                     related_name='master_contracts')
-    archivo = models.FileField(upload_to='contracts/csv//%Y/%m/%d',
-                               blank=True, null=True)
+    poliza = models.IntegerField(default=0)
+    adicionales = models.IntegerField(default=0)
+    comision = models.IntegerField(default=0)
+    
     processed = models.BooleanField(default=False)
 
     def __unicode__(self):
