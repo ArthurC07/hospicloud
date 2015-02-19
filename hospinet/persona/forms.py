@@ -115,6 +115,9 @@ class PersonaForm(FieldSetModelFormMixin):
         model = Persona
         exclude = ('duplicado', )
 
+    class Media:
+        js = ('js/jquery.validate.min.js', 'js/persona.validator.js',)
+
     nacimiento = forms.DateField(widget=DateWidget(), required=False,
                                  initial=timezone.now)
     domicilio = forms.CharField(required=True)
@@ -122,6 +125,7 @@ class PersonaForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Persona', *self.field_names)
+        self.helper.form_id = "persona_form"
 
 
 class BasePersonaForm(FieldSetModelFormMixin):

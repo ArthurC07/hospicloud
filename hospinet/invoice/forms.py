@@ -41,6 +41,7 @@ class PersonaForm(FieldSetModelFormMixinNoButton):
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Datos del Cliente', *self.field_names)
+        self.helper.form_id = "persona_form"
 
 
 class ReciboForm(FieldSetModelFormMixin):

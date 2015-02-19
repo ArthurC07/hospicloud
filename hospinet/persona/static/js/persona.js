@@ -39,4 +39,4 @@ Persona.prototype.search_person = function (query, target)
     });
     target.append(resultado);
   });
-}
+};
