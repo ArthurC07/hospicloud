@@ -91,7 +91,7 @@ class Consulta(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return self.paciente.get_absolute_url()
 
 
 class LecturaSignos(TimeStampedModel):
