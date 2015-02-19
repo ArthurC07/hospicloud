@@ -189,6 +189,8 @@ class Contrato(TimeStampedModel):
     cancelado = models.BooleanField(default=False)
     empresa = models.ForeignKey(Empleador, blank=True, null=True,
                                 related_name='contratos')
+    poliza = models.IntegerField(default=0)
+    certificado = models.IntegerField(default=0)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""
@@ -280,6 +282,8 @@ class Beneficiario(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='beneficiarios')
     contrato = models.ForeignKey(Contrato, related_name='beneficiarios')
     inscripcion = models.DateTimeField(default=timezone.now)
+    activo = models.BooleanField(default=True)
+    dependiente = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.persona.nombre_completo()
