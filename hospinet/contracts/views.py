@@ -113,15 +113,12 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         self.get_fechas()
         self.create_forms(context)
         contratos = Contrato.objects.filter(inicio__gte=self.inicio,
-                                            plan__empresarial=False).filter(
-            inicio__lte=self.fin)
+                                            inicio__lte=self.fin)
         context['vendedores'] = Vendedor.objects.filter(habilitado=True).all()
 
         privados = Contrato.objects.filter(inicio__gte=self.inicio,
-                                           plan__empresarial=False,
                                            cancelado=False).all()
         empresariales = Contrato.objects.filter(inicio__gte=self.inicio,
-                                                plan__empresarial=True,
                                                 cancelado=False).all()
 
         context['consulta'] = Consulta.objects.filter(created__gte=self.inicio,
@@ -151,14 +148,12 @@ class IndexView(TemplateView, ContratoPermissionMixin):
 
         morosos = [c for c in
                    Contrato.objects.filter(vencimiento__gte=self.fin,
-                                           cancelado=False,
-                                           plan__empresarial=False).all() if
+                                           cancelado=False).all() if
                    c.dias_mora() > 0]
         context['mora'] = len(morosos)
         context['monto_mora'] = sum(c.mora() for c in morosos)
         context['ingresos'] = Contrato.objects.filter(
-            cancelado=False,
-            plan__empresarial=False).aggregate(Sum('plan__precio'))
+            cancelado=False).aggregate(Sum('plan__precio'))
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
@@ -166,23 +161,20 @@ class IndexView(TemplateView, ContratoPermissionMixin):
             fecha__gte=self.inicio).count()
         # TODO Hospitalizaciones y cirugias empresariales
         contratos_e = Contrato.objects.filter(inicio__gte=self.inicio,
-                                              plan__empresarial=True).filter(
-            inicio__lte=self.fin)
+                                              inicio__lte=self.fin)
         context['contratos_empresariales'] = contratos_e.count()
         context['hospitalizaciones'] = Admision.objects.filter(
             ingreso__gte=self.inicio).count()
         context['empresas'] = Empleador.objects.all()
         context['ingresos_empresa'] = Contrato.objects.filter(
-            cancelado=False,
-            plan__empresarial=True).aggregate(Sum('plan__precio'))
+            cancelado=False).aggregate(Sum('plan__precio'))
         morosos = [c for c in
-                   Contrato.objects.filter(vencimiento__lte=self.fin,
-                                           plan__empresarial=True).all() if
+                   Contrato.objects.filter(vencimiento__lte=self.fin).all() if
                    c.dias_mora() > 0]
         context['mora_empresa'] = len(morosos)
         context['monto_mora_empresa'] = sum(c.mora() for c in morosos)
         context['cancelaciones_empresa'] = Cancelacion.objects.filter(
-            fecha__gte=self.inicio, contrato__plan__empresarial=True).count()
+            fecha__gte=self.inicio).count()
 
         context['planes'] = Plan.objects.all()
 
@@ -441,7 +433,6 @@ class ContratoListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         return Contrato.objects.filter(
-            plan__empresarial=False,
             cancelado=False,
             vencimiento__gte=timezone.now().date).all()
 
@@ -466,7 +457,6 @@ class ContratoEmpresarialListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         return Contrato.objects.filter(
-            plan__empresarial=True,
             cancelado=False,
             vencimiento__gte=timezone.now().date).all()
 
@@ -484,7 +474,6 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
             self.contratos = Contrato.objects.filter(
                 inicio__gte=self.inicio,
                 inicio__lte=self.fin,
-                plan__empresarial=False
             )
         return super(ContratoPeriodoView, self).dispatch(request, *args,
                                                          **kwargs)
