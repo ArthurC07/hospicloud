@@ -68,13 +68,14 @@ class BeneficioForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(BeneficioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar un Beneficio', *self.field_names)
+        self.helper.layout = Fieldset(u'Agregar un Beneficio',
+                                      *self.field_names)
 
 
 class ContratoForm(FieldSetModelFormMixin):
     class Meta:
         model = Contrato
-        exclude = ('cancelado', 'empresa',)
+        exclude = ('cancelado',)
 
     vencimiento = forms.DateField(widget=FutureDateWidget)
     ultimo_pago = forms.DateTimeField(widget=DateTimeWidget(), required=False,
