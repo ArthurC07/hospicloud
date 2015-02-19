@@ -293,7 +293,7 @@ class PrecontratoForm(FieldSetModelFormMixin):
         model = Precontrato
         fields = ('metodo_de_pago', 'de_acuerdo', 'plan')
 
-    plan = forms.ModelChoiceField(queryset=Plan.objects.filter(precontrato=True))
+    plan = forms.ModelChoiceField()
 
     def __init__(self, *args, **kwargs):
         super(PrecontratoForm, self).__init__(*args, **kwargs)
