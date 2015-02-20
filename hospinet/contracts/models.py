@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import operator
 
 from django.contrib.auth.models import User
@@ -103,6 +103,84 @@ class Beneficio(TimeStampedModel):
         return self.plan.get_absolute_url()
 
 
+class PCD(TimeStampedModel):
+    persona = models.ForeignKey("Persona", related_name="pcds")
+    numero = models.IntegerField(unique=True)
+    pc = models.IntegerField(default=0)
+
+
+def check_line(line, vencimiento):
+    file_pcd = int(line[4])
+    file_certificado = int(line[6])
+    try:
+        pcd = PCD.objects.get(numero=file_pcd)
+        contratos = pcd.persona.contratos.filter(
+            certificado=file_certificado)
+
+        for contrato in contratos.all():
+            contrato.vencimiento = vencimiento
+            contrato.save()
+
+        for beneficiario in pcd.persona.beneficiarios.all():
+            beneficiario.contrato.vencimiento = vencimiento
+            beneficiario.contrato.save()
+
+    except ObjectDoesNotExist:
+        nombre_f, apellido_f = line[10].split(",")
+        nacimiento_f = datetime.strptime(line[16], "%d/%m/%Y")
+        sexo_f = line[15]
+
+        persona = Persona(nombre=nombre_f, apellido=apellido_f,
+                          sexo=sexo_f, nacimiento=nacimiento_f)
+        persona.save()
+        pcd = PCD(persona=persona, numero=file_pcd)
+        pcd.save()
+
+        dependiente = int(line[8])
+        poliza_f = int(line[5])
+
+        master = MasterContract.objects.get(poliza=poliza_f)
+
+        if dependiente == 0:
+
+            contract = master.create_contract(persona, vencimiento,
+                                              file_certificado)
+            contract.save()
+        else:
+            contract = Contrato.filter(poliza=poliza_f,
+                                       certificado=file_certificado).first()
+            if contract:
+                beneficiario = Beneficiario(persona=persona,
+                                            contrato=contract)
+                beneficiario.save()
+
+    except MultipleObjectsReturned:
+        pass
+
+
+class ImportFile(TimeStampedModel):
+    archivo = models.FileField(upload_to='/contracts/import')
+    processed = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        return reverse('contracts-import-file', args=[self.id])
+
+    def assign_contracts(self):
+        """Creates :class:`Contract`s for existing :class:`Persona`"""
+        if self.processed:
+            return
+
+        archivo = open(self.archivo.path, 'rU')
+        data = unicodecsv.reader(archivo)
+        vencimiento = self.created + timedelta(days=8)
+
+        # Create a :class:`Contract` for each identificacion on the file
+        results = (check_line(line, vencimiento) for line in data)
+
+        self.processed = True
+        self.save()
+
+
 class MasterContract(TimeStampedModel):
     vendedor = models.ForeignKey(Vendedor, related_name='master_contracts')
     plan = models.ForeignKey(Plan, related_name='master_contracts')
@@ -131,33 +209,13 @@ class MasterContract(TimeStampedModel):
 
         return reverse('contract-master', args=[self.id])
 
-    def assign_contracts(self):
-        """Creates :class:`Contract`s for existing :class:`Persona`"""
-        if self.processed:
-            return
+    def create_contract(self, persona, vencimiento, certificiado):
 
-        archivo = open(self.archivo.path, 'rU')
-        data = unicodecsv.reader(archivo)
+        contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
+                            inicio=self.inicio, vencimiento=vencimiento,
+                            certificiado=certificiado)
 
-        # Create a :class:`Contract` for each identificacion on the file
-        for line in data:
-            identificacion = line[0]
-            try:
-                persona = Persona.objects.get(identificacion=identificacion)
-                contrato = Contrato(persona=persona, plan=self.plan,
-                                    vendedor=self.vendedor,
-                                    vencimiento=self.vencimiento,
-                                    inicio=self.inicio,
-                                    empresa=self.contratante)
-                contrato.save()
-            except ObjectDoesNotExist:
-                pass
-            except MultipleObjectsReturned:
-                pass
-
-        # Mark the :class:`MasterContract` as processed
-        self.processed = True
-        self.save()
+        return contract
 
 
 class Contrato(TimeStampedModel):
@@ -183,6 +241,7 @@ class Contrato(TimeStampedModel):
                                 related_name='contratos')
     poliza = models.IntegerField(default=0)
     certificado = models.IntegerField(default=0)
+    titular = models.IntegerField(default=0)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""
