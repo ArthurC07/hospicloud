@@ -43,8 +43,7 @@ class Vendedor(TimeStampedModel):
 
     def get_contratos_vendidos(self, fecha, fin):
         return self.contratos.filter(inicio__gte=fecha, cancelado=False,
-                                     plan__empresarial=False).filter(
-            inicio__lte=fin)
+                                     inicio__lte=fin)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
@@ -85,6 +84,7 @@ class Plan(TimeStampedModel):
 class Beneficio(TimeStampedModel):
     """Permite listar los posibles cobros a efectuar dentro de un :class`Plan`
     de :class:`contrato`"""
+
     class Meta:
         ordering = ["nombre"]
 
@@ -115,7 +115,7 @@ class MasterContract(TimeStampedModel):
     poliza = models.IntegerField(default=0)
     adicionales = models.IntegerField(default=0)
     comision = models.IntegerField(default=0)
-    
+
     processed = models.BooleanField(default=False)
 
     def __unicode__(self):
