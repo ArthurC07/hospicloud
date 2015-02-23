@@ -116,7 +116,7 @@ def check_line(line, vencimiento):
         pcd = PCD.objects.get(numero=file_pcd)
         contratos = pcd.persona.contratos.filter(
             certificado=file_certificado)
-
+        
         for contrato in contratos.all():
             contrato.vencimiento = vencimiento
             contrato.save()
@@ -126,6 +126,7 @@ def check_line(line, vencimiento):
             beneficiario.contrato.save()
 
     except ObjectDoesNotExist:
+
         nombre_f, apellido_f = line[10].split(",")
         nacimiento_f = datetime.strptime(line[16], "%d/%m/%Y")
         sexo_f = line[15]
@@ -144,7 +145,7 @@ def check_line(line, vencimiento):
         if dependiente == 0:
 
             contract = master.create_contract(persona, vencimiento,
-                                              file_certificado)
+                                              file_certificado, file_pcd)
             contract.save()
         else:
             contract = Contrato.filter(poliza=poliza_f,
@@ -167,15 +168,16 @@ class ImportFile(TimeStampedModel):
 
     def assign_contracts(self):
         """Creates :class:`Contract`s for existing :class:`Persona`"""
-        if self.processed:
-            return
+        #if self.processed:
+        #    return
 
         archivo = open(self.archivo.path, 'rU')
         data = unicodecsv.reader(archivo)
         vencimiento = self.created + timedelta(days=8)
 
         # Create a :class:`Contract` for each identificacion on the file
-        results = (check_line(line, vencimiento) for line in data)
+        for line in data:
+            check_line(line, vencimiento)
 
         self.processed = True
         self.save()
@@ -209,11 +211,12 @@ class MasterContract(TimeStampedModel):
 
         return reverse('contract-master', args=[self.id])
 
-    def create_contract(self, persona, vencimiento, certificiado):
+    def create_contract(self, persona, vencimiento, certificiado, numero):
 
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=self.inicio, vencimiento=vencimiento,
-                            certificiado=certificiado)
+                            certificado=certificiado, numero=numero,
+                            vendedor=self.vendedor, empresa=self.contratante)
 
         return contract
 
