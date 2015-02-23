@@ -159,7 +159,7 @@ def check_line(line, vencimiento):
 
 
 class ImportFile(TimeStampedModel):
-    archivo = models.FileField(upload_to='/contracts/import')
+    archivo = models.FileField(upload_to='contracts/import/%Y/%m/%d')
     processed = models.BooleanField(default=False)
 
     def get_absolute_url(self):
