@@ -230,7 +230,7 @@ urlpatterns = patterns('',
 
                        url(r'^archivo/(?P<pk>\d+)$',
                            ImportFileDetailView.as_view(),
-                           name='contract-archivo'),
+                           name='contracts-archivo'),
 
                        url(r'^archivo/agregar$',
                            ImportFileCreateView.as_view(),

@@ -163,7 +163,7 @@ class ImportFile(TimeStampedModel):
     processed = models.BooleanField(default=False)
 
     def get_absolute_url(self):
-        return reverse('contracts-archivo-add', args=[self.id])
+        return reverse('contracts-archivo', args=[self.id])
 
     def assign_contracts(self):
         """Creates :class:`Contract`s for existing :class:`Persona`"""
