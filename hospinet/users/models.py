@@ -28,7 +28,6 @@ from persona.models import Persona
 
 
 class UserProfile(UserenaBaseProfile):
-    id = models.OneToOneField(User, db_column='id', primary_key=True)
     user = models.OneToOneField(User, related_name="profile",
                                 blank=True, null=True)
     inventario = models.ForeignKey(Inventario, related_name='usuarios',
