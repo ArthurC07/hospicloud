@@ -104,7 +104,7 @@ class Beneficio(TimeStampedModel):
 
 
 class PCD(TimeStampedModel):
-    persona = models.ForeignKey("Persona", related_name="pcds")
+    persona = models.ForeignKey(Persona, related_name="pcds")
     numero = models.IntegerField(unique=True)
     pc = models.IntegerField(default=0)
 
