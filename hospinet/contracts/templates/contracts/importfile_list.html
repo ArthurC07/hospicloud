@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <section class="col-md-12">
+            <div class="page-header">
+                <h1>Archivos de Importaci&oacute;n</h1>
+            </div>
+        </section>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="col-md-12 toolbox ">
+                <a href="{% url 'contrato-index' %}"
+                   class="btn btn-primary">Volver a Contratos</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12 table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Fecha Subida</th>
+                        <th>Archivo</th>
+                        <th>Ver</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for file in files %}
+                        <tr>
+                            <td>{{ file.created }}</td>
+                            <td><a href="{{ file.archivo.url }}">{{ file.archivo }}</a></td>
+                            <td>
+                                <a class="btn btn-success" href="{% url 'contracts-archivo' file.id %}">Ver</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

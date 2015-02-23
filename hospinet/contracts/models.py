@@ -116,7 +116,7 @@ def check_line(line, vencimiento):
         pcd = PCD.objects.get(numero=file_pcd)
         contratos = pcd.persona.contratos.filter(
             certificado=file_certificado)
-        
+
         for contrato in contratos.all():
             contrato.vencimiento = vencimiento
             contrato.save()
@@ -148,11 +148,11 @@ def check_line(line, vencimiento):
                                               file_certificado, file_pcd)
             contract.save()
         else:
-            contract = Contrato.filter(poliza=poliza_f,
-                                       certificado=file_certificado).first()
+            contract = Contrato.objects.filter(poliza=poliza_f,
+                                               certificado=file_certificado).first()
+
             if contract:
-                beneficiario = Beneficiario(persona=persona,
-                                            contrato=contract)
+                beneficiario = Beneficiario(persona=persona, contrato=contract)
                 beneficiario.save()
 
     except MultipleObjectsReturned:

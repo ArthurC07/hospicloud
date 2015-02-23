@@ -40,7 +40,7 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              MasterContractDetailView, MasterContractCreateView,
                              MasterContractProcessView, BeneficioUpdateView,
                              ImportFileDetailView, ImportFileCreateView,
-                             ImportFileProcessView)
+                             ImportFileProcessView, ImportFileListView)
 
 
 urlpatterns = patterns('',
@@ -235,6 +235,10 @@ urlpatterns = patterns('',
                        url(r'^archivo/agregar$',
                            ImportFileCreateView.as_view(),
                            name='contracts-archivo-add'),
+
+                       url(r'^archivo/lista$',
+                           ImportFileListView.as_view(),
+                           name='contracts-archivo-list'),
 
                        url(r'^archivo/(?P<pk>\d+)/procesar$',
                            ImportFileProcessView.as_view(),

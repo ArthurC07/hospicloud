@@ -866,3 +866,8 @@ class ImportFileProcessView(RedirectView, LoginRequiredMixin):
 
         messages.info(self.request, u'¡Archivo Importado Exitosamente!')
         return import_file.get_absolute_url()
+
+
+class ImportFileListView(ListView, LoginRequiredMixin):
+    model = ImportFile
+    context_object_name = 'files'
