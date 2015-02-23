@@ -45,11 +45,12 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              CancelacionForm, ContratoEmpresarialForm,
                              EmpleadorChoiceForm, VendedorPeriodoForm,
                              PrecontratoForm, PersonaPrecontratoForm,
-                             BeneficioForm, MasterContractForm)
+                             BeneficioForm, MasterContractForm, ImportFileForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Autorizacion,
-                              Prebeneficiario, Beneficio, MasterContract)
+                              Prebeneficiario, Beneficio, MasterContract,
+                              ImportFile)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
@@ -843,3 +844,25 @@ class MasterContractProcessView(RedirectView, LoginRequiredMixin):
 
         messages.info(self.request, u'¡Creados los contratos!')
         return master.get_absolute_url()
+
+
+class ImportFileCreateView(CreateView, LoginRequiredMixin):
+    model = ImportFile
+    form_class = ImportFileForm
+
+
+class ImportFileDetailView(DetailView, LoginRequiredMixin):
+    model = ImportFile
+    context_object_name = 'import_file'
+
+
+class ImportFileProcessView(RedirectView, LoginRequiredMixin):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        import_file = get_object_or_404(ImportFile, pk=kwargs['pk'])
+        import_file.assign_contracts()
+
+        messages.info(self.request, u'¡Archivo Importado Exitosamente!')
+        return import_file.get_absolute_url()

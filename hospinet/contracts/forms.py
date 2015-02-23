@@ -24,7 +24,7 @@ from select2.fields import ModelChoiceField
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Beneficio,
-                              MasterContract)
+                              MasterContract, ImportFile)
 from invoice.forms import PeriodoForm
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
@@ -298,3 +298,13 @@ class PrecontratoForm(FieldSetModelFormMixin):
         self.helper.layout = Fieldset(u'Preaprobar Contrato de Servicios',
                                       *self.field_names)
         self.helper.form_tag = False
+
+
+class ImportFileForm(FieldSetModelFormMixin):
+    class Meta:
+        model = ImportFile
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(ImportFileForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar Archivo', *self.field_names)
