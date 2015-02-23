@@ -16,7 +16,7 @@
                         <li class="active"><a href="#paciente" data-toggle="tab">Datos
                             Personales</a>
                         </li>
-                        <li><a href="#clinico" data-toggle="tab">Antecedentes</a>
+                        <li><a href="#antecedente" data-toggle="tab">Antecedentes</a>
                         </li>
                         <li><a href="#consulta_inicio"
                                               data-toggle="tab">Consultas</a>
@@ -44,7 +44,7 @@
                                 {% endfor %}
                             {% endif %}
                         </article>
-                        <article id="clinico" class="tab-pane">
+                        <article id="antecedente" class="tab-pane">
                                 <div class="info">
                                     {% include 'snippets/fisico.html' with fisico=paciente.persona.fisico %}
                                     <a href="{% url 'clinique-fisico-editar' paciente.persona.id %}"
