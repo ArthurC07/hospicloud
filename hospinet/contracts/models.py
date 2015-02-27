@@ -112,12 +112,15 @@ class PCD(TimeStampedModel):
 def check_line(line, vencimiento):
     file_pcd = int(line[4])
     file_certificado = int(line[6])
-    venc = datetime.strptime(line[21], '%d/%m/%Y')
 
-    if venc <= vencimiento:
-        vencimiento_r = venc
+    if line[21]:
+        venc = datetime.strptime(line[21], '%d/%m/%Y')
+        if venc <= vencimiento:
+            vencimiento_r = venc
+
     else:
         vencimiento_r = vencimiento
+    
     try:
         pcd = PCD.objects.get(numero=file_pcd)
         contratos = pcd.persona.contratos.filter(
