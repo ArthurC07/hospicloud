@@ -130,9 +130,11 @@ def check_line(line, vencimiento):
         nombre_f, apellido_f = line[10].split(",")
         nacimiento_f = datetime.strptime(line[16], "%d/%m/%Y")
         sexo_f = line[15]
+        identificacion = line[24]
 
         persona = Persona(nombre=nombre_f, apellido=apellido_f,
-                          sexo=sexo_f, nacimiento=nacimiento_f)
+                          sexo=sexo_f, nacimiento=nacimiento_f,
+                          identificacion=identificacion)
         persona.save()
         pcd = PCD(persona=persona, numero=file_pcd)
         pcd.save()
