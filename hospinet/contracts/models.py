@@ -112,17 +112,23 @@ class PCD(TimeStampedModel):
 def check_line(line, vencimiento):
     file_pcd = int(line[4])
     file_certificado = int(line[6])
+    venc = datetime.strptime(line[21], '%d/%m/%Y')
+
+    if venc <= vencimiento:
+        vencimiento_r = venc
+    else:
+        vencimiento_r = vencimiento
     try:
         pcd = PCD.objects.get(numero=file_pcd)
         contratos = pcd.persona.contratos.filter(
             certificado=file_certificado)
 
         for contrato in contratos.all():
-            contrato.vencimiento = vencimiento
+            contrato.vencimiento = vencimiento_r
             contrato.save()
 
         for beneficiario in pcd.persona.beneficiarios.all():
-            beneficiario.contrato.vencimiento = vencimiento
+            beneficiario.contrato.vencimiento = vencimiento_r
             beneficiario.contrato.save()
 
     except ObjectDoesNotExist:
@@ -146,7 +152,7 @@ def check_line(line, vencimiento):
 
         if dependiente == 0:
 
-            contract = master.create_contract(persona, vencimiento,
+            contract = master.create_contract(persona, vencimiento_r,
                                               file_certificado, file_pcd)
             contract.save()
         else:
