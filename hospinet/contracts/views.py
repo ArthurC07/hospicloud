@@ -169,7 +169,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
             cancelado=False).aggregate(Sum('plan__precio'))
         morosos = Contrato.objects.filter(vencimiento__lte=self.fin).all()
         context['mora_empresa'] = morosos.count()
-        
+
         context['cancelaciones_empresa'] = Cancelacion.objects.filter(
             fecha__gte=self.inicio).count()
 

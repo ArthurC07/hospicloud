@@ -107,13 +107,14 @@ class Beneficio(TimeStampedModel):
 
 class PCD(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name="pcds")
-    numero = models.IntegerField(unique=True)
+    numero = models.BigIntegerField(unique=True)
     pc = models.IntegerField(default=0)
 
 
 def check_line(line, vencimiento):
     file_pcd = int(line[4])
     file_certificado = int(line[6])
+    vencimiento_r = None
 
     if line[21]:
 
@@ -139,7 +140,7 @@ def check_line(line, vencimiento):
 
     except ObjectDoesNotExist:
 
-        nombre_f, apellido_f = line[10].split(",")
+        apellido_f, nombre_f = line[10].split(",")
         nacimiento_f = server_timezone.localize(
             datetime.strptime(line[16], "%m/%d/%Y"))
         sexo_f = line[15]
