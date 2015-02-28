@@ -117,13 +117,13 @@ def check_line(line, vencimiento):
 
     if line[21]:
 
-        venc = datetime.strptime(line[21], '%d/%m/%Y')
+        venc = datetime.strptime(line[21], '%m/%d/%Y')
         if venc <= vencimiento:
             vencimiento_r = server_timezone.localize(venc)
 
     else:
         vencimiento_r = vencimiento
-    
+
     try:
         pcd = PCD.objects.get(numero=file_pcd)
         contratos = pcd.persona.contratos.filter(
@@ -140,7 +140,8 @@ def check_line(line, vencimiento):
     except ObjectDoesNotExist:
 
         nombre_f, apellido_f = line[10].split(",")
-        nacimiento_f = datetime.strptime(line[16], "%d/%m/%Y")
+        nacimiento_f = server_timezone.localize(
+            datetime.strptime(line[16], "%m/%d/%Y"))
         sexo_f = line[15]
         identificacion = line[24]
 
@@ -182,7 +183,7 @@ class ImportFile(TimeStampedModel):
 
     def assign_contracts(self):
         """Creates :class:`Contract`s for existing :class:`Persona`"""
-        #if self.processed:
+        # if self.processed:
         #    return
 
         archivo = open(self.archivo.path, 'rU')
