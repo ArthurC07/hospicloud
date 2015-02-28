@@ -347,6 +347,14 @@ class Contrato(TimeStampedModel):
 
         return self.plan.precio * self.plan.comision
 
+    def activo(self):
+
+        if self.vencimiento <= timezone.now():
+            return False
+
+        else:
+            return True
+
 
 class Beneficiario(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='beneficiarios')
