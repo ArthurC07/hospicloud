@@ -26,14 +26,13 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
-import pytz
 import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
 from inventory.models import ItemTemplate
 from persona.models import Persona, Empleador
 
-server_timezone = pytz.timezone(timezone.get_current_timezone())
+server_timezone = timezone.get_current_timezone()
 
 
 class Vendedor(TimeStampedModel):
