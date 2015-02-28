@@ -229,7 +229,7 @@ class MasterContract(TimeStampedModel):
     def create_contract(self, persona, vencimiento, certificiado, numero):
 
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
-                            inicio=self.inicio, vencimiento=vencimiento,
+                            inicio=timezone.now(), vencimiento=vencimiento,
                             certificado=certificiado, numero=numero,
                             vendedor=self.vendedor, empresa=self.contratante)
 
