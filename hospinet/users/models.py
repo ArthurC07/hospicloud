@@ -46,7 +46,7 @@ User.userena_signup = property(lambda u: UserenaSignup.objects.get_or_create(use
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        profile = UserProfile.objects.create(id=instance, user=instance)
+        profile = UserProfile.objects.create(user=instance)
         profile.save()
         assign_perm('change_profile', instance, instance.profile)
 
