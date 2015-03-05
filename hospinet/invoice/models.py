@@ -25,7 +25,7 @@ from django.db.models.fields.related import ForeignKey
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 
-from persona.models import Persona
+from persona.models import Persona, persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
 from spital.models import Deposito
 
@@ -389,3 +389,14 @@ class CierreTurno(TimeStampedModel):
 
         return reverse('invoice-turno', args=[self.turno.id])
 
+
+def consolidate_invoice(persona, clone):
+    [move_invoice(persona, recibo) for recibo in clone.recibos.all()]
+
+
+def move_invoice(persona, recibo):
+    recibo.paciente = persona
+    recibo.save()
+
+
+persona_consolidation_functions.append(consolidate_invoice)

@@ -286,7 +286,7 @@ class AntecedenteObstetrico(models.Model):
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
 
     persona = models.OneToOneField(Persona, primary_key=True,
-                                related_name='antecedente_obstetrico')
+                                   related_name='antecedente_obstetrico')
 
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)
@@ -308,11 +308,9 @@ class Empleador(TimeStampedModel):
     direccion = models.TextField()
 
     def __unicode__(self):
-
         return self.nombre
 
     def get_absolute_url(self):
-
         return reverse('empresa', args=[self.id])
 
 
@@ -323,7 +321,6 @@ class Sede(TimeStampedModel):
     direccion = models.TextField()
 
     def __unicode__(self):
-
         return u'{0} de {1}'.format(self.lugar, self.empleador.nombre)
 
 
@@ -370,3 +367,25 @@ def create_persona(sender, instance, created, **kwargs):
 
 
 post_save.connect(create_persona, sender=Persona)
+
+
+persona_consolidation_functions = []
+
+
+def consolidate_into_persona(persona):
+    clones = Persona.objects.filter(nombre=persona.nombre, duplicado=True,
+                                    apellido=persona.apellido,
+                                    identificacion=persona.identificacion).exclude(
+        pk=persona.pk)
+
+    [move_persona(persona, clone) for clone in clones.all()]
+
+
+def move_persona(persona, clone):
+    [function(persona, clone) for function in persona_consolidation_functions]
+    clone.delete()
+
+
+def transfer_object_to_persona(entity, persona):
+    entity.persona = persona
+    entity.save()

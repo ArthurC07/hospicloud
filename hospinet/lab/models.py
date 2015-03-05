@@ -16,7 +16,8 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
-from persona.models import Persona
+from persona.models import Persona, transfer_object_to_persona, \
+    persona_consolidation_functions
 
 
 class Resultado(TimeStampedModel):
@@ -35,3 +36,11 @@ class Resultado(TimeStampedModel):
         o editar un :class:`Resultado`"""
 
         return self.persona.get_absolute_url()
+
+
+def consolidate_contracts(persona, clone):
+    [transfer_object_to_persona(resultado, persona) for resultado in
+     clone.resultados.all()]
+
+
+persona_consolidation_functions.append(consolidate_contracts)

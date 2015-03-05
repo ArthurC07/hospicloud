@@ -24,7 +24,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 
-from persona.models import Persona
+from persona.models import Persona, transfer_object_to_persona, \
+    persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -194,3 +195,11 @@ class Cobro(TimeStampedModel):
     def total(self):
 
         return self.cargo.precio_de_venta * self.cantidad
+
+
+def consolidate_emergency(persona, clone):
+    [transfer_object_to_persona(emergency, persona) for emergency in
+     clone.emergencias.all()]
+
+
+persona_consolidation_functions.append(consolidate_emergency())

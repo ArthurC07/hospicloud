@@ -99,23 +99,23 @@ class SignoVital(models.Model, Turno):
 
 
 Admision.temperatura_promedio = property(lambda a:
-sum(s.temperatura for s
-    in a.signos_vitales.all())
-/ a.signos_vitales.count())
+                                         sum(s.temperatura for s
+                                             in a.signos_vitales.all())
+                                         / a.signos_vitales.count())
 
 Admision.pulso_promedio = property(lambda a:
-sum(s.pulso for s in a.signos_vitales.all())
-/ a.signos_vitales.count())
+                                   sum(s.pulso for s in a.signos_vitales.all())
+                                   / a.signos_vitales.count())
 
 Admision.presion_sistolica_promedio = property(lambda a:
-sum(s.presion_sistolica for s
-    in a.signos_vitales.all())
-/ a.signos_vitales.count())
+                                               sum(s.presion_sistolica for s
+                                                   in a.signos_vitales.all())
+                                               / a.signos_vitales.count())
 
 Admision.presion_diastolica_promedio = property(lambda a:
-sum(s.presion_diastolica for s
-    in a.signos_vitales.all())
-/ a.signos_vitales.count())
+                                                sum(s.presion_diastolica for s
+                                                    in a.signos_vitales.all())
+                                                / a.signos_vitales.count())
 
 
 class Evolucion(models.Model):
@@ -157,7 +157,6 @@ class Cargo(TimeStampedModel, Precio):
         return reverse('enfermeria-cargo-agregar', args=[self.admision.id])
 
     def subtotal(self):
-
         return (self.cantidad * self.precio_unitario()).quantize(dot01)
 
     def valor(self):

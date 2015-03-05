@@ -25,7 +25,8 @@ from django.contrib.auth.models import User
 from django_extensions.db.fields import UUIDField
 from django_extensions.db.models import TimeStampedModel
 
-from persona.models import Persona
+from persona.models import Persona, transfer_object_to_persona, \
+    persona_consolidation_functions
 from emergency.models import Emergencia
 from inventory.models import ItemTemplate, TipoVenta
 
@@ -342,7 +343,7 @@ class Admision(models.Model):
         self.fecha_alta = day
         self.estado = 'C'
         self.fecha_alta = timezone.now()
-        (m.suspender() for m in self.medicamentos.all())
+        [m.suspender() for m in self.medicamentos.all()]
         self.save()
 
     def actualizar_tiempo(self):
@@ -498,3 +499,15 @@ class Deposito(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('admision-view-id', args=[self.admision.id])
+
+
+def consolidate_spital(persona, clone):
+    [move_admision(persona, admision) for admision in clone.admisiones.all()]
+
+
+def move_admision(persona, admision):
+    admision.paciente = persona
+    admision.save()
+
+
+persona_consolidation_functions.append(consolidate_spital)

@@ -30,7 +30,9 @@ import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
 from inventory.models import ItemTemplate
-from persona.models import Persona, Empleador
+from persona.models import Persona, Empleador, transfer_object_to_persona, \
+    persona_consolidation_functions
+
 
 server_timezone = timezone.get_current_timezone()
 
@@ -185,7 +187,7 @@ class ImportFile(TimeStampedModel):
     def assign_contracts(self):
         """Creates :class:`Contract`s for existing :class:`Persona`"""
         # if self.processed:
-        #    return
+        # return
 
         archivo = open(self.archivo.path, 'rU')
         data = unicodecsv.reader(archivo)
@@ -503,3 +505,16 @@ class Autorizacion(TimeStampedModel):
 
     def __unicode__(self):
         return self.imagen.name
+
+
+def consolidate_contracts(persona, clone):
+    [transfer_object_to_persona(contrato, persona) for contrato in
+     clone.contratos.all()]
+
+    [transfer_object_to_persona(beneficiario, persona) for beneficiario in
+     clone.beneficiarios.all()]
+
+    [transfer_object_to_persona(pcd, persona) for pcd in clone.pcds.all()]
+
+
+persona_consolidation_functions.append(consolidate_contracts)

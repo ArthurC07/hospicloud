@@ -22,7 +22,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from inventory.models import ItemTemplate, Inventario
-from persona.models import Persona
+from persona.models import Persona, transfer_object_to_persona, \
+    persona_consolidation_functions
 
 
 class TipoConsulta(models.Model):
@@ -307,3 +308,22 @@ class Reporte(TimeStampedModel):
     def get_absolute_url(self):
 
         return self.consultorio.get_absolute_url()
+
+
+def consolidate_clinique(persona, clone):
+    [transfer_object_to_persona(paciente, persona) for paciente in
+     clone.pacientes.all()]
+
+    [transfer_object_to_persona(espera, persona) for espera in
+     clone.esperas.all()]
+
+    [transfer_object_to_persona(signos, persona) for signos in
+     clone.lecturas_signos.all()]
+
+    [transfer_object_to_persona(cita, persona) for cita in
+     clone.citas.all()]
+
+    [transfer_object_to_persona(pcd, persona) for pcd in clone.pcds.all()]
+
+
+persona_consolidation_functions.append(consolidate_clinique)
