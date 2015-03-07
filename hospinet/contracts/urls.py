@@ -41,7 +41,8 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              MasterContractProcessView, BeneficioUpdateView,
                              ImportFileDetailView, ImportFileCreateView,
                              ImportFileProcessView, ImportFileListView,
-                             PlanCloneView, PlanUpdateView)
+                             PlanCloneView, PlanUpdateView,
+                             MasterContractListView)
 
 
 urlpatterns = patterns('',
@@ -228,6 +229,11 @@ urlpatterns = patterns('',
                        url(r'^contrato/maestro/(?P<pk>\d+)$',
                            MasterContractDetailView.as_view(),
                            name='contract-master'),
+
+
+                       url(r'^contrato/maestro/list$',
+                           MasterContractListView.as_view(),
+                           name='contract-master-list'),
 
                        url(r'^contrato/maestro/agregar$',
                            MasterContractCreateView.as_view(),

@@ -852,6 +852,11 @@ class MasterContractCreateView(CreateView, LoginRequiredMixin):
     form_class = MasterContractForm
 
 
+class MasterContractListView(ListView, LoginRequiredMixin):
+    model = MasterContract
+    context_object_name = 'contratos'
+
+
 class MasterContractProcessView(RedirectView, LoginRequiredMixin):
 
     permanent = False
