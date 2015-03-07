@@ -198,6 +198,28 @@ class PlanListView(ListView, LoginRequiredMixin):
     context_object_name = 'planes'
 
 
+class PlanCloneView(RedirectView, LoginRequiredMixin):
+    """Allows cloning :class:`Plan` and its related member"""
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        plan = get_object_or_404(Plan, pk=kwargs['pk'])
+        plan.pk = None
+        plan.save()
+        clone = plan
+
+        plan = get_object_or_404(Plan, pk=kwargs['pk'])
+
+        for beneficio in plan.beneficios.all():
+            beneficio.plan = clone
+            beneficio.pk = None
+            beneficio.save()
+
+        messages.info(self.request, u'¡Plan Copiado Exitosamente!')
+        return plan.get_absolute_url()
+
+
 class PlanMixin(View):
     def dispatch(self, *args, **kwargs):
         self.plan = get_object_or_404(Plan, pk=kwargs['plan'])
