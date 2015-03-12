@@ -172,7 +172,7 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         form = PersonaSearchForm(self.request.GET)
 
-        #if not form.is_valid():
+        # if not form.is_valid():
         #    redirect('admision-estadisticas')
         form.is_valid()
 

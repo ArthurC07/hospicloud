@@ -21,7 +21,7 @@
               <td>{{ receta.medicamentos }}</td>
               <td>{{ receta.notas_adicionales }}</td>
               <td>
-                <a href="{% url consultorio-consulta-view consulta.id %}">Ver</a>
+                <a href="{% url 'consultorio-consulta-view' consulta.id %}">Ver</a>
               </td>
             </tr>
           {% endfor %}

@@ -40,7 +40,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Honorario,
                                 Medicamento, Dosis, Devolucion, Sumario,
                                 OxigenoTerapia)
 from spital.models import Admision
-from spital.views import AdmisionFormMixin
+# from spital.views import AdmisionFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -74,7 +74,7 @@ class NightingaleIndexView(ListView, EnfermeriaPermissionMixin):
         context['puntos'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
                                                                        admisiones[
                                                                            n]
-                                                                           .tiempo_hospitalizacion())
+                                                                       .tiempo_hospitalizacion())
                                                    for n in
                                                    range(self.queryset.count()))
 

@@ -34,7 +34,7 @@ class OrderedCountryField(CountryField):
             if sort == 'Name':
                 choices = sorted(choices, key=itemgetter(1))
             else:
-                pass  #right now choices is sorted by code already
+                pass  # right now choices is sorted by code already
         if ordered:
             choices_in_ordered = {}
             ordered_choices = []
@@ -60,8 +60,8 @@ add_introspection_rules([
                                 # Class(es) these apply to
                                 [],  # Positional arguments (not used)
                                 {  # Keyword argument
-                                   #"ordered": ["ordered", {}],
-                                   #"sort": ["sort", {}],
+                                    # "ordered": ["ordered", {}],
+                                    # "sort": ["sort", {}],
                                 },
                             ),
                         ], ["^persona\.fields\.OrderedCountryField"])

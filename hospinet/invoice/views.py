@@ -966,11 +966,6 @@ class CierreTurnoCreateView(TurnoCajaFormMixin):
     form_class = CierreTurnoForm
 
 
-class TurnoCajaUpdateView(UpdateView, LoginRequiredMixin):
-    model = TurnoCaja
-    form_class = TurnoCajaCierreForm
-
-
 class DepositoDetailView(DetailView, LoginRequiredMixin):
     model = Deposito
     context_object_name = 'deposito'

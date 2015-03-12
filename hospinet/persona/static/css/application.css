@@ -107,7 +107,7 @@ table caption {
     margin-bottom: 15px;
     position: relative;
     text-align: center;
-    text-shadow: 0px 0px 4px #acacac;
+    text-shadow: 0 0 4px #acacac;
     filter: dropshadow(color=#acacac, offx=0, offy=0);
 }
 

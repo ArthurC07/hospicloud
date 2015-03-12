@@ -23,12 +23,12 @@ from tastypie.resources import ModelResource
 from django.db.models.query_utils import Q
 from tastypie import fields
 
+
 class MedicamentoResource(ModelResource):
     cargo = fields.ForeignKey('inventory.api.ItemTemplateResource', 'cargo', full=True)
     admision = fields.ForeignKey('spital.api.AdmisionResource', 'admision', full=True)
-    
+
     class Meta:
-        
         queryset = Medicamento.objects.filter(Q(estado=1))
         authorization = ReadOnlyAuthorization()
         authentication = MultiAuthentication(SessionAuthentication(),

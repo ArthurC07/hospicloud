@@ -20,7 +20,7 @@ Spital.prototype.search_person = function(query, target)
       target.append(article);
     })
   });
-}
+};
 
 Spital.prototype.fiadores = function(query, target, admision)
 {
@@ -39,7 +39,7 @@ Spital.prototype.fiadores = function(query, target, admision)
       target.append(article);
     })
   });
-}
+};
 
 Spital.prototype.referencias = function(query, target, admision)
 {
@@ -58,4 +58,4 @@ Spital.prototype.referencias = function(query, target, admision)
       target.append(article);
     })
   });
-}
+};

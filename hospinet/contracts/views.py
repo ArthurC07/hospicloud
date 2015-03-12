@@ -656,8 +656,7 @@ class VendedorPeriodoView(TemplateView, LoginRequiredMixin):
         context['contratos'] = self.contratos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
-        context['comision'] = \
-        self.contratos.aggregate(total=Sum('plan__comision'))['total']
+        context['comision'] = self.contratos.aggregate(total=Sum('plan__comision'))['total']
 
         return context
 
@@ -805,7 +804,6 @@ class PrecontratoCreateView(CreateWithInlinesView):
     inlines = [PrecontratoInline, ]
 
     def get_success_url(self):
-
         precontrato = self.object.precontratos.first()
 
         url = self.request.build_absolute_uri(precontrato.get_absolute_url())
@@ -858,7 +856,6 @@ class MasterContractListView(ListView, LoginRequiredMixin):
 
 
 class MasterContractProcessView(RedirectView, LoginRequiredMixin):
-
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -880,7 +877,6 @@ class ImportFileDetailView(DetailView, LoginRequiredMixin):
 
 
 class ImportFileProcessView(RedirectView, LoginRequiredMixin):
-
     permanent = False
 
     def get_redirect_url(self, **kwargs):
