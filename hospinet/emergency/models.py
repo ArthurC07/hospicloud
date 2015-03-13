@@ -202,4 +202,4 @@ def consolidate_emergency(persona, clone):
      clone.emergencias.all()]
 
 
-persona_consolidation_functions.append(consolidate_emergency())
+persona_consolidation_functions.append(consolidate_emergency)
