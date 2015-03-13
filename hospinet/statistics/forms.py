@@ -5,10 +5,9 @@ from persona.forms import FieldSetFormMixin
 
 
 class ReporteAnualForm(FieldSetFormMixin):
-    
     anio = forms.IntegerField(label=_(u'Año'))
 
+
 class ReporteMensualForm(FieldSetFormMixin):
-    
     anio = forms.IntegerField(label=_(u'Año'))
     mes = forms.IntegerField()
