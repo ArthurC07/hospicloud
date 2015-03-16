@@ -24,7 +24,8 @@ from persona.models import (Persona, EstiloVida, Fisico, Antecedente,
 
 class PersonaAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'apellido', 'identificacion')
-    list_filter = ('nombre', 'apellido', 'identificacion')
+    ordering = ['nombre', 'apellido', 'identificacion']
+    search_fields = ['nombre', 'apellido', 'identificacion']
 
 
 admin.site.register(Persona, PersonaAdmin)
