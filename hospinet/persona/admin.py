@@ -22,7 +22,12 @@ from persona.models import (Persona, EstiloVida, Fisico, Antecedente,
                             AntecedenteFamiliar, Empleador, Empleo, Sede)
 
 
-admin.site.register(Persona)
+class PersonaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'apellido', 'identificacion')
+    list_filter = ('nombre', 'apellido', 'identificacion')
+
+
+admin.site.register(Persona, PersonaAdmin)
 admin.site.register(Fisico)
 admin.site.register(EstiloVida)
 admin.site.register(Antecedente)
