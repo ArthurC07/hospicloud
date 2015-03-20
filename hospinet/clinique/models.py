@@ -166,6 +166,8 @@ class Cita(TimeStampedModel):
         espera.consultorio = self.consultorio
         espera.persona = self.persona
 
+        return espera
+
 
 class Seguimiento(TimeStampedModel):
     """Representa las consultas posteriores que sirven como seguimiento a la
