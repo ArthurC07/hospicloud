@@ -23,7 +23,7 @@ from persona.models import (Persona, EstiloVida, Fisico, Antecedente,
 
 
 class PersonaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre', 'apellido', 'identificacion')
+    list_display = ('nombre', 'apellido', 'id', 'identificacion')
     ordering = ['id', 'nombre', 'apellido', 'identificacion']
     search_fields = ['nombre', 'apellido', 'identificacion']
 
