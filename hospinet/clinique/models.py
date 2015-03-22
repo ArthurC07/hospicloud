@@ -150,6 +150,7 @@ class Cita(TimeStampedModel):
                                 null=True)
     fecha = models.DateTimeField(blank=True, null=True, default=timezone.now)
     ausente = models.BooleanField(default=False)
+    atendida = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -165,6 +166,8 @@ class Cita(TimeStampedModel):
         espera = Espera()
         espera.consultorio = self.consultorio
         espera.persona = self.persona
+        self.atendida = True
+        self.save()
 
         return espera
 

@@ -133,7 +133,7 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         context['citas'] = Cita.objects.filter(consultorio=self.object,
                                                fecha__gte=timezone.now().date(),
                                                fecha__lte=self.fin,
-                                               ausente=False)
+                                               ausente=False, atendida=False)
 
         return context
 
@@ -761,6 +761,7 @@ class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         cita = get_object_or_404(Cita, pk=kwargs['pk'])
         espera = cita.to_espera()
+        cita
         espera.save()
         messages.info(self.request, u'¡Se envio el paciente a salada de espera!')
         return espera.get_absolute_url()
