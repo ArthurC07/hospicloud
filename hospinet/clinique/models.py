@@ -320,7 +320,7 @@ def consolidate_clinique(persona, clone):
      clone.pacientes.all()]
 
     [transfer_object_to_persona(espera, persona) for espera in
-     clone.esperas.all()]
+     clone.espera.all()]
 
     [transfer_object_to_persona(signos, persona) for signos in
      clone.lecturas_signos.all()]

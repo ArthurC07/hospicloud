@@ -16,3 +16,4 @@ simplejson
 six
 unicodecsv
 pytz
+django-picklefield

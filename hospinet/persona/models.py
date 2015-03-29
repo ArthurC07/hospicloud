@@ -372,17 +372,38 @@ post_save.connect(create_persona, sender=Persona)
 persona_consolidation_functions = []
 
 
+def remove_duplicates():
+    count = Persona.objects.filter(duplicado=True).count()
+    persona = Persona.objects.filter(duplicado=True).first()
+
+    if count == 1:
+        persona.duplicado = False
+        persona.save()
+
+    while persona and count > 1:
+        print(persona)
+        consolidate_into_persona(persona)
+        persona = Persona.objects.filter(duplicado=True).first()
+        count = Persona.objects.filter(duplicado=True).count()
+
+
 def consolidate_into_persona(persona):
-    clones = Persona.objects.filter(nombre=persona.nombre, duplicado=True,
-                                    apellido=persona.apellido,
+    clones = Persona.objects.filter(nombre__iexact=persona.nombre, duplicado=True,
+                                    apellido__iexact=persona.apellido,
                                     identificacion=persona.identificacion).exclude(
         pk=persona.pk)
+    print(clones.count())
+    for clone in clones.all():
+        print(clone)
 
     [move_persona(persona, clone) for clone in clones.all()]
+    persona.duplicado = False
+    persona.save()
 
 
 def move_persona(persona, clone):
     [function(persona, clone) for function in persona_consolidation_functions]
+    print(u"Removing persona")
     clone.delete()
 
 
