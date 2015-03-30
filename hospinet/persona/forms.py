@@ -231,7 +231,7 @@ class EmpleadorForm(FieldSetModelFormMixin):
         model = Empleador
 
     def __init__(self, *args, **kwargs):
-        super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)
+        super(EmpleadorForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Datos del Empleador', *self.field_names)
 
 
