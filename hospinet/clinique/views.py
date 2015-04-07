@@ -16,7 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
 from collections import defaultdict
-from datetime import time
+from datetime import time, timedelta
 from django.contrib import messages
 
 from django.core.urlresolvers import reverse
@@ -131,7 +131,7 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
 
         context['total'] = sum(e.tiempo() for e in queryset.all())
         context['citas'] = Cita.objects.filter(consultorio=self.object,
-                                               fecha__gte=timezone.now().date(),
+                                               fecha__gte=self.today,
                                                fecha__lte=self.fin,
                                                ausente=False, atendida=False)
 
@@ -144,12 +144,16 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         return queryset
 
     def get_fechas(self):
-        now = date.today()
+        tz = timezone.get_current_timezone()
+        now = timezone.now()
+        day = timedelta(days=1)
+        self.yesterday = now - day
+        self.today = tz.localize(datetime.combine(now, time.min))
         self.fin = date(now.year, now.month,
                         calendar.monthrange(now.year, now.month)[1])
         self.inicio = date(now.year, now.month, 1)
-        self.inicio = datetime.combine(self.inicio, time.min)
-        self.fin = datetime.combine(self.fin, time.max)
+        self.inicio = tz.localize(datetime.combine(self.inicio, time.min))
+        self.fin = tz.localize(datetime.combine(self.fin, time.max))
 
 
 class PacienteSearchView(ListView, LoginRequiredMixin):
