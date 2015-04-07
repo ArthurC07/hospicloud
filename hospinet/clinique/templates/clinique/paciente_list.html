@@ -23,10 +23,10 @@
             {% for paciente in pacientes %}
             <tr>
                 <td>{{ paciente.identificacion }}</td>
-                <td><a href="{% url 'clinique-paciente' paciente.id %}">{{ paciente }}</a></td>
+                <td>{{ paciente }}</td>
                 <td>{{ paciente.persona.obtener_edad }}</td>
                 <td>
-                    <a class="btn btn-success" href="{% url 'clinique-paciente-delete' paciente.id %}"><i class="fa fa-trash-o"></i> Eliminar</a>
+                    <a href="{% url 'clinique-paciente' paciente.id %}">Ver</a>
                 </td>
             </tr>
             {% endfor %}
