@@ -850,6 +850,22 @@ class MasterContractCreateView(CreateView, LoginRequiredMixin):
     form_class = MasterContractForm
 
 
+class MasterContractUpdateView(UpdateView, LoginRequiredMixin):
+    model = MasterContract
+    form_class = MasterContractForm
+
+    def form_valid(self, form):
+        """Ademas de registrar la """
+
+        self.object = form.save()
+
+        for contrato in self.object.contratos.all():
+            contrato.plan = self.object.plan
+            contrato.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
 class MasterContractListView(ListView, LoginRequiredMixin):
     model = MasterContract
     context_object_name = 'contratos'

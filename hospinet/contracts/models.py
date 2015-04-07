@@ -116,7 +116,10 @@ class PCD(TimeStampedModel):
 def check_line(line, vencimiento):
     file_pcd = int(line[4])
     file_certificado = int(line[6])
+    poliza_f = int(line[5])
     vencimiento_r = None
+
+    master = MasterContract.objects.get(poliza=poliza_f)
 
     if line[21]:
 
@@ -134,6 +137,8 @@ def check_line(line, vencimiento):
 
         for contrato in contratos.all():
             contrato.vencimiento = vencimiento_r
+            contrato.plan = master.plan
+            contrato.master = master
             contrato.save()
 
         for beneficiario in pcd.persona.beneficiarios.all():
@@ -156,9 +161,6 @@ def check_line(line, vencimiento):
         pcd.save()
 
         dependiente = int(line[8])
-        poliza_f = int(line[5])
-
-        master = MasterContract.objects.get(poliza=poliza_f)
 
         if dependiente == 0:
 
@@ -234,7 +236,7 @@ class MasterContract(TimeStampedModel):
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=timezone.now(), vencimiento=vencimiento,
                             certificado=certificiado, numero=numero,
-                            vendedor=self.vendedor, empresa=self.contratante)
+                            vendedor=self.vendedor, empresa=self.contratante, master=self)
 
         return contract
 
@@ -263,6 +265,7 @@ class Contrato(TimeStampedModel):
     poliza = models.IntegerField(default=0)
     certificado = models.IntegerField(default=0)
     titular = models.IntegerField(default=0)
+    master = models.ForeignKey(MasterContract, related_name='contratos', blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""

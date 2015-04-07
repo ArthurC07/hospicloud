@@ -42,7 +42,7 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              ImportFileDetailView, ImportFileCreateView,
                              ImportFileProcessView, ImportFileListView,
                              PlanCloneView, PlanUpdateView,
-                             MasterContractListView)
+                             MasterContractListView, MasterContractUpdateView)
 
 
 urlpatterns = patterns('',
@@ -230,6 +230,9 @@ urlpatterns = patterns('',
                            MasterContractDetailView.as_view(),
                            name='contract-master'),
 
+                       url(r'^contrato/maestro/(?P<pk>\d+)/edit$',
+                           MasterContractUpdateView.as_view(),
+                           name='contract-master-edit'),
 
                        url(r'^contrato/maestro/list$',
                            MasterContractListView.as_view(),
