@@ -32,6 +32,11 @@ class Localidad(TimeStampedModel):
     habilitado = models.BooleanField(default=True)
 
 
+class Especialidad(TimeStampedModel):
+    nombre = models.CharField(max_length=50)
+    habilitado = models.BooleanField(default=True)
+
+
 class TipoConsulta(models.Model):
     tipo = models.CharField(max_length=50)
     habilitado = models.BooleanField(default=True)
@@ -55,6 +60,8 @@ class Consultorio(TimeStampedModel):
                                              related_name='consultorios_administrados')
     localidad = models.ForeignKey(Localidad, related_name='consultorios',
                                   blank=True, null=True)
+    especialidad = models.ForeignKey(Especialidad, related_name='consultorios',
+                                     blank=True, null=True)
     activo = models.BooleanField(default=True)
 
     def __unicode__(self):

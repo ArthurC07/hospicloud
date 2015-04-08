@@ -471,10 +471,6 @@ class PreAdmision(TimeStampedModel):
             self.emergencia.persona.nombre_completo(), self.completada)
 
 
-class Especialidad(TimeStampedModel):
-    nombre = models.CharField(max_length=50)
-
-
 class Doctor(TimeStampedModel):
     nombre = models.CharField(max_length=50)
 
