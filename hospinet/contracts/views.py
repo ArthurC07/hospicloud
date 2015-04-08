@@ -304,16 +304,9 @@ class ContratoFormMixin(CreateView, LoginRequiredMixin):
         return super(ContratoFormMixin, self).dispatch(*args, **kwargs)
 
 
-class ContratoCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
+class ContratoCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
     model = Contrato
     form_class = ContratoForm
-
-    def get_context_data(self, **kwargs):
-        """Adds :class:`Persona` to the template variables"""
-        context = super(PersonaFormMixin, self).get_context_data()
-        context['persona'] = self.persona
-
-        return context
 
 
 class ContratoEmpresarialCreateView(ContratoCreateView):
