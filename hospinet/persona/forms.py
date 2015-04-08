@@ -135,13 +135,6 @@ class BasePersonaForm(FieldSetModelFormMixin):
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput())
 
-    def __init__(self, *args, **kwargs):
-        super(BasePersonaForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Guardar'))
-
 
 class FisicoForm(BasePersonaForm):
     """Permite editar :class:`Fisico`"""

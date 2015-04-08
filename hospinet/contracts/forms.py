@@ -26,9 +26,9 @@ from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Cancelacion, Precontrato, Beneficio,
                               MasterContract, ImportFile)
 from invoice.forms import PeriodoForm
-from persona.forms import (FieldSetModelFormMixin, DateTimeWidget, DateWidget,
+from persona.forms import (FieldSetModelFormMixin, DateTimeWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
-                           FutureDateWidget)
+                           FutureDateWidget, BasePersonaForm)
 from persona.models import Persona, Empleador
 
 
@@ -61,18 +61,7 @@ class PlanForm(FieldSetModelFormMixin):
         self.helper.layout = Fieldset(u'Formulario de Plan', *self.field_names)
 
 
-class BeneficioForm(FieldSetModelFormMixin):
-    class Meta:
-        model = Beneficio
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(BeneficioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar un Beneficio',
-                                      *self.field_names)
-
-
-class ContratoForm(FieldSetModelFormMixin):
+class ContratoForm(BasePersonaForm):
     class Meta:
         model = Contrato
         exclude = ('cancelado',)
@@ -91,7 +80,7 @@ class ContratoForm(FieldSetModelFormMixin):
 class ContratoEmpresarialForm(FieldSetModelFormMixin):
     class Meta:
         model = Contrato
-        exclude = ('cancelado', )
+        exclude = ('cancelado',)
 
     vencimiento = forms.DateField(widget=FutureDateWidget)
     ultimo_pago = forms.DateTimeField(widget=DateTimeWidget(), required=False,
@@ -107,6 +96,7 @@ class ContratoEmpresarialForm(FieldSetModelFormMixin):
 class TipoEventoForm(FieldSetModelFormMixin):
     class Meta:
         model = TipoEvento
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(TipoEventoForm, self).__init__(*args, **kwargs)
@@ -124,6 +114,7 @@ class ContratoMixin(FieldSetModelFormMixin):
 class EventoForm(ContratoMixin):
     class Meta:
         model = Evento
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(EventoForm, self).__init__(*args, **kwargs)
@@ -134,6 +125,7 @@ class EventoForm(ContratoMixin):
 class PagoForm(ContratoMixin):
     class Meta:
         model = Pago
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(PagoForm, self).__init__(*args, **kwargs)
@@ -144,6 +136,7 @@ class PagoForm(ContratoMixin):
 class VendedorForm(FieldSetModelFormMixin):
     class Meta:
         model = Vendedor
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(VendedorForm, self).__init__(*args, **kwargs)
@@ -165,7 +158,8 @@ class VendedorPeriodoForm(PeriodoForm):
 
     def __init__(self, *args, **kwargs):
         super(VendedorPeriodoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Por Vendedor y Periodo', *self.field_names)
+        self.helper.layout = Fieldset(u'Por Vendedor y Periodo',
+                                      *self.field_names)
 
 
 class ContratoSearchForm(FieldSetFormMixin):
@@ -180,6 +174,7 @@ class ContratoSearchForm(FieldSetFormMixin):
 class BeneficiarioForm(ContratoMixin):
     class Meta:
         model = Beneficiario
+        fields = '__all__'
 
     inscripcion = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)
@@ -193,6 +188,7 @@ class BeneficiarioForm(ContratoMixin):
 class BeneficiarioPersonaForm(FieldSetModelFormMixin):
     class Meta:
         model = Beneficiario
+        fields = '__all__'
 
     contrato = ModelChoiceField(
         queryset=Contrato.objects.all(),
@@ -207,7 +203,6 @@ class BeneficiarioPersonaForm(FieldSetModelFormMixin):
 
 
 class PlanFormMixin(FieldSetModelFormMixin):
-
     plan = forms.ModelChoiceField(label="", queryset=Plan.objects.all(),
                                   widget=forms.HiddenInput(),
                                   required=False)
@@ -230,7 +225,8 @@ class BeneficioForm(PlanFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(BeneficioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar un Beneficio', *self.field_names)
+        self.helper.layout = Fieldset(u'Agregar un Beneficio',
+                                      *self.field_names)
 
 
 class PlanChoiceForm(FieldSetFormMixin):
@@ -256,7 +252,7 @@ class EmpleadorChoiceForm(FieldSetFormMixin):
 class MasterContractForm(FieldSetModelFormMixin):
     class Meta:
         model = MasterContract
-        exclude = ('processed', )
+        exclude = ('processed',)
 
     def __init__(self, *args, **kwargs):
         super(MasterContractForm, self).__init__(*args, **kwargs)
