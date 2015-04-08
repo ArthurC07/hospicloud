@@ -24,7 +24,7 @@ from persona.views import (PersonaDetailView, PersonaCreateView,
                            AntecedenteQuirurgicoUpdateView,
                            AntecedenteQuirurgicoCreateView, PersonaSearchView,
                            EmpleoCreateView, PersonaDuplicateView,
-                           EmpleadorDetailView)
+                           EmpleadorDetailView, EmpleadorCreateView)
 
 urlpatterns = patterns('',
 
@@ -48,6 +48,10 @@ urlpatterns = patterns('',
                        url(r'^empresa/(?P<pk>\d+)$',
                            EmpleadorDetailView.as_view(),
                            name='empresa'),
+
+                       url(r'^empresa/agregar$',
+                           EmpleadorCreateView.as_view(),
+                           name='empresa-add'),
 
                        url(r'^buscar$',
                            PersonaSearchView.as_view(),
