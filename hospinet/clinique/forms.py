@@ -24,7 +24,7 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad, Reporte)
+                             Incapacidad, Reporte, TipoConsulta)
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, \
     FieldSetFormMixin
@@ -44,6 +44,7 @@ class PacienteForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Paciente
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(PacienteForm, self).__init__(*args, **kwargs)
@@ -61,6 +62,10 @@ class ConsultorioFormMixin(FieldSetModelFormMixin):
 class ConsultaForm(PacienteFormMixin):
     class Meta:
         model = Consulta
+        fields = '__all__'
+
+    tipo = forms.ModelChoiceField(
+        queryset=TipoConsulta.objects.filter(habilitado=True).all())
 
     def __init__(self, *args, **kwargs):
         super(ConsultaForm, self).__init__(*args, **kwargs)
@@ -70,6 +75,7 @@ class ConsultaForm(PacienteFormMixin):
 class EvaluacionForm(HiddenUserForm, PacienteFormMixin):
     class Meta:
         model = Evaluacion
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(EvaluacionForm, self).__init__(*args, **kwargs)
@@ -80,6 +86,7 @@ class EvaluacionForm(HiddenUserForm, PacienteFormMixin):
 class CitaForm(ConsultorioFormMixin):
     class Meta:
         model = Cita
+        fields = '__all__'
 
     persona = ModelChoiceField(queryset=Persona.objects.all(), name="",
                                model="")
@@ -99,6 +106,7 @@ class CitaPersonaForm(CitaForm):
 class SeguimientoForm(PacienteFormMixin, HiddenUserForm):
     class Meta:
         model = Seguimiento
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(SeguimientoForm, self).__init__(*args, **kwargs)
@@ -109,7 +117,7 @@ class SeguimientoForm(PacienteFormMixin, HiddenUserForm):
 class LecturaSignosForm(PacienteFormMixin):
     class Meta:
         model = LecturaSignos
-        exclude = ('presion_arterial_media', )
+        exclude = ('presion_arterial_media',)
 
     persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
@@ -133,6 +141,7 @@ class DiagnosticoClinicoForm(PacienteFormMixin):
 class ConsultorioForm(HiddenUserForm):
     class Meta:
         model = Consultorio
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ConsultorioForm, self).__init__(*args, **kwargs)
@@ -143,6 +152,7 @@ class ConsultorioForm(HiddenUserForm):
 class CargoForm(PacienteFormMixin):
     class Meta:
         model = Cargo
+        fields = '__all__'
 
     item = ModelChoiceField(queryset=ItemTemplate.objects.all(), name="",
                             model="")

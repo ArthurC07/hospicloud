@@ -28,6 +28,7 @@ from persona.models import Persona, transfer_object_to_persona, \
 
 class TipoConsulta(models.Model):
     tipo = models.CharField(max_length=50)
+    habilitado = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.tipo
