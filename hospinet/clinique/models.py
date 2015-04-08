@@ -298,6 +298,7 @@ class Incapacidad(TimeStampedModel):
     paciente = models.ForeignKey(Paciente, related_name='incapacidades')
     consultorio = models.ForeignKey(Consultorio, related_name='incapacidades')
     descripcion = models.TextField()
+    dias = models.IntegerField(default=0)
 
     def get_absolute_url(self):
 
