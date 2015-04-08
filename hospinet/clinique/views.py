@@ -118,32 +118,8 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     paginate_by = 20
     template_name = 'clinique/consultorio_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
+    def dispatch(self, request, *args, **kwargs):
 
-        context['consultorio'] = self.object
-        context['buscar'] = PacienteSearchForm(
-            initial={'consultorio': self.object.id})
-
-        self.get_fechas()
-        queryset = self.object.espera.filter(fecha__gte=self.inicio,
-                                             fecha__lte=self.fin)
-
-        context['total'] = sum(e.tiempo() for e in queryset.all())
-        context['citas'] = Cita.objects.filter(consultorio=self.object,
-                                               fecha__gte=self.today,
-                                               fecha__lte=self.fin,
-                                               ausente=False, atendida=False)
-
-        return context
-
-    def get_queryset(self):
-        self.object = self.get_object(Consultorio.objects.all())
-        queryset = self.object.espera.filter(fecha__gte=timezone.now().date(),
-                                             atendido=False, ausente=False)
-        return queryset
-
-    def get_fechas(self):
         tz = timezone.get_current_timezone()
         now = timezone.now()
         day = timedelta(days=1)
@@ -154,6 +130,29 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         self.inicio = date(now.year, now.month, 1)
         self.inicio = tz.localize(datetime.combine(self.inicio, time.min))
         self.fin = tz.localize(datetime.combine(self.fin, time.max))
+
+        return super(ConsultorioDetailView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
+
+        context['consultorio'] = self.object
+        context['buscar'] = PacienteSearchForm(
+            initial={'consultorio': self.object.id})
+
+        context['total'] = sum(e.tiempo() for e in self.get_queryset().all())
+        context['citas'] = Cita.objects.filter(consultorio=self.object,
+                                               fecha__gte=self.today,
+                                               fecha__lte=self.fin,
+                                               ausente=False, atendida=False)
+
+        return context
+
+    def get_queryset(self):
+        self.object = self.get_object(Consultorio.objects.all())
+        queryset = self.object.espera.filter(created__gte=self.today,
+                                             atendido=False, ausente=False)
+        return queryset
 
 
 class PacienteSearchView(ListView, LoginRequiredMixin):
