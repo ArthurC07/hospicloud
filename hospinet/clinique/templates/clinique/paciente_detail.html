@@ -242,6 +242,27 @@
                                 </tbody>
                             </table>
                             <table class="table table-striped">
+                                <caption>Incapacidades</caption>
+                                <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Descripci&oacute;n</th>
+                                    <th>D&iacute;s</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for incapacidad in paciente.incapacidades.all %}
+                                    <tr>
+                                        <td>{{ incapacidad.created }}</td>
+                                        <td>{{ incapacidad.descripcion }}</td>
+                                        <td>{{ incapacidad.dias }}</td>
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <table class="table table-striped">
                                 <caption>Prescripciones</caption>
                                 <thead>
                                     <tr>
