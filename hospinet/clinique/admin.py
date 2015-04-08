@@ -18,7 +18,7 @@
 from django.contrib import admin
 from clinique.models import (Paciente, Cita, Consulta, TipoConsulta,
                              Consultorio, Evaluacion, Seguimiento, LecturaSignos,
-                             TipoCargo, Cargo, OrdenMedica)
+                             TipoCargo, Cargo, OrdenMedica, Localidad)
 from contracts.models import Beneficio
 
 
@@ -38,3 +38,4 @@ admin.site.register(LecturaSignos)
 admin.site.register(OrdenMedica)
 admin.site.register(Cargo)
 admin.site.register(TipoCargo)
+admin.site.register(Localidad)

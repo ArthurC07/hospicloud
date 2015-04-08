@@ -19,11 +19,17 @@ from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
+
 from django.core.urlresolvers import reverse
 
 from inventory.models import ItemTemplate, Inventario
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
+
+
+class Localidad(TimeStampedModel):
+    nombre = models.CharField(max_length=50, blank=True, null=True)
+    habilitado = models.BooleanField(default=True)
 
 
 class TipoConsulta(models.Model):
@@ -47,6 +53,8 @@ class Consultorio(TimeStampedModel):
                                    blank=True, null=True)
     administradores = models.ManyToManyField(User, blank=True, null=True,
                                              related_name='consultorios_administrados')
+    localidad = models.ForeignKey(Localidad, related_name='consultorios',
+                                  blank=True, null=True)
     activo = models.BooleanField(default=True)
 
     def __unicode__(self):
@@ -70,7 +78,7 @@ class Paciente(TimeStampedModel):
 
     def __unicode__(self):
         return u"Paciente {0} de {1}".format(self.persona.nombre_completo(),
-                                             self.consultorio.usuario.get_full_name())
+            self.consultorio.usuario.get_full_name())
 
     def identificacion(self):
         return self.persona.identificacion
@@ -159,11 +167,9 @@ class Cita(TimeStampedModel):
         return reverse('consultorio-cita-list', args=[self.consultorio.id])
 
     def __unicode__(self):
-
         return u'{0}'.format(self.persona.nombre_completo())
 
     def to_espera(self):
-
         espera = Espera()
         espera.consultorio = self.consultorio
         espera.persona = self.persona
@@ -272,11 +278,9 @@ class Espera(TimeStampedModel):
     ausente = models.BooleanField(default=False)
 
     def get_absolute_url(self):
-
         return self.consultorio.get_absolute_url()
 
     def tiempo(self):
-
         delta = timezone.now() - self.created
 
         return delta.seconds / 60
@@ -287,11 +291,9 @@ class Prescripcion(TimeStampedModel):
     nota = models.TextField(blank=True)
 
     def __unicode__(self):
-
         return self.paciente.persona.nombre_completo()
 
     def get_absolute_url(self):
-
         return self.paciente.get_absolute_url()
 
 
@@ -302,7 +304,6 @@ class Incapacidad(TimeStampedModel):
     dias = models.IntegerField(default=0)
 
     def get_absolute_url(self):
-
         return self.paciente.get_absolute_url()
 
 
@@ -313,7 +314,6 @@ class Reporte(TimeStampedModel):
     fecha = models.DateTimeField(default=timezone.now, null=True, blank=True)
 
     def get_absolute_url(self):
-
         return self.consultorio.get_absolute_url()
 
 
