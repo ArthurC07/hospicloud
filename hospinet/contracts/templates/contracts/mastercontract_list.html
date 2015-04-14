@@ -22,8 +22,9 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>N&uacute;mero</th>
-                        <th>Titular</th>
+                        <th>Poliza</th>
+                        <th>Contratante</th>
+                        <th>Aseguradora</th>
                         <th>Plan</th>
                         <th>Vendedor</th>
                         <th>Vencimiento</th>
@@ -33,9 +34,10 @@
                     {% for contrato in contratos %}
                         <tr>
                             <td><a class="btn btn-success"
-                                   href="{{ contrato.get_absolute_url }}">{{ contrato.numero }}</a>
+                                   href="{{ contrato.get_absolute_url }}">{{ contrato.poliza }}</a>
                             </td>
-                            <td>{{ contrato.persona }}</td>
+                            <td>{{ contrato.contratante }}</td>
+                            <td>{{ contrato.aseguradora }}</td>
                             <td>{{ contrato.plan }}</td>
                             <td>{{ contrato.vendedor }}</td>
                             <td>{{ contrato.vencimiento|date:"d/m/Y" }}</td>
