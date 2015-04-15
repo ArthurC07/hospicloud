@@ -17,8 +17,8 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
 from datetime import datetime, time, date
-from django.contrib import messages
 
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from django.db.models import Q, Sum
@@ -34,9 +34,10 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
 from guardian.decorators import permission_required
-from clinique.models import Cita, Consulta, Seguimiento
+
 from constance import config
 
+from clinique.models import Cita, Consulta, Seguimiento
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              VendedorForm, VendedorChoiceForm,
                              ContratoSearchForm, PersonaForm, TipoEventoForm,
@@ -45,11 +46,12 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              CancelacionForm, ContratoEmpresarialForm,
                              EmpleadorChoiceForm, VendedorPeriodoForm,
                              PrecontratoForm, PersonaPrecontratoForm,
-                             BeneficioForm, MasterContractForm, ImportFileForm)
+                             BeneficioForm, MasterContractForm, ImportFileForm,
+                             ContratoMasterForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
-                              Cancelacion, Precontrato, Autorizacion,
-                              Prebeneficiario, Beneficio, MasterContract,
+                              Cancelacion, Precontrato, Prebeneficiario,
+                              Beneficio, MasterContract,
                               ImportFile)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
@@ -363,7 +365,23 @@ class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
 
     def get_success_url(self):
 
-        return reverse('contrato', args=[self.contrato.id])
+        return self.contrato.get_absolute_url()
+
+
+class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
+                                      CreateView):
+    model = Contrato
+    form_class = ContratoMasterForm
+    template_name = 'contracts/contrato_master_create.html'
+
+    def form_valid(self, form):
+        master = form.cleaned_data['master']
+        self.object = master.create_contract(form.cleaned_data['persona'],
+                                          form.cleaned_data['vencimiento'],
+                                          form.cleaned_data['certificado'],
+                                          form.cleaned_data['numero'])
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ContratoEmpresarialPersonaCreateView(CreateView, LoginRequiredMixin):
@@ -656,7 +674,8 @@ class VendedorPeriodoView(TemplateView, LoginRequiredMixin):
         context['contratos'] = self.contratos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
-        context['comision'] = self.contratos.aggregate(total=Sum('plan__comision'))['total']
+        context['comision'] = \
+        self.contratos.aggregate(total=Sum('plan__comision'))['total']
 
         return context
 

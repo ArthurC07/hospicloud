@@ -77,6 +77,24 @@ class ContratoForm(BasePersonaForm):
                                       *self.field_names)
 
 
+class ContratoMasterForm(FieldSetFormMixin):
+
+    persona = forms.ModelChoiceField(label="",
+                                     queryset=Persona.objects.all(),
+                                     widget=forms.HiddenInput())
+    vencimiento = forms.DateField(widget=FutureDateWidget)
+    certificado = forms.IntegerField()
+    numero = forms.IntegerField()
+    master = forms.ModelChoiceField(MasterContract.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        del kwargs['instance']
+        super(ContratoMasterForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Contrato',
+                                      *self.field_names)
+        self.helper.add_input(Submit('submit', u'Guardar'))
+
+
 class ContratoEmpresarialForm(FieldSetModelFormMixin):
     class Meta:
         model = Contrato
