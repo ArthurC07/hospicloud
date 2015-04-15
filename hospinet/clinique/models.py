@@ -18,6 +18,7 @@
 from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
+
 from django.contrib.auth.models import User
 
 from django.core.urlresolvers import reverse
@@ -324,6 +325,19 @@ class Reporte(TimeStampedModel):
         return self.consultorio.get_absolute_url()
 
 
+class TipoRemision(TimeStampedModel):
+    nombre = models.CharField(max_length=50)
+
+
+class Remision(TimeStampedModel):
+    tipo = models.ForeignKey(TipoRemision, related_name='remisiones')
+    persona = models.ForeignKey(Persona, related_name='remisiones')
+    especialidad = models.ForeignKey(Especialidad, related_name='remisiones',
+                                     blank=True, null=True)
+    consultorio = models.ForeignKey(Consultorio, related_name='remisiones')
+    motivo = models.TextField()
+
+
 def consolidate_clinique(persona, clone):
     [transfer_object_to_persona(paciente, persona) for paciente in
      clone.pacientes.all()]
@@ -337,7 +351,8 @@ def consolidate_clinique(persona, clone):
     [transfer_object_to_persona(cita, persona) for cita in
      clone.citas.all()]
 
-    [transfer_object_to_persona(pcd, persona) for pcd in clone.pcds.all()]
+    [transfer_object_to_persona(remision, persona) for remision in
+     clone.remisiones.all()]
 
 
 persona_consolidation_functions.append(consolidate_clinique)

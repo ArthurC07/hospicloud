@@ -24,7 +24,7 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad, Reporte, TipoConsulta)
+                             Incapacidad, Reporte, TipoConsulta, Remision)
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, \
     FieldSetFormMixin
@@ -53,6 +53,14 @@ class PacienteForm(FieldSetModelFormMixin):
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
+    consultorio = forms.ModelChoiceField(label="",
+                                         queryset=Consultorio.objects.filter(
+                                             activo=True).order_by(
+                                             'nombre').all(),
+                                         widget=forms.HiddenInput())
+
+
+class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
     consultorio = ModelChoiceField(
         queryset=Consultorio.objects.filter(activo=True).order_by(
             'nombre').all(),
@@ -251,6 +259,7 @@ class PrescripcionForm(PacienteFormMixin):
 class IncapacidadForm(PacienteFormMixin, ConsultorioFormMixin):
     class Meta:
         model = Incapacidad
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(IncapacidadForm, self).__init__(*args, **kwargs)
@@ -260,7 +269,18 @@ class IncapacidadForm(PacienteFormMixin, ConsultorioFormMixin):
 class ReporteForm(ConsultorioFormMixin):
     class Meta:
         model = Reporte
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ReporteForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Reporte', *self.field_names)
+
+
+class RemisionForm(ConsultorioFormMixin, BasePersonaForm):
+    class Meta:
+        model = Remision
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(RemisionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Remitir Paciente', *self.field_names)

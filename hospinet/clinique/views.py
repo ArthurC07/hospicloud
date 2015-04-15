@@ -41,12 +41,12 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             NotaEnfermeriaForm, ExamenForm, EsperaForm,
                             EsperaAusenteForm, CitaAusenteForm,
                             PacienteSearchForm, PrescripcionForm,
-                            IncapacidadForm, ReporteForm)
+                            IncapacidadForm, ReporteForm, RemisionForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad, Reporte)
+                             Incapacidad, Reporte, Remision)
 from inventory.models import ItemTemplate
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
@@ -764,7 +764,13 @@ class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         cita = get_object_or_404(Cita, pk=kwargs['pk'])
         espera = cita.to_espera()
-        cita
         espera.save()
         messages.info(self.request, u'¡Se envio el paciente a salada de espera!')
         return espera.get_absolute_url()
+
+
+class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, ConsultorioFormMixin, CreateView):
+    """Permite crear una :class:`Remision` a una :class:`Persona`"""
+
+    model = Remision
+    form_class = RemisionForm

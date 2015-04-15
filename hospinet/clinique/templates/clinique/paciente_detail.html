@@ -300,6 +300,27 @@
                                 {% endfor %}
                                 </tbody>
                             </table>
+                            <table class="table table-striped">
+                                <caption>Remisiones</caption>
+                                <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Especialidad</th>
+                                    <th>Motivo</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for remision in paciente.remisiones.all %}
+                                    <tr>
+                                        <td>{{ remision.created }}</td>
+                                        <td>{{ remision.tipo }}</td>
+                                        <td>{{ remision.especilidad }}</td>
+                                        <td>{{ remision.motivo }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </article>
                     </div>
                 </section>

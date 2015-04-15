@@ -48,5 +48,11 @@
                 Agregar Paciente a Sala de Espera de {{ paciente.consultorio }}
             </a>
         </li>
+
+        <li>
+            <a href="{% url 'consultorio-remision-agregar' paciente.persona.id paciente.consultorio.id %}">
+                Remitir Paciente
+            </a>
+        </li>
     </ul>
 </nav>
