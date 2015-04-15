@@ -53,18 +53,18 @@ class PacienteForm(FieldSetModelFormMixin):
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
+    consultorio = ModelChoiceField(
+        queryset=Consultorio.objects.filter(activo=True).order_by(
+            'nombre').all(),
+        name="", model="", )
+
+
+class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
     consultorio = forms.ModelChoiceField(label="",
                                          queryset=Consultorio.objects.filter(
                                              activo=True).order_by(
                                              'nombre').all(),
                                          widget=forms.HiddenInput())
-
-
-class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
-    consultorio = ModelChoiceField(
-        queryset=Consultorio.objects.filter(activo=True).order_by(
-            'nombre').all(),
-        name="", model="", )
 
 
 class ConsultaForm(PacienteFormMixin):
