@@ -203,7 +203,7 @@ class BeneficiarioForm(ContratoMixin):
                                       *self.field_names)
 
 
-class BeneficiarioPersonaForm(FieldSetModelFormMixin):
+class BeneficiarioPersonaForm(BasePersonaForm):
     class Meta:
         model = Beneficiario
         fields = '__all__'
