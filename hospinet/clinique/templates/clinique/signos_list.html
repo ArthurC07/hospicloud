@@ -24,6 +24,7 @@
                     <th>Presi&oacute;n Diast&oacute;lica</th>
                     <th>Presi&oacute;n Arterial Media</th>
                     <th>Respiraci&oacute;n</th>
+                    <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -36,6 +37,7 @@
                         <td>{{ signos_vitales.presion_diastolica }}</td>
                         <td> {{ signos_vitales.presion_arterial_media }}</td>
                         <td> {{ signos_vitales.respiracion }}</td>
+                        <td><a class="btn btn-success" href="{% url 'clinique-signos-edit' signos_vitales.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
