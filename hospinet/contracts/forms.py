@@ -206,7 +206,7 @@ class BeneficiarioForm(ContratoMixin):
 class BeneficiarioPersonaForm(BasePersonaForm):
     class Meta:
         model = Beneficiario
-        fields = '__all__'
+        exclude =('activo', 'dependiente',)
 
     contrato = ModelChoiceField(
         queryset=Contrato.objects.all(),
