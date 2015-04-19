@@ -94,7 +94,7 @@ class EvaluacionForm(HiddenUserForm, PacienteFormMixin):
 class CitaForm(ConsultorioFormMixin):
     class Meta:
         model = Cita
-        fields = '__all__'
+        exclude = ('ausente', 'atendida',)
 
     persona = ModelChoiceField(queryset=Persona.objects.all(), name="",
                                model="")
