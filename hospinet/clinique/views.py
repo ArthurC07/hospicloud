@@ -552,17 +552,6 @@ class LecturaSignosUpdateView(UpdateView, LoginRequiredMixin):
     model = LecturaSignos
     form_class = LecturaSignosForm
 
-    def get_success_url(self):
-        paciente = Paciente.objects.filter(persona=self.object.persona,
-                                           consultorio=self.consultorio).first()
-        if paciente is None:
-            paciente = Paciente()
-            paciente.persona = self.object.persona
-            paciente.consultorio = self.consultorio
-            paciente.save()
-
-        return paciente.get_absolute_url()
-
 
 class DiagnosticoCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
     model = DiagnosticoClinico

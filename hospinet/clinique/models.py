@@ -128,7 +128,7 @@ class LecturaSignos(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('persona-view-id', args=[self.persona.id])
+        return self.persona.get_absolute_url()
 
     def save(self, *args, **kwargs):
         """Permite guardar los datos mientras calcula algunos campos
