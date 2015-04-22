@@ -19,9 +19,14 @@
 
                     <nav class="sidebar-nav">
                         <ul class="nav nav-stacked nav-tabs">
+                            <li>
+                                <a href="{% url 'invoice-new' %}">Crear
+                                    Recibo</a>
+                            </li>
                             <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
                                 Pago de Cierre</a></li>
                             <li><a href="{% url 'invoice-turno-cerrar' turno.id %}">Cerrar Turno</a></li>
+                            <li><a href="{% url 'invoice-index' %}">Regresar a Caja</a></li>
                         </ul>
                     </nav>
                 </div>
