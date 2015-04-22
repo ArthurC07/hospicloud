@@ -261,8 +261,10 @@
                         <a href="{% url 'invoice-new' %}">Crear
                             Recibo</a>
                     </li>
-                    <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
-                        Turno</a></li>
+                    {% if not turno %}
+                        <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
+                            Turno</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>

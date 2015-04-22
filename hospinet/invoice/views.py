@@ -112,6 +112,9 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
                                                      finalizado=False).all()
 
+        if context['turnos'].count() != 0:
+            context['turno'] = True
+
         context['ventaperiodoform'] = VentaPeriodoForm(prefix='venta')
         context['ventaperiodoform'].set_action('periodo-venta')
 
