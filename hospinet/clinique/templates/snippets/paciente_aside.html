@@ -1,10 +1,27 @@
 <nav class="sidebar-nav">
     <ul class="nav nav-tabs nav-stacked">
         <li>
-            <a href="{% url 'persona-view-id' paciente.persona.id %}">Ficha Personal</a>
+            <a href="{% url 'consultorio-espera-agregar' paciente.persona.id paciente.consultorio.id %}">
+                Agregar Paciente a Sala de Espera de {{ paciente.consultorio }}
+            </a>
         </li>
         <li>
-            <a href="{% url 'clinique-paciente' paciente.id %}"><i class="fa fa-list-ol"></i> Resumen de Paciente</a>
+            <a href="{% url 'consultorio-consulta-agregar' paciente.id %}">Agregar
+                Consulta Inicial</a>
+        </li>
+        <li>
+            <a href="{% url 'consultorio-segumiento-agregar' paciente.id %}">Agregar
+                Consulta de Segumiento</a>
+        </li>
+        <li>
+            <a href="{% url 'clinique-notas' paciente.id %}"><i class="fa fa-pencil"></i> Notas de Enfermeria</a>
+        </li>
+        <li>
+            <a href="{% url 'clinique-signos' paciente.id %}"><i class="fa fa-heart"></i> Signos Vitales</a>
+        </li>
+        <li>
+            <a href="{% url 'consultorio-evaluacion-agregar' paciente.id %}">Agregar
+                Examen Físico</a>
         </li>
         <li>
             <a href="{% url 'clinique-ordenes' paciente.id %}"><i class="fa fa-stethoscope"></i> Ordenes M&eacute;dicas</a>
@@ -13,28 +30,10 @@
             <a href="{% url 'clinique-cargos' paciente.id %}"><i class="fa fa-medkit"></i> Medicamentos</a>
         </li>
         <li>
-            <a href="{% url 'clinique-signos' paciente.id %}"><i class="fa fa-heart"></i> Signos Vitales</a>
-        </li>
-        <li>
-            <a href="{% url 'clinique-notas' paciente.id %}"><i class="fa fa-pencil"></i> Notas de Enfermeria</a>
-        </li>
-        <li>
-            <a href="{% url 'consultorio-consulta-agregar' paciente.id %}">Agregar
-                Consulta Inicial</a>
-        </li>
-        <li>
-            <a href="{% url 'consultorio-evaluacion-agregar' paciente.id %}">Agregar
-                Examen Físico</a>
-        </li>
-        <li>
             <a href="{% url 'consultorio-prescripcion-agregar' paciente.id %}">Agregar Prescripci&oacute;n</a>
         </li>
         <li>
             <a href="{% url 'consultorio-incapacidad-agregar' paciente.id %}">Agregar Incapacidad</a>
-        </li>
-        <li>
-            <a href="{% url 'consultorio-segumiento-agregar' paciente.id %}">Agregar
-                Consulta de Segumiento</a>
         </li>
         <li>
             <a href="{% url 'consultorio-diagnostico-agregar' paciente.id %}">Agregar
@@ -44,15 +43,12 @@
             <a href="{% url 'consultorio-citapersona-agregar' paciente.persona.id %}">Crear Cita</a>
         </li>
         <li>
-            <a href="{% url 'consultorio-espera-agregar' paciente.persona.id paciente.consultorio.id %}">
-                Agregar Paciente a Sala de Espera de {{ paciente.consultorio }}
-            </a>
-        </li>
-
-        <li>
             <a href="{% url 'consultorio-remision-agregar' paciente.persona.id paciente.consultorio.id %}">
                 Remitir Paciente
             </a>
+        </li>
+        <li>
+            <a href="{% url 'persona-view-id' paciente.persona.id %}">Ficha Personal</a>
         </li>
     </ul>
 </nav>
