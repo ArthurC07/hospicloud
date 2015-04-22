@@ -25,6 +25,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+
 from django_extensions.db.models import TimeStampedModel
 import unicodecsv
 
@@ -236,7 +237,8 @@ class MasterContract(TimeStampedModel):
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=timezone.now(), vencimiento=vencimiento,
                             certificado=certificiado, numero=numero,
-                            vendedor=self.vendedor, empresa=self.contratante, master=self)
+                            vendedor=self.vendedor, empresa=self.contratante,
+                            master=self)
 
         return contract
 
@@ -265,7 +267,8 @@ class Contrato(TimeStampedModel):
     poliza = models.IntegerField(default=0)
     certificado = models.IntegerField(default=0)
     titular = models.IntegerField(default=0)
-    master = models.ForeignKey(MasterContract, related_name='contratos', blank=True, null=True)
+    master = models.ForeignKey(MasterContract, related_name='contratos',
+                               blank=True, null=True, verbose_name="Contrato")
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""
