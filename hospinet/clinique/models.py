@@ -23,7 +23,7 @@ from django.contrib.auth.models import User
 
 from django.core.urlresolvers import reverse
 
-from inventory.models import ItemTemplate, Inventario
+from inventory.models import ItemTemplate, Inventario, ItemType
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
 
@@ -105,6 +105,8 @@ class Consulta(TimeStampedModel):
     tipo = models.ForeignKey(TipoConsulta, related_name='consultas')
     motivo_de_consulta = models.TextField(default=None, null=True)
     HEA = models.TextField(default=None, null=True)
+    facturada = models.BooleanField(default=False)
+    activa = models.BooleanField(default=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -238,9 +240,10 @@ class Cargo(TimeStampedModel):
     """Permite registrar diversos cobros a un :class:`Paciente`"""
 
     paciente = models.ForeignKey(Paciente, related_name='cargos')
-    tipo = models.ForeignKey(TipoCargo, related_name='cargos')
+    tipo = models.ForeignKey(ItemType, related_name='cargos')
     item = models.ForeignKey(ItemTemplate, related_name='consultorio_cargos')
     cantidad = models.IntegerField(default=1)
+    facturado = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
@@ -294,6 +297,8 @@ class Espera(TimeStampedModel):
 
 class Prescripcion(TimeStampedModel):
     paciente = models.ForeignKey(Paciente, related_name='prescripciones')
+    consulta = models.ForeignKey(Consulta, blank=True, null=True,
+                                 related_name='prescripciones')
     nota = models.TextField(blank=True)
 
     def __unicode__(self):

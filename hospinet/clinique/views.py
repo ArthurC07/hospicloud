@@ -47,7 +47,7 @@ from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
                              Incapacidad, Reporte, Remision)
-from inventory.models import ItemTemplate
+from inventory.models import ItemTemplate, Inventario
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
     AntecedenteFamiliarForm, AntecedenteObstetricoForm, EstiloVidaForm, \
@@ -270,6 +270,15 @@ class PacienteDetailView(DetailView, LoginRequiredMixin):
 
     model = Paciente
     context_object_name = 'paciente'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(PacienteDetailView, self).get_context_data()
+
+        context['consultas'] = self.object.consultas.filter(facturada=False,
+                                                            activa=True).all()
+
+        return context
 
 
 class PacienteDeleteView(DeleteView, LoginRequiredMixin):
@@ -667,6 +676,13 @@ class CargoCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+
+        consultorio = self.paciente.consultorio
+        if consultorio.inventario is None:
+            inventario = Inventario(lugar=consultorio.nombre)
+            inventario.save()
+            consultorio.inventario = inventario
+            consultorio.save()
 
         item = self.object.paciente.consultorio.inventario.buscar_item(
             self.object.item)

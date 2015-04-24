@@ -160,7 +160,7 @@ class ConsultorioForm(HiddenUserForm):
 class CargoForm(PacienteFormMixin):
     class Meta:
         model = Cargo
-        fields = '__all__'
+        exclude = ('facturado', )
 
     item = ModelChoiceField(queryset=ItemTemplate.objects.all(), name="",
                             model="")
