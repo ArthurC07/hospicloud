@@ -127,6 +127,8 @@ def check_line(line, vencimiento):
         venc = server_timezone.localize(datetime.strptime(line[21], '%m/%d/%Y'))
         if venc <= vencimiento:
             vencimiento_r = venc
+        else:
+            vencimiento_r = vencimiento
 
     else:
         vencimiento_r = vencimiento
