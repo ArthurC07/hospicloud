@@ -137,20 +137,20 @@ urlpatterns = patterns('',
                            PacienteCreateView.as_view(),
                            name='consultorio-paciente-add'),
 
-                       url(r'^consulta/(?P<paciente>\d+)/agregar$',
+                       url(r'^consulta/(?P<persona>\d+)/(?P<consultorio>\d+)/agregar$',
                            ConsultaCreateView.as_view(),
                            name='consultorio-consulta-agregar'),
 
-                       url(r'^(?P<paciente>\d+)/nota/agregar$',
+                       url(r'^(?P<persona>\d+)/nota/agregar$',
                            NotaEnfermeriaCreateView.as_view(),
                            name='consultorio-nota-agregar'),
 
                        url(
-                           r'^lectura/(?P<persona>\d+)/(?P<consultorio>\d+)/agregar$',
+                           r'^lectura/(?P<persona>\d+)/agregar$',
                            LecturaSignosCreateView.as_view(),
                            name='consultorio-lectura-agregar'),
 
-                       url(r'^evaluacion/(?P<paciente>\d+)/agregar$',
+                       url(r'^evaluacion/(?P<persona>\d+)/agregar$',
                            EvaluacionCreateView.as_view(),
                            name='consultorio-evaluacion-agregar'),
 
@@ -278,7 +278,7 @@ urlpatterns = patterns('',
                            name='consultorio-incapacidad-agregar'),
 
                        url(
-                           r'^/(?P<persona>\d+)/(?P<consultorio>\d+)/remision/agregar$',
+                           r'^/(?P<persona>\d+)/remision/agregar$',
                            RemisionCreateView.as_view(),
                            name='consultorio-remision-agregar'),
 )

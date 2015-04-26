@@ -2,117 +2,363 @@
 {% load staticfiles %}{% load thumbnail %}
 {% block content %}
     <div class="row">
-        <section class="col-md-12">
-            <div class="main-content col-md-12">‏
+        <section class="col-md-12 main-header">
                 <section class="page-header">
                     <h1> {{ persona.nombre_completo }}
                         <small>Informaci&oacute;n</small>
                     </h1>
                 </section>
-            </div>
         </section>
     </div>
     <div class="row">
-        <section id="informacion" class="col-md-9">
-            <div class="main-content col-md-12">‏
-                <section class="tabbable">
-                    <ul class="nav nav-tabs">
-                        <li><a class="active" href="#paciente" data-toggle="tab">Datos
-                            Personales</a></li>
-                        <li><a href="#clinico"
-                               data-toggle="tab">Antecedentes</a></li>
-                        {% if persona.emergencias %}
-                            <li><a href="#emergencias"
-                                   data-toggle="tab">Emergencias</a></li>
-                        {% endif %}
-                        {% if persona.admisiones %}
-                            <li><a href="#admisiones" data-toggle="tab">Hospitalizaciones</a>
-                            </li>
-                        {% endif %}
-                        {% if persona.examenes %}
-                            <li><a href="#examenes" data-toggle="tab">Im&aacute;genes</a>
-                            </li>
-                        {% endif %}
-                        <li><a href="#consultorios" data-toggle="tab">Consultorios</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <article id="paciente" class="tab-pane active">
-                            <div class="row">
-                                <div class="col-md-12">
-                                {% include 'snippets/persona_fotografia.html'  with persona=persona %}
-                                {% include 'snippets/persona.html' with persona=persona %}
-                                </div>
-                                <a href="{% url 'persona-editar' persona.id %}"
-                                   class="btn btn-primary">Editar Datos</a>
-                            </div>
-                            {% if persona.contratos %}
-                                {% include 'contracts/snippets/contracts.html' %}
-                            {% endif %}
-                            {% if persona.beneficiarios %}
-                                {% for beneficiario in persona.beneficiarios.all %}
-                                    {% include 'contracts/snippets/contracts.html' with persona=beneficiario.contrato.persona %}
-                                {% endfor %}
-                            {% endif %}
-                            <div class="row">
-                                <div class="col-md-12">
-                                {% for beneficiario in persona.beneficiarios.all %}
-                                    <li>
-                                        <a href="{% url 'contrato' beneficiario.contrato.id %}">{{ beneficiario.contrato }}</a>
-                                    </li>
-                                {% endfor %}
-                                </div>
-                            </div>
-                        </article>
-                        <article id="clinico" class="tab-pane">
-                            {% include 'snippets/fisico.html' with fisico=persona.fisico %}
-                            <a href="{% url 'persona-fisico-editar' persona.id %}"
-                               class="btn btn-primary">Editar F&iacute;sico</a>
-                            {% include 'snippets/antecedente.html' with antecedente=persona.antecedente %}
-                            <a href="{% url 'persona-antecedente-editar' persona.id %}"
-                               class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos
-                                Personales</a>
-                            {% include 'snippets/antecedente_familiar.html' with antecedente=persona.antecedente_familiar %}
-                            <a href="{% url 'persona-antecedente-familiar-editar' persona.id %}"
-                               class="btn btn-primary">Editar Antecedentes
-                                Familiares</a>
-                            {% include 'snippets/antecedente_quirurgico.html' with persona=persona %}
-                            <a href="{% url 'persona-antecedente-quirurgico-agregar' persona.id %}"
-                               class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
-                            {% ifequal persona.sexo 'F' %}
-                                {% include 'snippets/antecedente_obstetrico.html' with antecedente=persona.antecedente_obstetrico %}
-                                <a href="{% url 'persona-antecedente-obstetrico-editar' persona.id %}"
-                                   class="btn btn-primary">Editar Antecedentes
-                                    Obstetricos</a>
-                            {% endifequal %}
-                        </article>
-                        {% if persona.emergencias %}
-                            <article id="emergencias" class="tab-pane">
-                                {% include 'emergency/snippets/emergencia_list.html' with emergencias=persona.emergencias.all %}
-                            </article>
-                        {% endif %}
-                        {% if persona.admisiones %}
-                            <article id="admisiones" class="tab-pane">
-                                {% include 'snippets/enfermeria_list.html' with admisiones=persona.admisiones.all %}
-                            </article>
-                        {% endif %}
-                        {% if persona.examenes %}
-                            <article id="examenes" class="tab-pane">
-                                {% include 'snippets/examen_list.html' with examenes=persona.examenes.all %}
-                            </article>
-                        {% endif %}
-                        <article id="consultorios" class="tab-pane">
-                            <h3>Consultorios</h3>
-                            <ul>
-                                {% for paciente in persona.pacientes.all %}
-                                    <li>
-                                        <a href="{{ paciente.get_absolute_url }}">{{ paciente.consultorio }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </article>
+        <section id="informacion" class="col-md-9 main-content">
+            <div class="row">
+                {% for consulta in consultas %}
+                    <div class="col-md-12">
+                        <section class="page-header">
+                            <h2>Consulta en Consultorio {{ consulta.consultorio }} {{ consulta.created }}</h2>
+                        </section>
                     </div>
-                </section>
+                {% endfor %}
+            </div>
+            <div class="row">
+                <div class="col-md-12">‏
+                    <section class="tabbable">
+                        <ul class="nav nav-tabs">
+                            <li><a class="active" href="#paciente" data-toggle="tab">Datos
+                                Personales</a></li>
+                            {% if persona.consultas %}
+                                <li><a href="#consulta_inicio"
+                                       data-toggle="tab">Consultas</a>
+                                </li>
+                                <li><a href="#examen_fisico" data-toggle="tab">Examen
+                                    F&iacute;sico</a>
+                                </li>
+                                <li><a href="#clinico" data-toggle="tab">Datos Cl&iacute;nicos</a></li>
+                                <li><a href="#diagnostico" data-toggle="tab">Diagn&oacute;stico</a>
+                                </li>
+                            {% endif %}
+                            {% if persona.emergencias %}
+                                <li><a href="#emergencias"
+                                       data-toggle="tab">Emergencias</a></li>
+                            {% endif %}
+                            {% if persona.admisiones %}
+                                <li><a href="#admisiones" data-toggle="tab">Hospitalizaciones</a>
+                                </li>
+                            {% endif %}
+                            {% if persona.examenes %}
+                                <li><a href="#examenes" data-toggle="tab">Im&aacute;genes</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <div class="tab-content">
+                            <article id="paciente" class="tab-pane active">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {% include 'snippets/persona_fotografia.html'  with persona=persona %}
+                                        {% include 'snippets/persona.html' with persona=persona %}
+                                        <a href="{% url 'persona-editar' persona.id %}"
+                                           class="btn btn-primary">Editar Datos</a>
+                                    </div>
+                                </div>
+                                {% if persona.contratos %}
+                                    {% include 'contracts/snippets/contracts.html' %}
+                                {% endif %}
+                                {% if persona.beneficiarios %}
+                                    {% for beneficiario in persona.beneficiarios.all %}
+                                        {% include 'contracts/snippets/contracts.html' with persona=beneficiario.contrato.persona %}
+                                    {% endfor %}
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {% for beneficiario in persona.beneficiarios.all %}
+                                            <li>
+                                                <a href="{% url 'contrato' beneficiario.contrato.id %}">{{ beneficiario.contrato }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </article>
+                            <article id="clinico" class="tab-pane">
+                                {% include 'snippets/fisico.html' with fisico=persona.fisico %}
+                                <a href="{% url 'persona-fisico-editar' persona.id %}"
+                                   class="btn btn-primary">Editar F&iacute;sico</a>
+                                {% include 'snippets/antecedente.html' with antecedente=persona.antecedente %}
+                                <a href="{% url 'persona-antecedente-editar' persona.id %}"
+                                   class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos
+                                    Personales</a>
+                                {% include 'snippets/antecedente_familiar.html' with antecedente=persona.antecedente_familiar %}
+                                <a href="{% url 'persona-antecedente-familiar-editar' persona.id %}"
+                                   class="btn btn-primary">Editar Antecedentes
+                                    Familiares</a>
+                                {% include 'snippets/antecedente_quirurgico.html' with persona=persona %}
+                                <a href="{% url 'persona-antecedente-quirurgico-agregar' persona.id %}"
+                                   class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
+                                {% ifequal persona.sexo 'F' %}
+                                    {% include 'snippets/antecedente_obstetrico.html' with antecedente=persona.antecedente_obstetrico %}
+                                    <a href="{% url 'persona-antecedente-obstetrico-editar' persona.id %}"
+                                       class="btn btn-primary">Editar Antecedentes
+                                        Obstetricos</a>
+                                {% endifequal %}
+                            </article>
+                            {% if persona.emergencias %}
+                                <article id="emergencias" class="tab-pane">
+                                    {% include 'emergency/snippets/emergencia_list.html' with emergencias=persona.emergencias.all %}
+                                </article>
+                            {% endif %}
+                            {% if persona.admisiones %}
+                                <article id="admisiones" class="tab-pane">
+                                    {% include 'snippets/enfermeria_list.html' with admisiones=persona.admisiones.all %}
+                                </article>
+                            {% endif %}
+                            {% if persona.examenes %}
+                                <article id="examenes" class="tab-pane">
+                                    {% include 'snippets/examen_list.html' with examenes=persona.examenes.all %}
+                                </article>
+                            {% endif %}
+                            {% if persona.consultas %}
+                                <article id="consulta_inicio" class="tab-pane">
+                                    {% load l10n %}
+                                    <table class="table table-striped">
+                                        <caption>Consulta Inicial</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Consulta inicial</th>
+                                            <th>tipo de consulta</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for consulta in persona.consultas.all %}
+                                            <tr>
+                                                <td>{{ consulta.created }}</td>
+                                                <td>{{ consulta.padecimiento }}</td>
+                                                <td>{{ consulta.tipo }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped">
+                                        <caption>Consulta De Seguimiento</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>descripcion</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for seguimiento in persona.seguimientos.all %}
+                                            <tr>
+                                                <td>{{ seguimiento.created }}</td>
+                                                <td>{{ seguimiento.observaciones }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped">
+                                        <caption>Notas de Enfermeria</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>descripcion</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for nota in persona.notas_enfermeria.all %}
+                                            <tr>
+                                                <td>{{ nota.created }}</td>
+                                                <td>{{ nota.nota }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </article>
+                                <article id="examen_fisico" class="tab-pane">
+                                    {% load l10n %}
+                                    <table class="table table-striped">
+                                        <caption>Examenes F&iacute;sicos</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>fecha</th>
+                                            <th>ORL</th>
+                                            <th>Cardiopulmonar</th>
+                                            <th>Gastrointestinal</th>
+                                            <th>Extremidades</th>
+                                            <th>Otras</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for evaluacion in persona.evaluaciones.all %}
+                                            <tr>
+                                                <td>{{ evaluacion.created }}</td>
+                                                <td>{{ evaluacion.orl }}</td>
+                                                <td>{{ evaluacion.cardiopulmonar }}</td>
+                                                <td>{{ evaluacion.gastrointestinal }}</td>
+                                                <td>{{ evaluacion.extremidades }}</td>
+                                                <td>{{ evaluacion.otras }}</td>
+                                                <td><a class="btn btn-success" href="{% url 'clinique-evaluacion-edit' evaluacion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </article>
+                                <article id="diagnostico" class="tab-pane">
+                                    {% load l10n %}
+                                    <table class="table table-striped">
+                                        <caption>Diagn&oacute;stico</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Consulta inicial</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for diagnostico in persona.diagnosticos_clinicos.all %}
+                                            <tr>
+                                                <td>{{ diagnostico.created }}</td>
+                                                <td>{{ diagnostico.diagnostico }}</td>
+                                                <td><a class="btn btn-success" href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i class="fa fa-edit"></i> Editar</a> </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </article>
+                                <article id="clinico" class="tab-pane">
+                                    <table class="table table-striped">
+                                        <caption>Signos Vitales</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Pulso</th>
+                                            <th>Temperatura</th>
+                                            <th>Presi&oacute;n Sist&oacute;lica</th>
+                                            <th>Presi&oacute;n Diast&oacute;lica</th>
+                                            <th>Presi&oacute;n Arterial Media</th>
+                                            <th>Respiraci&oacute;n</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for signos_vitales in persona.lecturas_signos.all %}
+                                            <tr>
+                                                <td>{{ signos_vitales.created }}</td>
+                                                <td>{{ signos_vitales.pulso }}</td>
+                                                <td>{{ signos_vitales.temperatura }}</td>
+                                                <td>{{ signos_vitales.presion_sistolica }}</td>
+                                                <td>{{ signos_vitales.presion_diastolica }}</td>
+                                                <td>{{ signos_vitales.presion_arterial_media }}</td>
+                                                <td>{{ signos_vitales.respiracion }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped">
+                                        <caption>Ordenes M&eacute;dicas</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Orden</th>
+                                            <th>Evoluci&oacute;n</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for orden in persona.ordenes_medicas.all %}
+                                            <tr>
+                                                <td>{{ orden.created }}</td>
+                                                <td>{{ orden.orden }}</td>
+                                                <td>{{ orden.evolucion }}</td>
+                                                <td><a class="btn btn-success" href="{% url 'clinique-orden-edit' orden.id %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped">
+                                        <caption>Incapacidades</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Descripci&oacute;n</th>
+                                            <th>D&iacute;as</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for incapacidad in persona.incapacidades.all %}
+                                            <tr>
+                                                <td>{{ incapacidad.created }}</td>
+                                                <td>{{ incapacidad.descripcion }}</td>
+                                                <td>{{ incapacidad.dias }}</td>
+                                                <td></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped">
+                                        <caption>Prescripciones</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Nota</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for prescripcion in persona.prescripciones.all %}
+                                            <tr>
+                                                <th>{{ prescripcion.created }}</th>
+                                                <th>{{ prescripcion.nota }}</th>
+                                                <td><a class="btn btn-success" href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped">
+                                        <caption>Cargos y Honorarios</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Tipo</th>
+                                            <th>Cargo</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for cargo in persona.cargos.all %}
+                                            <tr>
+                                                <td>{{ cargo.created }}</td>
+                                                <td>{{ cargo.tipo }}</td>
+                                                <td>{{ cargo.item }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped">
+                                        <caption>Remisiones</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Tipo</th>
+                                            <th>Especialidad</th>
+                                            <th>Motivo</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for remision in persona.remisiones.all %}
+                                            <tr>
+                                                <td>{{ remision.created }}</td>
+                                                <td>{{ remision.tipo }}</td>
+                                                <td>{{ remision.especilidad }}</td>
+                                                <td>{{ remision.motivo }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </article>
+                            {% endif %}
+                        </div>
+                    </section>
+                </div>
             </div>
         </section>
         {% include 'snippets/persona_aside.html' with persona=persona %}

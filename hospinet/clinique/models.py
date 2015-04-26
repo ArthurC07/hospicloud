@@ -18,7 +18,6 @@
 from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
-
 from django.contrib.auth.models import User
 
 from django.core.urlresolvers import reverse
@@ -101,17 +100,21 @@ class Paciente(TimeStampedModel):
 
 
 class Consulta(TimeStampedModel):
-    paciente = models.ForeignKey(Paciente, related_name='consultas')
+    persona = models.ForeignKey(Persona, related_name='consultas',
+                                blank=True, null=True)
+    consultorio = models.ForeignKey(Consultorio, related_name='consultas',
+                                    blank=True, null=True)
     tipo = models.ForeignKey(TipoConsulta, related_name='consultas')
     motivo_de_consulta = models.TextField(default=None, null=True)
     HEA = models.TextField(default=None, null=True)
     facturada = models.BooleanField(default=False)
     activa = models.BooleanField(default=True)
+    final = models.DateTimeField(blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return self.paciente.get_absolute_url()
+        return self.persona.get_absolute_url()
 
 
 class LecturaSignos(TimeStampedModel):
@@ -143,8 +146,10 @@ class LecturaSignos(TimeStampedModel):
 
 class Evaluacion(TimeStampedModel):
     """Registra los análisis que se le efectua a la :class:`Persona`"""
-
-    paciente = models.ForeignKey(Paciente, related_name='evaluaciones')
+    persona = models.ForeignKey(Persona, related_name='evaluaciones',
+                                blank=True, null=True)
+    usuario = models.ForeignKey(User, related_name='evaluaciones',
+                                blank=True, null=True)
     orl = models.TextField()
     cardiopulmonar = models.TextField()
     gastrointestinal = models.TextField()
@@ -154,7 +159,7 @@ class Evaluacion(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.paciente.get_absolute_url()
+        return self.persona.get_absolute_url()
 
 
 class Cita(TimeStampedModel):
@@ -191,38 +196,48 @@ class Seguimiento(TimeStampedModel):
     """Representa las consultas posteriores que sirven como seguimiento a la
     dolencia original"""
 
-    paciente = models.ForeignKey(Paciente, related_name='seguimientos')
+    persona = models.ForeignKey(Persona, related_name='seguimientos',
+                                blank=True, null=True)
+    consultorio = models.ForeignKey(Consultorio, related_name='seguimientos',
+                                    blank=True, null=True)
     observaciones = models.TextField()
     usuario = models.ForeignKey(User, related_name='seguimientos')
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.paciente.get_absolute_url()
+        return self.persona.get_absolute_url()
 
 
 class DiagnosticoClinico(TimeStampedModel):
-    paciente = models.ForeignKey(Paciente, related_name='diagnosticos_clinicos')
+    persona = models.ForeignKey(Persona, related_name='diagnosticos_clinicos',
+                                blank=True, null=True)
+    consultorio = models.ForeignKey(Consultorio,
+                                    related_name='diagnosticos_clinicos',
+                                    blank=True, null=True)
     diagnostico = models.TextField()
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('clinique-paciente', args=[self.paciente.id])
+        return self.persona.get_absolute_url()
 
 
 class OrdenMedica(TimeStampedModel):
     """Registra las indicaciones dadas al paciente de parte del
     :class:`Doctor`"""
 
-    paciente = models.ForeignKey(Paciente, related_name='ordenes_medicas')
+    persona = models.ForeignKey(Persona, related_name='ordenes_medicas',
+                                blank=True, null=True)
+    consultorio = models.ForeignKey(Consultorio, related_name='ordenes_medicas',
+                                    blank=True, null=True)
     evolucion = models.TextField(blank=True)
     orden = models.TextField(blank=True)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.paciente.get_absolute_url()
+        return self.persona.get_absolute_url()
 
 
 class TipoCargo(TimeStampedModel):
@@ -239,7 +254,10 @@ class TipoCargo(TimeStampedModel):
 class Cargo(TimeStampedModel):
     """Permite registrar diversos cobros a un :class:`Paciente`"""
 
-    paciente = models.ForeignKey(Paciente, related_name='cargos')
+    persona = models.ForeignKey(Persona, related_name='cargos',
+                                blank=True, null=True)
+    consultorio = models.ForeignKey(Consultorio, related_name='cargos',
+                                    blank=True, null=True)
     tipo = models.ForeignKey(ItemType, related_name='cargos')
     item = models.ForeignKey(ItemTemplate, related_name='consultorio_cargos')
     cantidad = models.IntegerField(default=1)
@@ -248,13 +266,14 @@ class Cargo(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.paciente.get_absolute_url()
+        return self.persona.get_absolute_url()
 
 
 class NotaEnfermeria(TimeStampedModel):
     """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
 
-    paciente = models.ForeignKey(Paciente, related_name='notas_enfermeria')
+    persona = models.ForeignKey(Persona, related_name='notas_enfermeria',
+                                blank=True, null=True)
     nota = models.TextField(blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='consultorio_notas_enfermeria')
@@ -262,7 +281,7 @@ class NotaEnfermeria(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.paciente.get_absolute_url()
+        return self.persona.get_absolute_url()
 
 
 class Examen(TimeStampedModel):
@@ -296,26 +315,28 @@ class Espera(TimeStampedModel):
 
 
 class Prescripcion(TimeStampedModel):
-    paciente = models.ForeignKey(Paciente, related_name='prescripciones')
+    persona = models.ForeignKey(Persona, related_name='prescripciones',
+                                blank=True, null=True)
     consulta = models.ForeignKey(Consulta, blank=True, null=True,
                                  related_name='prescripciones')
     nota = models.TextField(blank=True)
 
     def __unicode__(self):
-        return self.paciente.persona.nombre_completo()
+        return self.persona.nombre_completo()
 
     def get_absolute_url(self):
-        return self.paciente.get_absolute_url()
+        return self.persona.get_absolute_url()
 
 
 class Incapacidad(TimeStampedModel):
-    paciente = models.ForeignKey(Paciente, related_name='incapacidades')
+    persona = models.ForeignKey(Persona, related_name='incapacidades',
+                                blank=True, null=True)
     consultorio = models.ForeignKey(Consultorio, related_name='incapacidades')
     descripcion = models.TextField()
     dias = models.IntegerField(default=0)
 
     def get_absolute_url(self):
-        return self.paciente.get_absolute_url()
+        return self.persona.get_absolute_url()
 
 
 class Reporte(TimeStampedModel):
@@ -342,8 +363,20 @@ class Remision(TimeStampedModel):
 
 
 def consolidate_clinique(persona, clone):
-    [transfer_object_to_persona(paciente, persona) for paciente in
-     clone.pacientes.all()]
+    [transfer_object_to_persona(consulta, persona) for consulta in
+     clone.consultas.all()]
+
+    [transfer_object_to_persona(incapacidad, persona) for incapacidad in
+     clone.incapacidades.all()]
+
+    [transfer_object_to_persona(diagnostico, persona) for diagnostico in
+     clone.diagnosticos.all()]
+
+    [transfer_object_to_persona(evaluacion, persona) for evaluacion in
+     clone.evaluaciones.all()]
+
+    [transfer_object_to_persona(orden, persona) for orden in
+     clone.ordenes_medicas.all()]
 
     [transfer_object_to_persona(espera, persona) for espera in
      clone.espera.all()]
@@ -356,6 +389,9 @@ def consolidate_clinique(persona, clone):
 
     [transfer_object_to_persona(remision, persona) for remision in
      clone.remisiones.all()]
+
+    [transfer_object_to_persona(cargo, persona) for cargo in
+     clone.cargos.all()]
 
 
 persona_consolidation_functions.append(consolidate_clinique)

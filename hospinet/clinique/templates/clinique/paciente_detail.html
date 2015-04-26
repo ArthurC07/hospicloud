@@ -41,14 +41,14 @@
                         <div class="tab-content">
                             <article id="paciente" class="tab-pane active">
                                 <div class="info">
-                                    {% include 'snippets/persona.html' with persona=paciente.persona %}
-                                    <a href="{% url 'clinique-persona-edit' paciente.persona.id %}"
+                                    {% include 'snippets/persona.html' with persona=paciente %}
+                                    <a href="{% url 'clinique-persona-edit' paciente.id %}"
                                        class="btn btn-primary">Editar Datos</a>
                                 </div>
                                 {% if paciente.persona.contratos %}
-                                    {% include 'contracts/snippets/contracts.html' with persona=paciente.persona %}
+                                    {% include 'contracts/snippets/contracts.html' with persona=paciente %}
                                 {% endif %}
-                                {% if paciente.persona.beneficiarios %}
+                                {% if paciente.beneficiarios %}
                                     {% for beneficiario in paciente.persona.beneficiarios.all %}
                                         {% include 'contracts/snippets/contracts.html' with persona=beneficiario.contrato.persona %}
                                     {% endfor %}
@@ -57,38 +57,38 @@
                             <article id="antecedente" class="tab-pane">
                                 <div class="info">
                                     {% include 'snippets/fisico.html' with fisico=paciente.persona.fisico %}
-                                    <a href="{% url 'clinique-fisico-editar' paciente.persona.id %}"
+                                    <a href="{% url 'clinique-fisico-editar' paciente.id %}"
                                        class="btn btn-primary">Editar
                                         F&iacute;sico</a>
                                 </div>
                                 <div class="info">
-                                    {% include 'snippets/antecedente.html' with antecedente=paciente.persona.antecedente %}
-                                    <a href="{% url 'clinique-antecedente-editar' paciente.persona.id %}"
+                                    {% include 'snippets/antecedente.html' with antecedente=paciente.antecedente %}
+                                    <a href="{% url 'clinique-antecedente-editar' paciente.id %}"
                                        class="btn btn-primary">Editar Antecedentes
                                         Cl&iacute;nicos</a>
                                 </div>
                                 <div class="info">
-                                    {% include 'snippets/antecedente_familiar.html' with antecedente=paciente.persona.antecedente_familiar %}
-                                    <a href="{% url 'clinique-antecedente-familiar-editar' paciente.persona.id %}"
+                                    {% include 'snippets/antecedente_familiar.html' with antecedente=paciente.antecedente_familiar %}
+                                    <a href="{% url 'clinique-antecedente-familiar-editar' paciente.id %}"
                                        class="btn btn-primary">Editar Antecedentes
                                         Familiares</a>
                                 </div>
                                 <div class="info">
                                     {% ifequal paciente.persona.sexo 'F' %}
                                         {% if paciente.persona.antecedente_obstetrico %}
-                                            {% include 'snippets/antecedente_obstetrico.html' with antecedente=paciente.persona.antecedente_obstetrico %}
-                                            <a href="{% url 'clinique-antecedente-obstetrico-editar' paciente.persona.id %}"
+                                            {% include 'snippets/antecedente_obstetrico.html' with antecedente=paciente.antecedente_obstetrico %}
+                                            <a href="{% url 'clinique-antecedente-obstetrico-editar' paciente.id %}"
                                                class="btn btn-primary">Editar
                                                 Antecedentes
                                                 Obstetricos</a>
                                         {% else %}
-                                            <a href="{% url 'clinique-antecedente-obstetrico-agregar' paciente.persona.id %}" class="btn btn-primary">
+                                            <a href="{% url 'clinique-antecedente-obstetrico-agregar' paciente.id %}" class="btn btn-primary">
                                                 Agregar Antecedentes Obstetricos
                                             </a>
                                         {% endif %}
                                     {% endifequal %}
-                                    {% include 'snippets/antecedente_quirurgico.html' with antecedente=paciente.persona %}
-                                    <a href="{% url 'clinique-antecedente-quirurgico-agregar' paciente.id paciente.persona.id %}"
+                                    {% include 'snippets/antecedente_quirurgico.html' with antecedente=paciente %}
+                                    <a href="{% url 'clinique-antecedente-quirurgico-agregar' paciente.id paciente.id %}"
                                        class="btn btn-primary">Agregar Antecedente Quir&uacute;rgico</a>
                                 </div>
                             </article>

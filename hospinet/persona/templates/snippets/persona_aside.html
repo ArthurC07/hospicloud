@@ -3,6 +3,46 @@
         <nav class="sidebar-nav">
             <ul class="nav nav-stacked">
                 <li>
+                    {% for consultorio in user.consultorios.all %}
+                        <a href="{% url 'consultorio-espera-agregar' persona.id consultorio.id %}">Agregar
+                            Paciente a Sala de Espera de {{ consultorio }}</a>
+                    {% endfor %}
+                </li>
+                <li>
+                    {% for consultorio in user.consultorios.all %}
+                        <a href="{% url 'consultorio-consulta-agregar' persona.id consultorio.id %}">Agregar Consulta Inicial de {{ consultorio }}</a>
+                    {% endfor %}
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-segumiento-agregar' persona.id %}">Agregar
+                        Consulta de Segumiento</a>
+                </li>
+                <li>
+                    <a href="{% url 'clinique-notas' persona.id %}"><i class="fa fa-pencil"></i> Notas de Enfermeria</a>
+                </li>
+                <li>
+                    <a href="{% url 'clinique-signos' persona.id %}"><i class="fa fa-heart"></i> Signos Vitales</a>
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-evaluacion-agregar' persona.id %}">Agregar
+                        Examen Físico</a>
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-remision-agregar' persona.id %}">
+                        Remitir Paciente
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-prescripcion-agregar' persona.id %}">Agregar Prescripci&oacute;n</a>
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-incapacidad-agregar' persona.id %}">Agregar Incapacidad</a>
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-diagnostico-agregar' persona.id %}">Agregar
+                        Diagnóstico</a>
+                </li>
+                <li>
                     <a href="{% url 'persona-estilo' persona.id %}">Estilo de
                         Vida</a>
                 </li>
@@ -16,22 +56,6 @@
                 </li>
                 <li>
                     <a href="{% url 'admision-persona-agregar' persona.id %}">Hospitalizar</a>
-                </li>
-                <li>
-                    <a href="{% url 'consultorio-paciente-add' persona.id %}">Agregar
-                        a un Consultorio</a>
-                </li>
-                <li>
-                    {% for consultorio in user.consultorios.all %}
-                        <a href="{% url 'consultorio-paciente-agregar' persona.id consultorio.id %}">Agregar
-                            Paciente a Consultorio {{ consultorio }}</a>
-                    {% endfor %}
-                </li>
-                <li>
-                    {% for consultorio in user.consultorios.all %}
-                        <a href="{% url 'consultorio-espera-agregar' persona.id consultorio.id %}">Agregar
-                            Paciente a Sala de Espera de {{ consultorio }}</a>
-                    {% endfor %}
                 </li>
                 <li>
                     <a href="{% url 'contrato-persona-add' persona.id %}">Crear

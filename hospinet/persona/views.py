@@ -54,7 +54,14 @@ class PersonaDetailView(DetailView, LoginRequiredMixin):
 
     context_object_name = 'persona'
     model = Persona
-    template_name = 'persona/persona_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PersonaDetailView, self).get_context_data()
+
+        context['consultas'] = self.object.consultas.filter(facturada=False,
+                                                            activa=True).all()
+
+        return context
 
 
 class PersonaCreateView(CreateView, LoginRequiredMixin):

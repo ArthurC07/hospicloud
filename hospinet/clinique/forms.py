@@ -67,10 +67,10 @@ class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
                                          widget=forms.HiddenInput())
 
 
-class ConsultaForm(PacienteFormMixin):
+class ConsultaForm(PacienteFormMixin, ConsultorioFormMixin, BasePersonaForm,):
     class Meta:
         model = Consulta
-        fields = '__all__'
+        exclude = ('facturada', 'activa', 'final')
 
     tipo = forms.ModelChoiceField(
         queryset=TipoConsulta.objects.filter(habilitado=True).all())
@@ -80,7 +80,7 @@ class ConsultaForm(PacienteFormMixin):
         self.helper.layout = Fieldset(u'Agregar Consulta', *self.field_names)
 
 
-class EvaluacionForm(HiddenUserForm, PacienteFormMixin):
+class EvaluacionForm(HiddenUserForm, BasePersonaForm):
     class Meta:
         model = Evaluacion
         fields = '__all__'
@@ -180,7 +180,7 @@ class OrdenMedicaForm(PacienteFormMixin):
                                       *self.field_names)
 
 
-class NotaEnfermeriaForm(PacienteFormMixin, HiddenUserForm):
+class NotaEnfermeriaForm(BasePersonaForm, HiddenUserForm):
     class Meta:
         model = NotaEnfermeria
 

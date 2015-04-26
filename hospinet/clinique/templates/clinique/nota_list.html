@@ -17,16 +17,14 @@
                 <thead>
                 <tr>
                     <th>Fecha</th>
-                    <th>Orden</th>
-                    <th>Evoluci&oacute;n</th>
+                    <th>Nota</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for orden in paciente.notas_enfermeria.all %}
                     <tr>
                         <td>{{ orden.created }}</td>
-                        <td>{{ orden.orden }}</td>
-                        <td>{{ orden.evolucion }}</td>
+                        <td>{{ orden.nota }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

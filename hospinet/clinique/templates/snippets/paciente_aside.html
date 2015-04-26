@@ -1,13 +1,15 @@
 <nav class="sidebar-nav">
     <ul class="nav nav-tabs nav-stacked">
         <li>
-            <a href="{% url 'consultorio-espera-agregar' paciente.persona.id paciente.consultorio.id %}">
-                Agregar Paciente a Sala de Espera de {{ paciente.consultorio }}
-            </a>
+            {% for consultorio in user.consultorios.all %}
+                <a href="{% url 'consultorio-espera-agregar' paciente.id consultorio.id %}">Agregar
+                    Paciente a Sala de Espera de {{ consultorio }}</a>
+            {% endfor %}
         </li>
         <li>
-            <a href="{% url 'consultorio-consulta-agregar' paciente.id %}">Agregar
-                Consulta Inicial</a>
+            {% for consultorio in user.consultorios.all %}
+                <a href="{% url 'consultorio-consulta-agregar' paciente.id consultorio.id %}">Agregar Consulta Inicial de {{ consultorio }}</a>
+            {% endfor %}
         </li>
         <li>
             <a href="{% url 'consultorio-segumiento-agregar' paciente.id %}">Agregar
@@ -40,15 +42,15 @@
                 Diagnóstico</a>
         </li>
         <li>
-            <a href="{% url 'consultorio-citapersona-agregar' paciente.persona.id %}">Crear Cita</a>
+            <a href="{% url 'consultorio-citapersona-agregar' paciente.id %}">Crear Cita</a>
         </li>
         <li>
-            <a href="{% url 'consultorio-remision-agregar' paciente.persona.id paciente.consultorio.id %}">
+            <a href="{% url 'consultorio-remision-agregar' paciente.id %}">
                 Remitir Paciente
             </a>
         </li>
         <li>
-            <a href="{% url 'persona-view-id' paciente.persona.id %}">Ficha Personal</a>
+            <a href="{% url 'persona-view-id' paciente.id %}">Ficha Personal</a>
         </li>
     </ul>
 </nav>
