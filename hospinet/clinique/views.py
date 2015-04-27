@@ -722,9 +722,16 @@ class EsperaListView(ConsultorioMixin, LoginRequiredMixin, ListView):
     model = Espera
 
 
-class EsperaAusenteView(UpdateView, LoginRequiredMixin):
-    model = Espera
-    form_class = EsperaAusenteForm
+class EsperaAusenteView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        espera = get_object_or_404(Espera, pk=kwargs['pk'])
+        espera.ausente = True
+        espera.save()
+        messages.info(self.request,
+                      u'¡Se marco la espera como ausente!')
+        return espera.get_absolute_url()
 
 
 class PrescripcionCreateView(PersonaFormMixin, CurrentUserFormMixin,
