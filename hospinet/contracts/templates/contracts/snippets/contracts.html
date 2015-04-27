@@ -6,7 +6,7 @@
                     <section class="page-header">
                         <h3>Contrato {{ contrato.numero }}
                             <small>
-                                {{ contrato.plan }} - {{ contrato.empresa }} -
+                                {{ contrato.plan }} - {{ contrato.empresa }}
                                 {% if contrato.activo %}
                                 <button type="button" class="btn btn-info">
                                 {% else %}
@@ -18,12 +18,12 @@
                         </h3>
                     </section>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3>Titular:{{ contrato.persona }}
-                            <small>Vencimiento: {{ contrato.vencimiento }}</small>
-                        </h3>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Titular:{{ contrato.persona }}
+                        <small>Vencimiento: {{ contrato.vencimiento }}</small>
+                    </h3>
                 </div>
             </div>
             <div class="row">
