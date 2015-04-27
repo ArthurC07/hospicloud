@@ -66,7 +66,7 @@
                                 {% endif %}
                                 {% if persona.beneficiarios %}
                                     {% for beneficiario in persona.beneficiarios.all %}
-                                        {% include 'contracts/snippets/contracts.html' with persona=beneficiario.contrato.persona %}
+                                        {% include 'contracts/snippets/contracts.html' with contrato=beneficiario.contrato %}
                                     {% endfor %}
                                 {% endif %}
                                 <div class="row">
