@@ -552,7 +552,7 @@ class LecturaSignosUpdateView(UpdateView, LoginRequiredMixin):
     form_class = LecturaSignosForm
 
 
-class DiagnosticoCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+class DiagnosticoCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 

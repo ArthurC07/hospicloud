@@ -136,7 +136,7 @@ class LecturaSignosForm(PacienteFormMixin):
                                       *self.field_names)
 
 
-class DiagnosticoClinicoForm(PacienteFormMixin):
+class DiagnosticoClinicoForm(BasePersonaForm, HiddenUserForm):
     class Meta:
         model = DiagnosticoClinico
 

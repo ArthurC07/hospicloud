@@ -212,9 +212,8 @@ class Seguimiento(TimeStampedModel):
 class DiagnosticoClinico(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='diagnosticos_clinicos',
                                 blank=True, null=True)
-    consultorio = models.ForeignKey(Consultorio,
-                                    related_name='diagnosticos_clinicos',
-                                    blank=True, null=True)
+    usuario = models.ForeignKey(User, related_name='diagnosticos_clinicos',
+                                blank=True, null=True)
     diagnostico = models.TextField()
 
     def get_absolute_url(self):
