@@ -21,32 +21,32 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-2">
-                                    {% with photo=cita.persona.fotografia|thumbnailer %}
-                                        {% if photo %}
-                                            <img src="{{ photo.small.url }}"
-                                                 width="{{ photo.small.width }}"
-                                                 height="{{ photo.small.height }}">
-                                        {% else %}
-                                            <img src="{% static 'images/face.jpg' %}"
-                                                 width="100"
-                                                 height="100"/>
-                                        {% endif %}
-                                    {% endwith %}
+                                    <img src="{% static 'images/face.jpg' %}"
+                                         width="100" height="100"/>
                                 </div>
                                 <div class="col-md-9">
                                     <h3>{{ cita.persona }}
-                                        <small>{{ cita.persona.obtener_edad }} a&ntilde;os
+                                        <small>{{ cita.persona.obtener_edad }}
+                                            a&ntilde;os
                                         </small>
                                     </h3>
                                     <p>
-                                        {{ cita.persona.get_sexo_display }},
-                                        Programada para
-                                        el {{ cita.fecha }}, {{ cita.consultorio }}
+                                        {{ cita.persona.get_sexo_display }}
+                                        Programado para
+                                        el {{ cita.fecha }}
                                     </p>
 
                                     <p>
-                                        <a class="btn btn-success" href="{% url 'consultorio-lectura-agregar' cita.persona.id %}">Agregar Lectura de Signos</a>
-                                        <a class="btn btn-primary" href="{% url 'clinique-cita-ausente' cita.id  %}">No se Presentó a la Cita</a>
+                                        <a class="btn btn-success"
+                                           href="{% url 'consultorio-lectura-agregar' cita.persona.id %}">Agregar
+                                            Lectura de Signos</a>
+                                        <a class="btn btn-success"
+                                           href="{% url 'clinique-cita-espera' cita.id %}">Enviar
+                                            a Sala de Espera</a>
+                                        <a class="btn btn-primary"
+                                           href="{% url 'clinique-cita-ausente' cita.id %}">No
+                                            se Presentó a la
+                                            Cita</a>
                                     </p>
                                 </div>
                             </div>
