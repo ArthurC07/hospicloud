@@ -147,7 +147,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['consultasp'] = Consulta.objects.filter(
             created__gte=self.inicio,
             created__lte=self.fin,
-            paciente__persona__in=personas).count()
+            persona__in=personas).count()
 
         morosos = Contrato.objects.filter(vencimiento__gte=self.fin,
                                           cancelado=False).all()
