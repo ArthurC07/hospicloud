@@ -143,7 +143,7 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
 
         context['total'] = sum(e.tiempo() for e in self.get_queryset().all())
         context['citas'] = Cita.objects.filter(consultorio=self.object,
-                                               fecha__gte=self.today,
+                                               fecha__gte=self.yesterday,
                                                fecha__lte=self.fin,
                                                ausente=False, atendida=False)
 
