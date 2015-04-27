@@ -178,7 +178,7 @@ class AntecedenteFamiliarForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteFamiliarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Antecedentes Familiares',
+        self.helper.layout = Fieldset(u'Editar Antecedentes Patológicos Familiares',
                                       *self.field_names)
 
 

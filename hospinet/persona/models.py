@@ -256,7 +256,7 @@ class AntecedenteFamiliar(models.Model):
     sindrome_coronario_agudo = models.BooleanField(default=False, blank=True)
     hipertension = models.BooleanField(default=False, blank=True)
     tabaquismo = models.BooleanField(default=False, blank=True)
-    epoc = models.NullBooleanField(default=False, blank=True)
+    epoc = models.BooleanField(default=False, blank=True)
     diabetes = models.BooleanField(default=False, blank=True)
     tuberculosis = models.BooleanField(default=False, blank=True)
     asma = models.BooleanField(default=False, blank=True)
