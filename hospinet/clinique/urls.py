@@ -178,7 +178,7 @@ urlpatterns = patterns('',
                            CitaEsperaRedirectView.as_view(),
                            name='clinique-cita-espera'),
 
-                       url(r'^diagnostico/(?P<paciente>\d+)/agregar$',
+                       url(r'^diagnostico/(?P<persona>\d+)/agregar$',
                            DiagnosticoCreateView.as_view(),
                            name='consultorio-diagnostico-agregar'),
 
