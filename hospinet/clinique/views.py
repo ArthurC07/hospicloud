@@ -659,7 +659,7 @@ class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/estilo_vida_update.html'
 
 
-class CargoCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+class CargoCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
     model = Cargo
     form_class = CargoForm
 
@@ -681,12 +681,12 @@ class CargoCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class OrdenMedicaCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+class OrdenMedicaCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
 
 
-class OrdenMedicaUpdateView(UpdateView, LoginRequiredMixin):
+class OrdenMedicaUpdateView(LoginRequiredMixin, UpdateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
 
@@ -697,7 +697,7 @@ class NotaEnfermeriaCreateView(PersonaFormMixin, CurrentUserFormMixin,
     form_class = NotaEnfermeriaForm
 
 
-class ExamenCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+class ExamenCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
     model = Examen
     form_class = ExamenForm
 
@@ -707,8 +707,8 @@ class ExamenUpdateView(UpdateView, LoginRequiredMixin):
     form_class = ExamenForm
 
 
-class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin, CreateView,
-                       LoginRequiredMixin):
+class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin,
+                       LoginRequiredMixin, CreateView):
     model = Espera
     form_class = EsperaForm
 
@@ -722,7 +722,8 @@ class EsperaAusenteView(UpdateView, LoginRequiredMixin):
     form_class = EsperaAusenteForm
 
 
-class PrescripcionCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
+class PrescripcionCreateView(PersonaFormMixin, CurrentUserFormMixin,
+                             CreateView):
     model = Prescripcion
     form_class = PrescripcionForm
 
@@ -737,7 +738,7 @@ class IncapacidadCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
     form_class = IncapacidadForm
 
 
-class ReporteCreateView(ConsultorioFormMixin, CreateView, LoginRequiredMixin):
+class ReporteCreateView(ConsultorioFormMixin, LoginRequiredMixin, CreateView):
     model = Reporte
     form_class = ReporteForm
 
