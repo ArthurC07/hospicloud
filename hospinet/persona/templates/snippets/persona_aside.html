@@ -18,6 +18,10 @@
                         Consulta de Segumiento</a>
                 </li>
                 <li>
+                    <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">Crear
+                        una Cita</a>
+                </li>
+                <li>
                     <a href="{% url 'clinique-notas' persona.id %}"><i class="fa fa-pencil"></i> Notas de Enfermeria</a>
                 </li>
                 <li>
@@ -65,10 +69,6 @@
                 <li>
                     <a href="{% url 'persona-beneficiario-add' persona.id %}">Convertir
                         en Beneficiario</a>
-                </li>
-                <li>
-                    <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">Crear
-                        una Cita</a>
                 </li>
                 <li>
                     <a href="{% url 'persona-empleo-add' persona.id %}">Agregar
