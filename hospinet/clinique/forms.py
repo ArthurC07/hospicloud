@@ -256,7 +256,7 @@ class PrescripcionForm(BasePersonaForm):
                                       *self.field_names)
 
 
-class IncapacidadForm(BasePersonaForm, ConsultorioFormMixin):
+class IncapacidadForm(BasePersonaForm, HiddenUserForm):
     class Meta:
         model = Incapacidad
         fields = '__all__'

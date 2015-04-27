@@ -732,7 +732,7 @@ class PrescripcionUpdateView(UpdateView, LoginRequiredMixin):
     form_class = PrescripcionForm
 
 
-class IncapacidadCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
+class IncapacidadCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
     model = Incapacidad
     form_class = IncapacidadForm
 
