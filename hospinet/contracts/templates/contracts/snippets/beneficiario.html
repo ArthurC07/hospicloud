@@ -5,9 +5,14 @@
                 <section class="page-header">
                     <h3>Contrato {{ contrato.numero }}
                         <small>
-                            {{ contrato.plan }}
+                            {{ contrato.plan }} - {{ contrato.empresa }}
+                            {% if contrato.activo %}
+                                <button type="button" class="btn btn-info">
+                            {% else %}
+                                <button type="button" class="btn btn-warning">
+                            {% endif %}
                             {{ contrato.activo|yesno:"Activo,Inactivo" }}
-                            {{ contrato.empresa }}
+                            </button>
                         </small>
                     </h3>
                 </section>
