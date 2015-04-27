@@ -34,16 +34,16 @@
         <td class="data-label">Cancer</td>
         <td class="patient-data">{{ antecedente.cancer|yesno:"Sí,No" }}</td>
         <td class="data-label">Alergias</td>
-        <td class="patient-data">{{ antecedente.alergias|yesno:"Sí,No" }}</td>
+        <td class="patient-data">{{ antecedente.alergias }}</td>
         <td class="data-label">Congenital</td>
-        <td class="patient-data">{{ antecedente.congenital|yesno:"Sí,No" }}</td>
-        <td class="data-label">general</td>
-        <td class="patient-data">{{ antecedente.general|yesno:"Sí,No" }}</td>
+        <td class="patient-data">{{ antecedente.congenital }}</td>
+        <td class="data-label">General</td>
+        <td class="patient-data">{{ antecedente.general }}</td>
     </tr>
     <tr>
-        <td class="data-label">nutricional</td>
-        <td class="patient-data">{{ antecedente.nutricional|yesno:"Sí,No" }}</td>
-        <td class="data-label">otros</td>
-        <td class="patient-data">{{ antecedente.otros|yesno:"Sí,No" }}</td>
+        <td class="data-label">Nutricional</td>
+        <td class="patient-data">{{ antecedente.nutricional }}</td>
+        <td class="data-label">Otros</td>
+        <td class="patient-data">{{ antecedente.otros }}</td>
     </tr>
 </table>
