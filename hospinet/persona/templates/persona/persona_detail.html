@@ -70,18 +70,9 @@
                                 {% endif %}
                                 {% if persona.beneficiarios %}
                                     {% for beneficiario in persona.beneficiarios.all %}
-                                        {% include 'contracts/snippets/contracts.html' with contrato=beneficiario.contrato %}
+                                        {% include 'contracts/snippets/beneficiario.html' with contrato=beneficiario.contrato %}
                                     {% endfor %}
                                 {% endif %}
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        {% for beneficiario in persona.beneficiarios.all %}
-                                            <li>
-                                                <a href="{% url 'contrato' beneficiario.contrato.id %}">{{ beneficiario.contrato }}</a>
-                                            </li>
-                                        {% endfor %}
-                                    </div>
-                                </div>
                             </article>
                             <article id="clinico" class="tab-pane">
                                 {% include 'snippets/fisico.html' with fisico=persona.fisico %}
