@@ -24,7 +24,7 @@ from select2.fields import ModelChoiceField
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Beneficio,
-                              MasterContract, ImportFile)
+                              MasterContract, ImportFile, PCD)
 from invoice.forms import PeriodoForm
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
@@ -322,3 +322,13 @@ class ImportFileForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(ImportFileForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Archivo', *self.field_names)
+
+
+class PCDForm(BasePersonaForm):
+    class Meta:
+        model = PCD
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(PCDForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de PCD', *self.field_names)

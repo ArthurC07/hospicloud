@@ -115,6 +115,14 @@ class PCD(TimeStampedModel):
     numero = models.BigIntegerField(unique=True)
     pc = models.IntegerField(default=0)
 
+    def __unicode__(self):
+
+        return u'{0} {1}'.format(self.persona.nombre_completo(), self.numero)
+
+    def get_absolute_url(self):
+
+        return self.persona.get_absolute_url()
+
 
 def check_line(line, vencimiento):
     file_pcd = int(line[4])

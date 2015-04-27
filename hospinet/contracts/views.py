@@ -47,12 +47,12 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              EmpleadorChoiceForm, VendedorPeriodoForm,
                              PrecontratoForm, PersonaPrecontratoForm,
                              BeneficioForm, MasterContractForm, ImportFileForm,
-                             ContratoMasterForm)
+                             ContratoMasterForm, PCDForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Prebeneficiario,
                               Beneficio, MasterContract,
-                              ImportFile)
+                              ImportFile, PCD)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
@@ -925,3 +925,8 @@ class ImportFileProcessView(RedirectView, LoginRequiredMixin):
 class ImportFileListView(ListView, LoginRequiredMixin):
     model = ImportFile
     context_object_name = 'files'
+
+
+class PCDUpdateView(LoginRequiredMixin, UpdateView):
+    model = PCD
+    form_class = PCDForm

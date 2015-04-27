@@ -1,0 +1,7 @@
+{% for pcd in persona.pcds.all %}
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'contracts-pcd-editar' pcd.id %}" class="btn btn-primary">Editar {{ pcd }}</a>
+        </div>
+    </div>
+{% endfor %}

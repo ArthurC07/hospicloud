@@ -50,6 +50,10 @@
                                 <li><a href="#examenes" data-toggle="tab">Im&aacute;genes</a>
                                 </li>
                             {% endif %}
+                            {% if persona.contratos %}
+                                <li><a href="#contratos" data-toggle="tab">Contratos</a>
+                                </li>
+                            {% endif %}
                         </ul>
                         <div class="tab-content">
                             <article id="paciente" class="tab-pane active">
@@ -117,6 +121,11 @@
                             {% endif %}
                             {% if persona.consultas %}
                                 {% include 'clinique/snippets/consulta.html' with persona=persona %}
+                            {% endif %}
+                            {% if persona.contratos %}
+                                <article id="contratos" class="tab-pane">
+                                    {% include 'contracts/snippets/pcd.html' with persona=persona %}
+                                </article>
                             {% endif %}
                         </div>
                     </section>
