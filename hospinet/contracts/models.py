@@ -51,7 +51,7 @@ class Vendedor(TimeStampedModel):
                                      inicio__lte=fin)
 
     def get_absolute_url(self):
-        """Obtiene la url relacionada con un :class:`Paciente`"""
+        """Obtiene la url relacionada con un :class:`Vendedor`"""
 
         return reverse('contracts-vendedor', args=[self.id])
 
@@ -288,15 +288,13 @@ class Contrato(TimeStampedModel):
             self.renovacion = self.inicio
             self.save()
 
-        consultas = Consulta.objects.filter(
-            paciente__persona=self.persona,
-            created__gte=self.renovacion).count()
-        seguimientos = Seguimiento.objects.filter(
-            paciente__persona=self.persona,
-            created__gte=self.renovacion).count()
+        consultas = Consulta.objects.filter(persona=self.persona,
+                                            created__gte=self.renovacion).count()
+        seguimientos = Seguimiento.objects.filter(persona=self.persona,
+                                                  created__gte=self.renovacion).count()
         total = seguimientos + consultas
 
-        predicates = [Q(paciente__persona=beneficiario.persona) for beneficiario
+        predicates = [Q(persona=beneficiario.persona) for beneficiario
                       in self.beneficiarios.all()]
 
         query = reduce(operator.or_, predicates, Q())
@@ -312,7 +310,7 @@ class Contrato(TimeStampedModel):
         """Obtiene el total de :class:`Cita`s de un periodo"""
         total = self.persona.citas.count()
 
-        predicates = [Q(paciente__persona=beneficiario.persona) for beneficiario
+        predicates = [Q(persona=beneficiario.persona) for beneficiario
                       in self.beneficiarios.all()]
 
         total += Cita.objects.filter(created__gte=self.renovacion).filter(
