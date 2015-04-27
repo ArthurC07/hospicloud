@@ -45,5 +45,9 @@
         <td class="patient-data">{{ antecedente.nutricional }}</td>
         <td class="data-label">Otros</td>
         <td class="patient-data">{{ antecedente.otros }}</td>
+        <td class="data-label">Diabetes Mellitus</td>
+        <td class="patient-data">{{ antecedente.diabetes|yesno:"Sí,No" }}</td>
+        <td class="data-label">Tuberculosis</td>
+        <td class="patient-data">{{ antecedente.tuberculosis|yesno:"Sí,No" }}</td>
     </tr>
 </table>
