@@ -329,7 +329,8 @@ class Prescripcion(TimeStampedModel):
 class Incapacidad(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='incapacidades',
                                 blank=True, null=True)
-    consultorio = models.ForeignKey(Consultorio, related_name='incapacidades')
+    usuario = models.ForeignKey(User, related_name='incapacidades',
+                                blank=True, null=True)
     descripcion = models.TextField()
     dias = models.IntegerField(default=0)
 

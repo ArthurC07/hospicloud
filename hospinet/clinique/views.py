@@ -505,7 +505,7 @@ class ConsultaCreateView(PersonaFormMixin, CurrentUserFormMixin,
     form_class = ConsultaForm
 
 
-class SeguimientoCreateView(PacienteFormMixin, CurrentUserFormMixin, CreateView,
+class SeguimientoCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
                             LoginRequiredMixin):
     model = Seguimiento
     form_class = SeguimientoForm
@@ -722,7 +722,7 @@ class EsperaAusenteView(UpdateView, LoginRequiredMixin):
     form_class = EsperaAusenteForm
 
 
-class PrescripcionCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+class PrescripcionCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
     model = Prescripcion
     form_class = PrescripcionForm
 
@@ -732,7 +732,7 @@ class PrescripcionUpdateView(UpdateView, LoginRequiredMixin):
     form_class = PrescripcionForm
 
 
-class IncapacidadCreateView(PacienteFormMixin, CreateView, LoginRequiredMixin):
+class IncapacidadCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
     model = Incapacidad
     form_class = IncapacidadForm
 
