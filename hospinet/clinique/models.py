@@ -58,6 +58,7 @@ class Consultorio(TimeStampedModel):
         permissions = (
             ('consultorio', 'Permite al usuario gestionar consultorios'),
         )
+        ordering = ["nombre", ]
 
     nombre = models.CharField(max_length=50, blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='consultorios')
