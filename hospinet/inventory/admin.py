@@ -21,9 +21,10 @@ from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType,
 
 
 class ItemTemplateAdmin(admin.ModelAdmin):
-    list_display = ('descripcion', 'activo')
-    list_filter = ('descripcion', 'activo')
-    ordering = ('descripcion', 'activo')
+    list_display = ('descripcion', 'activo', 'item_type')
+    list_filter = ('descripcion', 'activo', 'item_type')
+    ordering = ('descripcion', 'activo', 'item_type')
+    filter_horizontal = ('item_type',)
 
 
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
