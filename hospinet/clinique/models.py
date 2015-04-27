@@ -303,6 +303,14 @@ class Espera(TimeStampedModel):
     fecha = models.DateTimeField(default=timezone.now)
     atendido = models.BooleanField(default=False)
     ausente = models.BooleanField(default=False)
+    consulta = models.BooleanField(default=False)
+    inicio = models.DateTimeField(default=timezone.now)
+    terminada = models.BooleanField(default=False)
+    fin = models.DateTimeField(default=timezone.now)
+
+    def __unicode__(self):
+        return u"{0} en {1}".format(self.persona.nombre_completo(),
+            self.consultorio.nombre)
 
     def get_absolute_url(self):
         return self.consultorio.get_absolute_url()

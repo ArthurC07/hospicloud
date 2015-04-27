@@ -147,11 +147,16 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
                                                fecha__lte=self.fin,
                                                ausente=False, atendida=False)
 
+        context['consultas'] = Espera.objects.filter(consultorio=self.object,
+                                                     consulta=True,
+                                                     terminada=False)
+
         return context
 
     def get_queryset(self):
         self.object = self.get_object(Consultorio.objects.all())
-        queryset = self.object.espera.filter(created__gte=self.today,
+        queryset = self.object.espera.filter(fecha__gte=self.yesterday,
+                                             consulta=False, terminada=False,
                                              atendido=False, ausente=False)
         return queryset
 
@@ -762,6 +767,38 @@ class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
         espera.save()
         messages.info(self.request,
                       u'¡Se envio el paciente a salada de espera!')
+        return espera.get_absolute_url()
+
+
+class EsperaConsultaRedirectView(RedirectView, LoginRequiredMixin):
+    """Crea una :class:´Espera´ a partir de una :class:´Cita´ y redirige al
+    usuario al :class:´Consultorio´ asociado"""
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        espera = get_object_or_404(Espera, pk=kwargs['pk'])
+        espera.consulta = True
+        espera.inicio = timezone.now()
+        espera.save()
+        messages.info(self.request,
+                      u'¡Se envio el paciente a salada de consulta!')
+        return espera.get_absolute_url()
+
+
+class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
+    """Crea una :class:´Espera´ a partir de una :class:´Cita´ y redirige al
+    usuario al :class:´Consultorio´ asociado"""
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        espera = get_object_or_404(Espera, pk=kwargs['pk'])
+        espera.terminada = True
+        espera.fin = timezone.now()
+        espera.save()
+        messages.info(self.request,
+                      u'¡La consulta se marcó como terminada!')
         return espera.get_absolute_url()
 
 
