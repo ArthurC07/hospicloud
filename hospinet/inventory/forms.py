@@ -20,7 +20,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from select2.fields import ModelChoiceField
 
-from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
+from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, DateTimeWidget, FutureDateWidget
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
                               Transferido, ItemComprado, Historial, Proveedor)
@@ -50,11 +50,13 @@ class InventarioForm(FieldSetModelFormMixin):
 class ItemForm(FieldSetModelFormMixin):
     class Meta:
         model = Item
-        fields = ("inventario", "plantilla", "cantidad")
+        fields = ("inventario", "plantilla", "cantidad", 'vencimiento')
 
     plantilla = ModelChoiceField(name="", model="", label="Item",
                                  queryset=ItemTemplate.objects.filter(
                                      activo=True).order_by('descripcion').all())
+
+    vencimiento = forms.DateTimeField(widget=FutureDateWidget())
 
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
@@ -127,7 +129,7 @@ class ItemRequisicionForm(FieldSetModelFormMixin):
 class TransferenciaForm(HiddenUserForm):
     class Meta:
         model = Transferencia
-        exclude = ('aplicada', )
+        exclude = ('aplicada',)
 
     def __init__(self, *args, **kwargs):
         super(TransferenciaForm, self).__init__(*args, **kwargs)
@@ -154,7 +156,7 @@ class TransferirForm(FieldSetModelFormMixin):
 class TransferidoForm(FieldSetModelFormMixin):
     class Meta:
         model = Transferido
-        exclude = ('aplicada', )
+        exclude = ('aplicada',)
 
     item = ModelChoiceField(name="", model="",
                             queryset=ItemTemplate.objects.filter(
@@ -179,7 +181,7 @@ class HistorialForm(FieldSetModelFormMixin):
 class ItemCompradoForm(FieldSetModelFormMixin):
     class Meta:
         model = ItemComprado
-        exclude = ('ingresado', )
+        exclude = ('ingresado',)
 
     item = ModelChoiceField(name="", model="",
                             queryset=ItemTemplate.objects.filter(

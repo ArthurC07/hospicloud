@@ -20,6 +20,7 @@ from datetime import date
 
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
@@ -103,6 +104,10 @@ class ItemTemplate(TimeStampedModel):
 
         return reverse('itemtemplate', args=[self.id])
 
+    def get_types(self):
+
+        return u"\n".join([t.nombre for t in self.item_type.all()])
+
 
 class Proveedor(models.Model):
     name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
@@ -115,6 +120,7 @@ class Item(TimeStampedModel):
     plantilla = models.ForeignKey(ItemTemplate, related_name='items',
                                   verbose_name='Item')
     inventario = models.ForeignKey(Inventario, related_name='items')
+    vencimiento = models.DateTimeField(default=timezone.now)
     cantidad = models.IntegerField(default=0)
 
     def disminuir(self, cantidad):
