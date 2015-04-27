@@ -23,7 +23,7 @@
                                 </section>
                                 {% load staticfiles %}{% load thumbnail %}
                                 {% for espera in consultas %}
-                                    {% include 'snippets/espera.html' with espera=espera %}
+                                    {% include 'clinique/snippets/espera.html' with espera=espera %}
                                 {% endfor %}
                             </div>
                         </div>
@@ -38,7 +38,7 @@
                                     </h2>
                                 </section>
                                 {% for espera in page_obj %}
-                                    {% include 'espera.html' with espera=espera %}
+                                    {% include 'clinique/snippets/espera.html' with espera=espera %}
                                 {% endfor %}
                             </div>
                         </div>
