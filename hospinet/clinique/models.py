@@ -31,10 +31,18 @@ class Localidad(TimeStampedModel):
     nombre = models.CharField(max_length=50, blank=True, null=True)
     habilitado = models.BooleanField(default=True)
 
+    def __unicode__(self):
+
+        return self.nombre
+
 
 class Especialidad(TimeStampedModel):
     nombre = models.CharField(max_length=50)
     habilitado = models.BooleanField(default=True)
+
+    def __unicode__(self):
+
+        return self.nombre
 
 
 class TipoConsulta(models.Model):
