@@ -317,8 +317,6 @@ class Espera(TimeStampedModel):
 class Prescripcion(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='prescripciones',
                                 blank=True, null=True)
-    consulta = models.ForeignKey(Consulta, blank=True, null=True,
-                                 related_name='prescripciones')
     nota = models.TextField(blank=True)
 
     def __unicode__(self):

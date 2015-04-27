@@ -246,7 +246,7 @@ class PacienteSearchForm(FieldSetFormMixin):
         self.helper.form_action = 'clinique-paciente-search'
 
 
-class PrescripcionForm(PacienteFormMixin):
+class PrescripcionForm(BasePersonaForm):
     class Meta:
         model = Prescripcion
 
