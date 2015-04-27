@@ -113,7 +113,7 @@ class PersonaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Persona
-        exclude = ('duplicado', )
+        exclude = ('duplicado',)
 
     class Media:
         js = ('js/jquery.validate.min.js', 'js/persona.validator.js',)
@@ -166,7 +166,8 @@ class AntecedenteForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Fisico', *self.field_names)
+        self.helper.layout = Fieldset(u'Editar Antecedentes Personales',
+                                      *self.field_names)
 
 
 class AntecedenteFamiliarForm(BasePersonaForm):
@@ -240,8 +241,9 @@ class EmpleoForm(BasePersonaForm):
 class PersonaDuplicateForm(FieldSetModelFormMixin):
     class Meta:
         model = Persona
-        fields = ('duplicado', )
+        fields = ('duplicado',)
 
     def __init__(self, *args, **kwargs):
         super(PersonaDuplicateForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Reportar Persona Duplicada', *self.field_names)
+        self.helper.layout = Fieldset(u'Reportar Persona Duplicada',
+                                      *self.field_names)
