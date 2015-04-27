@@ -111,7 +111,7 @@ class CitaPersonaForm(CitaForm):
                                      widget=forms.HiddenInput(), required=False)
 
 
-class SeguimientoForm(PacienteFormMixin, HiddenUserForm):
+class SeguimientoForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm):
     class Meta:
         model = Seguimiento
         fields = '__all__'
