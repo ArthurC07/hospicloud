@@ -278,7 +278,7 @@ urlpatterns = patterns('',
                            name='consultorio-incapacidad-agregar'),
 
                        url(
-                           r'^/(?P<persona>\d+)/remision/agregar$',
+                           r'^(?P<persona>\d+)/remision/agregar$',
                            RemisionCreateView.as_view(),
                            name='consultorio-remision-agregar'),
 )
