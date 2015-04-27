@@ -265,7 +265,7 @@ urlpatterns = patterns('',
                                template_name='clinique/paciente_add_list.html'),
                            name='clinique-paciente-search-add'),
 
-                       url(r'^(?P<paciente>\d+)/prescripcion/agregar$',
+                       url(r'^(?P<persona>\d+)/prescripcion/agregar$',
                            PrescripcionCreateView.as_view(),
                            name='consultorio-prescripcion-agregar'),
 
@@ -273,7 +273,7 @@ urlpatterns = patterns('',
                            PrescripcionUpdateView.as_view(),
                            name='clinique-prescripcion-edit'),
 
-                       url(r'^(?P<paciente>\d+)/incapacidad/agregar$',
+                       url(r'^(?P<persona>\d+)/incapacidad/agregar$',
                            IncapacidadCreateView.as_view(),
                            name='consultorio-incapacidad-agregar'),
 
