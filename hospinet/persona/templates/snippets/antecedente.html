@@ -1,4 +1,5 @@
-<table class="table table-striped table-responsive">
+<div class="table-responsive">
+<table class="table table-striped">
     <caption>Antecedentes Patol&oacute;gicos Personales</caption>
     <tr>
         <td class="data-label">Cardiopatías</td>
@@ -45,6 +46,8 @@
         <td class="patient-data">{{ antecedente.hipertrigliceridemia|yesno:"Sí,No" }}</td>
         <td class="data-label">Colelitiasis</td>
         <td class="patient-data">{{ antecedente.colelitiasis|yesno:"Sí,No" }}</td>
+        <td class="data-label">Tiroides</td>
+        <td class="patient-data">{{ antecedente.tiroides|yesno:"Sí,No" }}</td>
     </tr>
     <tr>
         <td class="data-label">Cancer</td>
@@ -63,3 +66,4 @@
         <td class="patient-data">{{ antecedente.otros }}</td>
     </tr>
 </table>
+</div>

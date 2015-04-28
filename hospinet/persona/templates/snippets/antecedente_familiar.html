@@ -1,4 +1,5 @@
-<table class="table table-striped table-responsive">
+<div class="table-responsive">
+<table class="table table-striped">
     <caption>Antecedentes Patol&oacute;gicos Familiares</caption>
     <tr>
         <td class="data-label">Sindrome Coronario Agudo</td>
@@ -41,6 +42,16 @@
         <td class="patient-data">{{ antecedente.general }}</td>
     </tr>
     <tr>
+        <td class="data-label">Tiroides</td>
+        <td class="patient-data">{{ antecedente.tiroides|yesno:"Sí,No" }}</td>
+        <td class="data-label"></td>
+        <td class="patient-data"></td>
+        <td class="data-label"></td>
+        <td class="patient-data"></td>
+        <td class="data-label"></td>
+        <td class="patient-data"></td>
+    </tr>
+    <tr>
         <td class="data-label">Nutricional</td>
         <td class="patient-data">{{ antecedente.nutricional }}</td>
         <td class="data-label">Otros</td>
@@ -51,3 +62,4 @@
         <td class="patient-data">{{ antecedente.tuberculosis|yesno:"Sí,No" }}</td>
     </tr>
 </table>
+</div>
