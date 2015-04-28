@@ -233,6 +233,7 @@ class Antecedente(models.Model):
     trigliceridos = models.BooleanField(default=False, blank=True)
     alcoholismo = models.BooleanField(default=False, blank=True)
     cancer = models.BooleanField(default=False, blank=True)
+    tiroides = models.BooleanField(default=False, blank=True)
     alergias = models.CharField(max_length=200, blank=True, null=True)
 
     congenital = models.CharField(max_length=200, blank=True)
@@ -268,6 +269,7 @@ class AntecedenteFamiliar(models.Model):
     dislipidemias = models.BooleanField(default=False, blank=True)
     alcoholismo = models.BooleanField(default=False, blank=True)
     cancer = models.BooleanField(default=False, blank=True)
+    tiroides = models.BooleanField(default=False, blank=True)
     alergias = models.CharField(max_length=200, blank=True, null=True)
 
     congenital = models.CharField(max_length=200, blank=True)
