@@ -20,15 +20,12 @@
                 minutos
             </p>
             {% if espera.consulta %}
-                <a class="btn btn-danger"
-                   href="{% url 'clinique-espera-terminada' espera.id %}">Terminar
-                    Consulta</a>
+                <a class="btn btn-info" href="{% url 'persona-view-id' espera.persona.id %}">Ver</a>
+                <a class="btn btn-danger" href="{% url 'clinique-espera-terminada' espera.id %}">Terminar Consulta</a>
             {% else %}
-            <a class="btn btn-success"
-               href="{% url 'clinique-espera-ausente' espera.id %}">No
+            <a class="btn btn-success" href="{% url 'clinique-espera-ausente' espera.id %}">No
                 se Present&oacute;</a>
-            <a class="btn btn-danger"
-               href="{% url 'clinique-espera-consulta' espera.id %}">A
+            <a class="btn btn-danger" href="{% url 'clinique-espera-consulta' espera.id %}">A
                 Consulta</a>
             {% endif %}
         </div>
