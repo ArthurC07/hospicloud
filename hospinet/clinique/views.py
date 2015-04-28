@@ -840,3 +840,17 @@ class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
 
     model = Remision
     form_class = RemisionForm
+
+
+class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+        consulta.activa = True
+        consulta.final = timezone.now()
+        consulta.save()
+        messages.info(self.request,
+                      u'¡La consulta se marcó como terminada!')
+        return consulta.get_absolute_url()

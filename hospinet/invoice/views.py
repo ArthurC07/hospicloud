@@ -32,6 +32,7 @@ from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DeleteView)
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
+from clinique.models import Consulta
 
 from spital.forms import DepositoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -47,7 +48,7 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            PagoForm, PersonaForm, TurnoCajaForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm, PeriodoAreaForm)
-from inventory.models import ItemTemplate
+from inventory.models import ItemTemplate, TipoVenta
 
 
 class InvoicePermissionMixin(LoginRequiredMixin):
@@ -108,6 +109,7 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(
             facturada=False).order_by('id')
+        context['consultas'] = Consulta.objects.filter(facturada=False)
 
         context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
                                                      finalizado=False).all()
@@ -752,6 +754,40 @@ class EmergenciaFacturarView(UpdateView, LoginRequiredMixin):
         self.object.save()
 
         return HttpResponseRedirect(recibo.get_absolute_url())
+
+
+class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+
+        items = consulta.facturar()
+
+        recibo = Recibo()
+        recibo.cajero = self.request.user
+        recibo.cliente = consulta.persona
+        if consulta.persona.obtener_edad() >= config.ELDER_AGE:
+            tipo_de_venta = TipoVenta.objects.get(pk=config.ELDER_VENTA_TYPE)
+        else:
+            tipo_de_venta = TipoVenta.objects.get(pk=config.DEFAULT_VENTA_TYPE)
+
+        recibo.tipo_de_venta = tipo_de_venta
+
+        recibo.save()
+
+        crear_ventas(items, recibo)
+
+        consulta.facturada = True
+        consulta.save()
+
+        messages.info(self.request, u'¡La consulta se marcó como facturada!')
+        return recibo.get_absolute_url()
+
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(ConsultaFacturarView, self).dispatch(*args, **kwargs)
 
 
 class AdmisionFacturarView(UpdateView, LoginRequiredMixin):

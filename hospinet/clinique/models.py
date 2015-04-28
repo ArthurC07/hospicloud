@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from collections import defaultdict
 
 from django.db import models
 from django.utils import timezone
@@ -123,6 +124,23 @@ class Consulta(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return self.persona.get_absolute_url()
+
+    def facturar(self):
+
+        """Permite convertir los :class:`Cargo`s de esta :class:`Admision` en
+        las :class:`Venta`s de un :class:`Recibo`"""
+
+        items = defaultdict(int)
+
+        # TODO: Add the Consulta Item
+        # items[self.habitacion.item] += self.tiempo_cobro()
+
+        for cargo in self.cargos.all():
+            items[cargo.item] += cargo.cantidad
+            cargo.facturado = True
+            cargo.save()
+
+        return items
 
 
 class LecturaSignos(TimeStampedModel):

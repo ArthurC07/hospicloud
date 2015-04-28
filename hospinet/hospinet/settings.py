@@ -280,7 +280,10 @@ CONSTANCE_CONFIG = {
     'CHAT': (u'http://www.example.com', u'Url para el chat interno'),
     'ONLINE_HELP': (u'http://www.example.com', u'Url para ayuda en línea'),
     'SYSTEM_EMAIL': (u'me@localhost', u'Email utilizado para enviar correo'),
-    'NOTIFICATION_EMAIL': (u'me@localhost', u'Email para notificar')
+    'NOTIFICATION_EMAIL': (u'me@localhost', u'Email para notificar'),
+    'DEFAULT_VENTA_TYPE': (1, u'Tipo de Venta Predeterminada'),
+    'ELDER_VENTA_TYPE': (1, u'Tipo de Venta Predeterminada'),
+    'ELDER_AGE': (60, u'Edad mínima de la Tercera Edad'),
 }
 
 
