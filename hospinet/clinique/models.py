@@ -18,6 +18,7 @@
 from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
+
 from django.contrib.auth.models import User
 
 from django.core.urlresolvers import reverse
@@ -32,7 +33,6 @@ class Localidad(TimeStampedModel):
     habilitado = models.BooleanField(default=True)
 
     def __unicode__(self):
-
         return self.nombre
 
 
@@ -41,7 +41,6 @@ class Especialidad(TimeStampedModel):
     habilitado = models.BooleanField(default=True)
 
     def __unicode__(self):
-
         return self.nombre
 
 
@@ -412,3 +411,6 @@ def consolidate_clinique(persona, clone):
 
 
 persona_consolidation_functions.append(consolidate_clinique)
+
+User.consultorios_activos = property(
+    lambda u: Consultorio.objects.filter(usuario=u, activo=True))
