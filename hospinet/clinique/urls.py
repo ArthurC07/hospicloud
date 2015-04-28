@@ -155,7 +155,7 @@ urlpatterns = patterns('',
                            EvaluacionCreateView.as_view(),
                            name='consultorio-evaluacion-agregar'),
 
-                       url(r'^seguimiento/(?P<paciente>\d+)/agregar$',
+                       url(r'^seguimiento/(?P<persona>\d+)/agregar$',
                            SeguimientoCreateView.as_view(),
                            name='consultorio-segumiento-agregar'),
 
