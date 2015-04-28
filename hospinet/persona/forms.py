@@ -205,7 +205,7 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Antecendete Quirúgico',
+        self.helper.layout = Fieldset(u'Agregar Antecendete Quirúrgico',
                                       *self.field_names)
 
 
