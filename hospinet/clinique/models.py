@@ -186,7 +186,7 @@ class Cita(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('consultorio-cita-list', args=[self.consultorio.id])
+        return self.consultorio.get_absolute_url()
 
     def __unicode__(self):
         return u'{0}'.format(self.persona.nombre_completo())

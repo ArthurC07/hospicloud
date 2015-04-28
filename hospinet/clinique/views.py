@@ -461,9 +461,17 @@ class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
         return context
 
 
-class CitaAusenteView(UpdateView, LoginRequiredMixin):
-    model = Cita
-    form_class = CitaAusenteForm
+class CitaAusenteView(LoginRequiredMixin, RedirectView):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        cita = get_object_or_404(Cita, pk=kwargs['pk'])
+        cita.ausente = True
+        cita.save()
+        messages.info(self.request,
+                      u'¡Se marco la espera como ausente!')
+        return cita.get_absolute_url()
 
 
 class EvaluacionCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
