@@ -89,7 +89,7 @@ urlpatterns = patterns('',
                            AntecedenteQuirurgicoUpdateView.as_view(),
                            name='persona-antecedente-quirurgico-editar'),
 
-                       url(r'^(?P<pk>\d+)/antecedente/quirurgico/agregar$',
+                       url(r'^(?P<persona>\d+)/antecedente/quirurgico/agregar$',
                            AntecedenteQuirurgicoCreateView.as_view(),
                            name='persona-antecedente-quirurgico-agregar'),
 

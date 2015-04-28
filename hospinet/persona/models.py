@@ -339,15 +339,14 @@ class Empleo(TimeStampedModel):
 class AntecedenteQuirurgico(models.Model):
     """Registra los antecendentes quirurgicos de una :class:`Persona`"""
 
-    persona = models.ForeignKey(Persona, primary_key=True,
-                                related_name="antecedentes_quirurgicos")
+    persona = models.ForeignKey(Persona, related_name="antecedentes_quirurgicos")
     procedimiento = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('persona-view-id', args=[self.persona.id])
+        return self.persona.get_absolute_url()
 
 
 def create_persona(sender, instance, created, **kwargs):
