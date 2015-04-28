@@ -106,9 +106,6 @@
                             <nav class="sidebar-nav">
                                 <ul class="nav nav-stacked nav-tabs">
                                     <li>
-                                        <a href="{% url 'consultorio-persona-agregar' consultorio.id %}">Agregar
-                                            Paciente</a></li>
-                                    <li>
                                         <a href="{% url 'consultorio-cita-agregar' %}">Crear
                                             una Cita</a>
                                     </li>
@@ -124,11 +121,6 @@
                                     </li>
                                 </ul>
                             </nav>
-                        </section>
-                        <section class="row">
-                            <div class="col-md-12">
-                                {% crispy buscar %}
-                            </div>
                         </section>
                     </div>
                 </aside>
