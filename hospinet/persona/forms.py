@@ -178,8 +178,9 @@ class AntecedenteFamiliarForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteFamiliarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Antecedentes Patológicos Familiares',
-                                      *self.field_names)
+        self.helper.layout = Fieldset(
+            u'Editar Antecedentes Patológicos Familiares',
+            *self.field_names)
 
 
 class AntecedenteObstetricoForm(BasePersonaForm):
@@ -188,9 +189,14 @@ class AntecedenteObstetricoForm(BasePersonaForm):
     class Meta:
         model = AntecedenteObstetrico
 
+    menarca = forms.DateField(widget=DateWidget(), required=False,
+                              initial=timezone.now)
+    ultimo_periodo = forms.DateField(widget=DateWidget(), required=False,
+                                     initial=timezone.now)
+
     def __init__(self, *args, **kwargs):
         super(AntecedenteObstetricoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Antecedentes Obstetricos',
+        self.helper.layout = Fieldset(u'Editar Antecedentes Obstétricos',
                                       *self.field_names)
 
 

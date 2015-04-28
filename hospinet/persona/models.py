@@ -290,12 +290,12 @@ class AntecedenteObstetrico(models.Model):
 
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)
-    displasia = models.BooleanField(default=False, blank=True)
-    gestas = models.CharField(max_length=200, blank=True)
-    partos = models.CharField(max_length=200, blank=True)
-    anticoncepcion = models.CharField(max_length=200, blank=True)
-    cesareas = models.CharField(max_length=200, blank=True)
+    gestas = models.IntegerField(default=0)
+    partos = models.IntegerField(default=0)
+    cesareas = models.IntegerField(default=0)
     otros = models.CharField(max_length=200, blank=True)
+    displasia = models.BooleanField(default=False, blank=True)
+    anticoncepcion = models.BooleanField(default=False, blank=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
