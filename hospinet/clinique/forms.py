@@ -67,7 +67,13 @@ class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
                                          widget=forms.HiddenInput())
 
 
-class ConsultaForm(PacienteFormMixin, ConsultorioFormMixin, BasePersonaForm,):
+class HiddenConsultaFormMixin(FieldSetModelFormMixin):
+    consulta = forms.ModelChoiceField(label="",
+                                         queryset=Consulta.objects.all(),
+                                         widget=forms.HiddenInput())
+
+
+class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
     class Meta:
         model = Consulta
         exclude = ('facturada', 'activa', 'final')
@@ -157,10 +163,10 @@ class ConsultorioForm(HiddenUserForm):
                                       *self.field_names)
 
 
-class CargoForm(PacienteFormMixin):
+class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = Cargo
-        exclude = ('facturado', )
+        exclude = ('facturado',)
 
     item = ModelChoiceField(queryset=ItemTemplate.objects.all(), name="",
                             model="")

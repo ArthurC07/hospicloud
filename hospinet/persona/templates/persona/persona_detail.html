@@ -12,15 +12,11 @@
     </div>
     <div class="row">
         <section id="informacion" class="col-md-9 main-content">
+            {% for consulta in persona.consultas_activas %}
             <div class="row">
-                {% for consulta in consultas %}
-                    <div class="col-md-12">
-                        <section class="page-header">
-                            <h2>Consulta en Consultorio {{ consulta.consultorio }} {{ consulta.created }}</h2>
-                        </section>
-                    </div>
-                {% endfor %}
+                {% include 'clinique/snippets/consulta_activa.html' with persona=persona %}
             </div>
+            {% endfor %}
             <div class="row">
                 <div class="col-md-12">‏
                     <section class="tabbable">

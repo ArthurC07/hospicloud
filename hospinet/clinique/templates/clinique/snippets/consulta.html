@@ -196,25 +196,6 @@
         </tbody>
     </table>
     <table class="table table-striped">
-        <caption>Cargos y Honorarios</caption>
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Tipo</th>
-            <th>Cargo</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for cargo in persona.cargos.all %}
-            <tr>
-                <td>{{ cargo.created }}</td>
-                <td>{{ cargo.tipo }}</td>
-                <td>{{ cargo.item }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <table class="table table-striped">
         <caption>Remisiones</caption>
         <thead>
         <tr>

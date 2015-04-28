@@ -302,6 +302,14 @@ class PacienteMixin(View):
         return super(PacienteMixin, self).dispatch(*args, **kwargs)
 
 
+class ConsultaMixin(View):
+    """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
+
+    def dispatch(self, *args, **kwargs):
+        self.consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
+        return super(ConsultaMixin, self).dispatch(*args, **kwargs)
+
+
 class PacienteFormMixin(FormMixin, PacienteMixin):
     """Permite inicializar el paciente que se utilizará en un formulario"""
 
@@ -309,6 +317,16 @@ class PacienteFormMixin(FormMixin, PacienteMixin):
         initial = super(PacienteFormMixin, self).get_initial()
         initial = initial.copy()
         initial['paciente'] = self.paciente
+        return initial
+
+
+class ConsultaFormMixin(FormMixin, ConsultaMixin):
+    """Permite inicializar el paciente que se utilizará en un formulario"""
+
+    def get_initial(self):
+        initial = super(ConsultaFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['consulta'] = self.consulta
         return initial
 
 
@@ -672,22 +690,22 @@ class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/estilo_vida_update.html'
 
 
-class CargoCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
+    """Permite crear :class:`Cargo`s durante una :class:`Consulta`"""
     model = Cargo
     form_class = CargoForm
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
-        consultorio = self.paciente.consultorio
+        consultorio = self.object.consulta.consultorio
         if consultorio.inventario is None:
             inventario = Inventario(lugar=consultorio.nombre)
             inventario.save()
             consultorio.inventario = inventario
             consultorio.save()
 
-        item = self.object.paciente.consultorio.inventario.buscar_item(
-            self.object.item)
+        item = consultorio.inventario.buscar_item(self.object.item)
         item.disminuir(self.object.cantidad)
         self.object.save()
 

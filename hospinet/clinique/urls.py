@@ -232,7 +232,7 @@ urlpatterns = patterns('',
                            OrdenMedicaCreateView.as_view(),
                            name='consultorio-om-agregar'),
 
-                       url(r'^(?P<paciente>\d+)/cargo/agregar$',
+                       url(r'^(?P<consulta>\d+)/cargo/agregar$',
                            CargoCreateView.as_view(),
                            name='consultorio-cargo-agregar'),
 

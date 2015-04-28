@@ -259,12 +259,12 @@ class TipoCargo(TimeStampedModel):
 
 
 class Cargo(TimeStampedModel):
-    """Permite registrar diversos cobros a un :class:`Paciente`"""
-
-    persona = models.ForeignKey(Persona, related_name='cargos',
-                                blank=True, null=True)
-    consultorio = models.ForeignKey(Consultorio, related_name='cargos',
-                                    blank=True, null=True)
+    """Permite registrar diversos cobros durante una :class:`Consulta`"""
+    consulta = models.ForeignKey(Consulta, related_name='cargos', blank=True,
+                                 null=True)
+    usuario = models.ForeignKey(User, related_name='cargos_clinicos',
+                                blank=True,
+                                null=True)
     tipo = models.ForeignKey(ItemType, related_name='cargos')
     item = models.ForeignKey(ItemTemplate, related_name='consultorio_cargos')
     cantidad = models.IntegerField(default=1)
@@ -273,7 +273,7 @@ class Cargo(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.persona.get_absolute_url()
+        return self.consulta.persona.get_absolute_url()
 
 
 class NotaEnfermeria(TimeStampedModel):
@@ -414,3 +414,6 @@ persona_consolidation_functions.append(consolidate_clinique)
 
 User.consultorios_activos = property(
     lambda u: Consultorio.objects.filter(usuario=u, activo=True))
+
+Persona.consultas_activas = property(
+    lambda p: Consulta.objects.filter(persona=p, activa=True))

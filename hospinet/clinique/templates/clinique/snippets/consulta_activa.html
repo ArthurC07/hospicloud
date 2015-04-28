@@ -1,0 +1,29 @@
+<div class="col-md-12">
+    <section class="page-header">
+        <h2>Consulta en Consultorio {{ consulta.consultorio }}
+            <small>{{ consulta.created }}</small>
+        </h2>
+    </section>
+    <table class="table table-striped">
+        <caption>Cargos y Honorarios</caption>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Cargo</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for cargo in consulta.cargos.all %}
+            <tr>
+                <td>{{ cargo.created }}</td>
+                <td>{{ cargo.tipo }}</td>
+                <td>{{ cargo.item }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-primary" href="{% url 'consultorio-cargo-agregar' consulta.id %}">Agregar
+        Cargos, Medicamentos y Honorarios</a>
+    <hr>
+</div>
