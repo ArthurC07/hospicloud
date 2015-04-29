@@ -183,7 +183,7 @@ urlpatterns = patterns('',
                            EsperaConsultaRedirectView.as_view(),
                            name='clinique-espera-consulta'),
 
-                       url(r'^/espera/(?P<pk>\d+)/terminada$',
+                       url(r'^espera/(?P<pk>\d+)/terminada$',
                            EsperaTerminadaRedirectView.as_view(),
                            name='clinique-espera-terminada'),
 
