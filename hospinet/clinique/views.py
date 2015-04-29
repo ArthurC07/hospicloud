@@ -712,7 +712,7 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class OrdenMedicaCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+class OrdenMedicaCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
 

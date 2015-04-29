@@ -254,8 +254,8 @@ class OrdenMedica(TimeStampedModel):
 
     persona = models.ForeignKey(Persona, related_name='ordenes_medicas',
                                 blank=True, null=True)
-    consultorio = models.ForeignKey(Consultorio, related_name='ordenes_medicas',
-                                    blank=True, null=True)
+    usuario = models.ForeignKey(User, related_name='ordenes_clinicas',
+                                blank=True, null=True)
     evolucion = models.TextField(blank=True)
     orden = models.TextField(blank=True)
 

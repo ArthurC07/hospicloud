@@ -228,7 +228,7 @@ urlpatterns = patterns('',
                            CliniqueAntecedenteQuirurgicoCreateView.as_view(),
                            name='clinique-antecedente-quirurgico-agregar'),
 
-                       url(r'^(?P<paciente>\d+)/ordenmedica/agregar$',
+                       url(r'^(?P<persona>\d+)/ordenmedica/agregar$',
                            OrdenMedicaCreateView.as_view(),
                            name='consultorio-om-agregar'),
 

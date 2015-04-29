@@ -176,7 +176,7 @@ class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
         self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
 
 
-class OrdenMedicaForm(PacienteFormMixin):
+class OrdenMedicaForm(BasePersonaForm, HiddenUserForm):
     class Meta:
         model = OrdenMedica
 
