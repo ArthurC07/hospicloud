@@ -23,6 +23,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
+
 from django_extensions.db.models import TimeStampedModel
 
 from persona.models import Persona
@@ -60,7 +61,6 @@ class Tecnico(TimeStampedModel):
     porcentaje = models.IntegerField(default=10)
 
     def __unicode__(self):
-
         return self.nombre
 
 
@@ -123,12 +123,13 @@ class Examen(models.Model):
                                 related_name="examenes")
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
                                        related_name="examenes")
-    radiologo = models.ForeignKey(Radiologo, related_name='examenes')
+    radiologo = models.ForeignKey(Radiologo, related_name='examenes',
+                                  blank=True, null=True)
     fecha = models.DateTimeField(default=datetime.now)
     uuid = UUIDField(version=4)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='estudios_realizados')
-    remitio = models.CharField(max_length=200, null=True)
+    remitio = models.CharField(max_length=200, null=True, blank=True)
     facturado = models.NullBooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='examenes')
     tecnico = models.ForeignKey(Tecnico, blank=True, null=True,
@@ -190,7 +191,7 @@ class Dicom(models.Model):
     descripcion = models.CharField(max_length=255, blank=True)
     convertido = models.BooleanField(default=False)
     imagen = models.ImageField(upload_to='examen/dicom/imagen/%Y/%m/%d',
-                        blank=True)
+                               blank=True)
     uuid = UUIDField(version=4)
 
     def extraer_imagen(self):
