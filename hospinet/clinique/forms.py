@@ -69,8 +69,8 @@ class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
 
 class HiddenConsultaFormMixin(FieldSetModelFormMixin):
     consulta = forms.ModelChoiceField(label="",
-                                         queryset=Consulta.objects.all(),
-                                         widget=forms.HiddenInput())
+                                      queryset=Consulta.objects.all(),
+                                      widget=forms.HiddenInput())
 
 
 class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
@@ -168,8 +168,9 @@ class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
         model = Cargo
         exclude = ('facturado',)
 
-    item = ModelChoiceField(queryset=ItemTemplate.objects.all(), name="",
-                            model="")
+    item = ModelChoiceField(
+        queryset=ItemTemplate.objects.all().order_by('descripcion'), name="",
+        model="")
 
     def __init__(self, *args, **kwargs):
         super(CargoForm, self).__init__(*args, **kwargs)
