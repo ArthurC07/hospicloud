@@ -23,7 +23,8 @@ from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago,
 
 
 class BeneficioAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'activo')
+    list_display = ('nombre', 'plan', 'activo')
+    ordering = ['plan', 'nombre', 'activo']
 
 
 admin.site.register(Plan)

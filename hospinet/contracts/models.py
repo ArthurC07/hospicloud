@@ -76,7 +76,8 @@ class Plan(TimeStampedModel):
     nombre = models.CharField(max_length=255, null=True, blank=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     edad_maxima = models.IntegerField()
-    consulta = models.ForeignKey(ItemTemplate, null=True, blank=True, related_name='plan')
+    consulta = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                 related_name='plan')
 
     def __unicode__(self):
         return self.nombre
@@ -101,6 +102,8 @@ class Beneficio(TimeStampedModel):
     descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     observacion = models.CharField(max_length=255, null=True, blank=True)
     activo = models.BooleanField(default=True)
+    item = models.ForeignKey(ItemTemplate, related_name='beneficios', null=True,
+                             blank=True)
 
     def __unicode__(self):
         return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
@@ -115,11 +118,9 @@ class PCD(TimeStampedModel):
     pc = models.IntegerField(default=0)
 
     def __unicode__(self):
-
         return u'{0} {1}'.format(self.persona.nombre_completo(), self.numero)
 
     def get_absolute_url(self):
-
         return self.persona.get_absolute_url()
 
 
