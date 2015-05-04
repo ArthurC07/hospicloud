@@ -69,7 +69,7 @@
                                            class="btn btn-primary">Editar Datos</a>
                                     </div>
                                 </div>
-                                {% if CONTRATOS_ENABLED %}
+                                {% if config.CONTRATOS_ENABLED %}
                                     {% include 'contracts/snippets/contracts.html' %}
                                 {% endif %}
                                 {% if persona.beneficiarios %}
