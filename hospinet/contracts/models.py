@@ -17,6 +17,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
 from datetime import date, timedelta, datetime
+from decimal import Decimal
 import operator
 
 from django.contrib.auth.models import User
@@ -103,7 +104,7 @@ class Beneficio(TimeStampedModel):
     activo = models.BooleanField(default=True)
     tipo_items = models.ForeignKey(ItemType, related_name='beneficios',
                                    null=True, blank=True)
-    limite = models.IntegerField(default=0)
+    limite = models.IntegerField(default=0, verbose_name=u'Límite de Eventos')
     descuento_post_limite = models.DecimalField(max_digits=10, decimal_places=2,
                                                 default=0)
 
@@ -350,10 +351,10 @@ class Contrato(TimeStampedModel):
         return dias
 
     def obtener_cobro(self, item):
-
         for beneficio in self.plan.beneficios.all():
-            if beneficio.tipo_items in item.item_type:
-                return item.precio_de_venta - item.precio_de_venta * beneficio.descuento
+            for type in item.item_type.all():
+                if beneficio.tipo_items == type:
+                    return item.precio_de_venta - item.precio_de_venta * beneficio.descuento / Decimal(100)
 
         return item.precio_de_venta
 

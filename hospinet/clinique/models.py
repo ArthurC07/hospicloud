@@ -15,12 +15,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
-from constance import config
 
+from constance import config
 from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
+
 from django.core.urlresolvers import reverse
 
 from inventory.models import ItemTemplate, Inventario, ItemType
@@ -137,7 +138,7 @@ class Consulta(TimeStampedModel):
     def item(self):
 
         item = None
-        for contrato in self.persona.contratos.filter(activo=True).all():
+        for contrato in self.persona.contratos.filter(vencimiento__gte=timezone.now()).all():
             item = contrato.plan.consulta
 
         if item is None:
@@ -159,13 +160,14 @@ class Consulta(TimeStampedModel):
             items[cargo.item] += cargo.cantidad
             precios[cargo.item] = cargo.item.precio_de_venta
 
-            for contrato in self.persona.contratos.filter(activo=True).all():
-                precios[cargo.item] = contrato.obtener_cobro(item)
+            for contrato in self.persona.contratos.filter(vencimiento__gte=timezone.now()).all():
+                precios[cargo.item] = contrato.obtener_cobro(cargo.item)
 
+            print precios[cargo.item]
             cargo.facturado = True
             cargo.save()
 
-        return items
+        return items, precios
 
 
 class LecturaSignos(TimeStampedModel):
