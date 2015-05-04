@@ -39,7 +39,6 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             DiagnosticoClinicoForm, ConsultorioForm,
                             CitaPersonaForm, CargoForm, OrdenMedicaForm,
                             NotaEnfermeriaForm, ExamenForm, EsperaForm,
-                            EsperaAusenteForm, CitaAusenteForm,
                             PacienteSearchForm, PrescripcionForm,
                             IncapacidadForm, ReporteForm, RemisionForm)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
@@ -480,7 +479,6 @@ class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
 
 
 class CitaAusenteView(LoginRequiredMixin, RedirectView):
-
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -829,6 +827,12 @@ class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.terminada = True
         espera.fin = timezone.now()
+        consultas = Consulta.objects.filter(activa=True, persona=espera.persona)
+        
+        for consulta in consultas.all():
+            consulta.activa = False
+            consulta.save()
+
         espera.save()
         messages.info(self.request,
                       u'¡La consulta se marcó como terminada!')
@@ -843,7 +847,6 @@ class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
 
 
 class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
-
     permanent = False
 
     def get_redirect_url(self, **kwargs):
