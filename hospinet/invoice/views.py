@@ -725,6 +725,27 @@ def crear_ventas(items, recibo, examen=False, tecnico=False):
         recibo.ventas.add(venta)
 
 
+def crear_ventas_consulta(items, precios, recibo):
+    """Permite convertir un :class:`dict` de :class:`ItemTemplate` y sus
+    cantidades en una las :class:`Venta`s de un :class:`Recibo`
+
+    Toma en consideración las indicaciones acerca de los cobros de comisiones
+    indicados por los examenes"""
+
+    for item in items:
+        venta = Venta()
+        venta.item = item
+        venta.recibo = recibo
+        venta.cantidad = items[item]
+
+        precio = item.precio_de_venta
+        venta.precio = precios[item]
+        venta.impuesto = item.impuestos
+
+        venta.save()
+        recibo.ventas.add(venta)
+
+
 class EmergenciaFacturarView(UpdateView, LoginRequiredMixin):
     """Permite crear de manera automática un :class:`Recibo` con todas sus
     :class:`Ventas` a partir de una :class:`Emergencia` que aun no se haya
@@ -765,7 +786,7 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
 
-        items = consulta.facturar()
+        items, precios = consulta.facturar()
 
         recibo = Recibo()
         recibo.cajero = self.request.user
@@ -779,7 +800,7 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
 
         recibo.save()
 
-        crear_ventas(items, recibo)
+        crear_ventas_consulta(items, precios, recibo)
 
         consulta.facturada = True
         consulta.save()

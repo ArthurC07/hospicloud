@@ -24,13 +24,14 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
+
 from django.utils import timezone
 
 from django_extensions.db.models import TimeStampedModel
 import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
-from inventory.models import ItemTemplate
+from inventory.models import ItemTemplate, ItemType
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
 
@@ -100,10 +101,11 @@ class Beneficio(TimeStampedModel):
     descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     observacion = models.CharField(max_length=255, null=True, blank=True)
     activo = models.BooleanField(default=True)
-    item = models.ForeignKey(ItemTemplate, related_name='beneficios', null=True,
-                             blank=True)
+    tipo_items = models.ForeignKey(ItemType, related_name='beneficios',
+                                   null=True, blank=True)
     limite = models.IntegerField(default=0)
-    descuento_post_limite = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    descuento_post_limite = models.DecimalField(max_digits=10, decimal_places=2,
+                                                default=0)
 
     def __unicode__(self):
         return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
@@ -347,6 +349,14 @@ class Contrato(TimeStampedModel):
 
         return dias
 
+    def obtener_cobro(self, item):
+
+        for beneficio in self.plan.beneficios.all():
+            if beneficio.tipo_items in item.item_type:
+                return item.precio_de_venta - item.precio_de_venta * beneficio.descuento
+
+        return item.precio_de_venta
+
     def mora(self):
         """Obtiene la cantidad moentaria debida en este :class:`Contrato`"""
         dias = self.dias_mora()
@@ -416,6 +426,8 @@ class Pago(TimeStampedModel):
 
 class TipoEvento(TimeStampedModel):
     nombre = models.CharField(max_length=255, null=True, blank=True)
+    tipo_items = models.ForeignKey(ItemType, related_name='tipo_eventos',
+                                   null=True, blank=True)
 
     def __unicode__(self):
         return self.nombre

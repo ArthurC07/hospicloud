@@ -150,12 +150,18 @@ class Consulta(TimeStampedModel):
         las :class:`Venta`s de un :class:`Recibo`"""
 
         items = defaultdict(int)
+        precios = defaultdict(int)
         item = self.item()
 
         items[item] += 1
 
         for cargo in self.cargos.all():
             items[cargo.item] += cargo.cantidad
+            precios[cargo.item] = cargo.item.precio_de_venta
+
+            for contrato in self.persona.contratos.filter(activo=True).all():
+                precios[cargo.item] = contrato.obtener_cobro(item)
+
             cargo.facturado = True
             cargo.save()
 
