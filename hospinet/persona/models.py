@@ -76,7 +76,9 @@ class Persona(models.Model):
     fax = models.CharField(max_length=200, blank=True)
     fotografia = models.ImageField(upload_to='persona/foto//%Y/%m/%d',
                                    blank=True, null=True,
-                                   help_text="El archivo debe estar en formato jpg o png y no pesar mas de 120kb")
+                                   help_text="El archivo debe estar en "
+                                             "formato jpg o png y no pesar "
+                                             "mas de 120kb")
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
     duplicado = models.BooleanField(default=False)
 
@@ -255,10 +257,12 @@ class AntecedenteFamiliar(models.Model):
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='antecedente_familiar')
     sindrome_coronario_agudo = models.BooleanField(default=False, blank=True)
-    hipertension = models.BooleanField(default=False, blank=True)
+    hipertension = models.BooleanField(default=False, blank=True,
+                                       verbose_name=u'Hipertensión Arterial')
     tabaquismo = models.BooleanField(default=False, blank=True)
     epoc = models.BooleanField(default=False, blank=True)
-    diabetes = models.BooleanField(default=False, blank=True)
+    diabetes = models.BooleanField(default=False, blank=True,
+                                   verbose_name=u'Diabetes Mellitus')
     tuberculosis = models.BooleanField(default=False, blank=True)
     asma = models.BooleanField(default=False, blank=True)
     colitis = models.BooleanField(default=False, blank=True)
@@ -341,7 +345,8 @@ class Empleo(TimeStampedModel):
 class AntecedenteQuirurgico(models.Model):
     """Registra los antecendentes quirurgicos de una :class:`Persona`"""
 
-    persona = models.ForeignKey(Persona, related_name="antecedentes_quirurgicos")
+    persona = models.ForeignKey(Persona,
+                                related_name="antecedentes_quirurgicos")
     procedimiento = models.CharField(max_length=200, blank=True)
     fecha = models.CharField(max_length=200, blank=True)
 
@@ -369,7 +374,6 @@ def create_persona(sender, instance, created, **kwargs):
 
 post_save.connect(create_persona, sender=Persona)
 
-
 persona_consolidation_functions = []
 
 
@@ -389,7 +393,8 @@ def remove_duplicates():
 
 
 def consolidate_into_persona(persona):
-    clones = Persona.objects.filter(nombre__iexact=persona.nombre, duplicado=True,
+    clones = Persona.objects.filter(nombre__iexact=persona.nombre,
+                                    duplicado=True,
                                     apellido__iexact=persona.apellido,
                                     identificacion=persona.identificacion).exclude(
         pk=persona.pk)
