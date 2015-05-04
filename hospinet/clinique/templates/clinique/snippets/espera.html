@@ -23,6 +23,9 @@
                 <a class="btn btn-info" href="{% url 'persona-view-id' espera.persona.id %}">Ver</a>
                 <a class="btn btn-danger" href="{% url 'clinique-espera-terminada' espera.id %}">Terminar Consulta</a>
             {% else %}
+            <a class="btn btn-success"
+               href="{% url 'consultorio-lectura-agregar' espera.persona.id %}">Agregar
+                Lectura de Signos</a>
             <a class="btn btn-success" href="{% url 'clinique-espera-ausente' espera.id %}">No
                 se Present&oacute;</a>
             <a class="btn btn-danger" href="{% url 'clinique-espera-consulta' espera.id %}">A

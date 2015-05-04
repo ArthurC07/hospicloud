@@ -24,14 +24,12 @@
                     <div class="navbar-inner">
                         <a href="#" class="navbar-brand">Acciones</a>
                         <ul class="nav navbar-nav">
+                            {% if recibo.cerrado == False %}
                             <li>
                                 <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
                             </li>
                             <li>
                                 <a href="{% url 'invoice-nullify' recibo.id %}">Anular Recibo</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'invoice-print' recibo.id %}">Imprimir Recibo</a>
                             </li>
                             <li>
                                 <a href="{% url 'venta-add' recibo.id %}">Agregar Venta</a>
@@ -41,6 +39,10 @@
                             </li>
                             <li>
                                 <a href="{% url 'invoice-close' recibo.id %}">Cerrar Recibo</a>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <a href="{% url 'invoice-print' recibo.id %}">Imprimir Recibo</a>
                             </li>
                         </ul>
                     </div>
