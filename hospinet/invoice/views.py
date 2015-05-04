@@ -284,6 +284,12 @@ class ReciboFormMixin(CreateView):
         self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
         return super(ReciboFormMixin, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+
+        context = super(ReciboFormMixin, self).get_context_data(**kwargs)
+        context['recibo'] = self.recibo
+        return context
+
     def get_initial(self):
         initial = super(ReciboFormMixin, self).get_initial()
         initial = initial.copy()
