@@ -803,6 +803,7 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
         crear_ventas_consulta(items, precios, recibo)
 
         consulta.facturada = True
+        consulta.activa = False
         consulta.save()
 
         messages.info(self.request, u'¡La consulta se marcó como facturada!')
