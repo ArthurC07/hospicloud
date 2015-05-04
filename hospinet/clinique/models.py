@@ -155,6 +155,7 @@ class Consulta(TimeStampedModel):
         item = self.item()
 
         items[item] += 1
+        precios[item] += item.precio_de_venta
 
         for cargo in self.cargos.all():
             items[cargo.item] += cargo.cantidad
