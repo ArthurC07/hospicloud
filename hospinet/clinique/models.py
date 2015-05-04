@@ -19,9 +19,7 @@ from collections import defaultdict
 from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
-
 from django.contrib.auth.models import User
-
 from django.core.urlresolvers import reverse
 
 from inventory.models import ItemTemplate, Inventario, ItemType
@@ -30,6 +28,15 @@ from persona.models import Persona, transfer_object_to_persona, \
 
 
 class Localidad(TimeStampedModel):
+    nombre = models.CharField(max_length=50, blank=True, null=True)
+    habilitado = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.nombre
+
+
+class Afeccion(TimeStampedModel):
+    codigo = nombre = models.CharField(max_length=50)
     nombre = models.CharField(max_length=50, blank=True, null=True)
     habilitado = models.BooleanField(default=True)
 
@@ -126,7 +133,6 @@ class Consulta(TimeStampedModel):
         return self.persona.get_absolute_url()
 
     def facturar(self):
-
         """Permite convertir los :class:`Cargo`s de esta :class:`Admision` en
         las :class:`Venta`s de un :class:`Recibo`"""
 
@@ -240,6 +246,8 @@ class DiagnosticoClinico(TimeStampedModel):
                                 blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='diagnosticos_clinicos',
                                 blank=True, null=True)
+    afeccion = models.ForeignKey(Afeccion, related_name='diagnosticos_clinicos',
+                                 blank=True, null=True)
     diagnostico = models.TextField()
 
     def get_absolute_url(self):
