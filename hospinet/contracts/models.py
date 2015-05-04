@@ -97,13 +97,13 @@ class Beneficio(TimeStampedModel):
 
     plan = models.ForeignKey(Plan, related_name='beneficios')
     nombre = models.CharField(max_length=255, null=True, blank=True)
-    valor = models.DecimalField(max_digits=10, decimal_places=2, default=0,
-                                verbose_name="precio")
     descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     observacion = models.CharField(max_length=255, null=True, blank=True)
     activo = models.BooleanField(default=True)
     item = models.ForeignKey(ItemTemplate, related_name='beneficios', null=True,
                              blank=True)
+    limite = models.IntegerField(default=0)
+    descuento_post_limite = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __unicode__(self):
         return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
