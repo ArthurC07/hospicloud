@@ -77,7 +77,6 @@ class Plan(TimeStampedModel):
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     edad_maxima = models.IntegerField()
     consulta = models.ForeignKey(ItemTemplate, null=True, blank=True, related_name='plan')
-    consulta_horario_extendido = models.ForeignKey(ItemTemplate, null=True, blank=True, related_name='plan_extendido')
 
     def __unicode__(self):
         return self.nombre

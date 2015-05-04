@@ -282,6 +282,8 @@ CONSTANCE_CONFIG = {
     'SYSTEM_EMAIL': (u'me@localhost', u'Email utilizado para enviar correo'),
     'NOTIFICATION_EMAIL': (u'me@localhost', u'Email para notificar'),
     'DEFAULT_VENTA_TYPE': (1, u'Tipo de Venta Predeterminada'),
+    'DEFAULT_CONSULTA_ITEM': (1, u'Costo de Consulta'),
+    'NIGHT_CONSULTA_ITEM': (1, u'Costo de Consulta Nocturna'),
     'ELDER_VENTA_TYPE': (1, u'Tipo de Venta Predeterminada'),
     'ELDER_AGE': (60, u'Edad mínima de la Tercera Edad'),
     'CONSULTA_ENABLED': (1, u'Consulta habilitada'),

@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
+from constance import config
 
 from django.db import models
 from django.utils import timezone
@@ -132,14 +133,25 @@ class Consulta(TimeStampedModel):
 
         return self.persona.get_absolute_url()
 
+    def item(self):
+
+        item = None
+        for contrato in self.persona.contratos.all():
+            item = contrato.plan.consulta
+
+        if item is None:
+            item = ItemTemplate.objects.get(pk=config.DEFAULT_CONSULTA_ITEM)
+
+        return item
+
     def facturar(self):
         """Permite convertir los :class:`Cargo`s de esta :class:`Admision` en
         las :class:`Venta`s de un :class:`Recibo`"""
 
         items = defaultdict(int)
+        item = self.item()
 
-        # TODO: Add the Consulta Item
-        # items[self.habitacion.item] += self.tiempo_cobro()
+        items[item] += 1
 
         for cargo in self.cargos.all():
             items[cargo.item] += cargo.cantidad
