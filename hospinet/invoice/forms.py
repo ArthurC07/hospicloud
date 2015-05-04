@@ -196,7 +196,7 @@ class CierreTurnoForm(FieldSetModelFormMixin):
 class TurnoCajaCierreForm(FieldSetModelFormMixin):
     class Meta:
         model = TurnoCaja
-        fields = ('finalizado', 'fin',)
+        fields = ('fin',)
 
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                               initial=timezone.now)

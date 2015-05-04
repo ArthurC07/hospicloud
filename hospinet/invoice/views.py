@@ -31,9 +31,10 @@ from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView)
 from django.forms.models import inlineformset_factory
-from django.contrib.auth.decorators import permission_required
-from clinique.models import Consulta
 
+from django.contrib.auth.decorators import permission_required
+
+from clinique.models import Consulta
 from spital.forms import DepositoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from spital.models import Admision, Deposito
@@ -757,7 +758,6 @@ class EmergenciaFacturarView(UpdateView, LoginRequiredMixin):
 
 
 class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
-
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -901,7 +901,8 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
 
 
 class AdmisionAltaView(ListView, LoginRequiredMixin):
-    """Muestra una lista de :class:`Admisiones` que aun no han sido facturadas"""
+    """Muestra una lista de :class:`Admisiones` que aun no han sido
+    facturadas"""
 
     context_object_name = 'admisiones'
     template_name = 'invoice/admisiones.html'
@@ -1003,6 +1004,24 @@ class TurnoCajaFormMixin(CreateView, LoginRequiredMixin):
 class CierreTurnoCreateView(TurnoCajaFormMixin):
     model = CierreTurno
     form_class = CierreTurnoForm
+
+
+class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
+    model = TurnoCaja
+    form_class = TurnoCajaCierreForm
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        if self.object.diferencia_total() != 0:
+            messages.info(self.request,
+                          u'No se puede cerrar el turno, tiene diferencias en '
+                          u'saldos')
+        else:
+            self.object.finalizado = True
+            self.object.save()
+
+        return HttpResponseRedirect(self.object.get_absolute_url())
 
 
 class DepositoDetailView(DetailView, LoginRequiredMixin):
