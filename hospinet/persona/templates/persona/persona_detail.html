@@ -25,7 +25,7 @@
                         <ul class="nav nav-tabs">
                             <li><a class="active" href="#paciente" data-toggle="tab">Datos
                                 Personales</a></li>
-                            {% if persona.consultas %}
+                            {% if config.CONSULTA_ENABLED %}
                                 <li>
                                     <a href="#consulta_inicio"
                                        data-toggle="tab">Consultas</a>
@@ -42,19 +42,19 @@
                                 </li>
                             {% endif %}
                             <li><a href="#clinico" data-toggle="tab">Datos Cl&iacute;nicos</a></li>
-                            {% if persona.emergencias %}
+                            {% if config.EMERGENCIAS_ENABLED %}
                                 <li><a href="#emergencias"
                                        data-toggle="tab">Emergencias</a></li>
                             {% endif %}
-                            {% if persona.admisiones %}
+                            {% if config.HOSPITALIZACION_ENABLED %}
                                 <li><a href="#admisiones" data-toggle="tab">Hospitalizaciones</a>
                                 </li>
                             {% endif %}
-                            {% if persona.examenes %}
+                            {% if config.IMAGENES_ENABLED %}
                                 <li><a href="#examenes" data-toggle="tab">Im&aacute;genes</a>
                                 </li>
                             {% endif %}
-                            {% if persona.contratos %}
+                            {% if config.CONTRATOS_ENABLED %}
                                 <li><a href="#contratos" data-toggle="tab">Contratos</a>
                                 </li>
                             {% endif %}
@@ -69,7 +69,7 @@
                                            class="btn btn-primary">Editar Datos</a>
                                     </div>
                                 </div>
-                                {% if persona.contratos %}
+                                {% if CONTRATOS_ENABLED %}
                                     {% include 'contracts/snippets/contracts.html' %}
                                 {% endif %}
                                 {% if persona.beneficiarios %}

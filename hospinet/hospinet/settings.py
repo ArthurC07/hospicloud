@@ -284,6 +284,11 @@ CONSTANCE_CONFIG = {
     'DEFAULT_VENTA_TYPE': (1, u'Tipo de Venta Predeterminada'),
     'ELDER_VENTA_TYPE': (1, u'Tipo de Venta Predeterminada'),
     'ELDER_AGE': (60, u'Edad mínima de la Tercera Edad'),
+    'CONSULTA_ENABLED': (1, u'Consulta habilitada'),
+    'EMERGENCIA_ENABLED': (1, u'Emergencia Habilitada'),
+    'HOSPITALIZACION_ENABLED': (1, u'Hospitalizacion Habilitada'),
+    'IMAGENES_ENABLED': (1, u'Imagenes Habilitadas'),
+    'CONTRATOS_ENABLED': (1, u'Edad mínima de la Tercera Edad'),
 }
 
 

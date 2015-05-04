@@ -19,4 +19,6 @@ from constance import config
 
 def chat(request):
     return {'online_help': config.ONLINE_HELP, 'chat': config.CHAT,
-            'bug_report': 'https://gitreports.com/issue/SpectralAngel/hospicloud'}
+            'bug_report': 'https://gitreports.com/issue/SpectralAngel'
+                          '/hospicloud',
+            'config': config}
