@@ -56,6 +56,7 @@ class Especialidad(TimeStampedModel):
 class TipoConsulta(models.Model):
     tipo = models.CharField(max_length=50)
     habilitado = models.BooleanField(default=True)
+    facturable = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.tipo
@@ -136,7 +137,7 @@ class Consulta(TimeStampedModel):
     def item(self):
 
         item = None
-        for contrato in self.persona.contratos.all():
+        for contrato in self.persona.contratos.filter(activo=True).all():
             item = contrato.plan.consulta
 
         if item is None:

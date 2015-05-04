@@ -30,6 +30,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView)
+
 from django.forms.models import inlineformset_factory
 
 from django.contrib.auth.decorators import permission_required
@@ -110,7 +111,8 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(
             facturada=False).order_by('id')
-        context['consultas'] = Consulta.objects.filter(facturada=False)
+        context['consultas'] = Consulta.objects.filter(facturada=False,
+                                                       tipo__facturable=True)
 
         context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
                                                      finalizado=False).all()
