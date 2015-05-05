@@ -10,12 +10,8 @@
                 </li>
                 <li>
                     {% for consultorio in user.consultorios.all %}
-                        <a href="{% url 'consultorio-consulta-agregar' persona.id consultorio.id %}">Agregar Consulta Inicial de {{ consultorio }}</a>
+                        <a href="{% url 'consultorio-consulta-agregar' persona.id consultorio.id %}">Agregar Consulta de {{ consultorio }}</a>
                     {% endfor %}
-                </li>
-                <li>
-                    <a href="{% url 'consultorio-segumiento-agregar' persona.id %}">Agregar
-                        Consulta de Segumiento</a>
                 </li>
                 <li>
                     <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">Crear
