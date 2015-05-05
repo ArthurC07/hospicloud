@@ -168,7 +168,7 @@ class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
         model = Cargo
         exclude = ('facturado',)
 
-    item = ModelChoiceField(
+    tipo = ModelChoiceField(
         queryset=ItemType.objects.filter(consulta=True).all(), name="",
         model="")
 
@@ -213,9 +213,7 @@ class ExamenForm(PacienteFormMixin):
 class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
     class Meta:
         model = Espera
-
-    fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
-                                initial=timezone.now)
+        fields = ('persona', 'consultorio', )
 
     def __init__(self, *args, **kwargs):
         super(EsperaForm, self).__init__(*args, **kwargs)
