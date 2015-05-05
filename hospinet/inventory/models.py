@@ -64,6 +64,8 @@ class Inventario(models.Model):
 
 class ItemType(TimeStampedModel):
     nombre = models.CharField(max_length=255)
+    consulta = models.BooleanField(default=True,
+                                   verbose_name='Aparece en Cargos de Consulta')
 
     def __unicode__(self):
         return self.nombre
@@ -105,7 +107,6 @@ class ItemTemplate(TimeStampedModel):
         return reverse('itemtemplate', args=[self.id])
 
     def get_types(self):
-
         return u"\n".join([t.nombre for t in self.item_type.all()])
 
 

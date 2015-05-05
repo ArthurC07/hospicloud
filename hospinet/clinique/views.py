@@ -828,7 +828,7 @@ class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
         espera.terminada = True
         espera.fin = timezone.now()
         consultas = Consulta.objects.filter(activa=True, persona=espera.persona)
-        
+
         for consulta in consultas.all():
             consulta.activa = False
             consulta.save()

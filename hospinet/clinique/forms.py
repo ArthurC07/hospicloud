@@ -30,7 +30,7 @@ from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     FieldSetFormMixin
 from persona.models import Persona
 from users.mixins import HiddenUserForm
-from inventory.models import ItemTemplate
+from inventory.models import ItemTemplate, ItemType
 
 
 class PacienteFormMixin(FieldSetModelFormMixin):
@@ -167,6 +167,10 @@ class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = Cargo
         exclude = ('facturado',)
+
+    item = ModelChoiceField(
+        queryset=ItemType.objects.filter(consulta=True).all(), name="",
+        model="")
 
     item = ModelChoiceField(
         queryset=ItemTemplate.objects.all().order_by('descripcion'), name="",
