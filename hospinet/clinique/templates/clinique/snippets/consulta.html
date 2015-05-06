@@ -5,33 +5,20 @@
         <thead>
         <tr>
             <th>Fecha</th>
-            <th>Consulta inicial</th>
-            <th>tipo de consulta</th>
+            <th>Motivo de Consulta</th>
+            <th>HEA</th>
+            <th>Tipo de Consulta</th>
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
         {% for consulta in persona.consultas.all %}
             <tr>
                 <td>{{ consulta.created }}</td>
-                <td>{{ consulta.padecimiento }}</td>
+                <td>{{ consulta.motivo_de_consulta }}</td>
+                <td>{{ consulta.HEA }}</td>
                 <td>{{ consulta.tipo }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <table class="table table-striped">
-        <caption>Consulta De Seguimiento</caption>
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>descripcion</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for seguimiento in persona.seguimientos.all %}
-            <tr>
-                <td>{{ seguimiento.created }}</td>
-                <td>{{ seguimiento.observaciones }}</td>
+                <td><a class="btn btn-primary" href="{% url 'consulta' consulta.id %}">Ver</a></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -49,58 +36,6 @@
             <tr>
                 <td>{{ nota.created }}</td>
                 <td>{{ nota.nota }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</article>
-<article id="examen_fisico" class="tab-pane table-responsive">
-    {% load l10n %}
-    <table class="table table-striped">
-        <caption>Examenes F&iacute;sicos</caption>
-        <thead>
-        <tr>
-            <th>fecha</th>
-            <th>ORL</th>
-            <th>Cardiopulmonar</th>
-            <th>Gastrointestinal</th>
-            <th>Extremidades</th>
-            <th>Otras</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for evaluacion in persona.evaluaciones.all %}
-            <tr>
-                <td>{{ evaluacion.created }}</td>
-                <td>{{ evaluacion.orl }}</td>
-                <td>{{ evaluacion.cardiopulmonar }}</td>
-                <td>{{ evaluacion.gastrointestinal }}</td>
-                <td>{{ evaluacion.extremidades }}</td>
-                <td>{{ evaluacion.otras }}</td>
-                <td><a class="btn btn-success" href="{% url 'clinique-evaluacion-edit' evaluacion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</article>
-<article id="diagnostico" class="tab-pane table-responsive">
-    {% load l10n %}
-    <table class="table table-striped">
-        <caption>Diagn&oacute;stico</caption>
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Consulta inicial</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for diagnostico in persona.diagnosticos_clinicos.all %}
-            <tr>
-                <td>{{ diagnostico.created }}</td>
-                <td>{{ diagnostico.diagnostico }}</td>
-                <td><a class="btn btn-success" href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i class="fa fa-edit"></i> Editar</a> </td>
             </tr>
         {% endfor %}
         </tbody>
@@ -130,67 +65,6 @@
                 <td>{{ signos_vitales.presion_diastolica }}</td>
                 <td>{{ signos_vitales.presion_arterial_media }}</td>
                 <td>{{ signos_vitales.respiracion }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <table class="table table-striped">
-        <caption>Ordenes M&eacute;dicas</caption>
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Orden</th>
-            <th>Evoluci&oacute;n</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for orden in persona.ordenes_medicas.all %}
-            <tr>
-                <td>{{ orden.created }}</td>
-                <td>{{ orden.orden }}</td>
-                <td>{{ orden.evolucion }}</td>
-                <td><a class="btn btn-success" href="{% url 'clinique-orden-edit' orden.id %}"><i class="fa fa-edit"></i> Editar</a></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <table class="table table-striped">
-        <caption>Incapacidades</caption>
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Descripci&oacute;n</th>
-            <th>D&iacute;as</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for incapacidad in persona.incapacidades.all %}
-            <tr>
-                <td>{{ incapacidad.created }}</td>
-                <td>{{ incapacidad.descripcion }}</td>
-                <td>{{ incapacidad.dias }}</td>
-                <td></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <table class="table table-striped">
-        <caption>Prescripciones</caption>
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Nota</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for prescripcion in persona.prescripciones.all %}
-            <tr>
-                <th>{{ prescripcion.created }}</th>
-                <th>{{ prescripcion.nota }}</th>
-                <td><a class="btn btn-success" href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
             </tr>
         {% endfor %}
         </tbody>

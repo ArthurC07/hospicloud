@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="row">
-    <div class="col-md-12">
-        <div class="col-md-12 main-header">
-            <section class="page-header">
-                <h1>{{ persona.nombre_completo }}</h1>
-            </section>
+        <div class="col-md-12">
+            <div class="col-md-12 main-header">
+                <section class="page-header">
+                    <h1>{{ persona.nombre_completo }}</h1>
+                </section>
+            </div>
         </div>
-    </div>
     </div>
     <div class="row">
         <div id="informacion" class="col-md-9">
@@ -15,10 +15,7 @@
                 {% include 'snippets/persona_fotografia.html' with persona=persona %}
                 <div class="info">
                     {% include 'snippets/estilo_vida.html' with estilo_vida=persona.estilo_vida %}
-                    <a
-                            href="{% url 'persona-estilovida-editar' persona.id %}"
-                            class="btn btn-primary">Editar Estilo de
-                        Vida</a>
+                    <a href="{% url 'persona-estilovida-editar' persona.id %}" class="btn btn-primary">Editar Estilo de Vida</a>
                 </div>
             </div>
         </div>

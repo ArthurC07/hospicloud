@@ -204,6 +204,8 @@ class Evaluacion(TimeStampedModel):
                                 blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='evaluaciones',
                                 blank=True, null=True)
+    consulta = models.ForeignKey(Consulta, related_name='evaluaciones',
+                                 blank=True, null=True)
     orl = models.TextField()
     cardiopulmonar = models.TextField()
     gastrointestinal = models.TextField()
@@ -213,7 +215,7 @@ class Evaluacion(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.persona.get_absolute_url()
+        return self.consulta.get_absolute_url()
 
 
 class Cita(TimeStampedModel):
@@ -270,12 +272,14 @@ class DiagnosticoClinico(TimeStampedModel):
                                 blank=True, null=True)
     afeccion = models.ForeignKey(Afeccion, related_name='diagnosticos_clinicos',
                                  blank=True, null=True)
+    consulta = models.ForeignKey(Consulta, related_name='diagnosticos_clinicos',
+                                 blank=True, null=True)
     diagnostico = models.TextField()
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.persona.get_absolute_url()
+        return self.consulta.get_absolute_url()
 
 
 class OrdenMedica(TimeStampedModel):
@@ -286,6 +290,8 @@ class OrdenMedica(TimeStampedModel):
                                 blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='ordenes_clinicas',
                                 blank=True, null=True)
+    consulta = models.ForeignKey(Consulta, related_name='ordenes_medicas',
+                                 blank=True, null=True)
     evolucion = models.TextField(blank=True)
     orden = models.TextField(blank=True)
 
@@ -382,13 +388,15 @@ class Prescripcion(TimeStampedModel):
                                 blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='prescripciones',
                                 blank=True, null=True)
+    consulta = models.ForeignKey(Consulta, related_name='prescripciones',
+                                 blank=True, null=True)
     nota = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.persona.nombre_completo()
 
     def get_absolute_url(self):
-        return self.persona.get_absolute_url()
+        return self.consulta.get_absolute_url()
 
 
 class Incapacidad(TimeStampedModel):
@@ -396,11 +404,13 @@ class Incapacidad(TimeStampedModel):
                                 blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='incapacidades',
                                 blank=True, null=True)
+    consulta = models.ForeignKey(Consulta, related_name='incapacidades',
+                                 blank=True, null=True)
     descripcion = models.TextField()
     dias = models.IntegerField(default=0)
 
     def get_absolute_url(self):
-        return self.persona.get_absolute_url()
+        return self.consulta.get_absolute_url()
 
 
 class Reporte(TimeStampedModel):

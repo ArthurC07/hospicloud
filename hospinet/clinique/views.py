@@ -490,7 +490,8 @@ class CitaAusenteView(LoginRequiredMixin, RedirectView):
         return cita.get_absolute_url()
 
 
-class EvaluacionCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
+class EvaluacionCreateView(PersonaFormMixin, ConsultaFormMixin,
+                           CurrentUserFormMixin, CreateView):
     model = Evaluacion
     form_class = EvaluacionForm
 
@@ -532,6 +533,11 @@ class ConsultaCreateView(PersonaFormMixin, CurrentUserFormMixin,
                          LoginRequiredMixin):
     model = Consulta
     form_class = ConsultaForm
+
+
+class ConsultaDetailView(LoginRequiredMixin, DetailView):
+    model = Consulta
+    context_object_name = 'consulta'
 
 
 class SeguimientoCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
@@ -581,7 +587,8 @@ class LecturaSignosUpdateView(UpdateView, LoginRequiredMixin):
     form_class = LecturaSignosForm
 
 
-class DiagnosticoCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
+class DiagnosticoCreateView(PersonaFormMixin, ConsultaFormMixin,
+                            CurrentUserFormMixin, CreateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
@@ -710,7 +717,7 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class OrdenMedicaCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
+class OrdenMedicaCreateView(PersonaFormMixin, ConsultaFormMixin, CurrentUserFormMixin, CreateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
 
@@ -758,8 +765,8 @@ class EsperaAusenteView(RedirectView, LoginRequiredMixin):
         return espera.get_absolute_url()
 
 
-class PrescripcionCreateView(PersonaFormMixin, CurrentUserFormMixin,
-                             CreateView):
+class PrescripcionCreateView(PersonaFormMixin, ConsultaFormMixin,
+                             CurrentUserFormMixin, CreateView):
     model = Prescripcion
     form_class = PrescripcionForm
 
@@ -769,7 +776,8 @@ class PrescripcionUpdateView(UpdateView, LoginRequiredMixin):
     form_class = PrescripcionForm
 
 
-class IncapacidadCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView):
+class IncapacidadCreateView(PersonaFormMixin, ConsultaFormMixin,
+                            CurrentUserFormMixin, CreateView):
     model = Incapacidad
     form_class = IncapacidadForm
 
@@ -851,7 +859,7 @@ class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
 
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
-        consulta.activa = True
+        consulta.activa = False
         consulta.final = timezone.now()
         consulta.save()
         messages.info(self.request,

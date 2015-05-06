@@ -4,6 +4,24 @@
             <small>{{ consulta.created }}</small>
         </h2>
     </section>
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button"
+                id="dropdownMenu1" data-toggle="dropdown"
+                aria-expanded="true">
+            Acciones de Consulta
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu"
+            aria-labelledby="dropdownMenu1">
+            <li role="presentation"><a role="menuitem" href="{% url 'consultorio-cargo-agregar' consulta.id %}">Agregar Cargos, Medicamentos y Honorarios</a></li>
+            <li role="presentation"><a role="menuitem" href="{% url 'consultorio-evaluacion-agregar' consulta.persona.id consulta.id %}">Agregar Examen Físico</a></li>
+            <li role="presentation"><a role="menuitem" href="{% url 'consultorio-prescripcion-agregar' consulta.persona.id consulta.id %}">Agregar Prescripci&oacute;n</a></li>
+            <li role="presentation"><a role="menuitem" href="{% url 'consultorio-incapacidad-agregar' consulta.persona.id consulta.id %}">Agregar Incapacidad</a></li>
+            <li role="presentation"><a role="menuitem" href="{% url 'consultorio-diagnostico-agregar' consulta.persona.id consulta.id %}">Agregar Diagnóstico</a></li>
+            <li role="presentation"><a role="menuitem" href="{% url 'consultorio-om-agregar' consulta.persona.id consulta.id %}"><i class="fa fa-stethoscope"></i> Agregar Orden M&eacute;dica</a></li>
+        </ul>
+        <a class="btn btn-danger" href="{% url 'clinique-consulta-terminada' consulta.id %}">Terminar Consulta</a>
+    </div>
     <table class="table table-striped">
         <caption>Cargos y Honorarios</caption>
         <thead>
@@ -23,7 +41,125 @@
         {% endfor %}
         </tbody>
     </table>
-    <a class="btn btn-primary" href="{% url 'consultorio-cargo-agregar' consulta.id %}">Agregar
-        Cargos, Medicamentos y Honorarios</a>
-    <hr>
+    <article id="examen_fisico" class="tab-pane table-responsive">
+        {% load l10n %}
+        <table class="table table-striped">
+            <caption>Examenes F&iacute;sicos</caption>
+            <thead>
+            <tr>
+                <th>fecha</th>
+                <th>ORL</th>
+                <th>Cardiopulmonar</th>
+                <th>Gastrointestinal</th>
+                <th>Extremidades</th>
+                <th>Otras</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for evaluacion in consulta.evaluaciones.all %}
+                <tr>
+                    <td>{{ evaluacion.created }}</td>
+                    <td>{{ evaluacion.orl }}</td>
+                    <td>{{ evaluacion.cardiopulmonar }}</td>
+                    <td>{{ evaluacion.gastrointestinal }}</td>
+                    <td>{{ evaluacion.extremidades }}</td>
+                    <td>{{ evaluacion.otras }}</td>
+                    <td><a class="btn btn-success"
+                           href="{% url 'clinique-evaluacion-edit' evaluacion.id %}"><i
+                            class="fa fa-edit"></i> Editar</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </article>
+    <article id="diagnostico" class="tab-pane table-responsive">
+        {% load l10n %}
+        <table class="table table-striped">
+            <caption>Diagn&oacute;stico</caption>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Consulta inicial</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for diagnostico in consulta.diagnosticos_clinicos.all %}
+                <tr>
+                    <td>{{ diagnostico.created }}</td>
+                    <td>{{ diagnostico.diagnostico }}</td>
+                    <td><a class="btn btn-success"
+                           href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i
+                            class="fa fa-edit"></i> Editar</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <table class="table table-striped">
+            <caption>Ordenes M&eacute;dicas</caption>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Orden</th>
+                <th>Evoluci&oacute;n</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for orden in consulta.ordenes_medicas.all %}
+                <tr>
+                    <td>{{ orden.created }}</td>
+                    <td>{{ orden.orden }}</td>
+                    <td>{{ orden.evolucion }}</td>
+                    <td><a class="btn btn-success"
+                           href="{% url 'clinique-orden-edit' orden.id %}"><i
+                            class="fa fa-edit"></i> Editar</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <table class="table table-striped">
+            <caption>Incapacidades</caption>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Descripci&oacute;n</th>
+                <th>D&iacute;as</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for incapacidad in consulta.incapacidades.all %}
+                <tr>
+                    <td>{{ incapacidad.created }}</td>
+                    <td>{{ incapacidad.descripcion }}</td>
+                    <td>{{ incapacidad.dias }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <table class="table table-striped">
+            <caption>Prescripciones</caption>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Nota</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for prescripcion in consulta.prescripciones.all %}
+                <tr>
+                    <th>{{ prescripcion.created }}</th>
+                    <th>{{ prescripcion.nota }}</th>
+                    <td><a class="btn btn-success"
+                           href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i
+                            class="fa fa-edit"></i> Editar</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </article>
 </div>

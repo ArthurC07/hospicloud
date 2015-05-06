@@ -86,7 +86,7 @@ class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
         self.helper.layout = Fieldset(u'Agregar Consulta', *self.field_names)
 
 
-class EvaluacionForm(HiddenUserForm, BasePersonaForm):
+class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
     class Meta:
         model = Evaluacion
         fields = '__all__'
@@ -142,7 +142,7 @@ class LecturaSignosForm(PacienteFormMixin):
                                       *self.field_names)
 
 
-class DiagnosticoClinicoForm(BasePersonaForm, HiddenUserForm):
+class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = DiagnosticoClinico
 
@@ -181,7 +181,7 @@ class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
         self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
 
 
-class OrdenMedicaForm(BasePersonaForm, HiddenUserForm):
+class OrdenMedicaForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = OrdenMedica
 
@@ -255,7 +255,7 @@ class PacienteSearchForm(FieldSetFormMixin):
         self.helper.form_action = 'clinique-paciente-search'
 
 
-class PrescripcionForm(BasePersonaForm, HiddenUserForm):
+class PrescripcionForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = Prescripcion
 
@@ -265,7 +265,7 @@ class PrescripcionForm(BasePersonaForm, HiddenUserForm):
                                       *self.field_names)
 
 
-class IncapacidadForm(BasePersonaForm, HiddenUserForm):
+class IncapacidadForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = Incapacidad
         fields = '__all__'

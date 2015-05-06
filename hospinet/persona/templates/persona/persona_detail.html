@@ -30,18 +30,9 @@
                                     <a href="#consulta_inicio"
                                        data-toggle="tab">Consultas</a>
                                 </li>
-                                <li>
-                                    <a href="#examen_fisico" data-toggle="tab">Examen
-                                    F&iacute;sico</a>
-                                </li>
-                                <li>
-                                    <a href="#diagnostico" data-toggle="tab">Diagn&oacute;stico</a>
-                                </li>
-                                <li>
-                                    <a href="#prescripcion" data-toggle="tab">Ordenes y Prescripciones</a>
-                                </li>
                             {% endif %}
                             <li><a href="#clinico" data-toggle="tab">Datos Cl&iacute;nicos</a></li>
+                            <li><a href="#vida" data-toggle="tab">Estilo de Vida</a></li>
                             {% if config.EMERGENCIAS_ENABLED %}
                                 <li><a href="#emergencias"
                                        data-toggle="tab">Emergencias</a></li>
@@ -98,6 +89,10 @@
                                        class="btn btn-primary">Editar Antecedentes
                                         Obstetricos</a>
                                 {% endifequal %}
+                            </article>
+                            <article id="vida" class="tab-pane">
+                                {% include 'snippets/estilo_vida.html' with estilo_vida=persona.estilo_vida %}
+                                <a href="{% url 'persona-estilovida-editar' persona.id %}" class="btn btn-primary">Editar Estilo de Vida</a>
                             </article>
                             {% if persona.emergencias %}
                                 <article id="emergencias" class="tab-pane">
