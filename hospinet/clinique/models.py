@@ -274,7 +274,7 @@ class DiagnosticoClinico(TimeStampedModel):
                                  blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='diagnosticos_clinicos',
                                  blank=True, null=True)
-    diagnostico = models.TextField()
+    diagnostico = models.TextField(blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
