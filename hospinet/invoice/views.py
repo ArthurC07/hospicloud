@@ -111,7 +111,7 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(
             facturada=False).order_by('id')
-        context['consultas'] = Consulta.objects.filter(facturada=False, acitva=False,
+        context['consultas'] = Consulta.objects.filter(facturada=False, activa=False,
                                                        tipo__facturable=True)
 
         context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
