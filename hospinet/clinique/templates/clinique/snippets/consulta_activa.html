@@ -112,9 +112,7 @@
                     <td>{{ orden.created }}</td>
                     <td>{{ orden.orden }}</td>
                     <td>{{ orden.evolucion }}</td>
-                    <td><a class="btn btn-success"
-                           href="{% url 'clinique-orden-edit' orden.id %}"><i
-                            class="fa fa-edit"></i> Editar</a></td>
+                    <td><a class="btn btn-success" href="{% url 'clinique-orden-edit' orden.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -135,7 +133,7 @@
                     <td>{{ incapacidad.created }}</td>
                     <td>{{ incapacidad.descripcion }}</td>
                     <td>{{ incapacidad.dias }}</td>
-                    <td><a href="{% url 'clinique-incapacidad-edit' incapacidad.id %}">Editar</a></td>
+                    <td><a class="btn btn-success" href="{% url 'clinique-incapacidad-edit' incapacidad.id %}">Editar</a></td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -867,6 +867,12 @@ class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
         consulta.activa = False
         consulta.final = timezone.now()
         consulta.save()
+
+        esperas = Espera.objects.filter(activa=True, persona=consulta.persona)
+        for espera in esperas.all():
+            espera.terminada = True
+            espera.save()
+
         messages.info(self.request,
                       u'¡La consulta se marcó como terminada!')
         return consulta.get_absolute_url()
