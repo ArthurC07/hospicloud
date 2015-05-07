@@ -52,7 +52,7 @@ from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Prebeneficiario,
                               Beneficio, MasterContract,
-                              ImportFile, PCD)
+                              ImportFile, PCD, Aseguradora)
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
