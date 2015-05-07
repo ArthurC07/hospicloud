@@ -30,6 +30,7 @@ from users.mixins import HiddenUserForm
 class ItemTemplateForm(FieldSetModelFormMixin):
     class Meta:
         model = ItemTemplate
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ItemTemplateForm, self).__init__(*args, **kwargs)
@@ -40,6 +41,7 @@ class ItemTemplateForm(FieldSetModelFormMixin):
 class InventarioForm(FieldSetModelFormMixin):
     class Meta:
         model = Inventario
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(InventarioForm, self).__init__(*args, **kwargs)
@@ -67,6 +69,7 @@ class ItemForm(FieldSetModelFormMixin):
 class CompraForm(FieldSetModelFormMixin):
     class Meta:
         model = Compra
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
@@ -77,6 +80,7 @@ class CompraForm(FieldSetModelFormMixin):
 class ItemTypeForm(FieldSetModelFormMixin):
     class Meta:
         model = ItemType
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ItemTypeForm, self).__init__(*args, **kwargs)
@@ -171,6 +175,7 @@ class TransferidoForm(FieldSetModelFormMixin):
 class HistorialForm(FieldSetModelFormMixin):
     class Meta:
         model = Historial
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(HistorialForm, self).__init__(*args, **kwargs)
@@ -205,6 +210,7 @@ class ItemTemplateSearchForm(FieldSetFormMixin):
 class ProveedorForm(FieldSetModelFormMixin):
     class Meta:
         model = Proveedor
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ProveedorForm, self).__init__(*args, **kwargs)

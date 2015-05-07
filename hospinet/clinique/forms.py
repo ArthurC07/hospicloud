@@ -145,6 +145,7 @@ class LecturaSignosForm(PacienteFormMixin):
 class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = DiagnosticoClinico
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(DiagnosticoClinicoForm, self).__init__(*args, **kwargs)
@@ -184,6 +185,7 @@ class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
 class OrdenMedicaForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = OrdenMedica
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(OrdenMedicaForm, self).__init__(*args, **kwargs)
@@ -194,6 +196,7 @@ class OrdenMedicaForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
 class NotaEnfermeriaForm(BasePersonaForm, HiddenUserForm):
     class Meta:
         model = NotaEnfermeria
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
@@ -204,6 +207,7 @@ class NotaEnfermeriaForm(BasePersonaForm, HiddenUserForm):
 class ExamenForm(PacienteFormMixin):
     class Meta:
         model = Examen
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ExamenForm, self).__init__(*args, **kwargs)
@@ -258,6 +262,7 @@ class PacienteSearchForm(FieldSetFormMixin):
 class PrescripcionForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = Prescripcion
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)

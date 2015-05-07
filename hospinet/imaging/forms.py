@@ -53,6 +53,7 @@ class ImagenForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Imagen
+        fields = '__all__'
 
     examen = forms.ModelChoiceField(label="",
                                     queryset=Examen.objects.all(),
@@ -70,6 +71,7 @@ class AdjuntoForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Adjunto
+        fields = '__all__'
 
     examen = forms.ModelChoiceField(label="",
                                     queryset=Examen.objects.all(),
@@ -138,6 +140,7 @@ class EmailForm(FieldSetFormMixin):
 class EstudioForm(FieldSetModelFormMixin):
     class Meta:
         model = Estudio
+        fields = '__all__'
 
     examen = forms.ModelChoiceField(label="",
                                     queryset=Examen.objects.all(),

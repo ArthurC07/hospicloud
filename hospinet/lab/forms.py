@@ -23,6 +23,7 @@ from persona.forms import BasePersonaForm
 class ResultadoForm(BasePersonaForm):
     class Meta:
         model = Resultado
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ResultadoForm, self).__init__(*args, **kwargs)

@@ -141,6 +141,7 @@ class FisicoForm(BasePersonaForm):
 
     class Meta:
         model = Fisico
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(FisicoForm, self).__init__(*args, **kwargs)
@@ -152,6 +153,7 @@ class EstiloVidaForm(BasePersonaForm):
 
     class Meta:
         model = EstiloVida
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(EstiloVidaForm, self).__init__(*args, **kwargs)
@@ -163,6 +165,7 @@ class AntecedenteForm(BasePersonaForm):
 
     class Meta:
         model = Antecedente
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteForm, self).__init__(*args, **kwargs)
@@ -175,6 +178,7 @@ class AntecedenteFamiliarForm(BasePersonaForm):
 
     class Meta:
         model = AntecedenteFamiliar
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteFamiliarForm, self).__init__(*args, **kwargs)
@@ -188,6 +192,7 @@ class AntecedenteObstetricoForm(BasePersonaForm):
 
     class Meta:
         model = AntecedenteObstetrico
+        fields = '__all__'
 
     menarca = forms.DateField(widget=DateWidget(), required=False,
                               initial=timezone.now)
@@ -205,6 +210,7 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
 
     class Meta:
         model = AntecedenteQuirurgico
+        fields = '__all__'
 
     fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                 initial=timezone.now)
@@ -229,6 +235,7 @@ class PersonaSearchForm(FieldSetFormMixin):
 class EmpleadorForm(FieldSetModelFormMixin):
     class Meta:
         model = Empleador
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(EmpleadorForm, self).__init__(*args, **kwargs)
@@ -238,6 +245,7 @@ class EmpleadorForm(FieldSetModelFormMixin):
 class EmpleoForm(BasePersonaForm):
     class Meta:
         model = Empleo
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(EmpleoForm, self).__init__(*args, **kwargs)

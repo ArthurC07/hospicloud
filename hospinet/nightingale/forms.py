@@ -108,6 +108,7 @@ class SumarioForm(AdmisionBaseForm):
 
     class Meta:
         model = Sumario
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(SumarioForm, self).__init__(*args, **kwargs)
@@ -121,6 +122,7 @@ class EvolucionForm(BaseForm):
 
     class Meta:
         model = Evolucion
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(EvolucionForm, self).__init__(*args, **kwargs)
@@ -133,6 +135,7 @@ class GlicemiaForm(BaseForm):
 
     class Meta:
         model = Glicemia
+        fields = '__all__'
 
     control = forms.CharField(widget=forms.TextInput)
 
@@ -147,6 +150,7 @@ class InsulinaForm(BaseForm):
 
     class Meta:
         model = Insulina
+        fields = '__all__'
 
     control = forms.CharField(widget=forms.TextInput)
 
@@ -162,6 +166,7 @@ class GlucosuriaForm(BaseForm):
 
     class Meta:
         model = Glucosuria
+        fields = '__all__'
 
     control = forms.CharField(widget=forms.TextInput)
 
@@ -190,6 +195,7 @@ class ExcretaForm(BaseForm):
 
     class Meta:
         model = Excreta
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(ExcretaForm, self).__init__(*args, **kwargs)
@@ -223,6 +229,7 @@ class OrdenMedicaForm(BaseForm):
 
     class Meta:
         model = OrdenMedica
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(OrdenMedicaForm, self).__init__(*args, **kwargs)
@@ -290,6 +297,7 @@ class DosificarForm(forms.Form):
 class DosisForm(FieldSetModelFormMixin):
     class Meta:
         model = Dosis
+        fields = '__all__'
 
     fecha_y_hora = forms.DateTimeField(widget=DateTimeWidget(), required=False)
 
@@ -318,6 +326,7 @@ class DevolucionForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Devolucion
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(DevolucionForm, self).__init__(*args, **kwargs)

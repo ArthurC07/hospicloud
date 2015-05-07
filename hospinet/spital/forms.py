@@ -52,6 +52,7 @@ class HabitacionForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Habitacion
+        fields = '__all__'
 
 
 class PreAdmisionForm(FieldSetModelFormMixin):
@@ -92,6 +93,7 @@ class DepositoForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Deposito
+        fields = '__all__'
 
     fecha = forms.DateTimeField(widget=DateTimeWidget(),
                                 required=False,

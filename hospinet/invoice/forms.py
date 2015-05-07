@@ -155,6 +155,7 @@ class InventarioForm(PeriodoForm):
 class PagoForm(FieldSetModelFormMixin):
     class Meta:
         model = Pago
+        fields = '__all__'
 
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
@@ -182,6 +183,7 @@ class TurnoCajaForm(HiddenUserForm):
 class CierreTurnoForm(FieldSetModelFormMixin):
     class Meta:
         model = CierreTurno
+        fields = '__all__'
 
     turno = forms.ModelChoiceField(label="",
                                    queryset=TurnoCaja.objects.all(),

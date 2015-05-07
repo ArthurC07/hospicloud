@@ -35,6 +35,7 @@ from persona.models import Persona, Empleador
 class PersonaForm(FieldSetModelFormMixinNoButton):
     class Meta:
         model = Persona
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
@@ -55,6 +56,7 @@ class PersonaPrecontratoForm(FieldSetModelFormMixin):
 class PlanForm(FieldSetModelFormMixin):
     class Meta:
         model = Plan
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(PlanForm, self).__init__(*args, **kwargs)
@@ -229,6 +231,7 @@ class PlanFormMixin(FieldSetModelFormMixin):
 class LimiteEventoForm(PlanFormMixin):
     class Meta:
         model = LimiteEvento
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(LimiteEventoForm, self).__init__(*args, **kwargs)
@@ -281,6 +284,7 @@ class MasterContractForm(FieldSetModelFormMixin):
 class MetaForm(FieldSetModelFormMixin):
     class Meta:
         model = Meta
+        fields = '__all__'
 
     fecha = forms.DateField(widget=FutureDateWidget(), required=False,
                             initial=timezone.now().date())
@@ -293,6 +297,7 @@ class MetaForm(FieldSetModelFormMixin):
 class CancelacionForm(ContratoMixin):
     class Meta:
         model = Cancelacion
+        fields = '__all__'
 
     fecha = forms.DateField(widget=FutureDateWidget(), required=False,
                             initial=timezone.now().date())
