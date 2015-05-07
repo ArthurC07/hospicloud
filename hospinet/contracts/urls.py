@@ -43,7 +43,8 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              ImportFileProcessView, ImportFileListView,
                              PlanCloneView, PlanUpdateView,
                              MasterContractListView, MasterContractUpdateView,
-                             ContratoMasterPersonaCreateView, PCDUpdateView)
+                             ContratoMasterPersonaCreateView, PCDUpdateView,
+                             AseguradoraCreateView)
 
 
 urlpatterns = patterns('',
@@ -270,4 +271,8 @@ urlpatterns = patterns('',
                        url(r'^pcd/(?P<pk>\d+)/editar$',
                            PCDUpdateView.as_view(),
                            name='contracts-pcd-editar'),
+
+                       url(r'^aseguradora/agregar$',
+                           AseguradoraCreateView.as_view(),
+                           name='contracts-aseguradora-add'),
 )

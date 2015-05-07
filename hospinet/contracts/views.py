@@ -47,7 +47,7 @@ from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
                              EmpleadorChoiceForm, VendedorPeriodoForm,
                              PrecontratoForm, PersonaPrecontratoForm,
                              BeneficioForm, MasterContractForm, ImportFileForm,
-                             ContratoMasterForm, PCDForm)
+                             ContratoMasterForm, PCDForm, AseguradoraForm)
 from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               TipoEvento, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Prebeneficiario,
@@ -930,3 +930,8 @@ class ImportFileListView(ListView, LoginRequiredMixin):
 class PCDUpdateView(LoginRequiredMixin, UpdateView):
     model = PCD
     form_class = PCDForm
+
+
+class AseguradoraCreateView(LoginRequiredMixin, CreateView):
+    model = Aseguradora
+    form_class = AseguradoraForm

@@ -24,7 +24,7 @@ from select2.fields import ModelChoiceField
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Beneficio,
-                              MasterContract, ImportFile, PCD)
+                              MasterContract, ImportFile, PCD, Aseguradora)
 from invoice.forms import PeriodoForm
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
@@ -80,7 +80,6 @@ class ContratoForm(BasePersonaForm):
 
 
 class ContratoMasterForm(FieldSetFormMixin):
-
     persona = forms.ModelChoiceField(label="",
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput())
@@ -208,7 +207,7 @@ class BeneficiarioForm(ContratoMixin):
 class BeneficiarioPersonaForm(BasePersonaForm):
     class Meta:
         model = Beneficiario
-        exclude =('activo', 'dependiente',)
+        exclude = ('activo', 'dependiente',)
 
     contrato = ModelChoiceField(
         queryset=Contrato.objects.all(),
@@ -337,3 +336,14 @@ class PCDForm(BasePersonaForm):
     def __init__(self, *args, **kwargs):
         super(PCDForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de PCD', *self.field_names)
+
+
+class AseguradoraForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Aseguradora
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(AseguradoraForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Aseguradora',
+                                      *self.field_names)

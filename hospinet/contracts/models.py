@@ -71,6 +71,9 @@ class Aseguradora(TimeStampedModel):
     def __unicode__(self):
         return self.nombre
 
+    def get_absolute_url(self):
+        return reverse('contrato-index')
+
 
 class Plan(TimeStampedModel):
     """Indica los limites que presenta cada :class:`Contrato`"""
