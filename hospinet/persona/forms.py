@@ -157,7 +157,8 @@ class EstiloVidaForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(EstiloVidaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Estilo de Vida', *self.field_names)
+        self.helper.layout = Fieldset(u'Editar Estilo de Vida',
+                                      *self.field_names)
 
 
 class AntecedenteForm(BasePersonaForm):
@@ -217,7 +218,7 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Antecendete Quirúrgico',
+        self.helper.layout = Fieldset(u'Antecedente Quirúrgico',
                                       *self.field_names)
 
 
