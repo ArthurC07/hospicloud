@@ -274,7 +274,7 @@ class Contrato(TimeStampedModel):
     vencimiento = models.DateField()
     ultimo_pago = models.DateTimeField(default=timezone.now)
     administradores = models.ManyToManyField(User, related_name='contratos',
-                                             blank=True, null=True)
+                                             blank=True)
     renovacion = models.DateField(null=True, blank=True)
     cancelado = models.BooleanField(default=False)
     empresa = models.ForeignKey(Empleador, blank=True, null=True,

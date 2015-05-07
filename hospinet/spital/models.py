@@ -130,9 +130,9 @@ class Admision(models.Model):
     momento = models.DateTimeField(default=timezone.now, null=True, blank=True)
     paciente = models.ForeignKey(Persona, related_name='admisiones')
     fiadores = models.ManyToManyField(Persona, related_name='fianzas',
-                                      null=True, blank=True)
+                                      blank=True)
     referencias = models.ManyToManyField(Persona, related_name='referencias',
-                                         null=True, blank=True)
+                                         blank=True)
 
     diagnostico = models.CharField(max_length=200, blank=True)
     doctor = models.CharField(max_length=200, blank=True)
@@ -245,7 +245,7 @@ class Admision(models.Model):
         if self.hospitalizacion is None:
             dias = (timezone.now() - self.momento).days
             fraccion_dias = (
-                            timezone.now() - self.momento).total_seconds() / 3600 / 24
+                                timezone.now() - self.momento).total_seconds() / 3600 / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
@@ -253,7 +253,7 @@ class Admision(models.Model):
         if self.fecha_alta > self.hospitalizacion:
             dias = (self.fecha_alta - self.hospitalizacion).days
             fraccion_dias = (
-                            self.fecha_alta - self.hospitalizacion).seconds / 3600 / 24
+                                self.fecha_alta - self.hospitalizacion).seconds / 3600 / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
@@ -261,20 +261,21 @@ class Admision(models.Model):
         if self.ingreso is None or self.ingreso <= self.hospitalizacion:
             dias = (timezone.now() - self.hospitalizacion).days
             fraccion_dias = \
-            divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[
-                0] / 24
+                divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[
+                    0] / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
 
         if self.fecha_alta <= self.hospitalizacion:
             return \
-            divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[
-                0] / 24
+                divmod((timezone.now() - self.hospitalizacion).seconds, 3600)[
+                    0] / 24
 
         dias = (self.fecha_alta - self.hospitalizacion).days
         fraccion_dias = \
-        divmod((self.fecha_alta - self.hospitalizacion).seconds, 3600)[0] / 24
+            divmod((self.fecha_alta - self.hospitalizacion).seconds, 3600)[
+                0] / 24
         if dias < 0:
             dias = 0
         return Decimal(dias + fraccion_dias)
@@ -395,7 +396,7 @@ class Admision(models.Model):
     def __unicode__(self):
 
         return u"{0} en {1}".format(self.paciente.nombre_completo(),
-                                    self.habitacion)
+            self.habitacion)
 
     def tiempo_ahora(self):
 
@@ -446,7 +447,8 @@ class Admision(models.Model):
 
     def descuento(self):
 
-        return sum(c.descuento() for c in self.cargos.all()) + self.descuento_hospitalizacion()
+        return sum(c.descuento() for c in
+                   self.cargos.all()) + self.descuento_hospitalizacion()
 
     def total(self):
 
@@ -483,7 +485,6 @@ class Laboratorio(TimeStampedModel):
 
 
 class Deposito(TimeStampedModel):
-
     admision = models.ForeignKey(Admision, related_name='depositos')
     monto = models.DecimalField(blank=True, null=True, max_digits=7,
                                 decimal_places=2)
@@ -491,7 +492,6 @@ class Deposito(TimeStampedModel):
     recibo = models.IntegerField(null=True, blank=True)
 
     def get_absolute_url(self):
-
         """Obtiene la URL absoluta"""
 
         return reverse('admision-view-id', args=[self.admision.id])

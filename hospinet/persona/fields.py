@@ -16,8 +16,6 @@
 
 from django_countries.fields import CountryField
 from django_countries.data import COUNTRIES
-from django.db.models.fields import CharField
-from south.modelsinspector import add_introspection_rules
 
 
 class OrderedCountryField(CountryField):
@@ -52,16 +50,3 @@ class OrderedCountryField(CountryField):
         kwargs.setdefault('choices', choices)
 
         super(OrderedCountryField, self).__init__(*args, **kwargs)
-
-
-add_introspection_rules([
-                            (
-                                [OrderedCountryField],
-                                # Class(es) these apply to
-                                [],  # Positional arguments (not used)
-                                {  # Keyword argument
-                                    # "ordered": ["ordered", {}],
-                                    # "sort": ["sort", {}],
-                                },
-                            ),
-                        ], ["^persona\.fields\.OrderedCountryField"])

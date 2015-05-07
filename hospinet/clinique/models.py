@@ -75,7 +75,7 @@ class Consultorio(TimeStampedModel):
     secretaria = models.ForeignKey(User, related_name='secretarias')
     inventario = models.ForeignKey(Inventario, related_name='consultorios',
                                    blank=True, null=True)
-    administradores = models.ManyToManyField(User, blank=True, null=True,
+    administradores = models.ManyToManyField(User, blank=True,
                                              related_name='consultorios_administrados')
     localidad = models.ForeignKey(Localidad, related_name='consultorios',
                                   blank=True, null=True)

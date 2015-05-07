@@ -1,6 +1,5 @@
 Django
 Pillow
-South
 django-bootstrap-pagination
 django-constance[database]
 django-countries

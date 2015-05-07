@@ -301,7 +301,4 @@ CONSTANCE_CONFIG = {
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-SOUTH_MIGRATION_MODULES = {
-    'easy_thumbnails': 'easy_thumbnails.south_migrations',
-}
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'

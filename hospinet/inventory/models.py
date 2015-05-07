@@ -81,7 +81,7 @@ class ItemTemplate(TimeStampedModel):
     marca = models.CharField(max_length=32, null=True, blank=True)
     modelo = models.CharField(max_length=32, null=True, blank=True)
     notas = models.TextField(null=True, blank=True)
-    suppliers = models.ManyToManyField("Proveedor", null=True, blank=True,
+    suppliers = models.ManyToManyField("Proveedor", blank=True,
                                        related_name='plantillas')
     precio_de_venta = models.DecimalField(max_digits=10, decimal_places=2,
                                           default=0)
@@ -92,7 +92,7 @@ class ItemTemplate(TimeStampedModel):
                                     default=0)
     activo = models.BooleanField(default=True)
     item_type = models.ManyToManyField(ItemType, related_name='items',
-                                       null=True, blank=True)
+                                       blank=True)
     comision = models.DecimalField(decimal_places=2, max_digits=4,
                                    default=Decimal("30.00"))
     comision2 = models.DecimalField(decimal_places=2, max_digits=4,
