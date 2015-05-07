@@ -390,6 +390,8 @@ class Prescripcion(TimeStampedModel):
                                 blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='prescripciones',
                                  blank=True, null=True)
+    medicamento = models.ForeignKey(ItemTemplate, related_name='prescripciones',
+                                    blank=True, null=True)
     nota = models.TextField(blank=True)
 
     def __unicode__(self):
