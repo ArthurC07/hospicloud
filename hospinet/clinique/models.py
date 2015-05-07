@@ -392,7 +392,7 @@ class Prescripcion(TimeStampedModel):
                                  blank=True, null=True)
     medicamento = models.ForeignKey(ItemTemplate, related_name='prescripciones',
                                     blank=True, null=True)
-    nota = models.TextField(blank=True)
+    nota = models.TextField(blank=True, verbose_name=u'Otros MEdicamentos')
 
     def __unicode__(self):
         return self.persona.nombre_completo()

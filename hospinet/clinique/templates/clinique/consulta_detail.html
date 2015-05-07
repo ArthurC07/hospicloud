@@ -117,7 +117,7 @@
                             {% for prescripcion in consulta.prescripciones.all %}
                                 <tr>
                                     <td>{{ prescripcion.created }}</td>
-                                    <td>{{ prescripcion.nota }}</td>
+                                    <td>{{ prescripcion.medicamento }} {{ prescripcion.nota }}</td>
                                     <td><a class="btn btn-success" href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
                                 </tr>
                             {% endfor %}
