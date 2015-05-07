@@ -22,8 +22,8 @@
         <td class="patient-data">{{ antecedente.asma|yesno:"Sí,No" }}</td>
     </tr>
     <tr>
-        <td class="data-label">Colitis</td>
-        <td class="patient-data">{{ antecedente.colitis|yesno:"Sí,No" }}</td>
+        <td class="data-label">Cancer</td>
+        <td class="patient-data">{{ antecedente.cancer|yesno:"Sí,No" }}</td>
         <td class="data-label">Gastritis</td>
         <td class="patient-data">{{ antecedente.gastritis|yesno:"Sí,No" }}</td>
         <td class="data-label">Sinusitis</td>
@@ -32,12 +32,12 @@
         <td class="patient-data">{{ antecedente.migrana|yesno:"Sí,No" }}</td>
     </tr>
     <tr>
+        <td class="data-label">Colitis</td>
+        <td class="patient-data">{{ antecedente.colitis|yesno:"Sí,No" }}</td>
         <td class="data-label">Obesidad</td>
         <td class="patient-data">{{ antecedente.obesidad|yesno:"Sí,No" }}</td>
         <td class="data-label">Alcoholismo</td>
         <td class="patient-data">{{ antecedente.alcoholismo|yesno:"Sí,No" }}</td>
-        <td class="data-label">Cancer</td>
-        <td class="patient-data">{{ antecedente.migrana|yesno:"Sí,No" }}</td>
         <td class="data-label">Trigliceridos</td>
         <td class="patient-data">{{ antecedente.trigliceridos|yesno:"Sí,No" }}</td>
     </tr>
@@ -50,11 +50,9 @@
         <td class="patient-data">{{ antecedente.tiroides|yesno:"Sí,No" }}</td>
     </tr>
     <tr>
-        <td class="data-label">Cancer</td>
-        <td class="patient-data">{{ antecedente.cancer|yesno:"Sí,No" }}</td>
         <td class="data-label">Alergias</td>
         <td class="patient-data">{{ antecedente.alergias }}</td>
-        <td class="data-label">Congenital</td>
+        <td class="data-label">Congenitas</td>
         <td class="patient-data">{{ antecedente.congenital }}</td>
         <td class="data-label">General</td>
         <td class="patient-data">{{ antecedente.general }}</td>

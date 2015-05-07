@@ -2,24 +2,25 @@
 <table class="table table-striped">
     <caption>Antecedentes Patol&oacute;gicos Familiares</caption>
     <tr>
-        <td class="data-label">Sindrome Coronario Agudo</td>
+        <td class="data-label">Cardiopatías</td>
         <td class="patient-data">{{ antecedente.sindrome_coronario_agudo|yesno:"Sí,No" }}</td>
         <td class="data-label">Hipertensión Arterial</td>
         <td class="patient-data">{{ antecedente.hipertension|yesno:"Sí,No" }}</td>
-        <td class="data-label">Tabaquismo</td>
-        <td class="patient-data">{{ antecedente.tabaquismo|yesno:"Sí,No" }}</td>
+        <td class="data-label">Diabetes Mellitus</td>
+        <td class="patient-data">{{ antecedente.diabetes|yesno:"Sí,No" }}</td>
         <td class="data-label">Epoc</td>
         <td class="patient-data">{{ antecedente.epoc|yesno:"Sí,No" }}</td>
     </tr>
     <tr>
+
+        <td class="data-label">Nutricional</td>
+        <td class="patient-data">{{ antecedente.nutricional }}</td>
+        <td class="data-label">Tabaquismo</td>
+        <td class="patient-data">{{ antecedente.tabaquismo|yesno:"Sí,No" }}</td>
+        <td class="data-label">Tuberculosis</td>
+        <td class="patient-data">{{ antecedente.tuberculosis|yesno:"Sí,No" }}</td>
         <td class="data-label">Asma</td>
         <td class="patient-data">{{ antecedente.asma|yesno:"Sí,No" }}</td>
-        <td class="data-label">Colitis</td>
-        <td class="patient-data">{{ antecedente.colitis|yesno:"Sí,No" }}</td>
-        <td class="data-label">Sinusitis</td>
-        <td class="patient-data">{{ antecedente.sinusitis|yesno:"Sí,No" }}</td>
-        <td class="data-label">Migra&ntilde;a</td>
-        <td class="patient-data">{{ antecedente.migrana|yesno:"Sí,No" }}</td>
     </tr>
     <tr>
         <td class="data-label">Colelitiasis</td>
@@ -34,12 +35,12 @@
     <tr>
         <td class="data-label">Cancer</td>
         <td class="patient-data">{{ antecedente.cancer|yesno:"Sí,No" }}</td>
-        <td class="data-label">Alergias</td>
-        <td class="patient-data">{{ antecedente.alergias }}</td>
-        <td class="data-label">Congenital</td>
-        <td class="patient-data">{{ antecedente.congenital }}</td>
-        <td class="data-label">General</td>
-        <td class="patient-data">{{ antecedente.general }}</td>
+        <td class="data-label">Colitis</td>
+        <td class="patient-data">{{ antecedente.colitis|yesno:"Sí,No" }}</td>
+        <td class="data-label">Sinusitis</td>
+        <td class="patient-data">{{ antecedente.sinusitis|yesno:"Sí,No" }}</td>
+        <td class="data-label">Migra&ntilde;a</td>
+        <td class="patient-data">{{ antecedente.migrana|yesno:"Sí,No" }}</td>
     </tr>
     <tr>
         <td class="data-label">Tiroides</td>
@@ -48,18 +49,16 @@
         <td class="patient-data"></td>
         <td class="data-label"></td>
         <td class="patient-data"></td>
-        <td class="data-label"></td>
-        <td class="patient-data"></td>
     </tr>
     <tr>
-        <td class="data-label">Nutricional</td>
-        <td class="patient-data">{{ antecedente.nutricional }}</td>
+        <td class="data-label">Alergias</td>
+        <td class="patient-data">{{ antecedente.alergias }}</td>
+        <td class="data-label">Congenitas</td>
+        <td class="patient-data">{{ antecedente.congenital }}</td>
+        <td class="data-label">General</td>
+        <td class="patient-data">{{ antecedente.general }}</td>
         <td class="data-label">Otros</td>
         <td class="patient-data">{{ antecedente.otros }}</td>
-        <td class="data-label">Diabetes Mellitus</td>
-        <td class="patient-data">{{ antecedente.diabetes|yesno:"Sí,No" }}</td>
-        <td class="data-label">Tuberculosis</td>
-        <td class="patient-data">{{ antecedente.tuberculosis|yesno:"Sí,No" }}</td>
     </tr>
 </table>
 </div>

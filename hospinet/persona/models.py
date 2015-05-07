@@ -229,7 +229,8 @@ class Antecedente(models.Model):
     sinusitis = models.BooleanField(default=False, blank=True)
     hipertrigliceridemia = models.BooleanField(default=False, blank=True)
     colelitiasis = models.BooleanField(default=False, blank=True)
-    migrana = models.BooleanField(default=False, blank=True)
+    migrana = models.BooleanField(default=False, blank=True,
+                                  verbose_name=u'Migraña')
     obesidad = models.BooleanField(default=False, blank=True)
     colesterol = models.BooleanField(default=False, blank=True)
     trigliceridos = models.BooleanField(default=False, blank=True)
@@ -238,7 +239,8 @@ class Antecedente(models.Model):
     tiroides = models.BooleanField(default=False, blank=True)
     alergias = models.CharField(max_length=200, blank=True, null=True)
 
-    congenital = models.CharField(max_length=200, blank=True)
+    congenital = models.CharField(max_length=200, blank=True,
+                                  verbose_name=u'Congenitas')
 
     general = models.CharField(max_length=200, blank=True)
     nutricional = models.CharField(max_length=200, blank=True)
@@ -256,7 +258,8 @@ class AntecedenteFamiliar(models.Model):
 
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='antecedente_familiar')
-    sindrome_coronario_agudo = models.BooleanField(default=False, blank=True)
+    sindrome_coronario_agudo = models.BooleanField(default=False, blank=True,
+                                                   verbose_name=u'cardiopatia')
     hipertension = models.BooleanField(default=False, blank=True,
                                        verbose_name=u'Hipertensión Arterial')
     tabaquismo = models.BooleanField(default=False, blank=True)
