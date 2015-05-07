@@ -868,9 +868,10 @@ class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
         consulta.final = timezone.now()
         consulta.save()
 
-        esperas = Espera.objects.filter(activa=True, persona=consulta.persona)
+        esperas = Espera.objects.filter(terminada=False, persona=consulta.persona)
         for espera in esperas.all():
             espera.terminada = True
+            espera.fin = timezone.now()
             espera.save()
 
         messages.info(self.request,
