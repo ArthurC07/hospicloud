@@ -782,6 +782,11 @@ class IncapacidadCreateView(PersonaFormMixin, ConsultaFormMixin,
     form_class = IncapacidadForm
 
 
+class IncapacidadUpdateView(LoginRequiredMixin, UpdateView):
+    model = Incapacidad
+    form_class = IncapacidadForm
+
+
 class ReporteCreateView(ConsultorioFormMixin, LoginRequiredMixin, CreateView):
     model = Reporte
     form_class = ReporteForm
