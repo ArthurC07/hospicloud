@@ -70,6 +70,14 @@ class PersonaDetailView(DetailView, LoginRequiredMixin):
     context_object_name = 'persona'
     model = Persona
 
+    def get_context_data(self, **kwargs):
+
+        context = super(PersonaDetailView, self).get_context_data(**kwargs)
+
+        self.object.save()
+
+        return context
+
 
 class PersonaCreateView(CreateView, LoginRequiredMixin):
     """Permite ingresar :class:`Persona`s a la aplicación"""
