@@ -266,7 +266,7 @@ class PrescripcionForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm)
 
     medicamento = ModelChoiceField(
         queryset=ItemTemplate.objects.all().order_by('descripcion'), name="",
-        model="", blank=False, null=True)
+        model="", blank=False)
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)
