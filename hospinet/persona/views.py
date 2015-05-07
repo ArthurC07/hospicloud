@@ -74,6 +74,10 @@ class PersonaDetailView(DetailView, LoginRequiredMixin):
 
         context = super(PersonaDetailView, self).get_context_data(**kwargs)
 
+        if self.object.sexo == 'F':
+            antecedente_obstetrico = AntecedenteObstetrico(persona=self.object)
+            antecedente_obstetrico.save()
+
         self.object.save()
 
         return context
