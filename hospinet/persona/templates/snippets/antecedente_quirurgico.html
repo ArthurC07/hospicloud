@@ -14,7 +14,7 @@
   <tr>
     <td>{{ antecedente.procedimiento }}</td>
     <td>{{ antecedente.fecha }}</td>
-    <td><a href="{% 'persona-antecedente-quirurgico-editar' antecedente.id' %}"></a> </td>
+    <td><a class="btn btn-primary" href="{% url 'persona-antecedente-quirurgico-editar' antecedente.id %}"></a> </td>
   </tr>
   {% endfor %}
   </tbody>
