@@ -264,6 +264,10 @@ class PrescripcionForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm)
         model = Prescripcion
         fields = '__all__'
 
+    medicamento = ModelChoiceField(
+        queryset=ItemTemplate.objects.all().order_by('descripcion'), name="",
+        model="")
+
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Prescripcion',
