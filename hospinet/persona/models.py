@@ -181,7 +181,7 @@ class EstiloVida(models.Model):
     consume_tabaco = models.BooleanField(default=False, blank=True)
     inicio_consumo_tabaco = models.CharField(max_length=30, blank=True)
     tipo_de_tabaco = models.CharField(max_length=30, blank=True)
-    consumo_diario_tabaco = models.IntegerField(null=True)
+    consumo_diario_tabaco = models.IntegerField(default=0)
 
     # consume_alcohol = models.BooleanField(default=False, blank=True)
     vino = models.BooleanField(default=False, blank=True)
