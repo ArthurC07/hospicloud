@@ -24,7 +24,8 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad, Reporte, TipoConsulta, Remision)
+                             Incapacidad, Reporte, TipoConsulta, Remision,
+                             Afeccion)
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, \
     FieldSetFormMixin
@@ -146,6 +147,10 @@ class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUse
     class Meta:
         model = DiagnosticoClinico
         fields = '__all__'
+
+    afeccion = ModelChoiceField(
+        queryset=Afeccion.objects.all().order_by('nombre'), name="",
+        model="", required=False)
 
     def __init__(self, *args, **kwargs):
         super(DiagnosticoClinicoForm, self).__init__(*args, **kwargs)
