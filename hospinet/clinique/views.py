@@ -717,7 +717,8 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class OrdenMedicaCreateView(PersonaFormMixin, ConsultaFormMixin, CurrentUserFormMixin, CreateView):
+class OrdenMedicaCreateView(PersonaFormMixin, ConsultaFormMixin,
+                            CurrentUserFormMixin, CreateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
 
@@ -745,6 +746,12 @@ class ExamenUpdateView(UpdateView, LoginRequiredMixin):
 
 class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin,
                        LoginRequiredMixin, CreateView):
+    model = Espera
+    form_class = EsperaForm
+
+
+class EsperaConsultorioCreateView(PersonaFormMixin, LoginRequiredMixin,
+                                  CreateView):
     model = Espera
     form_class = EsperaForm
 
@@ -868,7 +875,8 @@ class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
         consulta.final = timezone.now()
         consulta.save()
 
-        esperas = Espera.objects.filter(terminada=False, persona=consulta.persona)
+        esperas = Espera.objects.filter(terminada=False,
+                                        persona=consulta.persona)
         for espera in esperas.all():
             espera.terminada = True
             espera.fin = timezone.now()

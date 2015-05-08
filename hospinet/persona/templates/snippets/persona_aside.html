@@ -3,10 +3,7 @@
         <nav class="sidebar-nav">
             <ul class="nav nav-stacked">
                 <li>
-                    {% for consultorio in user.consultorios.all %}
-                        <a href="{% url 'consultorio-espera-agregar' persona.id consultorio.id %}">Agregar
-                            Paciente a Sala de Espera de {{ consultorio }}</a>
-                    {% endfor %}
+                    <a href="{% url 'consultorio-espera-u-agregar' persona.id %}">Agregar Paciente a Sala de Espera</a>
                 </li>
                 <li>
                     {% for consultorio in user.consultorios.all %}
