@@ -49,8 +49,8 @@ class Vendedor(TimeStampedModel):
         return self.usuario.get_full_name()
 
     def get_contratos_vendidos(self, fecha, fin):
-        return self.contratos.filter(inicio__gte=fecha, cancelado=False,
-                                     inicio__lte=fin)
+        return Contrato.objects.filter(inicio__gte=fecha, cancelado=False,
+                                       inicio__lte=fin, vendedor=self)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Vendedor`"""
