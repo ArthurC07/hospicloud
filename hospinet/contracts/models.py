@@ -134,25 +134,17 @@ def check_line(line, vencimiento):
     file_pcd = int(line[4])
     file_certificado = int(line[6])
     poliza_f = int(line[5])
-    vencimiento_r = None
+    vencimiento_r = vencimiento
 
     master = MasterContract.objects.get(poliza=poliza_f)
 
     if line[21]:
 
         venc = server_timezone.localize(datetime.strptime(line[21], '%m/%d/%Y'))
-        if venc <= vencimiento:
             vencimiento_r = venc
-        else:
-            vencimiento_r = vencimiento
-
-    else:
-        vencimiento_r = vencimiento
 
     try:
         pcd = PCD.objects.get(numero=file_pcd)
-        contratos = pcd.persona.contratos.filter(
-            certificado=file_certificado)
 
         for contrato in contratos.all():
             contrato.vencimiento = vencimiento_r
@@ -160,7 +152,6 @@ def check_line(line, vencimiento):
             contrato.master = master
             contrato.save()
 
-        for beneficiario in pcd.persona.beneficiarios.all():
             beneficiario.contrato.vencimiento = vencimiento_r
             beneficiario.contrato.save()
 
@@ -357,7 +348,6 @@ class Contrato(TimeStampedModel):
         for beneficio in self.plan.beneficios.all():
             for type in item.item_type.all():
                 if beneficio.tipo_items == type:
-                    return item.precio_de_venta - item.precio_de_venta * beneficio.descuento / Decimal(100)
 
         return item.precio_de_venta
 
@@ -490,7 +480,6 @@ class Meta(TimeStampedModel):
 class Cancelacion(TimeStampedModel):
     """Registra las condiciones en las cuales se termina un :class:`Contrato`"""
     contrato = models.ForeignKey(Contrato, related_name='cancelaciones')
-    fecha = fecha = models.DateField(default=timezone.now)
     motivo = models.TextField()
     pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
