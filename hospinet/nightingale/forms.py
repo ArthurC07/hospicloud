@@ -351,6 +351,7 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = OxigenoTerapia
+        fields = '__all__'
 
     admision = forms.ModelChoiceField(label="",
                                       queryset=Admision.objects.all(),
@@ -378,6 +379,7 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
 class HonorarioForm(AdmisionBaseForm):
     class Meta:
         model = Honorario
+        fields = '__all__'
 
     item = ModelChoiceField(name="", model="",
                             queryset=ItemTemplate.objects.filter(
