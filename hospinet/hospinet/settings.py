@@ -271,11 +271,14 @@ USERENA_ACTIVATION_REQUIRED = False
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_CONFIG = {
+    'RTN': (u'', u'Registro Tributario Nacional'),
+    'RECEIPT_ROOT': (u'PlaceHolder', u'Prefijo para recibos'),
+    'COMPANY_NAME': (u'COMPANY_NAME', u'Nombre de la Empresa'),
+    'COMPANY_ADDRESS': (u'', u'Dirección de la Compañía'),
     'EMERGENCIA': (1, u'Cuenta utilizada para estadia en emergencias'),
     'INVOICE_OFFSET': (0, u'Numeración para iniciar recibos'),
     'DEPOSIT_ACCOUNT': (1, u'Cuenta utilizada para disminuir depositos'),
-    'EXTRA_EMERGENCIA': (
-    1, u'Cuenta utilizada para agregar tiempo extra de emergencias'),
+    'EXTRA_EMERGENCIA': (1, u'Cuenta utilizada para agregar tiempo extra de emergencias'),
     'DEPOSIT_PAYMENT': (1, u'Tipo de Pago para Abonos a cuenta'),
     'CHAT': (u'http://www.example.com', u'Url para el chat interno'),
     'ONLINE_HELP': (u'http://www.example.com', u'Url para ayuda en línea'),
