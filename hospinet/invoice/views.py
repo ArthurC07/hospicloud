@@ -120,6 +120,8 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         if context['turnos'].count() != 0:
             context['turno'] = True
 
+        context['pendientes'] = Recibo.objects.filter(cerrado=False).all()
+
         context['ventaperiodoform'] = VentaPeriodoForm(prefix='venta')
         context['ventaperiodoform'].set_action('periodo-venta')
 
