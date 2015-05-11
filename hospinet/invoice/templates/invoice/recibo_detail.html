@@ -44,6 +44,9 @@
                             <li>
                                 <a href="{% url 'invoice-print' recibo.id %}">Imprimir Recibo</a>
                             </li>
+                            <li>
+                                <a href="{% url 'invoice-index' %}">Volver a Caja</a>
+                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -113,6 +116,7 @@
                     <tr>
                         <th>M&eacute;todo</th>
                         <th>Monto</th>
+                        <th>Comprobante</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -120,6 +124,7 @@
                         <tr>
                             <td>{{ pago.tipo }}</td>
                             <td>{{ pago.monto }}</td>
+                            <td>{{ pago.comprobante }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
