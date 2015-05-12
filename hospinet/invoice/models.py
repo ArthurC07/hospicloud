@@ -136,7 +136,7 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        total = sum(v.total() for v in self.ventas.all())
+        total = sum(v.total() for v in Venta.objects.filter(recibo=self).all())
         return Decimal(total).quantize(dot01)
 
     def comision_doctor(self):
