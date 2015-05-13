@@ -36,6 +36,7 @@ class UserProfile(UserenaBaseProfile):
                                   blank=True, null=True)
     persona = models.OneToOneField(Persona, related_name='profile', blank=True,
                                    null=True)
+    prefijo_recibo = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.user.username
