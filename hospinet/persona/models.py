@@ -81,6 +81,7 @@ class Persona(models.Model):
                                              "mas de 120kb")
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
     duplicado = models.BooleanField(default=False)
+    rtn = models.CharField(max_length=200, blank=True, null=True)
 
     @staticmethod
     def validar_identidad(identidad):

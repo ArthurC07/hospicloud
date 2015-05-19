@@ -262,3 +262,14 @@ class PersonaDuplicateForm(FieldSetModelFormMixin):
         super(PersonaDuplicateForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Reportar Persona Duplicada',
                                       *self.field_names)
+
+
+class PersonaRTNForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Persona
+        fields = ('rtn',)
+
+    def __init__(self, *args, **kwargs):
+        super(PersonaRTNForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Actualizar RTN de la Persona',
+                                      *self.field_names)
