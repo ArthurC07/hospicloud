@@ -31,13 +31,10 @@
             <table style="width: 100%;">
                 <thead>
                 <tr>
-                    <th>Cantidad</th>
+                    <th>Qty</th>
                     <th>Concepto</th>
                     <th>Precio unitario</th>
                     <th>Subtotal</th>
-                    <th>
-                        Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
-                    <th>Total</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -47,8 +44,6 @@
                         <td>{{ venta.item }}</td>
                         <td>{{ venta.precio_unitario }}</td>
                         <td>{{ venta.monto }}</td>
-                        <td>{{ venta.descuento_tipo }}</td>
-                        <td>{{ venta.total }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
