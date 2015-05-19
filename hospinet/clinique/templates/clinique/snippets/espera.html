@@ -18,6 +18,7 @@
                 Tiempo en
                 espera: {{ espera.tiempo }}
                 minutos
+                {{ espera.consultorio }}
             </p>
             {% if espera.consulta %}
                 <a class="btn btn-info" href="{% url 'persona-view-id' espera.persona.id %}">Ver</a>
