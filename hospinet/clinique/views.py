@@ -127,10 +127,6 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
                                                    consulta=False, terminada=False,
                                                    atendido=False, ausente=False).all()
 
-        if self.request.user.is_staff:
-            context['consultorios'] = Consultorio.objects.order_by(
-                'nombre').all()
-
         return context
 
 
