@@ -68,6 +68,22 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
     paginate_by = 20
     context_object_name = 'pacientes'
 
+    def dispatch(self, request, *args, **kwargs):
+
+        tz = timezone.get_current_timezone()
+        now = timezone.now()
+        day = timedelta(days=1)
+        self.yesterday = now - day
+        self.today = tz.localize(datetime.combine(now, time.min))
+        self.fin = date(now.year, now.month,
+                        calendar.monthrange(now.year, now.month)[1])
+        self.inicio = date(now.year, now.month, 1)
+        self.inicio = tz.localize(datetime.combine(self.inicio, time.min))
+        self.fin = tz.localize(datetime.combine(self.fin, time.max))
+
+        return super(ConsultorioIndexView, self).dispatch(request, *args,
+                                                           **kwargs)
+
     def get_queryset(self):
         return Paciente.objects.filter(
             consultorio__usuario=self.request.user).order_by('nombre').all()
@@ -106,6 +122,10 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context[
             'pacientesearch'].helper.form_action = \
             'clinique-paciente-search-add'
+
+        context['esperas'] = Espera.objects.filter(fecha__gte=self.yesterday,
+                                                   consulta=False, terminada=False,
+                                                   atendido=False, ausente=False).all()
 
         if self.request.user.is_staff:
             context['consultorios'] = Consultorio.objects.order_by(
@@ -858,7 +878,7 @@ class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
                       u'¡La consulta se marcó como terminada!')
         return espera.get_absolute_url()
 
-
+ 
 class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     """Permite crear una :class:`Remision` a una :class:`Persona`"""
 

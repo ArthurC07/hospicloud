@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load crispy_forms_tags %}
 {% block content %}
-    <div class="row">
+    <div class="row main-content">
         <section class="col-md-12">
             <div class="page-header">
                 <h1>Consultorios Médicos
@@ -13,6 +13,21 @@
     <div class="row">
         <div class="col-md-9">
             <div class="main-content col-md-12">‏
+                <div class="row">
+                    <div class="col-md-12">
+                        <section class="page-header">
+                            <h2>
+                                Sala de Espera
+                                <small>Promedio de Espera Ultimo
+                                    mes {{ total }} minutos
+                                </small>
+                            </h2>
+                        </section>
+                        {% for espera in esperas %}
+                            {% include 'clinique/snippets/espera.html' with espera=espera %}
+                        {% endfor %}
+                    </div>
+                </div>
                 {% for consultorio in user.consultorios_activos.all %}
                     <div class="row">
                         <div class="col-md-9">
