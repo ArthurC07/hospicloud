@@ -12,11 +12,29 @@
             </div>
         </div>
     </div>
+    {% if turno.finalizado %}
+    <section class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-inner">
+                    <a href="#" class="navbar-brand">Acciones</a>
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="javascript:print();">Imprimir Reporte</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-index' %}">Volver a Caja</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </section>
+    {% endif %}
     <section class="row">
         {% ifnotequal turno.finalizado True %}
             <div class="col-md-3 no-print">
                 <div class="toolbox col-md-12">
-
                     <nav class="sidebar-nav">
                         <ul class="nav nav-stacked nav-tabs">
                             <li>
