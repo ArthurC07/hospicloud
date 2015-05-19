@@ -1,7 +1,7 @@
 .no-print {
 	display: none;
 }
-.navbar-fixed-top {
+.navbar-fixed-top, footer {
 	display: none;
 }
 .page {
