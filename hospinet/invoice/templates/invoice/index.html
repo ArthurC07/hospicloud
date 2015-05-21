@@ -19,13 +19,20 @@
             <div class="main-content col-md-12">‏
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#turno" data-toggle="tab">Turno</a></li>
-                        <li><a href="#pendientes" data-toggle="tab">Recibo Pendiente</a></li>
-                        <li><a href="#consulta" data-toggle="tab">Consulta</a></li>
-                        <li><a href="#admisiones" data-toggle="tab">Admisiones</a></li>
-                        <li><a href="#emergencias" data-toggle="tab">Emergencias</a></li>
-                        <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a></li>
-                        <li><a href="#reporte" data-toggle="tab">Reportes</a></li>
+                        <li class="active"><a href="#turno" data-toggle="tab">Turno</a>
+                        </li>
+                        <li><a href="#pendientes" data-toggle="tab">Recibo
+                            Pendiente</a></li>
+                        <li><a href="#consulta" data-toggle="tab">Consulta</a>
+                        </li>
+                        <li><a href="#admisiones"
+                               data-toggle="tab">Admisiones</a></li>
+                        <li><a href="#emergencias"
+                               data-toggle="tab">Emergencias</a></li>
+                        <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
+                        </li>
+                        <li><a href="#reporte" data-toggle="tab">Reportes</a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <article id="turno" class="tab-pane active">
@@ -116,7 +123,8 @@
                                             {{ recibo.cliente.nombre_completo }}
                                         </td>
                                         <td><a class="btn btn-block btn-primary"
-                                               href="{% url 'invoice-view-id' recibo.id %}">Ver Recibo</a>
+                                               href="{% url 'invoice-view-id' recibo.id %}">Ver
+                                            Recibo</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -228,7 +236,8 @@
                                 {% for consulta in consultas %}
                                     <tr>
                                         <td>
-                                            <a class="btn btn-info" href="{% url 'persona-view-id' consulta.persona.id %}">
+                                            <a class="btn btn-info"
+                                               href="{% url 'persona-view-id' consulta.persona.id %}">
                                                 {% if consulta.persona.identificacion %}
                                                     {{ consulta.persona.identificacion }}
                                                 {% else %}
@@ -339,6 +348,10 @@
                             <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
                                 Turno</a></li>
                         {% endif %}
+                        <li>
+                            <a href="{% url 'invoice-turno-activo' %}">Turnos
+                                Activos</a>
+                        </li>
                     </ul>
                 </nav>
             </div>

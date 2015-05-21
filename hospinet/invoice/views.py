@@ -30,7 +30,6 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView)
-
 from django.forms.models import inlineformset_factory
 
 from django.contrib.auth.decorators import permission_required
@@ -111,7 +110,8 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(
             facturada=False).order_by('id')
-        context['consultas'] = Consulta.objects.filter(facturada=False, activa=False,
+        context['consultas'] = Consulta.objects.filter(facturada=False,
+                                                       activa=False,
                                                        tipo__facturable=True)
 
         context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
@@ -287,7 +287,6 @@ class ReciboFormMixin(CreateView):
         return super(ReciboFormMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-
         context = super(ReciboFormMixin, self).get_context_data(**kwargs)
         context['recibo'] = self.recibo
         return context
@@ -1031,6 +1030,14 @@ class TurnoCajaFormMixin(CreateView, LoginRequiredMixin):
         initial = initial.copy()
         initial['turno'] = self.turno.id
         return initial
+
+
+class TurnoCajaListView(ListView, LoginRequiredMixin):
+    model = TurnoCaja
+    context_object_name = 'turnos'
+
+    def get_queryset(self):
+        return TurnoCaja.objects.filter(finalizado=False).all()
 
 
 class CierreTurnoCreateView(TurnoCajaFormMixin):
