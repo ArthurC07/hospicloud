@@ -55,7 +55,7 @@
                             {% for diagnostico in consulta.diagnosticos_clinicos.all %}
                                 <tr>
                                     <td>{{ diagnostico.created }}</td>
-                                    <td>{{ diagnostico.diagnostico }}</td>
+                                    <td>{{ Diagnostico.afeccion }}{{ diagnostico.diagnostico }}</td>
                                     <td><a class="btn btn-success" href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i class="fa fa-edit"></i> Editar</a> </td>
                                 </tr>
                             {% endfor %}
