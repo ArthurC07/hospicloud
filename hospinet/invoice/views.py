@@ -1058,6 +1058,7 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
                           u'saldos')
         else:
             self.object.finalizado = True
+            self.object.fin = timezone.now()
             self.object.save()
 
         return HttpResponseRedirect(self.object.get_absolute_url())

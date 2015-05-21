@@ -198,10 +198,11 @@ class CierreTurnoForm(FieldSetModelFormMixin):
 class TurnoCajaCierreForm(FieldSetModelFormMixin):
     class Meta:
         model = TurnoCaja
-        fields = ('fin',)
+        fields = ()
 
-    fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
-                              initial=timezone.now)
+    id = forms.ModelChoiceField(label="",
+                                queryset=TurnoCaja.objects.all(),
+                                widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(TurnoCajaCierreForm, self).__init__(*args, **kwargs)
