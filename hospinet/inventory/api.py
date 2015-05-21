@@ -24,17 +24,14 @@ from inventory.models import ItemTemplate, Inventario
 
 
 class ItemTemplateResource(ModelResource):
-    
     class Meta:
-        
         queryset = ItemTemplate.objects.all()
         authorization = ReadOnlyAuthorization()
         authentication = MultiAuthentication(SessionAuthentication(),
-                                             Authentication(),
-                                             ApiKeyAuthentication()) 
+            Authentication(),
+            ApiKeyAuthentication())
+
 
 class InventarioResource(ModelResource):
-    
     class Meta:
-        
         queryset = Inventario.objects.all()
