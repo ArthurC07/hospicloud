@@ -19,7 +19,7 @@
                 {{ config.COMPANY_NAME }}<br>
                 {{ config.COMPANY_ADDRESS }}<br>
                 RTN: {{ config.RTN }}<br >
-                Factura: {{ recibo.numero }}<br>
+                Factura: config.RECEIPT_ROOT{{ recibo.numero }}<br>
                 Fecha: {{ recibo.created }}<br>
                 Cliente: {{ recibo.cliente }}<br>
                 RTN Cliente: {{ recibo.cliente.rtn }}<br>
