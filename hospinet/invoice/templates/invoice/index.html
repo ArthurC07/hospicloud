@@ -249,7 +249,7 @@
                                         <td>{{ consulta.persona.obtener_edad }}</td>
                                         <td>{{ consulta.persona.get_sexo_display }}</td>
                                         <td>{{ consulta.created|date:"d/m/Y H:i" }}</td>
-                                        <td>{{ consulta.consultoria.usuario }}</td>
+                                        <td>{{ consulta.usuario }}</td>
                                         <td>
                                             {% if not consulta.facturada %}
                                                 <a class="btn btn-block btn-primary"
