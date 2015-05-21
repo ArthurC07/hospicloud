@@ -16,12 +16,21 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+
 from invoice.models import (Recibo, Venta, Pago, TipoPago, TurnoCaja,
                             CierreTurno)
+
+
+class CierreturnoAdmin(admin.ModelAdmin):
+    list_display = ('turno', 'pago', 'monto')
+    ordering = ['turno', 'pago', 'monto']
+    search_fields = ['turno__usuario__first_name', 'turno__usuario__last_name',
+                     'pago__nombre', 'monto']
+
 
 admin.site.register(Recibo)
 admin.site.register(Venta)
 admin.site.register(Pago)
 admin.site.register(TipoPago)
 admin.site.register(TurnoCaja)
-admin.site.register(CierreTurno)
+admin.site.register(CierreTurno, CierreturnoAdmin)
