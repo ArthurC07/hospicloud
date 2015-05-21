@@ -7,3 +7,15 @@
 .page {
 	page-break-before: always;
 }
+.main-content {
+	margin: 0;
+	padding: 0;
+}
+h1 {
+	margin: 0;
+	padding: 0;
+}
+.page-header {
+	margin: 0;
+	padding: 0;
+}

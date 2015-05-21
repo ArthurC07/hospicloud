@@ -11,23 +11,25 @@
         </div>
     </div>
     {% if turno.finalizado %}
-    <section class="row no-print">
-        <div class="col-md-12">
-            <nav class="navbar navbar-default" role="navigation">
-                <div class="navbar-inner">
-                    <a href="#" class="navbar-brand">Acciones</a>
-                    <ul class="nav navbar-nav">
-                        <li>
-                            <a href="javascript:print();">Imprimir Reporte</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'invoice-index' %}">Volver a Caja</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </section>
+        <section class="row no-print">
+            <div class="col-md-12 main-content">
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="navbar-inner">
+                        <a href="#" class="navbar-brand">Acciones</a>
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="javascript:print();">Imprimir
+                                    Reporte</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'invoice-index' %}">Volver a
+                                    Caja</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </section>
     {% endif %}
     <section class="row">
         {% ifnotequal turno.finalizado True %}
@@ -39,77 +41,78 @@
                                 <a href="{% url 'invoice-new' %}">Crear
                                     Recibo</a>
                             </li>
-                            <li><a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
-                                Pago de Cierre</a></li>
-                            <li><a href="{% url 'invoice-turno-cerrar' turno.id %}">Cerrar Turno</a></li>
-                            <li><a href="{% url 'invoice-index' %}">Regresar a Caja</a></li>
+                            <li>
+                                <a href="{% url 'invoice-cierre-nuevo' turno.id %}">Agregar
+                                    Pago de Cierre</a></li>
+                            <li>
+                                <a href="{% url 'invoice-turno-cerrar' turno.id %}">Cerrar
+                                    Turno</a></li>
+                            <li><a href="{% url 'invoice-index' %}">Regresar a
+                                Caja</a></li>
                         </ul>
                     </nav>
                 </div>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-9 main-content">
         {% else %}
-            <div class="col-md-12">
+            <div class="col-md-12 main-content">
         {% endifnotequal %}
-        <div class="main-content col-md-12">‏
-
-            <h3>Total de Ventas: {{ turno.venta }}</h3>
-            <table class="table table-striped table-bordered table-condensed">
-                <caption>Reporte de Facturaci&oacute;n</caption>
-                <thead>
+        <h3>Total de Ventas: {{ turno.venta }}</h3>
+        <table class="table table-striped table-bordered table-condensed">
+            <caption>Reporte de Facturaci&oacute;n</caption>
+            <thead>
+            <tr>
+                <th>Tipo de Pago</th>
+                <th>Monto</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Apertura</td>
+                <td>{{ turno.apertura }}</td>
+            </tr>
+            {% for metodo, monto in turno.pagos %}
                 <tr>
-                    <th>Tipo de Pago</th>
-                    <th>Monto</th>
+                    <td>{{ metodo }} Facturado</td>
+                    <td>{{ monto }}</td>
                 </tr>
-                </thead>
-                <tbody>
+            {% endfor %}
+            <tr>
+                <th>Total de Ingresos</th>
+                <th>{{ turno.ingresos }}</th>
+            </tr>
+            {% for cierre in turno.cierres.all %}
                 <tr>
-                    <td>Apertura</td>
-                    <td>{{ turno.apertura }}</td>
+                    <td>En Caja {{ cierre.pago }}</td>
+                    <td>{{ cierre.monto }}</td>
                 </tr>
-                {% for metodo, monto in turno.pagos %}
-                    <tr>
-                        <td>{{ metodo }} Facturado</td>
-                        <td>{{ monto }}</td>
-                    </tr>
-                {% endfor %}
+            {% endfor %}
+            <tr>
+                <th>Total en Caja</th>
+                <th>{{ turno.total_cierres }}</th>
+            </tr>
+            {% for diferencia, monto in turno.diferencia %}
                 <tr>
-                    <th>Total de Ingresos</th>
-                    <th>{{ turno.ingresos }}</th>
+                    <td>Diferencia {{ diferencia }}</td>
+                    <td>{{ monto }}</td>
                 </tr>
-                {% for cierre in turno.cierres.all %}
-                    <tr>
-                        <td>En Caja {{ cierre.pago }}</td>
-                        <td>{{ cierre.monto }}</td>
-                    </tr>
-                {% endfor %}
-                <tr>
-                    <th>Total en Caja</th>
-                    <th>{{ turno.total_cierres }}</th>
-                </tr>
-                {% for diferencia, monto in turno.diferencia %}
-                    <tr>
-                        <td>Diferencia {{ diferencia }}</td>
-                        <td>{{ monto }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-                <tfoot>
-                <tr>
-                    <td>Menos Apertura</td>
-                    <td>{{ turno.apertura }}</td>
-                </tr>
-                <tr>
-                    <th>Diferencia Total de Cierre</th>
-                    <th>{{ turno.diferencia_total }}</th>
-                </tr>
-                <tr>
-                    <th>Dep&oacute;sitos de Admisiones</th>
-                    <th>{{ turno.depositado }}</th>
-                </tr>
-                </tfoot>
-            </table>
-        </div>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td>Menos Apertura</td>
+                <td>{{ turno.apertura }}</td>
+            </tr>
+            <tr>
+                <th>Diferencia Total de Cierre</th>
+                <th>{{ turno.diferencia_total }}</th>
+            </tr>
+            <tr>
+                <th>Dep&oacute;sitos de Admisiones</th>
+                <th>{{ turno.depositado }}</th>
+            </tr>
+            </tfoot>
+        </table>
         </div>
     </section>
 {% endblock %}
