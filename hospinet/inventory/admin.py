@@ -25,6 +25,7 @@ class ItemTemplateAdmin(admin.ModelAdmin):
     list_filter = ('activo', )
     ordering = ('descripcion', 'activo', 'precio_de_venta',)
     filter_horizontal = ('item_type',)
+    search_fields = ['descripcion',]
 
 
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
