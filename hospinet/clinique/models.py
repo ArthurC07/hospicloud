@@ -466,9 +466,6 @@ def consolidate_clinique(persona, clone):
     [transfer_object_to_persona(remision, persona) for remision in
      clone.remisiones.all()]
 
-    [transfer_object_to_persona(cargo, persona) for cargo in
-     clone.cargos.all()]
-
 
 persona_consolidation_functions.append(consolidate_clinique)
 
