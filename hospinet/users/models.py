@@ -27,6 +27,12 @@ from inventory.models import Inventario, ItemTemplate
 from persona.models import Persona
 
 
+class Ciudad(TimeStampedModel):
+    nombre = models.CharField(max_length=100)
+    correlativo_de_recibo = models.IntegerField(default=0)
+    prefijo_recibo = models.CharField(max_length=100, blank=True, null=True)
+
+
 class UserProfile(UserenaBaseProfile):
     user = models.OneToOneField(User, related_name="profile",
                                 blank=True, null=True)
@@ -36,13 +42,15 @@ class UserProfile(UserenaBaseProfile):
                                   blank=True, null=True)
     persona = models.OneToOneField(Persona, related_name='profile', blank=True,
                                    null=True)
-    prefijo_recibo = models.IntegerField(default=0)
+    ciudad = models.ForeignKey(Ciudad, related_name='usuarios', blank=True,
+                               null=True)
 
     def __unicode__(self):
         return self.user.username
 
 
-User.userena_signup = property(lambda u: UserenaSignup.objects.get_or_create(user=u)[0])
+User.userena_signup = property(
+    lambda u: UserenaSignup.objects.get_or_create(user=u)[0])
 
 
 def create_user_profile(sender, instance, created, **kwargs):

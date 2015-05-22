@@ -28,9 +28,16 @@ class CierreturnoAdmin(admin.ModelAdmin):
                      'pago__nombre', 'monto']
 
 
+class TurnoCajaAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'inicio', 'fin', 'apertura')
+    ordering = ['usuario', 'inicio', 'fin', 'apertura']
+    search_fields = ['usuario__first_name', 'usuario__last_name',
+                     'pago__nombre', 'apertura']
+
+
 admin.site.register(Recibo)
 admin.site.register(Venta)
 admin.site.register(Pago)
 admin.site.register(TipoPago)
-admin.site.register(TurnoCaja)
+admin.site.register(TurnoCaja, TurnoCajaAdmin)
 admin.site.register(CierreTurno, CierreturnoAdmin)

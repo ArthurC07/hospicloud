@@ -28,7 +28,7 @@ from django_extensions.db.models import TimeStampedModel
 from persona.models import Persona, persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
 from spital.models import Deposito
-
+from django.db.models import F
 
 dot01 = Decimal("0.01")
 
@@ -57,6 +57,7 @@ class Recibo(TimeStampedModel):
     cajero = models.ForeignKey(User, blank=True, null=True,
                                related_name='recibos')
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
+    correlativo = models.IntegerField(default=0)
 
     def get_absolute_url(self):
 
@@ -65,8 +66,8 @@ class Recibo(TimeStampedModel):
         return reverse('invoice-view-id', args=[self.id])
 
     def numero(self):
-
-        return config.INVOICE_OFFSET + self.id
+        ciudad = self.recibo.cajero.ciudad
+        return u'{0}-{1}'.format(ciudad.prefijo_recibo, self.correlativo)
 
     def anular(self):
 
@@ -74,7 +75,7 @@ class Recibo(TimeStampedModel):
         calculos financieros"""
 
         self.nulo = True
-        for pago in self.pagos.all():
+        for pago in Pago.objects.filter(recibo=self).all():
             pago.delete()
         self.save()
 
@@ -102,7 +103,8 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        subtotal = sum(v.monto() for v in self.ventas.all())
+        subtotal = sum(
+            v.monto() for v in Venta.objects.filter(recibo=self).all())
         return Decimal(subtotal).quantize(dot01)
 
     def impuesto(self):
@@ -112,7 +114,7 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        tax = sum(v.tax() for v in self.ventas.all())
+        tax = sum(v.tax() for v in Venta.objects.filter(recibo=self).all())
         return Decimal(tax).quantize(dot01)
 
     def descuento(self):
@@ -122,12 +124,14 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        discount = sum(v.discount() for v in self.ventas.all())
+        discount = sum(
+            v.discount() for v in Venta.objects.filter(recibo=self).all())
         return Decimal(discount).quantize(dot01)
 
     def conceptos(self):
 
-        return ', '.join(v.item.descripcion for v in self.ventas.all())
+        return ', '.join(
+            v.item.descripcion for v in Venta.objects.filter(recibo=self).all())
 
     def total(self):
 
@@ -145,11 +149,12 @@ class Recibo(TimeStampedModel):
 
     def comision_radiologo(self):
 
-        return sum(v.radiologo() for v in self.ventas.all())
+        return sum(
+            v.radiologo() for v in Venta.objects.filter(recibo=self).all())
 
     def placas(self):
 
-        return sum(v.placas for v in self.ventas.all())
+        return sum(v.placas for v in Venta.objects.filter(recibo=self).all())
 
     def fractional(self):
         """Obtiene la parte decimal del total del :class:`Recibo`"""
@@ -163,11 +168,21 @@ class Recibo(TimeStampedModel):
 
     def pagado(self):
 
-        return sum(p.monto for p in self.pagos.all())
+        return sum(p.monto for p in Pago.objects.filter(recibo=self).all())
 
     def debido(self):
 
         return self.total() - self.pagado()
+
+    def save(self, *args, **kwargs):
+
+        if self.pk is None:
+            ciudad = self.cajero.profile.ciudad
+            ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
+            ciudad.save()
+            self.correlativo = ciudad.correlativo_de_recibo
+
+        super(Recibo, self).save(*args, **kwargs)
 
 
 class Venta(TimeStampedModel):
@@ -291,14 +306,11 @@ class TurnoCaja(TimeStampedModel):
     usuario = models.ForeignKey(User, related_name='turno_caja')
     inicio = models.DateTimeField(null=True, blank=True)
     fin = models.DateTimeField(null=True, blank=True)
-    apertura = models.DecimalField(blank=True, null=True, max_digits=7,
-                                   decimal_places=2)
+    apertura = models.DecimalField(default=0, max_digits=7, decimal_places=2)
     finalizado = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return u"Turno de {0} del {1} al {2}".format(
-            self.usuario.get_full_name(),
-            self.inicio, self.fin)
+        return u"Turno de {0}".format(self.usuario.get_full_name())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -350,7 +362,8 @@ class TurnoCaja(TimeStampedModel):
 
     def total_cierres(self):
 
-        return sum(c.monto for c in self.cierres.all())
+        return sum(
+            c.monto for c in CierreTurno.objects.filter(recibo=self).all())
 
     def diferencia(self):
 
@@ -361,7 +374,7 @@ class TurnoCaja(TimeStampedModel):
                 metodos[pago.tipo] += pago.monto
 
         cierres = defaultdict(Decimal)
-        for cierre in self.cierres.all():
+        for cierre in CierreTurno.objects.filter(recibo=self).all():
             cierres[cierre.pago] += cierre.monto
 
         diferencia = defaultdict(Decimal)
@@ -372,7 +385,8 @@ class TurnoCaja(TimeStampedModel):
 
     def diferencia_total(self):
 
-        cierre = sum(c.monto for c in self.cierres.all())
+        cierre = sum(
+            c.monto for c in CierreTurno.objects.filter(recibo=self).all())
         pagos = sum(r.pagado() for r in self.recibos())
 
         return cierre - pagos - self.apertura
@@ -387,7 +401,7 @@ class CierreTurno(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('invoice-turno', args=[self.turno.id])
+        return self.turno.get_absolute_url()
 
 
 def consolidate_invoice(persona, clone):
