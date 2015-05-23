@@ -66,7 +66,7 @@ class Recibo(TimeStampedModel):
         return reverse('invoice-view-id', args=[self.id])
 
     def numero(self):
-        ciudad = self.recibo.cajero.ciudad
+        ciudad = self.cajero.ciudad
         return u'{0}-{1}'.format(ciudad.prefijo_recibo, self.correlativo)
 
     def anular(self):
