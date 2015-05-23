@@ -240,6 +240,10 @@ class Venta(TimeStampedModel):
 
     def precio_previo(self):
 
+        if self.precio is None:
+            self.precio = self.item.precio_de_venta
+            self.save()
+
         if not self.recibo.tipo_de_venta:
             return self.precio.quantize(dot01)
 
