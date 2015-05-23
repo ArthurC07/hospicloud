@@ -67,7 +67,6 @@ class Recibo(TimeStampedModel):
 
     def numero(self):
         ciudad = self.cajero.profile.ciudad
-        return u'{0}-{1}'.format(ciudad.prefijo_recibo, self.correlativo)
 
     def anular(self):
 
