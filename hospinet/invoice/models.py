@@ -299,6 +299,13 @@ class Venta(TimeStampedModel):
 
         return neto.quantize(dot01)
 
+    def save(self, *args, **kwargs):
+
+        if self.precio is None:
+            self.precio = self.item.precio_de_venta
+            
+        super(Venta, self).save(*args, **kwargs)
+
 
 class Pago(TimeStampedModel):
     """Permite especificar los montos de acuerdo al :class:`TipoPago` utilizado
