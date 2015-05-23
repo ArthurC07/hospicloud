@@ -32,6 +32,10 @@ class Ciudad(TimeStampedModel):
     correlativo_de_recibo = models.IntegerField(default=0)
     prefijo_recibo = models.CharField(max_length=100, blank=True, null=True)
 
+    def __unicode__(self):
+
+        return self.nombre
+
 
 class UserProfile(UserenaBaseProfile):
     user = models.OneToOneField(User, related_name="profile",
