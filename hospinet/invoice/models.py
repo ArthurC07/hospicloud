@@ -17,19 +17,21 @@
 from collections import defaultdict
 from decimal import Decimal
 
-from constance import config
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.utils import timezone
+
 from django_extensions.db.models import TimeStampedModel
+
+from django.db.models import F
 
 from persona.models import Persona, persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
 from spital.models import Deposito
-from django.db.models import F
 from users.models import Ciudad
+
 
 dot01 = Decimal("0.01")
 
@@ -66,8 +68,15 @@ class Recibo(TimeStampedModel):
 
         return reverse('invoice-view-id', args=[self.id])
 
+    @property
     def numero(self):
+
+        if self.cajero is None or self.cajero.profile is None or \
+           self.cajero.profile.ciudad is None:
+            return self.correlativo
+
         ciudad = self.cajero.profile.ciudad
+
         return u'{0}-{1:08d}'.format(ciudad.prefijo_recibo, self.correlativo)
 
     def anular(self):

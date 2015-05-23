@@ -21,6 +21,12 @@ from invoice.models import (Recibo, Venta, Pago, TipoPago, TurnoCaja,
                             CierreTurno)
 
 
+class ReciboAdmin(admin.ModelAdmin):
+    list_display = ('cliente', 'numero', 'created')
+    ordering = ['cliente', 'created']
+    search_fields = ['cliente__nombre']
+
+
 class CierreturnoAdmin(admin.ModelAdmin):
     list_display = ('turno', 'pago', 'monto')
     ordering = ['turno', 'pago', 'monto']
@@ -35,7 +41,7 @@ class TurnoCajaAdmin(admin.ModelAdmin):
                      'pago__nombre', 'apertura']
 
 
-admin.site.register(Recibo)
+admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta)
 admin.site.register(Pago)
 admin.site.register(TipoPago)
