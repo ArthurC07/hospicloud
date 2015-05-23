@@ -232,6 +232,10 @@ class Venta(TimeStampedModel):
 
     def precio_unitario(self):
 
+        if self.precio is None:
+            self.precio = self.item.precio_de_venta
+            self.save()
+
         if not self.recibo.tipo_de_venta or not self.descontable:
             return self.precio.quantize(dot01)
 
