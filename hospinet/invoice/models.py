@@ -29,6 +29,7 @@ from persona.models import Persona, persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
 from spital.models import Deposito
 from django.db.models import F
+from users.models import Ciudad
 
 dot01 = Decimal("0.01")
 
@@ -180,6 +181,7 @@ class Recibo(TimeStampedModel):
             ciudad = self.cajero.profile.ciudad
             ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
             ciudad.save()
+            ciudad = Ciudad.objects.get(pk=ciudad.pk)
             self.correlativo = ciudad.correlativo_de_recibo
 
         super(Recibo, self).save(*args, **kwargs)
