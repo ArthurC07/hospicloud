@@ -28,12 +28,18 @@ class ItemTemplateAdmin(admin.ModelAdmin):
     search_fields = ['descripcion',]
 
 
+class ItemAdmin(admin.ModelAdmin):
+    list_display = ('plantilla', 'inventario', 'vencimiento', 'created')
+    ordering = ['plantilla__descripcion', 'inventario', 'vencimiento', 'created']
+    search_fields = ['plantilla__descripcion', 'inventario__lugar']
+
+
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
 admin.site.register(Requisicion)
 admin.site.register(Inventario)
 admin.site.register(ItemType)
 admin.site.register(TipoVenta)
-admin.site.register(Item)
+admin.site.register(Item, ItemAdmin)
 admin.site.register(Transferido)
 admin.site.register(Transferencia)
 admin.site.register(Compra)
