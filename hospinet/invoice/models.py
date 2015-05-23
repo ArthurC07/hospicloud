@@ -363,7 +363,7 @@ class TurnoCaja(TimeStampedModel):
     def total_cierres(self):
 
         return sum(
-            c.monto for c in CierreTurno.objects.filter(recibo=self).all())
+            c.monto for c in CierreTurno.objects.filter(turno=self).all())
 
     def diferencia(self):
 
@@ -374,7 +374,7 @@ class TurnoCaja(TimeStampedModel):
                 metodos[pago.tipo] += pago.monto
 
         cierres = defaultdict(Decimal)
-        for cierre in CierreTurno.objects.filter(recibo=self).all():
+        for cierre in CierreTurno.objects.filter(turno=self).all():
             cierres[cierre.pago] += cierre.monto
 
         diferencia = defaultdict(Decimal)
@@ -386,7 +386,7 @@ class TurnoCaja(TimeStampedModel):
     def diferencia_total(self):
 
         cierre = sum(
-            c.monto for c in CierreTurno.objects.filter(recibo=self).all())
+            c.monto for c in CierreTurno.objects.filter(turno=self).all())
         pagos = sum(r.pagado() for r in self.recibos())
 
         return cierre - pagos - self.apertura
