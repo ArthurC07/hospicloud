@@ -22,8 +22,8 @@ from invoice.models import (Recibo, Venta, Pago, TipoPago, TurnoCaja,
 
 
 class ReciboAdmin(admin.ModelAdmin):
-    list_display = ('cliente', 'numero', 'usuario', 'created')
-    ordering = ['cliente', 'usuario', 'created']
+    list_display = ('cliente', 'numero', 'cajero', 'created')
+    ordering = ['cliente', 'cajero', 'created']
     search_fields = ['cliente__nombre']
 
 
