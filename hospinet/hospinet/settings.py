@@ -82,7 +82,7 @@ USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'es-hn'
+LANGUAGE_CODE = 'es-MX'
 
 SITE_ID = 1
 
@@ -306,3 +306,4 @@ CONSTANCE_CONFIG = {
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+WSGI_APPLICATION = 'hospinet.wsgi.application'
