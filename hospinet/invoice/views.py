@@ -304,20 +304,6 @@ class VentaCreateView(ReciboFormMixin, LoginRequiredMixin):
     model = Venta
     form_class = VentaForm
 
-    def form_valid(self, form):
-        """Guarda el objeto generado espeficando precio obtenido directamente
-        del :class:`Producto`"""
-
-        self.object = form.save(commit=False)
-        if self.object.precio == Decimal(0):
-            self.object.precio = self.object.item.precio_de_venta
-        self.object.impuesto = self.object.item.impuestos * self.object.monto()
-        self.object.save()
-
-        # messages.info(self.request, u"Agregada una Venta al Recibo!")
-
-        return HttpResponseRedirect(self.get_success_url())
-
 
 class ReciboDetailView(DetailView, LoginRequiredMixin):
     """Muestra los detalles del :class:`Recibo` para agregar :class:`Producto`s

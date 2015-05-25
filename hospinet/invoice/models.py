@@ -232,10 +232,6 @@ class Venta(TimeStampedModel):
 
     def precio_unitario(self):
 
-        if self.precio is None:
-            self.precio = self.item.precio_de_venta
-            self.save()
-
         if not self.recibo.tipo_de_venta or not self.descontable:
             return self.precio.quantize(dot01)
 
@@ -243,10 +239,6 @@ class Venta(TimeStampedModel):
         return (self.precio + aumento).quantize(dot01)
 
     def precio_previo(self):
-
-        if self.precio is None:
-            self.precio = self.item.precio_de_venta
-            self.save()
 
         if not self.recibo.tipo_de_venta:
             return self.precio.quantize(dot01)
@@ -303,7 +295,9 @@ class Venta(TimeStampedModel):
 
         if self.precio is None:
             self.precio = self.item.precio_de_venta
-            
+
+        self.impuesto = self.item.impuestos * self.monto()
+        
         super(Venta, self).save(*args, **kwargs)
 
 
