@@ -105,6 +105,7 @@
                                 <tr>
                                     <th>C&oacute;digo</th>
                                     <th>Nombre</th>
+                                    <th>Cajero</th>
                                     <th>Acciones</th>
                                 </tr>
                                 </thead>
@@ -112,7 +113,7 @@
                                 {% for recibo in pendientes %}
                                     <tr>
                                         <td>
-                                            <a href="{% url 'persona-view-id' recibo.cliente.id %}">
+                                            <a class="btn btn-primary" href="{% url 'persona-view-id' recibo.cliente.id %}">
                                                 {% if recibo.cliente.identificacion %}
                                                     {{ recibo.cliente.identificacion }}
                                                 {% else %}
@@ -122,7 +123,8 @@
                                         <td>
                                             {{ recibo.cliente.nombre_completo }}
                                         </td>
-                                        <td><a class="btn btn-block btn-primary"
+                                        <td>{{ recibo.cajero }}</td>
+                                        <td><a class="btn btn-success"
                                                href="{% url 'invoice-view-id' recibo.id %}">Ver
                                             Recibo</a>
                                         </td>
