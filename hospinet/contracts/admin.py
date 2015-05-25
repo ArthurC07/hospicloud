@@ -16,15 +16,24 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
-from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago,
+
+from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago, PCD,
                               Beneficiario, Vendedor, LimiteEvento, TipoPago,
                               Meta, Autorizacion, Precontrato, MetodoPago,
-                              Beneficio, Aseguradora, MasterContract)
+                              Beneficio, Aseguradora, MasterContract,
+                              ImportFile)
 
 
 class BeneficioAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'plan', 'activo')
     ordering = ['plan', 'nombre', 'activo']
+
+
+class PCDAdmin(admin.ModelAdmin):
+    list_display = ('numero', 'persona')
+    ordering = ['numero', 'persona']
+    search_fields = ['persona__nombre', 'persona__apellidos',
+                     'numero']
 
 
 admin.site.register(Plan)
@@ -42,4 +51,6 @@ admin.site.register(Precontrato)
 admin.site.register(MetodoPago)
 admin.site.register(Aseguradora)
 admin.site.register(MasterContract)
+admin.site.register(PCD, PCDAdmin)
 admin.site.register(Beneficio, BeneficioAdmin)
+admin.site.register(ImportFile)

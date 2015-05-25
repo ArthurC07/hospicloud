@@ -120,7 +120,7 @@ class Beneficio(TimeStampedModel):
 
 class PCD(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name="pcds")
-    numero = models.BigIntegerField(unique=True)
+    numero = models.CharField(max_length=255, unique=True)
     pc = models.IntegerField(default=0)
 
     def __unicode__(self):
@@ -131,9 +131,9 @@ class PCD(TimeStampedModel):
 
 
 def check_line(line, vencimiento):
-    file_pcd = int(line[4])
+    file_pcd = line[4]
     file_certificado = int(line[6])
-    poliza_f = int(line[5])
+    poliza_f = line[5]
     vencimiento_r = vencimiento
 
     master = MasterContract.objects.get(poliza=poliza_f)
@@ -226,7 +226,7 @@ class MasterContract(TimeStampedModel):
     vencimiento = models.DateField(default=timezone.now)
     contratante = models.ForeignKey(Empleador, blank=True, null=True,
                                     related_name='master_contracts')
-    poliza = models.IntegerField(default=0)
+    poliza = models.CharField(max_length=255, null=True, blank=True)
     adicionales = models.IntegerField(default=0)
     comision = models.IntegerField(default=0)
 

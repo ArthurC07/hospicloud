@@ -15,7 +15,6 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
-from contracts.models import ImportFile, PCD
 
 from persona.models import (Persona, EstiloVida, Fisico, Antecedente,
                             AntecedenteQuirurgico, AntecedenteObstetrico,
@@ -38,5 +37,3 @@ admin.site.register(AntecedenteFamiliar)
 admin.site.register(Empleador)
 admin.site.register(Empleo)
 admin.site.register(Sede)
-admin.site.register(ImportFile)
-admin.site.register(PCD)
