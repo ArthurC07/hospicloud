@@ -297,7 +297,7 @@ class Venta(TimeStampedModel):
             self.precio = self.item.precio_de_venta
 
         self.impuesto = self.item.impuestos * self.monto()
-        
+
         super(Venta, self).save(*args, **kwargs)
 
 
