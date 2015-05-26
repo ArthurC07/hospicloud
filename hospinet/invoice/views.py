@@ -175,9 +175,9 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
         self.ReciboFormset = inlineformset_factory(Persona, Recibo,
                                                    form=ReciboForm,
                                                    fk_name='cliente', extra=1)
-        return super(CreateView, self).dispatch(request, *args, **kwargs)
+        return super(ReciboCreateView, self).dispatch(request, *args, **kwargs)
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
 
         self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
         self.persona_form.helper.form_tag = False

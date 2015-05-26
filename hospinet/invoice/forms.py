@@ -49,7 +49,8 @@ class ReciboForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Recibo
-        exclude = ('nulo', 'cerrado', 'discount', 'radiologo', 'remite')
+        exclude = (
+        'nulo', 'cerrado', 'discount', 'radiologo', 'remite', 'ciudad')
 
     cajero = forms.ModelChoiceField(label="",
                                     queryset=User.objects.all(),
@@ -69,7 +70,7 @@ class VentaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Venta
-        exclude = ('impuesto', 'descuento', 'descripcion', 'placas', )
+        exclude = ('impuesto', 'descuento', 'descripcion', 'placas',)
 
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
@@ -107,7 +108,7 @@ class PeriodoForm(forms.Form):
 class EmergenciaFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Emergencia
-        fields = ('facturada', )
+        fields = ('facturada',)
 
     def __init__(self, *args, **kwargs):
         super(EmergenciaFacturarForm, self).__init__(*args, **kwargs)
@@ -118,7 +119,7 @@ class EmergenciaFacturarForm(FieldSetModelFormMixin):
 class AdmisionFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Admision
-        fields = ('facturada', )
+        fields = ('facturada',)
 
     def __init__(self, *args, **kwargs):
         super(AdmisionFacturarForm, self).__init__(*args, **kwargs)
