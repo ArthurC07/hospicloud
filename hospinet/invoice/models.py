@@ -187,7 +187,7 @@ class Recibo(TimeStampedModel):
         return self.total() - self.pagado()
 
     def save(self, *args, **kwargs):
-        
+
         if self.pk is None:
             ciudad = self.cajero.profile.ciudad
             ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1

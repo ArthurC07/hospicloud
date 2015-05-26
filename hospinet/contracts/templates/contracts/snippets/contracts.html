@@ -38,7 +38,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for beneficio in contrato.plan.beneficios.all %}
+                        {% for beneficio in contrato.beneficios %}
                             <tr>
                                 <td>{{ beneficio.nombre }}</td>
                                 <td>{{ beneficio.valor }}</td>

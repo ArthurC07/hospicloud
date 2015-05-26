@@ -25,7 +25,6 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-
 from django.utils import timezone
 
 from django_extensions.db.models import TimeStampedModel
@@ -35,7 +34,6 @@ from clinique.models import Consulta, Seguimiento, Cita
 from inventory.models import ItemTemplate, ItemType
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
-
 
 server_timezone = timezone.get_current_timezone()
 
@@ -110,6 +108,7 @@ class Beneficio(TimeStampedModel):
     limite = models.IntegerField(default=0, verbose_name=u'Límite de Eventos')
     descuento_post_limite = models.DecimalField(max_digits=10, decimal_places=2,
                                                 default=0)
+    aplicar_a_suspendidos = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
@@ -131,15 +130,17 @@ class PCD(TimeStampedModel):
 
 
 def check_line(line, vencimiento):
-    file_pcd = line[4]
-    file_certificado = int(line[6])
-    poliza_f = line[5]
+    file_pcd = line[0]
+    file_certificado = int(line[2])
+    poliza_f = line[1]
     vencimiento_r = vencimiento
+
+    activo = line['7'].upper()
 
     master = MasterContract.objects.get(poliza=poliza_f)
 
-    if line[21]:
-        venc = server_timezone.localize(datetime.strptime(line[21], '%m/%d/%Y'))
+    if line[8]:
+        venc = server_timezone.localize(datetime.strptime(line[8], '%m/%d/%Y'))
         if venc <= vencimiento_r:
             vencimiento_r = venc
 
@@ -152,6 +153,12 @@ def check_line(line, vencimiento):
             contrato.vencimiento = vencimiento_r
             contrato.plan = master.plan
             contrato.master = master
+
+            if activo == 'S':
+                contrato.suspendido = True
+            else:
+                contrato.suspendido = False
+
             contrato.save()
 
         for beneficiario in Beneficiario.objects.filter(
@@ -161,11 +168,11 @@ def check_line(line, vencimiento):
 
     except ObjectDoesNotExist:
 
-        apellido_f, nombre_f = line[10].split(",")
+        apellido_f, nombre_f = line[4].split(",")
         nacimiento_f = server_timezone.localize(
-            datetime.strptime(line[16], "%m/%d/%Y"))
-        sexo_f = line[15]
-        identificacion = line[24]
+            datetime.strptime(line[6], "%m/%d/%Y"))
+        sexo_f = line[5]
+        identificacion = line[9]
 
         persona = Persona(nombre=nombre_f, apellido=apellido_f,
                           sexo=sexo_f, nacimiento=nacimiento_f,
@@ -174,12 +181,17 @@ def check_line(line, vencimiento):
         pcd = PCD(persona=persona, numero=file_pcd)
         pcd.save()
 
-        dependiente = int(line[8])
+        dependiente = int(line[3])
 
         if dependiente == 0:
 
             contract = master.create_contract(persona, vencimiento_r,
                                               file_certificado, file_pcd)
+            if activo == 'S':
+                contract.suspendido = True
+            else:
+                contract.suspendido = False
+
             contract.save()
         else:
             contract = Contrato.objects.filter(poliza=poliza_f,
@@ -282,6 +294,7 @@ class Contrato(TimeStampedModel):
     titular = models.IntegerField(default=0)
     master = models.ForeignKey(MasterContract, related_name='contratos',
                                blank=True, null=True, verbose_name="Contrato")
+    suspendido = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""
@@ -382,6 +395,14 @@ class Contrato(TimeStampedModel):
 
         else:
             return True
+
+    def beneficios(self):
+
+        if self.suspendido:
+            return Beneficio.objects.filter(plan=self.plan,
+                                            aplicar_a_suspendidos=True).all()
+
+        return Beneficio.objects.filter(plan=self.plan).all()
 
 
 class Beneficiario(TimeStampedModel):
