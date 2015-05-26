@@ -36,8 +36,15 @@ class PCDAdmin(admin.ModelAdmin):
                      'numero']
 
 
+class ContratoAdmin(admin.ModelAdmin):
+    list_display = ('numero', 'persona', 'plan', 'activo')
+    ordering = ['numero', 'persona', 'plan']
+    search_fields = ['persona__nombre', 'persona__apellidos',
+                     'numero']
+
+
 admin.site.register(Plan)
-admin.site.register(Contrato)
+admin.site.register(Contrato, ContratoAdmin)
 admin.site.register(TipoEvento)
 admin.site.register(Evento)
 admin.site.register(LimiteEvento)
