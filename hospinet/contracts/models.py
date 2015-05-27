@@ -133,6 +133,11 @@ def check_line(line, vencimiento):
     file_pcd = line[0]
     file_certificado = int(line[2])
     poliza_f = line[1]
+    apellido_f, nombre_f = line[4].split(",")
+    nacimiento_f = server_timezone.localize(
+        datetime.strptime(line[6], "%m/%d/%Y"))
+    sexo_f = line[5]
+    identificacion = line[9]
     vencimiento_r = vencimiento
 
     activo = line['7'].upper()
@@ -146,7 +151,13 @@ def check_line(line, vencimiento):
 
     try:
         pcd = PCD.objects.get(numero=file_pcd)
-        contratos = Contrato.objects.filter(persona=pcd.persona,
+
+        persona = pcd.persona
+        persona.apellido = apellido_f
+        persona.nombre = nombre_f
+        persona.save()
+
+        contratos = Contrato.objects.filter(persona=persona,
                                             certificado=file_certificado)
 
         for contrato in contratos.all():
@@ -162,17 +173,11 @@ def check_line(line, vencimiento):
             contrato.save()
 
         for beneficiario in Beneficiario.objects.filter(
-                persona=pcd.persona).all():
+                persona=persona).all():
             beneficiario.contrato.vencimiento = vencimiento_r
             beneficiario.contrato.save()
 
     except ObjectDoesNotExist:
-
-        apellido_f, nombre_f = line[4].split(",")
-        nacimiento_f = server_timezone.localize(
-            datetime.strptime(line[6], "%m/%d/%Y"))
-        sexo_f = line[5]
-        identificacion = line[9]
 
         persona = Persona(nombre=nombre_f, apellido=apellido_f,
                           sexo=sexo_f, nacimiento=nacimiento_f,
