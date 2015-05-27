@@ -114,7 +114,7 @@ class InventarioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         return self.object.items.all()
 
 
-class InventarioMixin(View):
+class InventarioMixin(TemplateView):
     def dispatch(self, *args, **kwargs):
         self.inventario = get_object_or_404(Inventario, pk=kwargs['inventario'])
         return super(InventarioMixin, self).dispatch(*args, **kwargs)
