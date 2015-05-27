@@ -195,7 +195,7 @@ class Recibo(TimeStampedModel):
             ciudad = Ciudad.objects.get(pk=ciudad.pk)
             self.correlativo = ciudad.correlativo_de_recibo
 
-        if self.ciudad is None:
+        if self.ciudad is None and self.pk is not None:
             self.ciudad = self.cajero.profile.ciudad
 
         super(Recibo, self).save(*args, **kwargs)
