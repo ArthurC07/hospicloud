@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
+from collections import defaultdict
 from datetime import date, timedelta, datetime
 from decimal import Decimal
 import operator
@@ -64,13 +65,32 @@ class Vendedor(TimeStampedModel):
 
 
 class Aseguradora(TimeStampedModel):
-    nombre = models.CharField(max_length=255, null=True, blank=True)
-
+    nombre = models.CharField(max_length=255, blank=True)
+    rtn = models.CharField(max_length=255, blank=True)
+    representante = models.ForeignKey(Persona, null=True, blank=True,
+                                      related_name='aseguradoras')
+    
     def __unicode__(self):
         return self.nombre
 
     def get_absolute_url(self):
         return reverse('contrato-index')
+
+    def facturar(self):
+        """Permite convertir los :class:`Cargo`s de esta :class:`Admision` en
+        las :class:`Venta`s de un :class:`Recibo`"""
+
+        items = defaultdict(int)
+        precios = defaultdict(int)
+        item = self.item()
+
+        items[item] += 1
+        precios[item] += item.precio_de_venta
+
+        for master in MasterContract.objects.filter(aseguradora=self).all():
+            items[master.item] += master.active_contracts().count()
+
+        return items, precios
 
 
 class Plan(TimeStampedModel):
@@ -248,6 +268,7 @@ class MasterContract(TimeStampedModel):
     comision = models.IntegerField(default=0)
 
     processed = models.BooleanField(default=False)
+    item = models.ForeignKey(ItemTemplate, null=True, blank=True)
 
     def __unicode__(self):
         nombre = self.plan.nombre
@@ -271,6 +292,10 @@ class MasterContract(TimeStampedModel):
                             master=self)
 
         return contract
+
+    def active_contracts(self):
+
+        return Contrato.objects.filter(master=self, vencimiento__gte=timezone.now().date())
 
 
 class Contrato(TimeStampedModel):
