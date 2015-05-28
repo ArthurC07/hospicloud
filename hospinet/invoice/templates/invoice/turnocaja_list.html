@@ -13,7 +13,10 @@
             <div class="main-content col-md-12">‏
                 <a class="btn btn-primary" href="{% url 'invoice-index' %}">Volver a Caja</a>
                 {% for turno in turnos %}
-                    <h1>{{ turno }}</h1>
+                    <h1>
+                        {{ turno }}
+                        <small>{{ turno.inicio }} al {{ turno.fin }}</small>
+                    </h1>
                     <table class="table table-striped table-bordered table-condensed">
                         <caption>Reporte de Facturaci&oacute;n
                         </caption>
