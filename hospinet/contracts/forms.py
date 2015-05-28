@@ -343,6 +343,9 @@ class AseguradoraForm(FieldSetModelFormMixin):
         model = Aseguradora
         fields = '__all__'
 
+    representante = ModelChoiceField(queryset=Persona.objects.all(),
+                                     name="representante", model="")
+
     def __init__(self, *args, **kwargs):
         super(AseguradoraForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Aseguradora',

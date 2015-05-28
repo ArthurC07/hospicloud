@@ -69,12 +69,12 @@ class Aseguradora(TimeStampedModel):
     rtn = models.CharField(max_length=255, blank=True)
     representante = models.ForeignKey(Persona, null=True, blank=True,
                                       related_name='aseguradoras')
-    
+
     def __unicode__(self):
         return self.nombre
 
     def get_absolute_url(self):
-        return reverse('contrato-index')
+        return reverse('aseguradora', args=[self.id])
 
     def facturar(self):
         """Permite convertir los :class:`Cargo`s de esta :class:`Admision` en
@@ -273,9 +273,9 @@ class MasterContract(TimeStampedModel):
     def __unicode__(self):
         nombre = self.plan.nombre
         if self.contratante:
-            nombre += self.contratante.nombre
+            nombre += ' ' + self.contratante.nombre
         if self.aseguradora:
-            nombre += self.aseguradora.nombre
+            nombre += ' ' + self.aseguradora.nombre
         return nombre
 
     def get_absolute_url(self):
@@ -296,6 +296,10 @@ class MasterContract(TimeStampedModel):
     def active_contracts(self):
 
         return Contrato.objects.filter(master=self, vencimiento__gte=timezone.now().date())
+
+    def active_contracts_count(self):
+
+        return self.active_contracts().count()
 
 
 class Contrato(TimeStampedModel):

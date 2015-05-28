@@ -31,6 +31,9 @@
                         <li>
                             <a href="#planes" data-toggle="tab">Planes</a>
                         </li>
+                        <li>
+                            <a href="#aseguradoras" data-toggle="tab">Aseguradoras</a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <article id="estadisticas" class="tab-pane active">
@@ -217,6 +220,28 @@
                                             {% for plan in planes.all %}
                                                 <li>
                                                     <a href="{% url 'contracts-plan' plan.id %}">Plan {{ plan }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="aseguradoras" class="tab-pane">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <section class="page-header">
+                                            <h1>Aseguradoras</h1>
+                                        </section>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul>
+                                            {% for aseguradora in aseguradoras.all %}
+                                                <li>
+                                                    <a href="{% url 'aseguradora' aseguradora.id %}">Aseguradora {{ aseguradora }}</a>
                                                 </li>
                                             {% endfor %}
                                         </ul>

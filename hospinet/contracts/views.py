@@ -177,6 +177,8 @@ class IndexView(TemplateView, ContratoPermissionMixin):
 
         context['planes'] = Plan.objects.all()
 
+        context['aseguradoras'] = Aseguradora.objects.all()
+
         return context
 
 
@@ -933,5 +935,15 @@ class PCDUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class AseguradoraCreateView(LoginRequiredMixin, CreateView):
+    model = Aseguradora
+    form_class = AseguradoraForm
+
+
+class AseguradoraDetailView(LoginRequiredMixin, DetailView):
+    model = Aseguradora
+    context_object_name = 'aseguradora'
+
+
+class AseguradoraUpdateView(LoginRequiredMixin, UpdateView):
     model = Aseguradora
     form_class = AseguradoraForm

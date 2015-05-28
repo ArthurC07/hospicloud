@@ -44,8 +44,8 @@ from contracts.views import (ContratoDetailView, PagoCreateView,
                              PlanCloneView, PlanUpdateView,
                              MasterContractListView, MasterContractUpdateView,
                              ContratoMasterPersonaCreateView, PCDUpdateView,
-                             AseguradoraCreateView)
-
+                             AseguradoraCreateView, AseguradoraUpdateView,
+                             AseguradoraDetailView)
 
 urlpatterns = patterns('',
 
@@ -211,7 +211,6 @@ urlpatterns = patterns('',
                            PrebeneficiarioCreateView.as_view(),
                            name='contrato-prebeneficiario-add'),
 
-
                        url(r'^(?P<persona>\d+)/beneficiario/agregar$',
                            BeneficiarioCreateView.as_view(),
                            name='persona-beneficiario-add'),
@@ -275,4 +274,12 @@ urlpatterns = patterns('',
                        url(r'^aseguradora/agregar$',
                            AseguradoraCreateView.as_view(),
                            name='contracts-aseguradora-add'),
-)
+
+                       url(r'^aseguradora/(?P<pk>\d+)/editar$',
+                           AseguradoraUpdateView.as_view(),
+                           name='aseguradora-editar'),
+
+                       url(r'^aseguradora/(?P<pk>\d+)$',
+                           AseguradoraDetailView.as_view(),
+                           name='aseguradora'),
+                       )
