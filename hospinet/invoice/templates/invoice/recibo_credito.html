@@ -44,7 +44,9 @@
         hr {
             height: 2px;
         }
-
+        .lf {
+            float: left;
+        }
         .sp-col {
             position: relative;
             left: 20px;
@@ -74,13 +76,13 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 .lf">
             <p>
                 Cliente: {{ recibo.cliente }} <br>
                 RTN: {{ recibo.cliente.rtn }}
             </p>
         </div>
-        <div class="col-md-6 text-right right">
+        <div class="col-md-6 text-right right .lf">
             <br>
             C.A.I: {{ config.CAI }}
         </div>
@@ -170,6 +172,17 @@
                     <td class="text-right">{{ recibo.total }}</td>
                 </tr>
             </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 .lf text-center">
+            <p class="text-center">_________________________________________</p>
+            <p class="text-center">Recib&iacute; Conforme</p>
+        </div>
+        <div class="col-md-6 text-center right .lf">
+            <p class="text-center">_________________________________________</p>
+            <p class="text-center">Firma y Sello</p>
         </div>
     </div>
     {% for pago in recibo.pagos.all %}
