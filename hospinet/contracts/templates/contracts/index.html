@@ -241,7 +241,7 @@
                                         <ul>
                                             {% for aseguradora in aseguradoras.all %}
                                                 <li>
-                                                    <a href="{% url 'aseguradora' aseguradora.id %}">Aseguradora {{ aseguradora }}</a>
+                                                    <a href="{% url 'aseguradora' aseguradora.id %}">{{ aseguradora }}</a>
                                                 </li>
                                             {% endfor %}
                                         </ul>
