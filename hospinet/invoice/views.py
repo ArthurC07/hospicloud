@@ -35,6 +35,7 @@ from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
 
 from clinique.models import Consulta
+from contracts.models import Aseguradora
 from spital.forms import DepositoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from spital.models import Admision, Deposito
@@ -858,6 +859,40 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
         self.object.save()
 
         return HttpResponseRedirect(recibo.get_absolute_url())
+
+
+class AseguradoraFacturarView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        aseguradora = get_object_or_404(Aseguradora, pk=kwargs['pk'])
+
+        recibo = Recibo()
+        recibo.cajero = self.request.user
+        recibo.cliente = aseguradora.cardex
+        recibo.credito = True
+
+        recibo.save()
+        for master in aseguradora.master_contracts.all():
+            venta = Venta()
+            venta.item = master.item
+            venta.recibo = recibo
+            venta.descripcion = master.contratante.nombre
+            venta.cantidad = master.active_contracts_count()
+            venta.precio = master.item.precio_de_venta
+            venta.impuesto = master.item.impuestos
+            venta.save()
+            recibo.ventas.add(venta)
+            venta.save()
+
+        recibo.save()
+
+        messages.info(self.request, u'¡La consulta se marcó como facturada!')
+        return recibo.get_absolute_url()
+
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(AseguradoraFacturarView, self).dispatch(*args, **kwargs)
 
 
 class ExamenFacturarView(UpdateView, LoginRequiredMixin):

@@ -18,6 +18,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
+from django.utils import timezone
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 from tastypie.models import create_api_key
@@ -30,7 +31,12 @@ from persona.models import Persona
 class Ciudad(TimeStampedModel):
     nombre = models.CharField(max_length=100)
     correlativo_de_recibo = models.IntegerField(default=0)
-    prefijo_recibo = models.CharField(max_length=100, blank=True, null=True)
+    direccion = models.CharField(max_length=255, blank=True)
+    telefono = models.CharField(max_length=100, blank=True)
+    prefijo_recibo = models.CharField(max_length=100, blank=True)
+    limite_de_emision = models.DateTimeField(default=timezone.now)
+    inicio_rango = models.CharField(max_length=100, blank=True)
+    fin_rango = models.CharField(max_length=100, blank=True)
 
     def __unicode__(self):
 

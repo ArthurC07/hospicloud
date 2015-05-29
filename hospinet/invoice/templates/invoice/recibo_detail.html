@@ -73,7 +73,7 @@
                         <tr>
                             <td>{{ venta.cantidad }}</td>
                             <td><a href="{% url 'venta-delete' venta.id %}"><i
-                                    class="glyphicon glyphicon-trash"></i></a> {{ venta.item }}</td>
+                                    class="glyphicon glyphicon-trash"></i></a>{{ venta.descripcion }} {{ venta.item }}</td>
                             <td>{{ venta.precio_unitario }}</td>
                             <td>{{ venta.monto }}</td>
                             <td>{{ venta.descuento_tipo }}</td>

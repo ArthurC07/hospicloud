@@ -16,6 +16,8 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
 from decimal import Decimal
+from datetime import timedelta
+from constance import config
 
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -52,23 +54,27 @@ class Recibo(TimeStampedModel):
         )
 
     cliente = models.ForeignKey(Persona, related_name='recibos')
-    remite = models.CharField(max_length=255, blank=True, null=True)
-    radiologo = models.CharField(max_length=255, blank=True, null=True)
-    discount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-    cerrado = models.BooleanField(default=False)
-    nulo = models.BooleanField(default=False)
+    ciudad = models.ForeignKey(Ciudad, blank=True, null=True,
+                               related_name='recibos')
     cajero = models.ForeignKey(User, blank=True, null=True,
                                related_name='recibos')
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
+    discount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     correlativo = models.IntegerField(default=0)
-    ciudad = models.ForeignKey(Ciudad, blank=True, null=True,
-                               related_name='recibos')
+    credito = models.BooleanField(default=False)
+    cerrado = models.BooleanField(default=False)
+    nulo = models.BooleanField(default=False)
+    emision = models.DateTimeField(default=timezone.now)
 
     def get_absolute_url(self):
 
         """Obtiene la URL absoluta"""
 
         return reverse('invoice-view-id', args=[self.id])
+
+    def vencimiento(self):
+
+        return self.emision + timedelta(days=config.RECEIPT_DAYS)
 
     @property
     def numero(self):

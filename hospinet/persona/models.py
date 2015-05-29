@@ -82,6 +82,7 @@ class Persona(models.Model):
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
     duplicado = models.BooleanField(default=False)
     rtn = models.CharField(max_length=200, blank=True, null=True)
+    mostrar_en_cardex = models.BooleanField(default=False)
 
     @staticmethod
     def validar_identidad(identidad):

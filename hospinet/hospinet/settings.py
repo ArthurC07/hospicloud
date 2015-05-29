@@ -295,6 +295,7 @@ CONSTANCE_CONFIG = {
     'IMAGENES_ENABLED': (1, u'Imagenes Habilitadas'),
     'CONTRATOS_ENABLED': (1, u'Edad mínima de la Tercera Edad'),
     'DEFAULT_CLIENT': (1, u'Cliente Predeterminado para los recibos'),
+    'RECEIPT_DAYS': (1, u'Dias que dura una factura al credito'),
 }
 
 

@@ -25,6 +25,7 @@ from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Beneficio,
                               MasterContract, ImportFile, PCD, Aseguradora)
+from inventory.models import ItemTemplate
 from invoice.forms import PeriodoForm
 from persona.forms import (FieldSetModelFormMixin, DateTimeWidget,
                            FieldSetFormMixin, FieldSetModelFormMixinNoButton,
@@ -274,6 +275,10 @@ class MasterContractForm(FieldSetModelFormMixin):
         model = MasterContract
         exclude = ('processed',)
 
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
+
     def __init__(self, *args, **kwargs):
         super(MasterContractForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Crear un Contrato Maestro',
@@ -343,8 +348,12 @@ class AseguradoraForm(FieldSetModelFormMixin):
         model = Aseguradora
         fields = '__all__'
 
-    representante = ModelChoiceField(queryset=Persona.objects.all(),
-                                     name="representante", model="")
+    representante = ModelChoiceField(
+        queryset=Persona.objects.filter(mostrar_en_cardex=True).all(),
+        name="representante", model="")
+    cardex = ModelChoiceField(
+        queryset=Persona.objects.filter(mostrar_en_cardex=True).all(),
+        name="representante", model="")
 
     def __init__(self, *args, **kwargs):
         super(AseguradoraForm, self).__init__(*args, **kwargs)
