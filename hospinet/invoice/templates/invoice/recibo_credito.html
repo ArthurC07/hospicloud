@@ -21,23 +21,34 @@
         .hp-table > tfoot > tr > td,
         .hp-table > tfoot > tr > th,
         .hp-table > thead > tr > td,
-        .hp-table > thead > tr > th
-        {
+        .hp-table > thead > tr > th,
+
+        .lp-table > tbody > tr > td,
+        .lp-table > tbody > tr > th,
+        .lp-table > tfoot > tr > td,
+        .lp-table > tfoot > tr > th,
+        .lp-table > thead > tr > td,
+        .lp-table > thead > tr > th {
             border-top: none;
         }
+
         .sp-table {
             border-top: 2px solid #ddd;
             border-bottom: 2px solid #ddd;
         }
+
         .hp-table thead {
             border-bottom: 2px solid #ddd;
         }
+
         hr {
             height: 2px;
         }
+
         .sp-col {
             float: left;
         }
+
         .right {
             text-align: right;
         }
@@ -48,6 +59,7 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <h1>Factura al Cr&eacute;dito</h1>
+
             <p>
                 {{ config.COMPANY_NAME }}<br>
                 RTN: {{ config.RTN }}<br>
@@ -73,12 +85,15 @@
         <div class="col-md-12">
             <table class="table sp-table">
                 <tbody>
-                    <tr>
-                        <td>Mes de Facturaci&oacute;n: {{ recibo.created|date:"E Y" }}</td>
-                        <td>Fecha de Emisi&oacute;n: {{ recibo.created|date:"d/m/Y" }}</td>
-                        <td>Fecha de Vencimiento: {{ recibo.vencimiento|date:"d/m/Y" }}</td>
-                        <td>Factura: {{ recibo.numero }}</td>
-                    </tr>
+                <tr>
+                    <td>Mes de
+                        Facturaci&oacute;n: {{ recibo.created|date:"E Y" }}</td>
+                    <td>Fecha de
+                        Emisi&oacute;n: {{ recibo.created|date:"d/m/Y" }}</td>
+                    <td>Fecha de
+                        Vencimiento: {{ recibo.vencimiento|date:"d/m/Y" }}</td>
+                    <td>Factura: {{ recibo.numero }}</td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -113,14 +128,41 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
-            $ {{ recibo.other_currency }} Tasa de cambio de mercado {{ config.CURRENCY_EXCHANGE }}
-        </div>
-        <div class="col-md-6 text-right right">
-            Subtotal:{{ recibo.subtotal }}<br>
-            Descuento: {{ recibo.descuento }}<br>
-            Impuestos: {{ recibo.impuesto }}<br>
-            Total: {{ recibo.total }}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        $ {{ recibo.other_currency }} Tasa de cambio de mercado {{ config.CURRENCY_EXCHANGE }}
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table lp-table">
+                <tr>
+                    <td width="40%"></td>
+                    <td>Subtotal USD$:</td>
+                    <td class="text-right">{{ recibo.subtotal_other }}</td>
+                    <td>Subtotal LPS:</td>
+                    <td class="text-right">{{ recibo.subtotal }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Descuento USD$:</td>
+                    <td class="text-right">{{ recibo.descuento_other }}</td>
+                    <td>Descuento LPS:</td>
+                    <td class="text-right">{{ recibo.descuento }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Impuestos USD$:</td>
+                    <td class="text-right">{{ recibo.impuesto_other }}</td>
+                    <td>Impuestos LPS:</td>
+                    <td class="text-right">{{ recibo.impuesto }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Total USD$:</td>
+                    <td class="text-right">{{ recibo.other_currency }}</td>
+                    <td>Total LPS:</td>
+                    <td class="text-right">{{ recibo.total }}</td>
+                </tr>
+            </table>
         </div>
     </div>
     {% for pago in recibo.pagos.all %}
@@ -131,8 +173,10 @@
     {% endfor %}
     <div class="row">
         <div class="col-md-12">
-            Fecha L&iacute;mite de Emisi&oacute;n: {{ recibo.ciudad.limite_de_emision }}<br>
-            Rango Autorizado: {{ recibo.ciudad.inicio_rango }} a la {{ recibo.ciudad.fin_rango }}
+            Fecha L&iacute;mite de
+            Emisi&oacute;n: {{ recibo.ciudad.limite_de_emision }}<br>
+            Rango Autorizado: {{ recibo.ciudad.inicio_rango }} a
+            la {{ recibo.ciudad.fin_rango }}
         </div>
     </div>
 </div>
