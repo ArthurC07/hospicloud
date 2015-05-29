@@ -91,6 +91,18 @@ class Recibo(TimeStampedModel):
 
         return (self.total() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
 
+    def impuesto_other(self):
+
+        return (self.impuesto() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
+
+    def descuento_other(self):
+
+        return (self.descuento() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
+
+    def subtotal_other(self):
+
+        return (self.subtotal() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
+
     def anular(self):
 
         """Anula el :class:`Recibo` para que no se tome en cuenta en los
