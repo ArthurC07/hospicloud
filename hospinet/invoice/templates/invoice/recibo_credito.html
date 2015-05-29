@@ -7,7 +7,29 @@
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"/>
     <style type="text/css">
         thead {
-            border-bottom: 2px dashed;
+            border-bottom: 2px solid;
+        }
+
+        .sp-table > tbody > tr > td,
+        .sp-table > tbody > tr > th,
+        .sp-table > tfoot > tr > td,
+        .sp-table > tfoot > tr > th,
+        .sp-table > thead > tr > td,
+        .sp-table > thead > tr > th {
+            border-top: none;
+        }
+        .sp-table {
+            border-top: 2px solid #ddd;
+            border-bottom: 2px solid #ddd;
+        }
+        hr {
+            height: 2px;
+        }
+        .sp-col {
+            float: left;
+        }
+        .right {
+            text-align: right;
         }
     </style>
 </head>
@@ -18,19 +40,48 @@
             <h1>Factura al Cr&eacute;dito</h1>
             <p>
                 {{ config.COMPANY_NAME }}<br>
-                {{ config.COMPANY_ADDRESS }}<br>
-                RTN: {{ config.RTN }}<br >
-                Factura: {{ recibo.numero }}<br>
-                Fecha: {{ recibo.created }}<br>
-                Cliente: {{ recibo.cliente }}<br>
-                RTN Cliente: {{ recibo.cliente.rtn }}<br>
-                Cajero: {{ recibo.cajero }}
+                RTN: {{ config.RTN }}<br>
+                {{ config.COMPANY_ADDRESS }}
+                Tel&eacute;fono {{ config.PHONE_NUMBER }}
+                Cajero: {{ recibo.cajero }}<br>
             </p>
         </div>
     </div>
     <div class="row">
+        <div class="col-md-6 sp-col">
+            <p>
+                Cliente: {{ recibo.cliente }} <br>
+                RTNCliente: {{ recibo.cliente.rtn }}
+            </p>
+        </div>
+        <div class="col-md-6 sp-col text-right right">
+            <br>
+            C.A.I: {{ config.CAI }}
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
-            <table style="width: 100%;">
+            <table class="table sp-table">
+                <tbody>
+                    <tr>
+                        <td>Mes de Facturaci&oacute;n:</td>
+                        <td>Fecha de Emisi&oacute;n:</td>
+                        <td>Fecha de Vencimiento:</td>
+                        <td>Factura:</td>
+                    </tr>
+                    <tr>
+                        <td>{{ recibo.created|date:"E Y" }}</td>
+                        <td>{{ recibo.created|date:"d/m/Y" }}</td>
+                        <td>{{ recibo.vencimiento|date:"d/m/Y" }}</td>
+                        <td>{{ recibo.numero }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
                 <thead>
                 <tr>
                     <th>Qty</th>
@@ -48,15 +99,18 @@
                         <td>{{ venta.monto }}</td>
                     </tr>
                 {% endfor %}
+                <tr>
+                    <td colspan="4" class="text-center">::::Ultima L&iacute;nea::::</td>
+                </tr>
                 </tbody>
             </table>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12 text-right">
-            Subtotal:{{ recibo.subtotal }}<br >
-            Descuento: {{ recibo.descuento }}<br >
-            Impuestos: {{ recibo.impuesto }}<br >
+            Subtotal:{{ recibo.subtotal }}<br>
+            Descuento: {{ recibo.descuento }}<br>
+            Impuestos: {{ recibo.impuesto }}<br>
             Total: {{ recibo.total }}
         </div>
     </div>
@@ -68,14 +122,10 @@
     {% endfor %}
     <div class="row">
         <div class="col-md-12">
-            <br/>
-            <br/>
-            <br/>
-            <p class="text-center">_________________________________________</p>
-            <p class="text-center">Firma Cliente</p>
+            Fecha L&iacute;mite de Emisi&oacute;n: {{ recibo.ciudad.limite_de_emision }}<br>
+            Rango Autorizado: {{ recibo.ciudad.inicio_rango }} a la {{ recibo.ciudad.fin_rango }}
         </div>
     </div>
 </div>
-
 </body>
 </html>

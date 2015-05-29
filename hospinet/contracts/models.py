@@ -66,9 +66,7 @@ class Vendedor(TimeStampedModel):
 
 class Aseguradora(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
-    rtn = models.CharField(max_length=255, blank=True)
-    representante = models.ForeignKey(Persona, null=True, blank=True,
-                                      related_name='aseguradoras')
+    representante = models.CharField(max_length=255, blank=True, default='')
     cardex = models.ForeignKey(Persona, null=True, blank=True,
                                related_name='cardex')
 
