@@ -22,7 +22,6 @@
         .hp-table > tfoot > tr > th,
         .hp-table > thead > tr > td,
         .hp-table > thead > tr > th,
-
         .lp-table > tbody > tr > td,
         .lp-table > tbody > tr > th,
         .lp-table > tfoot > tr > td,
@@ -44,9 +43,11 @@
         hr {
             height: 2px;
         }
+
         .lf {
             float: left;
         }
+
         .sp-col {
             position: relative;
             left: 20px;
@@ -56,6 +57,7 @@
         .right {
             text-align: right;
         }
+
         .lp-table {
             margin-top: -50px;
         }
@@ -66,6 +68,7 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <h1>Factura al Cr&eacute;dito</h1>
+
             <p>
                 {{ config.COMPANY_NAME }}<br>
                 RTN: {{ config.RTN }}<br>
@@ -135,7 +138,8 @@
     </div>
     <div class="row">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        $ {{ recibo.other_currency }} Tasa de cambio de mercado {{ config.CURRENCY_EXCHANGE }}<br >
+        $ {{ recibo.other_currency }} Tasa de cambio de
+        mercado {{ config.CURRENCY_EXCHANGE }}<br>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -176,23 +180,42 @@
     </div>
     <br>
     <br>
+
     <div class="row">
         <div class="col-md-6 .lf text-center">
             <p class="text-center">_________________________________________</p>
+
             <p class="text-center">Recib&iacute; Conforme</p>
         </div>
         <div class="col-md-6 text-center right .lf">
             <p class="text-center">_________________________________________</p>
+
             <p class="text-center">Firma y Sello</p>
         </div>
     </div>
     <hr>
-    {% for pago in recibo.pagos.all %}
-        <div class="row">
-            <div class="col-md-12 text-right">
-                {{ pago.tipo }}: {{ pago.monto }}</div>
+    <div class="row">
+        <div class="col-md-12">
+            <ol>
+                <li>
+                    La factura se pagar&aacute; en USD$ o en su equivalencia en
+                    Lempiras al tipo de cambio vigente al día en que se efectua
+                    el pago utilizando el precio del USD$ conforme al contrato.
+                    Monto detallado en Lempiras solo para efecto de referencia.
+                </li>
+                <li>
+                    La factura será pagada dentro de los primeros 20 (veinte)
+                    días de cada mes. Además la contratante acepta pagar el 3.5%
+                    mensual de interés moratorio sobre el valor total del pago
+                    atrasado.
+                </li>
+                <li>Recargo de L. 500.00 por cheque devuelto en Lempiras o de
+                    USD$60.00 por cheque devuelto en USD$.
+                </li>
+            </ol>
         </div>
-    {% endfor %}
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             Fecha L&iacute;mite de
