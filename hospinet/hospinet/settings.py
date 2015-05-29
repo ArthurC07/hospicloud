@@ -297,7 +297,7 @@ CONSTANCE_CONFIG = {
     'DEFAULT_CLIENT': (1, u'Cliente Predeterminado para los recibos'),
     'RECEIPT_DAYS': (1, u'Dias que dura una factura al credito'),
     'PHONE_NUMBER': (1, u'Número de teléfono'),
-    'CAI': (1, u'CAI'),
+    'CAI': ('1', u'CAI'),
 }
 
 
