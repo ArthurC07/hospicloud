@@ -15,11 +15,21 @@
         .sp-table > tfoot > tr > td,
         .sp-table > tfoot > tr > th,
         .sp-table > thead > tr > td,
-        .sp-table > thead > tr > th {
+        .sp-table > thead > tr > th,
+        .hp-table > tbody > tr > td,
+        .hp-table > tbody > tr > th,
+        .hp-table > tfoot > tr > td,
+        .hp-table > tfoot > tr > th,
+        .hp-table > thead > tr > td,
+        .hp-table > thead > tr > th
+        {
             border-top: none;
         }
         .sp-table {
             border-top: 2px solid #ddd;
+            border-bottom: 2px solid #ddd;
+        }
+        .hp-table thead {
             border-bottom: 2px solid #ddd;
         }
         hr {
@@ -64,16 +74,10 @@
             <table class="table sp-table">
                 <tbody>
                     <tr>
-                        <td>Mes de Facturaci&oacute;n:</td>
-                        <td>Fecha de Emisi&oacute;n:</td>
-                        <td>Fecha de Vencimiento:</td>
-                        <td>Factura:</td>
-                    </tr>
-                    <tr>
-                        <td>{{ recibo.created|date:"E Y" }}</td>
-                        <td>{{ recibo.created|date:"d/m/Y" }}</td>
-                        <td>{{ recibo.vencimiento|date:"d/m/Y" }}</td>
-                        <td>{{ recibo.numero }}</td>
+                        <td>Mes de Facturaci&oacute;n: {{ recibo.created|date:"E Y" }}</td>
+                        <td>Fecha de Emisi&oacute;n: {{ recibo.created|date:"d/m/Y" }}</td>
+                        <td>Fecha de Vencimiento: {{ recibo.vencimiento|date:"d/m/Y" }}</td>
+                        <td>Factura: {{ recibo.numero }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -81,7 +85,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <table class="table">
+            <table class="table hp-table">
                 <thead>
                 <tr>
                     <th>Qty</th>
