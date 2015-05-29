@@ -46,11 +46,16 @@
         }
 
         .sp-col {
-            float: left;
+            position: relative;
+            left: 20px;
+            top: 40px;
         }
 
         .right {
             text-align: right;
+        }
+        .lp-table {
+            margin-top: -50px;
         }
     </style>
 </head>
@@ -59,7 +64,6 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <h1>Factura al Cr&eacute;dito</h1>
-
             <p>
                 {{ config.COMPANY_NAME }}<br>
                 RTN: {{ config.RTN }}<br>
@@ -70,13 +74,13 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 sp-col">
+        <div class="col-md-6">
             <p>
                 Cliente: {{ recibo.cliente }} <br>
                 RTN: {{ recibo.cliente.rtn }}
             </p>
         </div>
-        <div class="col-md-6 sp-col text-right right">
+        <div class="col-md-6 text-right right">
             <br>
             C.A.I: {{ config.CAI }}
         </div>
@@ -129,10 +133,13 @@
     </div>
     <div class="row">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        $ {{ recibo.other_currency }} Tasa de cambio de mercado {{ config.CURRENCY_EXCHANGE }}
+        $ {{ recibo.other_currency }} Tasa de cambio de mercado {{ config.CURRENCY_EXCHANGE }}<br >
     </div>
     <div class="row">
         <div class="col-md-12">
+            <div class="sp-col">
+                <h1>ORIGINAL</h1>
+            </div>
             <table class="table lp-table">
                 <tr>
                     <td width="40%"></td>
