@@ -882,8 +882,8 @@ class AseguradoraFacturarView(RedirectView, LoginRequiredMixin):
             venta.descripcion = u'Poliza {0}  {1}'.format(master.poliza,
                                                             master.contratante.nombre)
             venta.cantidad = master.active_contracts_count()
-            venta.precio = master.item.precio_de_venta
-            venta.impuesto = master.item.impuestos
+            venta.precio = master.plan.item.precio_de_venta
+            venta.impuesto = master.plan.item.impuestos
             venta.save()
             recibo.ventas.add(venta)
             venta.save()

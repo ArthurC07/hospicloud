@@ -85,6 +85,7 @@ class Plan(TimeStampedModel):
     edad_maxima = models.IntegerField()
     consulta = models.ForeignKey(ItemTemplate, null=True, blank=True,
                                  related_name='plan')
+    item = models.ForeignKey(ItemTemplate, null=True, blank=True, related_name='planes_precio')
 
     def __unicode__(self):
         return self.nombre

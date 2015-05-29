@@ -19,7 +19,6 @@
                     <li>{{ master_contract.inicio }}</li>
                     <li>{{ master_contract.vencimiento }}</li>
                     <li>{{ master_contract.contratante }}</li>
-                    <li>{{ master_contract.archivo }}</li>
                     <li>{{ master_contract.processed }}</li>
                 </ul>
             </div>
@@ -32,7 +31,7 @@
                             <a href="{% url 'contract-master-edit' master_contract.id %}">Editar Contrato Maestro</a>
                         </li>
                         <li>
-                            <a href="{% url 'contracts-master-process' master_contract.id %}">Procesar Contratos</a>
+                            <a href="{% url 'contract-master-list' %}">Regresar a Contrato</a>
                         </li>
                     </ul>
                 </nav>

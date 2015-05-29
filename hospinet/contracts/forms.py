@@ -59,6 +59,10 @@ class PlanForm(FieldSetModelFormMixin):
         model = Plan
         fields = '__all__'
 
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
+
     def __init__(self, *args, **kwargs):
         super(PlanForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Plan', *self.field_names)
