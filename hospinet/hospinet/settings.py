@@ -298,6 +298,7 @@ CONSTANCE_CONFIG = {
     'RECEIPT_DAYS': (1, u'Dias que dura una factura al credito'),
     'PHONE_NUMBER': (1, u'Número de teléfono'),
     'CAI': ('1', u'CAI'),
+    'CURRENCY_EXCHANGE': (22.03, u'Cambio de Moneda'),
 }
 
 

@@ -87,6 +87,10 @@ class Recibo(TimeStampedModel):
 
         return u'{0}-{1:08d}'.format(ciudad.prefijo_recibo, self.correlativo)
 
+    def other_currency(self):
+
+        return (self.total() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
+
     def anular(self):
 
         """Anula el :class:`Recibo` para que no se tome en cuenta en los
