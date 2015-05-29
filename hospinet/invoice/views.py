@@ -699,6 +699,8 @@ def crear_ventas(items, recibo, examen=False, tecnico=False):
     indicados por los examenes"""
 
     for item in items:
+        if item is None:
+            continue
         venta = Venta()
         venta.item = item
         venta.recibo = recibo
