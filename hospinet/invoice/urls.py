@@ -64,6 +64,11 @@ urlpatterns = patterns('',
                                template_name='invoice/recibo_print.html'),
                            name='invoice-print'),
 
+                       url(r'^(?P<pk>\d+)/impresion/credito$',
+                           ReciboDetailView.as_view(
+                               template_name='invoice/recibo_credito.html'),
+                           name='invoice-print-credito'),
+
                        url(r'^(?P<pk>\d+)/anular$',
                            ReciboAnularView.as_view(),
                            name='invoice-nullify'),

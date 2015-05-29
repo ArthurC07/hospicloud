@@ -41,9 +41,15 @@
                                 <a href="{% url 'invoice-close' recibo.id %}">Cerrar Recibo</a>
                             </li>
                             {% endif %}
+                            {% if recibo.credito %}
+                                <li>
+                                    <a href="{% url 'invoice-print-credito' recibo.id %}">Imprimir Recibo</a>
+                                </li>
+                            {% else %}
                             <li>
                                 <a href="{% url 'invoice-print' recibo.id %}">Imprimir Recibo</a>
                             </li>
+                            {% endif %}
                             <li>
                                 <a href="{% url 'invoice-index' %}">Volver a Caja</a>
                             </li>
