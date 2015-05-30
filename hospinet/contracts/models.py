@@ -309,7 +309,7 @@ class Contrato(TimeStampedModel):
     cancelado = models.BooleanField(default=False)
     empresa = models.ForeignKey(Empleador, blank=True, null=True,
                                 related_name='contratos')
-    poliza = models.IntegerField(default=0)
+    poliza = models.CharField(max_length=255, default='', blank=True)
     certificado = models.IntegerField(default=0)
     titular = models.IntegerField(default=0)
     master = models.ForeignKey(MasterContract, related_name='contratos',
