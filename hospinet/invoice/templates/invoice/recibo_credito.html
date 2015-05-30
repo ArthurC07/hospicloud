@@ -103,7 +103,7 @@
                         Emisi&oacute;n: {{ recibo.created|date:"d/m/Y" }}</td>
                     <td>Fecha de
                         Vencimiento: {{ recibo.vencimiento|date:"d/m/Y" }}</td>
-                    <td>Factura: {{ recibo.numero }}</td>
+                    <td>Factura: <span style="white-space: nowrap">{{ recibo.numero }}</span></td>
                 </tr>
                 </tbody>
             </table>
