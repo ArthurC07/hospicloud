@@ -145,7 +145,7 @@ def check_line(line, vencimiento):
     identificacion = line[9]
     vencimiento_r = vencimiento
 
-    activo = line['7'].upper()
+    activo = line[7].upper()
 
     master = MasterContract.objects.get(poliza=poliza_f)
 
