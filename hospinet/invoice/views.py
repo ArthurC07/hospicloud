@@ -877,7 +877,7 @@ class AseguradoraFacturarView(RedirectView, LoginRequiredMixin):
         recibo.save()
         for master in aseguradora.master_contracts.all():
             venta = Venta()
-            venta.item = master.item
+            venta.item = master.plan.item
             venta.recibo = recibo
             venta.descripcion = u'Poliza {0}  {1}'.format(master.poliza,
                                                             master.contratante.nombre)
