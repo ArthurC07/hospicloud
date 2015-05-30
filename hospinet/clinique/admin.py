@@ -19,8 +19,14 @@ from django.contrib import admin
 from clinique.models import (Paciente, Cita, Consulta, TipoConsulta,
                              Consultorio, Evaluacion, Seguimiento, LecturaSignos,
                              TipoCargo, Cargo, OrdenMedica, Localidad,
-                             Especialidad, Espera, Afeccion)
+                             Especialidad, Espera, Afeccion, Incapacidad)
 from contracts.models import Beneficio
+
+
+class IncapacidadAdmin(admin.ModelAdmin):
+    list_display = ('persona', 'usuario', 'descripcion', 'dias')
+    ordering = ['persona', 'usuario', 'descripcion', 'dias']
+    search_fields = ['persona__nombre', 'persona__apellido']
 
 
 class ConsultorioAdmin(admin.ModelAdmin):
@@ -31,6 +37,7 @@ class ConsultorioAdmin(admin.ModelAdmin):
 admin.site.register(Paciente)
 admin.site.register(Cita)
 admin.site.register(Consulta)
+admin.site.register(Incapacidad, IncapacidadAdmin)
 admin.site.register(TipoConsulta)
 admin.site.register(Consultorio, ConsultorioAdmin)
 admin.site.register(Seguimiento)
