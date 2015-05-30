@@ -8,6 +8,7 @@
             <th>Motivo de Consulta</th>
             <th>HEA</th>
             <th>Tipo de Consulta</th>
+            <th>Usuario</th>
             <th>Acciones</th>
         </tr>
         </thead>
@@ -18,6 +19,7 @@
                 <td>{{ consulta.motivo_de_consulta }}</td>
                 <td>{{ consulta.HEA }}</td>
                 <td>{{ consulta.tipo }}</td>
+                <td>{{ consulta.consultorio.usuario }}</td>
                 <td><a class="btn btn-primary" href="{% url 'consulta' consulta.id %}">Ver</a></td>
             </tr>
         {% endfor %}
