@@ -24,8 +24,8 @@ from contracts.models import Beneficio
 
 
 class IncapacidadAdmin(admin.ModelAdmin):
-    list_display = ('persona', 'usuario', 'descripcion', 'dias')
-    ordering = ['persona', 'usuario', 'descripcion', 'dias']
+    list_display = ('persona', 'usuario', 'descripcion', 'created','dias')
+    ordering = ['persona', 'usuario', 'descripcion', 'created', 'dias']
     search_fields = ['persona__nombre', 'persona__apellido']
 
 
