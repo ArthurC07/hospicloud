@@ -297,7 +297,7 @@ class Contrato(TimeStampedModel):
         )
 
     persona = models.ForeignKey(Persona, related_name='contratos')
-    numero = models.BigIntegerField()
+    numero = models.CharField(max_length=255, default='', blank=True)
     vendedor = models.ForeignKey(Vendedor, related_name='contratos')
     plan = models.ForeignKey(Plan, related_name='contratos')
     inicio = models.DateField()
