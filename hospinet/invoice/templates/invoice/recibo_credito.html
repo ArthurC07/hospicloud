@@ -84,13 +84,14 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 lf">
-                Cliente: {{ recibo.cliente }} <br>
-                RTN: {{ recibo.cliente.rtn }}
-        </div>
-        <div class="col-md-6 text-right right rf">
-            C.A.I: {{ config.CAI }}
-        </div>
+        <table style="width: 100%;">
+            <tr>
+                <td colspan="2">Cliente: {{ recibo.cliente }}</td>
+            </tr>
+            <tr>
+                <td>RTN: {{ recibo.cliente.rtn }}</td>
+            </tr>
+        </table>
     </div>
     <div class="row">
         <div class="col-md-12">
