@@ -18,6 +18,7 @@ from collections import defaultdict
 from decimal import Decimal
 from datetime import timedelta
 from constance import config
+from dateutil.relativedelta import relativedelta
 
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -75,6 +76,10 @@ class Recibo(TimeStampedModel):
     def vencimiento(self):
 
         return self.emision + timedelta(days=config.RECEIPT_DAYS)
+
+    def facturacion(self):
+
+        return self.created - relativedelta(months=1)
 
     @property
     def numero(self):
