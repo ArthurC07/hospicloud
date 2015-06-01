@@ -85,13 +85,10 @@
     </div>
     <div class="row">
         <div class="col-md-6 lf">
-            <p>
                 Cliente: {{ recibo.cliente }} <br>
                 RTN: {{ recibo.cliente.rtn }}
-            </p>
         </div>
         <div class="col-md-6 text-right right rf">
-            <br>
             C.A.I: {{ config.CAI }}
         </div>
     </div>
@@ -129,9 +126,9 @@
                     <tr>
                         <td>{{ venta.descripcion }}</td>
                         <td>{{ venta.item }}</td>
-                        <td>{{ venta.precio_unitario }}</td>
-                        <td>{{ venta.cantidad }}</td>
-                        <td>{{ venta.monto }}</td>
+                        <td class="text-right">{{ venta.precio_unitario }}</td>
+                        <td class="text-right">{{ venta.cantidad }}</td>
+                        <td class="text-right">{{ venta.monto }}</td>
                     </tr>
                 {% endfor %}
                 <tr>

@@ -70,7 +70,7 @@ class VentaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Venta
-        exclude = ('impuesto', 'descuento', 'descripcion', 'placas',)
+        exclude = ('impuesto', 'descuento', 'placas',)
 
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
