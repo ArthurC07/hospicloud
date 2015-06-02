@@ -114,6 +114,10 @@ class Recibo(TimeStampedModel):
         calculos financieros"""
 
         self.nulo = True
+
+        for venta in Venta.objects.filter(recibo=self):
+            venta.delete()
+
         for pago in Pago.objects.filter(recibo=self).all():
             pago.delete()
         self.save()
@@ -122,9 +126,9 @@ class Recibo(TimeStampedModel):
 
         """Anula el :class:`Recibo` para que no se tome en cuenta en los
         calculos financieros"""
-
-        self.cerrado = True
-        self.save()
+        if self.pagado() == self.total():
+            self.cerrado = True
+            self.save()
 
     def __unicode__(self):
 

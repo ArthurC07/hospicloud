@@ -354,7 +354,12 @@ class ReciboCerrarView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         recibo = get_object_or_404(Recibo, pk=kwargs['pk'])
         recibo.cerrar()
-        messages.info(self.request, u'¡El recibo ha sido cerrado!')
+
+        if not recibo.cerrado:
+            messages.info(self.request,
+                          u'¡El recibo no se puede cerrar, revise los pagos')
+        else:
+            messages.info(self.request, u'¡El recibo ha sido cerrado!')
         return reverse('invoice-view-id', args=[recibo.id])
 
 
@@ -880,7 +885,7 @@ class AseguradoraFacturarView(RedirectView, LoginRequiredMixin):
             venta.item = master.plan.item
             venta.recibo = recibo
             venta.descripcion = u'Poliza {0}  {1}'.format(master.poliza,
-                                                            master.contratante.nombre)
+                                                          master.contratante.nombre)
             venta.cantidad = master.active_contracts_count()
             venta.precio = master.plan.item.precio_de_venta
             venta.impuesto = master.plan.item.impuestos
