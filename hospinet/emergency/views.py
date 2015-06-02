@@ -66,7 +66,8 @@ class EmergenciaPreCreateView(TemplateView, LoginRequiredMixin):
     template_name = 'emergency/emergencia_agregar.html'
 
     def get_context_data(self, **kwargs):
-        context = super(EmergenciaPreCreateView, self).get_context_data(**kwargs)
+        context = super(EmergenciaPreCreateView, self).get_context_data(
+            **kwargs)
         context['persona_form'] = PersonaForm()
         context['persona_form'].helper.form_action = 'emergency-persona-create'
         return context
@@ -219,9 +220,21 @@ class CobroCreateView(BaseCreateView):
     model = Cobro
     form_class = CobroForm
 
+    def dispatch(self, *args, **kwargs):
+        """Obtiene la :class:`Emergencia` que se entrego como argumento en la
+        url"""
+
+        self.emergencia = get_object_or_404(Emergencia, pk=kwargs['emergencia'])
+        if self.request.user.profile.inventario is None:
+            messages.info(self.request,
+                          u'Su usuario no tiene un inventario asociado, '
+                          u'por favor modifique su perfil para indicar su '
+                          u'inventario')
+            return HttpResponseRedirect(self.emergencia.get_absolute_url())
+        return super(BaseCreateView, self).dispatch(*args, **kwargs)
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
-
         item = self.request.user.profile.inventario.buscar_item(
             self.object.cargo)
         item.disminuir(self.object.cantidad)

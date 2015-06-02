@@ -136,7 +136,7 @@ class CobroForm(EmergenciaBaseForm):
 
     class Meta:
         model = Cobro
-        fields = '__all__'
+        exclude = ('facturado', )
 
     cargo = ModelChoiceField(name="", model="",
                              queryset=ItemTemplate.objects.filter(
