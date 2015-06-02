@@ -50,7 +50,7 @@ class ReciboForm(FieldSetModelFormMixin):
     class Meta:
         model = Recibo
         exclude = (
-        'nulo', 'cerrado', 'discount', 'radiologo', 'remite', 'ciudad')
+        'nulo', 'cerrado', 'discount', 'radiologo', 'remite', 'ciudad', 'emision', 'correlativo')
 
     cajero = forms.ModelChoiceField(label="",
                                     queryset=User.objects.all(),
