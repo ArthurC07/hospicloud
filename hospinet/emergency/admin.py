@@ -20,7 +20,14 @@ from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
                               RemisionExterna, Hallazgo, Diagnostico,
                               ExamenFisico, Cobro)
 
-admin.site.register(Emergencia)
+
+class EmergenciaAdmin(admin.ModelAdmin):
+    list_display = ('persona', 'usuario', 'facturada', 'created',)
+    ordering = ['persona', 'usuario', 'facturada', 'created']
+    search_fields = ['persona__nombre', 'persona__apellido']
+
+
+admin.site.register(Emergencia, EmergenciaAdmin)
 admin.site.register(Tratamiento)
 admin.site.register(Hallazgo)
 admin.site.register(RemisionInterna)
