@@ -755,38 +755,31 @@ def crear_ventas_consulta(items, precios, recibo):
         recibo.ventas.add(venta)
 
 
-class EmergenciaFacturarView(UpdateView, LoginRequiredMixin):
-    """Permite crear de manera automática un :class:`Recibo` con todas sus
-    :class:`Ventas` a partir de una :class:`Emergencia` que aun no se haya
-    marcado como facturada"""
+class EmergenciaFacturarView(RedirectView, LoginRequiredMixin):
+    permanent = False
 
-    model = Emergencia
-    form_class = EmergenciaFacturarForm
-    context_object_name = 'emergencia'
-    template_name = 'invoice/emergency_form.html'
+    def get_redirect_url(self, **kwargs):
+        emergencia = get_object_or_404(Emergencia, pk=kwargs['pk'])
 
-    @method_decorator(permission_required('invoice.cajero'))
-    def dispatch(self, *args, **kwargs):
-        return super(EmergenciaFacturarView, self).dispatch(*args, **kwargs)
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-
-        items = self.object.facturar()
+        items = emergencia.facturar()
 
         recibo = Recibo()
         recibo.cajero = self.request.user
-        recibo.cliente = self.object.persona
-        recibo.tipo_de_venta = self.object.tipo_de_venta
+        recibo.cliente = emergencia.persona
+        recibo.tipo_de_venta = emergencia.tipo_de_venta
 
         recibo.save()
 
         crear_ventas(items, recibo)
 
-        self.object.facturado = True
-        self.object.save()
+        emergencia.facturada = True
+        emergencia.save()
 
-        return HttpResponseRedirect(recibo.get_absolute_url())
+        return recibo.get_absolute_url()
+
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(EmergenciaFacturarView, self).dispatch(*args, **kwargs)
 
 
 class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
