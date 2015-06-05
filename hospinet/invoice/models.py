@@ -94,19 +94,23 @@ class Recibo(TimeStampedModel):
 
     def other_currency(self):
 
-        return (self.total() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
+        return (self.total() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
+            Decimal("0.01"))
 
     def impuesto_other(self):
 
-        return (self.impuesto() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
+        return (self.impuesto() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
+            Decimal("0.01"))
 
     def descuento_other(self):
 
-        return (self.descuento() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
+        return (self.descuento() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
+            Decimal("0.01"))
 
     def subtotal_other(self):
 
-        return (self.subtotal() / Decimal(config.CURRENCY_EXCHANGE)).quantize(Decimal("0.01"))
+        return (self.subtotal() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
+            Decimal("0.01"))
 
     def anular(self):
 
@@ -348,9 +352,10 @@ class Pago(TimeStampedModel):
     comprobante = models.CharField(max_length=255, blank=True, null=True)
 
     def __unicode__(self):
-        return "Pago en {2} de {0} al recibo {1}".format(self.monto,
-                                                         self.recibo.id,
-                                                         self.tipo.nombre)
+        return "Pago en {2} de {0} al recibo {1} {3}".format(self.monto,
+                                                             self.recibo.id,
+                                                             self.tipo.nombre,
+                                                             self.created)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

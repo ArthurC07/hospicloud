@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>Ingresos por Tipo de Pago
+                        <small>{{ inicio }} al {{ fin }}</small>
+                    </h1>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Tipo de pago</th>
+                                <th>Monto</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for pago in pagos %}
+                                <tr>
+                                    <td>{{ pago.tipo__nombre }}</td>
+                                    <td class="text-right">{{ pago.monto }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

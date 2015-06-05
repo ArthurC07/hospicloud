@@ -34,7 +34,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            DepositoFacturarView,
                            VentaDeleteView, VentaListView, VentaAreaListView,
                            ConsultaFacturarView, TurnoCierreUpdateView,
-                           TurnoCajaListView, AseguradoraFacturarView)
+                           TurnoCajaListView, AseguradoraFacturarView,
+                           PagoPeriodoView)
 
 
 urlpatterns = patterns('',
@@ -104,6 +105,10 @@ urlpatterns = patterns('',
                        url(r'^periodo/remite$',
                            ReciboRemiteView.as_view(),
                            name='invoice-periodo-remite'),
+
+                       url(r'^periodo/pago$',
+                           PagoPeriodoView.as_view(),
+                           name='invoice-periodo-pago'),
 
                        url(r'^periodo/radiologo$',
                            ReciboRadView.as_view(),

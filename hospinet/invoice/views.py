@@ -23,6 +23,7 @@ from constance import config
 from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
@@ -92,13 +93,13 @@ class IndexView(TemplateView, InvoicePermissionMixin):
                                  u'Referencias de un Periodo',
                                  'invoice-periodo-remite')
 
-        self.create_periodo_form(context, 'radperiodoform', 'rad',
-                                 u'Comisiones de un Periodo',
-                                 'invoice-periodo-radiologo')
-
         self.create_periodo_form(context, 'emerperiodoform', 'emergencia',
                                  u'Emergencias de un Periodo',
                                  'invoice-periodo-emergencia')
+
+        self.create_periodo_form(context, 'pagoform', 'pago',
+                                 u'Pagos por Tipo y Periodo',
+                                 'invoice-periodo-pago')
 
         context['corteform'] = CorteForm(prefix='corte')
         context['corteform'].set_action('invoice-corte')
@@ -383,6 +384,36 @@ class ReciboPeriodoView(TemplateView):
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
 
 
+class PagoPeriodoView(TemplateView):
+    """Obtiene los :class:`Recibo` de un periodo determinado en base
+    a un formulario que las clases derivadas deben proporcionar como
+    self.form"""
+    template_name = 'invoice/pago_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Efectua la consulta de los :class:`Recibo` de acuerdo a los
+        datos ingresados en el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='pago')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+
+        return super(PagoPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(PagoPeriodoView, self).get_context_data(**kwargs)
+
+        context['pagos'] = Pago.objects.filter(created__gte=self.inicio,
+                                              created__lte=self.fin).values(
+            'tipo__nombre').annotate(monto=Sum('monto'))
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
+
+
 class ReporteReciboView(ReciboPeriodoView, LoginRequiredMixin):
     """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
     durante el periodo especificado"""
@@ -609,28 +640,6 @@ class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
         """Agrega el formulario de :class:`Recibo`"""
 
         context = super(ReciboRadView, self).get_context_data(**kwargs)
-
-        context['cantidad'] = Decimal('0')
-        doctores = defaultdict(lambda: defaultdict(Decimal))
-
-        for recibo in self.recibos.all():
-            radiologo = recibo.radiologo.upper()
-
-            if not radiologo in doctores:
-                doctores[radiologo]['recibos'] = list()
-
-            doctores[radiologo]['recibos'].append(recibo)
-            doctores[radiologo]['monto'] += recibo.total()
-            doctores[radiologo]['cantidad'] += 1
-            doctores[radiologo]['comision'] += recibo.comision_radiologo()
-
-        context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
-        context['costo'] = sum(r.total() for r in self.recibos.all())
-
-        context['recibos'] = self.recibos
-        context['inicio'] = self.inicio
-        context['doctores'] = doctores.items()
-        context['fin'] = self.fin
         return context
 
 
