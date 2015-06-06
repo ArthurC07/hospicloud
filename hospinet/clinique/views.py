@@ -30,7 +30,7 @@ from django.views.generic import (DetailView, CreateView, View,
                                   ListView, UpdateView, TemplateView,
                                   RedirectView)
 from django.views.generic.detail import SingleObjectMixin
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import FormMixin, DeleteView
 from guardian.decorators import permission_required
 
@@ -69,7 +69,6 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
     context_object_name = 'pacientes'
 
     def dispatch(self, request, *args, **kwargs):
-
         tz = timezone.get_current_timezone()
         now = timezone.now()
         day = timedelta(days=1)
@@ -82,7 +81,7 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         self.fin = tz.localize(datetime.combine(self.fin, time.max))
 
         return super(ConsultorioIndexView, self).dispatch(request, *args,
-                                                           **kwargs)
+                                                          **kwargs)
 
     def get_queryset(self):
         return Paciente.objects.filter(
@@ -105,6 +104,10 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
         context['cargosperiodoform'].set_legend(u'Cargos por Periodo')
 
+        context['consultasperiodoform'] = PeriodoForm(prefix='consulta')
+        context['consultasperiodoform'].helper.form_action = 'consulta-periodo'
+        context['consultasperiodoform'].set_legend(u'Consultas por Periodo')
+
         context['evaluacionperiodoform'] = PeriodoForm(
             prefix='evaluacion-periodo')
         context[
@@ -124,8 +127,10 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
             'clinique-paciente-search-add'
 
         context['esperas'] = Espera.objects.filter(fecha__gte=self.yesterday,
-                                                   consulta=False, terminada=False,
-                                                   atendido=False, ausente=False).all()
+                                                   consulta=False,
+                                                   terminada=False,
+                                                   atendido=False,
+                                                   ausente=False).all()
 
         return context
 
@@ -874,7 +879,7 @@ class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
                       u'¡La consulta se marcó como terminada!')
         return espera.get_absolute_url()
 
- 
+
 class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     """Permite crear una :class:`Remision` a una :class:`Persona`"""
 
@@ -901,3 +906,36 @@ class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
         messages.info(self.request,
                       u'¡La consulta se marcó como terminada!')
         return consulta.get_absolute_url()
+
+
+class ConsultaPeriodoView(TemplateView, LoginRequiredMixin):
+    """Muestra las opciones disponibles para la aplicación"""
+
+    template_name = 'clinique/consulta_list.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Filtra las :class:`Emergencia` de acuerdo a los datos ingresados en
+        el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='consulta')
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.consultas = Consulta.objects.filter(
+                created__range=(self.inicio, self.fin)
+            )
+        else:
+            return redirect('invoice-index')
+
+        return super(ConsultaPeriodoView, self).dispatch(request, *args,
+                                                         **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        """Permite utilizar las :class:`Emergencia`s en la vista"""
+
+        context = super(ConsultaPeriodoView, self).get_context_data(**kwargs)
+        context['consultas'] = self.consultas
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        return context
