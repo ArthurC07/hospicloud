@@ -317,7 +317,7 @@ class Contrato(TimeStampedModel):
     master = models.ForeignKey(MasterContract, related_name='contratos',
                                blank=True, null=True, verbose_name="Contrato")
     suspendido = models.BooleanField(default=False)
-    exclusion = models.TextField()
+    exclusion = models.TextField(blank=True)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""
@@ -434,7 +434,7 @@ class Beneficiario(TimeStampedModel):
     inscripcion = models.DateTimeField(default=timezone.now)
     activo = models.BooleanField(default=True)
     dependiente = models.IntegerField(default=0)
-    exclusion = models.TextField()
+    exclusion = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.persona.nombre_completo()
