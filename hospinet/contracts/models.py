@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
-from collections import defaultdict
 from datetime import date, timedelta, datetime
 from decimal import Decimal
 import operator
@@ -85,7 +84,8 @@ class Plan(TimeStampedModel):
     edad_maxima = models.IntegerField()
     consulta = models.ForeignKey(ItemTemplate, null=True, blank=True,
                                  related_name='plan')
-    item = models.ForeignKey(ItemTemplate, null=True, blank=True, related_name='planes_precio')
+    item = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                             related_name='planes_precio')
 
     def __unicode__(self):
         return self.nombre
@@ -169,7 +169,7 @@ def check_line(line, vencimiento):
             contrato.vencimiento = vencimiento_r
             contrato.plan = master.plan
             contrato.master = master
-
+            contrato.exclusion = line[10]
             if activo == 'S':
                 contrato.suspendido = True
             else:
@@ -180,6 +180,7 @@ def check_line(line, vencimiento):
         for beneficiario in Beneficiario.objects.filter(
                 persona=persona).all():
             beneficiario.contrato.vencimiento = vencimiento_r
+            beneficiario.exclusion = line[10]
             beneficiario.contrato.save()
 
     except ObjectDoesNotExist:
@@ -201,7 +202,7 @@ def check_line(line, vencimiento):
                 contract.suspendido = True
             else:
                 contract.suspendido = False
-
+            contract.exclusion = line[10]
             contract.save()
         else:
             contract = Contrato.objects.filter(poliza=poliza_f,
@@ -209,6 +210,7 @@ def check_line(line, vencimiento):
 
             if contract:
                 beneficiario = Beneficiario(persona=persona, contrato=contract)
+                beneficiario.exclusion = line[10]
                 beneficiario.save()
 
     except MultipleObjectsReturned:
@@ -315,6 +317,7 @@ class Contrato(TimeStampedModel):
     master = models.ForeignKey(MasterContract, related_name='contratos',
                                blank=True, null=True, verbose_name="Contrato")
     suspendido = models.BooleanField(default=False)
+    exclusion = models.TextField()
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Contrato`"""
@@ -431,6 +434,7 @@ class Beneficiario(TimeStampedModel):
     inscripcion = models.DateTimeField(default=timezone.now)
     activo = models.BooleanField(default=True)
     dependiente = models.IntegerField(default=0)
+    exclusion = models.TextField()
 
     def __unicode__(self):
         return self.persona.nombre_completo()
