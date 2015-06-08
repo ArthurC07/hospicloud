@@ -36,7 +36,7 @@
                         <td>{{ consulta.HEA }}</td>
                         <td>{{ consulta.tipo }}</td>
                         <td>
-                            {% for diagnosito in ccnsulta.diagnosticos_clinicos.all %}
+                            {% for diagnostico in ccnsulta.diagnosticos_clinicos.all %}
                                 {{ diagnostico.afeccion }}
                                 {{ diagnostico.diagnostico }}
                             {% endfor %}
