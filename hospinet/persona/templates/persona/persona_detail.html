@@ -66,6 +66,7 @@
                                 {% if persona.beneficiarios %}
                                     {% for beneficiario in persona.beneficiarios.all %}
                                         {% include 'contracts/snippets/beneficiario.html' with contrato=beneficiario.contrato %}
+                                        <p>Exclusiones: {{ beneficiario.exclusion }}</p>
                                     {% endfor %}
                                 {% endif %}
                             </article>
