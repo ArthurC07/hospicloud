@@ -41,9 +41,16 @@ class TurnoCajaAdmin(admin.ModelAdmin):
                      'pago__nombre', 'apertura']
 
 
+class PagoAdmin(admin.ModelAdmin):
+    list_display = ('tipo', 'recibo', 'monto', 'created')
+    ordering = ['tipo', 'recibo', 'monto', 'created']
+    search_fields = ['recibo__usuario__first_name', 'recibo__usuario__last_name',
+                     'tipo__nombre', 'monto']
+
+
 admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta)
-admin.site.register(Pago)
+admin.site.register(Pago, PagoAdmin)
 admin.site.register(TipoPago)
 admin.site.register(TurnoCaja, TurnoCajaAdmin)
 admin.site.register(CierreTurno, CierreturnoAdmin)
