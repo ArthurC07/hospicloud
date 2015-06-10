@@ -419,11 +419,12 @@ class PagoPeriodoView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PagoPeriodoView, self).get_context_data(**kwargs)
-        pagos = Pago.objects.filter(created__range=(self.inicio, self.fin))
+        pagos = Pago.objects.filter(recibo__created__range=(self.inicio, self.fin))
         context['group'] = pagos.values('tipo__nombre').annotate(
             monto=Sum('monto')
         ).order_by()
         context['pagos'] = pagos
+        context['total'] = pagos.aggregate(total=Sum('monto'))
 
         context['inicio'] = self.inicio
         context['fin'] = self.fin
