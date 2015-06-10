@@ -29,7 +29,7 @@ from django.utils import timezone
 
 from django_extensions.db.models import TimeStampedModel
 
-from django.db.models import F
+from django.db.models import F, Sum
 
 from persona.models import Persona, persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
@@ -215,7 +215,9 @@ class Recibo(TimeStampedModel):
 
     def pagado(self):
 
-        return sum(p.monto for p in Pago.objects.filter(recibo=self).all())
+        return Pago.objects.filter(recibo=self).aggregate(
+            total=Sum('monto')
+        )['total']
 
     def debido(self):
 
