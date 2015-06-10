@@ -42,10 +42,20 @@ class TurnoCajaAdmin(admin.ModelAdmin):
 
 
 class PagoAdmin(admin.ModelAdmin):
-    list_display = ('tipo', 'recibo', 'monto', 'created')
+    list_display = (
+    'tipo', 'get_recibo_number', 'recibo', 'get_recibo_cajero', 'monto', 'created')
     ordering = ['tipo', 'recibo', 'monto', 'created']
-    search_fields = ['recibo__usuario__first_name', 'recibo__usuario__last_name',
+    search_fields = ['recibo__usuario__first_name',
+                     'recibo__usuario__last_name',
                      'tipo__nombre', 'monto']
+
+    def get_recibo_number(self, instance):
+
+        return instance.recibo.numero()
+
+    def get_recibo_cajero(self, instance):
+
+        return instance.recibo.cajero
 
 
 admin.site.register(Recibo, ReciboAdmin)

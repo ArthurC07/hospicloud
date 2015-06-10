@@ -46,7 +46,7 @@ from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
                             TipoPago, dot01)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
-                           EmergenciaFacturarForm, AdmisionFacturarForm,
+                           AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
                            PagoForm, PersonaForm, TurnoCajaForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
@@ -333,6 +333,21 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
+class ReciboPrintView(LoginRequiredMixin, DetailView):
+    model = Recibo
+    object_context_name = 'recibo'
+    template_name = 'invoice/recibo_print.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if not self.object.cerrado:
+            messages.info(self.request, u'El recibo aún no ha sido cerrado')
+            return redirect(self.object.get_absolute_url())
+
+        return super(ReciboPrintView, self).get(request, *args, **kwargs)
+
+
 class ReciboAnularView(RedirectView, LoginRequiredMixin):
     """Marca un :class:`Recibo` como anulado para que la facturación del mismo
     no se vea reflejado en los cortes de caja"""
@@ -404,10 +419,12 @@ class PagoPeriodoView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PagoPeriodoView, self).get_context_data(**kwargs)
+        pagos = Pago.objects.filter(created__range=(self.inicio, self.fin))
+        context['group'] = pagos.values('tipo__nombre').annotate(
+            monto=Sum('monto')
+        ).order_by()
+        context['pagos'] = pagos
 
-        context['pagos'] = Pago.objects.filter(
-            created__range=(self.inicio, self.fin)).values(
-            'tipo__nombre').annotate(monto=Sum('monto')).order_by()
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context

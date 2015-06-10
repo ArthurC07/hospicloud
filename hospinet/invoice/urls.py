@@ -35,7 +35,7 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            VentaDeleteView, VentaListView, VentaAreaListView,
                            ConsultaFacturarView, TurnoCierreUpdateView,
                            TurnoCajaListView, AseguradoraFacturarView,
-                           PagoPeriodoView)
+                           PagoPeriodoView, ReciboPrintView)
 
 
 urlpatterns = patterns('',
@@ -61,8 +61,7 @@ urlpatterns = patterns('',
                            name='invoice-view-id'),
 
                        url(r'^(?P<pk>\d+)/impresion$',
-                           ReciboDetailView.as_view(
-                               template_name='invoice/recibo_print.html'),
+                           ReciboPrintView.as_view(),
                            name='invoice-print'),
 
                        url(r'^(?P<pk>\d+)/impresion/credito$',

@@ -24,10 +24,35 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for pago in pagos %}
+                            {% for pago in group %}
                                 <tr>
                                     <td>{{ pago.tipo__nombre }}</td>
                                     <td class="text-right">{{ pago.monto }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <table class="table table-striped table-bordered">
+                            <caption>Pagos</caption>
+                            <thead>
+                            <tr>
+                                <th>Recibo</th>
+                                <th>Fecha y Hora</th>
+                                <th>M&eacute;todo</th>
+                                <th>Monto</th>
+                                <th>Total Recibo</th>
+                                <th>Total Pagado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for pago in pagos.all %}
+                                <tr>
+                                    <td><a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo }}</a></td>
+                                    <td>{{ pago.created }}</td>
+                                    <td>{{ pago.tipo }}</td>
+                                    <td>{{ pago.monto }}</td>
+                                    <td>{{ pago.recibo.total }}</td>
+                                    <td>{{ pago.recibo.pagado }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
