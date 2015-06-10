@@ -38,6 +38,9 @@
                         <li><a href="{% url 'persona-index' %}">Personas</a></li>
                     </ul>
                 </li>
+                {% if user.is_superuser %}
+                    <li><a href="{% url 'admin:index' %}">Administraci&oacute;n</a></li>
+                {% endif %}
             </ul>
             <div class="navbar-right">
                 <form class="navbar-form navbar-left" method="get"
