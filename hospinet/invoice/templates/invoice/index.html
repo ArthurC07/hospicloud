@@ -25,12 +25,16 @@
                             Pendiente</a></li>
                         <li><a href="#consulta" data-toggle="tab">Consulta</a>
                         </li>
+                        {% if config.HOSPITALIZACION_ENABLED %}
                         <li><a href="#admisiones"
                                data-toggle="tab">Admisiones</a></li>
+                        {% endif %}
                         <li><a href="#emergencias"
                                data-toggle="tab">Emergencias</a></li>
+                        {% if config.IMAGENES_ENABLED %}
                         <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
                         </li>
+                        {% endif %}
                         <li><a href="#reporte" data-toggle="tab">Reportes</a>
                         </li>
                     </ul>
@@ -133,6 +137,7 @@
                                 </tbody>
                             </table>
                         </article>
+                        {% if config.HOSPITALIZACION_ENABLED %}
                         <article id="admisiones" class="tab-pane">
                             <table class="table table-striped">
                                 <caption>Admisiones sin Facturar</caption>
@@ -178,6 +183,7 @@
                                 </tbody>
                             </table>
                         </article>
+                        {% endif %}
                         <article id="emergencias" class="tab-pane">
                             <table class="table table-striped no-more-tables">
                                 <caption>Emergencias sin Facturar</caption>
@@ -263,6 +269,7 @@
                                 </tbody>
                             </table>
                         </article>
+                        {% if config.IMAGENES_ENABLED %}
                         <article id="imagenes" class="tab-pane">
                             <table class="table table-striped no-more-tables">
                                 <caption>Estudios de Im&aacute;genes sin
@@ -294,6 +301,7 @@
                                 </tbody>
                             </table>
                         </article>
+                        {% endif %}
                         <article id="reporte" class="tab-pane">
                             <div class="row">
                                 <section class="col-md-4">
