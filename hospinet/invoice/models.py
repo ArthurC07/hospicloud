@@ -214,13 +214,14 @@ class Recibo(TimeStampedModel):
         return int(self.total())
 
     def pagado(self):
-
-        return Pago.objects.filter(recibo=self).aggregate(
+        total = Pago.objects.filter(recibo=self).aggregate(
             total=Sum('monto')
         )['total']
+        if not total:
+            return Decimal()
+        return total
 
     def debido(self):
-
         return self.total() - self.pagado()
 
     def save(self, *args, **kwargs):
