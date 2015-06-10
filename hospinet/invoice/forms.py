@@ -225,3 +225,14 @@ class VentaPeriodoForm(PeriodoForm):
 class PeriodoAreaForm(PeriodoForm):
     area = ModelChoiceField(name="", model="",
                             queryset=ItemType.objects.all())
+
+
+class PagoStatusForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Pago
+        fields = ('status', )
+
+    def __init__(self, *args, **kwargs):
+        super(PagoStatusForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Cambiar Estado de Pago',
+                                      *self.field_names)

@@ -46,6 +46,14 @@ class TipoPago(TimeStampedModel):
         return self.nombre
 
 
+class StatusPago(TimeStampedModel):
+    nombre = models.CharField(max_length=255, blank=True)
+    reportable = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.nombre
+
+
 class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
 
@@ -83,12 +91,13 @@ class Recibo(TimeStampedModel):
 
     @property
     def numero(self):
+        ciudad = self.ciudad
+        if ciudad is None:
+            if self.cajero is None or self.cajero.profile is None or \
+                            self.cajero.profile.ciudad is None:
+                return self.correlativo
 
-        if self.cajero is None or self.cajero.profile is None or \
-                        self.cajero.profile.ciudad is None:
-            return self.correlativo
-
-        ciudad = self.cajero.profile.ciudad
+            ciudad = self.cajero.profile.ciudad
 
         return u'{0}-{1:08d}'.format(ciudad.prefijo_recibo, self.correlativo)
 
@@ -350,6 +359,8 @@ class Pago(TimeStampedModel):
 
     tipo = ForeignKey(TipoPago, related_name='pagos')
     recibo = ForeignKey(Recibo, related_name='pagos')
+    status = models.ForeignKey(StatusPago, blank=True, null=True,
+                               related_name='pagos')
     monto = models.DecimalField(blank=True, null=True, max_digits=7,
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)

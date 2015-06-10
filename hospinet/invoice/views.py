@@ -44,13 +44,13 @@ from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
-                            TipoPago, dot01)
+                            TipoPago, dot01, StatusPago)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
                            PagoForm, PersonaForm, TurnoCajaForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
-                           VentaPeriodoForm, PeriodoAreaForm)
+                           VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -121,6 +121,8 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         if context['turnos'].count() != 0:
             context['turno'] = True
+
+        context['status'] = StatusPago.objects.filter(reportable=True).all()
 
         context['pendientes'] = Recibo.objects.filter(cerrado=False).all()
 
@@ -1051,6 +1053,15 @@ class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
     """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`"""
     model = Pago
     form_class = PagoForm
+
+
+class PagoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Pago
+    form_class = PagoStatusForm
+
+    def get_success_url(self):
+
+        return redirect('invoice-index')
 
 
 class TurnoCajaDetailView(DetailView, LoginRequiredMixin):

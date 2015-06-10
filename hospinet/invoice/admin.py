@@ -18,7 +18,7 @@
 from django.contrib import admin
 
 from invoice.models import (Recibo, Venta, Pago, TipoPago, TurnoCaja,
-                            CierreTurno)
+                            CierreTurno, StatusPago)
 
 
 class ReciboAdmin(admin.ModelAdmin):
@@ -43,15 +43,25 @@ class TurnoCajaAdmin(admin.ModelAdmin):
 
 class PagoAdmin(admin.ModelAdmin):
     list_display = (
-    'tipo', 'get_recibo_number', 'recibo', 'get_recibo_cajero', 'monto', 'created')
-    ordering = ['tipo', 'recibo', 'monto', 'created']
+        'tipo', 'get_recibo_number', 'recibo', 'get_recibo_cajero', 'monto',
+        'created', 'status')
+    ordering = ['tipo', 'recibo', 'monto', 'created', 'status']
     search_fields = ['recibo__usuario__first_name',
                      'recibo__usuario__last_name',
                      'tipo__nombre', 'monto']
 
     def get_recibo_number(self, instance):
+        ciudad = instance.recibo.ciudad
+        if ciudad is None:
+            if instance.recibo.cajero is None or \
+                            instance.recibo.cajero.profile is None or \
+                            instance.recibo.cajero.profile.ciudad is None:
+                return instance.recibo.correlativo
 
-        return instance.recibo.numero()
+            ciudad = instance.recibo.cajero.profile.ciudad
+
+        return u'{0}-{1:08d}'.format(ciudad.prefijo_recibo,
+                                     instance.recibo.correlativo)
 
     def get_recibo_cajero(self, instance):
 
@@ -60,6 +70,7 @@ class PagoAdmin(admin.ModelAdmin):
 
 admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta)
+admin.site.register(StatusPago)
 admin.site.register(Pago, PagoAdmin)
 admin.site.register(TipoPago)
 admin.site.register(TurnoCaja, TurnoCajaAdmin)
