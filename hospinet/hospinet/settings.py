@@ -299,6 +299,8 @@ CONSTANCE_CONFIG = {
     'PHONE_NUMBER': (1, u'Número de teléfono'),
     'CAI': ('1', u'CAI'),
     'CURRENCY_EXCHANGE': (22.03, u'Cambio de Moneda'),
+    'PAYMENT_TYPE_PENDING': (1, u'Tipo de Pago Pendiente'),
+    'PAYMENT_STATUS_PENDING': (1, u'Estado de Pago Pendiente'),
 }
 
 

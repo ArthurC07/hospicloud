@@ -17,14 +17,13 @@
 from collections import defaultdict
 from decimal import Decimal
 from datetime import timedelta
+
 from constance import config
 from dateutil.relativedelta import relativedelta
-
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
-
 from django.utils import timezone
 
 from django_extensions.db.models import TimeStampedModel
@@ -375,6 +374,13 @@ class Pago(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('invoice-view-id', args=[self.recibo.id])
+
+    def save(self, *args, **kwargs):
+        if self.tipo == TipoPago.objects.get(pk=config.PAYMENT_TYPE_PENDING):
+            self.status = StatusPago.objects.get(
+                pk=config.PAYMENT_STATUS_PENDING)
+
+        super(Pago, self).save(*args, **kwargs)
 
 
 class TurnoCaja(TimeStampedModel):
