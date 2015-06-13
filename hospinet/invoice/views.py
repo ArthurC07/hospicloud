@@ -1061,7 +1061,7 @@ class PagoUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
 
-        return redirect('invoice-index')
+        return reverse('invoice-index')
 
 
 class TurnoCajaDetailView(DetailView, LoginRequiredMixin):
