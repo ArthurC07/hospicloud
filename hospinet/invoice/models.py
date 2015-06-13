@@ -25,6 +25,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.utils import timezone
+
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum
@@ -52,7 +53,6 @@ class StatusPago(TimeStampedModel):
         return self.nombre
 
     def total(self):
-
         total = Pago.objects.filter(status=self).aggregate(
             total=Sum('monto')
         )['total']
@@ -420,8 +420,7 @@ class TurnoCaja(TimeStampedModel):
             fin = timezone.now()
 
         return Recibo.objects.filter(cajero=self.usuario,
-                                     created__gte=self.inicio,
-                                     created__lte=fin).all()
+                                     created__range=(self.inicio, fin)).all()
 
     def depositos(self):
 
@@ -429,8 +428,8 @@ class TurnoCaja(TimeStampedModel):
         if fin is None:
             fin = timezone.now()
 
-        return Deposito.objects.filter(created__gte=self.inicio,
-                                       created__lte=fin).all()
+        return Deposito.objects.filter(
+            created__range=(self.inicio, fin)).all()
 
     def venta(self):
 
