@@ -309,7 +309,12 @@
                             {% for stat in status.all %}
                                 <div class="row">
                                     <div class="col-md-12 table-responsive">
-                                        <h3>{{ stat }}</h3>
+                                        <h3>
+                                            {{ stat }}
+                                            <small>
+                                                Total: {{ stat.total }}
+                                            </small>
+                                        </h3>
                                         <table class="table table-striped">
                                             <thead>
                                             <tr>

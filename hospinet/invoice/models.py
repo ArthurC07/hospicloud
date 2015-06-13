@@ -51,6 +51,15 @@ class StatusPago(TimeStampedModel):
     def __unicode__(self):
         return self.nombre
 
+    def total(self):
+
+        total = Pago.objects.filter(status=self).aggregate(
+            total=Sum('monto')
+        )['total']
+        if not total:
+            return Decimal()
+        return total
+
 
 class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
