@@ -49,6 +49,7 @@
                                 <li><a href="#contratos" data-toggle="tab">Contratos</a>
                                 </li>
                             {% endif %}
+                            <li><a href="#laboratorio" data-toggle="tab">Laboratorio</a></li>
                         </ul>
                         <div class="tab-content">
                             <article id="paciente" class="tab-pane active">
@@ -118,6 +119,9 @@
                                     {% include 'contracts/snippets/pcd.html' with persona=persona %}
                                 </article>
                             {% endif %}
+                            <article id="laboratorio" class="tab-pane">
+                                {% include 'lab/snippets/examen.html' with examenes=persona.resultados.all %}
+                            </article>
                         </div>
                     </section>
                 </div>

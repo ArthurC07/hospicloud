@@ -1,0 +1,19 @@
+<table class="table table-stripped">
+    <caption>Ex&aacute;menes de Laboratorio</caption>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Descripci&oacute;on</th>
+            <th>Archivo</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for examen in examenes %}
+        <tr>
+            <td>{{ examen.created }}</td>
+            <td>{{ examen.descripcion }}</td>
+            <td><a href="{{ examen.archivo.url }}" class="btn btn-primary">Descargar</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
