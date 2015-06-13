@@ -36,7 +36,7 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            ConsultaFacturarView, TurnoCierreUpdateView,
                            TurnoCajaListView, AseguradoraFacturarView,
                            PagoPeriodoView, ReciboPrintView, PagoUpdateView,
-                           StatusPagoListView)
+                           StatusPagoListView, TurnoCajaUpdateView)
 
 
 urlpatterns = patterns('',
@@ -193,6 +193,10 @@ urlpatterns = patterns('',
                        url(r'^turno/(?P<turno>\d+)/cierre/nuevo$',
                            CierreTurnoCreateView.as_view(),
                            name='invoice-cierre-nuevo'),
+
+                       url(r'^turno/(?P<pk>\d+)/update$',
+                           TurnoCajaUpdateView.as_view(),
+                           name='invoice-turno-edit'),
 
                        url(r'^deposito/(?P<pk>\d+)$',
                            DepositoDetailView.as_view(),
