@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="page-header col-md-12 main-content">
+        <h1>Estado de Pagos</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9 main-content">
+        {% for stat in status.all %}
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <h3>{{ stat }}</h3>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Recibo</th>
+                            <th>Fecha y Hora</th>
+                            <th>M&eacute;todo</th>
+                            <th>Monto</th>
+                            <th>Total Recibo</th>
+                            <th>Total Pagado</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for pago in stat.pagos.all %}
+                            <tr>
+                                <td><a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo }}</a></td>
+                                <td>{{ pago.created }}</td>
+                                <td>{{ pago.tipo }}</td>
+                                <td>{{ pago.monto }}</td>
+                                <td>{{ pago.recibo.total }}</td>
+                                <td>{{ pago.recibo.pagado }}</td>
+                                <td><a class="btn btn-primary" href="{% url 'invoice-pago-status-edit' pago.id %}">Cambiar Estado</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-3 no-print">
+        <div class="toolbox col-md-12">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-stacked nav-tabs">
+                    <li>
+                        <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

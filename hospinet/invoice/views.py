@@ -1061,7 +1061,7 @@ class PagoUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
 
-        return reverse('invoice-index')
+        return reverse('invoice-pago-status-index')
 
 
 class TurnoCajaDetailView(DetailView, LoginRequiredMixin):
@@ -1179,3 +1179,12 @@ class VentaAreaListView(ListView):
         context['fin'] = self.fin
         context['total'] = sum(v.total() for v in self.object_list)
         return context
+
+
+class StatusPagoListView(LoginRequiredMixin, ListView):
+    model = StatusPago
+    context_object_name = 'status'
+
+    def get_queryset(self):
+
+        return StatusPago.objects.filter(reportable=True).all()
