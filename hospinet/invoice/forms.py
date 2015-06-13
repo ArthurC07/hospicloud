@@ -156,7 +156,7 @@ class InventarioForm(PeriodoForm):
 class PagoForm(FieldSetModelFormMixin):
     class Meta:
         model = Pago
-        fields = '__all__'
+        exclude = ('status', )
 
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
