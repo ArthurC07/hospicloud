@@ -25,7 +25,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.utils import timezone
-
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum
@@ -376,7 +375,8 @@ class Pago(TimeStampedModel):
         return reverse('invoice-view-id', args=[self.recibo.id])
 
     def save(self, *args, **kwargs):
-        if self.tipo == TipoPago.objects.get(pk=config.PAYMENT_TYPE_PENDING):
+        if self.tipo == TipoPago.objects.get(
+                pk=config.PAYMENT_TYPE_PENDING) and self.pk is None:
             self.status = StatusPago.objects.get(
                 pk=config.PAYMENT_STATUS_PENDING)
 
