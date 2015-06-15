@@ -21,9 +21,9 @@ from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType,
 
 
 class ItemTemplateAdmin(admin.ModelAdmin):
-    list_display = ('descripcion', 'precio_de_venta', 'get_types', 'activo',)
+    list_display = ('descripcion', 'costo', 'precio_de_venta', 'get_types', 'activo',)
     list_filter = ('activo', )
-    ordering = ('descripcion', 'activo', 'precio_de_venta',)
+    ordering = ('descripcion', 'activo', 'precio_de_venta', 'costo')
     filter_horizontal = ('item_type',)
     search_fields = ['descripcion',]
 
