@@ -96,6 +96,15 @@ class Recibo(TimeStampedModel):
 
         return self.created - relativedelta(months=1)
 
+    def get_ventas(self):
+
+        return Venta.objects.filter(recibo=self).annotate(
+            total_vendido=F('impuesto') + (F('precio') * F('cantidad')))
+
+    def total(self):
+
+        return self.get_ventas().aggregate(total=Sum('total_vendido'))['total']
+
     @property
     def numero(self):
         ciudad = self.ciudad
@@ -177,8 +186,7 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        tax = sum(v.tax() for v in Venta.objects.filter(recibo=self).all())
-        return Decimal(tax).quantize(dot01)
+        return self.get_ventas().aggregate(tax=Sum('tax'))['tax']
 
     def descuento(self):
 
@@ -186,10 +194,7 @@ class Recibo(TimeStampedModel):
 
         if self.nulo:
             return Decimal(0)
-
-        discount = sum(
-            v.discount() for v in Venta.objects.filter(recibo=self).all())
-        return Decimal(discount).quantize(dot01)
+        return self.get_ventas().aggregate(discount=Sum('discount'))['discount']
 
     def conceptos(self):
 
@@ -269,7 +274,7 @@ class Venta(TimeStampedModel):
     descripcion = models.TextField(blank=True, null=True)
     precio = models.DecimalField(blank=True, null=True, max_digits=7,
                                  decimal_places=2)
-    impuesto = models.DecimalField(blank=True, null=True, max_digits=7,
+    impuesto = models.DecimalField(blank=True, default=0, max_digits=7,
                                    decimal_places=2)
     descuento = models.IntegerField(default=0)
     item = models.ForeignKey(ItemTemplate, related_name='ventas',
@@ -277,6 +282,10 @@ class Venta(TimeStampedModel):
     recibo = models.ForeignKey(Recibo, related_name='ventas')
     placas = models.IntegerField(default=0)
     descontable = models.BooleanField(default=True)
+    discount = models.DecimalField(blank=True, default=0, max_digits=7,
+                                   decimal_places=2)
+    tax = models.DecimalField(blank=True, default=0, max_digits=7,
+                              decimal_places=2)
 
     def __unicode__(self):
 
@@ -293,15 +302,11 @@ class Venta(TimeStampedModel):
         if self.recibo.nulo:
             return Decimal(0)
 
-        return Decimal(self.precio_unitario() * self.cantidad)
+        return Decimal(self.precio * self.cantidad)
 
     def precio_unitario(self):
 
-        if not self.recibo.tipo_de_venta or not self.descontable:
-            return self.precio.quantize(dot01)
-
-        aumento = self.recibo.tipo_de_venta.incremento * self.precio
-        return (self.precio + aumento).quantize(dot01)
+        return self.precio
 
     def precio_previo(self):
 
@@ -311,37 +316,25 @@ class Venta(TimeStampedModel):
         aumento = self.recibo.tipo_de_venta.incremento * self.precio
         return (self.precio + aumento).quantize(dot01)
 
-    def descuento_tipo(self):
-
-        if not self.recibo.tipo_de_venta or not self.descontable:
-            return Decimal(0)
-
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
-        return (self.precio_unitario() * disminucion).quantize(dot01)
-
-    def tax(self):
-        """Obtiene los impuestos a pagar por esta :class:`Venta`"""
-
-        if self.recibo.nulo:
-            return Decimal(0)
-
-        return ((self.monto() - self.discount()) * self.impuesto).quantize(
-            dot01)
-
     def total(self):
         """Calcula el valor total de esta :class:`Venta`"""
 
         if self.recibo.nulo:
             return Decimal(0)
 
-        return (self.tax() + self.monto() - self.descuento_tipo()).quantize(
+        return Decimal(
+            self.tax + self.precio * self.cantidad - self.discount).quantize(
             dot01)
 
-    def discount(self):
+    def discount_calc(self):
 
         """Calcula la cantidad que se disminuye de la :class:`Venta`"""
 
-        return self.descuento_tipo()
+        if not self.recibo.tipo_de_venta or not self.descontable:
+            return Decimal(0)
+
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
+        return (self.precio * disminucion).quantize(dot01)
 
     def radiologo(self):
 
@@ -359,9 +352,23 @@ class Venta(TimeStampedModel):
     def save(self, *args, **kwargs):
 
         if self.precio is None:
-            self.precio = self.item.precio_de_venta
+            if not self.recibo.tipo_de_venta or not self.descontable:
+                self.precio = self.item.precio_de_venta
+            else:
+                aumento = self.recibo.tipo_de_venta.incremento * self.precio
+                self.precio = (self.precio + aumento).quantize(dot01)
+
+        if not self.recibo.tipo_de_venta or not self.descontable:
+            self.discount = Decimal(0)
+
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
+        self.discount = (self.precio * disminucion).quantize(dot01)
 
         self.impuesto = self.item.impuestos * self.monto()
+
+        self.tax = Decimal(
+            self.precio * self.cantidad - self.discount * self.impuesto).quantize(
+            dot01)
 
         super(Venta, self).save(*args, **kwargs)
 

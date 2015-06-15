@@ -75,13 +75,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for venta in recibo.ventas.all %}
+                    {% for venta in recibo.get_ventas.all %}
                         <tr>
                             <td>{{ venta.cantidad }}</td>
                             <td><a href="{% url 'venta-delete' venta.id %}"><i
                                     class="glyphicon glyphicon-trash"></i></a>{{ venta.descripcion }} {{ venta.item }}</td>
-                            <td>{{ venta.precio_unitario }}</td>
-                            <td>{{ venta.monto }}</td>
+                            <td>{{ venta.precio }}</td>
+                            <td>{{ venta.total_vendido }}</td>
                             <td>{{ venta.descuento_tipo }}</td>
                             <td>{{ venta.total }}</td>
                         </tr>
