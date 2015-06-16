@@ -364,10 +364,10 @@ class Venta(TimeStampedModel):
         disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
         self.discount = (self.precio * disminucion).quantize(dot01)
 
-        self.impuesto = self.item.impuestos * self.monto()
+        self.impuesto = self.item.impuestos
 
         self.tax = Decimal(
-            self.precio * self.cantidad - self.discount * self.impuesto).quantize(
+            (self.precio * self.cantidad - self.discount) * self.impuesto).quantize(
             dot01)
 
         super(Venta, self).save(*args, **kwargs)
