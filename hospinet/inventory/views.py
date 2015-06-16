@@ -135,10 +135,18 @@ class ItemListView(ListView, LoginRequiredMixin):
     paginate_by = 10
 
 
-class ItemInventarioListView(InventarioMixin, ListView, LoginRequiredMixin):
+class ItemInventarioListView(ListView, LoginRequiredMixin):
     model = Item
     context_object_name = 'items'
     paginate_by = 10
+
+    def dispatch(self, *args, **kwargs):
+        self.inventario = get_object_or_404(Inventario, pk=kwargs['inventario'])
+        return super(ItemInventarioListView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs['inventario'] = self.inventario
+        return super(ItemInventarioListView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
 
