@@ -26,17 +26,18 @@
                         <li><a href="#consulta" data-toggle="tab">Consulta</a>
                         </li>
                         {% if config.HOSPITALIZACION_ENABLED %}
-                        <li><a href="#admisiones"
-                               data-toggle="tab">Admisiones</a></li>
+                            <li><a href="#admisiones"
+                                   data-toggle="tab">Admisiones</a></li>
                         {% endif %}
                         <li><a href="#emergencias"
                                data-toggle="tab">Emergencias</a></li>
                         {% if config.IMAGENES_ENABLED %}
-                        <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
-                        </li>
+                            <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
+                            </li>
                         {% endif %}
                         <li>
-                            <a href="#pagos" data-toggle="tab">Estado de Pagos</a>
+                            <a href="#pagos" data-toggle="tab">Estado de
+                                Pagos</a>
                         </li>
                         <li><a href="#reporte" data-toggle="tab">Reportes</a>
                         </li>
@@ -121,7 +122,8 @@
                                 {% for recibo in pendientes %}
                                     <tr>
                                         <td>
-                                            <a class="btn btn-primary" href="{% url 'persona-view-id' recibo.cliente.id %}">
+                                            <a class="btn btn-primary"
+                                               href="{% url 'persona-view-id' recibo.cliente.id %}">
                                                 {% if recibo.cliente.identificacion %}
                                                     {{ recibo.cliente.identificacion }}
                                                 {% else %}
@@ -142,51 +144,52 @@
                             </table>
                         </article>
                         {% if config.HOSPITALIZACION_ENABLED %}
-                        <article id="admisiones" class="tab-pane">
-                            <table class="table table-striped">
-                                <caption>Admisiones sin Facturar</caption>
-                                <thead class="gradient">
-                                <tr>
-                                    <th>C&oacute;digo</th>
-                                    <th>Nombre</th>
-                                    <th>Edad</th>
-                                    <th>Sexo</th>
-                                    <th>Acciones</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for admision in admisiones %}
+                            <article id="admisiones" class="tab-pane">
+                                <table class="table table-striped">
+                                    <caption>Admisiones sin Facturar</caption>
+                                    <thead class="gradient">
                                     <tr>
-                                        <td>
-                                            <a href="{% url 'persona-view-id' admision.paciente.id %}">
-                                                {% if admision.paciente.identificacion %}
-                                                    {{ admision.paciente.identificacion }}
-                                                {% else %}
-                                                    {{ admision.paciente.id }}
-                                                {% endif %}
-                                            </a></td>
-                                        <td>
-                                            {{ admision.paciente.nombre_completo }}
-                                            <ul>
-                                                {% for deposito in admision.depositos.all %}
-                                                    <li>
-                                                        Dep&oacute;sito {{ deposito.fecha }} {{ deposito.monto }}
-                                                        <a class="btn btn-primary"
-                                                           href="{% url 'deposito-invoice' deposito.id %}">Facturar</a>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        </td>
-                                        <td>{{ admision.paciente.obtener_edad }}</td>
-                                        <td>{{ admision.paciente.get_sexo_display }}</td>
-                                        <td><a class="btn btn-block btn-primary"
-                                               href="{% url 'admision-invoice' admision.id %}">Facturar</a>
-                                        </td>
+                                        <th>C&oacute;digo</th>
+                                        <th>Nombre</th>
+                                        <th>Edad</th>
+                                        <th>Sexo</th>
+                                        <th>Acciones</th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </article>
+                                    </thead>
+                                    <tbody>
+                                    {% for admision in admisiones %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'persona-view-id' admision.paciente.id %}">
+                                                    {% if admision.paciente.identificacion %}
+                                                        {{ admision.paciente.identificacion }}
+                                                    {% else %}
+                                                        {{ admision.paciente.id }}
+                                                    {% endif %}
+                                                </a></td>
+                                            <td>
+                                                {{ admision.paciente.nombre_completo }}
+                                                <ul>
+                                                    {% for deposito in admision.depositos.all %}
+                                                        <li>
+                                                            Dep&oacute;sito {{ deposito.fecha }} {{ deposito.monto }}
+                                                            <a class="btn btn-primary"
+                                                               href="{% url 'deposito-invoice' deposito.id %}">Facturar</a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </td>
+                                            <td>{{ admision.paciente.obtener_edad }}</td>
+                                            <td>{{ admision.paciente.get_sexo_display }}</td>
+                                            <td>
+                                                <a class="btn btn-block btn-primary"
+                                                   href="{% url 'admision-invoice' admision.id %}">Facturar</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </article>
                         {% endif %}
                         <article id="emergencias" class="tab-pane">
                             <table class="table table-striped no-more-tables">
@@ -274,37 +277,38 @@
                             </table>
                         </article>
                         {% if config.IMAGENES_ENABLED %}
-                        <article id="imagenes" class="tab-pane">
-                            <table class="table table-striped no-more-tables">
-                                <caption>Estudios de Im&aacute;genes sin
-                                    Facturar
-                                </caption>
-                                <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Paciente</th>
-                                    <th>Examen</th>
-                                    <th>Identificaci&oacute;n</th>
-                                    <th>Nacimiento</th>
-                                    <th>Acciones</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for examen in examenes %}
+                            <article id="imagenes" class="tab-pane">
+                                <table class="table table-striped no-more-tables">
+                                    <caption>Estudios de Im&aacute;genes sin
+                                        Facturar
+                                    </caption>
+                                    <thead>
                                     <tr>
-                                        <td>{{ examen.fecha }}</td>
-                                        <td>{{ examen.persona.nombre_completo }}</td>
-                                        <td>{{ examen.tipo_de_examen.nombre }}</td>
-                                        <td>{{ examen.persona.identificacion }}</td>
-                                        <td>{{ examen.persona.nacimiento }}</td>
-                                        <td><a class="btn btn-block btn-primary"
-                                               href="{% url 'examen-invoice' examen.id %}">Facturar</a>
-                                        </td>
+                                        <th>Fecha</th>
+                                        <th>Paciente</th>
+                                        <th>Examen</th>
+                                        <th>Identificaci&oacute;n</th>
+                                        <th>Nacimiento</th>
+                                        <th>Acciones</th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </article>
+                                    </thead>
+                                    <tbody>
+                                    {% for examen in examenes %}
+                                        <tr>
+                                            <td>{{ examen.fecha }}</td>
+                                            <td>{{ examen.persona.nombre_completo }}</td>
+                                            <td>{{ examen.tipo_de_examen.nombre }}</td>
+                                            <td>{{ examen.persona.identificacion }}</td>
+                                            <td>{{ examen.persona.nacimiento }}</td>
+                                            <td>
+                                                <a class="btn btn-block btn-primary"
+                                                   href="{% url 'examen-invoice' examen.id %}">Facturar</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </article>
                         {% endif %}
                         <article id="pagos" class="tab-pane">
                             {% for stat in status.all %}
@@ -331,13 +335,18 @@
                                             <tbody>
                                             {% for pago in stat.pagos.all %}
                                                 <tr>
-                                                    <td><a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo }}</a></td>
+                                                    <td>
+                                                        <a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo }}</a>
+                                                    </td>
                                                     <td>{{ pago.created }}</td>
                                                     <td>{{ pago.tipo }}</td>
                                                     <td>{{ pago.monto }}</td>
                                                     <td>{{ pago.recibo.total }}</td>
                                                     <td>{{ pago.recibo.pagado }}</td>
-                                                    <td><a class="btn btn-primary" href="{% url 'invoice-pago-status-edit' pago.id %}">Cambiar Estado</a></td>
+                                                    <td>
+                                                        <a class="btn btn-primary"
+                                                           href="{% url 'invoice-pago-status-edit' pago.id %}">Cambiar
+                                                            Estado</a></td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
@@ -408,6 +417,9 @@
                         <li>
                             <a href="{% url 'invoice-turno-activo' %}">Turnos
                                 Activos</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-estadisticas' %}">Estad&iacute;sticas</a>
                         </li>
                     </ul>
                 </nav>

@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import permission_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
-                                  DeleteView, View)
+                                  DeleteView)
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.base import TemplateView
 from django.shortcuts import get_object_or_404
@@ -149,7 +149,6 @@ class ItemInventarioListView(ListView, LoginRequiredMixin):
         return super(ItemInventarioListView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
-
         return Item.objects.filter(inventario=self.inventario).all()
 
 
@@ -259,7 +258,8 @@ class TransferenciaCreateView(RequisicionFormMixin, LoginRequiredMixin):
         return initial
 
 
-class TransferenciaDetailView(SingleObjectMixin, ListView, CurrentUserFormMixin):
+class TransferenciaDetailView(SingleObjectMixin, ListView,
+                              CurrentUserFormMixin):
     paginate_by = 10
     template_name = 'inventory/transferencia_detail.html'
 
@@ -381,7 +381,7 @@ class ItemTemplateSearchView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         form = ItemTemplateSearchForm(self.request.GET)
 
-        #if not form.is_valid():
+        # if not form.is_valid():
         #    redirect('admision-estadisticas')
         form.is_valid()
         print(form.errors)

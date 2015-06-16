@@ -14,9 +14,10 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+import calendar
 
-from collections import defaultdict
-from datetime import datetime, time
+from collections import defaultdict, OrderedDict
+from datetime import datetime, time, date
 from decimal import Decimal
 
 from constance import config
@@ -131,6 +132,56 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['ventaareaperiodoform'] = PeriodoAreaForm(prefix='venta-area')
         context['ventaareaperiodoform'].set_action('periodo-venta-area')
+
+        return context
+
+
+class EstadisticasView(TemplateView):
+    template_name = 'invoice/estadisticas.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(EstadisticasView, self).get_context_data(**kwargs)
+        recibos = Recibo.objects.annotate(sold=Sum('ventas__total'))
+
+        now = timezone.now()
+        context['pagos'] = OrderedDict()
+        context['pagos']['Recibos'] = OrderedDict()
+
+        for tipo in TipoPago.objects.all():
+            context['pagos'][tipo] = OrderedDict()
+
+        for n in range(1, 13):
+            fin = date(now.year, n, calendar.monthrange(now.year, n)[1])
+            inicio = datetime.combine(date(now.year, n, 1), time.min)
+            fin = datetime.combine(fin, time.max)
+
+            fin = timezone.make_aware(fin, timezone.get_current_timezone())
+            inicio = timezone.make_aware(inicio,
+                                         timezone.get_current_timezone())
+            total = recibos.filter(
+                created__range=(inicio, fin)
+            ).aggregate(total=Sum('sold'))['total']
+            if total is None:
+                total = Decimal()
+
+            for tipo in context['pagos']:
+                if tipo == 'Recibos':
+                    continue
+                pagado = tipo.pagos.filter(
+                    recibo__created__range=(inicio, fin)
+                ).aggregate(total=Sum('monto'))['total']
+                if pagado is None:
+                    pagado = Decimal()
+
+                context['pagos'][tipo][inicio] = pagado
+
+            pagos = Pago.objects.filter(
+                recibo__created__range=(inicio, fin)
+            ).values('tipo__nombre').annotate(
+                monto=Sum('monto')
+            ).order_by()
+
+            context['pagos']['Recibos'][inicio] = total
 
         return context
 
@@ -421,7 +472,8 @@ class PagoPeriodoView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PagoPeriodoView, self).get_context_data(**kwargs)
-        pagos = Pago.objects.filter(recibo__created__range=(self.inicio, self.fin))
+        pagos = Pago.objects.filter(
+            recibo__created__range=(self.inicio, self.fin))
         context['group'] = pagos.values('tipo__nombre').annotate(
             monto=Sum('monto')
         ).order_by()
@@ -1060,7 +1112,6 @@ class PagoUpdateView(LoginRequiredMixin, UpdateView):
     form_class = PagoStatusForm
 
     def get_success_url(self):
-
         return reverse('invoice-pago-status-index')
 
 
@@ -1186,5 +1237,4 @@ class StatusPagoListView(LoginRequiredMixin, ListView):
     context_object_name = 'status'
 
     def get_queryset(self):
-
         return StatusPago.objects.filter(reportable=True).all()

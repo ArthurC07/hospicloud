@@ -28,7 +28,7 @@ from django.utils import timezone
 
 from django_extensions.db.models import TimeStampedModel
 
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Count
 
 from persona.models import Persona, persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
@@ -96,14 +96,9 @@ class Recibo(TimeStampedModel):
 
         return self.created - relativedelta(months=1)
 
-    def get_ventas(self):
-
-        return Venta.objects.filter(recibo=self).annotate(
-            total_vendido=F('impuesto') + (F('precio') * F('cantidad')))
-
     def total(self):
 
-        return self.get_ventas().aggregate(total=Sum('total_vendido'))['total']
+        return self.ventas.aggregate(total=Sum('total'))['total']
 
     @property
     def numero(self):
@@ -172,12 +167,9 @@ class Recibo(TimeStampedModel):
 
         """Calcula el monto antes de impuestos"""
 
-        if self.nulo:
-            return Decimal(0)
-
-        subtotal = sum(
-            v.monto() for v in Venta.objects.filter(recibo=self).all())
-        return Decimal(subtotal).quantize(dot01)
+        return \
+        self.ventas.annotate(monto=F('precio') * F('cantidad')).aggregate(
+            total=Sum('monto', output_field=models.DecimalField()))['total']
 
     def impuesto(self):
 
@@ -200,16 +192,6 @@ class Recibo(TimeStampedModel):
 
         return ', '.join(
             v.item.descripcion for v in Venta.objects.filter(recibo=self).all())
-
-    def total(self):
-
-        """Calcula el monto que será mostrado en los cálculos financieros"""
-
-        if self.nulo:
-            return Decimal(0)
-
-        total = sum(v.total() for v in Venta.objects.filter(recibo=self).all())
-        return Decimal(total).quantize(dot01)
 
     def comision_doctor(self):
 
@@ -286,6 +268,8 @@ class Venta(TimeStampedModel):
                                    decimal_places=2)
     tax = models.DecimalField(blank=True, default=0, max_digits=7,
                               decimal_places=2)
+    total = models.DecimalField(blank=True, default=0, max_digits=11,
+                                decimal_places=2)
 
     def __unicode__(self):
 
@@ -315,16 +299,6 @@ class Venta(TimeStampedModel):
 
         aumento = self.recibo.tipo_de_venta.incremento * self.precio
         return (self.precio + aumento).quantize(dot01)
-
-    def total(self):
-        """Calcula el valor total de esta :class:`Venta`"""
-
-        if self.recibo.nulo:
-            return Decimal(0)
-
-        return Decimal(
-            self.tax + self.precio * self.cantidad - self.discount).quantize(
-            dot01)
 
     def discount_calc(self):
 
@@ -367,7 +341,12 @@ class Venta(TimeStampedModel):
         self.impuesto = self.item.impuestos
 
         self.tax = Decimal(
-            (self.precio * self.cantidad - self.discount) * self.impuesto).quantize(
+            (
+                self.precio * self.cantidad - self.discount) * self.impuesto).quantize(
+            dot01)
+
+        self.total = (
+            self.tax + self.precio * self.cantidad - self.discount).quantize(
             dot01)
 
         super(Venta, self).save(*args, **kwargs)

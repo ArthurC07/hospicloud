@@ -1,0 +1,13 @@
+<ul>
+{% for tipo, value2 in pagos.items %}
+    <li>{{ tipo }}
+        <ul>
+        {% for fecha, monto in value2.items %}
+            <li>
+            {{ fecha|date:"E" }} {{ monto }}
+            </li>
+        {% endfor %}
+        </ul>
+    </li>
+{% endfor %}
+</ul>
