@@ -194,7 +194,7 @@ class Recibo(TimeStampedModel):
 
         if self.nulo:
             return Decimal(0)
-        return self.get_ventas().aggregate(discount=Sum('discount'))['discount']
+        return self.ventas.all().aggregate(discount=Sum('discount'))['discount']
 
     def conceptos(self):
 
