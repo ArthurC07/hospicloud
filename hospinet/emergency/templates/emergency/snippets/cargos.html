@@ -6,7 +6,6 @@
         <th>C&oacute;digo</th>
         <th>Descripci&oacute;n</th>
         <th>Cantidad</th>
-        <th>Acciones</th>
     </tr>
     </thead>
     <tbody>
@@ -16,7 +15,6 @@
         <td>{{ cobro.cargo.id|unlocalize }}</td>
         <td>{{ cobro.cargo.descripcion }}</td>
         <td>{{ cobro.cantidad }}</td>
-        <td><a href="{% url 'emergencia-cobro-eliminar' cobro.id %}" class="btn btn-danger">Eliminar</a></td>
     </tr>
     {% endfor %}
     </tbody>

@@ -77,35 +77,33 @@
     </div>
     <div class="row">
         <article class="col-md-3">
-            <div class="toolbox col-md-12">
-                <table class="table table-bordered table-striped">
-                    <thead>
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Emergencias</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for doctor, cantidad in emergencia_doctores %}
                     <tr>
-                        <th>Doctor</th>
-                        <th>Emergencias</th>
+                        <td>{{ doctor.get_full_name }}</td>
+                        <td>{{ cantidad }}</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for doctor, cantidad in emergencia_doctores %}
-                        <tr>
-                            <td>{{ doctor.get_full_name }}</td>
-                            <td>{{ cantidad }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <th>Total</th>
-                        <th>{{ emergencia_total }}</th>
-                    </tr>
-                    </tfoot>
-                </table>
-            </div>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>{{ emergencia_total }}</th>
+                </tr>
+                </tfoot>
+            </table>
         </article>
-        <div class="col-md-offset-1 col-md-4">
+        <div class="col-md-6 main-content">
             <canvas id="emergencia" width="400" height="400"></canvas>
         </div>
-        <article class="col-md-offset-1 col-md-3">
+        <article class="col-md-3">
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -131,7 +129,7 @@
         </article>
     </div>
     <div class="row">
-        <article class="col-md-3">
+        <article class="col-md-3 action-nav-button">
             <div class="toolbox col-md-12">
                 <table class="table table-bordered table-striped">
                     <thead>
