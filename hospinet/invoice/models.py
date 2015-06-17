@@ -25,11 +25,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.utils import timezone
-
 from django_extensions.db.models import TimeStampedModel
 
-from django.db.models import F, Sum, Count
+from django.db.models import F, Sum
 
+from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
 from spital.models import Deposito
@@ -40,6 +40,7 @@ dot01 = Decimal("0.01")
 
 class TipoPago(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True, null=True)
+    color = ColorField(default='')
 
     def __unicode__(self):
         return self.nombre
@@ -168,8 +169,8 @@ class Recibo(TimeStampedModel):
         """Calcula el monto antes de impuestos"""
 
         return \
-        self.ventas.annotate(monto=F('precio') * F('cantidad')).aggregate(
-            total=Sum('monto', output_field=models.DecimalField()))['total']
+            self.ventas.annotate(monto=F('precio') * F('cantidad')).aggregate(
+                total=Sum('monto', output_field=models.DecimalField()))['total']
 
     def impuesto(self):
 
@@ -342,7 +343,8 @@ class Venta(TimeStampedModel):
 
         self.tax = Decimal(
             (
-                self.precio * self.cantidad - self.discount) * self.impuesto).quantize(
+                self.precio * self.cantidad - self.discount) *
+            self.impuesto).quantize(
             dot01)
 
         self.total = (

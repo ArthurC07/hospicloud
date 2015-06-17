@@ -41,6 +41,11 @@ class TurnoCajaAdmin(admin.ModelAdmin):
                      'pago__nombre', 'apertura']
 
 
+class TipoPagoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'color',)
+    ordering = ['nombre', 'color',]
+
+
 class PagoAdmin(admin.ModelAdmin):
     list_display = (
         'tipo', 'get_recibo_number', 'recibo', 'get_recibo_cajero', 'monto',
@@ -72,6 +77,6 @@ admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta)
 admin.site.register(StatusPago)
 admin.site.register(Pago, PagoAdmin)
-admin.site.register(TipoPago)
+admin.site.register(TipoPago, TipoPagoAdmin)
 admin.site.register(TurnoCaja, TurnoCajaAdmin)
 admin.site.register(CierreTurno, CierreturnoAdmin)

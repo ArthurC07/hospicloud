@@ -1,13 +1,76 @@
-<ul>
-{% for tipo, value2 in pagos.items %}
-    <li>{{ tipo }}
-        <ul>
-        {% for fecha, monto in value2.items %}
-            <li>
-            {{ fecha|date:"E" }} {{ monto }}
-            </li>
-        {% endfor %}
-        </ul>
-    </li>
-{% endfor %}
-</ul>
+{% extends 'base.html' %}
+{% load staticfiles %}{% load l10n %}{% load staticfiles %}{% load humanize %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <section class="col-md-9">
+            <div class="row">
+                <div class="main-content col-md-12">
+                    <canvas width="600" height="400" id="ventas"></canvas>
+                    <div id="legend" class="col-md-6"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="main-content col-md-12">‏
+                    <ul>
+                        {% for tipo, value2 in pagos.items %}
+                            <li>{{ tipo }}
+                                <ul>
+                                    {% for fecha, monto in value2.items %}
+                                        <li>
+                                            {{ fecha|date:"E" }} {{ monto }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li>
+                            <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {% localize off %}
+    <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+    <script type="text/javascript">
+        var data = {
+            labels: [0 {% for month in months %}, "{{ month|date:"E" }}"{% endfor %}],
+            datasets: [
+            {% for tipo, value2 in pagos.items %}
+                {
+                    label: "{{ tipo }}",
+                    fillColor: {% if tipo.color %} "{{ tipo.color }}" {% else %} "#89CFF0" {% endif %},
+                    strokeColor: {% if tipo.color %} "{{ tipo.color }}" {% else %} "#89CFF0" {% endif %},
+                    pointColor: {% if tipo.color %} "{{ tipo.color }}" {% else %} "#89CFF0" {% endif %},
+                    data: [0 {% for fecha, monto in value2.items %}, {{ monto }}{% endfor %}]
+                },
+            {% endfor %}
+            ]
+        };
+        var ctx = $("#ventas").get(0).getContext("2d");
+        var chart = new Chart(ctx).Line(data, {
+            legendTemplate : '<ul>'
+            +'<% for (var i=0; i<datasets.length; i++) { %>'
+            +'<li style=\"background-color:<%=datasets[i].fillColor%>;margin: 5px 0; color: white;\">'
+            +'<span >'
+            +'<% if (datasets[i].label) { %><%= datasets[i].label %><% } %>'
+            +'</li>'
+            +'<% } %>'
+            +'</ul>'
+        });
+        $("#legend").append(chart.generateLegend());
+    </script>
+    {% endlocalize %}
+{% endblock %}

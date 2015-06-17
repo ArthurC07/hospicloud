@@ -19,6 +19,7 @@ import calendar
 from collections import defaultdict, OrderedDict
 from datetime import datetime, time, date
 from decimal import Decimal
+import random
 
 from constance import config
 from django.contrib import messages
@@ -146,6 +147,8 @@ class EstadisticasView(TemplateView):
         now = timezone.now()
         context['pagos'] = OrderedDict()
         context['pagos']['Recibos'] = OrderedDict()
+        context['months'] = []
+        context['colors'] = []
 
         for tipo in TipoPago.objects.all():
             context['pagos'][tipo] = OrderedDict()
@@ -182,6 +185,7 @@ class EstadisticasView(TemplateView):
             ).order_by()
 
             context['pagos']['Recibos'][inicio] = total
+            context['months'].append(inicio)
 
         return context
 
