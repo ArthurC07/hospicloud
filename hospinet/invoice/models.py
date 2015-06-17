@@ -25,6 +25,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.utils import timezone
+
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum
@@ -169,7 +170,7 @@ class Recibo(TimeStampedModel):
         """Calcula el monto antes de impuestos"""
 
         return \
-            self.ventas.annotate(monto=F('precio') * F('cantidad')).aggregate(
+            self.ventas.aggregate(
                 total=Sum('monto', output_field=models.DecimalField()))['total']
 
     def impuesto(self):
@@ -271,6 +272,8 @@ class Venta(TimeStampedModel):
                               decimal_places=2)
     total = models.DecimalField(blank=True, default=0, max_digits=11,
                                 decimal_places=2)
+    monto = models.DecimalField(blank=True, null=True, max_digits=11,
+                                decimal_places=2)
 
     def __unicode__(self):
 
@@ -280,14 +283,6 @@ class Venta(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('invoice-view-id', args=[self.recibo.id])
-
-    def monto(self):
-        """Obtiene el valor a pagar por esta :class:`Venta`"""
-
-        if self.recibo.nulo:
-            return Decimal(0)
-
-        return Decimal(self.precio * self.cantidad)
 
     def precio_unitario(self):
 
@@ -319,7 +314,7 @@ class Venta(TimeStampedModel):
         if self.recibo.radiologo is None or self.recibo.radiologo == '':
             return Decimal('0')
 
-        bruto = self.monto() * self.item.comision / Decimal("100")
+        bruto = self.monto * self.item.comision / Decimal("100")
         neto = bruto - bruto * self.descuento / Decimal("100")
 
         return neto.quantize(dot01)
@@ -340,6 +335,7 @@ class Venta(TimeStampedModel):
         self.discount = (self.precio * disminucion).quantize(dot01)
 
         self.impuesto = self.item.impuestos
+        self.monto = self.precio * self.cantidad
 
         self.tax = Decimal(
             (
