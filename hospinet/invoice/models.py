@@ -324,11 +324,7 @@ class Venta(TimeStampedModel):
     def save(self, *args, **kwargs):
 
         if self.precio is None:
-            if not self.recibo.tipo_de_venta or not self.descontable:
-                self.precio = self.item.precio_de_venta
-            else:
-                aumento = self.recibo.tipo_de_venta.incremento * self.precio
-                self.precio = (self.precio + aumento).quantize(dot01)
+            self.precio = self.item.precio_de_venta
 
         if not self.recibo.tipo_de_venta or not self.descontable:
             self.discount = Decimal(0)
