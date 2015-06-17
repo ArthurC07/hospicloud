@@ -25,7 +25,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.utils import timezone
-
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum
@@ -100,7 +99,10 @@ class Recibo(TimeStampedModel):
 
     def total(self):
 
-        return self.ventas.aggregate(total=Sum('total'))['total']
+        total = self.ventas.aggregate(total=Sum('total'))['total']
+        if not total:
+            return Decimal()
+        return total
 
     @property
     def numero(self):
