@@ -10,7 +10,8 @@
             </div>
             <div class="row">
                 <div class="col-md-9 main-content">
-                    <article id="examen_fisico" class="tab-pane table-responsive">
+                    <article id="examen_fisico"
+                             class="tab-pane table-responsive">
                         {% load l10n %}
                         <table class="table table-striped">
                             <caption>Examenes F&iacute;sicos</caption>
@@ -34,7 +35,10 @@
                                     <td>{{ evaluacion.gastrointestinal }}</td>
                                     <td>{{ evaluacion.extremidades }}</td>
                                     <td>{{ evaluacion.otras }}</td>
-                                    <td><a class="btn btn-success" href="{% url 'clinique-evaluacion-edit' evaluacion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                    <td><a class="btn btn-success"
+                                           href="{% url 'clinique-evaluacion-edit' evaluacion.id %}"><i
+                                            class="fa fa-edit"></i> Editar</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -55,8 +59,12 @@
                             {% for diagnostico in consulta.diagnosticos_clinicos.all %}
                                 <tr>
                                     <td>{{ diagnostico.created }}</td>
-                                    <td>{{ diagnostico.afeccion }}{{ diagnostico.diagnostico }}</td>
-                                    <td><a class="btn btn-success" href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i class="fa fa-edit"></i> Editar</a> </td>
+                                    <td>
+                                        {{ diagnostico.afeccion }}{{ diagnostico.diagnostico }}</td>
+                                    <td><a class="btn btn-success"
+                                           href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i
+                                            class="fa fa-edit"></i> Editar</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -78,7 +86,10 @@
                                     <td>{{ orden.created }}</td>
                                     <td>{{ orden.orden }}</td>
                                     <td>{{ orden.evolucion }}</td>
-                                    <td><a class="btn btn-success" href="{% url 'clinique-orden-edit' orden.id %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                    <td><a class="btn btn-success"
+                                           href="{% url 'clinique-orden-edit' orden.id %}"><i
+                                            class="fa fa-edit"></i> Editar</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -99,7 +110,9 @@
                                     <td>{{ incapacidad.created }}</td>
                                     <td>{{ incapacidad.descripcion }}</td>
                                     <td>{{ incapacidad.dias }}</td>
-                                    <td><a class="btn btn-success" href="{% url 'clinique-incapacidad-edit' incapacidad.id %}">Editar</a></td>
+                                    <td><a class="btn btn-success"
+                                           href="{% url 'clinique-incapacidad-edit' incapacidad.id %}">Editar</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -118,7 +131,10 @@
                                 <tr>
                                     <td>{{ prescripcion.created }}</td>
                                     <td>{{ prescripcion.medicamento }} {{ prescripcion.nota }}</td>
-                                    <td><a class="btn btn-success" href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i class="fa fa-edit"></i> Editar</a></td>
+                                    <td><a class="btn btn-success"
+                                           href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i
+                                            class="fa fa-edit"></i> Editar</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -126,32 +142,37 @@
                     </article>
                 </div>
                 <div class="col-md-3">
-                    <nav class="sidebar-nav toolbox">
-                        <ul class="nav nav-stacked">
-                            <li>
-                                <a href="{% url 'consultorio-evaluacion-agregar' consulta.persona.id consulta.id %}">Agregar
-                                    Examen Físico</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'consultorio-prescripcion-agregar' consulta.persona.id consulta.id %}">Agregar
-                                    Prescripci&oacute;n</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'consultorio-incapacidad-agregar' consulta.persona.id consulta.id %}">Agregar
-                                    Incapacidad</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'consultorio-diagnostico-agregar' consulta.persona.id consulta.id %}">Agregar
-                                    Diagnóstico</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'consultorio-om-agregar' consulta.persona.id consulta.id %}"><i
-                                        class="fa fa-stethoscope"></i> Agregar
-                                    Orden M&eacute;dica</a>
-                            </li>
-                        </ul>
-                    </nav>
-
+                    <div class="toolbox col-md-12">
+                        <nav class="sidebar-nav">
+                            <ul class="nav nav-tabs nav-stacked">
+                                <li>
+                                    <a href="{% url 'consultorio-evaluacion-agregar' consulta.persona.id consulta.id %}">Agregar
+                                        Examen Físico</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'consultorio-prescripcion-agregar' consulta.persona.id consulta.id %}">Agregar
+                                        Prescripci&oacute;n</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'consultorio-incapacidad-agregar' consulta.persona.id consulta.id %}">Agregar
+                                        Incapacidad</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'consultorio-diagnostico-agregar' consulta.persona.id consulta.id %}">Agregar
+                                        Diagnóstico</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'consultorio-om-agregar' consulta.persona.id consulta.id %}"><i
+                                            class="fa fa-stethoscope"></i>
+                                        Agregar
+                                        Orden M&eacute;dica</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'persona-view-id' consulta.persona.id  %}">Volver al Paciente</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
