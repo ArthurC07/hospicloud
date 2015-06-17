@@ -20,8 +20,9 @@
                 {{ config.COMPANY_ADDRESS }}<br>
                 RTN: {{ config.RTN }}<br >
                 Factura: {{ recibo.numero }}<br>
+                C.A.I: {{ config.CAI }}
                 Fecha: {{ recibo.created }}<br>
-                Cliente: {{ recibo.cliente }}<br>
+                Cliente: {{ recibo.cliente }} {% if not cliente.rtn %} CONSUMIDOR FINAL {% endif %}<br>
                 RTN Cliente: {{ recibo.cliente.rtn }}<br>
                 Cajero: {{ recibo.cajero }}
             </p>
