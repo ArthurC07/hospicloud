@@ -60,7 +60,7 @@
             ]
         };
         var ctx = $("#ventas").get(0).getContext("2d");
-        var chart = new Chart(ctx).Line(data, {
+        var chart = new Chart(ctx).Bar(data, {
             legendTemplate : '<ul>'
             +'<% for (var i=0; i<datasets.length; i++) { %>'
             +'<li style=\"background-color:<%=datasets[i].fillColor%>;margin: 5px 0; color: white;\">'
