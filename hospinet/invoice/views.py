@@ -146,12 +146,29 @@ class EstadisticasView(TemplateView):
 
         now = timezone.now()
         context['pagos'] = OrderedDict()
-        context['pagos']['Recibos'] = OrderedDict()
         context['months'] = []
+        context['recibos'] = []
+        context['tipos'] = {}
         context['colors'] = []
+
+        fin = date(now.year, 12, 31)
+        inicio = datetime.combine(date(now.year, 1, 1), time.min)
+        fin = datetime.combine(fin, time.max)
+
+        fin = timezone.make_aware(fin, timezone.get_current_timezone())
+        inicio = timezone.make_aware(inicio,
+                                     timezone.get_current_timezone())
 
         for tipo in TipoPago.objects.all():
             context['pagos'][tipo] = OrderedDict()
+
+            pagado = tipo.pagos.filter(
+                recibo__created__range=(inicio, fin)
+            ).aggregate(total=Sum('monto'))['total']
+            if pagado is None:
+                pagado = Decimal()
+
+            context['tipos'][tipo] = pagado
 
         for n in range(1, 13):
             fin = date(now.year, n, calendar.monthrange(now.year, n)[1])
@@ -164,12 +181,14 @@ class EstadisticasView(TemplateView):
             total = recibos.filter(
                 created__range=(inicio, fin)
             ).aggregate(total=Sum('sold'))['total']
+
             if total is None:
                 total = Decimal()
 
+            context['recibos'].append(total)
+
             for tipo in context['pagos']:
-                if tipo == 'Recibos':
-                    continue
+
                 pagado = tipo.pagos.filter(
                     recibo__created__range=(inicio, fin)
                 ).aggregate(total=Sum('monto'))['total']
@@ -177,14 +196,6 @@ class EstadisticasView(TemplateView):
                     pagado = Decimal()
 
                 context['pagos'][tipo][inicio] = pagado
-
-            pagos = Pago.objects.filter(
-                recibo__created__range=(inicio, fin)
-            ).values('tipo__nombre').annotate(
-                monto=Sum('monto')
-            ).order_by()
-
-            context['pagos']['Recibos'][inicio] = total
             context['months'].append(inicio)
 
         return context
