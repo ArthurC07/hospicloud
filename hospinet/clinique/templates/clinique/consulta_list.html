@@ -21,7 +21,7 @@
                     <th>Motivo de Consulta</th>
                     <th>HEA</th>
                     <th>Tipo de Consulta</th>
-                    <th>Diagn&oacute;stico</th>
+                    <th>Cargos</th>
                     <th>Usuario</th>
                     <th>Ciudad</th>
                     <th>Acciones</th>
@@ -33,21 +33,16 @@
                         <td>{{ consulta.created }}</td>
                         <td>{{ consulta.persona }}</td>
                         <td>{{ consulta.motivo_de_consulta }}</td>
-                        <td>
-                            {{ consulta.HEA }}
-                            <ul>
-                                {% for cargo in consulta.cargos.all %}
-                                <li>
-                                    {{ cargo.item }}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
+                        <td>{{ consulta.HEA }}</td>
                         <td>{{ consulta.tipo }}</td>
                         <td>
-                            {% for diagnostico in consulta.diagnosticos_clinicos.all %}
-                                {{ diagnostico.afeccion }} - {{ diagnostico.diagnostico }}
-                            {% endfor %}
+                            <ul>
+                                {% for cargo in consulta.cargos.all %}
+                                    <li>
+                                        {{ cargo.item }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </td>
                         <td>{{ consulta.consultorio.usuario.get_full_name }}</td>
                         <td>{{ consulta.consultorio.localidad }}</td>
