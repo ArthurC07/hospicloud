@@ -70,7 +70,7 @@ class VentaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Venta
-        fields = ('item', 'cantidad', 'precio', 'descripcion',)
+        fields = ('item', 'cantidad', 'precio', 'descripcion', 'recibo')
 
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
