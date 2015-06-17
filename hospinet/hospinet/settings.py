@@ -200,7 +200,6 @@ INSTALLED_APPS = (
     'statistics',
     'contracts',
     'lab',
-    'bsc',
     # Third party apps go here
     'django_extensions',
     'django_countries',
