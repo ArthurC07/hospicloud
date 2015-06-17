@@ -33,7 +33,16 @@
                         <td>{{ consulta.created }}</td>
                         <td>{{ consulta.persona }}</td>
                         <td>{{ consulta.motivo_de_consulta }}</td>
-                        <td>{{ consulta.HEA }}</td>
+                        <td>
+                            {{ consulta.HEA }}
+                            <ul>
+                                {% for cargo in consulta.cargos.all %}
+                                <li>
+                                    {{ cargo.item }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
                         <td>{{ consulta.tipo }}</td>
                         <td>
                             {% for diagnostico in consulta.diagnosticos_clinicos.all %}
