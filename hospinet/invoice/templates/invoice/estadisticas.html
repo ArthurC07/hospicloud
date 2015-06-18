@@ -107,8 +107,9 @@
         ];
         var div = $('<div>');
         div.css({
-            width: '200px',
-            display: 'inline-block',
+            width: '240px',
+            'text-align': "center",
+            display: 'inline-block'
         });
         var canvas = $('<canvas>');
         canvas.css({
@@ -117,7 +118,9 @@
             display: 'inline-block',
             margin: '10px'
         });
-        div.append('{{ mes|date:'E' }}');
+        var head = $("<h3>");
+        head.append('{{ mes|date:'E' }}');
+        div.append(head);
         div.append(canvas);
         div.appendTo('#graphs');
         var ctx = canvas.get(0).getContext("2d");
