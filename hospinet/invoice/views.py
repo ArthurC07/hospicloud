@@ -193,7 +193,7 @@ class EstadisticasView(TemplateView):
                 ).aggregate(total=Sum('monto'))['total']
                 if pagado is None:
                     pagado = Decimal()
-                context['meses'][inicio].append((tipo, total))
+                context['meses'][inicio].append((tipo, pagado))
 
             for tipo in context['pagos']:
 
