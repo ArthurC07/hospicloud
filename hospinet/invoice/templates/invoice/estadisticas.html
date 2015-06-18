@@ -22,6 +22,12 @@
                 <div class="main-content col-md-12">
                     <canvas width="600" height="400" id="ventas"></canvas>
                     <div id="legend" class="col-md-6"></div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="main-content col-md-12">
+                    <div id="graphs"></div>
                 </div>
             </div>
             <div class="row">
@@ -83,6 +89,40 @@
             +'<% } %>'
             +'</ul>'
         });
+        {% for mes, pairs in meses.items %}
+        var data = [
+            {% for pair in pairs %}
+            {
+
+                color: "{{ pair.0.color }}",
+                label: "{{ pair.0.nombre }}",
+                value: {{ pair.1 }},
+            },
+            {% endfor %}
+            {
+                value: 0,
+                color: "black",
+                label: "Ninguno"
+            }
+        ];
+        var div = $('<div>');
+        div.css({
+            width: '200px',
+            display: 'inline-block',
+        });
+        var canvas = $('<canvas>');
+        canvas.css({
+            width: '200px',
+            height: '200px',
+            display: 'inline-block',
+            margin: '10px'
+        });
+        div.append('{{ mes|date:'E' }}');
+        div.append(canvas);
+        div.appendTo('#graphs');
+        var ctx = canvas.get(0).getContext("2d");
+        var chart = new Chart(ctx).Pie(data);
+        {% endfor %}
     </script>
     {% endlocalize %}
 {% endblock %}

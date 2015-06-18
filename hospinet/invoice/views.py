@@ -149,7 +149,7 @@ class EstadisticasView(TemplateView):
         context['months'] = []
         context['recibos'] = []
         context['tipos'] = {}
-        context['colors'] = []
+        context['meses'] = OrderedDict()
 
         fin = date(now.year, 12, 31)
         inicio = datetime.combine(date(now.year, 1, 1), time.min)
@@ -184,8 +184,16 @@ class EstadisticasView(TemplateView):
 
             if total is None:
                 total = Decimal()
-
+            context['meses'][inicio] = []
             context['recibos'].append(total)
+
+            for tipo in TipoPago.objects.all():
+                pagado = tipo.pagos.filter(
+                    recibo__created__range=(inicio, fin)
+                ).aggregate(total=Sum('monto'))['total']
+                if pagado is None:
+                    pagado = Decimal()
+                context['meses'][inicio].append((tipo, total))
 
             for tipo in context['pagos']:
 
