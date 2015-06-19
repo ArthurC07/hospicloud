@@ -28,11 +28,11 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for producto, datos in productos %}
+                            {% for producto in productos %}
                                 <tr>
-                                    <td>{{ producto }}</td>
-                                    <td>{{ datos.cantidad }}</td>
-                                    <td>{{ datos.monto }}</td>
+                                    <td>{{ producto.item__descripcion }}</td>
+                                    <td>{{ producto.count }}</td>
+                                    <td>{{ producto.monto }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>

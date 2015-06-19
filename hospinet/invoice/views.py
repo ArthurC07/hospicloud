@@ -24,7 +24,7 @@ from constance import config
 from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
@@ -685,21 +685,25 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
         context = super(ReporteProductoView, self).get_context_data(**kwargs)
 
         context['cantidad'] = 0
-        context['total'] = Decimal('0')
+        context['total'] = Decimal()
         productos = defaultdict(lambda: defaultdict(Decimal))
 
-        for recibo in self.recibos.all():
-
-            for venta in recibo.ventas.all():
-                productos[venta.item]['monto'] += venta.monto()
-                productos[venta.item]['cantidad'] += 1
-
-                context['cantidad'] += 1
+        ventas = Venta.objects.filter(
+            recibo__created__range=(self.inicio, self.fin))
 
         context['recibos'] = self.recibos
-        context['productos'] = productos.items()
-        context['impuesto'] = sum(r.impuesto() for r in self.recibos.all())
-        context['total'] = sum(r.total() for r in self.recibos.all())
+        context['productos'] = ventas.values('item__descripcion').annotate(
+            monto=Sum('monto'), count=Count('id')
+        ).order_by('-monto')
+
+        context['impuesto'] = Venta.objects.filter(
+            recibo__created__range=(self.inicio, self.end)
+        ).aggregate(tax=Sum('tax'))['tax']
+
+        context['total'] = Venta.objects.filter(
+            recibo__created__range=(self.inicio, self.end)
+        ).aggregate(total=Sum('total'))['total']
+
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context
@@ -730,7 +734,10 @@ class VentaListView(ListView):
         context['item'] = self.item
         context['inicio'] = self.inicio
         context['fin'] = self.fin
-        context['total'] = sum(v.total() for v in self.object_list)
+        total = self.get_queryset().aggregate(total=Sum('total'))['total']
+        if total is None:
+            total = Decimal()
+        context['total'] = total
         return context
 
 
@@ -1135,7 +1142,9 @@ class CorteView(ReciboPeriodoView):
         context['recibos'] = self.recibos.filter(cajero=context['cajero'])
         context['inicio'] = self.inicio
         context['fin'] = self.fin
-        context['total'] = sum(r.total() for r in context['recibos'].all())
+        context['total'] = context['recibos'].annotate(
+            sold=Sum('ventas__total')
+        ).aggregate(total=Sum('sold'))['total']
         return context
 
     def dispatch(self, request, *args, **kwargs):
@@ -1307,7 +1316,9 @@ class VentaAreaListView(ListView):
         context['item_type'] = self.item_type
         context['inicio'] = self.inicio
         context['fin'] = self.fin
-        context['total'] = sum(v.total() for v in self.object_list)
+        context['total'] = self.get_queryset().aggregate(
+            total=Sum('total')
+        )['total']
         return context
 
 
