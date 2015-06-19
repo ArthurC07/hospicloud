@@ -90,10 +90,6 @@ class IndexView(TemplateView, InvoicePermissionMixin):
                                  u'Productos Facturados en un Periodo',
                                  'invoice-periodo-producto')
 
-        self.create_periodo_form(context, 'remiteperiodoform', 'remite',
-                                 u'Referencias de un Periodo',
-                                 'invoice-periodo-remite')
-
         self.create_periodo_form(context, 'emerperiodoform', 'emergencia',
                                  u'Emergencias de un Periodo',
                                  'invoice-periodo-emergencia')

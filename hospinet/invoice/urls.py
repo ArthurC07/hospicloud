@@ -111,10 +111,6 @@ urlpatterns = patterns('',
                            ReporteProductoView.as_view(),
                            name='invoice-periodo-producto'),
 
-                       url(r'^periodo/remite$',
-                           ReciboRemiteView.as_view(),
-                           name='invoice-periodo-remite'),
-
                        url(r'^periodo/pago$',
                            PagoPeriodoView.as_view(),
                            name='invoice-periodo-pago'),
