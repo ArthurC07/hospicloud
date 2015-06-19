@@ -238,7 +238,8 @@ class EstadisticasPeriodoView(TemplateView):
         ventas = Venta.objects.filter(
             recibo__created__range=(self.inicio, self.fin))
         context['ventas'] = ventas.values('item__descripcion').annotate(
-            monto=Sum('monto')
+            monto=Sum('monto'),
+            cantidad=Sum('cantidad')
         ).order_by('-monto')[:20]
 
         if total is None:

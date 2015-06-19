@@ -6,6 +6,12 @@
             display: block;
             margin: auto;
         }
+
+        .squared {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+        }
     </style>
 {% endblock %}
 {% block content %}
@@ -20,19 +26,45 @@
         <section class="col-md-9">
             <div class="row">
                 <div class="main-content col-md-12">
-                    <canvas width="600" height="400" id="pagos"></canvas>
-                    <div id="legend" class="col-md-6"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul>
+                                {% for pair in pagos %}
+                                    <li>
+                                        <div class="squared"
+                                             style="background-color: {{ pair.0.color }}">&nbsp;</div>
+                                        {{ pair.0.nombre }}: {{ pair.1 }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <canvas width="400" height="400"
+                                    id="pagos"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row">
-                <div class="main-content col-md-12">
-                    <div id="graphs"></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="main-content col-md-12">‏
-                    {{ pagos }}
-                    {{ ventas }}
+                <div class="main-content col-md-12 table-responsive">‏
+                    <table class="table table-stripped">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in ventas %}
+                                <tr>
+                                    <td>{{ producto.item__descripcion }}</td>
+                                    <td>{{ producto.cantidad }}</td>
+                                    <td>{{ producto.monto }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -41,7 +73,8 @@
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
                         <li>
-                            <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                            <a href="{% url 'invoice-index' %}">Regresar a
+                                Caja</a>
                         </li>
                     </ul>
                 </nav>
@@ -50,27 +83,28 @@
     </div>
 {% endblock %}
 {% block scripts %}
-{% localize off %}
-<script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
-<script type="text/javascript">
-    var data = [
-        {% for pair in pagos %}
-            {
+    {% localize off %}
+        <script type="text/javascript"
+                src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            var data = [
+                {% for pair in pagos %}
+                    {
 
-                color: "{{ pair.0.color }}",
-                label: "{{ pair.0.nombre }}",
-                value: {{ pair.1 }}
-            },
-        {% endfor %}
-        {
-            value: 0,
-            color: "black",
-            label: "Ninguno"
-        }
-    ];
-    var canvas = $('#pagos');
-    var ctx = canvas.get(0).getContext("2d");
-    var chart = new Chart(ctx).Pie(data);
-</script>
-{% endlocalize %}
+                        color: "{{ pair.0.color }}",
+                        label: "{{ pair.0.nombre }}",
+                        value: {{ pair.1 }}
+                    },
+                {% endfor %}
+                {
+                    value: 0,
+                    color: "black",
+                    label: "Ninguno"
+                }
+            ];
+            var canvas = $('#pagos');
+            var ctx = canvas.get(0).getContext("2d");
+            var chart = new Chart(ctx).Pie(data);
+        </script>
+    {% endlocalize %}
 {% endblock %}
