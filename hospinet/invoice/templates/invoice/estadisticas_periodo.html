@@ -18,7 +18,10 @@
     <div class="row">
         <div class="col-md-12 main-content">
             <section class="page-header">
-                <h1>Estad&iacute;sticas de Ventas</h1>
+                <h1>
+                    Estad&iacute;sticas de Ventas
+                    <small>del {{ inicio }} al {{ fin }}</small>
+                </h1>
             </section>
         </div>
     </div>
@@ -47,6 +50,7 @@
             </div>
             <div class="row">
                 <div class="main-content col-md-12 table-responsive">‏
+                    <h2>Total de Ventas: {{ recibos }}</h2>
                     <table class="table table-stripped">
                         <thead>
                             <tr>
@@ -60,7 +64,7 @@
                                 <tr>
                                     <td>{{ producto.item__descripcion }}</td>
                                     <td>{{ producto.cantidad }}</td>
-                                    <td>{{ producto.monto }}</td>
+                                    <td class="text-right">{{ producto.monto }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
