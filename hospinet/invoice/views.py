@@ -697,11 +697,11 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
         ).order_by('-monto')
 
         context['impuesto'] = Venta.objects.filter(
-            recibo__created__range=(self.inicio, self.end)
+            recibo__created__range=(self.inicio, self.fin)
         ).aggregate(tax=Sum('tax'))['tax']
 
         context['total'] = Venta.objects.filter(
-            recibo__created__range=(self.inicio, self.end)
+            recibo__created__range=(self.inicio, self.fin)
         ).aggregate(total=Sum('total'))['total']
 
         context['inicio'] = self.inicio
