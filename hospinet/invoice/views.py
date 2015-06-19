@@ -19,7 +19,6 @@ import calendar
 from collections import defaultdict, OrderedDict
 from datetime import datetime, time, date
 from decimal import Decimal
-import random
 
 from constance import config
 from django.contrib import messages
@@ -102,6 +101,10 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         self.create_periodo_form(context, 'pagoform', 'pago',
                                  u'Pagos por Tipo y Periodo',
                                  'invoice-periodo-pago')
+
+        self.create_periodo_form(context, 'estadisticasform', 'estadisticas',
+                                 u'Estadísticas por periodo',
+                                 'invoice-estadisticas-periodo')
 
         context['corteform'] = CorteForm(prefix='corte')
         context['corteform'].set_action('invoice-corte')
@@ -206,6 +209,59 @@ class EstadisticasView(TemplateView):
                 context['pagos'][tipo][inicio] = pagado
             context['months'].append(inicio)
 
+        return context
+
+
+class EstadisticasPeriodoView(TemplateView):
+    """Obtiene los :class:`Recibo` de un periodo determinado en base
+    a un formulario que las clases derivadas deben proporcionar como
+    self.form"""
+    template_name = 'invoice/estadisticas_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Efectua la consulta de los :class:`Recibo` de acuerdo a los
+        datos ingresados en el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix='estadisticas')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+
+        return super(EstadisticasPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(EstadisticasPeriodoView, self).get_context_data(**kwargs)
+
+        context['pagos'] = []
+
+        total = Recibo.objects.annotate(sold=Sum('ventas__total')).filter(
+            created__range=(self.inicio, self.fin)
+        ).aggregate(total=Sum('sold'))['total']
+
+        ventas = Venta.objects.filter(
+            recibo__created__range=(self.inicio, self.fin))
+        context['ventas'] = ventas.values('item__descripcion').annotate(
+            monto=Sum('monto')
+        ).order_by('-monto')[:20]
+
+        if total is None:
+            total = Decimal()
+
+        context['recibos'] = total
+
+        for tipo in TipoPago.objects.all():
+
+            pagado = tipo.pagos.filter(
+                recibo__created__range=(self.inicio, self.fin)
+            ).aggregate(total=Sum('monto'))['total']
+            if pagado is None:
+                pagado = Decimal()
+
+            context['pagos'].append((tipo, pagado))
+
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
         return context
 
 
