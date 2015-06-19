@@ -693,7 +693,7 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
 
         context['recibos'] = self.recibos
         context['productos'] = ventas.values('item__descripcion').annotate(
-            monto=Sum('monto'), count=Count('id')
+            monto=Sum('monto'), count=Sum('cantidad')
         ).order_by('-monto')
 
         context['impuesto'] = Venta.objects.filter(
