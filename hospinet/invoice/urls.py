@@ -20,7 +20,7 @@ from django.conf.urls import patterns, url
 from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            ReciboDetailView, VentaCreateView,
                            ReporteReciboView, ReporteProductoView,
-                           ReciboRemiteView, ReciboRadView,
+                           ReciboRadView,
                            EmergenciaPeriodoView, ReciboCerrarView,
                            ReciboExamenCreateView, EmergenciaDiaView,
                            AdmisionAltaView,
@@ -38,7 +38,6 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            PagoPeriodoView, ReciboPrintView, PagoUpdateView,
                            StatusPagoListView, TurnoCajaUpdateView,
                            EstadisticasView, EstadisticasPeriodoView)
-
 
 urlpatterns = patterns('',
 
@@ -90,7 +89,7 @@ urlpatterns = patterns('',
                        url(r'^periodo$',
                            ReporteReciboView.as_view(),
                            name='invoice-periodo'),
-                       
+
                        url(r'^estadisticas$',
                            EstadisticasView.as_view(),
                            name='invoice-estadisticas'),
