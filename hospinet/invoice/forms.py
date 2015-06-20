@@ -22,7 +22,7 @@ from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
 from select2.fields import ModelChoiceField
 
-from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, TipoPago
 from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
@@ -50,7 +50,8 @@ class ReciboForm(FieldSetModelFormMixin):
     class Meta:
         model = Recibo
         exclude = (
-        'nulo', 'cerrado', 'discount', 'radiologo', 'remite', 'ciudad', 'emision', 'correlativo')
+            'nulo', 'cerrado', 'discount', 'radiologo', 'remite', 'ciudad',
+            'emision', 'correlativo')
 
     cajero = forms.ModelChoiceField(label="",
                                     queryset=User.objects.all(),
@@ -156,7 +157,7 @@ class InventarioForm(PeriodoForm):
 class PagoForm(FieldSetModelFormMixin):
     class Meta:
         model = Pago
-        exclude = ('status', )
+        exclude = ('status',)
 
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
@@ -222,6 +223,15 @@ class VentaPeriodoForm(PeriodoForm):
                                       *self.field_names)
 
 
+class TipoPagoPeriodoForm(PeriodoForm):
+    tipo = ModelChoiceField(name="", model="", queryset=TipoPago.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(TipoPagoPeriodoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Pagos por Tipo y Periodo',
+                                      *self.field_names)
+
+
 class PeriodoAreaForm(PeriodoForm):
     area = ModelChoiceField(name="", model="",
                             queryset=ItemType.objects.all())
@@ -230,7 +240,7 @@ class PeriodoAreaForm(PeriodoForm):
 class PagoStatusForm(FieldSetModelFormMixin):
     class Meta:
         model = Pago
-        fields = ('status', )
+        fields = ('status',)
 
     def __init__(self, *args, **kwargs):
         super(PagoStatusForm, self).__init__(*args, **kwargs)

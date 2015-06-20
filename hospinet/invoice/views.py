@@ -51,7 +51,8 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
                            PagoForm, PersonaForm, TurnoCajaForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
-                           VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm)
+                           VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
+                           TipoPagoPeriodoForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -104,6 +105,9 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['corteform'] = CorteForm(prefix='corte')
         context['corteform'].set_action('invoice-corte')
+
+        context['tipopagoform'] = TipoPagoPeriodoForm(prefix='tipopago')
+        context['tipopagoform'].set_action('periodo-tipopago')
 
         context['inventarioform'] = InventarioForm(prefix='inventario')
         context['inventarioform'].set_action('invoice-inventario')
@@ -1315,6 +1319,35 @@ class VentaAreaListView(ListView):
         context['fin'] = self.fin
         context['total'] = self.get_queryset().aggregate(
             total=Sum('total')
+        )['total']
+        return context
+
+
+class TipoPagoPeriodoView(ListView):
+    context_object_name = 'pagos'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = TipoPagoPeriodoForm(request.GET, prefix='tipopago')
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+            self.tipo_pago = self.form.cleaned_data['tipo']
+
+        return super(TipoPagoPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Pago.objects.filter(
+            recibo__created__range=(self.inicio, self.fin),
+            tipo=self.tipo_pago,
+        ).select_related('recibo__cliente')
+
+    def get_context_data(self, **kwargs):
+        context = super(TipoPagoPeriodoView, self).get_context_data(**kwargs)
+        context['tipo'] = self.tipo_pago
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = self.get_queryset().aggregate(
+            total=Sum('monto')
         )['total']
         return context
 
