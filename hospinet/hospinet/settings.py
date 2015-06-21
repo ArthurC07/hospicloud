@@ -192,6 +192,7 @@ INSTALLED_APPS = (
     'spital',
     'imaging',
     'users',
+    'bsc',
     'nightingale',
     'clinique',
     'invoice',
