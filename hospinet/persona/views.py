@@ -164,19 +164,19 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         form = PersonaSearchForm(self.request.GET)
 
-        # if not form.is_valid():
-        #    redirect('admision-estadisticas')
-        form.is_valid()
+        if form.is_valid():
 
-        query = form.cleaned_data['query']
+            query = form.cleaned_data['query']
 
-        queryset = Persona.objects.filter(
-            Q(nombre__icontains=query) |
-            Q(apellido__icontains=query) |
-            Q(identificacion__icontains=query)
-        )
+            queryset = Persona.objects.filter(
+                Q(nombre__icontains=query) |
+                Q(apellido__icontains=query) |
+                Q(identificacion__icontains=query)
+            )
 
-        return queryset.all()
+            return queryset.all()
+
+        return Persona.objects.none()
 
 
 class EmpleadorCreateView(CreateView, LoginRequiredMixin):
