@@ -21,7 +21,6 @@ from django.db import models
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
-
 from django.core.urlresolvers import reverse
 
 from inventory.models import ItemTemplate, Inventario, ItemType
@@ -104,7 +103,7 @@ class Paciente(TimeStampedModel):
 
     def __unicode__(self):
         return u"Paciente {0} de {1}".format(self.persona.nombre_completo(),
-            self.consultorio.usuario.get_full_name())
+                                             self.consultorio.usuario.get_full_name())
 
     def identificacion(self):
         return self.persona.identificacion
@@ -138,7 +137,8 @@ class Consulta(TimeStampedModel):
     def item(self):
 
         item = None
-        for contrato in self.persona.contratos.filter(vencimiento__gte=timezone.now()).all():
+        for contrato in self.persona.contratos.filter(
+                vencimiento__gte=timezone.now()).all():
             item = contrato.plan.consulta
 
         if item is None:
@@ -161,7 +161,8 @@ class Consulta(TimeStampedModel):
             items[cargo.item] += cargo.cantidad
             precios[cargo.item] = cargo.item.precio_de_venta
 
-            for contrato in self.persona.contratos.filter(vencimiento__gte=timezone.now()).all():
+            for contrato in self.persona.contratos.filter(
+                    vencimiento__gte=timezone.now()).all():
                 precios[cargo.item] = contrato.obtener_cobro(cargo.item)
 
             print precios[cargo.item]
@@ -294,6 +295,10 @@ class OrdenMedica(TimeStampedModel):
                                  blank=True, null=True)
     evolucion = models.TextField(blank=True)
     orden = models.TextField(blank=True)
+    medicamento = models.ForeignKey(ItemTemplate, blank=True, null=True,
+                                    related_name='ordenes_medicas')
+    farmacia = models.BooleanField(default=False)
+    facturada = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
@@ -362,17 +367,17 @@ class Espera(TimeStampedModel):
     consultorio = models.ForeignKey(Consultorio, related_name='espera',
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='espera')
-    fecha = models.DateTimeField(default=timezone.now)
+    fecha = models.DateTimeField(auto_now_add=True)
     atendido = models.BooleanField(default=False)
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
-    inicio = models.DateTimeField(default=timezone.now)
+    inicio = models.DateTimeField(auto_now_add=True)
     terminada = models.BooleanField(default=False)
-    fin = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return u"{0} en {1}".format(self.persona.nombre_completo(),
-            self.consultorio.nombre)
+                                    self.consultorio.nombre)
 
     def get_absolute_url(self):
         return self.consultorio.get_absolute_url()
