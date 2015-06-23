@@ -602,6 +602,17 @@ class LecturaSignosCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
     model = LecturaSignos
     form_class = LecturaSignosForm
 
+    def form_valid(self, form):
+        self.object = form.save(commit=True)
+
+        esperas = Espera.objects.filter(persona=self.object.persona,
+                                        terminada=False)
+
+        for espera in esperas.all():
+            espera.fecha = timezone.now()
+
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class LecturaSignosUpdateView(UpdateView, LoginRequiredMixin):
     model = LecturaSignos
