@@ -21,8 +21,8 @@ from bsc.models import Meta, ScoreCard
 
 
 class MetaAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ('score_card', 'tipo', 'peso', 'meta')
-    ordering = ['score_card', 'tipo', 'peso', 'meta']
+    list_display = ('score_card', 'tipo_meta', 'peso', 'meta')
+    ordering = ['score_card', 'tipo_meta', 'peso', 'meta']
 
 
 admin.site.register(Meta, MetaAdmin)
