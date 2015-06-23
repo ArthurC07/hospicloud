@@ -54,6 +54,8 @@ class UserProfile(UserenaBaseProfile):
                                    null=True)
     ciudad = models.ForeignKey(Ciudad, related_name='usuarios', blank=True,
                                null=True)
+    bsc = models.ForeignKey('bsc.ScoreCard', related_name='usuarios', blank=True,
+                            null=True)
 
     def __unicode__(self):
         return self.user.username
