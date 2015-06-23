@@ -17,12 +17,13 @@
 from django.contrib import admin
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
-from bsc.models import Meta
+from bsc.models import Meta, ScoreCard
 
 
 class MetaAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ('usuario', 'tipo', 'inicio', 'fin', 'base', 'meta')
-    ordering = ['usuario', 'tipo', 'inicio', 'fin', 'base', 'meta']
+    list_display = ('score_card', 'tipo', 'peso', 'meta')
+    ordering = ['score_card', 'tipo', 'peso', 'meta']
 
 
 admin.site.register(Meta, MetaAdmin)
+admin.site.register(ScoreCard)
