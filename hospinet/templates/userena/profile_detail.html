@@ -89,13 +89,16 @@
                             </tr>
                         {% endfor %}
                     </table>
-                    <dl>
+                    <div>
                     {% for escala in profile.get_escalas %}
                         <strong>Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}</strong>
                         <br>
                         <strong>Comisi&oacute;n:</strong> {{ escala.comision }}
+                    {% empty %}
+                        <strong>No se Alcanz&oacute; ninguna escala</strong>
                     {% endfor %}
-                    </dl>
+                    Emergencias Atendidas: {{ profile.user.get_current_month_emergencies }}
+                    </div>
                     </div>
                     </div>
                 {% endblock %}
