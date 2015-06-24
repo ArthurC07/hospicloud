@@ -81,8 +81,8 @@ class Meta(TimeStampedModel):
 
     def ponderacion(self, logro):
         if self.basado_en_tiempo:
-            return self.meta / Decimal(logro)
-        return Decimal(logro) / self.meta
+            return self.meta / max(Decimal(logro), 1)
+        return Decimal(logro) / max(self.meta, 1)
 
     def emergencias(self, usuario, inicio, fin):
         return Emergencia.objects.filter(usuario=usuario,
@@ -129,16 +129,10 @@ class Meta(TimeStampedModel):
         ordenes = self.orden_medicas(usuario, inicio, fin).count()
         consultas = self.consultas(usuario, inicio, fin).count()
 
-        if consultas == 0:
-            return 1
-
-        return float(ordenes) / consultas
+        return float(ordenes) / max(consultas, 1)
 
     def average_incapacidad(self, usuario, inicio, fin):
         incapacidades = self.incapacidades(usuario, inicio, fin).count()
         consultas = self.consultas(usuario, inicio, fin).count()
 
-        if consultas == 0:
-            return 1
-
-        return float(incapacidades) / consultas
+        return float(incapacidades) / max(consultas, 1)
