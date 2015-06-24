@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
-from datetime import date
+from datetime import date, datetime, time
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -65,10 +65,12 @@ class UserProfile(UserenaBaseProfile):
 
     def get_metas(self):
         now = timezone.now()
-        fin = date(now.year, 12, 31)
         fin = date(now.year, now.month,
                    calendar.monthrange(now.year, now.month)[1])
         inicio = date(now.year, now.month, 1)
+
+        fin = datetime.combine(fin, time.max)
+        inicio = datetime.combine(inicio, time.min)
 
         fin = timezone.make_aware(fin, timezone.get_current_timezone())
         inicio = timezone.make_aware(inicio,
