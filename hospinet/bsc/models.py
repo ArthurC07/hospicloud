@@ -90,6 +90,9 @@ class Meta(TimeStampedModel):
             return self.meta / max(Decimal(logro), 1)
         return Decimal(logro) / max(self.meta, 1)
 
+    def logro_ponderado(self, ponderacion):
+        return min(self.peso, ponderacion * self.peso)
+
     def emergencias(self, usuario, inicio, fin):
         return Emergencia.objects.filter(usuario=usuario,
                                          created__range=(inicio, fin)

@@ -88,6 +88,7 @@ class UserProfile(UserenaBaseProfile):
                      }
 
             datos['ponderacion'] = meta.ponderacion(datos['logro'])
+            datos['logro_ponderado'] = meta.logro_ponderado(datos['logro'])
             metas.append(datos)
 
         return metas

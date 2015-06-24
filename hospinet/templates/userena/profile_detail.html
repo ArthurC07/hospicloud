@@ -75,6 +75,7 @@
                                 <th>Meta</th>
                                 <th>Logro</th>
                                 <th>Ponderaci&oacute;n</th>
+                                <th>Logro Ponderado</th>
                             </tr>
                         </thead>
                         {% for meta in profile.get_metas %}
@@ -84,6 +85,7 @@
                                 <td>{{ meta.meta }}</td>
                                 <td>{{ meta.logro }}</td>
                                 <td>{{ meta.ponderacion }}</td>
+                                <td>{{ meta.logro_ponderado }}</td>
                             </tr>
                         {% endfor %}
                     </table>
