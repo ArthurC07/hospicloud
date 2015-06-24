@@ -89,7 +89,7 @@ class Meta(TimeStampedModel):
                                          )
 
     def consultas(self, usuario, inicio, fin):
-        return Consulta.objects.filter(consultorio___usuario=usuario,
+        return Consulta.objects.filter(consultorio__usuario=usuario,
                                        created__range=(inicio, fin)
                                        )
 
