@@ -15,10 +15,12 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from decimal import Decimal
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
+
 from django_extensions.db.models import TimeStampedModel
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
@@ -36,6 +38,12 @@ class ScoreCard(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('scorecard', args=[self.id])
+
+    def get_escala(self, score):
+        escalas = Escala.objects.filter(score_card=self,
+                                        puntaje_final__lte=score,
+                                        puntaje_inicial__gte=score)
+        return escalas.all()
 
 
 class Escala(TimeStampedModel):
@@ -100,7 +108,8 @@ class Meta(TimeStampedModel):
 
     def consultas(self, usuario, inicio, fin):
         return Consulta.objects.filter(consultorio__usuario=usuario,
-                                       created__range=(inicio, fin)
+                                       created__range=(inicio, fin),
+                                       activa=False
                                        )
 
     def recibos(self, usuario, inicio, fin):
@@ -123,6 +132,8 @@ class Meta(TimeStampedModel):
     def average_consulta_time(self, usuario, inicio, fin):
         tiempos = []
         for consulta in self.consultas(usuario, inicio, fin):
+            if consulta.final is None:
+                continue
             tiempos.append((consulta.final - consulta.created).total_seconds())
 
         return float(sum(tiempos)) / max(len(tiempos), 1)

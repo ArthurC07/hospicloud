@@ -28,5 +28,6 @@ class ScoreCardDetailView(LoginRequiredMixin, DetailView):
     model = ScoreCard
 
 
-class UserDetailView(LoginRequiredMixin, DetailView):
+class UserDetailView(DetailView, LoginRequiredMixin):
     model = User
+    template_name = 'bsc/user.html'
