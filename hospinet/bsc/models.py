@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from decimal import Decimal
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
@@ -80,8 +81,8 @@ class Meta(TimeStampedModel):
 
     def ponderacion(self, logro):
         if self.basado_en_tiempo:
-            return self.meta / logro
-        return logro / self.meta
+            return self.meta / Decimal(logro)
+        return Decimal(logro) / self.meta
 
     def emergencias(self, usuario, inicio, fin):
         return Emergencia.objects.filter(usuario=usuario,
