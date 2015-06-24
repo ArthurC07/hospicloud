@@ -141,7 +141,7 @@ class Meta(TimeStampedModel):
     def average_preconsulta(self, usuario, inicio, fin):
         tiempos = []
         for espera in self.esperas(usuario, inicio, fin):
-            tiempos.append((espera.final - espera.inicio).total_seconds())
+            tiempos.append((espera.fin - espera.inicio).total_seconds())
 
         return float(sum(tiempos)) / max(len(tiempos), 1)
 
