@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="row">
-        <section class="col-md-12">
+        <section class="col-md-12 main-content">
             <ul>
                 {% for scorecard in object_list.all %}
                     <li><a href="{{ scorecard.get_absolute_url }}">{{ scorecard }}</a></li>

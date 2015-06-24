@@ -12,9 +12,9 @@
         </div>
     </div>
     <div class="row">
-        <section class="col-md-12">
+        <section class="col-md-12 main-content">
             <ul>
-                {% for profile in object.userprofile_set.all %}
+                {% for profile in object.usuarios.all %}
                     <li><a href="{% url 'scorecard-user' profile.user.id %}">{{ userprofile }}</a></li>
                 {% empty %}
                     <li>No hay usuarios agregados</li>
