@@ -44,3 +44,4 @@ urlpatterns = patterns('',
                            UserAntecedenteQuirurgicoCreateView.as_view(),
                            name='user-antecedente-quirurgico-agregar'),
 )
+

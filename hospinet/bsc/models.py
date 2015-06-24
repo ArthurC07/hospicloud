@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from decimal import Decimal
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
 from django_extensions.db.models import TimeStampedModel
@@ -30,6 +31,11 @@ class ScoreCard(TimeStampedModel):
 
     def __unicode__(self):
         return self.nombre
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('scorecard', args=[self.id])
 
 
 class Escala(TimeStampedModel):

@@ -18,7 +18,9 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
 from hospinet.views import IndexView
+
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -29,40 +31,43 @@ admin.autodiscover()
 from api import v1_api
 
 urlpatterns = patterns('',
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+                       # Uncomment the admin/doc line below to enable admin
+                       # documentation:
+                       # url(r'^admin/doc/', include(
+                       # 'django.contrib.admindocs.urls')),
 
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+                       # Uncomment the next line to enable the admin:
+                       url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', IndexView.as_view(), name='home'),
-    url(r'^persona/', include('persona.urls')),
-    url(r'^examen/', include('imaging.urls')),
-    url(r'^inventory/', include('inventory.urls')),
-    url(r'^admision/', include('spital.urls')),
-    url(r'^reportes/', include('statistics.urls')),
-    url(r'^enfermeria/', include('nightingale.urls')),
-    url(r'^consultorio/', include('clinique.urls')),
-    url(r'^caja/', include('invoice.urls')),
-    url(r'^emergencia/', include('emergency.urls')),
-    url(r'^bussiness/', include('statistics.urls')),
-    url(r'^contracts/', include('contracts.urls')),
-    url(r'^lab/', include('lab.urls')),
-    url(r'^api/', include(v1_api.urls)),
-    url(r'^select2/', include('select2.urls')),
-    url(r'^users/', include('users.urls')),
-    url(r'^accounts/(?P<username>[\.\w-]+)/edit/$',
-        'userena.views.profile_edit',
-        {'edit_profile_form': CustomEditProfileForm},
-        name='userena_profile_edit'),
-    url(r'^accounts/', include('userena.urls')),
-)
+                       url(r'^$', IndexView.as_view(), name='home'),
+                       url(r'^persona/', include('persona.urls')),
+                       url(r'^examen/', include('imaging.urls')),
+                       url(r'^inventory/', include('inventory.urls')),
+                       url(r'^admision/', include('spital.urls')),
+                       url(r'^reportes/', include('statistics.urls')),
+                       url(r'^enfermeria/', include('nightingale.urls')),
+                       url(r'^consultorio/', include('clinique.urls')),
+                       url(r'^caja/', include('invoice.urls')),
+                       url(r'^emergencia/', include('emergency.urls')),
+                       url(r'^bussiness/', include('statistics.urls')),
+                       url(r'^contracts/', include('contracts.urls')),
+                       url(r'^lab/', include('lab.urls')),
+                       url(r'^api/', include(v1_api.urls)),
+                       url(r'^select2/', include('select2.urls')),
+                       url(r'^users/', include('users.urls')),
+                       url(r'^users/', include('bsc.urls')),
+                       url(r'^accounts/(?P<username>[\.\w-]+)/edit/$',
+                           'userena.views.profile_edit',
+                           {'edit_profile_form': CustomEditProfileForm},
+                           name='userena_profile_edit'),
+                       url(r'^accounts/', include('userena.urls')),
+                       )
 
 urlpatterns += staticfiles_urlpatterns()
 if settings.DEBUG:
     urlpatterns += patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT,
-        }),
-   )
-
+                            url(r'^media/(?P<path>.*)$',
+                                'django.views.static.serve', {
+                                    'document_root': settings.MEDIA_ROOT,
+                                }),
+                            )
