@@ -29,7 +29,7 @@
             </ul>
             <article id="profile" class="tab-pane">
                 <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 table-responsive">
                 {% block profile_details %}
                     <img class="mugshot pull-right" src="{{ profile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
                     <dl>
@@ -66,6 +66,16 @@
                             {% endif %}
                         {% endif %}
                     </dl>
+                    <table class="table table-stripped">
+                        {% for meta in profile.get_metas %}
+                            <tr>
+                                <td>{{ meta.tipo }}</td>
+                                <td>{{ meta.peso }}</td>
+                                <td>{{ meta.logro }}</td>
+                                <td>{{ meta.ponderacion }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
                     </div>
                     </div>
                 {% endblock %}
