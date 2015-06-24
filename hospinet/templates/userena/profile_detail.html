@@ -81,11 +81,11 @@
                         {% for meta in profile.get_metas %}
                             <tr>
                                 <td>{{ meta.tipo }}</td>
-                                <td>{{ meta.peso }}</td>
-                                <td>{{ meta.meta }}</td>
-                                <td>{{ meta.logro }}</td>
-                                <td>{{ meta.ponderacion }}</td>
-                                <td>{{ meta.logro_ponderado }}</td>
+                                <td>{{ meta.peso|floatformat:2 }}</td>
+                                <td>{{ meta.meta|floatformat:2 }}</td>
+                                <td>{{ meta.logro|floatformat:2 }}</td>
+                                <td>{{ meta.ponderacion|floatformat:2 }}</td>
+                                <td>{{ meta.logro_ponderado|floatformat:2 }}</td>
                             </tr>
                         {% endfor %}
                     </table>
