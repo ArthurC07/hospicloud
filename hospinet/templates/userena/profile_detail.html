@@ -67,6 +67,16 @@
                         {% endif %}
                     </dl>
                     <table class="table table-stripped">
+                        <caption>Balanced Score Card</caption>
+                        <thead>
+                            <tr>
+                                <th>Indicador</th>
+                                <th>Peso</th>
+                                <th>Meta</th>
+                                <th>Logro</th>
+                                <th>Ponderaci&oacute;n</th>
+                            </tr>
+                        </thead>
                         {% for meta in profile.get_metas %}
                             <tr>
                                 <td>{{ meta.tipo }}</td>
