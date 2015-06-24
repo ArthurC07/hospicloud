@@ -479,3 +479,6 @@ User.consultorios_activos = property(
 
 Persona.consultas_activas = property(
     lambda p: Consulta.objects.filter(persona=p, activa=True))
+
+Persona.ultima_consulta = property(
+    lambda p: Consulta.objects.filter(persona=p).last())

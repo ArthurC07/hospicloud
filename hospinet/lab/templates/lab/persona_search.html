@@ -34,7 +34,10 @@
                                     <small>{{ persona.obtener_edad }} a&ntilde;os
                                     </small>
                                 </h3>
-                                <p>{{ persona.get_sexo_display }}</p>
+                                <p>
+                                    {{ persona.get_sexo_display }}
+                                    Ultima Consulta: {{ persona.ultima_consulta.created }}
+                                </p>
                                 <a class="btn btn-primary"
                                    href="{% url 'lab-result-add' persona.id %}">Agregar resultado <i
                                         class="fa fa-arrow-right"></i></a>
