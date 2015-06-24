@@ -23,10 +23,12 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
+
 from tastypie.models import create_api_key
 
 from guardian.shortcuts import assign_perm
 
+from emergency.models import Emergencia
 from inventory.models import Inventario, ItemTemplate
 from persona.models import Persona
 
@@ -88,10 +90,29 @@ class UserProfile(UserenaBaseProfile):
                      }
 
             datos['ponderacion'] = meta.ponderacion(datos['logro'])
-            datos['logro_ponderado'] = meta.logro_ponderado(datos['ponderacion'])
+            datos['logro_ponderado'] = meta.logro_ponderado(
+                datos['ponderacion'])
             metas.append(datos)
 
         return metas
+
+    def get_current_month_emergencies(self):
+
+        now = timezone.now()
+        fin = date(now.year, now.month,
+                   calendar.monthrange(now.year, now.month)[1])
+        inicio = date(now.year, now.month, 1)
+
+        fin = datetime.combine(fin, time.max)
+        inicio = datetime.combine(inicio, time.min)
+
+        fin = timezone.make_aware(fin, timezone.get_current_timezone())
+        inicio = timezone.make_aware(inicio,
+                                     timezone.get_current_timezone())
+
+        return Emergencia.objects.filter(usuario=self.user,
+                                         created__range=(inicio, fin)
+                                         ).count()
 
 
 User.userena_signup = property(

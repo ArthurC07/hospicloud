@@ -24,8 +24,8 @@
     <section class="tabbable">
         <div class="tab-content">
             <ul class="nav nav-tabs">
-                <li><a href="#profile" data-toggle="tab">Perfil de Usuario</a></li>
-                <li><a class="active" href="#persona" data-toggle="tab">Datos Personales</a></li>
+                <li><a class="active" href="#profile" data-toggle="tab">Perfil de Usuario</a></li>
+                <li><a href="#persona" data-toggle="tab">Datos Personales</a></li>
             </ul>
             <article id="profile" class="tab-pane">
                 <div class="row">
@@ -89,6 +89,13 @@
                             </tr>
                         {% endfor %}
                     </table>
+                    <dl>
+                    {% for escala in profile.get_escalas %}
+                        <strong>Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}</strong>
+                        <br>
+                        <strong>Comisi&oacute;n:</strong> {{ escala.comision }}
+                    {% endfor %}
+                    </dl>
                     </div>
                     </div>
                 {% endblock %}
