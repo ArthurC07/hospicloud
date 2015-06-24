@@ -66,9 +66,10 @@
                             {% endif %}
                         {% endif %}
                     </dl>
-                    <table class="table table-stripped">
-                        <caption>Balanced Score Card</caption>
-                        <thead>
+                    {% with profile.get_metas as goal %}
+                        <table class="table table-stripped">
+                            <caption>Balanced Score Card</caption>
+                            <thead>
                             <tr>
                                 <th>Indicador</th>
                                 <th>Peso</th>
@@ -77,28 +78,29 @@
                                 <th>Ponderaci&oacute;n</th>
                                 <th>Logro Ponderado</th>
                             </tr>
-                        </thead>
-                        {% for meta in profile.get_metas %}
-                            <tr>
-                                <td>{{ meta.tipo }}</td>
-                                <td>{{ meta.peso|floatformat:2 }}</td>
-                                <td>{{ meta.meta|floatformat:2 }}</td>
-                                <td>{{ meta.logro|floatformat:2 }}</td>
-                                <td>{{ meta.ponderacion|floatformat:2 }}</td>
-                                <td>{{ meta.logro_ponderado|floatformat:2 }}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                    <div>
-                    {% for escala in profile.get_escalas %}
-                        <strong>Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}</strong>
-                        <br>
-                        <strong>Comisi&oacute;n:</strong> {{ escala.comision }}
-                    {% empty %}
-                        <strong>No se Alcanz&oacute; ninguna escala</strong>
-                    {% endfor %}
-                    Emergencias Atendidas: {{ profile.user.get_current_month_emergencies }}
-                    </div>
+                            </thead>
+                            {% for meta in goal.metas %}
+                                <tr>
+                                    <td>{{ meta.tipo }}</td>
+                                    <td>{{ meta.peso|floatformat:2 }}</td>
+                                    <td>{{ meta.meta|floatformat:2 }}</td>
+                                    <td>{{ meta.logro|floatformat:2 }}</td>
+                                    <td>{{ meta.ponderacion|floatformat:2 }}</td>
+                                    <td>{{ meta.logro_ponderado|floatformat:2 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <div>
+                            {% for escala in goal.escalas %}
+                                <strong>Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}</strong>
+                                <br>
+                                <strong>Comisi&oacute;n:</strong> {{ escala.comision }}
+                            {% empty %}
+                                <strong>No se Alcanz&oacute; ninguna escala</strong>
+                            {% endfor %}
+                            Emergencias Atendidas: {{ profile.user.get_current_month_emergencies }}
+                        </div>
+                    {% endwith %}
                     </div>
                     </div>
                 {% endblock %}

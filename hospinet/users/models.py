@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
 from datetime import date, datetime, time
+from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -81,7 +82,9 @@ class UserProfile(UserenaBaseProfile):
         inicio = timezone.make_aware(inicio,
                                      timezone.get_current_timezone())
 
-        metas = []
+        goal = {}
+        total = Decimal()
+        goal['metas'] = []
         for meta in self.bsc.meta_set.all():
             datos = {'logro': meta.logro(self.user, inicio, fin),
                      'tipo': meta.get_tipo_meta_display(),
@@ -92,9 +95,12 @@ class UserProfile(UserenaBaseProfile):
             datos['ponderacion'] = meta.ponderacion(datos['logro'])
             datos['logro_ponderado'] = meta.logro_ponderado(
                 datos['ponderacion'])
-            metas.append(datos)
+            total += datos['logro_ponderado']
+            goal['metas'].append(datos)
 
-        return metas
+        goal['escalas'] = self.bsc.get_escala(total)
+
+        return goal
 
     def get_current_month_emergencies(self):
 
