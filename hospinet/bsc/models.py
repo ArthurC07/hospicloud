@@ -73,7 +73,7 @@ class Meta(TimeStampedModel):
 
         if self.tipo_meta == self.CLIENT_FEEDBACK_PERCENTAGE:
             # TODO: Make this a calculation, there is no data for this
-            return 100
+            return 1
 
         if self.tipo_meta == self.INCAPACIDAD_PERCENTAGE:
             return self.average_incapacidad(usuario, inicio, fin)
@@ -127,9 +127,17 @@ class Meta(TimeStampedModel):
     def average_medical_order(self, usuario, inicio, fin):
         ordenes = self.orden_medicas(usuario, inicio, fin).count()
         consultas = self.consultas(usuario, inicio, fin).count()
+
+        if consultas == 0:
+            return 1
+
         return float(ordenes) / consultas
 
     def average_incapacidad(self, usuario, inicio, fin):
         incapacidades = self.incapacidades(usuario, inicio, fin).count()
         consultas = self.consultas(usuario, inicio, fin).count()
+
+        if consultas == 0:
+            return 1
+
         return float(incapacidades) / consultas
