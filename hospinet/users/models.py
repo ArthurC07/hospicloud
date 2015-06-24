@@ -66,7 +66,7 @@ class UserProfile(UserenaBaseProfile):
     def get_metas(self):
         if self.bsc is None:
             return []
-        
+
         now = timezone.now()
         fin = date(now.year, now.month,
                    calendar.monthrange(now.year, now.month)[1])

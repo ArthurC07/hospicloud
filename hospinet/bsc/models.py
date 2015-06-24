@@ -71,6 +71,10 @@ class Meta(TimeStampedModel):
         if self.tipo_meta == self.PRESCRIPTION_PERCENTAGE:
             return self.average_medical_order(usuario, inicio, fin)
 
+        if self.tipo_meta == self.CLIENT_FEEDBACK_PERCENTAGE:
+            # TODO: Make this a calculation, there is no data for this
+            return 100
+
     def ponderacion(self, logro):
         if self.basado_en_tiempo:
             return self.meta / logro
