@@ -15,7 +15,7 @@
         <section class="col-md-12 main-content">
             <ul>
                 {% for profile in object.usuarios.all %}
-                    <li><a href="{% url 'scorecard-user' profile.user.id %}">{{ userprofile }}</a></li>
+                    <li><a href="{% url 'scorecard-user' profile.user.id %}">{{ profile }}</a></li>
                 {% empty %}
                     <li>No hay usuarios agregados</li>
                 {% endfor %}
