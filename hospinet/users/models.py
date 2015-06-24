@@ -88,6 +88,9 @@ class UserProfile(UserenaBaseProfile):
                      }
 
             datos['ponderacion'] = meta.ponderacion(datos['logro'])
+            metas.append(datos)
+
+        return metas
 
 
 User.userena_signup = property(
