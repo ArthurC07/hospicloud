@@ -75,6 +75,9 @@ class Meta(TimeStampedModel):
             # TODO: Make this a calculation, there is no data for this
             return 100
 
+        if self.tipo_meta == self.INCAPACIDAD_PERCENTAGE:
+            return self.average_incapacidad(usuario, inicio, fin)
+
     def ponderacion(self, logro):
         if self.basado_en_tiempo:
             return self.meta / logro
