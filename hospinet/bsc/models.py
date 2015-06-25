@@ -20,7 +20,6 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
-
 from django_extensions.db.models import TimeStampedModel
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
@@ -45,6 +44,15 @@ class ScoreCard(TimeStampedModel):
                                         puntaje_inicial__gte=score)
         return escalas.all()
 
+    def get_extras(self, usuario, inicio, fin):
+        extras = []
+        for extra in self.extra_set.all():
+
+            if extra.cumplido(usuario, inicio, fin):
+                extras.append(extra)
+
+        return extras
+
 
 class Escala(TimeStampedModel):
     score_card = models.ForeignKey(ScoreCard)
@@ -55,12 +63,47 @@ class Escala(TimeStampedModel):
     comision = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
 
+class Extra(TimeStampedModel):
+    EMERGENCIA = 'ER'
+    EXTRAS = (
+        (Emergencia, u'Emergencias Atendidas'),
+    )
+    tipo_extra = models.CharField(max_length=3, choices=EXTRAS,
+                                  default=Emergencia)
+    score_card = models.ForeignKey(ScoreCard)
+    inicio_de_rango = models.DecimalField(max_digits=11, decimal_places=2,
+                                          default=0)
+    fin_de_rango = models.DecimalField(max_digits=11, decimal_places=2,
+                                       default=0)
+    comision = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+
+    def cumplido(self, usuario, inicio, fin):
+
+        cantidad = self.cantidad(usuario, inicio, fin)
+
+        if self.inicio_de_rango <= cantidad <= self.fin_de_rango:
+            return True
+
+        return False
+
+    def cantidad(self, usuario, inicio, fin):
+        if self.tipo_extra == self.EMERGENCIA:
+            return self.emergencias().count()
+
+        return Decimal()
+
+    def emergencias(self, usuario, inicio, fin):
+        return Emergencia.objects.filter(usuario=usuario,
+                                         created__range=(inicio, fin))
+
+
 class Meta(TimeStampedModel):
     CONSULTA_TIME = 'CT'
     PRE_CONSULTA_TIME = 'PCT'
     PRESCRIPTION_PERCENTAGE = 'PP'
     INCAPACIDAD_PERCENTAGE = 'IP'
     CLIENT_FEEDBACK_PERCENTAGE = 'CFP'
+    CONSULTA_REMITIDA = 'CR'
     METAS = (
         (CONSULTA_TIME, u'Tiempo de Consulta'),
         (PRE_CONSULTA_TIME, u'Tiempo en Preconsulta'),
@@ -91,8 +134,13 @@ class Meta(TimeStampedModel):
             # TODO: Make this a calculation, there is no data for this
             return 1
 
+        if self.tipo_meta == self.CONSULTA_REMITIDA:
+            return self.consulta_remitida(usuario, inicio, fin)
+
         if self.tipo_meta == self.INCAPACIDAD_PERCENTAGE:
             return self.average_incapacidad(usuario, inicio, fin)
+
+        return Decimal()
 
     def ponderacion(self, logro):
         if self.basado_en_tiempo or self.logro_menor_que_meta:
@@ -155,10 +203,20 @@ class Meta(TimeStampedModel):
         ordenes = self.orden_medicas(usuario, inicio, fin).count()
         consultas = self.consultas(usuario, inicio, fin).count()
 
-        return float(ordenes) / max(consultas, 1) * 100
+        return Decimal(ordenes) / max(consultas, 1) * 100
 
     def average_incapacidad(self, usuario, inicio, fin):
         incapacidades = self.incapacidades(usuario, inicio, fin).count()
         consultas = self.consultas(usuario, inicio, fin).count()
 
-        return float(incapacidades) / max(consultas, 1)
+        return Decimal(incapacidades) / max(consultas, 1)
+
+    def consulta_remitida(self, usuario, inicio, fin):
+
+        remitidas = self.consultas(usuario, inicio, fin).filter(
+            remitida=True
+        ).count()
+
+        consultas = self.consultas(usuario, inicio, fin).count()
+
+        return Decimal(remitidas) / max(consultas, 1)

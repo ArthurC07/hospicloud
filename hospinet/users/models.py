@@ -85,6 +85,7 @@ class UserProfile(UserenaBaseProfile):
         goal = {}
         total = Decimal()
         goal['metas'] = []
+        extras = Decimal()
         for meta in self.bsc.meta_set.all():
             datos = {'logro': meta.logro(self.user, inicio, fin),
                      'tipo': meta.get_tipo_meta_display(),
@@ -99,6 +100,7 @@ class UserProfile(UserenaBaseProfile):
             goal['metas'].append(datos)
 
         goal['escalas'] = self.bsc.get_escala(total)
+        goal['extras'] = self.bsc.get_extras(self.user, inicio, fin)
         goal['total'] = total
 
         return goal
