@@ -138,7 +138,7 @@ class Meta(TimeStampedModel):
             minutos = Decimal(segundos) / 60
             tiempos.append(minutos)
 
-        return float(sum(tiempos)) / max(len(tiempos), 1)
+        return Decimal(sum(tiempos)) / max(len(tiempos), 1)
 
     def average_preconsulta(self, usuario, inicio, fin):
         tiempos = []
@@ -148,13 +148,13 @@ class Meta(TimeStampedModel):
             tiempos.append(minutos)
             tiempos.append(minutos)
 
-        return float(sum(tiempos)) / max(len(tiempos), 1)
+        return Decimal(sum(tiempos)) / max(len(tiempos), 1)
 
     def average_medical_order(self, usuario, inicio, fin):
         ordenes = self.orden_medicas(usuario, inicio, fin).count()
         consultas = self.consultas(usuario, inicio, fin).count()
 
-        return float(ordenes) / max(consultas, 1)
+        return float(ordenes) / max(consultas, 1) * 100
 
     def average_incapacidad(self, usuario, inicio, fin):
         incapacidades = self.incapacidades(usuario, inicio, fin).count()
