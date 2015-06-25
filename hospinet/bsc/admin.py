@@ -17,7 +17,7 @@
 from django.contrib import admin
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
-from bsc.models import Meta, ScoreCard, Escala
+from bsc.models import Meta, ScoreCard, Escala, Extra
 
 
 class MetaAdmin(ForeignKeyAutocompleteAdmin):
@@ -29,7 +29,12 @@ class EscalaAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ('score_card', 'puntaje_inicial', 'puntaje_final', 'comision')
     ordering = ['score_card', 'puntaje_inicial', 'puntaje_final', 'comision']
 
+class ExtraAdmin(ForeignKeyAutocompleteAdmin):
+    list_display = ('score_card', 'inicio_de_rango', 'fin_de_rango', 'comision')
+    ordering = ['score_card', 'inicio_de_rango', 'fin_de_rango', 'comision']
+
 
 admin.site.register(Meta, MetaAdmin)
 admin.site.register(ScoreCard)
 admin.site.register(Escala, EscalaAdmin)
+admin.site.register(Extra, ExtraAdmin)
