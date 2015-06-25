@@ -74,6 +74,7 @@ class Meta(TimeStampedModel):
     peso = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     meta = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     basado_en_tiempo = models.BooleanField(default=False)
+    logro_menor_que_meta = models.BooleanField(default=False)
 
     def logro(self, usuario, inicio, fin):
 
@@ -94,7 +95,7 @@ class Meta(TimeStampedModel):
             return self.average_incapacidad(usuario, inicio, fin)
 
     def ponderacion(self, logro):
-        if self.basado_en_tiempo:
+        if self.basado_en_tiempo or self.logro_menor_que_meta:
             return self.meta / max(Decimal(logro), 1)
         return Decimal(logro) / max(self.meta, 1)
 
