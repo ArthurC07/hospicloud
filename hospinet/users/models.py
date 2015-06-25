@@ -99,6 +99,7 @@ class UserProfile(UserenaBaseProfile):
             goal['metas'].append(datos)
 
         goal['escalas'] = self.bsc.get_escala(total)
+        goal['total'] = total
 
         return goal
 

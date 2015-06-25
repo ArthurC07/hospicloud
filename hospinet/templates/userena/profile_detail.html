@@ -89,8 +89,26 @@
                                     <td>{{ meta.logro_ponderado|floatformat:2 }}</td>
                                 </tr>
                             {% endfor %}
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5">Total:</td>
+                                    <td>{{ goal.total }}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                         <div>
+                            <table class="table table-stripped">
+                                <tr>
+                                    <th>Rango</th>
+                                    <th>Comisi&oacute;n</th>
+                                </tr>
+                            {% for escala in profile.bsc.escalas_set.all %}
+                                <tr>
+                                    <td>De {{ escala.puntaje_inicial }} a {{ escala.puntaje_final }}</td>
+                                    <td>{{ escala.comision }}</td>
+                                </tr>
+                            {% endfor %}
+                            </table>
                             {% for escala in goal.escalas %}
                                 <strong>Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}</strong>
                                 <br>
@@ -98,6 +116,7 @@
                             {% empty %}
                                 <strong>No se Alcanz&oacute; ninguna escala</strong>
                             {% endfor %}
+                            <br>
                             Emergencias Atendidas: {{ profile.user.get_current_month_emergencies }}
                         </div>
                     {% endwith %}
