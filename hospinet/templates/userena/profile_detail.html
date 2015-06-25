@@ -117,7 +117,7 @@
                                 <strong>No se Alcanz&oacute; ninguna escala</strong>
                             {% endfor %}
                             <br>
-                            Emergencias Atendidas: {{ profile.user.get_current_month_emergencies }}
+                            Emergencias Atendidas: {{ profile.get_current_month_emergencies }}
                         </div>
                     {% endwith %}
                     </div>
