@@ -102,7 +102,7 @@
                                     <th>Rango</th>
                                     <th>Comisi&oacute;n</th>
                                 </tr>
-                            {% for escala in profile.bsc.escalas_set.all %}
+                            {% for escala in profile.bsc.escala_set.all %}
                                 <tr>
                                     <td>De {{ escala.puntaje_inicial }} a {{ escala.puntaje_final }}</td>
                                     <td>{{ escala.comision }}</td>
