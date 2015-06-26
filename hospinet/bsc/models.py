@@ -66,7 +66,7 @@ class Escala(TimeStampedModel):
 class Extra(TimeStampedModel):
     EMERGENCIA = 'ER'
     EXTRAS = (
-        (Emergencia, u'Emergencias Atendidas'),
+        (EMERGENCIA, u'Emergencias Atendidas'),
     )
     tipo_extra = models.CharField(max_length=3, choices=EXTRAS,
                                   default=Emergencia)
