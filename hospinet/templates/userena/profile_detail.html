@@ -102,11 +102,17 @@
                                 <tr>
                                     <th>Rango</th>
                                     <th>Comisi&oacute;n</th>
+                                    <th>Alcanzado</th>
                                 </tr>
                             {% for escala in profile.bsc.escala_set.all %}
                                 <tr>
                                     <td>De {{ escala.puntaje_inicial }} a {{ escala.puntaje_final }}</td>
                                     <td>{{ escala.comision }}</td>
+                                    <td>
+                                        {% if escala.puntaje_inicial <= goal.total and goal.total <= escala.puntaje_final %}
+                                        {{ goal.total }}
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </table>

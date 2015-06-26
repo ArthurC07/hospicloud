@@ -88,7 +88,7 @@ class Extra(TimeStampedModel):
 
     def cantidad(self, usuario, inicio, fin):
         if self.tipo_extra == self.EMERGENCIA:
-            return self.emergencias().count()
+            return self.emergencias(usuario, inicio, fin).count()
 
         return Decimal()
 
