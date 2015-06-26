@@ -124,7 +124,7 @@
                                 </tr>
                                 {% for extra in profile.bsc.extra_set.all %}
                                     <tr>
-                                        <td>De {{ extra.inicio_de_rango }} a {{ escala.fin_de_rango }}</td>
+                                        <td>De {{ extra.inicio_de_rango }} a {{ extra.fin_de_rango }}</td>
                                         <td>{{ extra.comision }}</td>
                                     </tr>
                                 {% endfor %}
