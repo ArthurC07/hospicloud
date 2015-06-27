@@ -107,6 +107,7 @@ class UserProfile(UserenaBaseProfile):
                 'logro': extra.cantidad(self.user, inicio, fin),
             }
             goal['extras'].append(datos)
+        goal['extra'] = self.bsc.get_extras(self.user, inicio, fin)
         goal['total'] = total
 
         return goal
