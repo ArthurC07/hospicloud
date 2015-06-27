@@ -110,6 +110,7 @@ class Meta(TimeStampedModel):
         (PRESCRIPTION_PERCENTAGE, u'Porcentaje de Recetas'),
         (INCAPACIDAD_PERCENTAGE, u'Porcentaje de Incapacidades'),
         (CLIENT_FEEDBACK_PERCENTAGE, u'Porcentaje de Aprobación del Cliente'),
+        (CONSULTA_REMITIDA, u'Consulta Remitida a Especialista'),
     )
     score_card = models.ForeignKey(ScoreCard)
     tipo_meta = models.CharField(max_length=3, choices=METAS,
