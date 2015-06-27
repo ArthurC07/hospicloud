@@ -145,7 +145,7 @@
                                 </tr>
                                 {% for dato in goal.extras %}
                                     <tr>
-                                        <td>{{ dato.extra.tipo_extra }} de {{ dato.extra.inicio_de_rango }} a {{ dato.extra.fin_de_rango }}</td>
+                                        <td>{{ dato.extra.get_tipo_extra_display }} de {{ dato.extra.inicio_de_rango }} a {{ dato.extra.fin_de_rango }}</td>
                                         <td>{{ dato.extra.comision }}</td>
                                         <td>
                                             {% if dato.extra.inicio_de_rango <= dato.logro and dato.logro <= dato.extra.fin_de_rango %}
