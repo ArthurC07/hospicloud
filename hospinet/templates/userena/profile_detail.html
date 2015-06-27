@@ -131,7 +131,7 @@
                                     {% for extra in goal.extra %}
                                         <strong>
                                             Bonificaci&oacute;n Obtenida: {{ extra.tipo_extra }} {{ extra.get_tipo_extra_display }}
-                                            de {{ escala.inicio_de_rango }} al {{ escala.fin_de_rango }}
+                                            de {{ extra.inicio_de_rango }} al {{ extra.fin_de_rango }}
                                         </strong>
                                         <br>
                                         <strong>Comisi&oacute;n:</strong> {{ extra.comision }}
@@ -148,8 +148,8 @@
                                         <td>{{ dato.extra.tipo_extra }} de {{ dato.extra.inicio_de_rango }} a {{ dato.extra.fin_de_rango }}</td>
                                         <td>{{ dato.extra.comision }}</td>
                                         <td>
-                                            {% if dato.extra.puntaje_inicial <= dato.logro and dato.logro <= dato.extra.puntaje_final %}
-                                                {{ goal.total }}
+                                            {% if dato.extra.inicio_de_rango <= dato.logro and dato.logro <= dato.extra.fin_de_rango %}
+                                                {{ goal.extra }}
                                             {% endif %}
                                         </td>
                                     </tr>
