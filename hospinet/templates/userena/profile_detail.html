@@ -68,7 +68,16 @@
                     </dl>
                     {% with profile.get_metas as goal %}
                         <table class="table table-stripped">
-                            <caption>Balanced Score Card</caption>
+                            <caption>
+                                Balanced Score Card <br>
+                                {% for escala in goal.escalas %}
+                                    <strong>Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}</strong>
+                                    <br>
+                                    <strong>Comisi&oacute;n:</strong> {{ escala.comision }}
+                                {% empty %}
+                                    <strong>No se Alcanz&oacute; ninguna escala</strong>
+                                {% endfor %}
+                            </caption>
                             <thead>
                             <tr>
                                 <th>Indicador</th>
@@ -117,34 +126,35 @@
                             {% endfor %}
                             </table>
                             <table class="table table-stripped">
-                                <caption>Otras Bonificaciones Disponibles</caption>
+                                <caption>
+                                    Otras Bonificaciones Disponibles<br>
+                                    {% for extra in goal.extras %}
+                                        <strong>
+                                            Bonificaci&oacute;n Obtenida: {{ extra.get_tipo_extra_display }}
+                                            de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}
+                                        </strong>
+                                        <br>
+                                        <strong>Comisi&oacute;n:</strong> {{ extra.comision }}
+                                    {% empty %}
+                                    {% endfor %}
+                                </caption>
                                 <tr>
                                     <th>Rango</th>
                                     <th>Comisi&oacute;n</th>
+                                    <th>Alcanzado</th>
                                 </tr>
-                                {% for extra in profile.bsc.extra_set.all %}
+                                {% for dato in goal.extras %}
                                     <tr>
-                                        <td>De {{ extra.inicio_de_rango }} a {{ extra.fin_de_rango }}</td>
-                                        <td>{{ extra.comision }}</td>
+                                        <td>De {{ dato.extra.inicio_de_rango }} a {{ dato.extra.fin_de_rango }}</td>
+                                        <td>{{ dato.extra.comision }}</td>
+                                        <td>
+                                            {% if dato.extra.puntaje_inicial <= dato.logro and dato.logro <= dato.extra.puntaje_final %}
+                                                {{ goal.total }}
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </table>
-                            {% for escala in goal.escalas %}
-                                <strong>Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}</strong>
-                                <br>
-                                <strong>Comisi&oacute;n:</strong> {{ escala.comision }}
-                            {% empty %}
-                                <strong>No se Alcanz&oacute; ninguna escala</strong>
-                            {% endfor %}
-                            {% for extra in goal.extras %}
-                                <strong>
-                                    Bonificaci&oacute;n Obteneida: {{ extra.get_tipo_extra_display }}
-                                    de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}
-                                </strong>
-                                <br>
-                                <strong>Comisi&oacute;n:</strong> {{ extra.comision }}
-                            {% empty %}
-                            {% endfor %}
                             <br>
                             Emergencias Atendidas: {{ profile.get_current_month_emergencies }}
                         </div>
