@@ -47,7 +47,8 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             EsperaTerminadaRedirectView, ConsultaDetailView,
                             ConsultaTerminadaRedirectView,
                             IncapacidadUpdateView, EsperaConsultorioCreateView,
-                            ConsultaPeriodoView, ConsultaRemitirView)
+                            ConsultaPeriodoView, ConsultaRemitirView,
+                            ConsultaEmergenciaRedirectView)
 
 
 urlpatterns = patterns('',
