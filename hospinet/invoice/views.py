@@ -52,7 +52,7 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            PagoForm, PersonaForm, TurnoCajaForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
-                           TipoPagoPeriodoForm)
+                           TipoPagoPeriodoForm, PeriodoCiudadForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -136,6 +136,9 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['ventaareaperiodoform'] = PeriodoAreaForm(prefix='venta-area')
         context['ventaareaperiodoform'].set_action('periodo-venta-area')
+
+        context['ciudadform'] = PeriodoCiudadForm(prefix='ciudad-periodo')
+        context['ciudadform'].set_action('periodo-ciudad')
 
         return context
 
@@ -1319,6 +1322,33 @@ class VentaAreaListView(ListView):
         context['fin'] = self.fin
         context['total'] = self.get_queryset().aggregate(
             total=Sum('total')
+        )['total']
+        return context
+
+
+class CiudadPeriodoListView(ListView):
+    context_object_name = 'recibos'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoCiudadForm(request.GET, prefix='ciudad-periodo')
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+            self.ciudad = self.form.cleaned_data['ciudad']
+
+        return super(CiudadPeriodoListView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Recibo.objects.filter(created__range=(self.inicio, self.fin),
+                                     nulo=False,
+                                     ciudad=self.ciudad)
+
+    def get_context_data(self, **kwargs):
+        context = super(CiudadPeriodoListView, self).get_context_data(**kwargs)
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = self.get_queryset().aggregate(
+            total=Sum('ventas__total')
         )['total']
         return context
 

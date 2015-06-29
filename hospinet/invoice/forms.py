@@ -31,6 +31,7 @@ from spital.models import Admision
 from imaging.models import Examen
 from inventory.models import ItemTemplate, ItemType
 from users.mixins import HiddenUserForm
+from users.models import Ciudad
 
 
 class PersonaForm(FieldSetModelFormMixinNoButton):
@@ -233,8 +234,16 @@ class TipoPagoPeriodoForm(PeriodoForm):
 
 
 class PeriodoAreaForm(PeriodoForm):
-    area = ModelChoiceField(name="", model="",
-                            queryset=ItemType.objects.all())
+    area = ModelChoiceField(name="", model="", queryset=ItemType.objects.all())
+
+
+class PeriodoCiudadForm(PeriodoForm):
+    ciudad = ModelChoiceField(name="", model="", queryset=Ciudad.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(PeriodoCiudadForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Recibos por Periodo y Ciudad',
+                                      *self.field_names)
 
 
 class PagoStatusForm(FieldSetModelFormMixin):
