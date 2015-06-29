@@ -5,19 +5,45 @@
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="col-md-6">
+        <section class="col-md-9">
             <div class="main-content col-md-12">
                 {% crispy form %}
             </div>
         </section>
         <aside class="col-md-3">
-            ‏<div class="toolbox col-md-12">
+            ‏
+            <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-list">
+                        <li><a href="{{ consulta.persona.get_absolute_url }}">Volver
+                            al Paciente</a></li>
                     </ul>
                 </nav>
             </div>
         </aside>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content table-responsive">
+            <table class="table table-striped">
+                <caption>Cargos y Honorarios</caption>
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Cargo</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cargo in consulta.cargos.all %}
+                    <tr>
+                        <td>{{ cargo.created }}</td>
+                        <td>{{ cargo.tipo }}</td>
+                        <td>{{ cargo.item }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}
 {% block scripts %}

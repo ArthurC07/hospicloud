@@ -333,7 +333,7 @@ class Cargo(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.consulta.persona.get_absolute_url()
+        return reverse('consultorio-cargo-agregar', args=[self.consulta.id])
 
 
 class NotaEnfermeria(TimeStampedModel):
@@ -480,3 +480,6 @@ User.consultorios_activos = property(
 
 Persona.consultas_activas = property(
     lambda p: Consulta.objects.filter(persona=p, activa=True))
+
+Persona.ultima_consulta = property(
+    lambda p: Consulta.objects.filter(persona=p).last())

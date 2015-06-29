@@ -22,6 +22,7 @@
             <li role="presentation"><a role="menuitem" href="{% url 'consulta-remitir' consulta.id %}"><i class="fa fa-stethoscope"></i> Remitir A Especialista</a></li>
         </ul>
         <a class="btn btn-danger" href="{% url 'clinique-consulta-terminada' consulta.id %}">Terminar Consulta</a>
+        <a class="btn btn-warning" href="{% url 'consulta-emergencia' consulta.id %}">Enviar a Emergencia</a>
     </div>
     <table class="table table-striped">
         <caption>Cargos y Honorarios</caption>

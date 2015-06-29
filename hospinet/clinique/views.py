@@ -17,6 +17,7 @@
 import calendar
 from collections import defaultdict
 from datetime import time, timedelta
+from constance import config
 
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -46,7 +47,8 @@ from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              DiagnosticoClinico, Cargo, OrdenMedica,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
                              Incapacidad, Reporte, Remision)
-from inventory.models import ItemTemplate, Inventario
+from emergency.models import Emergencia
+from inventory.models import ItemTemplate, Inventario, TipoVenta
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
     AntecedenteFamiliarForm, AntecedenteObstetricoForm, EstiloVidaForm, \
@@ -962,3 +964,27 @@ class ConsultaRemitirView(RedirectView):
         consulta.save()
         messages.info(self.request, u'¡Se remitio la consulta a especialista!')
         return consulta.get_absolute_url()
+
+
+class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+        consulta.activa = False
+        consulta.final = timezone.now()
+        consulta.save()
+        lectura = consulta.persona.lecturas_signos.last()
+        emergencia = Emergencia()
+        emergencia.persona = consulta.persona
+        emergencia.historia_enfermedad_actual = consulta.HEA
+        if lectura is not None:
+            emergencia.frecuencia_respiratoria = lectura.respiracion
+            emergencia.temperatura = lectura.temperatura
+            emergencia.presion = lectura.presion_arterial_media
+        tipo = int(config.DEFAULT_VENTA_TYPE)
+        emergencia.tipo_de_venta = TipoVenta.objects.get(pk=tipo)
+        emergencia.save()
+
+        messages.info(self.request, u'¡Se Envio el Paciente a Emergencias!')
+        return emergencia.get_absolute_url()
