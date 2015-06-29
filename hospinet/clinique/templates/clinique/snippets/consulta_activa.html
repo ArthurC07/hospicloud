@@ -19,6 +19,7 @@
             <li role="presentation"><a role="menuitem" href="{% url 'consultorio-incapacidad-agregar' consulta.persona.id consulta.id %}">Agregar Incapacidad</a></li>
             <li role="presentation"><a role="menuitem" href="{% url 'consultorio-diagnostico-agregar' consulta.persona.id consulta.id %}">Agregar Diagnóstico</a></li>
             <li role="presentation"><a role="menuitem" href="{% url 'consultorio-om-agregar' consulta.persona.id consulta.id %}"><i class="fa fa-stethoscope"></i> Agregar Orden M&eacute;dica</a></li>
+            <li role="presentation"><a role="menuitem" href="{% url 'consulta-remitir' consulta.id %}"><i class="fa fa-stethoscope"></i> Remitir A Especialista</a></li>
         </ul>
         <a class="btn btn-danger" href="{% url 'clinique-consulta-terminada' consulta.id %}">Terminar Consulta</a>
     </div>
