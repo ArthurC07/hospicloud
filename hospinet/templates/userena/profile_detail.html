@@ -18,18 +18,18 @@
   <div class="col-md-12 main-content">
       <div class="col-md-12">
           <section class="page-header">
-              <h1>{{ user.get_full_name }} <small>{{ user.username }}</small></h1>
+              <h1>{{ profile.user.get_full_name }} <small>{{ profile.user.username }}</small></h1>
           </section>
       </div>
     <section class="tabbable">
         <div class="tab-content">
             <ul class="nav nav-tabs">
-                <li><a href="#profile" data-toggle="tab">Perfil de Usuario</a></li>
-                <li><a class="active" href="#persona" data-toggle="tab">Datos Personales</a></li>
+                <li><a class="active" href="#profile" data-toggle="tab">Perfil de Usuario</a></li>
+                <li><a href="#persona" data-toggle="tab">Datos Personales</a></li>
             </ul>
             <article id="profile" class="tab-pane">
                 <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 table-responsive">
                 {% block profile_details %}
                     <img class="mugshot pull-right" src="{{ profile.get_mugshot_url }}" alt="{% trans 'Your mugshot' %}" />
                     <dl>
@@ -66,6 +66,98 @@
                             {% endif %}
                         {% endif %}
                     </dl>
+                    {% with profile.get_metas as goal %}
+                        <table class="table table-stripped">
+                            <caption>
+                                Balanced Score Card <br>
+                                {% for escala in goal.escalas %}
+                                    <strong>Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}</strong>
+                                    <br>
+                                    <strong>Comisi&oacute;n:</strong> {{ escala.comision }}
+                                {% empty %}
+                                    <strong>No se Alcanz&oacute; ninguna escala</strong>
+                                {% endfor %}
+                            </caption>
+                            <thead>
+                            <tr>
+                                <th>Indicador</th>
+                                <th>Peso</th>
+                                <th>Meta</th>
+                                <th>Logro</th>
+                                <th>Ponderaci&oacute;n</th>
+                                <th>Logro Ponderado</th>
+                            </tr>
+                            </thead>
+                            {% for meta in goal.metas %}
+                                <tr>
+                                    <td>{{ meta.tipo }}</td>
+                                    <td>{{ meta.peso|floatformat:2 }}</td>
+                                    <td>{{ meta.meta|floatformat:2 }}</td>
+                                    <td>{{ meta.logro|floatformat:2 }}</td>
+                                    <td>{{ meta.ponderacion|floatformat:2 }}</td>
+                                    <td>{{ meta.logro_ponderado|floatformat:2 }}</td>
+                                </tr>
+                            {% endfor %}
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5">Total:</td>
+                                    <td>{{ goal.total|floatformat:2 }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div>
+                            <table class="table table-stripped">
+                                <caption>Comisiones Disponibles</caption>
+                                <tr>
+                                    <th>Rango</th>
+                                    <th>Comisi&oacute;n</th>
+                                    <th>Alcanzado</th>
+                                </tr>
+                            {% for escala in profile.bsc.escala_set.all %}
+                                <tr>
+                                    <td>De {{ escala.puntaje_inicial }} a {{ escala.puntaje_final }}</td>
+                                    <td>{{ escala.comision }}</td>
+                                    <td>
+                                        {% if escala.puntaje_inicial <= goal.total and goal.total <= escala.puntaje_final %}
+                                        {{ goal.total }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                            <table class="table table-stripped">
+                                <caption>
+                                    Otras Bonificaciones Disponibles<br>
+                                    {% for extra in goal.extra %}
+                                        <strong>
+                                            Bonificaci&oacute;n Obtenida: {{ extra.tipo_extra }} {{ extra.get_tipo_extra_display }}
+                                            de {{ extra.inicio_de_rango }} al {{ extra.fin_de_rango }}
+                                        </strong>
+                                        <br>
+                                        <strong>Comisi&oacute;n:</strong> {{ extra.comision }}
+                                    {% empty %}
+                                    {% endfor %}
+                                </caption>
+                                <tr>
+                                    <th>Rango</th>
+                                    <th>Comisi&oacute;n</th>
+                                    <th>Alcanzado</th>
+                                </tr>
+                                {% for dato in goal.extras %}
+                                    <tr>
+                                        <td>{{ dato.extra.get_tipo_extra_display }} de {{ dato.extra.inicio_de_rango }} a {{ dato.extra.fin_de_rango }}</td>
+                                        <td>{{ dato.extra.comision }}</td>
+                                        <td>
+                                            {% if dato.extra.inicio_de_rango <= dato.logro and dato.logro <= dato.extra.fin_de_rango %}
+                                                {{ dato.logro }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                            <br>
+                        </div>
+                    {% endwith %}
                     </div>
                     </div>
                 {% endblock %}

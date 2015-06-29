@@ -14,6 +14,9 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+import calendar
+from datetime import date, datetime, time
+from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -21,9 +24,12 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
+
 from tastypie.models import create_api_key
+
 from guardian.shortcuts import assign_perm
 
+from emergency.models import Emergencia
 from inventory.models import Inventario, ItemTemplate
 from persona.models import Persona
 
@@ -39,7 +45,6 @@ class Ciudad(TimeStampedModel):
     fin_rango = models.CharField(max_length=100, blank=True)
 
     def __unicode__(self):
-
         return self.nombre
 
 
@@ -54,9 +59,76 @@ class UserProfile(UserenaBaseProfile):
                                    null=True)
     ciudad = models.ForeignKey(Ciudad, related_name='usuarios', blank=True,
                                null=True)
+    bsc = models.ForeignKey('bsc.ScoreCard', related_name='usuarios',
+                            blank=True,
+                            null=True)
 
     def __unicode__(self):
         return self.user.username
+
+    def get_metas(self):
+        if self.bsc is None:
+            return []
+
+        now = timezone.now()
+        fin = date(now.year, now.month,
+                   calendar.monthrange(now.year, now.month)[1])
+        inicio = date(now.year, now.month, 1)
+
+        fin = datetime.combine(fin, time.max)
+        inicio = datetime.combine(inicio, time.min)
+
+        fin = timezone.make_aware(fin, timezone.get_current_timezone())
+        inicio = timezone.make_aware(inicio,
+                                     timezone.get_current_timezone())
+
+        goal = {}
+        total = Decimal()
+        goal['metas'] = []
+        extras = Decimal()
+        for meta in self.bsc.meta_set.all():
+            datos = {'logro': meta.logro(self.user, inicio, fin),
+                     'tipo': meta.get_tipo_meta_display(),
+                     'peso': meta.peso,
+                     'meta': meta.meta
+                     }
+
+            datos['ponderacion'] = meta.ponderacion(datos['logro'])
+            datos['logro_ponderado'] = meta.logro_ponderado(
+                datos['ponderacion'])
+            total += datos['logro_ponderado']
+            goal['metas'].append(datos)
+
+        goal['escalas'] = self.bsc.get_escala(total)
+        goal['extras'] = []
+        for extra in self.bsc.extra_set.all():
+            datos = {
+                'extra': extra,
+                'logro': extra.cantidad(self.user, inicio, fin),
+            }
+            goal['extras'].append(datos)
+        goal['extra'] = self.bsc.get_extras(self.user, inicio, fin)
+        goal['total'] = total
+
+        return goal
+
+    def get_current_month_emergencies(self):
+
+        now = timezone.now()
+        fin = date(now.year, now.month,
+                   calendar.monthrange(now.year, now.month)[1])
+        inicio = date(now.year, now.month, 1)
+
+        fin = datetime.combine(fin, time.max)
+        inicio = datetime.combine(inicio, time.min)
+
+        fin = timezone.make_aware(fin, timezone.get_current_timezone())
+        inicio = timezone.make_aware(inicio,
+                                     timezone.get_current_timezone())
+
+        return Emergencia.objects.filter(usuario=self.user,
+                                         created__range=(inicio, fin)
+                                         ).count()
 
 
 User.userena_signup = property(

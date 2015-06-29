@@ -17,6 +17,7 @@
 import calendar
 from collections import defaultdict
 from datetime import time, timedelta
+from constance import config
 
 from constance import config
 from django.contrib import messages
@@ -960,6 +961,18 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context
+
+
+class ConsultaRemitirView(RedirectView):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+        consulta.remitida = True
+        consulta.save()
+        messages.info(self.request, u'¡Se remitio la consulta a especialista!')
+        return consulta.get_absolute_url()
 
 
 class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):

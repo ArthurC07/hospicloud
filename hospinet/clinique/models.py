@@ -128,6 +128,7 @@ class Consulta(TimeStampedModel):
     facturada = models.BooleanField(default=False)
     activa = models.BooleanField(default=True)
     final = models.DateTimeField(blank=True, null=True)
+    remitida = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
