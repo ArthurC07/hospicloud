@@ -239,7 +239,6 @@ class Encuesta(TimeStampedModel):
 class Pregunta(TimeStampedModel):
     encuesta = models.ForeignKey(Encuesta)
     pregunta = models.CharField(max_length=255)
-    valor = models.IntegerField(default=0)
 
     def __str__(self):
         return self.pregunta

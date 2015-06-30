@@ -41,8 +41,8 @@ class OpcionAdmin(ForeignKeyAutocompleteAdmin):
 
 
 class PreguntaAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ('encuesta', 'pregunta', 'valor')
-    ordering = ['encuesta', 'pregunta', 'valor']
+    list_display = ('encuesta', 'pregunta')
+    ordering = ['encuesta', 'pregunta']
 
 
 admin.site.register(Meta, MetaAdmin)
