@@ -19,6 +19,7 @@ from collections import defaultdict
 from datetime import time, timedelta
 from constance import config
 
+from constance import config
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
@@ -30,6 +31,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
                                   ListView, UpdateView, TemplateView,
                                   RedirectView)
+from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import FormMixin, DeleteView
@@ -324,12 +326,19 @@ class PacienteMixin(View):
         return super(PacienteMixin, self).dispatch(*args, **kwargs)
 
 
-class ConsultaMixin(View):
+class ConsultaMixin(TemplateResponseMixin):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
         self.consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
         return super(ConsultaMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ConsultaMixin, self).get_context_data(**kwargs)
+
+        context['consulta'] = self.consulta
+
+        return context
 
 
 class PacienteFormMixin(FormMixin, PacienteMixin):
@@ -342,7 +351,7 @@ class PacienteFormMixin(FormMixin, PacienteMixin):
         return initial
 
 
-class ConsultaFormMixin(FormMixin, ConsultaMixin):
+class ConsultaFormMixin(ConsultaMixin, FormMixin):
     """Permite inicializar el paciente que se utilizará en un formulario"""
 
     def get_initial(self):
@@ -513,7 +522,7 @@ class CitaAusenteView(LoginRequiredMixin, RedirectView):
         return cita.get_absolute_url()
 
 
-class EvaluacionCreateView(PersonaFormMixin, ConsultaFormMixin,
+class EvaluacionCreateView(ConsultaFormMixin, PersonaFormMixin,
                            CurrentUserFormMixin, CreateView):
     model = Evaluacion
     form_class = EvaluacionForm
@@ -921,7 +930,7 @@ class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
         return consulta.get_absolute_url()
 
 
-class ConsultaPeriodoView(TemplateView, LoginRequiredMixin):
+class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra las opciones disponibles para la aplicación"""
 
     template_name = 'clinique/consulta_list.html'
