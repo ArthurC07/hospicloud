@@ -85,7 +85,6 @@ class UserProfile(UserenaBaseProfile):
         goal = {}
         total = Decimal()
         goal['metas'] = []
-        extras = Decimal()
         for meta in self.bsc.meta_set.all():
             datos = {'logro': meta.logro(self.user, inicio, fin),
                      'tipo': meta.get_tipo_meta_display(),

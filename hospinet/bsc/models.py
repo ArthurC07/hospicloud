@@ -210,7 +210,7 @@ class Meta(TimeStampedModel):
         incapacidades = self.incapacidades(usuario, inicio, fin).count()
         consultas = self.consultas(usuario, inicio, fin).count()
 
-        return Decimal(incapacidades) / max(consultas, 1)
+        return (Decimal(incapacidades) / max(consultas, 1)) * 100
 
     def consulta_remitida(self, usuario, inicio, fin):
 
