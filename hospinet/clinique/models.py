@@ -19,6 +19,7 @@ from collections import defaultdict
 from constance import config
 from django.db import models
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -116,7 +117,7 @@ class Paciente(TimeStampedModel):
 
         return reverse('clinique-paciente', args=[self.id])
 
-
+@python_2_unicode_compatible
 class Consulta(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='consultas',
                                 blank=True, null=True)
@@ -129,6 +130,11 @@ class Consulta(TimeStampedModel):
     activa = models.BooleanField(default=True)
     final = models.DateTimeField(blank=True, null=True)
     remitida = models.BooleanField(default=False)
+    encuestada = models.BooleanField(default=False)
+
+    def __str__(self):
+
+        return u'Consulta de {0}'.format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

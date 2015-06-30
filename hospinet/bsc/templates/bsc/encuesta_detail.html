@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="main-content col-md-12">
+            <section class="page-header">
+                <h1>{{ object }}</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-6 main-content">
+            <ul>
+                {% for pregunta in encuesta.pregunta_set.all %}
+                    <li>{{ pregunta }}</li>
+                {% empty %}
+                    <li>No hay preguntas agregadas</li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section class="col-md-6 main-content">
+            <div class="">
+            {% for consulta in consultas.all %}
+                <li>{{ consulta.persona }} <a class="btn btn-warning" href="{% url 'encuesta-responder' encuesta.id consulta.id %}">Responder</a></li>
+            {% empty %}
+                <li>No hay preguntas agregadas</li>
+            {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}

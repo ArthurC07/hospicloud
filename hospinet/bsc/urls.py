@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.conf.urls import patterns, url
-from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView
+from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView, \
+    EncuestaListView, EncuestaDetailView, RespuestaCreateView, \
+    RespuestaDetailView, VotoUpdateView
 
 from users.views import UserPersonaCreateView, UserPersonaUpdateView, \
     UserFisicoUpdateView, UserAntecedenteObstetricoUpdateView, \
@@ -36,6 +38,26 @@ urlpatterns = patterns('',
                        url(r'^user/(?P<pk>\d+)$',
                            UserDetailView.as_view(),
                            name='scorecard-user'),
+
+                       url(r'^encuestas$',
+                           EncuestaListView.as_view(),
+                           name='encuesta-list'),
+
+                       url(r'^encuesta/(?P<pk>\d+)$',
+                           EncuestaDetailView.as_view(),
+                           name='encuesta'),
+
+                       url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/responder$',
+                           RespuestaCreateView.as_view(),
+                           name='encuesta-responder'),
+
+                       url(r'^respuesta/(?P<pk>\d+)$',
+                           RespuestaDetailView.as_view(),
+                           name='respuesta'),
+
+                       url(r'^voto/(?P<pk>\d+)/editar$',
+                           VotoUpdateView.as_view(),
+                           name='voto-editar'),
 
                        )
 

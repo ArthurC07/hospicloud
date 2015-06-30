@@ -20,17 +20,18 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
+from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from emergency.models import Emergencia
 from invoice.models import Recibo
 
-
+@python_2_unicode_compatible
 class ScoreCard(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def get_absolute_url(self):
@@ -221,3 +222,66 @@ class Meta(TimeStampedModel):
         consultas = self.consultas(usuario, inicio, fin).count()
 
         return Decimal(remitidas) / max(consultas, 1)
+
+@python_2_unicode_compatible
+class Encuesta(TimeStampedModel):
+    nombre = models.CharField(max_length=255)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('encuesta', args=[self.id])
+
+    def __str__(self):
+        return self.nombre
+
+@python_2_unicode_compatible
+class Pregunta(TimeStampedModel):
+    encuesta = models.ForeignKey(Encuesta)
+    pregunta = models.CharField(max_length=255)
+    valor = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.pregunta
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('pregunta', args=[self.id])
+
+
+@python_2_unicode_compatible
+class Opcion(TimeStampedModel):
+    pregunta = models.ForeignKey(Pregunta)
+    respuesta = models.CharField(max_length=255)
+    valor = models.IntegerField(default=0)
+
+    def __str__(self):
+
+        return self.respuesta
+
+
+@python_2_unicode_compatible
+class Respuesta(TimeStampedModel):
+    encuesta = models.ForeignKey(Encuesta)
+    consulta = models.ForeignKey(Consulta)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('respuesta', args=[self.id])
+
+    def __str__(self):
+
+        return u'Respuesta a {0}'.format(self.encuesta.nombre)
+
+
+class Voto(TimeStampedModel):
+    respuesta = models.ForeignKey(Respuesta)
+    pregunta = models.ForeignKey(Pregunta)
+    opcion = models.ForeignKey(Opcion, blank=True, null=True)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('respuesta', args=[self.respuesta.id])

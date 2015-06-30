@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="main-content col-md-12">
+            <section class="page-header">
+                <h1>Respuesta de {{ respuesta.consulta.persona }}</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-9 main-content">
+            <ul>
+                {% for voto in respuesta.voto_set.all %}
+                    <li>
+                        {{ voto.pregunta }}
+                        <ul>
+                            <li>
+                                {% if voto.opcion %}
+                                    {{ voto.opcion }}
+                                {% else %}
+                                    No ha respondido
+                                {% endif %}
+                            </li>
+                        </ul>
+                        <a class="btn btn-warning" href="{% url 'voto-editar' voto.id %}">Cambiar Respuesta</a>
+                    </li>
+                {% empty %}
+                    <li>No hay votos agregados</li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li><a href="{% url 'encuesta' respuesta.encuesta.id %}">Volver a Encuesta {{ respuesta.encuesta }}</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section>
+    </div>
+{% endblock %}
