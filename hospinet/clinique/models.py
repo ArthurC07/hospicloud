@@ -294,10 +294,7 @@ class OrdenMedica(TimeStampedModel):
                                 blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='ordenes_medicas',
                                  blank=True, null=True)
-    evolucion = models.TextField(blank=True)
     orden = models.TextField(blank=True)
-    medicamento = models.ForeignKey(ItemTemplate, blank=True, null=True,
-                                    related_name='ordenes_medicas')
     farmacia = models.BooleanField(default=False)
     facturada = models.BooleanField(default=False)
 
