@@ -987,6 +987,7 @@ class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
         emergencia = Emergencia()
         emergencia.persona = consulta.persona
         emergencia.historia_enfermedad_actual = consulta.HEA
+        emergencia.usuario = consulta.consultorio.usuario
         if lectura is not None:
             emergencia.frecuencia_respiratoria = lectura.respiracion
             emergencia.temperatura = lectura.temperatura
