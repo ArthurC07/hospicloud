@@ -90,7 +90,8 @@ class UserProfile(UserenaBaseProfile):
             datos = {'logro': meta.logro(self.user, inicio, fin),
                      'tipo': meta.get_tipo_meta_display(),
                      'peso': meta.peso,
-                     'meta': meta.meta
+                     'meta': meta.meta,
+                     'tiempo': meta.basado_en_tiempo
                      }
 
             datos['ponderacion'] = meta.ponderacion(datos['logro'])

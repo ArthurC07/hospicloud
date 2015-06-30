@@ -92,8 +92,22 @@
                                 <tr>
                                     <td>{{ meta.tipo }}</td>
                                     <td>{{ meta.peso|floatformat:2 }}</td>
-                                    <td>{{ meta.meta|floatformat:2 }}</td>
-                                    <td>{{ meta.logro|floatformat:2 }}</td>
+                                    <td>
+                                        {{ meta.meta|floatformat:2 }}
+                                        {% if meta.tiempo %}
+                                            min
+                                        {% else %}
+                                            %
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ meta.logro|floatformat:2 }}
+                                        {% if meta.tiempo %}
+                                            min
+                                        {% else %}
+                                            %
+                                        {% endif %}
+                                    </td>
                                     <td>{{ meta.ponderacion|floatformat:2 }}</td>
                                     <td>{{ meta.logro_ponderado|floatformat:2 }}</td>
                                 </tr>
