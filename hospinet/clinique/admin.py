@@ -29,6 +29,11 @@ class IncapacidadAdmin(admin.ModelAdmin):
     ordering = ['persona', 'usuario', 'descripcion', 'created', 'dias']
     search_fields = ['persona__nombre', 'persona__apellido']
 
+class EsperaAdmin(admin.ModelAdmin):
+    list_display = ('persona', 'consultorio', 'created', 'fecha', 'inicio', 'fin')
+    ordering = ['created', 'fecha', 'inicio', 'fin', 'persona', 'consultorio__usuario']
+    search_fields = ['persona__nombre', 'persona__apellido']
+
 
 class ConsultaAdmin(admin.ModelAdmin):
     list_display = ('persona', 'consultorio', 'created')
@@ -56,5 +61,5 @@ admin.site.register(Cargo)
 admin.site.register(TipoCargo)
 admin.site.register(Localidad)
 admin.site.register(Especialidad)
-admin.site.register(Espera)
+admin.site.register(Espera, EsperaAdmin)
 admin.site.register(Afeccion)
