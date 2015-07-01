@@ -17,7 +17,7 @@
 from django.conf.urls import patterns, url
 from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView, \
     EncuestaListView, EncuestaDetailView, RespuestaCreateView, \
-    RespuestaDetailView, VotoUpdateView
+    RespuestaDetailView, VotoUpdateView, RespuestaRedirectView
 
 from users.views import UserPersonaCreateView, UserPersonaUpdateView, \
     UserFisicoUpdateView, UserAntecedenteObstetricoUpdateView, \
@@ -48,7 +48,7 @@ urlpatterns = patterns('',
                            name='encuesta'),
 
                        url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/responder$',
-                           RespuestaCreateView.as_view(),
+                           RespuestaRedirectView.as_view(),
                            name='encuesta-responder'),
 
                        url(r'^respuesta/(?P<pk>\d+)$',

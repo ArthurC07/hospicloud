@@ -11,25 +11,22 @@
     </div>
     <div class="row">
         <section class="col-md-9 main-content">
-            <ul>
-                {% for voto in respuesta.voto_set.all %}
-                    <li>
-                        {{ voto.pregunta }}
-                        <ul>
-                            <li>
-                                {% if voto.opcion %}
-                                    {{ voto.opcion }}
-                                {% else %}
-                                    No ha respondido
-                                {% endif %}
-                            </li>
-                        </ul>
-                        <a class="btn btn-warning" href="{% url 'voto-editar' voto.id %}">Cambiar Respuesta</a>
-                    </li>
-                {% empty %}
-                    <li>No hay votos agregados</li>
-                {% endfor %}
-            </ul>
+            <div class="row">
+                <div class="col-md-12 bg-success lead">
+                    <p>
+                    Puntuaci&oacute;n Adquirida: {{ respuesta.puntuacion }}
+                    </p>
+                </div>
+            </div>
+            {% for form in forms %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {% crispy form %}
+                    </div>
+                </div>
+            {% empty %}
+                <h3>No hay votos agregados</h3>
+            {% endfor %}
         </section>
         <section class="col-md-3">
             <div class="toolbox col-md-12">

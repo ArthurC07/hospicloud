@@ -133,8 +133,7 @@ class Meta(TimeStampedModel):
             return self.average_medical_order(usuario, inicio, fin)
 
         if self.tipo_meta == self.CLIENT_FEEDBACK_PERCENTAGE:
-            # TODO: Make this a calculation, there is no data for this
-            return 1
+            return self.poll_average(usuario, inicio, fin)
 
         if self.tipo_meta == self.CONSULTA_REMITIDA:
             return self.consulta_remitida(usuario, inicio, fin)
@@ -223,6 +222,17 @@ class Meta(TimeStampedModel):
 
         return Decimal(remitidas) / max(consultas, 1)
 
+    def poll_average(self, usuario, inicio, fin):
+
+        votos = Voto.objects.filter(opcion__isnull=False,
+                                    created__range=(inicio, fin),
+                                    respuesta__consultorio__usuario=usuario,
+                                    pregunta__calificable=True)
+
+        total = votos.aggregate(total=Sum('opcion__valor'))['total']
+
+        return Decimal(total) / max(votos.count(), 1)
+
 @python_2_unicode_compatible
 class Encuesta(TimeStampedModel):
     nombre = models.CharField(max_length=255)
@@ -239,6 +249,7 @@ class Encuesta(TimeStampedModel):
 class Pregunta(TimeStampedModel):
     encuesta = models.ForeignKey(Encuesta)
     pregunta = models.CharField(max_length=255)
+    calificable = models.BooleanField(default=True)
 
     def __str__(self):
         return self.pregunta
@@ -273,6 +284,13 @@ class Respuesta(TimeStampedModel):
     def __str__(self):
 
         return u'Respuesta a {0}'.format(self.encuesta.nombre)
+
+    def puntuacion(self):
+        votos = Voto.objects.filter(opcion__isnull=False, respuesta=self)
+
+        total = votos.aggregate(total=Sum('opcion__valor'))['total']
+
+        return Decimal(total) / max(votos.count(), 1)
 
 
 class Voto(TimeStampedModel):

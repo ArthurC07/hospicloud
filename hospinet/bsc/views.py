@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
+    RedirectView
 from django.views.generic.base import TemplateResponseMixin
 
 from django.views.generic.edit import FormMixin
@@ -110,6 +112,18 @@ class RespuestaDetailView(DetailView):
     model = Respuesta
     context_object_name = 'respuesta'
 
+    def get_context_data(self, **kwargs):
+        context = super(RespuestaDetailView, self).get_context_data(**kwargs)
+
+        context['forms'] = []
+        for voto in self.object.voto_set.all():
+            form = VotoForm(instance=voto)
+            form.helper.form_action = reverse('voto-editar', args=[voto.id])
+            form.fields['opcion'].queryset = voto.pregunta.opcion_set.all()
+            context['forms'].append(form)
+
+        return context
+
 
 class RespuestaMixin(TemplateResponseMixin):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
@@ -121,7 +135,7 @@ class RespuestaMixin(TemplateResponseMixin):
     def get_context_data(self, **kwargs):
         context = super(RespuestaMixin, self).get_context_data(**kwargs)
 
-        context['encuesta'] = self.respuesta
+        context['respuesta'] = self.respuesta
 
         return context
 
@@ -172,3 +186,27 @@ class VotoUpdateView(UpdateView, LoginRequiredMixin):
             form.fields['opcion'].queryset = self.object.pregunta.opcion_set.all()
 
         return form
+
+
+class RespuestaRedirectView(RedirectView):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        encuesta = get_object_or_404(Encuesta, pk=kwargs['encuesta'])
+        consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
+
+        respuesta = Respuesta()
+        respuesta.consulta = consulta
+        respuesta.encuesta = encuesta
+        consulta.encuestada = True
+        consulta.save()
+        respuesta.save()
+
+        for pregunta in encuesta.pregunta_set.all():
+            voto = Voto()
+            voto.pregunta = pregunta
+            voto.respuesta = respuesta
+            voto.save()
+
+        return respuesta.get_absolute_url()

@@ -11,21 +11,37 @@
     </div>
     <div class="row">
         <section class="col-md-6 main-content">
-            <ul>
+
                 {% for pregunta in encuesta.pregunta_set.all %}
-                    <li>{{ pregunta }}</li>
+                    <blockquote>
+                        <p>{{ pregunta }}</p>
+                    </blockquote>
                 {% empty %}
-                    <li>No hay preguntas agregadas</li>
+                    <blockquote>No hay preguntas agregadas</blockquote>
                 {% endfor %}
             </ul>
         </section>
-        <section class="col-md-6 main-content">
-            <div class="">
-            {% for consulta in consultas.all %}
-                <li>{{ consulta.persona }} <a class="btn btn-warning" href="{% url 'encuesta-responder' encuesta.id consulta.id %}">Responder</a></li>
-            {% empty %}
-                <li>No hay preguntas agregadas</li>
-            {% endfor %}
+        <section class="col-md-6">
+            <div class="col-md-12 main-content table-responsive">
+                <table class="table">
+                    {% for consulta in consultas.all %}
+                        <tr>
+                            <td>
+                                <address>
+                                    <strong>{{ consulta.persona }}</strong><br>
+                                    {{ consulta.persona.domicilio }}<br>
+                                    <strong>Atendido:</strong> {{ consulta.created }}<br>
+                                    Tel&eacute;fono: {{ consulta.persona.telefono }}
+                                </address>
+                            </td>
+                            <td><a class="btn btn-warning" href="{% url 'encuesta-responder' encuesta.id consulta.id %}">Responder</a></td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td>No hay preguntas agregadas</td>
+                        </tr>
+                    {% endfor %}
+                </table>
             </div>
         </section>
     </div>
