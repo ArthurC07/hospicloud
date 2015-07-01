@@ -220,4 +220,4 @@ class Meta(TimeStampedModel):
 
         consultas = self.consultas(usuario, inicio, fin).count()
 
-        return Decimal(remitidas) / max(consultas, 1)
+        return Decimal(remitidas) / max(consultas, 1) * 100
