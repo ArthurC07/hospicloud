@@ -225,7 +225,8 @@ class Meta(TimeStampedModel):
 
         votos = Voto.objects.filter(opcion__isnull=False,
                                     created__range=(inicio, fin),
-                                    respuesta__consultorio__usuario=usuario)
+                                    respuesta__consulta__consultorio__usuario=usuario,
+                                    pregunta__calificable=True)
 
         total = votos.aggregate(total=Sum('opcion__valor'))['total']
         if total is None:
