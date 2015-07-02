@@ -248,6 +248,10 @@ class Encuesta(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Pregunta(TimeStampedModel):
+
+    class Meta:
+        ordering = ["created"]
+
     encuesta = models.ForeignKey(Encuesta)
     pregunta = models.CharField(max_length=255)
     calificable = models.BooleanField(default=True)
