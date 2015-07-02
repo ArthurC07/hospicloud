@@ -17,7 +17,8 @@
 from django.contrib import admin
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
-from bsc.models import Meta, ScoreCard, Escala, Extra
+from bsc.models import Meta, ScoreCard, Escala, Extra, Encuesta, Opcion, \
+    Pregunta
 
 
 class MetaAdmin(ForeignKeyAutocompleteAdmin):
@@ -34,7 +35,20 @@ class ExtraAdmin(ForeignKeyAutocompleteAdmin):
     ordering = ['score_card', 'inicio_de_rango', 'fin_de_rango', 'comision']
 
 
+class OpcionAdmin(ForeignKeyAutocompleteAdmin):
+    list_display = ('respuesta', 'pregunta', 'valor')
+    ordering = ['respuesta', 'pregunta', 'valor']
+
+
+class PreguntaAdmin(ForeignKeyAutocompleteAdmin):
+    list_display = ('encuesta', 'pregunta')
+    ordering = ['encuesta', 'pregunta']
+
+
 admin.site.register(Meta, MetaAdmin)
 admin.site.register(ScoreCard)
 admin.site.register(Escala, EscalaAdmin)
 admin.site.register(Extra, ExtraAdmin)
+admin.site.register(Encuesta)
+admin.site.register(Opcion, OpcionAdmin)
+admin.site.register(Pregunta, PreguntaAdmin)

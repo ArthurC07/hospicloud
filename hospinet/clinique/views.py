@@ -17,7 +17,6 @@
 import calendar
 from collections import defaultdict
 from datetime import time, timedelta
-from constance import config
 
 from constance import config
 from django.contrib import messages
