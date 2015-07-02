@@ -16,9 +16,10 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from crispy_forms.layout import Fieldset
 from django import forms
+from django.forms import modelformset_factory
 
-from bsc.models import Encuesta, Respuesta, Voto
-from persona.forms import FieldSetModelFormMixin
+from bsc.models import Encuesta, Respuesta, Voto, Opcion
+from persona.forms import FieldSetModelFormMixin, FieldSetModelFormMixinNoButton
 
 
 class EncuestaFormMixin(FieldSetModelFormMixin):
@@ -40,7 +41,7 @@ class RespuestaForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class VotoForm(FieldSetModelFormMixin):
+class VotoForm(FieldSetModelFormMixinNoButton):
     class Meta:
         model = Voto
         fields = '__all__'
@@ -49,8 +50,15 @@ class VotoForm(FieldSetModelFormMixin):
                                        queryset=Respuesta.objects.all(),
                                        widget=forms.HiddenInput(),
                                        required=False)
+    opcion = forms.ModelChoiceField(label='',
+                                    queryset=Opcion.objects.all(),
+                                    widget=forms.RadioSelect(),
+                                    required=False)
 
     def __init__(self, *args, **kwargs):
         super(VotoForm, self).__init__(*args, **kwargs)
         self.fields['pregunta'].widget.attrs['readonly'] = True
         self.helper.layout = Fieldset(u'Formulario de Voto', *self.field_names)
+
+
+VotoFormSet = modelformset_factory(Voto, form=VotoForm, extra=0)

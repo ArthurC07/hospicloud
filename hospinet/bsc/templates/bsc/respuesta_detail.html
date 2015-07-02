@@ -18,15 +18,9 @@
                     </p>
                 </div>
             </div>
-            {% for form in forms %}
-                <div class="row">
-                    <div class="col-md-12">
-                        {% crispy form %}
-                    </div>
-                </div>
-            {% empty %}
-                <h3>No hay votos agregados</h3>
-            {% endfor %}
+            <div class="col-md-12">
+                {% crispy formset helper %}
+            </div>
         </section>
         <section class="col-md-3">
             <div class="toolbox col-md-12">

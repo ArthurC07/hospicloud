@@ -14,17 +14,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView
+
 from django.views.generic.base import TemplateResponseMixin
 
 from django.views.generic.edit import FormMixin
 
-from bsc.forms import RespuestaForm, VotoForm
+from bsc.forms import RespuestaForm, VotoForm, VotoFormSet
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
@@ -115,14 +118,30 @@ class RespuestaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(RespuestaDetailView, self).get_context_data(**kwargs)
 
+        formset = VotoFormSet(queryset=self.object.voto_set.all())
+        for form in formset:
+            form.fields[
+                'opcion'].queryset = form.instance.pregunta.opcion_set.all()
+
+        context['formset'] = formset
+        context['helper'] = FormHelper()
+        context['helper'].form_action = reverse('votos-guardar',
+                                                args=[self.object.id])
+        context['helper'].add_input(Submit('submit', u'Guardar'))
+
         context['forms'] = []
-        for voto in self.object.voto_set.all():
-            form = VotoForm(instance=voto)
-            form.helper.form_action = reverse('voto-editar', args=[voto.id])
-            form.fields['opcion'].queryset = voto.pregunta.opcion_set.all()
-            context['forms'].append(form)
 
         return context
+
+
+def save_votes(request, respuesta):
+    respuesta = get_object_or_404(Respuesta, pk=respuesta)
+    if request.method == 'POST':
+        formset = VotoFormSet(request.POST, respuesta.voto_set.all())
+        if formset.is_valid():
+            formset.save()
+
+    return redirect(respuesta)
 
 
 class RespuestaMixin(TemplateResponseMixin):
@@ -183,13 +202,13 @@ class VotoUpdateView(UpdateView, LoginRequiredMixin):
         form = super(VotoUpdateView, self).get_form(form_class)
 
         if self.object is not None:
-            form.fields['opcion'].queryset = self.object.pregunta.opcion_set.all()
+            form.fields[
+                'opcion'].queryset = self.object.pregunta.opcion_set.all()
 
         return form
 
 
 class RespuestaRedirectView(RedirectView):
-
     permanent = False
 
     def get_redirect_url(self, **kwargs):

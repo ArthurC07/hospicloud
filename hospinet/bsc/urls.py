@@ -15,15 +15,10 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.conf.urls import patterns, url
-from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView, \
-    EncuestaListView, EncuestaDetailView, RespuestaCreateView, \
-    RespuestaDetailView, VotoUpdateView, RespuestaRedirectView
 
-from users.views import UserPersonaCreateView, UserPersonaUpdateView, \
-    UserFisicoUpdateView, UserAntecedenteObstetricoUpdateView, \
-    UserAntecedenteUpdateView, UserAntecedenteFamiliarUpdateView, \
-    UserAntecedenteQuirurgicoUpdateView, UserEstiloVidaUpdateView, \
-    UserAntecedenteQuirurgicoCreateView
+from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView, \
+    EncuestaListView, EncuestaDetailView, RespuestaDetailView, VotoUpdateView, \
+    RespuestaRedirectView, save_votes
 
 urlpatterns = patterns('',
 
@@ -47,7 +42,9 @@ urlpatterns = patterns('',
                            EncuestaDetailView.as_view(),
                            name='encuesta'),
 
-                       url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/responder$',
+                       url(
+                           r'^encuesta/(?P<encuesta>\d+)/('
+                           r'?P<consulta>\d+)/responder$',
                            RespuestaRedirectView.as_view(),
                            name='encuesta-responder'),
 
@@ -55,10 +52,11 @@ urlpatterns = patterns('',
                            RespuestaDetailView.as_view(),
                            name='respuesta'),
 
+                       url(r'^respuesta/(?P<respuesta>\d+)/votos/guardar$',
+                           save_votes, name='votos-guardar'),
+
                        url(r'^voto/(?P<pk>\d+)/editar$',
                            VotoUpdateView.as_view(),
                            name='voto-editar'),
 
                        )
-
-
