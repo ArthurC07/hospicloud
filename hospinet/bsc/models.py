@@ -230,7 +230,9 @@ class Meta(TimeStampedModel):
                                     pregunta__calificable=True)
 
         total = votos.aggregate(total=Sum('opcion__valor'))['total']
-
+        if total is None:
+            total = Decimal()
+            
         return Decimal(total) / max(votos.count(), 1)
 
 @python_2_unicode_compatible
@@ -289,6 +291,8 @@ class Respuesta(TimeStampedModel):
         votos = Voto.objects.filter(opcion__isnull=False, respuesta=self)
 
         total = votos.aggregate(total=Sum('opcion__valor'))['total']
+        if total is None:
+            total = Decimal()
 
         return Decimal(total) / max(votos.count(), 1)
 
