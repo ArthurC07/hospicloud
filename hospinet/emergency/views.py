@@ -129,6 +129,7 @@ class EmergenciaDetailView(DetailView, LoginRequiredMixin):
 
 class EmergenciaUpdateView(UpdateView, LoginRequiredMixin):
     model = Emergencia
+    form_class = EmergenciaForm
 
 
 class BaseCreateView(CreateView, LoginRequiredMixin):
