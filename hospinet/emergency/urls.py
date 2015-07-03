@@ -53,7 +53,7 @@ urlpatterns = patterns('',
         EmergenciaCreateView.as_view(),
         name='emergency-create'),
 
-    url(r'^(?P<emergencia>\d+)/edit$',
+    url(r'^(?P<pk>\d+)/edit$',
         EmergenciaUpdateView.as_view(),
         name='emergencia-update'),
 
