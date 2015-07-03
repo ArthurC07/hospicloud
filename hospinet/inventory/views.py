@@ -50,7 +50,7 @@ class IndexView(TemplateView, InventarioPermissionMixin):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        context['inventarios'] = Inventario.objects.all()
+        context['inventarios'] = Inventario.objects.all(activo=True)
         context['productoform'] = ItemTemplateSearchForm()
         context['productoform'].helper.form_tag = False
 

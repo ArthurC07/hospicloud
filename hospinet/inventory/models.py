@@ -35,6 +35,7 @@ class Inventario(models.Model):
     lugar = models.CharField(max_length=255, default='Bodega')
     puede_comprar = models.NullBooleanField(default=False, blank=True,
                                             null=True)
+    activo = models.BooleanField(default=True)
 
     def __unicode__(self):
         return u"Inventario de {0}".format(self.lugar)
