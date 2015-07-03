@@ -129,7 +129,6 @@ class EmergenciaDetailView(DetailView, LoginRequiredMixin):
 
 class EmergenciaUpdateView(UpdateView, LoginRequiredMixin):
     model = Emergencia
-    template_name = 'emergency/emergencia_update.html'
 
 
 class BaseCreateView(CreateView, LoginRequiredMixin):
