@@ -190,7 +190,7 @@ class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
 class OrdenMedicaForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = OrdenMedica
-        fields = '__all__'
+        exclude = ('facturada', 'farmacia')
 
     def __init__(self, *args, **kwargs):
         super(OrdenMedicaForm, self).__init__(*args, **kwargs)
