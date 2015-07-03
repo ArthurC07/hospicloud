@@ -141,7 +141,10 @@ def save_votes(request, respuesta):
         if formset.is_valid():
             formset.save()
 
-    return redirect(respuesta)
+    respuesta.consulta.encuestada = True
+    respuesta.consulta.save()
+
+    return redirect(respuesta.encuesta)
 
 
 class RespuestaMixin(TemplateResponseMixin):
