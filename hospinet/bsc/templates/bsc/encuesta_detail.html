@@ -31,7 +31,7 @@
                                     <strong>{{ consulta.persona }}</strong><br>
                                     {{ consulta.persona.domicilio }}<br>
                                     <strong>Atendido:</strong> {{ consulta.created }}<br>
-                                    Tel&eacute;fono: {{ consulta.persona.telefono }}
+                                    Tel&eacute;fono: {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
                                 </address>
                             </td>
                             <td><a class="btn btn-warning" href="{% url 'encuesta-responder' encuesta.id consulta.id %}">Responder</a></td>
