@@ -58,7 +58,7 @@ class ItemForm(FieldSetModelFormMixin):
                                  queryset=ItemTemplate.objects.filter(
                                      activo=True).order_by('descripcion').all())
 
-    vencimiento = forms.DateTimeField(widget=FutureDateWidget())
+    vencimiento = forms.DateTimeField(widget=DateTimeWidget())
 
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
