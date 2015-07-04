@@ -11,15 +11,22 @@
     </div>
     <div class="row">
         <section class="col-md-6 main-content">
-
-                {% for pregunta in encuesta.pregunta_set.all %}
-                    <blockquote>
-                        <p>{{ pregunta }}</p>
-                    </blockquote>
-                {% empty %}
-                    <blockquote>No hay preguntas agregadas</blockquote>
-                {% endfor %}
-            </ul>
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="lead">Encuestas realizadas: {{ object.respuesta_set.count }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {% for pregunta in encuesta.pregunta_set.all %}
+                        <blockquote>
+                            <p>{{ pregunta }}</p>
+                        </blockquote>
+                    {% empty %}
+                        <blockquote>No hay preguntas agregadas</blockquote>
+                    {% endfor %}
+                </div>
+            </div>
         </section>
         <section class="col-md-6">
             <div class="col-md-12 main-content table-responsive">
