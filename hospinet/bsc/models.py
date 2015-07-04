@@ -304,6 +304,7 @@ class Voto(TimeStampedModel):
     respuesta = models.ForeignKey(Respuesta)
     pregunta = models.ForeignKey(Pregunta)
     opcion = models.ForeignKey(Opcion, blank=True, null=True)
+    sugerencia = models.TextField(blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
