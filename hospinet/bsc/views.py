@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -141,6 +142,7 @@ def save_votes(request, respuesta):
         if formset.is_valid():
             formset.save()
 
+    messages.info(request, u'Encuesta guardada!')
     respuesta.consulta.encuestada = True
     respuesta.consulta.save()
 
