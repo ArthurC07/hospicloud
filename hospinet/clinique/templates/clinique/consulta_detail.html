@@ -162,13 +162,14 @@
                                         Diagnóstico</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'consultorio-om-agregar' consulta.persona.id consulta.id %}"><i
-                                            class="fa fa-stethoscope"></i>
-                                        Agregar
-                                        Orden M&eacute;dica</a>
+                                    <a href="{% url 'consultorio-om-agregar' consulta.id %}">
+                                        <i class="fa fa-stethoscope"></i>
+                                        Agregar Orden M&eacute;dica
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'persona-view-id' consulta.persona.id  %}">Volver al Paciente</a>
+                                    <a href="{% url 'persona-view-id' consulta.persona.id %}">Volver
+                                        al Paciente</a>
                                 </li>
                             </ul>
                         </nav>
