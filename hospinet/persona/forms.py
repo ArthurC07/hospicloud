@@ -118,7 +118,7 @@ class PersonaForm(FieldSetModelFormMixin):
     class Media:
         js = ('js/jquery.validate.min.js', 'js/persona.validator.js',)
 
-    nacimiento = forms.DateField(widget=DateWidget(), required=False,
+    nacimiento = forms.DateField(widget=DateWidget(), required=True,
                                  initial=timezone.now)
     domicilio = forms.CharField(required=True)
 
