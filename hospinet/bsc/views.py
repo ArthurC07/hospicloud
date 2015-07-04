@@ -130,8 +130,6 @@ class RespuestaDetailView(DetailView):
                                                 args=[self.object.id])
         context['helper'].add_input(Submit('submit', u'Guardar'))
 
-        context['forms'] = []
-
         return context
 
 

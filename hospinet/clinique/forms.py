@@ -17,6 +17,7 @@
 
 from crispy_forms.layout import Fieldset, Submit
 from django import forms
+from django.forms import inlineformset_factory
 from django.utils import timezone
 from select2.fields import ModelChoiceField
 
@@ -74,10 +75,16 @@ class HiddenConsultaFormMixin(FieldSetModelFormMixin):
                                       widget=forms.HiddenInput())
 
 
+class HiddenOrdenMedicaFormMixin(FieldSetModelFormMixin):
+    orden = forms.ModelChoiceField(label="",
+                                   queryset=OrdenMedica.objects.all(),
+                                   widget=forms.HiddenInput())
+
+
 class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
     class Meta:
         model = Consulta
-        exclude = ('facturada', 'activa', 'final')
+        exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada')
 
     tipo = forms.ModelChoiceField(
         queryset=TipoConsulta.objects.filter(habilitado=True).all())
@@ -143,7 +150,8 @@ class LecturaSignosForm(PacienteFormMixin):
                                       *self.field_names)
 
 
-class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
+class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin,
+                             HiddenUserForm):
     class Meta:
         model = DiagnosticoClinico
         fields = '__all__'
@@ -187,7 +195,7 @@ class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
         self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
 
 
-class OrdenMedicaForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
+class OrdenMedicaForm(HiddenConsultaFormMixin, HiddenUserForm):
     class Meta:
         model = OrdenMedica
         exclude = ('facturada', 'farmacia')
@@ -222,7 +230,7 @@ class ExamenForm(PacienteFormMixin):
 class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
     class Meta:
         model = Espera
-        fields = ('persona', 'consultorio', )
+        fields = ('persona', 'consultorio',)
 
     def __init__(self, *args, **kwargs):
         super(EsperaForm, self).__init__(*args, **kwargs)
@@ -264,19 +272,24 @@ class PacienteSearchForm(FieldSetFormMixin):
         self.helper.form_action = 'clinique-paciente-search'
 
 
-class PrescripcionForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
+class PrescripcionForm(HiddenOrdenMedicaFormMixin):
     class Meta:
         model = Prescripcion
         fields = '__all__'
 
     medicamento = ModelChoiceField(
-        queryset=ItemTemplate.objects.all().order_by('descripcion'), name="",
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion'), name="",
         model="", required=False)
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Prescripcion',
                                       *self.field_names)
+
+
+PrescripcionFormSet = inlineformset_factory(OrdenMedica, Prescripcion,
+                                            PrescripcionForm)
 
 
 class IncapacidadForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):

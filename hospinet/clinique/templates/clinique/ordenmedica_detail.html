@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load l10n %}
+{% load crispy_forms_tags %}
+{% block header %}
+    {% for form in formset %}
+        {{ form.media.css }}
+    {% endfor %}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <h1>{{ orden }}
+                <small>Orden M&eacute;dica</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9 main-content">
+            <div class="row">
+                <div class="col-md-12">‏
+                    <p class="text-justify lead">
+                        Historia de la Enfermedad Actual: {{ orden.consulta.HEA }}
+                    </p>
+                    <p class="text-justify lead">
+                        Orden M&eacute;dica:{{ orden.orden }}
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Medicamentos</h3>
+                    <ul>
+                        {% for prescripcion in orden.prescripcion_set.all %}
+                            <li>{{ prescripcion.medicamento }}</li>
+                        {% empty %}
+                            <li>No hay medicamentos prescritos</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-6 no-print">
+                    <h3>Editar Medicamentos</h3>
+                    {% crispy formset helper %}
+                </div>
+            </div>
+        </div>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li><a href="{% url 'clinique-orden-edit' orden.id %}"><i class="fa fa-edit"></i> Editar</a></li>
+                        <li><a href="{{ orden.consulta.persona.get_absolute_url }}">Regresar al Paciente</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {% for form in formset %}
+        {{ form.media.js }}
+    {% endfor %}
+{% endblock %}

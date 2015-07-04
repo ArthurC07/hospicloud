@@ -290,12 +290,10 @@ class DiagnosticoClinico(TimeStampedModel):
         return self.consulta.get_absolute_url()
 
 
+@python_2_unicode_compatible
 class OrdenMedica(TimeStampedModel):
     """Registra las indicaciones dadas al paciente de parte del
     :class:`Doctor`"""
-
-    persona = models.ForeignKey(Persona, related_name='ordenes_medicas',
-                                blank=True, null=True)
     usuario = models.ForeignKey(User, related_name='ordenes_clinicas',
                                 blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='ordenes_medicas',
@@ -304,10 +302,14 @@ class OrdenMedica(TimeStampedModel):
     farmacia = models.BooleanField(default=False)
     facturada = models.BooleanField(default=False)
 
+    def __str__(self):
+
+        return self.consulta.persona.nombre_completo()
+
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return self.persona.get_absolute_url()
+        return reverse('consultorio-orden-medica', args=[self.id])
 
 
 class TipoCargo(TimeStampedModel):
@@ -391,23 +393,17 @@ class Espera(TimeStampedModel):
 
         return delta.seconds / 60
 
-
+@python_2_unicode_compatible
 class Prescripcion(TimeStampedModel):
-    persona = models.ForeignKey(Persona, related_name='prescripciones',
-                                blank=True, null=True)
-    usuario = models.ForeignKey(User, related_name='prescripciones',
-                                blank=True, null=True)
-    consulta = models.ForeignKey(Consulta, related_name='prescripciones',
-                                 blank=True, null=True)
+    orden = models.ForeignKey(OrdenMedica, blank=True, null=True)
     medicamento = models.ForeignKey(ItemTemplate, related_name='prescripciones',
                                     blank=True, null=True)
-    nota = models.TextField(blank=True, verbose_name=u'Otros MEdicamentos')
 
-    def __unicode__(self):
-        return self.persona.nombre_completo()
+    def __str__(self):
+        return self.orden.consulta.persona.nombre_completo()
 
     def get_absolute_url(self):
-        return self.consulta.get_absolute_url()
+        return self.orden.get_absolute_url()
 
 
 class Incapacidad(TimeStampedModel):

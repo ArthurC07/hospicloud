@@ -19,6 +19,8 @@ from collections import defaultdict
 from datetime import time, timedelta
 
 from constance import config
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
@@ -42,7 +44,8 @@ from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
                             CitaPersonaForm, CargoForm, OrdenMedicaForm,
                             NotaEnfermeriaForm, ExamenForm, EsperaForm,
                             PacienteSearchForm, PrescripcionForm,
-                            IncapacidadForm, ReporteForm, RemisionForm)
+                            IncapacidadForm, ReporteForm, RemisionForm,
+                            PrescripcionFormSet)
 from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Seguimiento, LecturaSignos, Consultorio,
                              DiagnosticoClinico, Cargo, OrdenMedica,
@@ -759,8 +762,8 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class OrdenMedicaCreateView(PersonaFormMixin, ConsultaFormMixin,
-                            CurrentUserFormMixin, CreateView):
+class OrdenMedicaCreateView(ConsultaFormMixin, CurrentUserFormMixin,
+                            CreateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
 
@@ -768,6 +771,35 @@ class OrdenMedicaCreateView(PersonaFormMixin, ConsultaFormMixin,
 class OrdenMedicaUpdateView(LoginRequiredMixin, UpdateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
+
+
+class OrdenMedicaDetailView(DetailView, LoginRequiredMixin):
+    model = OrdenMedica
+    context_object_name = 'orden'
+
+    def get_context_data(self, **kwargs):
+        context = super(OrdenMedicaDetailView, self).get_context_data(**kwargs)
+
+        formset = PrescripcionFormSet(instance=self.object)
+        context['formset'] = formset
+        helper = FormHelper()
+        helper.form_action = reverse('prescripcion-guardar',
+                                     args=[self.object.id])
+        helper.add_input(Submit('submit', u'Guardar'))
+        context['helper'] = helper
+
+        return context
+
+
+def save_prescriptions(request, orden):
+    orden = get_object_or_404(OrdenMedica, pk=orden)
+    if request.method == 'POST':
+        formset = PrescripcionFormSet(request.POST, instance=orden)
+        if formset.is_valid():
+            formset.save()
+            messages.info(request, u'Agregados los medicamentos')
+
+    return redirect(orden)
 
 
 class NotaEnfermeriaCreateView(PersonaFormMixin, CurrentUserFormMixin,
@@ -963,7 +995,6 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
 
 
 class ConsultaRemitirView(RedirectView):
-
     permanent = False
 
     def get_redirect_url(self, **kwargs):
