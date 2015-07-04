@@ -19,6 +19,7 @@ from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django import forms
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
@@ -123,6 +124,8 @@ class RespuestaDetailView(DetailView):
         for form in formset:
             form.fields[
                 'opcion'].queryset = form.instance.pregunta.opcion_set.all()
+            if not form.instance.pregunta.mostrar_sugerencia:
+                form.fields['sugerencia'].widget = forms.HiddenInput()
 
         context['formset'] = formset
         context['helper'] = FormHelper()

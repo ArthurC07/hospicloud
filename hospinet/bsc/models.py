@@ -255,6 +255,7 @@ class Pregunta(TimeStampedModel):
     encuesta = models.ForeignKey(Encuesta)
     pregunta = models.CharField(max_length=255)
     calificable = models.BooleanField(default=True)
+    mostrar_sugerencia = models.BooleanField(default=False)
 
     def __str__(self):
         return self.pregunta
