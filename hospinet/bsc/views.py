@@ -142,6 +142,8 @@ def save_votes(request, respuesta):
         formset = VotoFormSet(request.POST, respuesta.voto_set.all())
         if formset.is_valid():
             formset.save()
+            respuesta.terminada = True
+            respuesta.save()
         else:
             messages.info(request, u'La respuesta está incompleta')
             return redirect(respuesta)

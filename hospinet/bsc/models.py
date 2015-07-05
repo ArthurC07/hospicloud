@@ -281,6 +281,7 @@ class Opcion(TimeStampedModel):
 class Respuesta(TimeStampedModel):
     encuesta = models.ForeignKey(Encuesta)
     consulta = models.ForeignKey(Consulta)
+    terminada = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

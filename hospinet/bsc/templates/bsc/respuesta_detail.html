@@ -19,7 +19,28 @@
                 </div>
             </div>
             <div class="col-md-12">
-                {% crispy formset helper %}
+                {% if respuesta.terminada %}
+                    <ul>
+                        {% for voto in respuesta.voto_set.all %}
+                            <li>
+                                {{ voto.pregunta }}
+                                <ul>
+                                    <li>
+                                        {% if voto.opcion %}
+                                            {{ voto.opcion }}
+                                        {% else %}
+                                            No ha respondido
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </li>
+                        {% empty %}
+                            <li>No hay votos agregados</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    {% crispy formset helper %}
+                {% endif %}
             </div>
         </section>
         <section class="col-md-3">
