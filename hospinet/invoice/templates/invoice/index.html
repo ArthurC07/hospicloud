@@ -311,49 +311,7 @@
                             </article>
                         {% endif %}
                         <article id="pagos" class="tab-pane">
-                            {% for stat in status.all %}
-                                <div class="row">
-                                    <div class="col-md-12 table-responsive">
-                                        <h3>
-                                            {{ stat }}
-                                            <small>
-                                                Total: {{ stat.total }}
-                                            </small>
-                                        </h3>
-                                        <table class="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th>Recibo</th>
-                                                <th>Fecha y Hora</th>
-                                                <th>M&eacute;todo</th>
-                                                <th>Monto</th>
-                                                <th>Total Recibo</th>
-                                                <th>Total Pagado</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for pago in stat.pagos.all %}
-                                                <tr>
-                                                    <td>
-                                                        <a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo }}</a>
-                                                    </td>
-                                                    <td>{{ pago.created }}</td>
-                                                    <td>{{ pago.tipo }}</td>
-                                                    <td>{{ pago.monto }}</td>
-                                                    <td>{{ pago.recibo.total }}</td>
-                                                    <td>{{ pago.recibo.pagado }}</td>
-                                                    <td>
-                                                        <a class="btn btn-primary"
-                                                           href="{% url 'invoice-pago-status-edit' pago.id %}">Cambiar
-                                                            Estado</a></td>
-                                                </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            {% endfor %}
+
                         </article>
                         <article id="reporte" class="tab-pane">
                             <div class="row">
@@ -428,6 +386,9 @@
                         </li>
                         <li>
                             <a href="{% url 'invoice-estadisticas' %}">Estad&iacute;sticas</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-pago-status-index' %}">Ver Status de los pagos</a>
                         </li>
                     </ul>
                 </nav>

@@ -356,7 +356,7 @@ class Pago(TimeStampedModel):
     recibo = ForeignKey(Recibo, related_name='pagos')
     status = models.ForeignKey(StatusPago, blank=True, null=True,
                                related_name='pagos')
-    monto = models.DecimalField(blank=True, null=True, max_digits=7,
+    monto = models.DecimalField(blank=True, null=True, max_digits=11,
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
 
