@@ -231,10 +231,12 @@ class EstadisticasPeriodoView(TemplateView):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = self.form.cleaned_data['fin']
 
-        return super(EstadisticasPeriodoView, self).dispatch(request, *args, **kwargs)
+        return super(EstadisticasPeriodoView, self).dispatch(request, *args,
+                                                             **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(EstadisticasPeriodoView, self).get_context_data(**kwargs)
+        context = super(EstadisticasPeriodoView, self).get_context_data(
+            **kwargs)
 
         context['pagos'] = []
 
@@ -674,7 +676,6 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
     template_name = 'invoice/producto_list.html'
 
     def dispatch(self, request, *args, **kwargs):
-
         """Agrega el formulario"""
 
         self.form = PeriodoForm(request.GET, prefix='producto')
@@ -683,7 +684,6 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
                                                          **kwargs)
 
     def get_context_data(self, **kwargs):
-
         """Agrega el formulario de :class:`Recibo`"""
 
         context = super(ReporteProductoView, self).get_context_data(**kwargs)
@@ -1041,6 +1041,8 @@ class AseguradoraFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cajero = self.request.user
         recibo.cliente = aseguradora.cardex
         recibo.credito = True
+        recibo.tipo_de_venta = TipoVenta.objects.get(
+            pk=int(config.DEFAULT_VENTA_TYPE))
 
         recibo.save()
         for master in aseguradora.master_contracts.all():
@@ -1336,7 +1338,8 @@ class CiudadPeriodoListView(ListView):
             self.fin = self.form.cleaned_data['fin']
             self.ciudad = self.form.cleaned_data['ciudad']
 
-        return super(CiudadPeriodoListView, self).dispatch(request, *args, **kwargs)
+        return super(CiudadPeriodoListView, self).dispatch(request, *args,
+                                                           **kwargs)
 
     def get_queryset(self):
         return Recibo.objects.filter(created__range=(self.inicio, self.fin),
@@ -1363,7 +1366,8 @@ class TipoPagoPeriodoView(ListView):
             self.fin = self.form.cleaned_data['fin']
             self.tipo_pago = self.form.cleaned_data['tipo']
 
-        return super(TipoPagoPeriodoView, self).dispatch(request, *args, **kwargs)
+        return super(TipoPagoPeriodoView, self).dispatch(request, *args,
+                                                         **kwargs)
 
     def get_queryset(self):
         return Pago.objects.filter(
