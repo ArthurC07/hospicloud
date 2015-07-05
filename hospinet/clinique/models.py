@@ -408,6 +408,7 @@ class Prescripcion(TimeStampedModel):
     orden = models.ForeignKey(OrdenMedica, blank=True, null=True)
     medicamento = models.ForeignKey(ItemTemplate, related_name='prescripciones',
                                     blank=True, null=True)
+    dosis = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.orden.consulta.persona.nombre_completo()
