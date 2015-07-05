@@ -311,7 +311,6 @@ class OrdenMedica(TimeStampedModel):
     facturada = models.BooleanField(default=False)
 
     def __str__(self):
-
         return self.consulta.persona.nombre_completo()
 
     def get_absolute_url(self):
@@ -402,6 +401,7 @@ class Espera(TimeStampedModel):
         delta = timezone.now() - self.created
 
         return delta.seconds / 60
+
 
 @python_2_unicode_compatible
 class Prescripcion(TimeStampedModel):
