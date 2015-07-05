@@ -29,40 +29,45 @@ from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
 
 
+@python_2_unicode_compatible
 class Localidad(TimeStampedModel):
     nombre = models.CharField(max_length=50, blank=True, null=True)
     habilitado = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class Afeccion(TimeStampedModel):
     codigo = nombre = models.CharField(max_length=50)
     nombre = models.CharField(max_length=50, blank=True, null=True)
     habilitado = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class Especialidad(TimeStampedModel):
     nombre = models.CharField(max_length=50)
     habilitado = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class TipoConsulta(models.Model):
     tipo = models.CharField(max_length=50)
     habilitado = models.BooleanField(default=True)
     facturable = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.tipo
 
 
+@python_2_unicode_compatible
 class Consultorio(TimeStampedModel):
     class Meta:
         permissions = (
@@ -83,7 +88,7 @@ class Consultorio(TimeStampedModel):
                                      blank=True, null=True)
     activo = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def get_absolute_url(self):
@@ -92,6 +97,7 @@ class Consultorio(TimeStampedModel):
         return reverse('consultorio', args=[self.id])
 
 
+@python_2_unicode_compatible
 class Paciente(TimeStampedModel):
     """Relaciona a una :class:`Persona` con un :class:`Doctor` para
     ayudar a proteger la privacidad de dicha :class:`Persona` ya que se
@@ -102,7 +108,7 @@ class Paciente(TimeStampedModel):
     consultorio = models.ForeignKey(Consultorio, related_name='pacientes',
                                     blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Paciente {0} de {1}".format(self.persona.nombre_completo(),
                                              self.consultorio.usuario.get_full_name())
 
@@ -116,6 +122,7 @@ class Paciente(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return reverse('clinique-paciente', args=[self.id])
+
 
 @python_2_unicode_compatible
 class Consulta(TimeStampedModel):
@@ -226,6 +233,7 @@ class Evaluacion(TimeStampedModel):
         return self.consulta.get_absolute_url()
 
 
+@python_2_unicode_compatible
 class Cita(TimeStampedModel):
     """Permite registrar las posibles :class:`Personas`s que serán atendidas
     en una fecha determinada"""
@@ -243,7 +251,7 @@ class Cita(TimeStampedModel):
 
         return self.consultorio.get_absolute_url()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0}'.format(self.persona.nombre_completo())
 
     def to_espera(self):
@@ -312,6 +320,7 @@ class OrdenMedica(TimeStampedModel):
         return reverse('consultorio-orden-medica', args=[self.id])
 
 
+@python_2_unicode_compatible
 class TipoCargo(TimeStampedModel):
     """Permite Diferenciar entre los distintos tipos de :class:`Cargo` que se
     pueden agregar a un :class:`Paciente`"""
@@ -319,7 +328,7 @@ class TipoCargo(TimeStampedModel):
     nombre = models.CharField(max_length=200, blank=True)
     descontable = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
@@ -369,6 +378,7 @@ class Examen(TimeStampedModel):
         return self.paciente.get_absolute_url()
 
 
+@python_2_unicode_compatible
 class Espera(TimeStampedModel):
     consultorio = models.ForeignKey(Consultorio, related_name='espera',
                                     blank=True, null=True)
@@ -381,7 +391,7 @@ class Espera(TimeStampedModel):
     terminada = models.BooleanField(default=False)
     fin = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"{0} en {1}".format(self.persona.nombre_completo(),
                                     self.consultorio.nombre)
 
