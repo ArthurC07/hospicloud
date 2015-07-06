@@ -244,6 +244,11 @@ urlpatterns = patterns('',
                            OrdenMedicaCreateView.as_view(),
                            name='consultorio-om-agregar'),
 
+                       url(r'^paciente/(?P<pk>\d+)/notas$',
+                           PacienteDetailView.as_view(
+                               template_name='clinique/nota_list.html'),
+                           name='clinique-notas'),
+
                        url(r'^orden/(?P<pk>\d+)$',
                            OrdenMedicaDetailView.as_view(),
                            name='consultorio-orden-medica'),
