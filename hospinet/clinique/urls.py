@@ -49,7 +49,8 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             IncapacidadUpdateView, EsperaConsultorioCreateView,
                             ConsultaPeriodoView, ConsultaRemitirView,
                             ConsultaEmergenciaRedirectView,
-                            OrdenMedicaDetailView, save_prescriptions)
+                            OrdenMedicaDetailView, save_prescriptions,
+                            OrdenMedicaListView, OrdenCompletarRedirect)
 
 
 urlpatterns = patterns('',
@@ -76,11 +77,6 @@ urlpatterns = patterns('',
                                template_name='clinique/cargo_list.html'),
                            name='clinique-cargos'),
 
-                       url(r'^paciente/(?P<pk>\d+)/ordenes$',
-                           PacienteDetailView.as_view(
-                               template_name='clinique/ordenes_list.html'),
-                           name='clinique-ordenes'),
-
                        url(r'^paciente/(?P<pk>\d+)/signos$',
                            PacienteDetailView.as_view(
                                template_name='clinique/signos_list.html'),
@@ -106,10 +102,9 @@ urlpatterns = patterns('',
                            OrdenMedicaUpdateView.as_view(),
                            name='clinique-orden-edit'),
 
-                       url(r'^paciente/(?P<pk>\d+)/notas$',
-                           PacienteDetailView.as_view(
-                               template_name='clinique/nota_list.html'),
-                           name='clinique-notas'),
+                       url(r'^orden/list$',
+                           OrdenMedicaListView.as_view(),
+                           name='clinique-orden-list'),
 
                        url(r'^(?P<pk>\d+)$',
                            ConsultorioDetailView.as_view(),
@@ -252,6 +247,15 @@ urlpatterns = patterns('',
                        url(r'^orden/(?P<pk>\d+)$',
                            OrdenMedicaDetailView.as_view(),
                            name='consultorio-orden-medica'),
+
+                       url(r'^orden/(?P<pk>\d+)/impresion$',
+                           OrdenMedicaDetailView.as_view(
+                               template_name='clinique/ordenmedica_print.html'),
+                           name='clinique-orden-print'),
+
+                       url(r'^orden/(?P<pk>\d+)/completar$',
+                           OrdenCompletarRedirect.as_view(),
+                           name='clinique-orden-completar'),
 
                        url(r'^orden/(?P<orden>\d+)/prescripcion/guardar$',
                            save_prescriptions,

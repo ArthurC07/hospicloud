@@ -791,6 +791,27 @@ class OrdenMedicaDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
+class OrdenMedicaListView(ListView, LoginRequiredMixin):
+    model = OrdenMedica
+    context_object_name = 'ordenes'
+
+    def get_queryset(self):
+
+        return OrdenMedica.objects.filter(farmacia=False)
+
+
+class OrdenCompletarRedirect(RedirectView, LoginRequiredMixin):
+
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        orden = get_object_or_404(OrdenMedica, pk=kwargs['pk'])
+        orden.farmacia = True
+        orden.save()
+
+        return reverse('clinique-orden-list')
+
+
 def save_prescriptions(request, orden):
     orden = get_object_or_404(OrdenMedica, pk=orden)
     if request.method == 'POST':

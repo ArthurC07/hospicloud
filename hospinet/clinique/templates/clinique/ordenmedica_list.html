@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load l10n %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <h1>Ordenes M&eacutedicas</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="main-content col-md-12">‏
+            <table class="table table-striped">
+                <caption>Ordenes M&eacute;dicas</caption>
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>Ordenes</th>
+                    <th>Medicamentos</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for orden in ordenes.all %}
+                    <tr>
+                        <td>{{ orden.created }}</td>
+                        <td>{{ orden.paciente }}</td>
+                        <td>{{ orden.orden }}</td>
+                        <td>
+                            <ul>
+                                {% for prescripcion in orden.prescripcion_set.all %}
+                                    <li>{{ prescripcion.medicamento }} {{ prescripcion.dosis }}</li>
+                                {% empty %}
+                                    <li>No hay medicamentos prescritos</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary btn-block" href="{% url 'clinique-orden-print' orden.id %}">Imprimir</a>
+                            <a class="btn btn-success btn-block" href="{% url 'clinique-orden-completar' orden.id %}">Completar</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No hay Ordenes M&eacute;dicas
+                            Pendientes
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+{% endblock %}
