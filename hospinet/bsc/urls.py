@@ -50,7 +50,7 @@ urlpatterns = patterns('',
 
                        url(
                            r'^encuesta/(?P<encuesta>\d+)/('
-                           r'?P<consulta>\d+)/responder$',
+                           r'?P<consulta>\d+)/encuestada$',
                            ConsultaEncuestadaRedirectView.as_view(),
                            name='encuesta-respondida'),
 
