@@ -38,6 +38,10 @@
                                     <strong>{{ consulta.persona }}</strong><br>
                                     {{ consulta.persona.domicilio }}<br>
                                     <strong>Atendido:</strong> {{ consulta.created }}<br>
+                                    <strong>Encuestada:</strong> {{ consulta.persona.cantidad_encuestas }} veces<br>
+                                    {% if consulta.persona.ultima_encuesta %}
+                                    <strong>&Uacute;ltima Encesuta:</strong> {{ consulta.persona.ultima_encuesta.created }}<br>
+                                    {% endif %}
                                     Tel&eacute;fono: {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
                                 </address>
                             </td>

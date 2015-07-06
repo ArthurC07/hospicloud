@@ -26,6 +26,8 @@ from django_extensions.db.models import TimeStampedModel
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from emergency.models import Emergencia
 from invoice.models import Recibo
+from persona.models import Persona
+
 
 @python_2_unicode_compatible
 class ScoreCard(TimeStampedModel):
@@ -231,8 +233,9 @@ class Meta(TimeStampedModel):
         total = votos.aggregate(total=Sum('opcion__valor'))['total']
         if total is None:
             total = Decimal()
-            
+
         return Decimal(total) / max(votos.count(), 1)
+
 
 @python_2_unicode_compatible
 class Encuesta(TimeStampedModel):
@@ -246,9 +249,9 @@ class Encuesta(TimeStampedModel):
     def __str__(self):
         return self.nombre
 
+
 @python_2_unicode_compatible
 class Pregunta(TimeStampedModel):
-
     class Meta:
         ordering = ["created"]
 
@@ -273,7 +276,6 @@ class Opcion(TimeStampedModel):
     valor = models.IntegerField(default=0)
 
     def __str__(self):
-
         return self.respuesta
 
 
@@ -289,7 +291,6 @@ class Respuesta(TimeStampedModel):
         return reverse('respuesta', args=[self.id])
 
     def __str__(self):
-
         return u'Respuesta a {0}'.format(self.encuesta.nombre)
 
     def puntuacion(self):
@@ -312,3 +313,10 @@ class Voto(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('respuesta', args=[self.respuesta.id])
+
+
+Persona.cantidad_encuestas = property(lambda p: Respuesta.objects.filter(
+    consulta__persona=p).count())
+
+Persona.ultima_encuesta = property(lambda p: Respuesta.objects.filter(
+    consulta__persona=p).order_by('created').last())
