@@ -243,3 +243,16 @@ class RespuestaRedirectView(RedirectView):
             voto.save()
 
         return respuesta.get_absolute_url()
+
+
+class ConsultaEncuestadaRedirectView(RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        encuesta = get_object_or_404(Encuesta, pk=kwargs['encuesta'])
+        consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
+
+        consulta.encuestada = True
+        consulta.save()
+
+        return encuesta.get_absolute_url()

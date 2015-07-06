@@ -45,7 +45,10 @@
                                     Tel&eacute;fono: {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
                                 </address>
                             </td>
-                            <td><a class="btn btn-warning" href="{% url 'encuesta-responder' encuesta.id consulta.id %}">Responder</a></td>
+                            <td>
+                                <a class="btn btn-warning" href="{% url 'encuesta-responder' encuesta.id consulta.id %}">Responder</a>
+                                <a class="btn btn-info" href="{% url 'encuesta-respondida' encuesta.id consulta.id %}">Ya Se Encuest&oacute;</a>
+                            </td>
                         </tr>
                     {% empty %}
                         <tr>
