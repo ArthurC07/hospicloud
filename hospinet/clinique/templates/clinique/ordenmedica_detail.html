@@ -31,7 +31,12 @@
                     <h3>Medicamentos</h3>
                     <ul>
                         {% for prescripcion in orden.prescripcion_set.all %}
-                            <li>{{ prescripcion.medicamento }}</li>
+                            <li>
+                                {{ prescripcion.medicamento }}
+                                <ul>
+                                    <li>{{ prescripcion.dosis }}</li>
+                                </ul>
+                            </li>
                         {% empty %}
                             <li>No hay medicamentos prescritos</li>
                         {% endfor %}
@@ -49,6 +54,7 @@
                     <ul class="nav nav-tabs nav-stacked">
                         <li><a href="{% url 'clinique-orden-edit' orden.id %}"><i class="fa fa-edit"></i> Editar</a></li>
                         <li><a href="{{ orden.consulta.persona.get_absolute_url }}">Regresar al Paciente</a></li>
+                        <li><a href="{% url 'clinique-orden-print' orden.id %}"><i class="fa fa-print"></i> Imprimir</a></li>
                     </ul>
                 </nav>
             </div>
