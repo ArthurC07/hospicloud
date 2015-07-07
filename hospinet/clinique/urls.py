@@ -50,7 +50,8 @@ from clinique.views import (PacienteCreateView, PacienteDetailView,
                             ConsultaPeriodoView, ConsultaRemitirView,
                             ConsultaEmergenciaRedirectView,
                             OrdenMedicaDetailView, save_prescriptions,
-                            OrdenMedicaListView, OrdenCompletarRedirect)
+                            OrdenMedicaListView, OrdenCompletarRedirect,
+                            IncapacidadListView)
 
 
 urlpatterns = patterns('',
@@ -336,6 +337,10 @@ urlpatterns = patterns('',
                        url(r'^incapacidad/(?P<pk>\d+)/editar$',
                            IncapacidadUpdateView.as_view(),
                            name='clinique-incapacidad-edit'),
+
+                       url(r'^incapacidad/list$',
+                           IncapacidadListView.as_view(),
+                           name='clinique-incapacidad-list'),
 
                        url(
                            r'^(?P<persona>\d+)/remision/agregar$',

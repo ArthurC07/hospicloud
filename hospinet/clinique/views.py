@@ -889,6 +889,11 @@ class IncapacidadUpdateView(LoginRequiredMixin, UpdateView):
     form_class = IncapacidadForm
 
 
+class IncapacidadListView(ListView, LoginRequiredMixin):
+    model = Incapacidad
+    context_object_name = 'incapacidades'
+
+
 class ReporteCreateView(ConsultorioFormMixin, LoginRequiredMixin, CreateView):
     model = Reporte
     form_class = ReporteForm

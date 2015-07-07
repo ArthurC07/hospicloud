@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load l10n %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Incapacidades</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <div class="main-content col-md-12">
+            <table class="table table-striped">
+                <caption>Incapacidades</caption>
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Persona</th>
+                    <th>D&iacute;as</th>
+                    <th>Empresa</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for incapacidad in incapacidades %}
+                    <tr>
+                        <td>{{ incapacidad.created }}</td>
+                        <td>{{ incapacidad.consulta.persona }}</td>
+                        <td>{{ incapacidad.dias }}</td>
+                        <td>
+                            {% for contrato in incapacidad.consulta.persona.contratos.all %}
+                                {{ contrato.empresa }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <aside class="col-md-3">
+        <div class="toolbox col-md-12">
+            {% include 'snippets/paciente_aside.html' %}
+        </div>
+    </aside>
+</div>
+{% endblock %}
