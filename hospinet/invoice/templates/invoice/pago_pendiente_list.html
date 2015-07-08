@@ -43,7 +43,7 @@
                                         {{ pago.recibo.cliente }}
                                         </a>
                                     </td>
-                                    <td>{{ recibo.ciudad }}</td>
+                                    <td>{{ pago.recibo.ciudad }}</td>
                                     <td>
                                         {% for contrato in pago.recibo.cliente.contratos.all %}
                                             {{ contrato.master.aseguradora }}
