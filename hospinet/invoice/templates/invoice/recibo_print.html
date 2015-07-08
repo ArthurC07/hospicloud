@@ -77,10 +77,10 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            {% for contrato in pago.recibo.cliente.contratos.all %}
+            {% for contrato in recibo.cliente.contratos.all %}
                 Poliza: {{ contrato.poliza }} Certificado: {{ contrato.certificado }}
             {% endfor %}
-            {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
+            {% for beneficiario in recibo.cliente.beneficiarios.all %}
                 {{ beneficiario.contrato.poliza }} Certificado: {{ beneficiario.contrato.certificado }}
             {% endfor %}
         </div>
