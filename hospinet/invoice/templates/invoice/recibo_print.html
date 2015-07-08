@@ -75,6 +75,16 @@
             <p class="text-center">Firma Cliente</p>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% for contrato in pago.recibo.cliente.contratos.all %}
+                Poliza: {{ contrato.poliza }} Certificado: {{ contrato.certificado }}
+            {% endfor %}
+            {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
+                {{ beneficiario.contrato.poliza }} Certificado: {{ beneficiario.contrato.certificado }}
+            {% endfor %}
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
     window.onload = function () {
