@@ -38,7 +38,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            PagoPeriodoView, ReciboPrintView, PagoUpdateView,
                            StatusPagoListView, TurnoCajaUpdateView,
                            EstadisticasView, EstadisticasPeriodoView,
-                           TipoPagoPeriodoView, CiudadPeriodoListView)
+                           TipoPagoPeriodoView, CiudadPeriodoListView,
+                           PagoListView)
 
 urlpatterns = patterns('',
 
@@ -114,6 +115,10 @@ urlpatterns = patterns('',
                        url(r'^periodo/pago$',
                            PagoPeriodoView.as_view(),
                            name='invoice-periodo-pago'),
+
+                       url(r'^pago/list$',
+                           PagoListView.as_view(),
+                           name='invoice-pago-list'),
 
                        url(r'^periodo/radiologo$',
                            ReciboRadView.as_view(),

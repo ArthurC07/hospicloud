@@ -1392,3 +1392,11 @@ class StatusPagoListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return StatusPago.objects.filter(reportable=True).all()
+
+
+class PagoListView(LoginRequiredMixin, ListView):
+    model = StatusPago
+    context_object_name = 'status'
+
+    def get_queryset(self):
+        return Pago.objects.filter(status__reportable=True).all()
