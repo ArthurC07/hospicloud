@@ -1395,7 +1395,7 @@ class StatusPagoListView(LoginRequiredMixin, ListView):
 
 
 class PagoListView(LoginRequiredMixin, ListView):
-    model = StatusPago
+    model = Pago
     context_object_name = 'pagos'
 
     def get_queryset(self):
