@@ -47,7 +47,7 @@
                                             {{ contrato.master.aseguradora }}
                                         {% endfor %}
                                         {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
-                                            {{ beneficiario.contrato.aseguradora }}
+                                            {{ beneficiario.contrato.master.aseguradora }}
                                         {% endfor %}
                                     </td>
                                     <td>
