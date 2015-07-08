@@ -25,6 +25,7 @@
                                 <th>Recibo</th>
                                 <th>Fecha</th>
                                 <th>Nombre</th>
+                                <th>Ciudad</th>
                                 <td>Aseguradoras</td>
                                 <td>Polizas</td>
                                 <th>Monto</th>
@@ -42,6 +43,7 @@
                                         {{ pago.recibo.cliente }}
                                         </a>
                                     </td>
+                                    <td>{{ recibo.ciudad }}</td>
                                     <td>
                                         {% for contrato in pago.recibo.cliente.contratos.all %}
                                             {{ contrato.master.aseguradora }}
