@@ -46,7 +46,7 @@
                                         {% for contrato in pago.recibo.cliente.contratos.all %}
                                             {{ contrato.master.aseguradora }}
                                         {% endfor %}
-                                        {% for beneficiario in pago.recibo.cliente.contratos.beneficiarios.all %}
+                                        {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
                                             {{ beneficiario.contrato.aseguradora }}
                                         {% endfor %}
                                     </td>
@@ -54,7 +54,7 @@
                                         {% for contrato in pago.recibo.cliente.contratos.all %}
                                             {{ contrato.poliza }} - {{ contrato.empresa }}
                                         {% endfor %}
-                                        {% for beneficiario in pago.recibo.cliente.contratos.beneficiarios.all %}
+                                        {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
                                             {{ beneficiario.contrato.poliza }} - {{ beneficiario.contrato.empresa }}
                                         {% endfor %}
                                     </td>
