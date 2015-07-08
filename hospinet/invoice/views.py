@@ -1394,9 +1394,10 @@ class StatusPagoListView(LoginRequiredMixin, ListView):
         return StatusPago.objects.filter(reportable=True).all()
 
 
-class PagoListView(LoginRequiredMixin, ListView):
+class PagoListView(ListView, LoginRequiredMixin):
     model = Pago
     context_object_name = 'pagos'
+    template_name = 'pago_pendiente_list.html'
 
     def get_queryset(self):
         return Pago.objects.filter(status__reportable=True).all()
