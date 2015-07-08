@@ -1396,7 +1396,7 @@ class StatusPagoListView(LoginRequiredMixin, ListView):
 
 class PagoListView(LoginRequiredMixin, ListView):
     model = StatusPago
-    context_object_name = 'status'
+    context_object_name = 'pagos'
 
     def get_queryset(self):
         return Pago.objects.filter(status__reportable=True).all()
