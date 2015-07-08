@@ -37,15 +37,25 @@
                                         <a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo.numero }}</a>
                                     </td>
                                     <td>{{ pago.recibo.created }}</td>
-                                    <td>{{ pago.recibo.cliente }}</td>
+                                    <td>
+                                        <a href="{{ pago.recibo.cliente.get_absolute_url }}">
+                                        {{ pago.recibo.cliente }}
+                                        </a>
+                                    </td>
                                     <td>
                                         {% for contrato in pago.recibo.cliente.contratos.all %}
                                             {{ contrato.master.aseguradora }}
                                         {% endfor %}
+                                        {% for beneficiario in pago.recibo.cliente.contratos.beneficiarios.all %}
+                                            {{ beneficiario.contrato.aseguradora }}
+                                        {% endfor %}
                                     </td>
                                     <td>
                                         {% for contrato in pago.recibo.cliente.contratos.all %}
-                                            {{ contrato.poliza }} - {{ contrato.master.aseguradora }}
+                                            {{ contrato.poliza }} - {{ contrato.empresa }}
+                                        {% endfor %}
+                                        {% for beneficiario in pago.recibo.cliente.contratos.beneficiarios.all %}
+                                            {{ beneficiario.contrato.poliza }} - {{ beneficiario.contrato.empresa }}
                                         {% endfor %}
                                     </td>
                                     <td class="text-right">{{ pago.monto }}</td>
