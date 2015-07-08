@@ -472,7 +472,7 @@ class TurnoCaja(TimeStampedModel):
 class CierreTurno(TimeStampedModel):
     turno = models.ForeignKey(TurnoCaja, related_name='cierres')
     pago = models.ForeignKey(TipoPago, related_name='cierres')
-    monto = models.DecimalField(blank=True, null=True, max_digits=7,
+    monto = models.DecimalField(blank=True, null=True, max_digits=11,
                                 decimal_places=2)
 
     def get_absolute_url(self):
