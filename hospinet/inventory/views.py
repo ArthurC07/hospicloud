@@ -138,7 +138,6 @@ class ItemListView(ListView, LoginRequiredMixin):
 class ItemInventarioListView(ListView, LoginRequiredMixin):
     model = Item
     context_object_name = 'items'
-    paginate_by = 10
 
     def dispatch(self, *args, **kwargs):
         self.inventario = get_object_or_404(Inventario, pk=kwargs['inventario'])
