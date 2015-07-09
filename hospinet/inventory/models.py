@@ -16,7 +16,6 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
 from datetime import date, time, datetime
-
 from decimal import Decimal
 
 from django.core.urlresolvers import reverse
@@ -164,9 +163,10 @@ class Item(TimeStampedModel):
         self.save()
 
     def movimiento(self, inicio, fin):
-        total = \
-        Transaccion.objects.filter(created__range=(inicio, fin)).aggregate(
-            total=Sum('cantidad'))['total']
+        total = Transaccion.objects.filter(
+            created__range=(inicio, fin),
+            item=self
+        ).aggregate(total=Sum('cantidad'))['total']
 
         if total:
             return total
@@ -174,7 +174,6 @@ class Item(TimeStampedModel):
         return 0
 
     def movimiento_mes(self):
-
         now = timezone.now()
         fin = date(now.year, now.month,
                    calendar.monthrange(now.year, now.month)[1])
@@ -378,7 +377,7 @@ class Historial(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('historial', args=[self.id])
+        return reverse('historial', args=[self.id]
 
 
 @python_2_unicode_compatible
