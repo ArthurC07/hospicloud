@@ -19,6 +19,7 @@ from decimal import Decimal
 
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.db import models
@@ -26,6 +27,7 @@ from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
 
 
+@python_2_unicode_compatible
 class Inventario(models.Model):
     class Meta:
         permissions = (
@@ -37,7 +39,7 @@ class Inventario(models.Model):
                                             null=True)
     activo = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Inventario de {0}".format(self.lugar)
 
     def buscar_item(self, item_template):
@@ -71,18 +73,20 @@ class Inventario(models.Model):
         return self.salidas.filter(aplicada=False).all()
 
 
+@python_2_unicode_compatible
 class ItemType(TimeStampedModel):
     nombre = models.CharField(max_length=255)
     consulta = models.BooleanField(default=True,
                                    verbose_name='Aparece en Cargos de Consulta')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def get_absolute_url(self):
         return reverse('inventario-index')
 
 
+@python_2_unicode_compatible
 class ItemTemplate(TimeStampedModel):
     """"""
 
@@ -107,7 +111,7 @@ class ItemTemplate(TimeStampedModel):
     comision2 = models.DecimalField(decimal_places=2, max_digits=4,
                                     default=Decimal("10.00"))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.descripcion
 
     def get_absolute_url(self):
@@ -126,6 +130,7 @@ class Proveedor(models.Model):
         return self.name
 
 
+@python_2_unicode_compatible
 class Item(TimeStampedModel):
     plantilla = models.ForeignKey(ItemTemplate, related_name='items',
                                   verbose_name='Item')
@@ -165,16 +170,21 @@ class Item(TimeStampedModel):
 
         return 0
 
+    def movimiento_mes(self):
+
+
+
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
         return reverse('inventario', args=[self.inventario.id])
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0} en {1}'.format(self.plantilla.descripcion,
                                     self.inventario.lugar)
 
 
+@python_2_unicode_compatible
 class Requisicion(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='requisiciones',
                                    null=True, blank=True)
@@ -188,7 +198,7 @@ class Requisicion(TimeStampedModel):
 
         return reverse('requisicion', args=[self.id])
 
-    def __unicode__(self):
+    def __str__(self):
         return u'Requisición Número {1} de {0}'.format(self.inventario.lugar,
                                                        self.id)
 
@@ -225,6 +235,7 @@ class ItemRequisicion(TimeStampedModel):
         self.save()
 
 
+@python_2_unicode_compatible
 class Transferencia(TimeStampedModel):
     requisicion = models.ForeignKey(Requisicion, related_name='transferencias',
                                     null=True, blank=True)
@@ -236,7 +247,7 @@ class Transferencia(TimeStampedModel):
     usuario = models.ForeignKey(User, related_name="transferencias",
                                 null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         origen = destino = ''
         if self.origen:
             origen = self.origen.lugar
@@ -269,6 +280,7 @@ class Transferencia(TimeStampedModel):
         return reverse('transferencia', args=[self.id])
 
 
+@python_2_unicode_compatible
 class Transferido(TimeStampedModel):
     transferencia = models.ForeignKey(Transferencia,
                                       related_name='transferidos')
@@ -276,7 +288,7 @@ class Transferido(TimeStampedModel):
     cantidad = models.IntegerField()
     aplicada = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'Transferir {1} {0}'.format(self.item.descripcion,
                                             self.cantidad)
 
@@ -286,13 +298,14 @@ class Transferido(TimeStampedModel):
         return reverse('transferencia', args=[self.transferencia.id])
 
 
+@python_2_unicode_compatible
 class Compra(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, blank=True, null=True,
                                    related_name='compras')
     ingresada = models.BooleanField(default=False)
     proveedor = models.CharField(max_length=255, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Compra efectuada el {0}".format(self.created)
 
     def get_absolute_url(self):
@@ -327,6 +340,7 @@ class ItemAction(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, related_name='acciones')
 
 
+@python_2_unicode_compatible
 class TipoVenta(TimeStampedModel):
     descripcion = models.CharField(max_length=255, blank=True, null=True)
     incremento = models.DecimalField(max_digits=10, decimal_places=2,
@@ -334,14 +348,15 @@ class TipoVenta(TimeStampedModel):
     disminucion = models.DecimalField(max_digits=10, decimal_places=2,
                                       default=0)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.descripcion
 
 
+@python_2_unicode_compatible
 class Historial(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='historiales')
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0} el {1}'.format(self.inventario.lugar,
                                     self.fecha.strftime('%d/%m/Y'))
 
@@ -351,12 +366,13 @@ class Historial(TimeStampedModel):
         return reverse('historial', args=[self.id])
 
 
+@python_2_unicode_compatible
 class ItemHistorial(TimeStampedModel):
     historial = models.ForeignKey(Historial, related_name='items')
     item = models.ForeignKey(ItemTemplate, related_name='historicos')
     cantidad = models.IntegerField(default=0)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0} {1} el {2}'.format(self.item.descripcion,
                                         self.historial.inventario.lugar,
                                         self.historial.created.strftime(
