@@ -201,11 +201,6 @@ class Recibo(TimeStampedModel):
 
         return self.total() * Decimal('0.07')
 
-    def comision_radiologo(self):
-
-        return sum(
-            v.radiologo() for v in Venta.objects.filter(recibo=self).all())
-
     def placas(self):
 
         return sum(v.placas for v in Venta.objects.filter(recibo=self).all())
@@ -307,17 +302,6 @@ class Venta(TimeStampedModel):
 
         disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
         return (self.precio * disminucion).quantize(dot01)
-
-    def radiologo(self):
-
-        """Calcular las comisiones del radiologo que atiende tomando en cuenta
-        los descuentos que se han efectuado al recibo"""
-
-        if self.recibo.radiologo is None or self.recibo.radiologo == '':
-            return Decimal('0')
-
-        bruto = self.monto * self.item.comision / Decimal("100")
-        neto = bruto - bruto * self.descuento / Decimal("100")
 
         return neto.quantize(dot01)
 
