@@ -377,7 +377,7 @@ class Historial(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('historial', args=[self.id]
+        return reverse('historial', args=[self.id])
 
 
 @python_2_unicode_compatible
