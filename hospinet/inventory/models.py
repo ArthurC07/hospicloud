@@ -16,9 +16,9 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from decimal import Decimal
-from datetime import date
 
 from django.core.urlresolvers import reverse
+from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.db import models
@@ -47,6 +47,14 @@ class Inventario(models.Model):
             return item
 
         return Item(inventario=self, plantilla=item_template)
+
+    def descargar(self, item_template, cantidad):
+        item = self.buscar_item(item_template)
+        item.disminuir(cantidad)
+
+    def cargar(self, item_template, cantidad):
+        item = self.buscar_item(item_template)
+        item.aumentar(cantidad)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -127,11 +135,35 @@ class Item(TimeStampedModel):
 
     def disminuir(self, cantidad):
         self.cantidad -= cantidad
+
+        transaccion = Transaccion()
+
+        transaccion.item = self
+        transaccion.cantidad = -abs(cantidad)
+        transaccion.save()
+
         self.save()
 
     def incrementar(self, cantidad):
         self.cantidad += cantidad
+
+        transaccion = Transaccion()
+
+        transaccion.item = self
+        transaccion.cantidad = abs(cantidad)
+        transaccion.save()
+
         self.save()
+
+    def movimiento(self, inicio, fin):
+        total = \
+        Transaccion.objects.filter(created__range=(inicio, fin)).aggregate(
+            total=Sum('cantidad'))['total']
+
+        if total:
+            return total
+
+        return 0
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -161,10 +193,10 @@ class Requisicion(TimeStampedModel):
                                                        self.id)
 
     def buscar_item(self, item_template):
-        qs = self.items.filter(item=item_template)
-        r = list(qs[:1])
-        if r:
-            return r[0]
+        item = self.items.filter(item=item_template).first()
+
+        if item:
+            return item
         return ItemRequisicion(requisicion=self, item=item_template)
 
 
@@ -219,12 +251,10 @@ class Transferencia(TimeStampedModel):
             if item.aplicada:
                 continue
 
-            destino = self.destino.buscar_item(item.item)
-            origen = self.origen.buscar_item(item.item)
+            self.destino.cargar(item.item, item.cantidad)
+            self.origen.descargar(item.item, item.cantidad)
             requisicion = self.requisicion.buscar_item(item.item)
 
-            destino.incrementar(item.cantidad)
-            origen.disminuir(item.cantidad)
             requisicion.disminuir(item.cantidad)
 
             item.aplicada = True
@@ -272,9 +302,7 @@ class Compra(TimeStampedModel):
 
     def transferir(self):
         for comprado in self.items.all():
-            item = self.inventario.buscar_item(comprado.item)
-            item.incrementar(comprado.cantidad)
-            item.save()
+            self.inventario.cargar(comprado.item, comprado.cantidad)
 
 
 class ItemComprado(TimeStampedModel):
@@ -331,4 +359,10 @@ class ItemHistorial(TimeStampedModel):
     def __unicode__(self):
         return u'{0} {1} el {2}'.format(self.item.descripcion,
                                         self.historial.inventario.lugar,
-                                        self.historial.created.strftime('%d/%m/Y'))
+                                        self.historial.created.strftime(
+                                            '%d/%m/Y'))
+
+
+class Transaccion(TimeStampedModel):
+    item = models.ForeignKey(Item)
+    cantidad = models.IntegerField(default=0)
