@@ -47,10 +47,11 @@ class Inventario(models.Model):
     def buscar_item(self, item_template):
         item = self.items.filter(plantilla=item_template).first()
 
-        if item:
-            return item
+        if not item:
+            item = Item(inventario=self, plantilla=item_template)
+            item.save()
 
-        return Item(inventario=self, plantilla=item_template)
+        return item
 
     def descargar(self, item_template, cantidad):
         item = self.buscar_item(item_template)
