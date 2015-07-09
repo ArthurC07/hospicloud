@@ -26,7 +26,7 @@
                                 <th>Vencimiento</th>
                                 <th>Cantidad</th>
                                 <th>&Uacute;ltimo Movimiento</th>
-                                <th>Acciones</th>
+                                <th>Movimientos</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -37,7 +37,7 @@
                                     <td>{{ item.vencimiento }}</td>
                                     <td>{{ item.modified }}</td>
                                     <td>{{ item.cantidad }}</td>
-                                    <td></td>
+                                    <td>{{ item.movimiento_mes }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
