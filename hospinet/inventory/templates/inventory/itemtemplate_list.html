@@ -19,6 +19,7 @@
                                 <th>Código</th>
                                 <th>Descripción</th>
                                 <th>Precio</th>
+                                <th>Costo</th>
                                 <th>activo</th>
                                 <th>Marca</th>
                                 <th>Módelo</th>
@@ -27,11 +28,12 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for item in items %}
+                            {% for item in item_templates %}
                                 <tr>
                                     <td>{{ item.id }}</td>
                                     <td>{{ item.descripcion }}</td>
                                     <td>{{ item.precio_de_venta }}</td>
+                                    <td>{{ item.costo }}</td>
                                     <td>{{ item.activo|yesno }}</td>
                                     <td>{{ item.marca }}</td>
                                     <td>{{ item.modelo }}</td>
@@ -40,7 +42,7 @@
                                             {{ grupo }}
                                         {% endfor %}
                                     </td>
-                                    <td><a class="btn" href="{% url 'itemtemplate' item.id %}">Ver</a></td>
+                                    <td><a class="btn" href="{{ item.get_absolute_url }}">Ver</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>

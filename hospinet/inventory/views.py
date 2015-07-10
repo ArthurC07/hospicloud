@@ -77,7 +77,6 @@ class ItemTemplateDetailView(DetailView, LoginRequiredMixin):
 class ItemTemplateListView(ListView, LoginRequiredMixin):
     model = ItemTemplate
     context_object_name = 'item_templates'
-    paginate_by = 10
 
 
 class ItemTemplateCreateView(CreateView, LoginRequiredMixin):
