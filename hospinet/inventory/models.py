@@ -52,13 +52,13 @@ class Inventario(models.Model):
 
         return item
 
-    def descargar(self, item_template, cantidad):
+    def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
-        item.disminuir(cantidad)
+        item.disminuir(cantidad, user)
 
-    def cargar(self, item_template, cantidad):
+    def cargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
-        item.aumentar(cantidad)
+        item.aumentar(cantidad, user)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -138,24 +138,26 @@ class Item(TimeStampedModel):
     vencimiento = models.DateTimeField(default=timezone.now)
     cantidad = models.IntegerField(default=0)
 
-    def disminuir(self, cantidad):
+    def disminuir(self, cantidad, user=None):
         self.cantidad -= cantidad
 
         transaccion = Transaccion()
 
         transaccion.item = self
         transaccion.cantidad = -abs(cantidad)
+        transaccion.user = user
         transaccion.save()
 
         self.save()
 
-    def incrementar(self, cantidad):
+    def incrementar(self, cantidad, user=None):
         self.cantidad += cantidad
 
         transaccion = Transaccion()
 
         transaccion.item = self
         transaccion.cantidad = abs(cantidad)
+        transaccion.user = user
         transaccion.save()
 
         self.save()
@@ -394,3 +396,4 @@ class ItemHistorial(TimeStampedModel):
 class Transaccion(TimeStampedModel):
     item = models.ForeignKey(Item)
     cantidad = models.IntegerField(default=0)
+    user = models.ForeignKey(User, blank=True, null=True)
