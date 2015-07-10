@@ -756,7 +756,8 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
             consultorio.save()
 
         self.request.user.profile.inventario.descargar(self.object.item,
-                                                       self.object.cantidad)
+                                                       self.object.cantidad,
+                                                       self.request.user)
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())

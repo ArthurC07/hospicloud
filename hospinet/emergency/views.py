@@ -22,6 +22,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, TemplateView,
                                   DetailView, UpdateView,
                                   DeleteView)
+
 from django.contrib import messages
 
 from persona.models import Persona
@@ -235,7 +236,9 @@ class CobroCreateView(BaseCreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.request.user.profile.inventario.descargar(self.object.cargo, self.object.cantidad)
+        self.request.user.profile.inventario.descargar(self.object.cargo,
+                                                       self.object.cantidad,
+                                                       self.request.user)
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())

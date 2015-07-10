@@ -276,8 +276,8 @@ class Transferencia(TimeStampedModel):
             if item.aplicada:
                 continue
 
-            self.destino.cargar(item.item, item.cantidad)
-            self.origen.descargar(item.item, item.cantidad)
+            self.destino.cargar(item.item, item.cantidad, self.usuario)
+            self.origen.descargar(item.item, item.cantidad, self.usuario)
             requisicion = self.requisicion.buscar_item(item.item)
 
             requisicion.disminuir(item.cantidad)

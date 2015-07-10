@@ -250,7 +250,8 @@ class CargoCreateView(AdmisionFormMixin, LoginRequiredMixin):
         self.object = form.save(commit=False)
 
         self.request.user.profile.inventario.descargar(self.object.cargo,
-                                                       self.object.cantidad)
+                                                       self.object.cantidad,
+                                                       self.request.user)
 
         self.object.save()
 
