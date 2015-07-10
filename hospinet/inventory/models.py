@@ -100,11 +100,9 @@ class ItemTemplate(TimeStampedModel):
                                        related_name='plantillas')
     precio_de_venta = models.DecimalField(max_digits=10, decimal_places=2,
                                           default=0)
-    costo = models.DecimalField(max_digits=10, decimal_places=2,
-                                default=0)
+    costo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unidad_de_medida = models.CharField(max_length=32, null=True, blank=True)
-    impuestos = models.DecimalField(max_digits=10, decimal_places=2,
-                                    default=0)
+    impuestos = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     activo = models.BooleanField(default=True)
     item_type = models.ManyToManyField(ItemType, related_name='items',
                                        blank=True)

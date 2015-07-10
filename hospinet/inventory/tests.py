@@ -1,16 +1,12 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
+from inventory.models import Inventario, ItemTemplate
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class InventoryTest(TestCase):
+    def setUp(self):
+
+        Inventario.objects.create(nombre=u'Principal', puede_comprar=True)
+        Inventario.objects.create(nombre=u'Secundario')
+
+        ItemTemplate.objects.create(descripcion=u'Apples')
+        ItemTemplate.objects.create(descripcion=u'Pears')
