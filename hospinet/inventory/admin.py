@@ -17,7 +17,8 @@
 from django.contrib import admin
 from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType,
                               TipoVenta, Item, ItemComprado, ItemRequisicion,
-                              Transferencia, Transferido, Proveedor, Compra)
+                              Transferencia, Transferido, Proveedor, Compra,
+                              Transaccion)
 
 
 class ItemTemplateAdmin(admin.ModelAdmin):
@@ -34,6 +35,10 @@ class ItemAdmin(admin.ModelAdmin):
     search_fields = ['plantilla__descripcion', 'inventario__lugar']
 
 
+class TransaccionAdmin(admin.ModelAdmin):
+    list_display = ['item', 'cantidad', 'user']
+
+
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
 admin.site.register(Requisicion)
 admin.site.register(Inventario)
@@ -46,3 +51,4 @@ admin.site.register(Compra)
 admin.site.register(ItemComprado)
 admin.site.register(ItemRequisicion)
 admin.site.register(Proveedor)
+admin.site.register(Transaccion, TransaccionAdmin)
