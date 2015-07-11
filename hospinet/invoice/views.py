@@ -745,68 +745,9 @@ class VentaListView(ListView):
         return context
 
 
-class ReciboRemiteView(ReciboPeriodoView, LoginRequiredMixin):
-    """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
-    los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
-    cuenta el periodo especificado"""
-
-    template_name = 'invoice/remite_list.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Agrega el formulario"""
-
-        self.form = PeriodoForm(request.GET, prefix='remite')
-
-        return super(ReciboRemiteView, self).dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        """Agrega el formulario de :class:`Recibo`"""
-
-        context = super(ReciboRemiteView, self).get_context_data(**kwargs)
-
-        context['cantidad'] = Decimal('0')
-        doctores = defaultdict(lambda: defaultdict(Decimal))
-
-        for recibo in self.recibos.all():
-            doctores[recibo.remite.upper()]['monto'] += recibo.total()
-            doctores[recibo.remite.upper()]['cantidad'] += 1
-            doctores[recibo.remite.upper()][
-                'comision'] += recibo.comision_doctor()
-
-        context['cantidad'] = sum(doctores[d]['comision'] for d in doctores)
-
-        context['recibos'] = self.recibos
-        context['inicio'] = self.inicio
-        context['doctores'] = doctores.items()
-        context['fin'] = self.fin
-        return context
-
-
-class ReciboRadView(ReciboPeriodoView, LoginRequiredMixin):
-    """Legacy - Muestra los honorarios médicos de los radiologos
-
-    Obsoleto
-    """
-
-    template_name = 'invoice/radiologo_list.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Agrega el formulario"""
-
-        self.form = PeriodoForm(request.GET, prefix='rad')
-
-        return super(ReciboRadView, self).dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        """Agrega el formulario de :class:`Recibo`"""
-
-        context = super(ReciboRadView, self).get_context_data(**kwargs)
-        return context
-
-
 class EmergenciaPeriodoView(TemplateView, LoginRequiredMixin):
     """Muestra las opciones disponibles para la aplicación"""
-
+    
     template_name = 'invoice/emergencia_list.html'
 
     def dispatch(self, request, *args, **kwargs):

@@ -20,7 +20,6 @@ from django.conf.urls import patterns, url
 from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            ReciboDetailView, VentaCreateView,
                            ReporteReciboView, ReporteProductoView,
-                           ReciboRadView,
                            EmergenciaPeriodoView, ReciboCerrarView,
                            ReciboExamenCreateView, EmergenciaDiaView,
                            AdmisionAltaView,
