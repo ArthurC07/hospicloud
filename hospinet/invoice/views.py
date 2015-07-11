@@ -747,7 +747,7 @@ class VentaListView(ListView):
 
 class EmergenciaPeriodoView(TemplateView, LoginRequiredMixin):
     """Muestra las opciones disponibles para la aplicación"""
-    
+
     template_name = 'invoice/emergencia_list.html'
 
     def dispatch(self, request, *args, **kwargs):
