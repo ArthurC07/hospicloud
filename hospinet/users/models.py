@@ -29,6 +29,7 @@ from tastypie.models import create_api_key
 
 from guardian.shortcuts import assign_perm
 
+from bsc.models import Login
 from emergency.models import Emergencia
 from inventory.models import Inventario, ItemTemplate
 from persona.models import Persona
@@ -129,6 +130,27 @@ class UserProfile(UserenaBaseProfile):
         return Emergencia.objects.filter(usuario=self.user,
                                          created__range=(inicio, fin)
                                          ).count()
+
+    def get_current_month_logins(self):
+
+        now = timezone.now()
+        fin = date(now.year, now.month,
+                   calendar.monthrange(now.year, now.month)[1])
+        inicio = date(now.year, now.month, 1)
+
+        fin = datetime.combine(fin, time.max)
+        inicio = datetime.combine(inicio, time.min)
+
+        fin = timezone.make_aware(fin, timezone.get_current_timezone())
+        inicio = timezone.make_aware(inicio,
+                                     timezone.get_current_timezone())
+
+        query = Login.objects.filter(created__range=(inicio, fin),
+                                     user=self.user)
+
+        return {'normal': query.filter(holiday=False).count(),
+                'holiday': query.filter(),
+                }
 
 
 User.userena_signup = property(

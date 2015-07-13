@@ -16,10 +16,11 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from decimal import Decimal
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, user_logged_in
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
@@ -314,6 +315,27 @@ class Voto(TimeStampedModel):
 
         return reverse('respuesta', args=[self.respuesta.id])
 
+
+class Holiday(TimeStampedModel):
+    day = models.DateField()
+
+
+class Login(TimeStampedModel):
+    user = models.ForeignKey(User)
+    holiday = models.BooleanField(default=False)
+
+
+def register_login(sender, user, request, **kwargs):
+    login = Login(user=user)
+    holidays = Holiday.objects.filter(day=timezone.now().date())
+
+    if holidays.count() > 0:
+        login.holiday = True
+
+    login.save()
+
+
+user_logged_in.connect(register_login)
 
 Persona.cantidad_encuestas = property(lambda p: Respuesta.objects.filter(
     consulta__persona=p).count())
