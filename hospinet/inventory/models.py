@@ -123,10 +123,11 @@ class ItemTemplate(TimeStampedModel):
         return u"\n".join([t.nombre for t in self.item_type.all()])
 
 
+@python_2_unicode_compatible
 class Proveedor(models.Model):
     name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 

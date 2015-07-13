@@ -28,17 +28,16 @@ class ReciboAdmin(admin.ModelAdmin):
 
 
 class CierreturnoAdmin(admin.ModelAdmin):
-    list_display = ('turno', 'pago', 'monto')
-    ordering = ['turno', 'pago', 'monto']
+    list_display = ('turno', 'pago', 'monto', 'created')
+    ordering = ['turno', 'pago', 'monto', 'created']
     search_fields = ['turno__usuario__first_name', 'turno__usuario__last_name',
-                     'pago__nombre', 'monto']
+                     'monto']
 
 
 class TurnoCajaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'inicio', 'fin', 'apertura')
     ordering = ['usuario', 'inicio', 'fin', 'apertura']
-    search_fields = ['usuario__first_name', 'usuario__last_name',
-                     'pago__nombre', 'apertura']
+    search_fields = ['usuario__first_name', 'usuario__last_name', 'apertura']
 
 
 class TipoPagoAdmin(admin.ModelAdmin):
