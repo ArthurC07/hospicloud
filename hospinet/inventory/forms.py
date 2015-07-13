@@ -250,5 +250,5 @@ class ItemCotizadoform(CotizacionFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemCotizadoform, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Cotizacion',
+        self.helper.layout = Fieldset(u'Formulario de Item Cotizado',
                                       *self.field_names)
