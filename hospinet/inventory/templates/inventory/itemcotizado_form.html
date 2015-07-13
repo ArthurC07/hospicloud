@@ -5,15 +5,14 @@
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="col-md-6">
-            <div class="main-content col-md-12">
-                {% crispy form %}
-            </div>
+        <section class="col-md-9">
+            {% crispy form %}
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
+                        <li><a href="{{ cotizacion.get_absolute_url }}">Regresar a Cotizaci&oacute;n</a></li>
                     </ul>
                 </nav>
             </div>
