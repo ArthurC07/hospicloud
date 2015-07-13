@@ -23,17 +23,17 @@
                             <th>C&oacute;digo</th>
                             <th>Descripci&oacute;n</th>
                             <th>Cantidad</th>
-                            <th>Pendiente</th>
-                            <th>Entregado</th>
+                            <th>Precio</th>
                             <th>Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in cotizacion.itemTemplate_set.all %}
+                        {% for item in cotizacion.itemcotizado_set.all %}
                             <tr>
                                 <td>{{ item.item.id }}</td>
                                 <td>{{ item.item.descripcion }}</td>
                                 <td>{{ item.cantidad }}</td>
+                                <td>{{ item.precio }}</td>
                                 <td></td>
                             </tr>
                         {% endfor %}

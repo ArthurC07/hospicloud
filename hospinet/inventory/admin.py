@@ -15,28 +15,50 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+from django_extensions.admin import ForeignKeyAutocompleteAdmin
+
 from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType,
                               TipoVenta, Item, ItemComprado, ItemRequisicion,
                               Transferencia, Transferido, Proveedor, Compra,
-                              Transaccion)
+                              Transaccion, Cotizacion, ItemCotizado)
 
 
 class ItemTemplateAdmin(admin.ModelAdmin):
-    list_display = ('descripcion', 'costo', 'precio_de_venta', 'get_types', 'activo',)
-    list_filter = ('activo', )
+    list_display = (
+    'descripcion', 'costo', 'precio_de_venta', 'get_types', 'activo',)
+    list_filter = ('activo',)
     ordering = ('descripcion', 'activo', 'precio_de_venta', 'costo')
     filter_horizontal = ('item_type',)
-    search_fields = ['descripcion',]
+    search_fields = ['descripcion', ]
 
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('plantilla', 'inventario', 'vencimiento', 'created')
-    ordering = ['plantilla__descripcion', 'inventario', 'vencimiento', 'created']
+    ordering = ['plantilla__descripcion', 'inventario', 'vencimiento',
+                'created']
     search_fields = ['plantilla__descripcion', 'inventario__lugar']
 
 
 class TransaccionAdmin(admin.ModelAdmin):
     list_display = ['item', 'cantidad', 'user']
+
+
+class CotizacionAdmin(ForeignKeyAutocompleteAdmin):
+    list_display = ['proveedor', 'created', 'vencimiento']
+    ordering = ['proveedor__name', 'created', 'vencimiento']
+    search_fields = ['proveedor__name']
+
+
+class ItemCotizadoAdmin(ForeignKeyAutocompleteAdmin):
+    list_display = ['get_proveedor', 'item', 'created', 'cantidad',
+                    'precio']
+    ordering = ['cotizacion__proveedor__name', 'item__descripcion', 'created',
+                'cantidad', 'precio']
+    search_fields = ['cotizacion__proveedor__name', 'item__descripcion']
+
+    def get_proveedor(self, obj):
+
+        return obj.cotizacion.proveedor.name
 
 
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
@@ -52,3 +74,5 @@ admin.site.register(ItemComprado)
 admin.site.register(ItemRequisicion)
 admin.site.register(Proveedor)
 admin.site.register(Transaccion, TransaccionAdmin)
+admin.site.register(Cotizacion, CotizacionAdmin)
+admin.site.register(ItemCotizado, ItemCotizadoAdmin)

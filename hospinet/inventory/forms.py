@@ -240,7 +240,7 @@ class CotizacionForm(ProveedorFormMixin):
 
 class CotizacionFormMixin(FieldSetModelFormMixin):
     cotizacion = forms.ModelChoiceField(label="",
-                                        queryset=Proveedor.objects.all(),
+                                        queryset=Cotizacion.objects.all(),
                                         widget=forms.HiddenInput())
 
 

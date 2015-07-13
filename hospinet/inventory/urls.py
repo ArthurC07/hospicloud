@@ -172,7 +172,7 @@ urlpatterns = patterns('',
                            CotizacionDetailView.as_view(),
                            name='cotizacion-view'),
 
-                       url(r'^cotizacion/(?P<pk>\d+)/item/agregar$',
+                       url(r'^cotizacion/(?P<cotizacion>\d+)/item/agregar$',
                            ItemCotizadoCreateView.as_view(),
                            name='itemcotizado-create'),
 

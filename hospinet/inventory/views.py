@@ -23,7 +23,6 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.base import TemplateView, TemplateResponseMixin
 from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponseRedirect
-
 from django.core.urlresolvers import reverse
 
 from django.views.generic.edit import FormMixin
@@ -485,6 +484,33 @@ class CotizacionDetailView(DetailView, LoginRequiredMixin):
     context_object_name = 'cotizacion'
 
 
-class ItemCotizadoCreateView(CreateView, LoginRequiredMixin):
+class CotizacionMixin(TemplateResponseMixin):
+    """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
+
+    def dispatch(self, *args, **kwargs):
+        self.cotizacion = get_object_or_404(Cotizacion, pk=kwargs['cotizacion'])
+        return super(CotizacionMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CotizacionMixin, self).get_context_data(**kwargs)
+
+        context['cotizacion'] = self.cotizacion
+
+        return context
+
+
+class CotizacionFormMixin(CotizacionMixin, FormMixin):
+    """Permite inicializar el :class:`Proveedor` que se utilizará en un
+    formulario"""
+
+    def get_initial(self):
+        initial = super(CotizacionFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['cotizacion'] = self.cotizacion
+        return initial
+
+
+class ItemCotizadoCreateView(CotizacionFormMixin, CreateView,
+                             LoginRequiredMixin):
     model = ItemCotizado
     form_class = ItemCotizadoform
