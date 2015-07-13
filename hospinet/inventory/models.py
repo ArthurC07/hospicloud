@@ -409,7 +409,16 @@ class Cotizacion(TimeStampedModel):
 
         return u'Cotización de {0}'.format(self.proveedor)
 
+    def get_absolute_url(self):
+
+        return reverse('cotizacion-view', args=[self.id])
+
 
 class ItemCotizado(TimeStampedModel):
     cotizacion = models.ForeignKey(Cotizacion)
     item = models.ForeignKey(ItemTemplate)
+    cantidad = models.IntegerField(default=0)
+
+    def get_absolute_url(self):
+
+        return self.cotizacion.get_absolute_url()

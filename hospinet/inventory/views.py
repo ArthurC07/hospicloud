@@ -461,17 +461,8 @@ class ProveedorListView(ListView, LoginRequiredMixin):
     paginate_by = 10
 
 
-class ProveedorDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
-    paginate_by = 10
+class ProveedorDetailView(DetailView, LoginRequiredMixin):
     template_name = 'inventory/proveedor_detail.html'
-
-    def get_context_data(self, **kwargs):
-        kwargs['inventario'] = self.object
-        return super(ProveedorDetailView, self).get_context_data(**kwargs)
-
-    def get_queryset(self):
-        self.object = self.get_object(Proveedor.objects.all())
-        return self.object.items.all()
 
 
 class ProveedorCreateView(CreateView, LoginRequiredMixin):
@@ -489,6 +480,11 @@ class CotizacionCreateView(CreateView, LoginRequiredMixin):
     form_class = CotizacionForm
 
 
-class ItemCotizadoForm(CreateView, LoginRequiredMixin):
+class CotizacionDetailView(DetailView, LoginRequiredMixin):
+    model = Cotizacion
+    context_object_name = 'cotizacion'
+
+
+class ItemCotizadoCreateView(CreateView, LoginRequiredMixin):
     model = ItemCotizado
     form_class = ItemCotizadoform

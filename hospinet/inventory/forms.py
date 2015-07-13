@@ -210,9 +210,8 @@ class ProveedorForm(FieldSetModelFormMixin):
 
 
 class ProveedorFormMixin(FieldSetModelFormMixin):
-    proveedor = ModelChoiceField(label="", name='', model='',
-                                 queryset=Proveedor.objects.all(),
-                                 widget=forms.HiddenInput())
+    proveedor = ModelChoiceField(name='', model='',
+                                 queryset=Proveedor.objects.all())
 
 
 class CompraForm(ProveedorFormMixin):
