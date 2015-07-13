@@ -34,6 +34,11 @@ class ItemAdmin(admin.ModelAdmin):
     search_fields = ['plantilla__descripcion', 'inventario__lugar']
 
 
+class ProveedorAdmin(admin.ModelAdmin):
+    list_display = ('name')
+    search_fields = ['name']
+
+
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
 admin.site.register(Requisicion)
 admin.site.register(Inventario)
@@ -45,4 +50,4 @@ admin.site.register(Transferencia)
 admin.site.register(Compra)
 admin.site.register(ItemComprado)
 admin.site.register(ItemRequisicion)
-admin.site.register(Proveedor)
+admin.site.register(Proveedor, ProveedorAdmin)
