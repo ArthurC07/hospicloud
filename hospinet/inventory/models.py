@@ -397,3 +397,18 @@ class Transaccion(TimeStampedModel):
     item = models.ForeignKey(Item)
     cantidad = models.IntegerField(default=0)
     user = models.ForeignKey(User, blank=True, null=True)
+
+
+@python_2_unicode_compatible
+class Cotizacion(TimeStampedModel):
+    proveedor = models.ForeignKey(Proveedor)
+    vencimiento = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+
+        return u'Cotización de {0}'.format(self.proveedor)
+
+
+class ItemCotizado(TimeStampedModel):
+    cotizacion = models.ForeignKey(Cotizacion)
+    item = models.ForeignKey(ItemTemplate)
