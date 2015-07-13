@@ -418,6 +418,7 @@ class ItemCotizado(TimeStampedModel):
     cotizacion = models.ForeignKey(Cotizacion)
     item = models.ForeignKey(ItemTemplate)
     cantidad = models.IntegerField(default=0)
+    precio = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def get_absolute_url(self):
 

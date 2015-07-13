@@ -21,7 +21,7 @@ from crispy_forms.layout import Submit, Fieldset
 from select2.fields import ModelChoiceField
 
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
-    DateTimeWidget
+    DateTimeWidget, FutureDateWidget
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
                               Transferido, ItemComprado, Historial, Proveedor,
@@ -230,6 +230,8 @@ class CotizacionForm(ProveedorFormMixin):
         model = Cotizacion
         fields = '__all__'
 
+    vencimiento = forms.DateField(widget=FutureDateWidget())
+
     def __init__(self, *args, **kwargs):
         super(CotizacionForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Cotizacion',
@@ -242,7 +244,7 @@ class CotizacionFormMixin(FieldSetModelFormMixin):
                                         widget=forms.HiddenInput())
 
 
-class ItemCotizadoform(CotizacionFormMixin):
+class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
     class Meta:
         model = ItemCotizado
         fields = '__all__'
