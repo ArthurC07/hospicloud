@@ -514,3 +514,7 @@ class ItemCotizadoCreateView(CotizacionFormMixin, CreateView,
                              LoginRequiredMixin):
     model = ItemCotizado
     form_class = ItemCotizadoform
+
+    def get_success_url(self):
+
+        return reverse('itemcotizado-create', args=[self.cotizacion.id])
