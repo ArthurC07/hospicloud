@@ -318,7 +318,7 @@ class Compra(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, blank=True, null=True,
                                    related_name='compras')
     ingresada = models.BooleanField(default=False)
-    proveedor = models.CharField(max_length=255, blank=True, null=True)
+    proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
 
     def __str__(self):
         return u"Compra efectuada el {0}".format(self.created)

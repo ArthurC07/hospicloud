@@ -20,22 +20,27 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
                                   DeleteView)
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, TemplateResponseMixin
 from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponseRedirect
+
 from django.core.urlresolvers import reverse
+
+from django.views.generic.edit import FormMixin
 
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from inventory.models import (Inventario, Item, ItemTemplate, Transferencia,
                               Historial, ItemComprado, Transferido, Compra,
                               ItemType, Requisicion, ItemRequisicion,
-                              ItemHistorial, Proveedor)
+                              ItemHistorial, Proveedor, Cotizacion,
+                              ItemCotizado)
 from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm,
                              HistorialForm, ItemForm, RequisicionForm,
                              ItemRequisicionForm, TransferenciaForm,
                              TransferidoForm, CompraForm, TransferirForm,
                              ItemTemplateSearchForm, RequisicionCompletarForm,
-                             ItemCompradoForm, ProveedorForm)
+                             ItemCompradoForm, ProveedorForm, CotizacionForm,
+                             ItemCotizadoform)
 
 
 class InventarioPermissionMixin(LoginRequiredMixin):
@@ -311,7 +316,34 @@ class TransferidoListView(ListView, LoginRequiredMixin):
     paginate_by = 10
 
 
-class CompraCreateView(InventarioFormMixin, LoginRequiredMixin):
+class ProveedorMixin(TemplateResponseMixin):
+    """Permite obtener un :class:`Proveedor` desde los argumentos en una url"""
+
+    def dispatch(self, *args, **kwargs):
+        self.proveedor = get_object_or_404(Proveedor, pk=kwargs['proveedor'])
+        return super(ProveedorMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ProveedorMixin, self).get_context_data(**kwargs)
+
+        context['proveedor'] = self.proveedor
+
+        return context
+
+
+class ProveedorFormMixin(ProveedorMixin, FormMixin):
+    """Permite inicializar el :class:`Proveedor` que se utilizará en un
+    formulario"""
+
+    def get_initial(self):
+        initial = super(ProveedorFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['proveedor'] = self.proveedor
+        return initial
+
+
+class CompraCreateView(InventarioFormMixin, ProveedorFormMixin,
+                       LoginRequiredMixin):
     model = Compra
     form_class = CompraForm
 
@@ -450,3 +482,13 @@ class ProveedorCreateView(CreateView, LoginRequiredMixin):
 class ProveedorUpdateView(UpdateView, LoginRequiredMixin):
     model = Proveedor
     form_class = ProveedorForm
+
+
+class CotizacionCreateView(CreateView, LoginRequiredMixin):
+    model = Cotizacion
+    form_class = CotizacionForm
+
+
+class ItemCotizadoForm(CreateView, LoginRequiredMixin):
+    model = ItemCotizado
+    form_class = ItemCotizadoform
