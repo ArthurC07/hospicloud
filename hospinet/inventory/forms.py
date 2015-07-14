@@ -20,7 +20,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from select2.fields import ModelChoiceField
 
-from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, DateTimeWidget, FutureDateWidget
+from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
+    DateTimeWidget
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
                               Transferido, ItemComprado, Historial, Proveedor)
@@ -134,6 +135,10 @@ class TransferenciaForm(HiddenUserForm):
     class Meta:
         model = Transferencia
         exclude = ('aplicada',)
+
+    origen = ModelChoiceField(name="", model="",
+                              queryset=Inventario.objects.filter(
+                                  activo=True).all())
 
     def __init__(self, *args, **kwargs):
         super(TransferenciaForm, self).__init__(*args, **kwargs)
