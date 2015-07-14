@@ -39,6 +39,9 @@ dot01 = Decimal("0.01")
 
 
 class TipoPago(TimeStampedModel):
+    """
+    Define las formas de pago disponibles para ingresar en los :class:`Recibo`
+    """
     nombre = models.CharField(max_length=255, blank=True, null=True)
     color = ColorField(default='')
 
