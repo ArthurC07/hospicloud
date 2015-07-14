@@ -140,6 +140,10 @@ class TransferenciaForm(HiddenUserForm):
                               queryset=Inventario.objects.filter(
                                   activo=True).all())
 
+    destino = ModelChoiceField(name="", model="",
+                               queryset=Inventario.objects.filter(
+                                   activo=True).all())
+
     def __init__(self, *args, **kwargs):
         super(TransferenciaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(
