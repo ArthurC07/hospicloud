@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
-
 from collections import defaultdict, OrderedDict
 from datetime import datetime, time, date
 from decimal import Decimal
@@ -24,20 +23,23 @@ from constance import config
 from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, Count
+from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView)
+
 from django.forms.models import inlineformset_factory
 
 from django.contrib.auth.decorators import permission_required
 
 from clinique.models import Consulta
 from contracts.models import Aseguradora
+from contracts.views import AseguradoraMixin
 from spital.forms import DepositoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from spital.models import Admision, Deposito
@@ -1326,7 +1328,7 @@ class TipoPagoPeriodoView(ListView):
         return context
 
 
-class StatusPagoListView(LoginRequiredMixin, ListView):
+class StatusPagoListView(ListView, LoginRequiredMixin):
     model = StatusPago
     context_object_name = 'status'
 
@@ -1341,3 +1343,40 @@ class PagoListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         return Pago.objects.filter(status__reportable=True).all()
+
+    def get_context_data(self, **kwargs):
+        context = super(PagoListView, self).get_context_data(**kwargs)
+
+        total = []
+        for aseguradora in Aseguradora.objects.all():
+            total.append((aseguradora, Pago.objects.filter(
+                status__reportable=True,
+                recibo__cliente__in=Persona.objects.filter(
+                    contratos__master__aseguradora=aseguradora)
+            ).aggregate(total=Sum('monto'))['total']))
+
+        context['total'] = self.get_queryset().aggregate(
+            total=Sum('monto')
+        )['total']
+
+        context['aseguradoras'] = total
+
+        return context
+
+
+class PagoAseguradoraList(ListView, AseguradoraMixin, LoginRequiredMixin):
+    model = Pago
+    context_object_name = 'pagos'
+    template_name = 'invoice/pago_pendiente_list.html'
+
+    def get_queryset(self):
+        return Pago.objects.filter(status__reportable=True,
+                                   recibo__cliente__in=Persona.objects.filter(
+                                       contratos__master__aseguradora=self.aseguradora))
+
+    def get_context_data(self, **kwargs):
+        context = super(PagoAseguradoraList, self).get_context_data(**kwargs)
+        context['total'] = self.get_queryset().aggregate(
+            total=Sum('monto')
+        )['total']
+        return context

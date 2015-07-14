@@ -35,8 +35,8 @@ class ItemAdmin(admin.ModelAdmin):
 
 
 class ProveedorAdmin(admin.ModelAdmin):
-    list_display = ('name')
-    search_fields = ['name']
+    list_display = ['name', ]
+    search_fields = ['name', ]
 
 
 admin.site.register(ItemTemplate, ItemTemplateAdmin)

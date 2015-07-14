@@ -38,7 +38,7 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            StatusPagoListView, TurnoCajaUpdateView,
                            EstadisticasView, EstadisticasPeriodoView,
                            TipoPagoPeriodoView, CiudadPeriodoListView,
-                           PagoListView)
+                           PagoListView, PagoAseguradoraList)
 
 urlpatterns = patterns('',
 
@@ -118,6 +118,10 @@ urlpatterns = patterns('',
                        url(r'^pago/list$',
                            PagoListView.as_view(),
                            name='invoice-pago-list'),
+
+                       url(r'^pago/aseguradora/(?P<aseguradora>\d+)/list$',
+                           PagoAseguradoraList.as_view(),
+                           name='invoice-pago-aseguradora-list'),
 
                        url(r'^periodo/emergencia$',
                            EmergenciaPeriodoView.as_view(),
