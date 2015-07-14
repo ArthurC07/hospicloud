@@ -14,6 +14,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+import calendar
+from datetime import date, datetime, time
 from decimal import Decimal
 
 from django.contrib.auth.models import User, user_logged_in
@@ -21,13 +23,16 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
 from django.utils import timezone
+
 from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from emergency.models import Emergencia
 from invoice.models import Recibo
 from persona.models import Persona
+from users.models import UserProfile
 
 
 @python_2_unicode_compatible
@@ -326,13 +331,21 @@ class Login(TimeStampedModel):
 
 
 def register_login(sender, user, request, **kwargs):
-    login = Login(user=user)
+
     day = timezone.now().date()
     holidays = Holiday.objects.filter(day=day)
+    logins = Login.objects.filter(created__range=(
+        datetime.combine(day, time.min),
+        datetime.combine(day, time.max)
+    )).count()
 
+    if logins > 0:
+        return
+
+    login = Login(user=user)
     if holidays.count() > 0 or day.weekday() not in range(1, 6):
         login.holiday = True
-        
+
     login.save()
 
 
@@ -343,3 +356,30 @@ Persona.cantidad_encuestas = property(lambda p: Respuesta.objects.filter(
 
 Persona.ultima_encuesta = property(lambda p: Respuesta.objects.filter(
     consulta__persona=p).order_by('created').last())
+
+
+def get_current_month_logins(user):
+    now = timezone.now()
+    fin = date(now.year, now.month,
+               calendar.monthrange(now.year, now.month)[1])
+    inicio = date(now.year, now.month, 1)
+
+    fin = datetime.combine(fin, time.max)
+    inicio = datetime.combine(inicio, time.min)
+
+    fin = timezone.make_aware(fin, timezone.get_current_timezone())
+    inicio = timezone.make_aware(inicio,
+                                 timezone.get_current_timezone())
+
+    query = Login.objects.filter(created__range=(inicio, fin),
+                                 user=user)
+
+    value = {'normal': query.filter(holiday=False).count(),
+             'festivos': query.filter(holiday=True).count(),
+             }
+
+    return value
+
+
+UserProfile.get_current_month_logins = property(
+    lambda p: get_current_month_logins(p.user))

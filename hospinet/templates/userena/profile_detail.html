@@ -158,6 +158,12 @@
                             <br>
                         </div>
                     {% endwith %}
+
+                    <h3>Inicios de Sesi&oacute;n</h3>
+                    {% with profile.get_current_month_logins as logins %}
+                        D&iacute;as Normales: {{ logins.normal }}
+                        D&iacute;as Festivos: {{ logins.festivos }}
+                    {% endwith %}
                     </div>
                     </div>
                 {% endblock %}
