@@ -327,11 +327,12 @@ class Login(TimeStampedModel):
 
 def register_login(sender, user, request, **kwargs):
     login = Login(user=user)
-    holidays = Holiday.objects.filter(day=timezone.now().date())
+    day = timezone.now().date()
+    holidays = Holiday.objects.filter(day=day)
 
-    if holidays.count() > 0:
+    if holidays.count() > 0 or day.weekday() not in range(1, 6):
         login.holiday = True
-
+        
     login.save()
 
 
