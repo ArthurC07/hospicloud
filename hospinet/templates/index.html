@@ -78,6 +78,7 @@
                 </div>
             </a>
             {% endif %}
+            {% if config.HOSPITALIZACION_ENABLED %}
             <a href="{% url 'nightingale-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon5.png' %}">
@@ -86,6 +87,7 @@
                     <div>Hospitalizaci&oacute;n</div>
                 </div>
             </a>
+            {% endif %}
             {% if config.INVENTORY_ENABLED %}
             <a href="{% url 'inventario-index' %}">
                 <div class="image-holder flex-container">
@@ -116,7 +118,7 @@
                 </div>
             </a>
             {% endif %}
-            {% if config.CAJA_ENABLED %}
+            {% if config.INVOICE_ENABLED %}
             <a href="{% url 'invoice-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon9.png' %}">
