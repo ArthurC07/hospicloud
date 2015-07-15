@@ -40,7 +40,7 @@ class ItemTemplateForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class ItemTemplateFormMixin(FieldSetFormMixin):
+class ItemTemplateFormMixin(FieldSetModelFormMixin):
     item = ModelChoiceField(
         queryset=ItemTemplate.objects.filter(activo=True).order_by(
             'descripcion'), name="", model="")
