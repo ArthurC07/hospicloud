@@ -28,11 +28,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView)
-
 from django.forms.models import inlineformset_factory
 
 from django.contrib.auth.decorators import permission_required
@@ -895,7 +893,8 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request, u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(self.request,
+                          u'No puede facturar sin tener ciudad en su perfil!')
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
             else:
@@ -948,7 +947,8 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request, u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(self.request,
+                          u'No puede facturar sin tener ciudad en su perfil!')
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
             else:
@@ -992,13 +992,14 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
         return HttpResponseRedirect(recibo.get_absolute_url())
 
 
-class AseguradoraFacturarView(RedirectView, LoginRequiredMixin):
+class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request, u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(self.request,
+                          u'No puede facturar sin tener ciudad en su perfil!')
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
             else:
@@ -1034,7 +1035,55 @@ class AseguradoraFacturarView(RedirectView, LoginRequiredMixin):
 
     @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
-        return super(AseguradoraFacturarView, self).dispatch(*args, **kwargs)
+        return super(AseguradoraContractsFacturarView, self).dispatch(*args,
+                                                                      **kwargs)
+
+
+class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+
+        if self.request.user.profile.ciudad is None:
+            messages.info(self.request,
+                          u'No puede facturar sin tener ciudad en su perfil!')
+            if self.request.META['HTTP_REFERER']:
+                return self.request.META['HTTP_REFERER']
+            else:
+                return reverse('invoice-index')
+
+        aseguradora = get_object_or_404(Aseguradora, pk=kwargs['pk'])
+
+        recibo = Recibo()
+        recibo.cajero = self.request.user
+        recibo.cliente = aseguradora.cardex
+        recibo.credito = True
+        recibo.tipo_de_venta = TipoVenta.objects.get(
+            pk=int(config.DEFAULT_VENTA_TYPE))
+
+        recibo.save()
+        for master in aseguradora.master_contracts.all():
+            venta = Venta()
+            venta.item = master.plan.item
+            venta.recibo = recibo
+            venta.descripcion = u'Poliza {0}  {1}'.format(master.poliza,
+                                                          master.contratante.nombre)
+            venta.cantidad = 1
+            venta.precio = master.comision_administrativa()
+            venta.impuesto = master.plan.item.impuestos
+            venta.save()
+            recibo.ventas.add(venta)
+            venta.save()
+
+        recibo.save()
+
+        messages.info(self.request, u'¡La consulta se marcó como facturada!')
+        return recibo.get_absolute_url()
+
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(AseguradoraMasterFacturarView, self).dispatch(*args,
+                                                                   **kwargs)
 
 
 class ExamenFacturarView(UpdateView, LoginRequiredMixin):
@@ -1054,7 +1103,8 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request, u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(self.request,
+                          u'No puede facturar sin tener ciudad en su perfil!')
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
             else:
@@ -1256,7 +1306,8 @@ class DepositoFacturarView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request, u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(self.request,
+                          u'No puede facturar sin tener ciudad en su perfil!')
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
             else:
