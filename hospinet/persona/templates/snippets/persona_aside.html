@@ -2,6 +2,7 @@
     <div class="col-md-12 toolbox">
         <nav class="sidebar-nav">
             <ul class="nav nav-stacked">
+                {% if config.CONSULTA_ENABLED %}
                 <li>
                     <a href="{% url 'consultorio-espera-u-agregar' persona.id %}">Agregar Paciente a Sala de Espera</a>
                 </li>
@@ -25,24 +26,35 @@
                         Remitir Paciente
                     </a>
                 </li>
+                {% endif %}
+                {% if config.IMAGENES_ENABLED %}
                 <li>
                     <a href="{% url 'examen-programar' persona.id %}">Programar
                         Estudio</a>
                 </li>
+                {% endif %}
+                {% if config.EMERGENCIA_ENABLED %}
                 <li>
                     <a href="{% url 'emergency-create' persona.id %}">Ingresar a
                         Emergencias</a>
                 </li>
+                {% endif %}
+                {% if config.HOSPITALIZACION_ENABLED %}
                 <li>
                     <a href="{% url 'admision-persona-agregar' persona.id %}">Hospitalizar</a>
                 </li>
+                {% endif %}
+
+                {% if config.INVOICE_ENABLED %}
+                    <li>
+                        <a href="{% url 'invoice-create' persona.id %}">Crear un Recibo</a>
+                    </li>
+                {% endif %}
+                {% if config.CONTRATOS_ENABLED %}
                 <li>
                     <a href="{% url 'contrato-persona-add' persona.id %}">Crear
                         un
                         Contrato</a>
-                </li>
-                <li>
-                    <a href="{% url 'invoice-create' persona.id %}">Crear un Recibo</a>
                 </li>
                 <li>
                     <a href="{% url 'persona-beneficiario-add' persona.id %}">Convertir
@@ -56,6 +68,7 @@
                     <a href="{% url 'contrato-persona-master-add' persona.id %}">Crear
                         Contrato desde Maestro</a>
                 </li>
+                {% endif %}
             </ul>
         </nav>
     </div>
