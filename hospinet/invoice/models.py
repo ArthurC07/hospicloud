@@ -232,11 +232,13 @@ class Recibo(TimeStampedModel):
     def save(self, *args, **kwargs):
 
         if self.pk is None:
-            ciudad = self.cajero.profile.ciudad
-            ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
-            ciudad.save()
-            ciudad = Ciudad.objects.get(pk=ciudad.pk)
-            self.correlativo = ciudad.correlativo_de_recibo
+            if self.cajero.profile is not None and self.cajero.profile.ciudad\
+                    is not None:
+                ciudad = self.cajero.profile.ciudad
+                ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
+                ciudad.save()
+                ciudad = Ciudad.objects.get(pk=ciudad.pk)
+                self.correlativo = ciudad.correlativo_de_recibo
 
             turnos = TurnoCaja.objects.filter(usuario=self.cajero,
                                               inicio__lte=self.created).count()
