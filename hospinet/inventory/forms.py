@@ -21,10 +21,15 @@ from crispy_forms.layout import Submit, Fieldset
 from select2.fields import ModelChoiceField
 
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
+<<<<<<< HEAD
     DateTimeWidget
+=======
+    DateTimeWidget, FutureDateWidget
+>>>>>>> origin/login
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
-                              Transferido, ItemComprado, Historial, Proveedor)
+                              Transferido, ItemComprado, Historial, Proveedor,
+                              Cotizacion, ItemCotizado)
 from users.mixins import HiddenUserForm
 
 
@@ -39,6 +44,12 @@ class ItemTemplateForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
+class ItemTemplateFormMixin(FieldSetFormMixin):
+    item = ModelChoiceField(
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion'), name="", model="")
+
+
 class InventarioForm(FieldSetModelFormMixin):
     class Meta:
         model = Inventario
@@ -48,6 +59,12 @@ class InventarioForm(FieldSetModelFormMixin):
         super(InventarioForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Bódega de Inventario',
                                       *self.field_names)
+
+
+class InventarioFormMixin(FieldSetFormMixin):
+    inventario = ModelChoiceField(label="", name='', model='',
+                                  queryset=Inventario.objects.all(),
+                                  widget=forms.HiddenInput())
 
 
 class ItemForm(FieldSetModelFormMixin):
@@ -64,17 +81,6 @@ class ItemForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Item Inventariado',
-                                      *self.field_names)
-
-
-class CompraForm(FieldSetModelFormMixin):
-    class Meta:
-        model = Compra
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(CompraForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Compra',
                                       *self.field_names)
 
 
@@ -116,14 +122,10 @@ class RequisicionCompletarForm(forms.ModelForm):
                                       *self.field_names)
 
 
-class ItemRequisicionForm(FieldSetModelFormMixin):
+class ItemRequisicionForm(ItemTemplateFormMixin):
     class Meta:
         model = ItemRequisicion
         exclude = ('entregada', 'pendiente')
-
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemRequisicionForm, self).__init__(*args, **kwargs)
@@ -166,14 +168,10 @@ class TransferirForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class TransferidoForm(FieldSetModelFormMixin):
+class TransferidoForm(ItemTemplateFormMixin):
     class Meta:
         model = Transferido
         exclude = ('aplicada',)
-
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(TransferidoForm, self).__init__(*args, **kwargs)
@@ -192,14 +190,10 @@ class HistorialForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class ItemCompradoForm(FieldSetModelFormMixin):
+class ItemCompradoForm(ItemTemplateFormMixin):
     class Meta:
         model = ItemComprado
         exclude = ('ingresado',)
-
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(ItemCompradoForm, self).__init__(*args, **kwargs)
@@ -224,4 +218,50 @@ class ProveedorForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(ProveedorForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Proveedor',
+                                      *self.field_names)
+
+
+class ProveedorFormMixin(FieldSetModelFormMixin):
+    proveedor = ModelChoiceField(name='', model='',
+                                 queryset=Proveedor.objects.all())
+
+
+class CompraForm(ProveedorFormMixin):
+    class Meta:
+        model = Compra
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(CompraForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Compra',
+                                      *self.field_names)
+
+
+class CotizacionForm(ProveedorFormMixin):
+    class Meta:
+        model = Cotizacion
+        fields = '__all__'
+
+    vencimiento = forms.DateField(widget=FutureDateWidget())
+
+    def __init__(self, *args, **kwargs):
+        super(CotizacionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Cotizacion',
+                                      *self.field_names)
+
+
+class CotizacionFormMixin(FieldSetModelFormMixin):
+    cotizacion = forms.ModelChoiceField(label="",
+                                        queryset=Cotizacion.objects.all(),
+                                        widget=forms.HiddenInput())
+
+
+class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
+    class Meta:
+        model = ItemCotizado
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(ItemCotizadoform, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Item Cotizado',
                                       *self.field_names)

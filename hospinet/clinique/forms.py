@@ -27,6 +27,7 @@ from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
                              Incapacidad, Reporte, TipoConsulta, Remision,
                              Afeccion)
+from inventory.forms import ItemTemplateFormMixin
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, \
     FieldSetFormMixin
@@ -177,17 +178,13 @@ class ConsultorioForm(HiddenUserForm):
                                       *self.field_names)
 
 
-class CargoForm(HiddenConsultaFormMixin, HiddenUserForm):
+class CargoForm(HiddenConsultaFormMixin, ItemTemplateFormMixin, HiddenUserForm):
     class Meta:
         model = Cargo
         exclude = ('facturado',)
 
     tipo = ModelChoiceField(
         queryset=ItemType.objects.filter(consulta=True).all(), name="",
-        model="")
-
-    item = ModelChoiceField(
-        queryset=ItemTemplate.objects.all().order_by('descripcion'), name="",
         model="")
 
     def __init__(self, *args, **kwargs):

@@ -22,6 +22,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, TemplateView,
                                   DetailView, UpdateView,
                                   DeleteView)
+
 from django.contrib import messages
 
 from persona.models import Persona
@@ -235,9 +236,9 @@ class CobroCreateView(BaseCreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        item = self.request.user.profile.inventario.buscar_item(
-            self.object.cargo)
-        item.disminuir(self.object.cantidad)
+        self.request.user.profile.inventario.descargar(self.object.cargo,
+                                                       self.object.cantidad,
+                                                       self.request.user)
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
@@ -253,9 +254,8 @@ class CobroDeleteView(DeleteView, LoginRequiredMixin):
         """
         self.object = self.get_object()
 
-        item = self.request.user.profile.inventario.buscar_item(
-            self.object.cargo)
-        item.incrementar(self.object.cantidad)
+        self.request.user.profile.inventario.cargar(self.object.cargo,
+                                                    self.object.cantidad)
 
         self.object.delete()
         return HttpResponseRedirect(self.get_success_url())

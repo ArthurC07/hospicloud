@@ -18,7 +18,7 @@ from django.contrib import admin
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from bsc.models import Meta, ScoreCard, Escala, Extra, Encuesta, Opcion, \
-    Pregunta
+    Pregunta, Holiday, Login
 
 
 class MetaAdmin(ForeignKeyAutocompleteAdmin):
@@ -45,6 +45,16 @@ class PreguntaAdmin(ForeignKeyAutocompleteAdmin):
     ordering = ['encuesta', 'pregunta']
 
 
+class HolidayAdmin(admin.ModelAdmin):
+    list_display = ['day']
+    ordering = ['day']
+
+
+class LoginAdmin(ForeignKeyAutocompleteAdmin):
+    list_display = ['user', 'created', 'holiday']
+    ordering = ['user', 'created', 'holiday']
+
+
 admin.site.register(Meta, MetaAdmin)
 admin.site.register(ScoreCard)
 admin.site.register(Escala, EscalaAdmin)
@@ -52,3 +62,5 @@ admin.site.register(Extra, ExtraAdmin)
 admin.site.register(Encuesta)
 admin.site.register(Opcion, OpcionAdmin)
 admin.site.register(Pregunta, PreguntaAdmin)
+admin.site.register(Holiday, HolidayAdmin)
+admin.site.register(Login, LoginAdmin)

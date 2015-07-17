@@ -23,6 +23,7 @@ from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView, FormView)
 from django.contrib import messages
 from django.utils import timezone
+
 from guardian.decorators import permission_required
 
 from inventory.models import ItemTemplate
@@ -40,6 +41,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Honorario,
                                 Medicamento, Dosis, Devolucion, Sumario,
                                 OxigenoTerapia)
 from spital.models import Admision
+
 # from spital.views import AdmisionFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
@@ -247,9 +249,9 @@ class CargoCreateView(AdmisionFormMixin, LoginRequiredMixin):
 
         self.object = form.save(commit=False)
 
-        item = self.request.user.profile.inventario.buscar_item(
-            self.object.cargo)
-        item.disminuir(self.object.cantidad)
+        self.request.user.profile.inventario.descargar(self.object.cargo,
+                                                       self.object.cantidad,
+                                                       self.request.user)
 
         self.object.save()
 
@@ -292,9 +294,8 @@ class CargoDeleteView(DeleteView, LoginRequiredMixin):
         """
         self.object = self.get_object()
 
-        item = self.request.user.profile.inventario.buscar_item(
-            self.object.cargo)
-        item.incrementar(self.object.cantidad)
+        self.request.user.profile.inventario.cargar(self.object.cargo,
+                                                    self.object.cantidad)
 
         self.object.delete()
         return HttpResponseRedirect(self.get_success_url())

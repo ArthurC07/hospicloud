@@ -14,10 +14,13 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+import calendar
+from datetime import date, time, datetime
 from decimal import Decimal
 
 from django.core.urlresolvers import reverse
+from django.db.models import Sum
+
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -44,10 +47,19 @@ class Inventario(models.Model):
     def buscar_item(self, item_template):
         item = self.items.filter(plantilla=item_template).first()
 
-        if item:
-            return item
+        if not item:
+            item = Item(inventario=self, plantilla=item_template)
+            item.save()
 
-        return Item(inventario=self, plantilla=item_template)
+        return item
+
+    def descargar(self, item_template, cantidad, user=None):
+        item = self.buscar_item(item_template)
+        item.disminuir(cantidad, user)
+
+    def cargar(self, item_template, cantidad, user=None):
+        item = self.buscar_item(item_template)
+        item.aumentar(cantidad, user)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -89,11 +101,9 @@ class ItemTemplate(TimeStampedModel):
                                        related_name='plantillas')
     precio_de_venta = models.DecimalField(max_digits=10, decimal_places=2,
                                           default=0)
-    costo = models.DecimalField(max_digits=10, decimal_places=2,
-                                default=0)
+    costo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unidad_de_medida = models.CharField(max_length=32, null=True, blank=True)
-    impuestos = models.DecimalField(max_digits=10, decimal_places=2,
-                                    default=0)
+    impuestos = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     activo = models.BooleanField(default=True)
     item_type = models.ManyToManyField(ItemType, related_name='items',
                                        blank=True)
@@ -117,6 +127,7 @@ class ItemTemplate(TimeStampedModel):
 @python_2_unicode_compatible
 class Proveedor(models.Model):
     name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
+    rtn = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.name
@@ -130,13 +141,55 @@ class Item(TimeStampedModel):
     vencimiento = models.DateTimeField(default=timezone.now)
     cantidad = models.IntegerField(default=0)
 
-    def disminuir(self, cantidad):
+    def disminuir(self, cantidad, user=None):
         self.cantidad -= cantidad
+
+        transaccion = Transaccion()
+
+        transaccion.item = self
+        transaccion.cantidad = -abs(cantidad)
+        transaccion.user = user
+        transaccion.save()
+
         self.save()
 
-    def incrementar(self, cantidad):
+    def incrementar(self, cantidad, user=None):
         self.cantidad += cantidad
+
+        transaccion = Transaccion()
+
+        transaccion.item = self
+        transaccion.cantidad = abs(cantidad)
+        transaccion.user = user
+        transaccion.save()
+
         self.save()
+
+    def movimiento(self, inicio, fin):
+        total = Transaccion.objects.filter(
+            created__range=(inicio, fin),
+            item=self
+        ).aggregate(total=Sum('cantidad'))['total']
+
+        if total:
+            return total
+
+        return 0
+
+    def movimiento_mes(self):
+        now = timezone.now()
+        fin = date(now.year, now.month,
+                   calendar.monthrange(now.year, now.month)[1])
+        inicio = date(now.year, now.month, 1)
+
+        fin = datetime.combine(fin, time.max)
+        inicio = datetime.combine(inicio, time.min)
+
+        fin = timezone.make_aware(fin, timezone.get_current_timezone())
+        inicio = timezone.make_aware(inicio,
+                                     timezone.get_current_timezone())
+
+        return self.movimiento(inicio, fin)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -167,10 +220,10 @@ class Requisicion(TimeStampedModel):
                                                        self.id)
 
     def buscar_item(self, item_template):
-        qs = self.items.filter(item=item_template)
-        r = list(qs[:1])
-        if r:
-            return r[0]
+        item = self.items.filter(item=item_template).first()
+
+        if item:
+            return item
         return ItemRequisicion(requisicion=self, item=item_template)
 
 
@@ -226,12 +279,10 @@ class Transferencia(TimeStampedModel):
             if item.aplicada:
                 continue
 
-            destino = self.destino.buscar_item(item.item)
-            origen = self.origen.buscar_item(item.item)
+            self.destino.cargar(item.item, item.cantidad, self.usuario)
+            self.origen.descargar(item.item, item.cantidad, self.usuario)
             requisicion = self.requisicion.buscar_item(item.item)
 
-            destino.incrementar(item.cantidad)
-            origen.disminuir(item.cantidad)
             requisicion.disminuir(item.cantidad)
 
             item.aplicada = True
@@ -269,7 +320,7 @@ class Compra(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, blank=True, null=True,
                                    related_name='compras')
     ingresada = models.BooleanField(default=False)
-    proveedor = models.CharField(max_length=255, blank=True, null=True)
+    proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
 
     def __str__(self):
         return u"Compra efectuada el {0}".format(self.created)
@@ -281,9 +332,7 @@ class Compra(TimeStampedModel):
 
     def transferir(self):
         for comprado in self.items.all():
-            item = self.inventario.buscar_item(comprado.item)
-            item.incrementar(comprado.cantidad)
-            item.save()
+            self.inventario.cargar(comprado.item, comprado.cantidad)
 
 
 class ItemComprado(TimeStampedModel):
@@ -333,6 +382,7 @@ class Historial(TimeStampedModel):
 
         return reverse('historial', args=[self.id])
 
+
 @python_2_unicode_compatible
 class ItemHistorial(TimeStampedModel):
     historial = models.ForeignKey(Historial, related_name='items')
@@ -344,3 +394,34 @@ class ItemHistorial(TimeStampedModel):
                                         self.historial.inventario.lugar,
                                         self.historial.created.strftime(
                                             '%d/%m/Y'))
+
+
+class Transaccion(TimeStampedModel):
+    item = models.ForeignKey(Item)
+    cantidad = models.IntegerField(default=0)
+    user = models.ForeignKey(User, blank=True, null=True)
+
+
+@python_2_unicode_compatible
+class Cotizacion(TimeStampedModel):
+    proveedor = models.ForeignKey(Proveedor)
+    vencimiento = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+
+        return u'Cotización de {0}'.format(self.proveedor)
+
+    def get_absolute_url(self):
+
+        return reverse('cotizacion-view', args=[self.id])
+
+
+class ItemCotizado(TimeStampedModel):
+    cotizacion = models.ForeignKey(Cotizacion)
+    item = models.ForeignKey(ItemTemplate)
+    cantidad = models.IntegerField(default=0)
+    precio = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+
+    def get_absolute_url(self):
+
+        return self.cotizacion.get_absolute_url()
