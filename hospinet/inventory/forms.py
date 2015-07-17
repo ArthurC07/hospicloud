@@ -21,11 +21,7 @@ from crispy_forms.layout import Submit, Fieldset
 from select2.fields import ModelChoiceField
 
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
-<<<<<<< HEAD
-    DateTimeWidget
-=======
     DateTimeWidget, FutureDateWidget
->>>>>>> origin/login
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Requisicion, ItemRequisicion, Transferencia,
                               Transferido, ItemComprado, Historial, Proveedor,
