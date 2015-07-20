@@ -11,10 +11,12 @@
     </div>
     <div class="row">
         <section class="col-md-12 main-content">
+            <h2>Total Presupuestado: {{ presupuesto.total_presupuestado }}</h2>
             {% for cuenta in presupuesto.cuenta_set.all %}
                 <div class="panel panel-primary">
                     <div class="panel-heading">{{ cuenta }}</div>
                     <div class="panel-body table-responsive">
+                        <h3>Presupuestado: {{ cuenta.limite }}</h3>
                         <table class="table">
                             <thead>
                                 <tr>

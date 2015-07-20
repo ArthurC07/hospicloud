@@ -39,6 +39,12 @@ class Presupuesto(TimeStampedModel):
 
         return reverse('budget', args=[self.id])
 
+    def total_presupuestado(self):
+
+        return Cuenta.objects.filter(
+            presupuesto=self
+        ).aggregate(total=Sum('limite'))['total']
+
 @python_2_unicode_compatible
 class Cuenta(TimeStampedModel):
     """Define una agrupación de gastos referentes a un rubro determinado"""
