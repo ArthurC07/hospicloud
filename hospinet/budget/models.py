@@ -14,21 +14,30 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.db import models
+from decimal import Decimal
 
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.db.models import Sum
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
-from users.models import Ciudad
+
+from users.models import Ciudad, get_current_month_range
 
 
 @python_2_unicode_compatible
 class Presupuesto(TimeStampedModel):
     """Define un presupuesto financiero para una :class:`Ciudad` específica"""
     ciudad = models.ForeignKey(Ciudad)
+    activo = models.BooleanField(default=True)
 
     def __str__(self):
 
         return u'Presupuesto de {0}'.format(self.ciudad.nombre)
+
+    def get_absolute_url(self):
+
+        return reverse('budget', args=[self.id])
 
 @python_2_unicode_compatible
 class Cuenta(TimeStampedModel):
@@ -41,6 +50,44 @@ class Cuenta(TimeStampedModel):
 
         return self.nombre
 
+    def get_absolute_url(self):
+
+        return self.presupuesto.get_absolute_url()
+
+    def gastos_por_periodo(self, inicio, fin):
+
+        return Gasto.objects.filter(cuenta=self, created__range=(inicio, fin))
+
+    def total_gastos_por_periodo(self, inicio, fin):
+
+        """Obtiene el tal de :class:`Gasto`s de la :class:`Cuenta` en un periodo
+        determinado de tiempo"""
+
+        gastos = self.gastos_por_periodo(inicio, fin).aggregate(
+            total=Sum('monto')
+        )['total']
+
+        if gastos is None:
+            return Decimal()
+
+        return gastos
+
+    def gastos_mes_actual(self):
+
+        inicio, fin = get_current_month_range()
+
+        return self.gastos_por_periodo(inicio, fin)
+
+    def total_gastos_mes_actual(self):
+
+        gastos = self.gastos_mes_actual().aggregate(total=Sum('monto'))['total']
+
+        if gastos is None:
+            return Decimal()
+
+        return gastos
+
+
 @python_2_unicode_compatible
 class Gasto(TimeStampedModel):
     """Representa las transacciones monetarias realizadas por el personal de la
@@ -52,3 +99,7 @@ class Gasto(TimeStampedModel):
     def __str__(self):
 
         return self.descripcion
+
+    def get_absolute_url(self):
+
+        return self.cuenta.get_absolute_url()

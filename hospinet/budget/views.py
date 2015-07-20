@@ -14,17 +14,26 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, ListView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormMixin
-from budget.forms import CuentaForm
-from budget.models import Presupuesto, Cuenta
+from budget.forms import CuentaForm, GastoForm
+from budget.models import Presupuesto, Cuenta, Gasto
 from users.mixins import LoginRequiredMixin
 
 
 class PresupuestoDetailView(DetailView, LoginRequiredMixin):
     model = Presupuesto
     context_object_name = 'presupuesto'
+
+
+class PresupuestoListView(ListView, LoginRequiredMixin):
+    model = Presupuesto
+    context_object_name = 'presupuestos'
+
+    def get_queryset(self):
+
+        return Presupuesto.objects.all()
 
 
 class PresupuestoMixin(TemplateResponseMixin):
@@ -87,3 +96,7 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
         initial = initial.copy()
         initial['cuenta'] = self.cuenta
         return initial
+
+class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
+    model = Gasto
+    form_class = GastoForm

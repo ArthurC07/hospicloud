@@ -52,6 +52,9 @@
                         {% if config.INVENTARIO_ENABLED %}
                             <li><a href="{% url 'inventario-index' %}">Inventario</a></li>
                         {% endif %}
+                        {% if config.BUDGET_ENABLED %}
+                            <li><a href="{% url 'budget-index' %}">Presupuesto</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 <li class="dropdown">

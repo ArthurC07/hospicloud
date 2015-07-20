@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="main-content col-md-12">
+            <section class="page-header">
+                <h1>{{ presupuesto }}</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12 main-content">
+            {% for cuenta in presupuesto.cuenta_set.all %}
+                <div class="panel panel-primary">
+                    <div class="panel-heading">{{ cuenta }}</div>
+                    <div class="panel-body table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Descripci&oacute;n</th>
+                                    <th>Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for gasto in cuenta.gastos_mes_actual.all %}
+                                    <tr>
+                                        <td>{{ gasto.created }}</td>
+                                        <td>{{ gasto.descripcion }}</td>
+                                        <td class="text-right">{{ gasto.monto }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">No hay gastos registrados</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="2">Total de Gastos</th>
+                                    <th>{{ cuenta.total_gastos_mes_actual }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No hay Cuentas Disponibles</p>
+            {% endfor %}
+        </section>
+    </div>
+{% endblock %}
