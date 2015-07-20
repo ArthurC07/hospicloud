@@ -119,6 +119,7 @@ urlpatterns = patterns('',
                        url(r'^pago/list$',
                            PagoListView.as_view(),
                            name='invoice-pago-list'),
+
                        url(r'^pago/aseguradora/(?P<aseguradora>\d+)/list$',
                            PagoAseguradoraList.as_view(),
                            name='invoice-pago-aseguradora-list'),

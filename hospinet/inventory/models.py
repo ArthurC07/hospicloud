@@ -20,7 +20,6 @@ from decimal import Decimal
 
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
-
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -56,7 +55,7 @@ class Inventario(models.Model):
     def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.disminuir(cantidad, user)
-
+        
     def cargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.aumentar(cantidad, user)
