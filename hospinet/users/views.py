@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2015 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -174,7 +174,7 @@ class UserEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
 
 
 class CiudadMixin(TemplateResponseMixin):
-    """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
+    """Permite obtener un :class:`Ciudad` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
         self.ciudad = get_object_or_404(Ciudad, pk=kwargs['ciudad'])
@@ -189,7 +189,7 @@ class CiudadMixin(TemplateResponseMixin):
 
 
 class CiudadFormMixin(CiudadMixin, FormMixin):
-    """Permite inicializar el :class:`Proveedor` que se utilizará en un
+    """Permite inicializar el :class:`Ciudad` que se utilizará en un
     formulario"""
 
     def get_initial(self):
