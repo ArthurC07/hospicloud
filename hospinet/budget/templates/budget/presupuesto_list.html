@@ -13,7 +13,35 @@
         <section class="col-md-12 main-content">
             <ul>
                 {% for presupuesto in presupuestos.all %}
-                    <li><a href="{{ presupuesto.get_absolute_url }}">{{ presupuesto }}</a></li>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h3><strong><a href="{{ presupuesto.get_absolute_url }}">{{ presupuesto }}</a></strong></h3>
+                                </div>
+                                <div class="col-md-4">
+                                    <h3>Presupuestado: {{ presupuesto.total_presupuestado }}</h3>
+                                </div>
+                                <div class="col-md-4">
+                                    <h3>
+                                        Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar"
+                                             aria-valuenow="{{ presupuesto.porcentaje_ejecutado_mes_actual }}"
+                                             aria-valuemin="0" aria-valuemax="100"
+                                             style="width: {{ cuenta.porcentaje_ejectuado_mes_actual }}%; min-width: 2em;">
+                                            {{ presupuesto.porcentaje_ejecutado_mes_actual }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
                 {% empty %}
                     <li>No hay Presupuestos Disponibles</li>
                 {% endfor %}
