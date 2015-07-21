@@ -11,40 +11,95 @@
     </div>
     <div class="row">
         <section class="col-md-12 main-content">
-            <h2>Total Presupuestado: {{ presupuesto.total_presupuestado }}</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="page-header">
+                        <h2>Total Presupuestado: {{ presupuesto.total_presupuestado }}</h2>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="page-header">
+                        <h2>Total Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar"
+                             aria-valuenow="{{ presupuesto.porcentaje_ejecutado_mes_actual }}"
+                             aria-valuemin="0" aria-valuemax="100"
+                             style="width: {{ presupuesto.porcentaje_ejecutado_mes_actual }}%; min-width: 2em;">
+                            {{ presupuesto.porcentaje_ejecutado_mes_actual }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="row">
+        <section class="col-md-12 main-content">
+            <div class="page-header">
+                <h2>Detalle de Gastos</h2>
+            </div>
             {% for cuenta in presupuesto.cuenta_set.all %}
                 <div class="panel panel-primary">
                     <div class="panel-heading">{{ cuenta }}</div>
-                    <div class="panel-body table-responsive">
-                        <h3>Presupuestado: {{ cuenta.limite }}</h3>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Descripci&oacute;n</th>
-                                    <th>Monto</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for gasto in cuenta.gastos_mes_actual.all %}
+                    <div class="panel-body ">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Presupuestado: {{ cuenta.limite }}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Ejecutado: {{ cuenta.total_gastos_mes_actual }}</strong></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                         aria-valuenow="{{ cuenta.porcentaje_ejecutado_mes_actual }}"
+                                         aria-valuemin="0" aria-valuemax="100"
+                                         style="width: {{ cuenta.porcentaje_ejectuado_mes_actual }}%; min-width: 2em;">
+                                        {{ cuenta.porcentaje_ejecutado_mes_actual }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 table-responsive">
+                                <table class="table">
+                                    <thead>
                                     <tr>
-                                        <td>{{ gasto.created }}</td>
-                                        <td>{{ gasto.descripcion }}</td>
-                                        <td class="text-right">{{ gasto.monto }}</td>
+                                        <th>Fecha</th>
+                                        <th>Descripci&oacute;n</th>
+                                        <th>Monto</th>
                                     </tr>
-                                {% empty %}
+                                    </thead>
+                                    <tbody>
+                                    {% for gasto in cuenta.gastos_mes_actual.all %}
+                                        <tr>
+                                            <td>{{ gasto.created }}</td>
+                                            <td>{{ gasto.descripcion }}</td>
+                                            <td class="text-right">{{ gasto.monto }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="3" class="text-center">No hay
+                                                gastos registrados
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <tfoot>
                                     <tr>
-                                        <td colspan="3" class="text-center">No hay gastos registrados</td>
+                                        <th colspan="2">Total de Gastos</th>
+                                        <th>{{ cuenta.total_gastos_mes_actual }}</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th colspan="2">Total de Gastos</th>
-                                    <th>{{ cuenta.total_gastos_mes_actual }}</th>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% empty %}

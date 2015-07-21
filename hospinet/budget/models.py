@@ -32,18 +32,45 @@ class Presupuesto(TimeStampedModel):
     activo = models.BooleanField(default=True)
 
     def __str__(self):
-
         return u'Presupuesto de {0}'.format(self.ciudad.nombre)
 
     def get_absolute_url(self):
-
         return reverse('budget', args=[self.id])
 
     def total_presupuestado(self):
-
         return Cuenta.objects.filter(
             presupuesto=self
         ).aggregate(total=Sum('limite'))['total']
+
+    def gastos_por_periodo(self, inicio, fin):
+        return Gasto.objects.filter(created__range=(inicio, fin),
+                                    cuenta__in=self.cuenta_set.all())
+
+    def total_gastos_por_periodo(self, inicio, fin):
+        gasto = self.gastos_por_periodo().aggregate(total=Sum('monto'))['total']
+
+        if gasto is None:
+            return Decimal()
+
+        return gasto
+
+    def gastos_mes_actual(self):
+        inicio, fin = get_current_month_range()
+
+        return self.gastos_por_periodo(inicio, fin)
+
+    def total_gastos_mes_actual(self):
+        gastos = self.gastos_mes_actual().aggregate(total=Sum('monto'))['total']
+
+        if gastos is None:
+            return Decimal()
+
+        return gastos
+
+    def porcentaje_ejecutado_mes_actual(self):
+        return self.total_gastos_mes_actual() / max(self.total_presupuestado(),
+                                                    1)
+
 
 @python_2_unicode_compatible
 class Cuenta(TimeStampedModel):
@@ -93,6 +120,10 @@ class Cuenta(TimeStampedModel):
 
         return gastos
 
+    def porcentaje_ejecutado_mes_actual(self):
+
+        return self.total_gastos_mes_actual() / max(self.limite, 1)
+
 
 @python_2_unicode_compatible
 class Gasto(TimeStampedModel):
@@ -103,9 +134,7 @@ class Gasto(TimeStampedModel):
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def __str__(self):
-
         return self.descripcion
 
     def get_absolute_url(self):
-
         return self.cuenta.get_absolute_url()
