@@ -69,7 +69,7 @@ class Presupuesto(TimeStampedModel):
 
     def porcentaje_ejecutado_mes_actual(self):
         return self.total_gastos_mes_actual() / max(self.total_presupuestado(),
-                                                    1)
+                                                    1) * 100
 
 
 @python_2_unicode_compatible
@@ -122,7 +122,7 @@ class Cuenta(TimeStampedModel):
 
     def porcentaje_ejecutado_mes_actual(self):
 
-        return self.total_gastos_mes_actual() / max(self.limite, 1)
+        return self.total_gastos_mes_actual() / max(self.limite, 1) * 100
 
 
 @python_2_unicode_compatible
