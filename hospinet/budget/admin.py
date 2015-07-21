@@ -20,7 +20,7 @@ class CuentaAdmin(admin.ModelAdmin):
 
 
 class GastoAdmin(admin.ModelAdmin):
-    list_display = ['get_ciudad', 'get_presupuesto', 'descripcion', 'monto']
+    list_display = ['get_ciudad', 'get_presupuesto', 'cuenta', 'descripcion', 'monto']
     ordering = ['descripcion', 'monto']
 
     def get_ciudad(self, obj):

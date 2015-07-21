@@ -55,7 +55,7 @@ class Presupuesto(TimeStampedModel):
         return gasto
 
     def gastos_mes_actual(self):
-        inicio, fin = get_current_month_range()
+        fin, inicio = get_current_month_range()
 
         return self.gastos_por_periodo(inicio, fin)
 
@@ -107,7 +107,7 @@ class Cuenta(TimeStampedModel):
 
     def gastos_mes_actual(self):
 
-        inicio, fin = get_current_month_range()
+        fin, inicio = get_current_month_range()
 
         return self.gastos_por_periodo(inicio, fin)
 
