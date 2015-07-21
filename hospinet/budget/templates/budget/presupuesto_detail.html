@@ -43,18 +43,14 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="page-header">
-                                    <h4>{{ cuenta }}</h4>
-                                </div>
+                            <div class="col-md-4">
+                                <h4><strong>{{ cuenta }}</strong></h4>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Presupuestado: {{ cuenta.limite }}</strong></p>
+                            <div class="col-md-4">
+                                <h4>Presupuestado: {{ cuenta.limite }}</h4>
                             </div>
-                            <div class="col-md-6">
-                                <p><strong>Ejecutado: {{ cuenta.total_gastos_mes_actual }}</strong></p>
+                            <div class="col-md-4">
+                                <h4>Ejecutado: {{ cuenta.total_gastos_mes_actual }}</h4>
                             </div>
                         </div>
                         <div class="row">
