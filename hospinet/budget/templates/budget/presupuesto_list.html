@@ -31,10 +31,10 @@
                                 <div class="col-md-12">
                                     <div class="progress">
                                         <div class="progress-bar" role="progressbar"
-                                             aria-valuenow="{{ presupuesto.porcentaje_ejecutado_mes_actual }}"
+                                             aria-valuenow="{{ presupuesto.porcentaje_ejecutado_mes_actual|floatformat:2 }}"
                                              aria-valuemin="0" aria-valuemax="100"
-                                             style="width: {{ cuenta.porcentaje_ejectuado_mes_actual }}%; min-width: 2em;">
-                                            {{ presupuesto.porcentaje_ejecutado_mes_actual }}%
+                                             style="width: {{ cuenta.porcentaje_ejectuado_mes_actual|floatformat:2 }}%; min-width: 3em;">
+                                            {{ presupuesto.porcentaje_ejecutado_mes_actual|floatformat:2 }}%
                                         </div>
                                     </div>
                                 </div>
