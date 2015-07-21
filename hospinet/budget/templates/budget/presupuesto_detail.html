@@ -38,14 +38,17 @@
         </section>
     </div>
     <div class="row">
-        <section class="col-md-12 main-content">
-            <div class="page-header">
-                <h2>Detalle de Gastos</h2>
-            </div>
+        <div class="col-md-12 main-content">
             {% for cuenta in presupuesto.cuenta_set.all %}
-                <div class="panel panel-primary">
-                    <div class="panel-heading">{{ cuenta }}</div>
-                    <div class="panel-body ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="page-header">
+                                    <h4>{{ cuenta }}</h4>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <p><strong>Presupuestado: {{ cuenta.limite }}</strong></p>
@@ -66,9 +69,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12 table-responsive">
-                                <table class="table">
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12 main-content">
+            <div class="page-header">
+                <h2>Detalle de Gastos</h2>
+            </div>
+            {% for cuenta in presupuesto.cuenta_set.all %}
+                <div class="panel panel-primary">
+                    <div class="panel-heading">{{ cuenta }}</div>
+                    <div class="panel-body ">
+                        <table class="table">
                                     <thead>
                                     <tr>
                                         <th>Fecha</th>
@@ -98,8 +113,6 @@
                                     </tr>
                                     </tfoot>
                                 </table>
-                            </div>
-                        </div>
                     </div>
                 </div>
             {% empty %}
