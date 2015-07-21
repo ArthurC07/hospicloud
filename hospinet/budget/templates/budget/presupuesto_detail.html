@@ -14,12 +14,14 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="page-header">
-                        <h2>Total Presupuestado: {{ presupuesto.total_presupuestado }}</h2>
+                        <h2>Total
+                            Presupuestado: {{ presupuesto.total_presupuestado }}</h2>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="page-header">
-                        <h2>Total Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h2>
+                        <h2>Total
+                            Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h2>
                     </div>
                 </div>
             </div>
@@ -50,7 +52,8 @@
                                 <h4>Presupuestado: {{ cuenta.limite }}</h4>
                             </div>
                             <div class="col-md-4">
-                                <h4>Ejecutado: {{ cuenta.total_gastos_mes_actual }}</h4>
+                                <h4>
+                                    Ejecutado: {{ cuenta.total_gastos_mes_actual }}</h4>
                             </div>
                         </div>
                         <div class="row">
@@ -80,35 +83,41 @@
                     <div class="panel-heading">{{ cuenta }}</div>
                     <div class="panel-body ">
                         <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Descripci&oacute;n</th>
-                                        <th>Monto</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for gasto in cuenta.gastos_mes_actual.all %}
-                                        <tr>
-                                            <td>{{ gasto.created }}</td>
-                                            <td>{{ gasto.descripcion }}</td>
-                                            <td class="text-right">{{ gasto.monto }}</td>
-                                        </tr>
-                                    {% empty %}
-                                        <tr>
-                                            <td colspan="3" class="text-center">No hay
-                                                gastos registrados
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <th colspan="2">Total de Gastos</th>
-                                        <th>{{ cuenta.total_gastos_mes_actual }}</th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
+                            <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripci&oacute;n</th>
+                                <th>Monto</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for gasto in cuenta.gastos_mes_actual.all %}
+                                <tr>
+                                    <td>{{ gasto.created }}</td>
+                                    <td>{{ gasto.descripcion }}</td>
+                                    <td class="text-right">{{ gasto.monto }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center">No hay
+                                        gastos registrados
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="2">Total de Gastos</th>
+                                <th>{{ cuenta.total_gastos_mes_actual }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+                        <a class="btn btn-primary" href="{% url 'budget-gasto-agregar' cuenta.id %}">
+                            <i class="fa fa-plus-circle"></i>
+                            Agregar Gasto
+                        </a>
                     </div>
                 </div>
             {% empty %}
