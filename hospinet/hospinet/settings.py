@@ -214,7 +214,6 @@ INSTALLED_APPS = (
     'select2',
     'constance',
     'constance.backends.database',
-    'csvimport.app.CSVImportConf',
 )
 
 # A sample logging configuration. The only tangible logging
