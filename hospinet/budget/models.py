@@ -22,6 +22,7 @@ from django.db.models import Sum
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
+from inventory.models import Proveedor
 from users.models import Ciudad, get_current_month_range
 
 
@@ -132,6 +133,10 @@ class Gasto(TimeStampedModel):
     cuenta = models.ForeignKey(Cuenta)
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
+    cheque = models.CharField(max_length=255, blank=True, null=True)
+    comprobante = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
+                                   blank=True, null=True)
 
     def __str__(self):
         return self.descripcion
