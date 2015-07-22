@@ -13,6 +13,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from decimal import Decimal
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, ListView
 from django.views.generic.base import TemplateResponseMixin
@@ -20,6 +22,7 @@ from django.views.generic.edit import FormMixin
 from budget.forms import CuentaForm, GastoForm
 from budget.models import Presupuesto, Cuenta, Gasto
 from users.mixins import LoginRequiredMixin
+from users.models import get_current_month_range
 
 
 class PresupuestoDetailView(DetailView, LoginRequiredMixin):
@@ -34,6 +37,33 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
 
         return Presupuesto.objects.all()
+
+    def get_context_data(self, **kwargs):
+
+        context = super(PresupuestoListView, self).get_context_data(**kwargs)
+
+        fin, inicio = get_current_month_range()
+
+        gastos = Gasto.objects.filter(
+            created__range=(inicio, fin)
+        ).aggregate(total=Sum('monto'))['total']
+
+        presupuesto = Cuenta.objects.filter(
+            presupuesto__activo=True
+        ).aggregate(total=Sum('limite'))['total']
+
+        if presupuesto is None:
+            presupuesto = Decimal()
+
+        if gastos is None:
+            gastos = Decimal()
+
+        context['presupuesto'] = presupuesto
+        context['gastos'] = gastos
+
+        context['porcentaje'] = gastos / max(presupuesto, 1) * 100
+
+        return context
 
 
 class PresupuestoMixin(TemplateResponseMixin):

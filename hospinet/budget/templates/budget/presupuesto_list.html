@@ -11,45 +11,78 @@
     </div>
     <div class="row">
         <section class="col-md-12 main-content">
-            <ul>
-                {% for presupuesto in presupuestos.all %}
+            <div class="row">
+                <article class="col-md-12">
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h3><strong><a href="{{ presupuesto.get_absolute_url }}">{{ presupuesto }}</a></strong></h3>
-                                </div>
-                                <div class="col-md-4">
-                                    <h3>Presupuestado: {{ presupuesto.total_presupuestado }}</h3>
-                                </div>
-                                <div class="col-md-4">
-                                    <h3>
-                                        Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h3>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="progress">
-                                        {% with presupuesto.porcentaje_ejecutado_mes_actual as ejecutado %}
-                                            <div class="progress-bar {% if ejecutado >= 100 %} progress-bar-danger {% endif %}"
-                                                 role="progressbar"
-                                                 aria-valuenow="{% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}"
-                                                 aria-valuemin="0"
-                                                 aria-valuemax="100"
-                                                 style="width: {% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}%; min-width: 3em;">
-                                                {{ ejecutado|floatformat:2 }}%
-                                            </div>
-                                        {% endwith %}
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
+                        <div class="col-md-4">
+                            <h2>Presupuesto Global</h2>
+                        </div>
+                        <div class="col-md-4">
+                            <h3>
+                                Presupuestado: {{ presupuesto }}</h3>
+                        </div>
+                        <div class="col-md-4">
+                            <h3>
+                                Ejecutado: {{ gastos }}</h3>
                         </div>
                     </div>
-                {% empty %}
-                    <li>No hay Presupuestos Disponibles</li>
-                {% endfor %}
-            </ul>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="progress">
+                                {% with porcentaje as ejecutado %}
+                                    <div class="progress-bar {% if ejecutado >= 100 %} progress-bar-danger {% endif %}"
+                                         role="progressbar"
+                                         aria-valuenow="{% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"
+                                         style="width: {% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}%; min-width: 3em;">
+                                        {{ ejecutado|floatformat:2 }}%
+                                    </div>
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </article>
+            </div>
+            {% for presupuesto in presupuestos.all %}
+                <article>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3><strong><a
+                                    href="{{ presupuesto.get_absolute_url }}">{{ presupuesto }}</a></strong>
+                            </h3>
+                        </div>
+                        <div class="col-md-4">
+                            <h3>
+                                Presupuestado: {{ presupuesto.total_presupuestado }}</h3>
+                        </div>
+                        <div class="col-md-4">
+                            <h3>
+                                Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="progress">
+                                {% with presupuesto.porcentaje_ejecutado_mes_actual as ejecutado %}
+                                    <div class="progress-bar {% if ejecutado >= 100 %} progress-bar-danger {% endif %}"
+                                         role="progressbar"
+                                         aria-valuenow="{% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"
+                                         style="width: {% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}%; min-width: 3em;">
+                                        {{ ejecutado|floatformat:2 }}%
+                                    </div>
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </article>
+            {% empty %}
+                <h3>No hay Presupuestos Disponibles</h3>
+            {% endfor %}
         </section>
     </div>
 {% endblock %}
