@@ -341,8 +341,7 @@ class ProveedorFormMixin(ProveedorMixin, FormMixin):
         return initial
 
 
-class CompraCreateView(InventarioFormMixin, ProveedorFormMixin,
-                       LoginRequiredMixin):
+class CompraCreateView(InventarioFormMixin, LoginRequiredMixin):
     model = Compra
     form_class = CompraForm
 
