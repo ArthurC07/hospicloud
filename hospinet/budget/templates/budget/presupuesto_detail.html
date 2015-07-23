@@ -91,6 +91,8 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Descripci&oacute;n</th>
+                                <th>Cheque</th>
+                                <th>Comprobante</th>
                                 <th>Monto</th>
                             </tr>
                             </thead>
@@ -99,6 +101,8 @@
                                 <tr>
                                     <td>{{ gasto.created }}</td>
                                     <td>{{ gasto.descripcion }}</td>
+                                    <td>{{ gasto.cheque }}</td>
+                                    <td><a class="btn btn-success" href="{{ gasto.comprobante.url }}"><i class="fa fa-download"></i> Descargar</a></td>
                                     <td class="text-right">{{ gasto.monto }}</td>
                                 </tr>
                             {% empty %}
