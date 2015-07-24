@@ -25,8 +25,6 @@ from django.utils import timezone
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 
-from tastypie.models import create_api_key
-
 from guardian.shortcuts import assign_perm
 
 from emergency.models import Emergencia
@@ -135,7 +133,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 
 post_save.connect(create_user_profile, sender=User)
-post_save.connect(create_api_key, sender=User)
 
 
 class UserAction(TimeStampedModel):
