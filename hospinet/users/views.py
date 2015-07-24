@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2015 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,10 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.edit import FormMixin
 from persona.forms import (PersonaForm, AntecedenteForm, FisicoForm,
                            AntecedenteFamiliarForm, AntecedenteObstetricoForm,
                            AntecedenteQuirurgicoForm, EstiloVidaForm)
@@ -24,6 +27,7 @@ from persona.models import (Persona, Antecedente, AntecedenteFamiliar,
                             AntecedenteQuirurgico)
 from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin
+from users.models import Ciudad
 
 
 class UserRedirectMixin(LoginRequiredMixin):
@@ -167,3 +171,29 @@ class UserEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
 
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
+
+
+class CiudadMixin(TemplateResponseMixin):
+    """Permite obtener un :class:`Ciudad` desde los argumentos en una url"""
+
+    def dispatch(self, *args, **kwargs):
+        self.ciudad = get_object_or_404(Ciudad, pk=kwargs['ciudad'])
+        return super(CiudadMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CiudadMixin, self).get_context_data(**kwargs)
+
+        context['cotizacion'] = self.cotizacion
+
+        return context
+
+
+class CiudadFormMixin(CiudadMixin, FormMixin):
+    """Permite inicializar el :class:`Ciudad` que se utilizará en un
+    formulario"""
+
+    def get_initial(self):
+        initial = super(CiudadFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['ciudad'] = self.ciudad
+        return initial

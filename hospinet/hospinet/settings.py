@@ -201,6 +201,7 @@ INSTALLED_APPS = (
     'statistics',
     'contracts',
     'lab',
+    'budget',
     # Third party apps go here
     'django_extensions',
     'django_countries',
@@ -213,7 +214,6 @@ INSTALLED_APPS = (
     'select2',
     'constance',
     'constance.backends.database',
-    'csvimport.app.CSVImportConf',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -291,6 +291,7 @@ CONSTANCE_CONFIG = {
     'ELDER_VENTA_TYPE': (1, u'Tipo de Venta Predeterminada'),
     'ELDER_AGE': (60, u'Edad mínima de la Tercera Edad'),
     'CONSULTA_ENABLED': (1, u'Consulta habilitada'),
+    'BUDGET_ENABLED': (1, u'Presupuesto Habilitado'),
     'EMERGENCIA_ENABLED': (1, u'Emergencia Habilitada'),
     'HOSPITALIZACION_ENABLED': (1, u'Hospitalizacion Habilitada'),
     'IMAGENES_ENABLED': (1, u'Imagenes Habilitadas'),
