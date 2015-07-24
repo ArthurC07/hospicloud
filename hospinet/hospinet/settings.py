@@ -188,7 +188,6 @@ INSTALLED_APPS = (
     # Third party apps go here
     'django_extensions',
     'django_countries',
-    'tastypie',
     'userena',
     'guardian',
     'easy_thumbnails',

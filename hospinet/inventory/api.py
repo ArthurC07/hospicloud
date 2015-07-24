@@ -14,24 +14,3 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
-from tastypie.authorization import ReadOnlyAuthorization
-from tastypie.authentication import (ApiKeyAuthentication, MultiAuthentication,
-                                     SessionAuthentication, Authentication)
-from tastypie.resources import ModelResource
-
-from inventory.models import ItemTemplate, Inventario
-
-
-class ItemTemplateResource(ModelResource):
-    class Meta:
-        queryset = ItemTemplate.objects.all()
-        authorization = ReadOnlyAuthorization()
-        authentication = MultiAuthentication(SessionAuthentication(),
-            Authentication(),
-            ApiKeyAuthentication())
-
-
-class InventarioResource(ModelResource):
-    class Meta:
-        queryset = Inventario.objects.all()

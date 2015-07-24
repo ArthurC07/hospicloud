@@ -14,34 +14,3 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.db.models import Q
-
-from tastypie.authorization import ReadOnlyAuthorization
-from tastypie.authentication import (ApiKeyAuthentication, MultiAuthentication,
-                                     SessionAuthentication)
-from tastypie.resources import ModelResource
-from tastypie import fields
-
-from spital.models import Admision, Habitacion
-
-
-class AdmisionResource(ModelResource):
-    paciente = fields.ForeignKey('persona.api.PersonaResource', 'paciente',
-                                 full=True)
-    habitacion = fields.ForeignKey('spital.api.HabitacionResource',
-                                   'habitacion', full=True)
-
-    class Meta:
-        queryset = Admision.objects.filter(Q(estado='H'))
-        authorization = ReadOnlyAuthorization()
-        authentication = MultiAuthentication(SessionAuthentication(),
-                                             ApiKeyAuthentication())
-        resource_name = 'spital/admision'
-
-
-class HabitacionResource(ModelResource):
-    class Meta:
-        queryset = Habitacion.objects.all()
-        authorization = ReadOnlyAuthorization()
-        authentication = MultiAuthentication(SessionAuthentication(),
-                                             ApiKeyAuthentication())

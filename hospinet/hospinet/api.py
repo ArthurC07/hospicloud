@@ -14,18 +14,3 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
-from tastypie.api import Api
-from persona.api import PersonaResource
-from nightingale.api import MedicamentoResource
-from inventory.api import ItemTemplateResource
-from spital.api import AdmisionResource, HabitacionResource
-from users.api import UserResource
-
-v1_api = Api(api_name='mobile')
-v1_api.register(PersonaResource())
-v1_api.register(MedicamentoResource())
-v1_api.register(ItemTemplateResource())
-v1_api.register(AdmisionResource())
-v1_api.register(HabitacionResource())
-v1_api.register(UserResource())

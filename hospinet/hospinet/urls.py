@@ -28,7 +28,6 @@ from users.forms import CustomEditProfileForm
 
 admin.autodiscover()
 
-from api import v1_api
 
 urlpatterns = patterns('',
                        # Uncomment the admin/doc line below to enable admin
@@ -52,7 +51,6 @@ urlpatterns = patterns('',
                        url(r'^bussiness/', include('statistics.urls')),
                        url(r'^contracts/', include('contracts.urls')),
                        url(r'^lab/', include('lab.urls')),
-                       url(r'^api/', include(v1_api.urls)),
                        url(r'^select2/', include('select2.urls')),
                        url(r'^users/', include('users.urls')),
                        url(r'^rrhh/', include('bsc.urls')),

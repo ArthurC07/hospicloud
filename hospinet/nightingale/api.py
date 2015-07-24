@@ -14,26 +14,3 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
-from nightingale.models import Medicamento
-from tastypie.authorization import ReadOnlyAuthorization
-from tastypie.authentication import (ApiKeyAuthentication, MultiAuthentication,
-                                     SessionAuthentication, Authentication)
-from tastypie.resources import ModelResource
-from django.db.models.query_utils import Q
-from tastypie import fields
-
-
-class MedicamentoResource(ModelResource):
-    cargo = fields.ForeignKey('inventory.api.ItemTemplateResource', 'cargo', full=True)
-    admision = fields.ForeignKey('spital.api.AdmisionResource', 'admision', full=True)
-
-    class Meta:
-        queryset = Medicamento.objects.filter(Q(estado=1))
-        authorization = ReadOnlyAuthorization()
-        authentication = MultiAuthentication(SessionAuthentication(),
-                                             Authentication(),
-                                             ApiKeyAuthentication())
-        filtering = {
-            'proxima_dosis': ['lte', 'gte', 'gt', 'lt'],
-        } 
