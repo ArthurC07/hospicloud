@@ -11,6 +11,5 @@ django-userena
 django-extra-views
 simplejson
 six
-unicodecsv
 pytz
 django-picklefield
