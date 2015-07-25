@@ -53,6 +53,7 @@ from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              Incapacidad, Reporte, Remision)
 from emergency.models import Emergencia
 from inventory.models import ItemTemplate, Inventario, TipoVenta
+from inventory.views import UserInventarioRequiredMixin
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
     AntecedenteFamiliarForm, AntecedenteObstetricoForm, EstiloVidaForm, \
@@ -740,12 +741,21 @@ class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/estilo_vida_update.html'
 
 
-class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
+class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin,
+                      UserInventarioRequiredMixin, CreateView):
     """Permite crear :class:`Cargo`s durante una :class:`Consulta`"""
     model = Cargo
     form_class = CargoForm
 
     def form_valid(self, form):
+
+        if self.request.profile is None:
+            messages.info(self.request,
+                          "Su usuario no tiene un Inventario asociado, por "
+                          "favor edite su Perfil para asociar un Inventario")
+
+            return redirect(self.request.META.get('HTTP_REFERER', '/'))
+
         self.object = form.save(commit=False)
 
         consultorio = self.object.consulta.consultorio
@@ -797,12 +807,10 @@ class OrdenMedicaListView(ListView, LoginRequiredMixin):
     context_object_name = 'ordenes'
 
     def get_queryset(self):
-
         return OrdenMedica.objects.filter(farmacia=False)
 
 
 class OrdenCompletarRedirect(RedirectView, LoginRequiredMixin):
-
     permanent = False
 
     def get_redirect_url(self, **kwargs):

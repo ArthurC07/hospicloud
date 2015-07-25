@@ -232,6 +232,7 @@ class CobroCreateView(BaseCreateView):
                           u'por favor modifique su perfil para indicar su '
                           u'inventario')
             return HttpResponseRedirect(self.emergencia.get_absolute_url())
+        
         return super(BaseCreateView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
