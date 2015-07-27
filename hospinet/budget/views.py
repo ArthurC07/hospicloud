@@ -77,6 +77,8 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
 
         context['ingresos'] = ingresos
 
+        context['equilibrio'] = gastos / max(ingresos, 1)
+
         return context
 
 
