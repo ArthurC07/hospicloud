@@ -78,7 +78,8 @@ class Presupuesto(TimeStampedModel):
         fin, inicio = get_current_month_range()
 
         ventas = Venta.objects.select_related('recibo').filter(
-            recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin),
+            recibo__ciudad=self.ciudad
         ).aggregate(total=Sum('monto'))
 
         return ventas['total']
