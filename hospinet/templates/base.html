@@ -28,14 +28,14 @@
 <div id="content" class="container">
     {% if messages %}
         <div id="system-message" class="row">
-            <ul class="messages bg-warning">
+            <div class="col-md-12">
                 {% for message in messages %}
-                    <li {% if message.tags %}
-                        class="{{ message.tags }}" {% endif %}>
+                    <div class="alert alert-warning alert-dismissible {% if message.tags %} {{ message.tags }} {% endif %} " role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         {{ message }}
-                    </li>
+                    </div>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
     {% endif %}
     {% block content %}{% endblock %}
