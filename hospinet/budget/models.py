@@ -73,7 +73,7 @@ class Presupuesto(TimeStampedModel):
         return self.total_gastos_mes_actual() / max(self.total_presupuestado(),
                                                     1) * 100
 
-    def ingresos(self):
+    def ingresos_mes_actual(self):
 
         fin, inicio = get_current_month_range()
 

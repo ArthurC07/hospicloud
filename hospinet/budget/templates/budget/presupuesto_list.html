@@ -14,16 +14,19 @@
             <div class="row">
                 <article class="col-md-12">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3 col-xs-3">
                             <h2>Presupuesto Global</h2>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3 col-xs-3">
                             <h3>
                                 Presupuestado: {{ presupuesto }}</h3>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3 col-xs-3">
                             <h3>
                                 Ejecutado: {{ gastos }}</h3>
+                        </div>
+                        <div class="col-md-3 col-xs-3">
+                            <h3>Total de Ingresos: {{ total_ingresos }}</h3>
                         </div>
                     </div>
                     <div class="row">
@@ -48,18 +51,21 @@
             {% for presupuesto in presupuestos.all %}
                 <article>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3 col-xs-3">
                             <h3><strong><a
                                     href="{{ presupuesto.get_absolute_url }}">{{ presupuesto }}</a></strong>
                             </h3>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3 col-xs-3">
                             <h3>
                                 Presupuestado: {{ presupuesto.total_presupuestado }}</h3>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3 col-xs-3">
                             <h3>
                                 Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h3>
+                        </div>
+                        <div class="col-md-3 col-xs-3">
+                            <h3>Total de Ingresos: {{ presupuesto.ingresos_mes_actual }}</h3>
                         </div>
                     </div>
                     <div class="row">
