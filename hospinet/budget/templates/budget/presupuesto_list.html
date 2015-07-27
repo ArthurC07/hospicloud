@@ -82,6 +82,18 @@
                                     </div>
                                 {% endwith %}
                             </div>
+                            <div class="progress">
+                                {% with presupuesto.porcentaje_consumido as ejecutado %}
+                                    <div class="progress-bar {% if ejecutado >= 100 %} progress-bar-danger {% endif %}"
+                                         role="progressbar"
+                                         aria-valuenow="{% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"
+                                         style="width: {% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}%; min-width: 3em;">
+                                        {{ ejecutado|floatformat:2 }}%
+                                    </div>
+                                {% endwith %}
+                            </div>
                         </div>
                     </div>
                     <hr>

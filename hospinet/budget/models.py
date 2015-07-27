@@ -80,9 +80,20 @@ class Presupuesto(TimeStampedModel):
         ventas = Venta.objects.select_related('recibo').filter(
             recibo__created__range=(inicio, fin),
             recibo__ciudad=self.ciudad
-        ).aggregate(total=Sum('monto'))
+        ).aggregate(total=Sum('monto'))['total']
 
-        return ventas['total']
+        if ventas is None:
+
+            ventas = Decimal()
+
+        return ventas
+
+    def porcentaje_consumido(self):
+
+        gastos = self.total_gastos_mes_actual()
+        ingresos = self.ingresos_mes_actual()
+
+        return gastos / max(ingresos, 1) * 100
 
 
 @python_2_unicode_compatible
