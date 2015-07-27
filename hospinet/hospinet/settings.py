@@ -22,6 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 from project_settings import *
 
+
 def env_var(key, default=None):
     """Retrieves env vars and makes Python boolean replacements"""
     val = os.environ.get(key, default)
@@ -31,6 +32,7 @@ def env_var(key, default=None):
         val = False
     return val
 
+
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
@@ -39,7 +41,7 @@ DEBUG = env_var('DEBUG', True)
 TEMPLATE_DEBUG = env_var('DEBUG', True)
 
 ADMINS = (
-# ('Your Name', 'your_email@example.com'),
+    # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -49,10 +51,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': env_var('DBNAME', 'hospinet'),
         # Or path to database file if using sqlite3.
-        'USER': env_var('DBUSER', 'hospinet'), # Not used with sqlite3.
-        'PASSWORD': env_var('DBPASSWORD', 'hospinet'), # Not used with sqlite3.
-        'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '', # Set to empty string for default. Not used with sqlite3.
+        'USER': env_var('DBUSER', 'hospinet'),  # Not used with sqlite3.
+        'PASSWORD': env_var('DBPASSWORD', 'hospinet'),  # Not used with sqlite3.
+        'HOST': '',  # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',  # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -111,9 +113,9 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-# Put strings here, like "/home/html/static" or "C:/www/django/static".
-# Always use forward slashes, even on Windows.
-# Don't forget to use absolute paths, not relative paths.
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
 )
 
 # List of finder classes that know how to find static files in
@@ -216,10 +218,10 @@ AUTH_PROFILE_MODULE = 'users.UserProfile'
 USE_THOUSAND_SEPARATOR = True
 
 
-#EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_PORT = 587
-#EMAIL_HOST_USER = 'me@gmail.com'
-#EMAIL_HOST_PASSWORD = 'password'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'me@gmail.com'
+# EMAIL_HOST_PASSWORD = 'password'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 WSGI_APPLICATION = 'hospinet.wsgi.application'
