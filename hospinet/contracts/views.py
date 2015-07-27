@@ -29,7 +29,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
-from django.views.generic.base import RedirectView
+from django.views.generic.base import RedirectView, TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
@@ -947,3 +947,18 @@ class AseguradoraDetailView(LoginRequiredMixin, DetailView):
 class AseguradoraUpdateView(LoginRequiredMixin, UpdateView):
     model = Aseguradora
     form_class = AseguradoraForm
+
+
+class AseguradoraMixin(TemplateResponseMixin):
+    """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
+
+    def dispatch(self, *args, **kwargs):
+        self.aseguradora = get_object_or_404(Aseguradora, pk=kwargs['aseguradora'])
+        return super(AseguradoraMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(AseguradoraMixin, self).get_context_data(**kwargs)
+
+        context['aseguradora'] = self.aseguradora
+
+        return context

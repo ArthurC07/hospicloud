@@ -49,6 +49,10 @@
                                 <li><a href="#contratos" data-toggle="tab">Contratos</a>
                                 </li>
                             {% endif %}
+                            {% if config.INVOICE_ENABLED %}
+                                <li><a href="#recibos" data-toggle="tab">Recibos</a>
+                                </li>
+                            {% endif %}
                             <li><a href="#laboratorio" data-toggle="tab">Laboratorio</a></li>
                         </ul>
                         <div class="tab-content">
@@ -117,6 +121,11 @@
                             {% if persona.contratos %}
                                 <article id="contratos" class="tab-pane">
                                     {% include 'contracts/snippets/pcd.html' with persona=persona %}
+                                </article>
+                            {% endif %}
+                            {% if persona.recibos %}
+                                <article id="recibos" class="tab-pane">
+                                    {% include 'invoice/persona.html' with recibos=persona.recibos %}
                                 </article>
                             {% endif %}
                             <article id="laboratorio" class="tab-pane">

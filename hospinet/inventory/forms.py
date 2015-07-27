@@ -40,7 +40,9 @@ class ItemTemplateForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class ItemTemplateFormMixin(FieldSetFormMixin):
+
+class ItemTemplateFormMixin(FieldSetModelFormMixin):
+
     item = ModelChoiceField(
         queryset=ItemTemplate.objects.filter(activo=True).order_by(
             'descripcion'), name="", model="")
@@ -133,6 +135,14 @@ class TransferenciaForm(HiddenUserForm):
     class Meta:
         model = Transferencia
         exclude = ('aplicada',)
+
+    origen = ModelChoiceField(name="", model="",
+                              queryset=Inventario.objects.filter(
+                                  activo=True).all())
+
+    destino = ModelChoiceField(name="", model="",
+                               queryset=Inventario.objects.filter(
+                                   activo=True).all())
 
     def __init__(self, *args, **kwargs):
         super(TransferenciaForm, self).__init__(*args, **kwargs)

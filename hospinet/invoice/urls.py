@@ -33,12 +33,13 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            DepositoFacturarView,
                            VentaDeleteView, VentaListView, VentaAreaListView,
                            ConsultaFacturarView, TurnoCierreUpdateView,
-                           TurnoCajaListView, AseguradoraFacturarView,
+                           TurnoCajaListView, AseguradoraContractsFacturarView,
                            PagoPeriodoView, ReciboPrintView, PagoUpdateView,
                            StatusPagoListView, TurnoCajaUpdateView,
                            EstadisticasView, EstadisticasPeriodoView,
                            TipoPagoPeriodoView, CiudadPeriodoListView,
-                           PagoListView)
+                           PagoListView, PagoAseguradoraList,
+                           AseguradoraMasterFacturarView)
 
 urlpatterns = patterns('',
 
@@ -119,6 +120,10 @@ urlpatterns = patterns('',
                            PagoListView.as_view(),
                            name='invoice-pago-list'),
 
+                       url(r'^pago/aseguradora/(?P<aseguradora>\d+)/list$',
+                           PagoAseguradoraList.as_view(),
+                           name='invoice-pago-aseguradora-list'),
+
                        url(r'^periodo/emergencia$',
                            EmergenciaPeriodoView.as_view(),
                            name='invoice-periodo-emergencia'),
@@ -180,8 +185,12 @@ urlpatterns = patterns('',
                            name='consulta-invoice'),
 
                        url(r'^aseguradora/(?P<pk>\d+)$',
-                           AseguradoraFacturarView.as_view(),
+                           AseguradoraContractsFacturarView.as_view(),
                            name='aseguradora-invoice'),
+
+                       url(r'^aseguradora/(?P<pk>\d+)$',
+                           AseguradoraMasterFacturarView.as_view(),
+                           name='aseguradora-invoice-master'),
 
                        url(r'^(?P<recibo>\d+)/pago/add$',
                            PagoCreateView.as_view(),

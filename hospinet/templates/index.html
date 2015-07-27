@@ -48,6 +48,7 @@
                     <div>Pacientes</div>
                 </div>
             </a>
+            {% if config.HOSPITALIZACION_ENABLED %}
             <a href="{% url 'admision-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon3.png' %}">
@@ -56,6 +57,8 @@
                     <div>Admisiones</div>
                 </div>
             </a>
+            {% endif %}
+            {% if config.LAB_ENABLED %}
             <a href="{% url 'lab-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon6.png' %}">
@@ -64,6 +67,8 @@
                     <div>Laboratorio</div>
                 </div>
             </a>
+            {% endif %}
+            {% if config.IMAGENES_ENABLED %}
             <a href="{% url 'examen-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon6.png' %}">
@@ -72,6 +77,8 @@
                     <div>Centro de Im&aacute;genes</div>
                 </div>
             </a>
+            {% endif %}
+            {% if config.HOSPITALIZACION_ENABLED %}
             <a href="{% url 'nightingale-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon5.png' %}">
@@ -80,6 +87,8 @@
                     <div>Hospitalizaci&oacute;n</div>
                 </div>
             </a>
+            {% endif %}
+            {% if config.INVENTORY_ENABLED %}
             <a href="{% url 'inventario-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon7.png' %}">
@@ -88,6 +97,8 @@
                     <div>Inventario</div>
                 </div>
             </a>
+            {% endif %}
+            {% if config.EMERGENCIA_ENABLED %}
             <a href="{% url 'emergency-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon2.png' %}">
@@ -96,6 +107,8 @@
                     <div>Emergencia</div>
                 </div>
             </a>
+            {% endif %}
+            {% if config.CONSULTA_ENABLED %}
             <a href="{% url 'consultorio-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon8.png' %}">
@@ -104,6 +117,8 @@
                     <div>Consultorios</div>
                 </div>
             </a>
+            {% endif %}
+            {% if config.INVOICE_ENABLED %}
             <a href="{% url 'invoice-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon9.png' %}">
@@ -112,6 +127,8 @@
                     <div>Caja</div>
                 </div>
             </a>
+            {% endif %}
+            {% if config.CONTRATOS_ENABLED %}
             <a href="{% url 'contrato-index' %}">
                 <div class="image-holder flex-container">
                     <img src="{% static 'images/icon1.png' %}">
@@ -120,6 +137,7 @@
                     <div>Contratos</div>
                 </div>
             </a>
+            {% endif %}
     </aside>
     {% endif %}
 {% endif %}

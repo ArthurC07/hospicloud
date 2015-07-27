@@ -25,6 +25,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
+
 from django.utils import timezone
 
 from django_extensions.db.models import TimeStampedModel
@@ -256,6 +257,12 @@ class MasterContract(TimeStampedModel):
 
     processed = models.BooleanField(default=False)
     item = models.ForeignKey(ItemTemplate, null=True, blank=True)
+    vida = models.DecimalField(max_digits=11, decimal_places=2, null=True,
+                               blank=True)
+    gastos_medicos = models.DecimalField(max_digits=11, decimal_places=2,
+                                         null=True, blank=True)
+    porcentaje = models.DecimalField(max_digits=3, decimal_places=2,
+                                     null=True, blank=True)
 
     def __unicode__(self):
         nombre = self.plan.nombre
@@ -288,6 +295,11 @@ class MasterContract(TimeStampedModel):
     def active_contracts_count(self):
 
         return self.active_contracts().count()
+
+    def comision_administrativa(self):
+
+        return ((self.vida + self.gastos_medicos) * self.porcentaje).quantize(
+            Decimal("0.01"))
 
 
 class Contrato(TimeStampedModel):

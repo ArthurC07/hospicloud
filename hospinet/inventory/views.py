@@ -14,11 +14,12 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
-                                  DeleteView)
+                                  DeleteView, View)
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.base import TemplateView, TemplateResponseMixin
 from django.shortcuts import get_object_or_404
@@ -341,8 +342,7 @@ class ProveedorFormMixin(ProveedorMixin, FormMixin):
         return initial
 
 
-class CompraCreateView(InventarioFormMixin, ProveedorFormMixin,
-                       LoginRequiredMixin):
+class CompraCreateView(InventarioFormMixin, LoginRequiredMixin):
     model = Compra
     form_class = CompraForm
 
@@ -516,5 +516,17 @@ class ItemCotizadoCreateView(CotizacionFormMixin, CreateView,
     form_class = ItemCotizadoform
 
     def get_success_url(self):
-
         return reverse('itemcotizado-create', args=[self.cotizacion.id])
+
+
+class UserInventarioRequiredMixin(View):
+    """Muestra un mensaje de error si el :class:`User` no tiene un
+    :class:`Inventario` asignado en su perfil"""
+
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.profile is None:
+            messages.info(self.request,
+                          "Su usuario no tiene un Inventario asociado, por "
+                          "favor edite su Perfil para asociar un Inventario")
+        return super(UserInventarioRequiredMixin, self).dispatch(*args,
+                                                                 **kwargs)

@@ -14,11 +14,18 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from select2.fields import ModelChoiceField
 
 from userena.forms import EditProfileForm
+from persona.forms import FieldSetModelFormMixin
+from users.models import Ciudad
 
 
 class CustomEditProfileForm(EditProfileForm):
     class Meta(EditProfileForm.Meta):
         exclude = EditProfileForm.Meta.exclude + ['id', 'inventario',
                                                   'honorario', 'persona']
+
+class CiudadFormMixin(FieldSetModelFormMixin):
+
+    ciudad = ModelChoiceField(queryset=Ciudad.objects.all(), name="", model="")

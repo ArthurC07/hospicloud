@@ -25,7 +25,7 @@ from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType,
 
 class ItemTemplateAdmin(admin.ModelAdmin):
     list_display = (
-    'descripcion', 'costo', 'precio_de_venta', 'get_types', 'activo',)
+        'descripcion', 'costo', 'precio_de_venta', 'get_types', 'activo',)
     list_filter = ('activo',)
     ordering = ('descripcion', 'activo', 'precio_de_venta', 'costo')
     filter_horizontal = ('item_type',)
@@ -37,6 +37,11 @@ class ItemAdmin(admin.ModelAdmin):
     ordering = ['plantilla__descripcion', 'inventario', 'vencimiento',
                 'created']
     search_fields = ['plantilla__descripcion', 'inventario__lugar']
+
+
+class ProveedorAdmin(admin.ModelAdmin):
+    list_display = ['name', ]
+    search_fields = ['name', ]
 
 
 class TransaccionAdmin(admin.ModelAdmin):
@@ -57,7 +62,6 @@ class ItemCotizadoAdmin(ForeignKeyAutocompleteAdmin):
     search_fields = ['cotizacion__proveedor__name', 'item__descripcion']
 
     def get_proveedor(self, obj):
-
         return obj.cotizacion.proveedor.name
 
 
@@ -72,7 +76,7 @@ admin.site.register(Transferencia)
 admin.site.register(Compra)
 admin.site.register(ItemComprado)
 admin.site.register(ItemRequisicion)
-admin.site.register(Proveedor)
+admin.site.register(Proveedor, ProveedorAdmin)
 admin.site.register(Transaccion, TransaccionAdmin)
 admin.site.register(Cotizacion, CotizacionAdmin)
 admin.site.register(ItemCotizado, ItemCotizadoAdmin)

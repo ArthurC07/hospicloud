@@ -55,7 +55,7 @@ class Inventario(models.Model):
     def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.disminuir(cantidad, user)
-
+        
     def cargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.aumentar(cantidad, user)

@@ -17,7 +17,7 @@
 from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView, FormView)
@@ -27,6 +27,7 @@ from django.utils import timezone
 from guardian.decorators import permission_required
 
 from inventory.models import ItemTemplate
+from inventory.views import UserInventarioRequiredMixin
 from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
                                HonorarioForm, PreCargoForm,
                                InsulinaForm, GlucosuriaForm, IngestaForm,
@@ -41,6 +42,7 @@ from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Honorario,
                                 Medicamento, Dosis, Devolucion, Sumario,
                                 OxigenoTerapia)
 from spital.models import Admision
+
 
 # from spital.views import AdmisionFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -235,7 +237,8 @@ class AdmisionFormMixin(CreateView, CurrentUserFormMixin):
         return super(AdmisionFormMixin, self).dispatch(*args, **kwargs)
 
 
-class CargoCreateView(AdmisionFormMixin, LoginRequiredMixin):
+class CargoCreateView(AdmisionFormMixin, UserInventarioRequiredMixin,
+                      LoginRequiredMixin):
     """Permite crear un :class:`Cargo` a una :class:`Admision`"""
 
     model = Cargo
@@ -246,6 +249,13 @@ class CargoCreateView(AdmisionFormMixin, LoginRequiredMixin):
         """Guarda el objeto generado espeficando la :class:`Admision` obtenida
         de los argumentos y el :class:`User` que esta utilizando la aplicación
         """
+
+        if self.request.profile is None:
+            messages.info(self.request,
+                          "Su usuario no tiene un Inventario asociado, por "
+                          "favor edite su Perfil para asociar un Inventario")
+
+            return redirect(self.request.META.get('HTTP_REFERER', '/'))
 
         self.object = form.save(commit=False)
 
