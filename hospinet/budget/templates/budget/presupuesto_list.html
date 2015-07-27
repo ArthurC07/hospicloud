@@ -85,4 +85,31 @@
             {% endfor %}
         </section>
     </div>
+    <div class="row">
+        <section class="col-md-12 col-xs-12 main-content">
+            <h2>Ingresos</h2>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Ciudad</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for ingreso in ingresos %}
+                <tr>
+                    <td>{{ ingreso.recibo__ciudad__nombre }}</td>
+                    <td class="text-right">{{ ingreso.total }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <th class="text-right">{{ total_ingresos }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+    </div>
 {% endblock %}

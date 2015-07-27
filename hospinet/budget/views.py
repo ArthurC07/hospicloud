@@ -14,13 +14,17 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from decimal import Decimal
+
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, ListView
 from django.views.generic.base import TemplateResponseMixin
+
 from django.views.generic.edit import FormMixin
+
 from budget.forms import CuentaForm, GastoForm
 from budget.models import Presupuesto, Cuenta, Gasto
+from invoice.models import Venta
 from users.mixins import LoginRequiredMixin
 from users.models import get_current_month_range
 
@@ -62,6 +66,16 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         context['gastos'] = gastos
 
         context['porcentaje'] = gastos / max(presupuesto, 1) * 100
+        ventas = Venta.objects.select_related('recibo').filter(
+            recibo__created__range=(inicio, fin)
+        )
+
+        ingresos = ventas.values('recibo__ciudad__nombre').annotate(
+            total=Sum('monto')
+        ).order_by()
+        context['total_ingresos'] = ventas.aggregate(total=Sum('monto'))['total']
+
+        context['ingresos'] = ingresos
 
         return context
 
@@ -70,7 +84,8 @@ class PresupuestoMixin(TemplateResponseMixin):
     """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
-        self.presupuesto = get_object_or_404(Presupuesto, pk=kwargs['presupuesto'])
+        self.presupuesto = get_object_or_404(Presupuesto,
+                                             pk=kwargs['presupuesto'])
         return super(PresupuestoMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -126,6 +141,7 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
         initial = initial.copy()
         initial['cuenta'] = self.cuenta
         return initial
+
 
 class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
     model = Gasto
