@@ -22,6 +22,11 @@
                         Control Presupuestal
                     </a>
                 </li>
+                <li role="presentation">
+                    <a data-toggle="tab" href="#punto-equilibrio">
+                        Control Presupuestal
+                    </a>
+                </li>
             </ul>
             <div class="tab-content">
                 <div class="row tab-pane fade in active" id="presupuesto">
@@ -187,6 +192,21 @@
                             <h3>No hay Presupuestos Disponibles</h3>
                         {% endfor %}
                     </section>
+                </div>
+                <div class="row tab-pane fade in" id="punto-equilibrio">
+                    <div class="col-md-12">
+                        <h2>Punto de Equilibrio</h2>
+                        <table class="table table-hover table-striped">
+                            {% for presupuesto in presupuestos.all %}
+                                {% with presupuesto.get_equilibiio as balance %}
+                                <tr>
+                                    <td>{{ presupuesto }}</td>
+                                    <td class="text-right {% if balance < 0 %}danger{% endif %}">{{ balance }}</td>
+                                </tr>
+                                {% endwith %}
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

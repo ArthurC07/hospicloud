@@ -88,6 +88,10 @@ class Presupuesto(TimeStampedModel):
 
         return ventas
 
+    def get_equilibiio(self):
+
+        return self.ingresos_mes_actual() - self.total_gastos_mes_actual()
+
     def porcentaje_consumido(self):
 
         gastos = self.total_gastos_mes_actual()
