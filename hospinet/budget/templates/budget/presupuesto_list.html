@@ -201,6 +201,7 @@
                                 {% with presupuesto.get_equilibiio as balance %}
                                     <tr class="{% if balance < 0 %}danger{% endif %}{% if balance > 0 %}success{% endif %}">
                                         <td>{{ presupuesto }}</td>
+                                        <td>{{ presupuesto.porcentaje_consumido }}%</td>
                                         <td class="text-right">{{ balance }}</td>
                                     </tr>
                                 {% endwith %}
