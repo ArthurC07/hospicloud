@@ -113,7 +113,7 @@ class Cuenta(TimeStampedModel):
 
     def get_absolute_url(self):
 
-        return self.presupuesto.get_absolute_url()
+        return reverse('budget-control', args=[self.presupuesto.id])
 
     def gastos_por_periodo(self, inicio, fin):
 
