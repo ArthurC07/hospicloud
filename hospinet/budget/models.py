@@ -23,6 +23,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
 from inventory.models import Proveedor
+from invoice.models import Venta
 from users.models import Ciudad, get_current_month_range
 
 
@@ -71,6 +72,32 @@ class Presupuesto(TimeStampedModel):
     def porcentaje_ejecutado_mes_actual(self):
         return self.total_gastos_mes_actual() / max(self.total_presupuestado(),
                                                     1) * 100
+
+    def ingresos_mes_actual(self):
+
+        fin, inicio = get_current_month_range()
+
+        ventas = Venta.objects.select_related('recibo').filter(
+            recibo__created__range=(inicio, fin),
+            recibo__ciudad=self.ciudad
+        ).aggregate(total=Sum('monto'))['total']
+
+        if ventas is None:
+
+            ventas = Decimal()
+
+        return ventas
+
+    def get_equilibiio(self):
+
+        return self.ingresos_mes_actual() - self.total_gastos_mes_actual()
+
+    def porcentaje_consumido(self):
+
+        gastos = self.total_gastos_mes_actual()
+        ingresos = self.ingresos_mes_actual()
+
+        return gastos / max(ingresos, 1) * 100
 
 
 @python_2_unicode_compatible

@@ -29,6 +29,11 @@ urlpatterns = patterns('',
                            PresupuestoDetailView.as_view(),
                            name='budget'),
 
+                       url(r'^(?P<pk>\d+)/control$',
+                           PresupuestoDetailView.as_view(
+                               template_name='budget/presupuesto_control.html'),
+                           name='budget-control'),
+
                        url(r'^(?P<presupuesto>\d+)/cuenta/agregar$',
                            CuentaCreateView.as_view(),
                            name='budget-cuenta-agregar'),
