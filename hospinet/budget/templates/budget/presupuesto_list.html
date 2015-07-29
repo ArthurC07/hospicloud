@@ -197,11 +197,20 @@
                     <div class="col-md-12">
                         <h2>Punto de Equilibrio</h2>
                         <table class="table table-hover table-striped">
+                            <thead>
                             <tr>
                                 <th>Presupuesto</th>
                                 <th>Ingresos</th>
                                 <th>Punto de Equilibrio</th>
                                 <th>Egresos</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Presupuesto Global</td>
+                                <td class="text-right">{{ total_ingresos }}</td>
+                                <td class="text-right">{{ balance }}</td>
+                                <td class="text-right">{{ gastos }}</td>
                             </tr>
                             {% for presupuesto in presupuestos.all %}
                                 {% with presupuesto.get_equilibiio as balance %}
@@ -213,6 +222,7 @@
                                     </tr>
                                 {% endwith %}
                             {% endfor %}
+                            </tbody>
                         </table>
                     </div>
                 </div>
