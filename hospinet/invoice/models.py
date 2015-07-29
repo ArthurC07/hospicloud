@@ -112,7 +112,7 @@ class Recibo(TimeStampedModel):
         ciudad = self.ciudad
         if ciudad is None:
             if self.cajero is None or self.cajero.profile is None or \
-                            self.cajero.profile.ciudad is None:
+               self.cajero.profile.ciudad is None:
                 return self.correlativo
 
             ciudad = self.cajero.profile.ciudad
@@ -232,7 +232,7 @@ class Recibo(TimeStampedModel):
     def save(self, *args, **kwargs):
 
         if self.pk is None:
-            if self.cajero.profile is not None and self.cajero.profile.ciudad\
+            if self.cajero.profile is not None and self.cajero.profile.ciudad \
                     is not None:
                 ciudad = self.cajero.profile.ciudad
                 ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
@@ -307,8 +307,6 @@ class Venta(TimeStampedModel):
 
         disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
         return (self.precio * disminucion).quantize(dot01)
-
-        return neto.quantize(dot01)
 
     def save(self, *args, **kwargs):
 
