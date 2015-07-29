@@ -199,15 +199,17 @@
                         <table class="table table-hover table-striped">
                             <tr>
                                 <th>Presupuesto</th>
-                                <th>Porcentaje de Ingresos Consumido</th>
-                                <th>Ganancia o P&eacute;rdida del Mes</th>
+                                <th>Ingresos</th>
+                                <th>Punto de Equilibrio</th>
+                                <th>Egresos</th>
                             </tr>
                             {% for presupuesto in presupuestos.all %}
                                 {% with presupuesto.get_equilibiio as balance %}
                                     <tr class="{% if balance < 0 %}danger{% endif %}{% if balance > 0 %}success{% endif %}">
                                         <td>{{ presupuesto }}</td>
-                                        <td>{{ presupuesto.porcentaje_consumido|floatformat:2 }}%</td>
+                                        <td class="text-right">{{ presupuesto.ingresos_mes_actual }}</td>
                                         <td class="text-right">{{ balance }}</td>
+                                        <td class="text-right">{{ presupuesto.total_gastos_mes_actual }}</td>
                                     </tr>
                                 {% endwith %}
                             {% endfor %}
