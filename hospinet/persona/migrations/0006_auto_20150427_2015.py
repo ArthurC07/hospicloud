@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 
 
-def fix_antecedente(apps, schema_editor):
+def yaaf(apps, schema_editor):
     Antecedente = apps.get_model("persona", "AntecedenteQuirurgico")
 
     for antecedente in Antecedente.objects.all():
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             field=models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True),
             preserve_default=True,
         ),
-        migrations.RunPython(fix_antecedente),
+        migrations.RunPython(yaaf),
         migrations.AlterField(
             model_name='antecedentequirurgico',
             name='persona',

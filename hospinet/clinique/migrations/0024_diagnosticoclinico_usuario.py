@@ -5,7 +5,7 @@ from django.db import models, migrations
 from django.conf import settings
 
 
-def extract_user(apps, schema_editor):
+def update_diagnostico_user(apps, schema_editor):
 
     DiagnosticoClinico = apps.get_model("clinique", "DiagnosticoClinico")
 
@@ -28,5 +28,5 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='diagnosticos_clinicos', blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
         ),
-        migrations.RunPython(extract_user),
+        migrations.RunPython(update_diagnostico_user),
     ]

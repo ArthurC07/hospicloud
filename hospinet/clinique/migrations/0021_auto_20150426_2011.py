@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 
 
-def expand_paciente(apps, schema_editor):
+def update_incapacidad_user(apps, schema_editor):
     Incapacidad = apps.get_model("clinique", "Incapacidad")
 
     for incapacidad in Incapacidad.objects.all():
@@ -20,5 +20,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(expand_paciente),
+        migrations.RunPython(update_incapacidad_user),
     ]
