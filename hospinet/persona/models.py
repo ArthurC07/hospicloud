@@ -25,11 +25,13 @@ from datetime import date
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
+from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
 from persona.fields import OrderedCountryField
 
 
+@python_2_unicode_compatible
 class Persona(models.Model):
     """Representación de una :class:`Persona` en la aplicación"""
 
@@ -83,6 +85,7 @@ class Persona(models.Model):
     duplicado = models.BooleanField(default=False)
     rtn = models.CharField(max_length=200, blank=True, null=True)
     mostrar_en_cardex = models.BooleanField(default=False)
+    ciudad = models.ForeignKey("users.Ciudad", blank=True, null=True)
 
     @staticmethod
     def validar_identidad(identidad):
@@ -95,7 +98,7 @@ class Persona(models.Model):
 
         return Persona.__expresion__.match(identidad)
 
-    def __unicode__(self):
+    def __str__(self):
 
         """Muestra el nombre completo de la persona"""
 
@@ -314,24 +317,26 @@ class AntecedenteObstetrico(models.Model):
         return reverse('persona-view-id', args=[self.persona.id])
 
 
+@python_2_unicode_compatible
 class Empleador(TimeStampedModel):
     nombre = models.CharField(max_length=200, blank=True)
     direccion = models.TextField()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def get_absolute_url(self):
         return reverse('empresa', args=[self.id])
 
 
+@python_2_unicode_compatible
 class Sede(TimeStampedModel):
     empleador = models.ForeignKey(Empleador, null=True, blank=True,
                                   related_name='sedes')
     lugar = models.CharField(max_length=200, blank=True)
     direccion = models.TextField()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0} de {1}'.format(self.lugar, self.empleador.nombre)
 
 
