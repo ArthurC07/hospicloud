@@ -749,7 +749,7 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin,
 
     def form_valid(self, form):
 
-        if self.request.profile is None:
+        if self.request.user.profile is None:
             messages.info(self.request,
                           "Su usuario no tiene un Inventario asociado, por "
                           "favor edite su Perfil para asociar un Inventario")
