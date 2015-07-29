@@ -197,6 +197,11 @@
                     <div class="col-md-12">
                         <h2>Punto de Equilibrio</h2>
                         <table class="table table-hover table-striped">
+                            <tr>
+                                <th>Presupuesto</th>
+                                <th>Porcentaje de Ingresos Consumido</th>
+                                <th>Ganancia o P&eacute;rdida del Mes</th>
+                            </tr>
                             {% for presupuesto in presupuestos.all %}
                                 {% with presupuesto.get_equilibiio as balance %}
                                     <tr class="{% if balance < 0 %}danger{% endif %}{% if balance > 0 %}success{% endif %}">
