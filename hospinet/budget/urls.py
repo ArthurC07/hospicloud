@@ -17,7 +17,7 @@
 from django.conf.urls import patterns, url
 
 from budget.views import PresupuestoDetailView, CuentaCreateView, \
-    GastoCreateView, PresupuestoListView
+    GastoCreateView, PresupuestoListView, GastoDeleteView
 
 urlpatterns = patterns('',
 
@@ -42,4 +42,7 @@ urlpatterns = patterns('',
                            GastoCreateView.as_view(),
                            name='budget-gasto-agregar'),
 
+                       url(r'^gasto/(?P<pk>\d+)$',
+                           GastoDeleteView.as_view(),
+                           name='gasto-delete'),
                        )

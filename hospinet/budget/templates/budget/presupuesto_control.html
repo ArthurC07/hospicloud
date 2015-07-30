@@ -56,6 +56,7 @@
                                 <th>Cheque</th>
                                 <th>Comprobante</th>
                                 <th>Monto</th>
+                                <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -74,10 +75,11 @@
                                         {% endif %}
                                     </td>
                                     <td class="text-right">{{ gasto.monto }}</td>
+                                    <td><a class="btn btn-danger" href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> Borrar</a></td>
                                 </tr>
                             {% empty %}
                                 <tr>
-                                    <td colspan="5" class="text-center">No hay
+                                    <td colspan="6" class="text-center">No hay
                                         gastos registrados
                                     </td>
                                 </tr>
@@ -86,7 +88,8 @@
                             <tfoot>
                             <tr>
                                 <th colspan="4">Total de Gastos</th>
-                                <th>{{ cuenta.total_gastos_mes_actual }}</th>
+                                <th class="text-right">{{ cuenta.total_gastos_mes_actual }}</th>
+                                <th>&nbsp;</th>
                             </tr>
                             </tfoot>
                         </table>

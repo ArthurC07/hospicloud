@@ -43,6 +43,7 @@ class Ciudad(TimeStampedModel):
     limite_de_emision = models.DateTimeField(default=timezone.now)
     inicio_rango = models.CharField(max_length=100, blank=True)
     fin_rango = models.CharField(max_length=100, blank=True)
+    tiene_presupuesto_global = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.nombre

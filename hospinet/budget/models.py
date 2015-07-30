@@ -18,7 +18,7 @@ from decimal import Decimal
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
@@ -32,6 +32,8 @@ class Presupuesto(TimeStampedModel):
     """Define un presupuesto financiero para una :class:`Ciudad` específica"""
     ciudad = models.ForeignKey(Ciudad)
     activo = models.BooleanField(default=True)
+    porcentaje_global = models.DecimalField(max_digits=3, decimal_places=2,
+                                            default=Decimal)
 
     def __str__(self):
         return u'Presupuesto de {0}'.format(self.ciudad.nombre)
@@ -49,7 +51,9 @@ class Presupuesto(TimeStampedModel):
                                     cuenta__in=self.cuenta_set.all())
 
     def total_gastos_por_periodo(self, inicio, fin):
-        gasto = self.gastos_por_periodo().aggregate(total=Sum('monto'))['total']
+        gasto = self.gastos_por_periodo(inicio, fin).aggregate(
+            total=Sum('monto')
+        )['total']
 
         if gasto is None:
             return Decimal()
@@ -77,16 +81,26 @@ class Presupuesto(TimeStampedModel):
 
         fin, inicio = get_current_month_range()
 
-        ventas = Venta.objects.select_related('recibo').filter(
-            recibo__created__range=(inicio, fin),
-            recibo__ciudad=self.ciudad
-        ).aggregate(total=Sum('monto'))['total']
+        ventas = self.ingresos_periodo(fin, inicio)
 
         if ventas is None:
-
             ventas = Decimal()
 
         return ventas
+
+    def ingresos_periodo(self, fin, inicio):
+
+        condition = Q(recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
+            recibo__cliente__ciudad__isnull=True)
+
+        query = Venta.objects.select_related('recibo__ciudad',
+                                             'recibo__cliente__ciudad').filter(
+            condition,
+            recibo__created__range=(inicio, fin),
+            recibo__ciudad=self.ciudad,
+        )
+
+        return query.aggregate(total=Sum('monto'))['total']
 
     def get_equilibiio(self):
 

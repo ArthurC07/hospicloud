@@ -17,7 +17,7 @@ from decimal import Decimal
 
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, CreateView, ListView
+from django.views.generic import DetailView, CreateView, ListView, DeleteView
 from django.views.generic.base import TemplateResponseMixin
 
 from django.views.generic.edit import FormMixin
@@ -149,3 +149,16 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
 class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
     model = Gasto
     form_class = GastoForm
+
+
+class GastoDeleteView(DeleteView, LoginRequiredMixin):
+    """Permite eliminar un :class:`Gasto`"""
+    model = Gasto
+
+    def get_object(self, queryset=None):
+        obj = super(GastoDeleteView, self).get_object(queryset)
+        self.cuenta = obj.cuenta
+        return obj
+
+    def get_success_url(self):
+        return self.cuenta.get_absolute_url()
