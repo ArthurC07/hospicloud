@@ -53,6 +53,7 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Descripci&oacute;n</th>
+                                <th>Proveedor</th>
                                 <th>Cheque</th>
                                 <th>Comprobante</th>
                                 <th>Monto</th>
@@ -64,6 +65,7 @@
                                 <tr>
                                     <td>{{ gasto.created }}</td>
                                     <td>{{ gasto.descripcion }}</td>
+                                    <td>{{ gasto.proveedor }}</td>
                                     <td>{{ gasto.cheque }}</td>
                                     <td>
                                         {% if gasto.comprobante %}

@@ -19,6 +19,7 @@ from decimal import Decimal
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum, Q
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
@@ -29,7 +30,8 @@ from users.models import Ciudad, get_current_month_range
 
 @python_2_unicode_compatible
 class Presupuesto(TimeStampedModel):
-    """Define un presupuesto financiero para una :class:`Ciudad` específica"""
+    """Define un presupuesto financiero para una :class:`Ciudad` específica,
+    permitiendo calcular lo gastado y lo que aún no ha sido pagado"""
     ciudad = models.ForeignKey(Ciudad)
     activo = models.BooleanField(default=True)
     porcentaje_global = models.DecimalField(max_digits=3, decimal_places=2,
@@ -47,7 +49,7 @@ class Presupuesto(TimeStampedModel):
         ).aggregate(total=Sum('limite'))['total']
 
     def gastos_por_periodo(self, inicio, fin):
-        return Gasto.objects.filter(created__range=(inicio, fin),
+        return Gasto.objects.filter(periodo_de_pago__range=(inicio, fin),
                                     cuenta__in=self.cuenta_set.all())
 
     def total_gastos_por_periodo(self, inicio, fin):
@@ -90,7 +92,8 @@ class Presupuesto(TimeStampedModel):
 
     def ingresos_periodo(self, fin, inicio):
 
-        condition = Q(recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
+        condition = Q(
+            recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
             recibo__cliente__ciudad__isnull=True)
 
         query = Venta.objects.select_related('recibo__ciudad',
@@ -116,25 +119,34 @@ class Presupuesto(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Cuenta(TimeStampedModel):
-    """Define una agrupación de gastos referentes a un rubro determinado"""
+    """Define una agrupación de :class:`Gasto`s referentes a un rubro
+    determinado. Estos :class:`Gasto` representan lo ejecutado y las cuentas
+    por pagar"""
     presupuesto = models.ForeignKey(Presupuesto)
     nombre = models.CharField(max_length=255)
     limite = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def __str__(self):
 
-        return self.nombre
+        return u'{0} en {1}'.format(self.nombre, self.presupuesto.ciudad.nombre)
 
     def get_absolute_url(self):
 
         return self.presupuesto.get_absolute_url()
 
-    def gastos_por_periodo(self, inicio, fin):
+    def get_cuentas_por_pagar(self):
+        """Obtiene los :class:`Gasto`s que aún no han sido ejectuados y por lo
+        tanto son cuentas por pagar"""
 
-        return Gasto.objects.filter(cuenta=self, created__range=(inicio, fin))
+        return Gasto.objects.filter(cuenta=self, ejecutado=True)
+
+    def gastos_por_periodo(self, inicio, fin):
+        """obtiene los :class:`Gasto`s que ya fueron ejecutados y que han sido
+        descargado del flujo de dinero de la empresa"""
+        return Gasto.objects.filter(cuenta=self, ejecutado=True,
+                                    periodo_de_pago__range=(inicio, fin))
 
     def total_gastos_por_periodo(self, inicio, fin):
-
         """Obtiene el tal de :class:`Gasto`s de la :class:`Cuenta` en un periodo
         determinado de tiempo"""
 
@@ -148,6 +160,7 @@ class Cuenta(TimeStampedModel):
         return gastos
 
     def gastos_mes_actual(self):
+        """Obtiene los :class:`Gasto` del mes actual"""
 
         fin, inicio = get_current_month_range()
 
@@ -170,7 +183,12 @@ class Cuenta(TimeStampedModel):
 @python_2_unicode_compatible
 class Gasto(TimeStampedModel):
     """Representa las transacciones monetarias realizadas por el personal de la
-    :class:`Ciudad` y que son restadas del :class:`Presupuesto` vigente"""
+    :class:`Ciudad` y que son restadas del :class:`Presupuesto` vigente
+
+    Cuando un :class:`Gasto` aún no está ejectuado, se encuentra en cuentas por
+    pagar y puede mantenerse en espera hasta us fecha máxima de pago, reflejada
+    por el campo correspondiente.
+    """
     cuenta = models.ForeignKey(Cuenta)
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
@@ -178,6 +196,10 @@ class Gasto(TimeStampedModel):
     cheque = models.CharField(max_length=255, blank=True, null=True)
     comprobante = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                    blank=True, null=True)
+    fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
+    fecha_de_pago = models.DateTimeField(default=timezone.now)
+    periodo_de_pago = models.DateTimeField(default=timezone.now)
+    ejecutado = models.BooleanField(default=False)
 
     def __str__(self):
         return self.descripcion

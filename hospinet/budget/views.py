@@ -22,7 +22,7 @@ from django.views.generic.base import TemplateResponseMixin
 
 from django.views.generic.edit import FormMixin
 
-from budget.forms import CuentaForm, GastoForm
+from budget.forms import CuentaForm, GastoForm, GastoPendienteForm
 from budget.models import Presupuesto, Cuenta, Gasto
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin
@@ -149,6 +149,17 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
 class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
     model = Gasto
     form_class = GastoForm
+
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.ejectuado = True
+        self.object.save()
+
+
+class GastoPendienteCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
+    model = Gasto
+    form_class = GastoPendienteForm
 
 
 class GastoDeleteView(DeleteView, LoginRequiredMixin):
