@@ -16,17 +16,20 @@
 from decimal import Decimal
 
 from django.db.models import Sum
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, CreateView, ListView, DeleteView
+from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
+    UpdateView
 from django.views.generic.base import TemplateResponseMixin
 
 from django.views.generic.edit import FormMixin
 
-from budget.forms import CuentaForm, GastoForm
+from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
+    GastoEjecutarFrom
 from budget.models import Presupuesto, Cuenta, Gasto
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin
-from users.models import get_current_month_range
+from hospinet.utils import get_current_month_range
 
 
 class PresupuestoDetailView(DetailView, LoginRequiredMixin):
@@ -73,12 +76,17 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         ingresos = ventas.values('recibo__ciudad__nombre').annotate(
             total=Sum('monto')
         ).order_by()
-        context['total_ingresos'] = ventas.aggregate(total=Sum('monto'))['total']
+        total_ingresos = ventas.aggregate(total=Sum('monto'))['total']
+
+        if total_ingresos is None:
+            total_ingresos = Decimal()
+
+        context['total_ingresos'] = total_ingresos
 
         context['ingresos'] = ingresos
 
         context['equilibrio'] = gastos / max(context['total_ingresos'], 1)
-        context['balance'] = context['total_ingresos'] - gastos
+        context['balance'] = total_ingresos - gastos
 
         return context
 
@@ -150,6 +158,19 @@ class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
     model = Gasto
     form_class = GastoForm
 
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.ejectuado = True
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class GastoPendienteCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
+    model = Gasto
+    form_class = GastoPendienteForm
+
 
 class GastoDeleteView(DeleteView, LoginRequiredMixin):
     """Permite eliminar un :class:`Gasto`"""
@@ -162,3 +183,16 @@ class GastoDeleteView(DeleteView, LoginRequiredMixin):
 
     def get_success_url(self):
         return self.cuenta.get_absolute_url()
+
+
+class GastoEjecutarView(UpdateView, LoginRequiredMixin):
+    model = Gasto
+    form_class = GastoEjecutarFrom
+
+    def form_valid(self, form):
+
+        self.object = form.save(commit=False)
+        self.object.ejecutado = True
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())

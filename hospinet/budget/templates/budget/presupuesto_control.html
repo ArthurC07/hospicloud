@@ -49,10 +49,63 @@
                     <div class="panel-heading">{{ cuenta }}</div>
                     <div class="panel-body ">
                         <table class="table">
+                            <caption>Cuentas Por Pagar</caption>
                             <thead>
                             <tr>
                                 <th>Fecha</th>
                                 <th>Descripci&oacute;n</th>
+                                <th>Proveedor</th>
+                                <th>Cheque</th>
+                                <th>Comprobante</th>
+                                <th>Monto</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for gasto in cuenta.cuentas_por_pagar.all %}
+                                <tr>
+                                    <td>{{ gasto.created }}</td>
+                                    <td>{{ gasto.descripcion }}</td>
+                                    <td>{{ gasto.proveedor }}</td>
+                                    <td>{{ gasto.cheque }}</td>
+                                    <td>
+                                        {% if gasto.comprobante %}
+                                            <a class="btn btn-success"
+                                               href="{{ gasto.comprobante.url }}">
+                                                <i class="fa fa-download"></i>
+                                                Descargar
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-right">{{ gasto.monto }}</td>
+                                    <td>
+                                        <a class="btn btn-danger" href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> Borrar</a>
+                                        <a class="btn btn-success" href="{% url 'gasto-ejecutar' gasto.id %}"><i class="fa fa-trash-o"></i> Ejecutar</a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No hay
+                                        gastos registrados
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="5">Total de Gastos</th>
+                                <th class="text-right">{{ cuenta.total_gastos_mes_actual }}</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                        <table class="table">
+                            <caption>Gastos Completados</caption>
+                            <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripci&oacute;n</th>
+                                <th>Proveedor</th>
                                 <th>Cheque</th>
                                 <th>Comprobante</th>
                                 <th>Monto</th>
@@ -64,6 +117,7 @@
                                 <tr>
                                     <td>{{ gasto.created }}</td>
                                     <td>{{ gasto.descripcion }}</td>
+                                    <td>{{ gasto.proveedor }}</td>
                                     <td>{{ gasto.cheque }}</td>
                                     <td>
                                         {% if gasto.comprobante %}
@@ -79,7 +133,7 @@
                                 </tr>
                             {% empty %}
                                 <tr>
-                                    <td colspan="6" class="text-center">No hay
+                                    <td colspan="7" class="text-center">No hay
                                         gastos registrados
                                     </td>
                                 </tr>
@@ -87,7 +141,7 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th colspan="4">Total de Gastos</th>
+                                <th colspan="5">Total de Gastos</th>
                                 <th class="text-right">{{ cuenta.total_gastos_mes_actual }}</th>
                                 <th>&nbsp;</th>
                             </tr>
@@ -99,6 +153,11 @@
                            href="{% url 'budget-gasto-agregar' cuenta.id %}">
                             <i class="fa fa-plus-circle"></i>
                             Agregar Gasto
+                        </a>
+                        <a class="btn btn-primary"
+                           href="{% url 'budget-gasto-pendiente-agregar' cuenta.id %}">
+                            <i class="fa fa-plus-circle"></i>
+                            Agregar Cuenta por Pagar
                         </a>
                     </div>
                 </div>
