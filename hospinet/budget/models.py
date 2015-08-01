@@ -218,4 +218,4 @@ class Gasto(TimeStampedModel):
         return self.descripcion
 
     def get_absolute_url(self):
-        return self.cuenta.get_absolute_url()
+        return reverse('budget-control', args=[self.cuenta.presupuesto.id])
