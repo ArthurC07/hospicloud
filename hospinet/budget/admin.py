@@ -22,7 +22,8 @@ class CuentaAdmin(admin.ModelAdmin):
 
 class GastoAdmin(admin.ModelAdmin):
     list_display = ['descripcion', 'proveedor', 'cuenta', 'get_presupuesto',
-                    'monto', 'ejecutado', 'fecha_maxima_de_pago']
+                    'monto', 'ejecutado', 'fecha_de_pago',
+                    'fecha_maxima_de_pago']
     ordering = ['descripcion', 'monto']
 
     def get_ciudad(self, obj):
