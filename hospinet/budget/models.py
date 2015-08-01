@@ -25,7 +25,8 @@ from django_extensions.db.models import TimeStampedModel
 
 from inventory.models import Proveedor
 from invoice.models import Venta
-from users.models import Ciudad, get_current_month_range
+from users.models import Ciudad
+from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
 @python_2_unicode_compatible
@@ -50,7 +51,8 @@ class Presupuesto(TimeStampedModel):
 
     def gastos_por_periodo(self, inicio, fin):
         return Gasto.objects.filter(periodo_de_pago__range=(inicio, fin),
-                                    cuenta__in=self.cuenta_set.all())
+                                    cuenta__in=self.cuenta_set.all(),
+                                    ejecutado=True)
 
     def total_gastos_por_periodo(self, inicio, fin):
         gasto = self.gastos_por_periodo(inicio, fin).aggregate(
@@ -82,6 +84,17 @@ class Presupuesto(TimeStampedModel):
     def ingresos_mes_actual(self):
 
         fin, inicio = get_current_month_range()
+
+        ventas = self.ingresos_periodo(fin, inicio)
+
+        if ventas is None:
+            ventas = Decimal()
+
+        return ventas
+
+    def ingresos_mes_anterior(self):
+
+        fin, inicio = get_previous_month_range()
 
         ventas = self.ingresos_periodo(fin, inicio)
 
@@ -134,11 +147,11 @@ class Cuenta(TimeStampedModel):
 
         return self.presupuesto.get_absolute_url()
 
-    def get_cuentas_por_pagar(self):
+    def cuentas_por_pagar(self):
         """Obtiene los :class:`Gasto`s que aún no han sido ejectuados y por lo
         tanto son cuentas por pagar"""
 
-        return Gasto.objects.filter(cuenta=self, ejecutado=True)
+        return Gasto.objects.filter(cuenta=self, ejecutado=False)
 
     def gastos_por_periodo(self, inicio, fin):
         """obtiene los :class:`Gasto`s que ya fueron ejecutados y que han sido
