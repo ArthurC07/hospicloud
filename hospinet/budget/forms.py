@@ -82,19 +82,19 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(GastoPendienteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Cuenta por Pagar', *self.field_names)
+        self.helper.layout = Fieldset(u'Formulario de Cuenta por Pagar',
+                                      *self.field_names)
 
 
-class GastoEjecutarFrom(FieldSetModelFormMixin):
-
+class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_maxima_de_pago',)
 
-    fecha_de_pago = forms.DateField(widget=DateTimeWidget(),
-                                    initial=timezone.now)
-    periodo_de_pago = forms.DateField(widget=DateTimeWidget(),
-                                      initial=timezone.now)
+    fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
+                                        initial=timezone.now)
+    periodo_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
+                                          initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoEjecutarFrom, self).__init__(*args, **kwargs)

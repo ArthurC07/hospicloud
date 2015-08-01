@@ -187,7 +187,7 @@ class GastoEjecutarView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
 
         self.object = form.save(commit=False)
-        self.object.ejectuado = True
+        self.object.ejecutado = True
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
