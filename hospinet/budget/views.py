@@ -76,12 +76,17 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         ingresos = ventas.values('recibo__ciudad__nombre').annotate(
             total=Sum('monto')
         ).order_by()
-        context['total_ingresos'] = ventas.aggregate(total=Sum('monto'))['total']
+        total_ingresos = ventas.aggregate(total=Sum('monto'))['total']
+
+        if total_ingresos is None:
+            total_ingresos = Decimal()
+
+        context['total_ingresos'] = total_ingresos
 
         context['ingresos'] = ingresos
 
         context['equilibrio'] = gastos / max(context['total_ingresos'], 1)
-        context['balance'] = context['total_ingresos'] - gastos
+        context['balance'] = total_ingresos - gastos
 
         return context
 
