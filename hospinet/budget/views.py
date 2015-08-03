@@ -43,13 +43,15 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
 
-        return Presupuesto.objects.all()
+        return Presupuesto.objects.filter(inversion=False).all()
 
     def get_context_data(self, **kwargs):
 
         context = super(PresupuestoListView, self).get_context_data(**kwargs)
 
         fin, inicio = get_current_month_range()
+
+        inversiones = Presupuesto.objects.filter(inversion=True)
 
         gastos = Gasto.objects.filter(
             created__range=(inicio, fin)
