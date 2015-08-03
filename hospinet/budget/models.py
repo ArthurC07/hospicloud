@@ -37,6 +37,7 @@ class Presupuesto(TimeStampedModel):
     activo = models.BooleanField(default=True)
     porcentaje_global = models.DecimalField(max_digits=3, decimal_places=2,
                                             default=Decimal)
+    inversion = models.BooleanField(default=False)
 
     def __str__(self):
         return u'Presupuesto de {0}'.format(self.ciudad.nombre)
