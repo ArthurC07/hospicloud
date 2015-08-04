@@ -44,9 +44,21 @@
                                 {% endfor %}
                             </ul>
                         </td>
+                        <td>
+                            {% for diagnostico in consulta.diagnosticos_clinicos.all %}
+                                {{ diagnostico.diagnostico }}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for contrato in consulta.persona.contratos.all %}
+                                Poliza: {{ contrato.poliza }}
+                            {% endfor %}
+                        </td>
                         <td>{{ consulta.consultorio.usuario.get_full_name }}</td>
                         <td>{{ consulta.consultorio.localidad }}</td>
-                        <td><a class="btn btn-primary" href="{% url 'consulta' consulta.id %}">Ver</a></td>
+                        <td><a class="btn btn-primary"
+                               href="{% url 'consulta' consulta.id %}">Ver</a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
