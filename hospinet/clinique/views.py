@@ -1011,7 +1011,7 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.consultas = Consulta.objects.filter(
                 created__range=(self.inicio, self.fin)
-            )
+            ).order_by('created')
         else:
             return redirect('invoice-index')
 
