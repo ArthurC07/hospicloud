@@ -54,7 +54,8 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         inversiones = Presupuesto.objects.filter(inversion=True)
 
         gastos = Gasto.objects.filter(
-            created__range=(inicio, fin)
+            created__range=(inicio, fin),
+            ejecutado=True
         ).aggregate(total=Sum('monto'))['total']
 
         presupuesto = Cuenta.objects.filter(
