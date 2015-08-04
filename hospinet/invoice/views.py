@@ -1007,6 +1007,15 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
 
         aseguradora = get_object_or_404(Aseguradora, pk=kwargs['pk'])
 
+        if not aseguradora.cardex:
+            messages.info(self.request,
+                          u'La aseguradora no tiene representante en el '
+                          u'cardex!')
+            if self.request.META['HTTP_REFERER']:
+                return self.request.META['HTTP_REFERER']
+            else:
+                return reverse('invoice-index')
+
         recibo = Recibo()
         recibo.cajero = self.request.user
         recibo.cliente = aseguradora.cardex
