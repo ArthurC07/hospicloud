@@ -27,10 +27,13 @@ from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
+
 from django.utils.decorators import method_decorator
+
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView)
+
 from django.forms.models import inlineformset_factory
 
 from django.contrib.auth.decorators import permission_required
@@ -1231,9 +1234,34 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
 
 
 class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
-    """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`"""
+    """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`
+
+    En caso que la :class:`Persona` tenga un :class:`Contrato` vigente, el
+    :class:`Pago` puede agregarse con uno de los :class:`TipoPago` que solo
+    son permitidos a los asegurados.
+    """
     model = Pago
     form_class = PagoForm
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        persona = self.object.recibo.cliente
+        if self.object.tipo.solo_asegurados and \
+                        persona.contratos.filter(
+                vencimiento__gte=timezone.now()).count() <= 0:
+
+            messages.info(self.request,
+                          u'No se puede agregar un este tipo de pago sin '
+                          u'contrato!')
+            if self.request.META['HTTP_REFERER']:
+                return HttpResponseRedirect(
+                    self.request.META['HTTP_REFERER'])
+            else:
+                return HttpResponseRedirect(reverse('invoice-index'))
+
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class PagoUpdateView(LoginRequiredMixin, UpdateView):
