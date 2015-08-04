@@ -36,13 +36,9 @@
                         <td>{{ consulta.HEA }}</td>
                         <td>{{ consulta.tipo }}</td>
                         <td>
-                            <ul>
-                                {% for cargo in consulta.cargos.all %}
-                                    <li>
-                                        {{ cargo.item }}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                            {% for cargo in consulta.cargos.all %}
+                                {{ cargo.item }} <br >
+                            {% endfor %}
                         </td>
                         <td>
                             {% for diagnostico in consulta.diagnosticos_clinicos.all %}
