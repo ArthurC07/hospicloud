@@ -26,5 +26,10 @@ def get_previous_month_range():
                               calendar.monthrange(previous_month_start.year,
                                                   previous_month_start.month)[
                                   1])
+    
+    previous_month_end = timezone.make_aware(previous_month_end,
+                                             timezone.get_current_timezone())
+    previous_month_start = timezone.make_aware(previous_month_start,
+                                               timezone.get_current_timezone())
 
     return previous_month_end, previous_month_start
