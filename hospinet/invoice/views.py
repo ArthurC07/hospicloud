@@ -1248,7 +1248,7 @@ class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
         persona = self.object.recibo.cliente
         if self.object.tipo.solo_asegurados and \
                         persona.contratos.filter(
-                vencimiento__gte=timezone.now()).count() <= 0:
+                            vencimiento__gte=timezone.now()).count() <= 0:
 
             messages.info(self.request,
                           u'No se puede agregar un este tipo de pago sin '
@@ -1319,7 +1319,18 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
-        if self.object.diferencia_total() != 0:
+        recibos = self.object.recibos().filter(cerrado=False).count()
+        consultas = Consulta.objects.filter(
+            consultorio__localidad=self.object.usuario.profile.ciudad,
+            terminada=True, facturada=False
+        ).count()
+        emergencias = Emergencia.objects.filter(
+            facturada=False,
+            usuario__profile__ciudad=self.object.usuario.profile.ciudad
+        ).count()
+
+        if self.object.diferencia_total() != 0 or recibos > 0 \
+                or consultas > 0 or emergencias > 0:
             messages.info(self.request,
                           u'No se puede cerrar el turno, tiene diferencias en '
                           u'saldos')
