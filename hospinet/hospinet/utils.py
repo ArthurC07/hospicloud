@@ -1,5 +1,6 @@
 import calendar
 from datetime import date, datetime, time
+
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
@@ -20,7 +21,10 @@ def get_current_month_range():
 def get_previous_month_range():
     fin, inicio = get_current_month_range()
     previous_month_start = inicio - relativedelta(months=1)
-    previous_month_end = date(inicio.year, inicio.month,
-               calendar.monthrange(inicio.year, inicio.month)[1])
+    previous_month_end = date(previous_month_start.year,
+                              previous_month_start.month,
+                              calendar.monthrange(previous_month_start.year,
+                                                  previous_month_start.month)[
+                                  1])
 
     return previous_month_end, previous_month_start
