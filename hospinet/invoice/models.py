@@ -393,6 +393,10 @@ class TurnoCaja(TimeStampedModel):
         return Recibo.objects.filter(cajero=self.usuario,
                                      created__range=(self.inicio, fin)).all()
 
+    def nulos(self):
+
+        return self.recibos().filter(nulo=True).all()
+
     def depositos(self):
 
         fin = self.fin
