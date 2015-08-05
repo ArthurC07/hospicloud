@@ -29,7 +29,7 @@ from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
 from budget.models import Presupuesto, Cuenta, Gasto
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin
-from hospinet.utils import get_current_month_range
+from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
 class PresupuestoDetailView(DetailView, LoginRequiredMixin):
@@ -50,6 +50,7 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         context = super(PresupuestoListView, self).get_context_data(**kwargs)
 
         fin, inicio = get_current_month_range()
+        fin_prev, inicio_prev = get_previous_month_range()
 
         inversiones = Presupuesto.objects.filter(inversion=True)
 
@@ -76,9 +77,16 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             recibo__created__range=(inicio, fin)
         )
 
+        ventas_anteriores = ventas = Venta.objects.select_related('recibo').filter(
+            recibo__created__range=(inicio_prev, fin_prev)
+        )
+
         ingresos = ventas.values('recibo__ciudad__nombre').annotate(
             total=Sum('monto')
         ).order_by()
+
+        disponible = ventas_anteriores.aggregate(total=Sum('monto'))['total']
+
         total_ingresos = ventas.aggregate(total=Sum('monto'))['total']
 
         if total_ingresos is None:
@@ -91,6 +99,7 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
 
         context['equilibrio'] = gastos / max(context['total_ingresos'], 1)
         context['balance'] = total_ingresos - gastos
+        context['disponible'] = disponible
 
         return context
 
