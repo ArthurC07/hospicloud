@@ -77,7 +77,7 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             recibo__created__range=(inicio, fin)
         )
 
-        ventas_anteriores = ventas = Venta.objects.select_related('recibo').filter(
+        ventas_anteriores = Venta.objects.select_related('recibo').filter(
             recibo__created__range=(inicio_prev, fin_prev)
         )
 
