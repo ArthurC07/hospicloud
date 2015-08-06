@@ -44,10 +44,30 @@
             <div class="page-header">
                 <h2>Detalle de Gastos</h2>
             </div>
+            <div class="row">
+                {% for cuenta in presupuesto.cuenta_set.all %}
+                <div class="col-md-3 col-xs-3">
+                    <a class="btn btn-block btn-primary" href="#cuenta-{{ cuenta.id }}">{{ cuenta.nombre }}</a>
+                    <br />
+                </div>
+                {% endfor %}
+            </div>
             {% for cuenta in presupuesto.cuenta_set.all %}
-                <div class="panel panel-primary">
+                <div class="panel panel-primary" id="cuenta-{{ cuenta.id }}">
                     <div class="panel-heading">{{ cuenta }}</div>
                     <div class="panel-body ">
+                        <div class="progress">
+                            {% with cuenta.porcentaje_ejecutado_mes_actual as ejecutado %}
+                                <div class="progress-bar {% if ejecutado >= 75 and ejecutado < 100 %}progress-bar-warning{% endif %}{% if ejecutado >= 100 %}progress-bar-danger{% endif %}"
+                                     role="progressbar"
+                                     aria-valuenow="{% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100"
+                                     style="width: {% if ejecutado >= 100 %}100{% else %}{{ ejecutado|floatformat:2 }}{% endif %}%; min-width: 3em;">
+                                    {{ ejecutado|floatformat:2 }}%
+                                </div>
+                            {% endwith %}
+                        </div>
                         <table class="table">
                             <caption>Cuentas Por Pagar</caption>
                             <thead>
@@ -79,8 +99,8 @@
                                     </td>
                                     <td class="text-right">{{ gasto.monto }}</td>
                                     <td>
-                                        <a class="btn btn-danger" href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> Borrar</a>
-                                        <a class="btn btn-success" href="{% url 'gasto-ejecutar' gasto.id %}"><i class="fa fa-trash-o"></i> Ejecutar</a>
+                                        <a class="btn btn-block btn-danger" href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> Borrar</a>
+                                        <a class="btn btn-block btn-success" href="{% url 'gasto-ejecutar' gasto.id %}"><i class="fa fa-trash-o"></i> Ejecutar</a>
                                     </td>
                                 </tr>
                             {% empty %}
