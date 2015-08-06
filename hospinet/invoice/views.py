@@ -1321,7 +1321,7 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
 
         recibos = self.object.recibos().filter(cerrado=False).count()
         consultas = Consulta.objects.filter(
-            consultorio__localidad=self.object.usuario.profile.ciudad,
+            consultorio__usuario__profile__ciudad=self.object.usuario.profile.ciudad,
             facturada=False
         ).count()
         emergencias = Emergencia.objects.filter(
