@@ -1329,12 +1329,21 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
             usuario__profile__ciudad=self.object.usuario.profile.ciudad
         ).count()
 
-        if self.object.diferencia_total() != 0 or recibos > 0 \
-                or consultas > 0 or emergencias > 0:
+        cerrable = True
+
+        if recibos > 0 or consultas > 0 or emergencias > 0:
+            messages.info(self.request,
+                          u'No se puede cerrar el turno, aún hay items'
+                          u'pendientes de facturacion')
+            cerrable = False
+
+        if self.object.diferencia_total() != 0:
             messages.info(self.request,
                           u'No se puede cerrar el turno, tiene diferencias en '
                           u'saldos')
-        else:
+            cerrable = False
+
+        if cerrable:
             self.object.finalizado = True
             self.object.fin = timezone.now()
             self.object.save()
