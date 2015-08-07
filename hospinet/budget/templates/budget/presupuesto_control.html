@@ -15,16 +15,21 @@
     <div class="row">
         <section class="col-md-12 main-content">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="page-header">
                         <h2>Total
                             Presupuestado: {{ presupuesto.total_presupuestado }}</h2>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="page-header">
                         <h2>Total
                             Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="page-header">
+                        <h2>Monto Disponible: {{ presupuesto.ingresos_mes_anterior }}</h2>
                     </div>
                 </div>
             </div>
@@ -52,7 +57,7 @@
                 <div class="col-md-3 col-xs-3">
                     <a class="btn btn-block btn-primary" href="#cuenta-{{ cuenta.id }}">
                         {{ cuenta.nombre }}<br>
-                        {{ cuenta.monto }}
+                        {{ cuenta.limite }}
                     </a>
                     <br />
                 </div>

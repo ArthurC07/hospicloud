@@ -29,6 +29,22 @@ from users.models import Ciudad
 from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
+def ingreso_global_periodo(inicio, fin):
+    query = Venta.objects.filter(
+        recibo__cliente__ciudad__tiene_presupuesto_global=True,
+        recibo__created__range=(inicio, fin),
+    )
+
+    ventas = query.aggregate(total=Sum('monto'))['total']
+
+    if ventas is None:
+        ventas = Decimal()
+
+    print ventas
+
+    return ventas
+
+
 @python_2_unicode_compatible
 class Presupuesto(TimeStampedModel):
     """Define un presupuesto financiero para una :class:`Ciudad` específica,
@@ -86,23 +102,23 @@ class Presupuesto(TimeStampedModel):
 
         fin, inicio = get_current_month_range()
 
-        ventas = self.ingresos_periodo(fin, inicio)
+        return self.ingresos_periodo(fin, inicio)
 
-        if ventas is None:
-            ventas = Decimal()
+    def ingreso_global_mes_anterior(self):
 
-        return ventas
+        fin, inicio = get_previous_month_range()
+        return ingreso_global_periodo(inicio, fin) * self.porcentaje_global
 
     def ingresos_mes_anterior(self):
 
+        return self.ingresos_mes_locales_anterior() + \
+               self.ingreso_global_mes_anterior()
+
+    def ingresos_mes_locales_anterior(self):
+
         fin, inicio = get_previous_month_range()
 
-        ventas = self.ingresos_periodo(fin, inicio)
-
-        if ventas is None:
-            ventas = Decimal()
-
-        return ventas
+        return self.ingresos_periodo(fin, inicio)
 
     def ingresos_periodo(self, fin, inicio):
 
@@ -117,7 +133,12 @@ class Presupuesto(TimeStampedModel):
             recibo__ciudad=self.ciudad,
         )
 
-        return query.aggregate(total=Sum('monto'))['total']
+        ventas = query.aggregate(total=Sum('monto'))['total']
+
+        if ventas is None:
+            ventas = Decimal()
+
+        return ventas
 
     def get_equilibiio(self):
 
