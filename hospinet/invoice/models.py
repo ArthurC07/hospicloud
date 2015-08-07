@@ -408,25 +408,40 @@ class TurnoCaja(TimeStampedModel):
 
     def venta(self):
 
-        return sum(r.total() for r in self.recibos())
+        total = Venta.objects.filter(recibo__in=self.recibos()).aggregate(
+            total=Sum('total')
+        )['total']
+
+        if total is None:
+            total = Decimal()
+
+        return total
 
     def depositado(self):
 
         return sum(d.monto for d in self.depositos())
 
     def ingresos(self):
-        return sum(r.pagado() for r in self.recibos())
+
+        pagos = Pago.objects.filter(recibo__in=self.recibos()).aggregate(
+            total=Sum('monto')
+        )['total']
+
+        if pagos is None:
+            pagos = Decimal()
+
+        return pagos
 
     def pagos(self):
+
+        pagos = Pago.objects.filter(recibo__in=self.recibos())
 
         metodos = defaultdict(Decimal)
         for tipo in TipoPago.objects.all():
             metodos[tipo] = 0
 
-        for recibo in self.recibos():
-
-            for pago in recibo.pagos.all():
-                metodos[pago.tipo] += pago.monto
+        for pago in pagos.all():
+            metodos[pago.tipo] += pago.monto
 
         return metodos.iteritems()
 
