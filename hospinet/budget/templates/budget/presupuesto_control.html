@@ -4,9 +4,12 @@
     {% load crispy_forms_tags %}
     <div class="row">
         <div class="main-content col-md-12">
-            <section class="page-header">
+            <section class="page-header col-md-10 col-xs-10">
                 <h1>{{ presupuesto }}</h1>
             </section>
+            <div class="col-md-2 col-xs-2">
+                <a class="btn btn-block btn-primary" href="{% url 'budget-index' %}">Volver a Presupuesto</a>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -47,7 +50,10 @@
             <div class="row">
                 {% for cuenta in presupuesto.cuenta_set.all %}
                 <div class="col-md-3 col-xs-3">
-                    <a class="btn btn-block btn-primary" href="#cuenta-{{ cuenta.id }}">{{ cuenta.nombre }}</a>
+                    <a class="btn btn-block btn-primary" href="#cuenta-{{ cuenta.id }}">
+                        {{ cuenta.nombre }}<br>
+                        {{ cuenta.monto }}
+                    </a>
                     <br />
                 </div>
                 {% endfor %}
