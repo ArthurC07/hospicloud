@@ -60,7 +60,7 @@
             </div>
             {% for cuenta in presupuesto.cuenta_set.all %}
                 <div class="panel panel-primary" id="cuenta-{{ cuenta.id }}">
-                    <div class="panel-heading">{{ cuenta }}</div>
+                    <div class="panel-heading">{{ cuenta.nombre }}</div>
                     <div class="panel-body ">
                         <div class="progress">
                             {% with cuenta.porcentaje_ejecutado_mes_actual as ejecutado %}
