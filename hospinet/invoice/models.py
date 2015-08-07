@@ -449,6 +449,8 @@ class TurnoCaja(TimeStampedModel):
 
         cierres = defaultdict(Decimal)
         for cierre in CierreTurno.objects.filter(turno=self).all():
+            if cierre.monto is None:
+                continue
             cierres[cierre.pago] += cierre.monto
 
         diferencia = defaultdict(Decimal)
