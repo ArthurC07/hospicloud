@@ -457,11 +457,11 @@ class TurnoCaja(TimeStampedModel):
     def diferencia(self):
 
         metodos = defaultdict(Decimal)
-        for recibo in self.recibos():
+        pagos = Pago.objects.filter(recibo__in=self.recibos())
 
-            for pago in recibo.pagos.all():
-                metodos[pago.tipo] += pago.monto
-
+        for pago in pagos.all():
+            metodos[pago.tipo] += pago.monto
+            
         cierres = defaultdict(Decimal)
         for cierre in CierreTurno.objects.filter(turno=self).all():
             if cierre.monto is None:
