@@ -228,6 +228,7 @@ class Gasto(TimeStampedModel):
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
+    factura = models.CharField(max_length=255, blank=True, null=True)
     cheque = models.CharField(max_length=255, blank=True, null=True)
     comprobante = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                    blank=True, null=True)
