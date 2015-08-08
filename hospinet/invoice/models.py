@@ -54,6 +54,7 @@ class TipoPago(TimeStampedModel):
 class StatusPago(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
     reportable = models.BooleanField(default=True)
+    next_status = models.ForeignKey('self', null=True)
 
     def __unicode__(self):
         return self.nombre
