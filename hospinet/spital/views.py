@@ -185,6 +185,7 @@ class PersonaReferenciaCreateView(PersonaCreateView):
 class ReferenciaAgregarView(RedirectView, LoginRequiredMixin):
     """Permite agregar una :class:`Persona` como referencia de una
     :class:`Admision`"""
+    permanent = False
 
     url = '/admision/referencia/agregar'
 
@@ -199,7 +200,7 @@ class ReferenciaAgregarView(RedirectView, LoginRequiredMixin):
 class FiadorAgregarView(RedirectView, LoginRequiredMixin):
     """Permite agregar una :class:`Persona` como fiador de una
     :class:`Admision`"""
-
+    permanent = False
     url = '/admision/fiador/agregar'
 
     def get_redirect_url(self, **kwargs):
