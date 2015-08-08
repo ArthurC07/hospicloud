@@ -48,14 +48,15 @@ from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
-                            TipoPago, dot01, StatusPago)
+                            TipoPago, dot01, StatusPago, CuentaPorCobrar)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
                            PagoForm, PersonaForm, TurnoCajaForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
-                           TipoPagoPeriodoForm, PeriodoCiudadForm)
+                           TipoPagoPeriodoForm, PeriodoCiudadForm,
+                           CuentaPorCobrarForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -1530,3 +1531,36 @@ class PagoAseguradoraList(ListView, AseguradoraMixin, LoginRequiredMixin):
             total=Sum('monto')
         )['total']
         return context
+
+
+class CuentaPorCobrarCreateView(CreateView, LoginRequiredMixin):
+    model = CuentaPorCobrar
+    form_class = CuentaPorCobrarForm
+
+
+class CuentaPorCobrarDetailView(DetailView, LoginRequiredMixin):
+    model = CuentaPorCobrar
+    context_object_name = 'cuenta'
+
+
+class CuentaPorCobrarListView(ListView, LoginRequiredMixin):
+    model = CuentaPorCobrar
+
+    def get_queryset(self):
+
+        return CuentaPorCobrar.objects.filter(status__reportable=True)
+
+
+class PagoSiguienteStatusView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        pago = get_object_or_404(Pago, pk=kwargs['pk'])
+        pago.status = pago.status.next_status
+        pago.save()
+        messages.info(self.request, u'¡El Pago se ha actualizado!')
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return reverse('invoice-index')

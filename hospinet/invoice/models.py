@@ -24,12 +24,13 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
+
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
 
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Min
 
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions
@@ -120,7 +121,7 @@ class Recibo(TimeStampedModel):
         ciudad = self.ciudad
         if ciudad is None:
             if self.cajero is None or self.cajero.profile is None or \
-               self.cajero.profile.ciudad is None:
+                            self.cajero.profile.ciudad is None:
                 return self.correlativo
 
             ciudad = self.cajero.profile.ciudad
@@ -469,7 +470,7 @@ class TurnoCaja(TimeStampedModel):
 
         for pago in pagos.all():
             metodos[pago.tipo] += pago.monto
-            
+
         cierres = defaultdict(Decimal)
         for cierre in CierreTurno.objects.filter(turno=self).all():
             if cierre.monto is None:
@@ -502,11 +503,45 @@ class CierreTurno(TimeStampedModel):
         return self.turno.get_absolute_url()
 
 
+class CuentaPorCobrar(TimeStampedModel):
+    """Represents all the pending :class:`Pago` que deben recolectarse como un
+    grupo"""
+    descripcion = models.TextField()
+    status = models.ForeignKey(StatusPago)
+    minimum = models.DateTimeField(default=timezone.now)
+
+    def get_absolute_url(self):
+
+        return reverse('invoice-cpc', args=[self.id])
+
+    def payments(self):
+        return Pago.objects.filter(created__range=(self.minimum, self.created),
+                                   status=self.status)
+
+    def save(self, *args, **kwargs):
+
+        if self.pk is None:
+            
+            pending = StatusPago.objects.get(pk=config.PAYMENT_STATUS_PENDING)
+            payments = Pago.objects.filter(status=pending)
+            self.minimum = payments.aggregate(
+                minimum=Min('created')
+            )['minimum']
+
+            payments.update(status=pending.next_status)
+            self.status = pending.next_status
+
+        super(CuentaPorCobrar, self).save(*args, **kwargs)
+
+
 def consolidate_invoice(persona, clone):
+    """Transfers all :class:`Recibo` from a duplicate :class:`Persona` to the
+    original one"""
     [move_invoice(persona, recibo) for recibo in clone.recibos.all()]
 
 
 def move_invoice(persona, recibo):
+    """Transfers a single :class:`Recibo` to a :class:`Persona`"""
     recibo.paciente = persona
     recibo.save()
 
