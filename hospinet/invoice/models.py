@@ -202,14 +202,6 @@ class Recibo(TimeStampedModel):
         return ', '.join(
             v.item.descripcion for v in Venta.objects.filter(recibo=self).all())
 
-    def comision_doctor(self):
-
-        return self.total() * Decimal('0.07')
-
-    def placas(self):
-
-        return sum(v.placas for v in Venta.objects.filter(recibo=self).all())
-
     def fractional(self):
         """Obtiene la parte decimal del total del :class:`Recibo`"""
 
@@ -370,6 +362,9 @@ class Pago(TimeStampedModel):
 
 
 class TurnoCaja(TimeStampedModel):
+    """Allows tracking the :class:`Invoice`s created by a :class:`User` and
+    to handle the amounts payed by clients"""
+
     usuario = models.ForeignKey(User, related_name='turno_caja')
     inicio = models.DateTimeField(null=True, blank=True)
     fin = models.DateTimeField(null=True, blank=True)
@@ -455,6 +450,10 @@ class TurnoCaja(TimeStampedModel):
         return total
 
     def diferencia(self):
+        """Muestra la diferencia que existe entre los :class:`Pago` que se han
+        efectuado a los :class:`Recibo` y los :class:`CierreTurno` que se
+        ingresaron al :class:`TurnoCaja` clasificandolos por :class:`TipoPago`
+        """
 
         metodos = defaultdict(Decimal)
         pagos = Pago.objects.filter(recibo__in=self.recibos())
@@ -477,7 +476,7 @@ class TurnoCaja(TimeStampedModel):
     def diferencia_total(self):
 
         cierre = self.total_cierres()
-        pagos = sum(r.pagado() for r in self.recibos())
+        pagos = self.ingresos()
 
         return cierre - pagos - self.apertura
 
