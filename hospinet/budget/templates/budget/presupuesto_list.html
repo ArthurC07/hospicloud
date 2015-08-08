@@ -118,6 +118,7 @@
                             <thead>
                             <tr>
                                 <th>Presupuesto</th>
+                                <th>Proyectado</th>
                                 <th>Monto Disponible</th>
                                 <th>Ingresos</th>
                                 <th>Ganacia o P&eacute;rdida del Periodo</th>
@@ -128,6 +129,7 @@
                             <tr>
                                 <td>Presupuesto Global</td>
                                 <td class="text-right">{{ disponible }}</td>
+                                <td class="text-right">{{ presupuesto }}</td>
                                 <td class="text-right">{{ total_ingresos }}</td>
                                 <td class="text-right">{{ balance }}</td>
                                 <td class="text-right">{{ gastos }}</td>
@@ -136,6 +138,7 @@
                                 {% with presupuesto.get_equilibiio as balance %}
                                     <tr class="{% if balance < 0 %}danger{% endif %}{% if balance > 0 %}success{% endif %}">
                                         <td>{{ presupuesto }}</td>
+                                        <td class="text-right">{{ presupuesto.total_presupuestado }}</td>
                                         <td class="text-right">{{ presupuesto.ingresos_mes_anterior }}</td>
                                         <td class="text-right">{{ presupuesto.ingresos_mes_actual }}</td>
                                         <td class="text-right">{{ balance }}</td>
