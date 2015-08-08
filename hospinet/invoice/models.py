@@ -25,6 +25,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum
@@ -38,6 +40,7 @@ from users.models import Ciudad
 dot01 = Decimal("0.01")
 
 
+@python_2_unicode_compatible
 class TipoPago(TimeStampedModel):
     """
     Define las formas de :class:`Pago` disponibles para ingresar en los
@@ -47,16 +50,17 @@ class TipoPago(TimeStampedModel):
     color = ColorField(default='')
     solo_asegurados = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class StatusPago(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
     reportable = models.BooleanField(default=True)
     next_status = models.ForeignKey('self', null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def total(self):
@@ -68,6 +72,7 @@ class StatusPago(TimeStampedModel):
         return total
 
 
+@python_2_unicode_compatible
 class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
 
@@ -164,7 +169,7 @@ class Recibo(TimeStampedModel):
             self.cerrado = True
             self.save()
 
-    def __unicode__(self):
+    def __str__(self):
 
         """Crea una representación en texto del :class:`Recibo`"""
 
@@ -247,6 +252,7 @@ class Recibo(TimeStampedModel):
         super(Recibo, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class Venta(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
     realizar los cobros asociados"""
@@ -272,7 +278,7 @@ class Venta(TimeStampedModel):
     monto = models.DecimalField(blank=True, null=True, max_digits=11,
                                 decimal_places=2)
 
-    def __unicode__(self):
+    def __str__(self):
 
         return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
 
@@ -330,6 +336,7 @@ class Venta(TimeStampedModel):
         super(Venta, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class Pago(TimeStampedModel):
     """Permite especificar los montos de acuerdo al :class:`TipoPago` utilizado
     por el cliente para pagar el :class:`Recibo`"""
@@ -342,7 +349,7 @@ class Pago(TimeStampedModel):
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "Pago en {2} de {0} al recibo {1} {3}".format(self.monto,
                                                              self.recibo.id,
                                                              self.tipo.nombre,
@@ -362,6 +369,7 @@ class Pago(TimeStampedModel):
         super(Pago, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class TurnoCaja(TimeStampedModel):
     """Allows tracking the :class:`Invoice`s created by a :class:`User` and
     to handle the amounts payed by clients"""
@@ -372,7 +380,7 @@ class TurnoCaja(TimeStampedModel):
     apertura = models.DecimalField(default=0, max_digits=7, decimal_places=2)
     finalizado = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Turno de {0}".format(self.usuario.get_full_name())
 
     def get_absolute_url(self):
