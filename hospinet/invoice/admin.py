@@ -18,7 +18,7 @@
 from django.contrib import admin
 
 from invoice.models import (Recibo, Venta, Pago, TipoPago, TurnoCaja,
-                            CierreTurno, StatusPago)
+                            CierreTurno, StatusPago, CuentaPorCobrar)
 
 
 class ReciboAdmin(admin.ModelAdmin):
@@ -72,6 +72,11 @@ class PagoAdmin(admin.ModelAdmin):
         return instance.recibo.cajero
 
 
+class CuentaPorCobrarAdmin(admin.ModelAdmin):
+    list_display = ('descripcion', 'created', 'minimum', 'status')
+    list_display = ('created', 'minimum', 'status')
+
+
 admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta)
 admin.site.register(StatusPago)
@@ -79,3 +84,4 @@ admin.site.register(Pago, PagoAdmin)
 admin.site.register(TipoPago, TipoPagoAdmin)
 admin.site.register(TurnoCaja, TurnoCajaAdmin)
 admin.site.register(CierreTurno, CierreturnoAdmin)
+admin.site.register(CuentaPorCobrar, CuentaPorCobrarAdmin)

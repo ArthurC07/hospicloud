@@ -503,6 +503,7 @@ class CierreTurno(TimeStampedModel):
         return self.turno.get_absolute_url()
 
 
+@python_2_unicode_compatible
 class CuentaPorCobrar(TimeStampedModel):
     """Represents all the pending :class:`Pago` que deben recolectarse como un
     grupo"""
@@ -510,13 +511,20 @@ class CuentaPorCobrar(TimeStampedModel):
     status = models.ForeignKey(StatusPago)
     minimum = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+
+        return self.descripcion
+
     def get_absolute_url(self):
 
         return reverse('invoice-cpc', args=[self.id])
 
     def payments(self):
-        return Pago.objects.filter(created__range=(self.minimum, self.created),
-                                   status=self.status)
+
+        payments = Pago.objects.filter(created__range=(self.minimum, self.created),
+                                       status=self.status)
+        print payments.query
+        return payments
 
     def save(self, *args, **kwargs):
 
@@ -527,6 +535,9 @@ class CuentaPorCobrar(TimeStampedModel):
             self.minimum = payments.aggregate(
                 minimum=Min('created')
             )['minimum']
+
+            if self.minimum is None:
+                self.minimum = timezone.now()
 
             payments.update(status=pending.next_status)
             self.status = pending.next_status

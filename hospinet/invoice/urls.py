@@ -40,7 +40,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            TipoPagoPeriodoView, CiudadPeriodoListView,
                            PagoListView, PagoAseguradoraList,
                            AseguradoraMasterFacturarView,
-                           CuentaPorCobrarDetailView, PagoSiguienteStatusView)
+                           CuentaPorCobrarDetailView, PagoSiguienteStatusView,
+                           CuentaPorCobrarListView, CuentaPorCobrarCreateView)
 
 urlpatterns = patterns('',
 
@@ -238,12 +239,16 @@ urlpatterns = patterns('',
                            TurnoCajaListView.as_view(),
                            name='invoice-turno-activo'),
 
+                       url(r'^cpc$',
+                           CuentaPorCobrarListView.as_view(),
+                           name='invoice-cpc-list'),
+
                        url(r'^cpc/(?P<pk>\d+)$',
                            CuentaPorCobrarDetailView.as_view(),
                            name='invoice-cpc'),
 
                        url(r'^cpc/agregar$',
-                           CuentaPorCobrarDetailView.as_view(),
+                           CuentaPorCobrarCreateView.as_view(),
                            name='invoice-cpc-add'),
 
                        url(r'^pago/(?P<pk>\d+)/status/next$',

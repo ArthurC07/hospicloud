@@ -8,26 +8,46 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 main-content">
+        <div class="col-md-9 col-xs-3 main-content">
             <div class="row">
                 {% for cuenta in object_list %}
                     <article class="col-md-6 col-xs-6">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <span class="lead">{{ presupuesto }}</span>
+                                <span class="lead">{{ cuenta.created }}</span>
                             </div>
-                            <div class="panel-body ">
+                            <div class="panel-body table-responsive">
+                                <dl class="dl-horizontal">
+                                    <dt>Descripci&oacute;n</dt>
+                                    <dd>{{ cuenta }}</dd>
+                                </dl>
+                                <table class="table table-striped">
+                                    {% for pago in cuenta.payments %}
+                                        <tr>
+                                            <td>{{ pago }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
                             </div>
                             <div class="panel-footer">
-                                <a class="btn btn-primary"
-                                   href="{% url 'budget-control' presupuesto.id %}">Ver
-                                    Control Presupuestal</a>
+
                             </div>
                         </div>
                     </article>
                 {% empty %}
-                    <h3>No hay Presupuestos Disponibles</h3>
+                    <h3>No hay Cuentas Por cobrar</h3>
                 {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li>
+                            <a href="{% url 'invoice-cpc-add' %}">Agregar Cuenta por Cobrar</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
