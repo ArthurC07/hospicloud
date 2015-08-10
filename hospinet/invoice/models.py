@@ -24,6 +24,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
@@ -516,6 +517,11 @@ class CuentaPorCobrar(TimeStampedModel):
 
         return self.descripcion
 
+    def monto(self):
+
+        return self.payments().aggregate(
+            total=Coalesce(Sum('monto'), Decimal()))['total']
+
     def get_absolute_url(self):
 
         return reverse('invoice-cpc', args=[self.id])
@@ -525,8 +531,14 @@ class CuentaPorCobrar(TimeStampedModel):
         payments = Pago.objects.filter(
             created__range=(self.minimum, self.created),
             status=self.status)
-        print payments.query
         return payments
+
+    def next_status(self):
+        payments = self.payments()
+
+        payments.update(status=self.status.next_status)
+        self.status = self.status.next_status
+        self.save()
 
     def save(self, *args, **kwargs):
 

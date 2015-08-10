@@ -27,9 +27,7 @@ from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
-
 from django.utils.decorators import method_decorator
-
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView)
@@ -1322,7 +1320,8 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
 
         recibos = self.object.recibos().filter(cerrado=False).count()
         consultas = Consulta.objects.filter(
-            consultorio__usuario__profile__ciudad=self.object.usuario.profile.ciudad,
+            consultorio__usuario__profile__ciudad=self.object.usuario.profile
+                .ciudad,
             facturada=False
         ).count()
         emergencias = Emergencia.objects.filter(
@@ -1547,7 +1546,6 @@ class CuentaPorCobrarListView(ListView, LoginRequiredMixin):
     model = CuentaPorCobrar
 
     def get_queryset(self):
-
         return CuentaPorCobrar.objects.filter(status__reportable=True)
 
 
@@ -1559,6 +1557,21 @@ class PagoSiguienteStatusView(RedirectView, LoginRequiredMixin):
         pago.status = pago.status.next_status
         pago.save()
         messages.info(self.request, u'¡El Pago se ha actualizado!')
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return reverse('invoice-index')
+
+
+class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
+                                                 LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
+        cuenta.next_status()
+        messages.info(self.request, u'¡Se Actualizó la Cuenta por Cobrar!')
 
         if self.request.META['HTTP_REFERER']:
             return self.request.META['HTTP_REFERER']
