@@ -24,10 +24,8 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
-
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum, Min
@@ -346,7 +344,7 @@ class Pago(TimeStampedModel):
     recibo = ForeignKey(Recibo, related_name='pagos')
     status = models.ForeignKey(StatusPago, blank=True, null=True,
                                related_name='pagos')
-    monto = models.DecimalField(blank=True, null=True, max_digits=11,
+    monto = models.DecimalField(default=Decimal(), max_digits=11,
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
 
@@ -446,6 +444,9 @@ class TurnoCaja(TimeStampedModel):
             metodos[tipo] = 0
 
         for pago in pagos.all():
+            if pago.monto is None:
+                pago.monto = Decimal()
+                pago.save()
             metodos[pago.tipo] += pago.monto
 
         return metodos.iteritems()
@@ -521,15 +522,16 @@ class CuentaPorCobrar(TimeStampedModel):
 
     def payments(self):
 
-        payments = Pago.objects.filter(created__range=(self.minimum, self.created),
-                                       status=self.status)
+        payments = Pago.objects.filter(
+            created__range=(self.minimum, self.created),
+            status=self.status)
         print payments.query
         return payments
 
     def save(self, *args, **kwargs):
 
         if self.pk is None:
-            
+
             pending = StatusPago.objects.get(pk=config.PAYMENT_STATUS_PENDING)
             payments = Pago.objects.filter(status=pending)
             self.minimum = payments.aggregate(
