@@ -31,7 +31,6 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView)
-
 from django.forms.models import inlineformset_factory
 
 from django.contrib.auth.decorators import permission_required
@@ -1322,7 +1321,8 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
         consultas = Consulta.objects.filter(
             consultorio__usuario__profile__ciudad=self.object.usuario.profile
                 .ciudad,
-            facturada=False
+            facturada=False,
+            activa=False
         ).count()
         emergencias = Emergencia.objects.filter(
             facturada=False,
