@@ -15,3 +15,4 @@ six
 unicodecsv
 pytz
 django-picklefield
+python-dateutil

@@ -87,6 +87,7 @@ class Consultorio(TimeStampedModel):
     especialidad = models.ForeignKey(Especialidad, related_name='consultorios',
                                      blank=True, null=True)
     activo = models.BooleanField(default=True)
+    especialista = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre
@@ -95,6 +96,10 @@ class Consultorio(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('consultorio', args=[self.id])
+
+    def consultas_remitidas(self):
+
+        return Consulta.objects.filter(remitida=True, revisada=False)
 
 
 @python_2_unicode_compatible
@@ -126,6 +131,9 @@ class Paciente(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Consulta(TimeStampedModel):
+    """Registra la interacción entre una :class:`Persona` y un :class:`Usuario`
+    que es un médico.
+    """
     persona = models.ForeignKey(Persona, related_name='consultas',
                                 blank=True, null=True)
     consultorio = models.ForeignKey(Consultorio, related_name='consultas',
@@ -138,6 +146,7 @@ class Consulta(TimeStampedModel):
     final = models.DateTimeField(blank=True, null=True)
     remitida = models.BooleanField(default=False)
     encuestada = models.BooleanField(default=False)
+    revisada = models.BooleanField(default=False)
 
     def __str__(self):
 
@@ -466,9 +475,6 @@ def consolidate_clinique(persona, clone):
 
     [transfer_object_to_persona(evaluacion, persona) for evaluacion in
      clone.evaluaciones.all()]
-
-    [transfer_object_to_persona(orden, persona) for orden in
-     clone.ordenes_medicas.all()]
 
     [transfer_object_to_persona(espera, persona) for espera in
      clone.espera.all()]

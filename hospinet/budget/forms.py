@@ -15,10 +15,12 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from crispy_forms.layout import Fieldset
 from django import forms
+from django.utils import timezone
 from select2.fields import ModelChoiceField
 
 from budget.models import Presupuesto, Cuenta, Gasto
-from persona.forms import FieldSetModelFormMixin
+from inventory.forms import ProveedorFormMixin
+from persona.forms import FieldSetModelFormMixin, DateTimeWidget
 from users.forms import CiudadFormMixin
 
 
@@ -54,11 +56,46 @@ class CuentaFormMixin(FieldSetModelFormMixin):
                               model="", widget=forms.HiddenInput())
 
 
-class GastoForm(CuentaFormMixin):
+class GastoForm(CuentaFormMixin, ProveedorFormMixin):
     class Meta:
         model = Gasto
-        fields = '__all__'
+        exclude = ('ejecutado', 'fecha_maxima_de_pago')
+
+    fecha_de_pago = forms.DateField(widget=DateTimeWidget(),
+                                    initial=timezone.now)
+    periodo_de_pago = forms.DateField(widget=DateTimeWidget(),
+                                      initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Gasto', *self.field_names)
+
+
+class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin):
+    class Meta:
+        model = Gasto
+        exclude = ('ejecutado', 'fecha_de_pago', 'periodo_de_pago', 'cheque')
+
+    fecha_maxima_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
+                                               required=False,
+                                               initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(GastoPendienteForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Cuenta por Pagar',
+                                      *self.field_names)
+
+
+class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
+    class Meta:
+        model = Gasto
+        exclude = ('ejecutado', 'fecha_maxima_de_pago',)
+
+    fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
+                                        initial=timezone.now)
+    periodo_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
+                                          initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(GastoEjecutarFrom, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Ejecutar un Gasto', *self.field_names)

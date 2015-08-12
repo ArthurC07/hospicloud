@@ -22,6 +22,8 @@
                     <th>HEA</th>
                     <th>Tipo de Consulta</th>
                     <th>Cargos</th>
+                    <th>Diagnostico</th>
+                    <th>Poliza</th>
                     <th>Usuario</th>
                     <th>Ciudad</th>
                     <th>Acciones</th>
@@ -36,17 +38,25 @@
                         <td>{{ consulta.HEA }}</td>
                         <td>{{ consulta.tipo }}</td>
                         <td>
-                            <ul>
-                                {% for cargo in consulta.cargos.all %}
-                                    <li>
-                                        {{ cargo.item }}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                            {% for cargo in consulta.cargos.all %}
+                                {{ cargo.item }}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for diagnostico in consulta.diagnosticos_clinicos.all %}
+                                {{ diagnostico.diagnostico }}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for contrato in consulta.persona.contratos.all %}
+                                Poliza: {{ contrato.poliza }}
+                            {% endfor %}
                         </td>
                         <td>{{ consulta.consultorio.usuario.get_full_name }}</td>
                         <td>{{ consulta.consultorio.localidad }}</td>
-                        <td><a class="btn btn-primary" href="{% url 'consulta' consulta.id %}">Ver</a></td>
+                        <td><a class="btn btn-primary"
+                               href="{% url 'consulta' consulta.id %}">Ver</a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

@@ -89,15 +89,37 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="page-header">
-                                <h2>Reportes</h2>
+                        {% if consultorio.especialista %}
+                            <div class="row">
+                                <div class="col-md-12 col-xs-12 table-responsive">
+                                    <table class="table table-striped">
+                                        <caption>Consultas Remitidas</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Motivo de Consulta</th>
+                                            <th>HEA</th>
+                                            <th>Tipo de Consulta</th>
+                                            <th>Usuario</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for consulta in consultorio.consultas_remitidas.all %}
+                                            <tr>
+                                                <td>{{ consulta.created }}</td>
+                                                <td>{{ consulta.motivo_de_consulta }}</td>
+                                                <td>{{ consulta.HEA }}</td>
+                                                <td>{{ consulta.tipo }}</td>
+                                                <td>{{ consulta.consultorio.usuario }}</td>
+                                                <td><a class="btn btn-primary" href="{% url 'consulta' consulta.id %}">Ver</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            {% for reporte in consultorio.reportes.all %}
-                                <a href="{{ reporte.archivo.url }}">Descargar
-                                    Reporte {{ reporte.fecha }}</a>
-                            {% endfor %}
-                        </div>
+                        {% endif %}
                     </div>
                 </section>
                 <aside class="col-md-3">

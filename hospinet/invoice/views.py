@@ -45,14 +45,15 @@ from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
-                            TipoPago, dot01, StatusPago)
+                            TipoPago, dot01, StatusPago, CuentaPorCobrar)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
                            PagoForm, PersonaForm, TurnoCajaForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
-                           TipoPagoPeriodoForm, PeriodoCiudadForm)
+                           TipoPagoPeriodoForm, PeriodoCiudadForm,
+                           CuentaPorCobrarForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -1007,6 +1008,15 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
 
         aseguradora = get_object_or_404(Aseguradora, pk=kwargs['pk'])
 
+        if not aseguradora.cardex:
+            messages.info(self.request,
+                          u'La aseguradora no tiene representante en el '
+                          u'cardex!')
+            if self.request.META['HTTP_REFERER']:
+                return self.request.META['HTTP_REFERER']
+            else:
+                return reverse('invoice-index')
+
         recibo = Recibo()
         recibo.cajero = self.request.user
         recibo.cliente = aseguradora.cardex
@@ -1222,9 +1232,34 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
 
 
 class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
-    """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`"""
+    """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`
+
+    En caso que la :class:`Persona` tenga un :class:`Contrato` vigente, el
+    :class:`Pago` puede agregarse con uno de los :class:`TipoPago` que solo
+    son permitidos a los asegurados.
+    """
     model = Pago
     form_class = PagoForm
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        persona = self.object.recibo.cliente
+        if self.object.tipo.solo_asegurados and \
+                        persona.contratos.filter(
+                            vencimiento__gte=timezone.now()).count() <= 0:
+
+            messages.info(self.request,
+                          u'No se puede agregar un este tipo de pago sin '
+                          u'contrato!')
+            if self.request.META['HTTP_REFERER']:
+                return HttpResponseRedirect(
+                    self.request.META['HTTP_REFERER'])
+            else:
+                return HttpResponseRedirect(reverse('invoice-index'))
+
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class PagoUpdateView(LoginRequiredMixin, UpdateView):
@@ -1282,11 +1317,33 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
+        recibos = self.object.recibos().filter(cerrado=False).count()
+        consultas = Consulta.objects.filter(
+            consultorio__usuario__profile__ciudad=self.object.usuario.profile
+                .ciudad,
+            facturada=False,
+            activa=False
+        ).count()
+        emergencias = Emergencia.objects.filter(
+            facturada=False,
+            usuario__profile__ciudad=self.object.usuario.profile.ciudad
+        ).count()
+
+        cerrable = True
+
+        if recibos > 0 or consultas > 0 or emergencias > 0:
+            messages.info(self.request,
+                          u'No se puede cerrar el turno, aún hay items'
+                          u'pendientes de facturacion')
+            cerrable = False
+
         if self.object.diferencia_total() != 0:
             messages.info(self.request,
                           u'No se puede cerrar el turno, tiene diferencias en '
                           u'saldos')
-        else:
+            cerrable = False
+
+        if cerrable:
             self.object.finalizado = True
             self.object.fin = timezone.now()
             self.object.save()
@@ -1473,3 +1530,50 @@ class PagoAseguradoraList(ListView, AseguradoraMixin, LoginRequiredMixin):
             total=Sum('monto')
         )['total']
         return context
+
+
+class CuentaPorCobrarCreateView(CreateView, LoginRequiredMixin):
+    model = CuentaPorCobrar
+    form_class = CuentaPorCobrarForm
+
+
+class CuentaPorCobrarDetailView(DetailView, LoginRequiredMixin):
+    model = CuentaPorCobrar
+    context_object_name = 'cuenta'
+
+
+class CuentaPorCobrarListView(ListView, LoginRequiredMixin):
+    model = CuentaPorCobrar
+
+    def get_queryset(self):
+        return CuentaPorCobrar.objects.filter(status__reportable=True)
+
+
+class PagoSiguienteStatusView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        pago = get_object_or_404(Pago, pk=kwargs['pk'])
+        pago.status = pago.status.next_status
+        pago.save()
+        messages.info(self.request, u'¡El Pago se ha actualizado!')
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return reverse('invoice-index')
+
+
+class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
+                                                 LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
+        cuenta.next_status()
+        messages.info(self.request, u'¡Se Actualizó la Cuenta por Cobrar!')
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return reverse('invoice-index')

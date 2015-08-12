@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="main-header col-md-12">‏
+            <section class="page-header">
+                <h1>Cuentas Por Cobrar</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9 col-xs-3 main-content table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Descripcion</th>
+                    <th>Recibos</th>
+                    <th>Monto</th>
+                    <th>D&iacute;as desde &uacute;ltimo pago</th>
+                    <th>Acciones</th>
+                </tr>
+                {% for cuenta in object_list %}
+                    <tr>
+                        <td>{{ cuenta.created }}</td>
+                        <td>{{ cuenta.descripcion }}</td>
+                        <td>{{ cuenta.payments.count }}</td>
+                        <td>{{ cuenta.monto }}</td>
+                        <td>{{ cuenta.created|timesince }}</td>
+                        <td>
+                            <a class="btn btn-success btn-block"
+                               href="{% url 'invoice-cpc-status-next' cuenta.id %}">Cambiar
+                                a {{ cuenta.status.next_status }}</a>
+                            <a class="btn btn-primary btn-block" href="{{ cuenta.get_absolute_url }}">
+                                Ver Detalle
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">No hay Cuentas Por cobrar</td>
+                    </tr>
+                {% endfor %}
+                </thead>
+            </table>
+        </div>
+        <div class="col-md-3 col-xs-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li>
+                            <a href="{% url 'invoice-cpc-add' %}">Agregar Cuenta
+                                por Cobrar</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

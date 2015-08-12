@@ -16,17 +16,20 @@
 from decimal import Decimal
 
 from django.db.models import Sum
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, CreateView, ListView
+from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
+    UpdateView
 from django.views.generic.base import TemplateResponseMixin
 
 from django.views.generic.edit import FormMixin
 
-from budget.forms import CuentaForm, GastoForm
+from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
+    GastoEjecutarFrom
 from budget.models import Presupuesto, Cuenta, Gasto
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin
-from users.models import get_current_month_range
+from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
 class PresupuestoDetailView(DetailView, LoginRequiredMixin):
@@ -40,16 +43,20 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
 
-        return Presupuesto.objects.all()
+        return Presupuesto.objects.filter(inversion=False).all()
 
     def get_context_data(self, **kwargs):
 
         context = super(PresupuestoListView, self).get_context_data(**kwargs)
 
         fin, inicio = get_current_month_range()
+        fin_prev, inicio_prev = get_previous_month_range()
+
+        inversiones = Presupuesto.objects.filter(inversion=True)
 
         gastos = Gasto.objects.filter(
-            created__range=(inicio, fin)
+            created__range=(inicio, fin),
+            ejecutado=True
         ).aggregate(total=Sum('monto'))['total']
 
         presupuesto = Cuenta.objects.filter(
@@ -70,15 +77,29 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             recibo__created__range=(inicio, fin)
         )
 
+        ventas_anteriores = Venta.objects.select_related('recibo').filter(
+            recibo__created__range=(inicio_prev, fin_prev)
+        )
+
         ingresos = ventas.values('recibo__ciudad__nombre').annotate(
             total=Sum('monto')
         ).order_by()
-        context['total_ingresos'] = ventas.aggregate(total=Sum('monto'))['total']
+
+        disponible = ventas_anteriores.aggregate(total=Sum('monto'))['total']
+
+        total_ingresos = ventas.aggregate(total=Sum('monto'))['total']
+
+        if total_ingresos is None:
+            total_ingresos = Decimal()
+
+        context['total_ingresos'] = total_ingresos
 
         context['ingresos'] = ingresos
+        context['inversiones'] = inversiones
 
         context['equilibrio'] = gastos / max(context['total_ingresos'], 1)
-        context['balance'] = context['total_ingresos'] - gastos
+        context['balance'] = total_ingresos - gastos
+        context['disponible'] = disponible
 
         return context
 
@@ -149,3 +170,42 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
 class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
     model = Gasto
     form_class = GastoForm
+
+    def form_valid(self, form):
+        
+        self.object = form.save(commit=False)
+        self.object.ejectuado = True
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class GastoPendienteCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
+    model = Gasto
+    form_class = GastoPendienteForm
+
+
+class GastoDeleteView(DeleteView, LoginRequiredMixin):
+    """Permite eliminar un :class:`Gasto`"""
+    model = Gasto
+
+    def get_object(self, queryset=None):
+        obj = super(GastoDeleteView, self).get_object(queryset)
+        self.cuenta = obj.cuenta
+        return obj
+
+    def get_success_url(self):
+        return self.cuenta.get_absolute_url()
+
+
+class GastoEjecutarView(UpdateView, LoginRequiredMixin):
+    model = Gasto
+    form_class = GastoEjecutarFrom
+
+    def form_valid(self, form):
+
+        self.object = form.save(commit=False)
+        self.object.ejecutado = True
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())

@@ -22,7 +22,8 @@ from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
 from select2.fields import ModelChoiceField
 
-from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, TipoPago
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, TipoPago, \
+    CuentaPorCobrar
 from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
@@ -254,4 +255,15 @@ class PagoStatusForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(PagoStatusForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Cambiar Estado de Pago',
+                                      *self.field_names)
+
+
+class CuentaPorCobrarForm(FieldSetModelFormMixin):
+    class Meta:
+        model = CuentaPorCobrar
+        fields = ('descripcion',)
+
+    def __init__(self, *args, **kwargs):
+        super(CuentaPorCobrarForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Formulario de Cuenta por Cobrar',
                                       *self.field_names)

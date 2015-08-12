@@ -18,8 +18,20 @@ $(document).ready(function ($) {
             changeYear: true
         });
     $('.table').tablesorter();
+    $('body').append('<div id="toTop" class="btn btn-info"><i class="fa fa-arrow-up"></i></div>');
+    $(window).scroll(function () {
+        if ($(this).scrollTop() != 0) {
+            $('#toTop').fadeIn();
+        } else {
+            $('#toTop').fadeOut();
+        }
+    });
+    $('#toTop').click(function () {
+        $("html, body").animate({scrollTop: 0}, 600);
+        return false;
+    });
 });
-$(document).delegate('a, :button', 'click', function(e) {
+$(document).delegate('a, :button', 'click', function (e) {
     var lastClicked = $.data(this, 'lastClicked'),
         now = new Date().getTime();
 

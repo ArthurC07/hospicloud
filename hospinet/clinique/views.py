@@ -1011,7 +1011,7 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.consultas = Consulta.objects.filter(
                 created__range=(self.inicio, self.fin)
-            )
+            ).order_by('created')
         else:
             return redirect('invoice-index')
 
@@ -1037,6 +1037,17 @@ class ConsultaRemitirView(RedirectView):
         consulta.remitida = True
         consulta.save()
         messages.info(self.request, u'¡Se remitio la consulta a especialista!')
+        return consulta.get_absolute_url()
+
+
+class ConsultaRevisarView(RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+        consulta.revisada = True
+        consulta.save()
+        messages.info(self.request, u'¡La Consulta ha sido revisada!')
         return consulta.get_absolute_url()
 
 
