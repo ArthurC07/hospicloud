@@ -14,8 +14,6 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-import calendar
-from datetime import date, datetime, time
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -28,6 +26,7 @@ from django_extensions.db.models import TimeStampedModel
 from guardian.shortcuts import assign_perm
 
 from emergency.models import Emergencia
+from hospinet.utils import get_current_month_range
 from inventory.models import Inventario, ItemTemplate
 from persona.models import Persona
 
@@ -41,6 +40,7 @@ class Ciudad(TimeStampedModel):
     limite_de_emision = models.DateTimeField(default=timezone.now)
     inicio_rango = models.CharField(max_length=100, blank=True)
     fin_rango = models.CharField(max_length=100, blank=True)
+    tiene_presupuesto_global = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.nombre
@@ -107,18 +107,6 @@ class UserProfile(UserenaBaseProfile):
         return Emergencia.objects.filter(usuario=self.user,
                                          created__range=(inicio, fin)
                                          ).count()
-
-def get_current_month_range():
-    now = timezone.now()
-    fin = date(now.year, now.month,
-               calendar.monthrange(now.year, now.month)[1])
-    inicio = date(now.year, now.month, 1)
-    fin = datetime.combine(fin, time.max)
-    inicio = datetime.combine(inicio, time.min)
-    fin = timezone.make_aware(fin, timezone.get_current_timezone())
-    inicio = timezone.make_aware(inicio,
-                                 timezone.get_current_timezone())
-    return fin, inicio
 
 
 User.userena_signup = property(
