@@ -1040,6 +1040,17 @@ class ConsultaRemitirView(RedirectView):
         return consulta.get_absolute_url()
 
 
+class ConsultaRevisarView(RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+        consulta.revisada = True
+        consulta.save()
+        messages.info(self.request, u'¡La Consulta ha sido revisada!')
+        return consulta.get_absolute_url()
+
+
 class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
