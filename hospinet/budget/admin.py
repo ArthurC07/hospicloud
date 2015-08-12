@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from budget.models import Presupuesto, Cuenta, Gasto
 
 
@@ -20,7 +21,9 @@ class CuentaAdmin(admin.ModelAdmin):
 
 
 class GastoAdmin(admin.ModelAdmin):
-    list_display = ['get_ciudad', 'get_presupuesto', 'cuenta', 'descripcion', 'monto']
+    list_display = ['descripcion', 'proveedor', 'cuenta', 'get_presupuesto',
+                    'monto', 'ejecutado', 'fecha_de_pago',
+                    'fecha_maxima_de_pago']
     ordering = ['descripcion', 'monto']
 
     def get_ciudad(self, obj):

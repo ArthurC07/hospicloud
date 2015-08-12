@@ -36,8 +36,8 @@ class EsperaAdmin(admin.ModelAdmin):
 
 
 class ConsultaAdmin(admin.ModelAdmin):
-    list_display = ('persona', 'consultorio', 'created')
-    ordering = ['persona', 'consultorio', 'created']
+    list_display = ('persona', 'consultorio', 'created', 'facturada', 'activa', 'remitida')
+    ordering = ['persona', 'consultorio', 'created', 'facturada', 'activa', 'remitida', ]
     search_fields = ['persona__nombre', 'persona__apellido',
                      'consultorio__nombre', ]
 

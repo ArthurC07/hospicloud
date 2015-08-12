@@ -152,9 +152,8 @@ def check_line(line, vencimiento):
 
     if line[8]:
         venc = server_timezone.localize(datetime.strptime(line[8], '%m/%d/%Y'))
-        if venc <= vencimiento_r:
-            vencimiento_r = venc
-
+        vencimiento_r = venc
+        
     try:
         pcd = PCD.objects.get(numero=file_pcd)
 

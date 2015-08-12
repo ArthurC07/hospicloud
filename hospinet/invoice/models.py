@@ -24,10 +24,12 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
+from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Min
 
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions
@@ -38,22 +40,27 @@ from users.models import Ciudad
 dot01 = Decimal("0.01")
 
 
+@python_2_unicode_compatible
 class TipoPago(TimeStampedModel):
     """
-    Define las formas de pago disponibles para ingresar en los :class:`Recibo`
+    Define las formas de :class:`Pago` disponibles para ingresar en los
+    :class:`Recibo`
     """
     nombre = models.CharField(max_length=255, blank=True, null=True)
     color = ColorField(default='')
+    solo_asegurados = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class StatusPago(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
     reportable = models.BooleanField(default=True)
+    next_status = models.ForeignKey('self', null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def total(self):
@@ -65,6 +72,7 @@ class StatusPago(TimeStampedModel):
         return total
 
 
+@python_2_unicode_compatible
 class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
 
@@ -112,7 +120,7 @@ class Recibo(TimeStampedModel):
         ciudad = self.ciudad
         if ciudad is None:
             if self.cajero is None or self.cajero.profile is None or \
-               self.cajero.profile.ciudad is None:
+                            self.cajero.profile.ciudad is None:
                 return self.correlativo
 
             ciudad = self.cajero.profile.ciudad
@@ -161,7 +169,7 @@ class Recibo(TimeStampedModel):
             self.cerrado = True
             self.save()
 
-    def __unicode__(self):
+    def __str__(self):
 
         """Crea una representación en texto del :class:`Recibo`"""
 
@@ -199,14 +207,6 @@ class Recibo(TimeStampedModel):
 
         return ', '.join(
             v.item.descripcion for v in Venta.objects.filter(recibo=self).all())
-
-    def comision_doctor(self):
-
-        return self.total() * Decimal('0.07')
-
-    def placas(self):
-
-        return sum(v.placas for v in Venta.objects.filter(recibo=self).all())
 
     def fractional(self):
         """Obtiene la parte decimal del total del :class:`Recibo`"""
@@ -252,6 +252,7 @@ class Recibo(TimeStampedModel):
         super(Recibo, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class Venta(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
     realizar los cobros asociados"""
@@ -277,7 +278,7 @@ class Venta(TimeStampedModel):
     monto = models.DecimalField(blank=True, null=True, max_digits=11,
                                 decimal_places=2)
 
-    def __unicode__(self):
+    def __str__(self):
 
         return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
 
@@ -335,6 +336,7 @@ class Venta(TimeStampedModel):
         super(Venta, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class Pago(TimeStampedModel):
     """Permite especificar los montos de acuerdo al :class:`TipoPago` utilizado
     por el cliente para pagar el :class:`Recibo`"""
@@ -343,11 +345,11 @@ class Pago(TimeStampedModel):
     recibo = ForeignKey(Recibo, related_name='pagos')
     status = models.ForeignKey(StatusPago, blank=True, null=True,
                                related_name='pagos')
-    monto = models.DecimalField(blank=True, null=True, max_digits=11,
+    monto = models.DecimalField(default=Decimal(), max_digits=11,
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "Pago en {2} de {0} al recibo {1} {3}".format(self.monto,
                                                              self.recibo.id,
                                                              self.tipo.nombre,
@@ -367,14 +369,18 @@ class Pago(TimeStampedModel):
         super(Pago, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class TurnoCaja(TimeStampedModel):
+    """Allows tracking the :class:`Invoice`s created by a :class:`User` and
+    to handle the amounts payed by clients"""
+
     usuario = models.ForeignKey(User, related_name='turno_caja')
     inicio = models.DateTimeField(null=True, blank=True)
     fin = models.DateTimeField(null=True, blank=True)
     apertura = models.DecimalField(default=0, max_digits=7, decimal_places=2)
     finalizado = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Turno de {0}".format(self.usuario.get_full_name())
 
     def get_absolute_url(self):
@@ -391,6 +397,10 @@ class TurnoCaja(TimeStampedModel):
         return Recibo.objects.filter(cajero=self.usuario,
                                      created__range=(self.inicio, fin)).all()
 
+    def nulos(self):
+
+        return self.recibos().filter(nulo=True).all()
+
     def depositos(self):
 
         fin = self.fin
@@ -402,43 +412,71 @@ class TurnoCaja(TimeStampedModel):
 
     def venta(self):
 
-        return sum(r.total() for r in self.recibos())
+        total = Venta.objects.filter(recibo__in=self.recibos()).aggregate(
+            total=Sum('total')
+        )['total']
+
+        if total is None:
+            total = Decimal()
+
+        return total
 
     def depositado(self):
 
         return sum(d.monto for d in self.depositos())
 
     def ingresos(self):
-        return sum(r.pagado() for r in self.recibos())
+
+        pagos = Pago.objects.filter(recibo__in=self.recibos()).aggregate(
+            total=Sum('monto')
+        )['total']
+
+        if pagos is None:
+            pagos = Decimal()
+
+        return pagos
 
     def pagos(self):
+
+        pagos = Pago.objects.filter(recibo__in=self.recibos())
 
         metodos = defaultdict(Decimal)
         for tipo in TipoPago.objects.all():
             metodos[tipo] = 0
 
-        for recibo in self.recibos():
-
-            for pago in recibo.pagos.all():
-                metodos[pago.tipo] += pago.monto
+        for pago in pagos.all():
+            if pago.monto is None:
+                pago.monto = Decimal()
+                pago.save()
+            metodos[pago.tipo] += pago.monto
 
         return metodos.iteritems()
 
     def total_cierres(self):
+        total = CierreTurno.objects.filter(turno=self).aggregate(
+            total=Sum('monto')
+        )['total']
+        if total is None:
+            total = Decimal()
 
-        return sum(
-            c.monto for c in CierreTurno.objects.filter(turno=self).all())
+        return total
 
     def diferencia(self):
+        """Muestra la diferencia que existe entre los :class:`Pago` que se han
+        efectuado a los :class:`Recibo` y los :class:`CierreTurno` que se
+        ingresaron al :class:`TurnoCaja` clasificandolos por :class:`TipoPago`
+        """
 
         metodos = defaultdict(Decimal)
-        for recibo in self.recibos():
+        pagos = Pago.objects.filter(recibo__in=self.recibos())
 
-            for pago in recibo.pagos.all():
-                metodos[pago.tipo] += pago.monto
+        for pago in pagos.all():
+            metodos[pago.tipo] += pago.monto
 
         cierres = defaultdict(Decimal)
         for cierre in CierreTurno.objects.filter(turno=self).all():
+            if cierre.monto is None:
+                continue
             cierres[cierre.pago] += cierre.monto
 
         diferencia = defaultdict(Decimal)
@@ -449,9 +487,8 @@ class TurnoCaja(TimeStampedModel):
 
     def diferencia_total(self):
 
-        cierre = sum(
-            c.monto for c in CierreTurno.objects.filter(turno=self).all())
-        pagos = sum(r.pagado() for r in self.recibos())
+        cierre = self.total_cierres()
+        pagos = self.ingresos()
 
         return cierre - pagos - self.apertura
 
@@ -468,11 +505,68 @@ class CierreTurno(TimeStampedModel):
         return self.turno.get_absolute_url()
 
 
+@python_2_unicode_compatible
+class CuentaPorCobrar(TimeStampedModel):
+    """Represents all the pending :class:`Pago` que deben recolectarse como un
+    grupo"""
+    descripcion = models.TextField()
+    status = models.ForeignKey(StatusPago)
+    minimum = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+
+        return self.descripcion
+
+    def monto(self):
+
+        return self.payments().aggregate(
+            total=Coalesce(Sum('monto'), Decimal()))['total']
+
+    def get_absolute_url(self):
+
+        return reverse('invoice-cpc', args=[self.id])
+
+    def payments(self):
+
+        payments = Pago.objects.filter(
+            created__range=(self.minimum, self.created),
+            status=self.status)
+        return payments
+
+    def next_status(self):
+        payments = self.payments()
+
+        payments.update(status=self.status.next_status)
+        self.status = self.status.next_status
+        self.save()
+
+    def save(self, *args, **kwargs):
+
+        if self.pk is None:
+
+            pending = StatusPago.objects.get(pk=config.PAYMENT_STATUS_PENDING)
+            payments = Pago.objects.filter(status=pending)
+            self.minimum = payments.aggregate(
+                minimum=Min('created')
+            )['minimum']
+
+            if self.minimum is None:
+                self.minimum = timezone.now()
+
+            payments.update(status=pending.next_status)
+            self.status = pending.next_status
+
+        super(CuentaPorCobrar, self).save(*args, **kwargs)
+
+
 def consolidate_invoice(persona, clone):
+    """Transfers all :class:`Recibo` from a duplicate :class:`Persona` to the
+    original one"""
     [move_invoice(persona, recibo) for recibo in clone.recibos.all()]
 
 
 def move_invoice(persona, recibo):
+    """Transfers a single :class:`Recibo` to a :class:`Persona`"""
     recibo.paciente = persona
     recibo.save()
 

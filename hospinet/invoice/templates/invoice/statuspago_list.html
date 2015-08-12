@@ -37,8 +37,24 @@
                                 <td>{{ pago.created }}</td>
                                 <td>{{ pago.tipo }}</td>
                                 <td>{{ pago.monto }}</td>
-                                <td>{{ pago.recibo.total }}</td>
-                                <td>{{ pago.recibo.pagado }}</td>
+                                <td>
+                                    {% for contrato in pago.recibo.cliente.contratos.all %}
+                                        {{ contrato.master.aseguradora }}
+                                    {% endfor %}
+                                    {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
+                                        {{ beneficiario.contrato.master.aseguradora }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for contrato in pago.recibo.cliente.contratos.all %}
+                                        {{ contrato.poliza }} -
+                                        {{ contrato.empresa }}
+                                    {% endfor %}
+                                    {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
+                                        {{ beneficiario.contrato.poliza }} -
+                                        {{ beneficiario.contrato.empresa }}
+                                    {% endfor %}
+                                </td>
                                 <td>
                                     <a class="btn btn-primary"
                                        href="{% url 'invoice-pago-status-edit' pago.id %}">Cambiar

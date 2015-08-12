@@ -127,6 +127,9 @@ class ItemTemplate(TimeStampedModel):
 class Proveedor(models.Model):
     name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
     rtn = models.CharField(max_length=255, blank=True)
+    direccion = models.CharField(max_length=255, blank=True)
+    contacto = models.CharField(max_length=255, blank=True)
+    telefono = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.name
