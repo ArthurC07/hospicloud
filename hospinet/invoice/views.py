@@ -24,6 +24,7 @@ from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
@@ -525,9 +526,13 @@ class ReciboPeriodoView(TemplateView):
     a un formulario que las clases derivadas deben proporcionar como
     self.form"""
 
+    prefix = 'recibo'
+
     def dispatch(self, request, *args, **kwargs):
         """Efectua la consulta de los :class:`Recibo` de acuerdo a los
         datos ingresados en el formulario"""
+
+        self.form = PeriodoForm(request.GET, prefix=self.prefix)
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
@@ -538,6 +543,20 @@ class ReciboPeriodoView(TemplateView):
             )
 
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """Agrega el formulario de :class:`Recibo`"""
+
+        context = super(ReciboPeriodoView, self).get_context_data(**kwargs)
+
+        context['recibos'] = self.recibos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = Venta.objects.filter(
+            recibo__in=self.recibos
+        ).aggregate(total=Coalesce(Sum('total'), Decimal()))['total']
+
+        return context
 
 
 class PagoPeriodoView(TemplateView):
@@ -579,53 +598,13 @@ class ReporteReciboView(ReciboPeriodoView, LoginRequiredMixin):
 
     template_name = 'invoice/recibo_list.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        """Agrega el formulario"""
-
-        self.form = PeriodoForm(request.GET, prefix='recibo')
-
-        return super(ReporteReciboView, self).dispatch(request, *args,
-                                                       **kwargs)
-
-    def get_context_data(self, **kwargs):
-        """Agrega el formulario de :class:`Recibo`"""
-
-        context = super(ReporteReciboView, self).get_context_data(**kwargs)
-
-        context['recibos'] = self.recibos
-        context['inicio'] = self.inicio
-        context['fin'] = self.fin
-        context['total'] = sum(r.total() for r in self.recibos.all())
-
-        return context
-
 
 class ReporteReciboDetailView(ReciboPeriodoView):
     """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
     durante el periodo especificado"""
 
     template_name = 'invoice/recibo_detail_list.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Agrega el formulario"""
-
-        self.form = PeriodoForm(request.GET, prefix='recibodetail')
-
-        return super(ReporteReciboDetailView, self).dispatch(request, *args,
-                                                             **kwargs)
-
-    def get_context_data(self, **kwargs):
-        """Agrega el formulario de :class:`Recibo`"""
-
-        context = super(ReporteReciboDetailView, self).get_context_data(
-            **kwargs)
-
-        context['recibos'] = self.recibos
-        context['inicio'] = self.inicio
-        context['fin'] = self.fin
-        context['total'] = sum(r.total() for r in self.recibos.all())
-
-        return context
+    prefix = 'recibodetail'
 
 
 class ReporteTipoView(ReciboPeriodoView):
@@ -633,14 +612,7 @@ class ReporteTipoView(ReciboPeriodoView):
     durante el periodo especificado"""
 
     template_name = 'invoice/tipo_list.html'
-
-    def dispatch(self, request, *args, **kwargs):
-
-        """Agrega el formulario"""
-
-        self.form = PeriodoForm(request.GET, prefix='tipo')
-
-        return super(ReporteTipoView, self).dispatch(request, *args, **kwargs)
+    prefix = 'tipo'
 
     def get_context_data(self, **kwargs):
 
@@ -649,7 +621,7 @@ class ReporteTipoView(ReciboPeriodoView):
         context = super(ReporteTipoView, self).get_context_data(**kwargs)
 
         context['cantidad'] = 0
-        context['total'] = Decimal('0')
+        context['total'] = Decimal()
         categorias = defaultdict(lambda: defaultdict(Decimal))
         self.recibos = self.recibos.filter(nulo=False)
         for recibo in self.recibos.all():
@@ -677,14 +649,7 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
     cuenta el periodo especificado"""
 
     template_name = 'invoice/producto_list.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Agrega el formulario"""
-
-        self.form = PeriodoForm(request.GET, prefix='producto')
-
-        return super(ReporteProductoView, self).dispatch(request, *args,
-                                                         **kwargs)
+    prefix = 'producto'
 
     def get_context_data(self, **kwargs):
         """Agrega el formulario de :class:`Recibo`"""
@@ -824,16 +789,7 @@ def crear_ventas(items, recibo, examen=False, tecnico=False):
         venta.item = item
         venta.recibo = recibo
         venta.cantidad = items[item]
-
-        precio = item.precio_de_venta
-
-        if examen:
-            comisiones = precio * item.comision * dot01
-            if tecnico:
-                comisiones += precio * item.comision2 * dot01
-            venta.precio = precio - comisiones
-        else:
-            venta.precio = precio
+        venta.precio = item.precio_de_venta
         venta.impuesto = item.impuestos
 
         venta.save()
