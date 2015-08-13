@@ -65,10 +65,9 @@ class StatusPago(TimeStampedModel):
 
     def total(self):
         total = Pago.objects.filter(status=self).aggregate(
-            total=Sum('monto')
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-        if not total:
-            return Decimal()
+
         return total
 
 

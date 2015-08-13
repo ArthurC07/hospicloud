@@ -121,7 +121,7 @@ urlpatterns = patterns('',
 
                        url(
                            r'^contrato/empresarial/agregar$',
-                           ContratoEmpresarialPersonaCreateView.as_view(),
+                           ContratoPersonaCreateView.as_view(),
                            name='contrato-empresarial-add'),
 
                        url(

@@ -386,61 +386,6 @@ class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ContratoEmpresarialPersonaCreateView(CreateView, LoginRequiredMixin):
-    model = Contrato
-    template_name = 'contracts/contrato_create.html'
-
-    def dispatch(self, request, *args, **kwargs):
-
-        self.persona = Persona()
-
-        self.ContratoFormset = inlineformset_factory(Persona, Contrato,
-                                                     form=ContratoEmpresarialForm,
-                                                     fk_name='persona', extra=1)
-        return super(ContratoEmpresarialPersonaCreateView, self).dispatch(
-            request, *args,
-            **kwargs)
-
-    def get_form(self, form_class):
-        formset = self.ContratoFormset(instance=self.persona, prefix='contrato')
-        return formset
-
-    def get_context_data(self, **kwargs):
-
-        self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
-        self.persona_form.helper.form_tag = False
-
-        context = super(ContratoEmpresarialPersonaCreateView,
-                        self).get_context_data(
-            **kwargs)
-        context['persona_form'] = self.persona_form
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.persona_form = PersonaForm(request.POST, request.FILES,
-                                        instance=self.persona,
-                                        prefix='persona')
-        self.formset = self.ContratoFormset(request.POST, request.FILES,
-                                            instance=self.persona,
-                                            prefix='contrato')
-
-        if self.persona_form.is_valid() and self.formset.is_valid():
-            self.persona_form.save()
-            instances = self.formset.save()
-            for instance in instances:
-                self.contrato = instance
-                self.contrato.save()
-
-            return self.form_valid(self.formset)
-        else:
-            self.object = None
-            return self.form_invalid(self.formset)
-
-    def get_success_url(self):
-
-        return reverse('contrato', args=[self.contrato.id])
-
-
 class ContratoDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
     paginate_by = 10
     template_name = 'contracts/contrato_detail.html'
