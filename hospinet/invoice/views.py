@@ -30,10 +30,12 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
-                                  DeleteView)
+                                  DeleteView, View)
 from django.forms.models import inlineformset_factory
 
 from django.contrib.auth.decorators import permission_required
+from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.edit import FormMixin
 
 from clinique.models import Consulta
 from contracts.models import Aseguradora
@@ -45,7 +47,8 @@ from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
-                            TipoPago, dot01, StatusPago, CuentaPorCobrar)
+                            TipoPago, dot01, StatusPago, CuentaPorCobrar,
+                            PagoCuenta)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
@@ -53,7 +56,7 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
                            TipoPagoPeriodoForm, PeriodoCiudadForm,
-                           CuentaPorCobrarForm)
+                           CuentaPorCobrarForm, PagoCuentaForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -1577,3 +1580,30 @@ class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
             return self.request.META['HTTP_REFERER']
         else:
             return reverse('invoice-index')
+
+
+class CuentaPorCobrarMixin(TemplateResponseMixin):
+    def dispatch(self, *args, **kwargs):
+        self.cuenta = get_object_or_404(CuentaPorCobrar,
+                                        pk=kwargs['cuenta'])
+        return super(CuentaPorCobrarMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CuentaPorCobrarMixin, self).get_context_data(**kwargs)
+
+        context['cuenta'] = self.cuenta
+
+        return context
+
+
+class CuentaPorCobrarFormMixin(CuentaPorCobrarMixin, FormMixin):
+    def get_initial(self):
+        initial = super(CuentaPorCobrarFormMixin, self).get_initial()
+        initial['cuenta'] = self.cuenta.id
+        return initial
+
+
+class PagoCuentaCreateView(CuentaPorCobrarFormMixin, CreateView,
+                           LoginRequiredMixin):
+    model = PagoCuenta
+    form_class = PagoCuentaForm

@@ -512,6 +512,7 @@ class CuentaPorCobrar(TimeStampedModel):
     descripcion = models.TextField()
     status = models.ForeignKey(StatusPago)
     minimum = models.DateTimeField(default=timezone.now)
+    inicial = models.DecimalField(default=0, max_digits=11, decimal_places=2)
 
     def __str__(self):
 
@@ -520,6 +521,11 @@ class CuentaPorCobrar(TimeStampedModel):
     def monto(self):
 
         return self.payments().aggregate(
+            total=Coalesce(Sum('monto'), Decimal()))['total']
+
+    def pagado(self):
+
+        return self.pagocuenta_set.aggregate(
             total=Coalesce(Sum('monto'), Decimal()))['total']
 
     def get_absolute_url(self):
@@ -553,10 +559,23 @@ class CuentaPorCobrar(TimeStampedModel):
             if self.minimum is None:
                 self.minimum = timezone.now()
 
+            self.inicial = self.monto()
             payments.update(status=pending.next_status)
             self.status = pending.next_status
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
+
+
+class PagoCuenta(TimeStampedModel):
+    """Describes the payments made to a :class:`Cuenta`"""
+    cuenta = models.ForeignKey(CuentaPorCobrar)
+    inicial = models.DecimalField(default=0, max_digits=11, decimal_places=2)
+    fecha = models.DateTimeField(default=timezone.now)
+    observaciones = models.TextField()
+
+    def get_absolute_url(self):
+
+        return self.cuenta.get_absolute_url()
 
 
 def consolidate_invoice(persona, clone):

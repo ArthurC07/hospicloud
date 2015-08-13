@@ -23,7 +23,7 @@ from django.utils import timezone
 from select2.fields import ModelChoiceField
 
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, TipoPago, \
-    CuentaPorCobrar
+    CuentaPorCobrar, PagoCuenta
 from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
@@ -266,4 +266,20 @@ class CuentaPorCobrarForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(CuentaPorCobrarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Cuenta por Cobrar',
+                                      *self.field_names)
+
+
+class PagoCuentaForm(FieldSetModelFormMixin):
+    class Meta:
+        model = PagoCuenta
+        fields = '__all__'
+
+    cuenta = forms.ModelChoiceField(label="",
+                                    queryset=CuentaPorCobrar.objects.all(),
+                                    widget=forms.HiddenInput(), required=False)
+    fecha = forms.DateTimeField(widget=DateTimeWidget)
+
+    def __init__(self, *args, **kwargs):
+        super(PagoCuentaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar un Pago a la Cuenta',
                                       *self.field_names)
