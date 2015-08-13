@@ -53,6 +53,7 @@ from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
                               Cancelacion, Precontrato, Prebeneficiario,
                               Beneficio, MasterContract,
                               ImportFile, PCD, Aseguradora)
+from hospinet.utils import get_current_month_range
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
@@ -103,12 +104,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['empresa-search'].helper.form_action = 'empresa-search'
 
     def get_fechas(self):
-        now = date.today()
-        self.fin = date(now.year, now.month,
-                        calendar.monthrange(now.year, now.month)[1])
-        self.inicio = date(now.year, now.month, 1)
-        self.inicio = datetime.combine(self.inicio, time.min)
-        self.fin = datetime.combine(self.fin, time.max)
+        self.fin, self.inicio = get_current_month_range()
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
