@@ -46,16 +46,13 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env_var('DBNAME', 'hospinet'),
-        # Or path to database file if using sqlite3.
-        'USER': env_var('DBUSER', 'hospinet'),  # Not used with sqlite3.
-        'PASSWORD': env_var('DBPASSWORD', 'hospinet'),  # Not used with sqlite3.
-        'HOST': '',  # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',  # Set to empty string for default. Not used with sqlite3.
-    }
+    'default': dj_database_url.config(
+        default=env_var('DB_URL',
+                        'postgres://hospinet:hospinet@localhost:5432/hospinet')
+    )
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
