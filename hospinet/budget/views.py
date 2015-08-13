@@ -60,7 +60,7 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         presupuesto = Cuenta.objects.filter(
             presupuesto__activo=True,
             presupuesto__inversion=False
-        ).aggregate(Coalesce(total=Sum('limite'), Decimal()))['total']
+        ).aggregate(total=Coalesce(Sum('limite'), Decimal()))['total']
 
         context['presupuesto'] = presupuesto
         context['gastos'] = gastos
