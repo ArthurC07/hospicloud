@@ -569,7 +569,7 @@ class CuentaPorCobrar(TimeStampedModel):
 class PagoCuenta(TimeStampedModel):
     """Describes the payments made to a :class:`Cuenta`"""
     cuenta = models.ForeignKey(CuentaPorCobrar)
-    inicial = models.DecimalField(default=0, max_digits=11, decimal_places=2)
+    monto = models.DecimalField(default=0, max_digits=11, decimal_places=2)
     fecha = models.DateTimeField(default=timezone.now)
     observaciones = models.TextField()
 

@@ -89,6 +89,24 @@
                 </tr>
                 </tfoot>
             </table>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Observaciones</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pago in cuenta.pagocuenta_set.all %}
+                        <tr>
+                            <td>{{ pago.fecha }}</td>
+                            <td>{{ pago.observaciones }}</td>
+                            <td>{{ pago.monto }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}
