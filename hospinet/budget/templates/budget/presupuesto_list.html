@@ -20,6 +20,11 @@
                         Inversi&oacute;n
                     </a>
                 </li>
+                <li role="presentation">
+                    <a data-toggle="tab" href="#ingresos">
+                        Ingresos
+                    </a>
+                </li>
             </ul>
             <div class="tab-content">
                 <div class="row tab-pane fade in active" id="presupuesto">
@@ -203,6 +208,29 @@
                             <h3>No hay Presupuestos Disponibles</h3>
                         </div>
                     {% endfor %}
+                </div>
+                <div class="row tab-pane fade in" id="ingresos">
+                    <div class="col-md-12">
+                        <h2>Ingresos</h2>
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>Ciudad</th>
+                                <th>Proyectado</th>
+                                <th>Ingresado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for income in incomes %}
+                                <tr>
+                                    <td>{{ income.ciudad }}</td>
+                                    <td>{{ income.monto }}</td>
+                                    <td>{{ income.ingresado_mes_actual }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

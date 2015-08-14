@@ -45,10 +45,19 @@ class TipoPago(TimeStampedModel):
     """
     Define las formas de :class:`Pago` disponibles para ingresar en los
     :class:`Recibo`
+
+    nombre: El nombre que se utilizará en los formularios y etiquetas.
+    color: El color que se utilizará para diferenciar en las gráficas.
+    solo_asegurados: El :class:`TipoPago` solo estará disponible a las
+                     :class:`Persona` que cuenten con un :class:`Contrato`
+                     vigente.
+    reembolso: Indica si el tipo de pago debe excluirse de los ingresos
+               inmediatos al momento de efectuar los calculos de ingresos
     """
     nombre = models.CharField(max_length=255, blank=True, null=True)
     color = ColorField(default='')
     solo_asegurados = models.BooleanField(default=False)
+    reembolso = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre

@@ -26,7 +26,7 @@ from django.views.generic.edit import FormMixin
 
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoEjecutarFrom
-from budget.models import Presupuesto, Cuenta, Gasto
+from budget.models import Presupuesto, Cuenta, Gasto, Income
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin
 from hospinet.utils import get_current_month_range, get_previous_month_range
@@ -94,6 +94,8 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         context['equilibrio'] = gastos / max(context['total_ingresos'], 1)
         context['balance'] = total_ingresos - gastos
         context['disponible'] = disponible
+
+        context['incomes'] = Income.objects.all()
 
         return context
 
