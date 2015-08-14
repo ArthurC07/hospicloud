@@ -65,10 +65,9 @@ class StatusPago(TimeStampedModel):
 
     def total(self):
         total = Pago.objects.filter(status=self).aggregate(
-            total=Sum('monto')
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-        if not total:
-            return Decimal()
+
         return total
 
 
@@ -110,9 +109,10 @@ class Recibo(TimeStampedModel):
 
     def total(self):
 
-        total = self.ventas.aggregate(total=Sum('total'))['total']
-        if not total:
-            return Decimal()
+        total = self.ventas.aggregate(
+            total=Coalesce(Sum('total'), Decimal())
+        )['total']
+
         return total
 
     @property
@@ -413,11 +413,8 @@ class TurnoCaja(TimeStampedModel):
     def venta(self):
 
         total = Venta.objects.filter(recibo__in=self.recibos()).aggregate(
-            total=Sum('total')
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-
-        if total is None:
-            total = Decimal()
 
         return total
 
@@ -454,10 +451,8 @@ class TurnoCaja(TimeStampedModel):
 
     def total_cierres(self):
         total = CierreTurno.objects.filter(turno=self).aggregate(
-            total=Sum('monto')
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-        if total is None:
-            total = Decimal()
 
         return total
 
