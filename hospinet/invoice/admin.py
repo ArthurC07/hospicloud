@@ -74,11 +74,14 @@ class PagoAdmin(admin.ModelAdmin):
 
 class CuentaPorCobrarAdmin(admin.ModelAdmin):
     list_display = ('descripcion', 'created', 'minimum', 'status')
-    list_display = ('created', 'minimum', 'status')
+
+
+class VentaAdmin(admin.ModelAdmin):
+    list_display = ('recibo', 'item', 'cantidad', 'precio', 'monto', 'total')
 
 
 admin.site.register(Recibo, ReciboAdmin)
-admin.site.register(Venta)
+admin.site.register(Venta, VentaAdmin)
 admin.site.register(StatusPago)
 admin.site.register(Pago, PagoAdmin)
 admin.site.register(TipoPago, TipoPagoAdmin)
