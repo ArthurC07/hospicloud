@@ -314,7 +314,7 @@ class Contrato(TimeStampedModel):
     vendedor = models.ForeignKey(Vendedor, related_name='contratos')
     plan = models.ForeignKey(Plan, related_name='contratos')
     inicio = models.DateField()
-    vencimiento = models.DateField()
+    vencimiento = models.DateTimeField()
     ultimo_pago = models.DateTimeField(default=timezone.now)
     administradores = models.ManyToManyField(User, related_name='contratos',
                                              blank=True)
