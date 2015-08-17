@@ -16,11 +16,14 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from collections import defaultdict
+from decimal import Decimal
 
 from constance import config
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.aggregates import Sum
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 
@@ -84,12 +87,17 @@ class Emergencia(TimeStampedModel):
             restante = horas - 1
             extra = ItemTemplate.objects.get(pk=config.EXTRA_EMERGENCIA)
             items[extra] = restante
-        
+
         return items
 
     def total(self):
 
-        return sum(c.total() for c in self.cobros.all())
+        return Cobro.objects.filter(emergencia=self).aggregate(
+            total=Coalesce(
+                Sum('cobro', field="cobro__precio_de_venta*cantidad"),
+                Decimal())
+        )
+
 
 class Tratamiento(TimeStampedModel):
     """Registra las indiciaciones que la :class:`Persona` debe seguir"""
@@ -104,6 +112,7 @@ class Tratamiento(TimeStampedModel):
 
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
+
 class Diagnostico(TimeStampedModel):
     """Registra el resultado que el medico ha encontrado luego de auscultar
     a la :class:`Persona`"""
@@ -117,6 +126,7 @@ class Diagnostico(TimeStampedModel):
         """Obtiene la URL absoluta"""
 
         return reverse('emergency-view-id', args=[self.emergencia.id])
+
 
 class ExamenFisico(TimeStampedModel):
     """Registra los análisis que se le efectua a la :class:`Persona`"""
@@ -151,7 +161,8 @@ class Hallazgo(TimeStampedModel):
 
 
 class RemisionInterna(TimeStampedModel):
-    emergencia = models.ForeignKey(Emergencia, related_name='remisiones_internas')
+    emergencia = models.ForeignKey(Emergencia,
+                                   related_name='remisiones_internas')
     doctor = models.CharField(max_length=100)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='er_rinternas')
@@ -163,7 +174,8 @@ class RemisionInterna(TimeStampedModel):
 
 
 class RemisionExterna(TimeStampedModel):
-    emergencia = models.ForeignKey(Emergencia, related_name='remisiones_externas')
+    emergencia = models.ForeignKey(Emergencia,
+                                   related_name='remisiones_externas')
     destino = models.CharField(max_length=100)
     diagnostico = models.TextField()
     notas = models.TextField()
@@ -193,7 +205,6 @@ class Cobro(TimeStampedModel):
         return u'{1}: {0}'.format(self.cargo.descripcion, self.created)
 
     def total(self):
-
         return self.cargo.precio_de_venta * self.cantidad
 
 
