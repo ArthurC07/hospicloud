@@ -56,7 +56,5 @@ CONSTANCE_CONFIG = {
     'PAYMENT_STATUS_PENDING': (1, u'Estado de Pago Pendiente'),
 }
 
-
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
 USERENA_ACTIVATION_REQUIRED = False
 AUTH_PROFILE_MODULE = 'users.UserProfile'

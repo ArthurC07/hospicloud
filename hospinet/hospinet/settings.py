@@ -211,7 +211,6 @@ CACHES = {
 }
 # Additional Settings
 ANONYMOUS_USER_ID = -1
-AUTH_PROFILE_MODULE = 'users.UserProfile'
 USE_THOUSAND_SEPARATOR = True
 
 
