@@ -424,7 +424,7 @@ class Contrato(TimeStampedModel):
 
     def activo(self):
 
-        if self.vencimiento <= timezone.now().date():
+        if self.vencimiento <= timezone.now():
             return False
 
         else:
