@@ -218,6 +218,8 @@
                                 <th>Ciudad</th>
                                 <th>Proyectado</th>
                                 <th>Ingresado</th>
+                                <th>Reembolsado</th>
+                                <th>Pendiente de Reembolso</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -226,6 +228,8 @@
                                     <td>{{ income.ciudad }}</td>
                                     <td>{{ income.monto }}</td>
                                     <td>{{ income.ingresado_mes_actual }}</td>
+                                    <td>{{ income.total_pagos_reembolsados_mes_actual }}</td>
+                                    <td>{{ income.total_pago_por_reembolsar_mes_actual }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>

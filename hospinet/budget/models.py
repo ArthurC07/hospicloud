@@ -25,7 +25,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
 from contracts.models import Aseguradora
-
 from inventory.models import Proveedor
 from invoice.models import Venta, Pago, PagoCuenta
 from users.models import Ciudad
@@ -230,7 +229,8 @@ class Income(TimeStampedModel):
         return Pago.objects.filter(
             tipo__reembolso=False,
             recibo__ciudad=self.ciudad,
-            recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False
         ).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
@@ -240,9 +240,65 @@ class Income(TimeStampedModel):
         return self.pagos_periodo(inicio, fin)
 
     def ingresado_periodo(self, inicio, fin):
-
         return self.pagos_periodo(inicio, fin)
 
     def ingresado_mes_actual(self):
-
         return self.pagos_mes_actual()
+
+    def reembolsos_periodo(self, inicio, fin):
+        return PagoCuenta.objects.filter(
+            fecha__range=(inicio, fin)
+        )
+
+    def total_reembolsos_periodo(self, inicio, fin):
+        return self.reembolsos_periodo(inicio, fin).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+    def reembolsos_mes_actual(self):
+        fin, inicio = get_current_month_range()
+        return self.reembolsos_periodo(inicio, fin)
+
+    def total_reembolsos_mes_actual(self):
+        fin, inicio = get_current_month_range()
+        return self.total_reembolsos_periodo(inicio, fin)
+
+    def pagos_reembolsados_periodo(self, inicio, fin):
+        return Pago.objects.filter(
+            tipo__reembolso=True,
+            recibo__ciudad=self.ciudad,
+            status__reportable=False,
+            modified__range=(inicio, fin),
+            recibo__nulo=False
+        )
+
+    def total_pagos_reembolsados_periodo(self, inicio, fin):
+        return self.pagos_reembolsados_periodo(inicio, fin).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+    def pagos_reembolsados_mes_actual(self):
+        fin, inicio = get_current_month_range()
+        return self.pagos_reembolsados_periodo(inicio, fin)
+
+    def total_pagos_reembolsados_mes_actual(self):
+        fin, inicio = get_current_month_range()
+        return self.total_pagos_reembolsados_periodo(inicio, fin)
+
+    def pagos_por_reembolsar_periodo(self, inicio, fin):
+        return Pago.objects.filter(
+            tipo__reembolso=True,
+            recibo__ciudad=self.ciudad,
+            status__reportable=True,
+            modified__range=(inicio, fin),
+            recibo__nulo=False
+        )
+
+    def total_pago_por_reembolsar_periodo(self, inicio, fin):
+        return self.pagos_por_reembolsar_periodo(inicio, fin).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+    def total_pago_por_reembolsar_mes_actual(self):
+        fin, inicio = get_current_month_range()
+        return self.total_pago_por_reembolsar_periodo(inicio, fin)
