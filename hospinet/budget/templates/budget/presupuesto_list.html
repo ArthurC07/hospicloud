@@ -226,10 +226,10 @@
                             {% for income in incomes %}
                                 <tr>
                                     <td>{{ income.ciudad }}</td>
-                                    <td>{{ income.monto }}</td>
-                                    <td>{{ income.ingresado_mes_actual }}</td>
-                                    <td>{{ income.total_pagos_reembolsados_mes_actual }}</td>
-                                    <td>{{ income.total_pago_por_reembolsar_mes_actual }}</td>
+                                    <td class="text-right">{{ income.monto }}</td>
+                                    <td class="text-right">{{ income.ingresado_mes_actual }}</td>
+                                    <td class="text-right">{{ income.total_pagos_reembolsados_mes_actual }}</td>
+                                    <td class="text-right">{{ income.total_pago_por_reembolsar_mes_actual }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>

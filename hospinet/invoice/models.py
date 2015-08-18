@@ -578,7 +578,6 @@ class PagoCuenta(TimeStampedModel):
     observaciones = models.TextField()
 
     def get_absolute_url(self):
-
         return self.cuenta.get_absolute_url()
 
 
