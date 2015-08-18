@@ -73,7 +73,7 @@ class PagoAdmin(admin.ModelAdmin):
 
 
 class CuentaPorCobrarAdmin(admin.ModelAdmin):
-    list_display = ('descripcion', 'created', 'minimum', 'status')
+    list_display = ('descripcion', 'created', 'modified', 'minimum', 'status')
 
 
 class VentaAdmin(admin.ModelAdmin):
