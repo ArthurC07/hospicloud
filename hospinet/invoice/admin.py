@@ -80,9 +80,14 @@ class VentaAdmin(admin.ModelAdmin):
     list_display = ('recibo', 'item', 'cantidad', 'precio', 'monto', 'total')
 
 
+class StatusPagoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'reportable', 'next_status', 'previous_status',)
+
+
+
 admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta, VentaAdmin)
-admin.site.register(StatusPago)
+admin.site.register(StatusPago, StatusPagoAdmin)
 admin.site.register(Pago, PagoAdmin)
 admin.site.register(TipoPago, TipoPagoAdmin)
 admin.site.register(TurnoCaja, TurnoCajaAdmin)

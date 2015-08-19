@@ -27,6 +27,7 @@ from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum, Min
@@ -59,6 +60,8 @@ class StatusPago(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
     reportable = models.BooleanField(default=True)
     next_status = models.ForeignKey('self', null=True)
+    previous_status = models.ForeignKey('self', null=True,
+                                        related_name='previous')
 
     def __str__(self):
         return self.nombre
@@ -541,6 +544,14 @@ class CuentaPorCobrar(TimeStampedModel):
         self.status = self.status.next_status
         self.save()
 
+    def previous_status(self):
+
+        payments = self.payments()
+
+        payments.update(status=self.status.previous_status)
+        self.status = self.status.previous_status
+        self.save()
+
     def save(self, *args, **kwargs):
 
         if self.pk is None:
@@ -569,7 +580,6 @@ class PagoCuenta(TimeStampedModel):
     observaciones = models.TextField()
 
     def get_absolute_url(self):
-
         return self.cuenta.get_absolute_url()
 
 

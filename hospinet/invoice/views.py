@@ -1582,6 +1582,21 @@ class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
             return reverse('invoice-index')
 
 
+class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
+                                                 LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
+        cuenta.previous_status()
+        messages.info(self.request, u'¡Se Actualizó la Cuenta por Cobrar!')
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return reverse('invoice-index')
+
+
 class CuentaPorCobrarMixin(TemplateResponseMixin):
     def dispatch(self, *args, **kwargs):
         self.cuenta = get_object_or_404(CuentaPorCobrar,
