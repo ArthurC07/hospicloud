@@ -210,7 +210,7 @@
                     {% endfor %}
                 </div>
                 <div class="row tab-pane fade in" id="ingresos">
-                    <div class="col-md-12">
+                    <div class="col-md-12 table-responsive">
                         <h2>Ingresos</h2>
                         <table class="table table-hover table-striped">
                             <thead>
@@ -234,6 +234,22 @@
                             {% endfor %}
                             </tbody>
                         </table>
+                        <h2>Aseguradoras</h2>
+                        {% for income in incomes %}
+                            <table class="table">
+                                <caption>{{ income.ciudad }}</caption>
+                                <tr>
+                                    <th>Aseguradora</th>
+                                    <th>Monto Pendiente</th>
+                                </tr>
+                                {% for aseguradora in income.pendiente_aseguradoras %}
+                                    <tr>
+                                        <td>{{ aseguradora.0 }}</td>
+                                        <td>{{ aseguradora.1 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

@@ -27,6 +27,7 @@ from django_extensions.db.models import TimeStampedModel
 from contracts.models import Aseguradora
 from inventory.models import Proveedor
 from invoice.models import Venta, Pago, PagoCuenta
+from persona.models import Persona
 from users.models import Ciudad
 from hospinet.utils import get_current_month_range, get_previous_month_range
 
@@ -302,3 +303,16 @@ class Income(TimeStampedModel):
     def total_pago_por_reembolsar_mes_actual(self):
         fin, inicio = get_current_month_range()
         return self.total_pago_por_reembolsar_periodo(inicio, fin)
+
+    def pendiente_aseguradoras(self):
+        return [
+            (aseguradora, Pago.objects.filter(
+                tipo__reembolso=True,
+                status__reportable=True,
+                recibo__ciudad=self.ciudad,
+                recibo__nulo=False,
+                recibo__cliente__in=Persona.objects.filter(
+                    contratos__master__aseguradora=aseguradora)
+            ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'])
+            for aseguradora in Aseguradora.objects.all()
+        ]
