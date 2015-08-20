@@ -350,6 +350,7 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
             for instance in instances:
                 self.recibo = instance
                 self.recibo.cajero = self.request.user
+                self.recibo.ciudad = self.recibo.cajero.profile.ciudad
                 self.recibo.save()
 
             return self.form_valid(self.formset)
