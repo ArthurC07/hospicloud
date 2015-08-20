@@ -22,7 +22,6 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
                                   TemplateView, RedirectView, FormView)
 from django.contrib import messages
-from templated_email import send_templated_mail
 
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
                            EstudioProgramadoForm, EmailForm, EstudioForm)
@@ -232,12 +231,6 @@ class NotificarExamenView(FormView, LoginRequiredMixin):
         examen = form.cleaned_data['examen']
         context = {'link_examen': self.request.build_absolute_uri(
             examen.get_absolute_url())}
-        send_templated_mail(
-            template_name='examen',
-            from_email='hospinet@casahospitalaria.com',
-            recipient_list=[form.cleaned_data['email']],
-            context=context
-        )
 
         return super(NotificarExamenView, self).form_valid(form)
 
