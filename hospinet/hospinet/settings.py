@@ -38,7 +38,6 @@ LOGOUT_URL = '/accounts/signout/'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
 
 DEBUG = env_var('DEBUG', True)
-TEMPLATE_DEBUG = env_var('DEBUG', True)
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -50,7 +49,7 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=env_var('DB_URL',
+        default=env_var('DATABASE_URL',
                         'postgres://hospinet:hospinet@localhost:5432/hospinet')
     )
 }
@@ -133,6 +132,7 @@ TEMPLATES = [
         ],
         'APP_DIRS': True,
         'OPTIONS': {
+            'debug': env_var('DEBUG', True),
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
