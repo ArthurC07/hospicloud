@@ -1,11 +1,12 @@
 from django.contrib import admin
 
-from budget.models import Presupuesto, Cuenta, Gasto
+from budget.models import Presupuesto, Cuenta, Gasto, Income
 
 
 class PresupuestoAdmin(admin.ModelAdmin):
-    list_display = ('ciudad', 'created')
-    ordering = ('ciudad', 'created')
+    list_display = (
+    'ciudad', 'porcentaje_global', 'inversion', 'activo', 'created')
+    ordering = ('ciudad', 'porcentaje_global', 'inversion', 'activo', 'created')
     search_fields = ['ciudad', ]
 
 
@@ -39,6 +40,13 @@ class GastoAdmin(admin.ModelAdmin):
     get_presupuesto.admin_order_field = 'cuenta__presupuesto'
 
 
+class IncomeAdmin(admin.ModelAdmin):
+    list_display = ('ciudad', 'monto', 'activo', 'created')
+    ordering = ('ciudad', 'monto', 'activo', 'created')
+    search_fields = ['ciudad', ]
+
+
 admin.site.register(Presupuesto, PresupuestoAdmin)
 admin.site.register(Cuenta, CuentaAdmin)
 admin.site.register(Gasto, GastoAdmin)
+admin.site.register(Income, IncomeAdmin)

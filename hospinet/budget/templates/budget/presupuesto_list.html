@@ -20,6 +20,11 @@
                         Inversi&oacute;n
                     </a>
                 </li>
+                <li role="presentation">
+                    <a data-toggle="tab" href="#ingresos">
+                        Ingresos
+                    </a>
+                </li>
             </ul>
             <div class="tab-content">
                 <div class="row tab-pane fade in active" id="presupuesto">
@@ -203,6 +208,59 @@
                             <h3>No hay Presupuestos Disponibles</h3>
                         </div>
                     {% endfor %}
+                </div>
+                <div class="row tab-pane fade in" id="ingresos">
+                    <div class="col-md-12 table-responsive">
+                        <h2>Ingresos</h2>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Ciudad</th>
+                                <th>Proyectado</th>
+                                <th>Ingresado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for income in incomes %}
+                                <tr>
+                                    <td>{{ income.ciudad }}</td>
+                                    <td class="text-right">{{ income.monto }}</td>
+                                    <td class="text-right">
+                                        {{ income.ingresado_mes_actual }}
+                                        <table class="table">
+                                            {% for pago in income.facturado_mes_actual %}
+                                                <tr>
+                                                    <td class="text-left">{{ pago.tipo__nombre }}</td>
+                                                    <td class="text-right">{{ pago.total }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <h2>Aseguradoras</h2>
+                        {% for income in incomes %}
+                            <table class="table">
+                                <caption>{{ income.ciudad }}</caption>
+                                <tr>
+                                    <th>Aseguradora</th>
+                                    <th>Facturado</th>
+                                    <th>Monto Reembolsado Mes Actual</th>
+                                    <th>Monto Pendiente</th>
+                                </tr>
+                                {% for aseguradora in income.pendiente_aseguradoras %}
+                                    <tr>
+                                        <td>{{ aseguradora.0 }}</td>
+                                        <td class="text-right">{{ aseguradora.1 }}</td>
+                                        <td class="text-right">{{ aseguradora.2 }}</td>
+                                        <td class="text-right">{{ aseguradora.3 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
