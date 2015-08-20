@@ -19,6 +19,10 @@
                 <a class="btn btn-block btn-success"
                    href="{% url 'invoice-cpc-status-next' cuenta.id %}">Cambiar
                     a {{ cuenta.status.next_status }}</a>
+                <a class="btn btn-block btn-success"
+                   href="{% url 'invoice-cpc-pago-add' cuenta.id %}">
+                    Agregar un Pago a la Cuenta
+                </a>
             </div>
             <table class="table table-striped table-bordered">
                 <caption>
@@ -84,6 +88,24 @@
                     <th>&nbsp;</th>
                 </tr>
                 </tfoot>
+            </table>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Observaciones</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pago in cuenta.pagocuenta_set.all %}
+                        <tr>
+                            <td>{{ pago.fecha }}</td>
+                            <td>{{ pago.observaciones }}</td>
+                            <td>{{ pago.monto }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>
