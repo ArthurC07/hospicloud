@@ -27,6 +27,7 @@ from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum, Min
@@ -45,10 +46,19 @@ class TipoPago(TimeStampedModel):
     """
     Define las formas de :class:`Pago` disponibles para ingresar en los
     :class:`Recibo`
+
+    nombre: El nombre que se utilizará en los formularios y etiquetas.
+    color: El color que se utilizará para diferenciar en las gráficas.
+    solo_asegurados: El :class:`TipoPago` solo estará disponible a las
+                     :class:`Persona` que cuenten con un :class:`Contrato`
+                     vigente.
+    reembolso: Indica si el tipo de pago debe excluirse de los ingresos
+               inmediatos al momento de efectuar los calculos de ingresos
     """
     nombre = models.CharField(max_length=255, blank=True, null=True)
     color = ColorField(default='')
     solo_asegurados = models.BooleanField(default=False)
+    reembolso = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre
@@ -59,6 +69,8 @@ class StatusPago(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
     reportable = models.BooleanField(default=True)
     next_status = models.ForeignKey('self', null=True)
+    previous_status = models.ForeignKey('self', null=True,
+                                        related_name='previous')
 
     def __str__(self):
         return self.nombre
@@ -109,9 +121,10 @@ class Recibo(TimeStampedModel):
 
     def total(self):
 
-        total = self.ventas.aggregate(total=Sum('total'))['total']
-        if not total:
-            return Decimal()
+        total = self.ventas.aggregate(
+            total=Coalesce(Sum('total'), Decimal())
+        )['total']
+
         return total
 
     @property
@@ -412,11 +425,8 @@ class TurnoCaja(TimeStampedModel):
     def venta(self):
 
         total = Venta.objects.filter(recibo__in=self.recibos()).aggregate(
-            total=Sum('total')
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-
-        if total is None:
-            total = Decimal()
 
         return total
 
@@ -453,10 +463,8 @@ class TurnoCaja(TimeStampedModel):
 
     def total_cierres(self):
         total = CierreTurno.objects.filter(turno=self).aggregate(
-            total=Sum('monto')
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-        if total is None:
-            total = Decimal()
 
         return total
 
@@ -511,6 +519,7 @@ class CuentaPorCobrar(TimeStampedModel):
     descripcion = models.TextField()
     status = models.ForeignKey(StatusPago)
     minimum = models.DateTimeField(default=timezone.now)
+    inicial = models.DecimalField(default=0, max_digits=11, decimal_places=2)
 
     def __str__(self):
 
@@ -519,6 +528,11 @@ class CuentaPorCobrar(TimeStampedModel):
     def monto(self):
 
         return self.payments().aggregate(
+            total=Coalesce(Sum('monto'), Decimal()))['total']
+
+    def pagado(self):
+
+        return self.pagocuenta_set.aggregate(
             total=Coalesce(Sum('monto'), Decimal()))['total']
 
     def get_absolute_url(self):
@@ -539,6 +553,14 @@ class CuentaPorCobrar(TimeStampedModel):
         self.status = self.status.next_status
         self.save()
 
+    def previous_status(self):
+
+        payments = self.payments()
+
+        payments.update(status=self.status.previous_status)
+        self.status = self.status.previous_status
+        self.save()
+
     def save(self, *args, **kwargs):
 
         if self.pk is None:
@@ -552,10 +574,22 @@ class CuentaPorCobrar(TimeStampedModel):
             if self.minimum is None:
                 self.minimum = timezone.now()
 
+            self.inicial = self.monto()
             payments.update(status=pending.next_status)
             self.status = pending.next_status
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
+
+
+class PagoCuenta(TimeStampedModel):
+    """Describes the payments made to a :class:`Cuenta`"""
+    cuenta = models.ForeignKey(CuentaPorCobrar)
+    monto = models.DecimalField(default=0, max_digits=11, decimal_places=2)
+    fecha = models.DateTimeField(default=timezone.now)
+    observaciones = models.TextField()
+
+    def get_absolute_url(self):
+        return self.cuenta.get_absolute_url()
 
 
 def consolidate_invoice(persona, clone):

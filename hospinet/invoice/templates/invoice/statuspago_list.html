@@ -1,12 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-    <div class="page-header col-md-12 main-content">
+    <div class="page-header col-md-9 main-content">
         <h1>Estado de Pagos</h1>
+    </div>
+    <div class="col-md-3 no-print">
+        <div class="toolbox col-md-12">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-stacked nav-tabs">
+                    <li>
+                        <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-9 main-content">
+    <div class="col-md-12 main-content">
         {% for stat in status.all %}
             <div class="row">
                 <div class="col-md-12 table-responsive">
@@ -20,6 +31,7 @@
                         <thead>
                         <tr>
                             <th>Recibo</th>
+                            <th>Cliente</th>
                             <th>Fecha y Hora</th>
                             <th>M&eacute;todo</th>
                             <th>Monto</th>
@@ -32,17 +44,20 @@
                         {% for pago in stat.pagos.all %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo }}</a>
+                                    <a href="{{ pago.recibo.get_absolute_url }}">{{ pago.recibo.numero }}</a>
                                 </td>
+                                <td>{{ pago.recibo }}</td>
                                 <td>{{ pago.created }}</td>
                                 <td>{{ pago.tipo }}</td>
                                 <td>{{ pago.monto }}</td>
                                 <td>
                                     {% for contrato in pago.recibo.cliente.contratos.all %}
                                         {{ contrato.master.aseguradora }}
+                                        {{ contrato.persona }}
                                     {% endfor %}
                                     {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
                                         {{ beneficiario.contrato.master.aseguradora }}
+                                        {{ beneficiario.contrato.persona }}
                                     {% endfor %}
                                 </td>
                                 <td>
@@ -66,17 +81,6 @@
                 </div>
             </div>
         {% endfor %}
-    </div>
-    <div class="col-md-3 no-print">
-        <div class="toolbox col-md-12">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-stacked nav-tabs">
-                    <li>
-                        <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
     </div>
 </div>
 {% endblock %}

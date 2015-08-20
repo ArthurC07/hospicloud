@@ -16,17 +16,17 @@
 from decimal import Decimal
 
 from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
     UpdateView
 from django.views.generic.base import TemplateResponseMixin
-
 from django.views.generic.edit import FormMixin
 
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoEjecutarFrom
-from budget.models import Presupuesto, Cuenta, Gasto
+from budget.models import Presupuesto, Cuenta, Gasto, Income
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin
 from hospinet.utils import get_current_month_range, get_previous_month_range
@@ -42,11 +42,9 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
     context_object_name = 'presupuestos'
 
     def get_queryset(self):
-
         return Presupuesto.objects.filter(inversion=False).all()
 
     def get_context_data(self, **kwargs):
-
         context = super(PresupuestoListView, self).get_context_data(**kwargs)
 
         fin, inicio = get_current_month_range()
@@ -57,17 +55,12 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         gastos = Gasto.objects.filter(
             created__range=(inicio, fin),
             ejecutado=True
-        ).aggregate(total=Sum('monto'))['total']
+        ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
 
         presupuesto = Cuenta.objects.filter(
-            presupuesto__activo=True
-        ).aggregate(total=Sum('limite'))['total']
-
-        if presupuesto is None:
-            presupuesto = Decimal()
-
-        if gastos is None:
-            gastos = Decimal()
+            presupuesto__activo=True,
+            presupuesto__inversion=False
+        ).aggregate(total=Coalesce(Sum('limite'), Decimal()))['total']
 
         context['presupuesto'] = presupuesto
         context['gastos'] = gastos
@@ -85,12 +78,13 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             total=Sum('monto')
         ).order_by()
 
-        disponible = ventas_anteriores.aggregate(total=Sum('monto'))['total']
+        disponible = ventas_anteriores.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
 
-        total_ingresos = ventas.aggregate(total=Sum('monto'))['total']
-
-        if total_ingresos is None:
-            total_ingresos = Decimal()
+        total_ingresos = ventas.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
 
         context['total_ingresos'] = total_ingresos
 
@@ -100,6 +94,8 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         context['equilibrio'] = gastos / max(context['total_ingresos'], 1)
         context['balance'] = total_ingresos - gastos
         context['disponible'] = disponible
+
+        context['incomes'] = Income.objects.all()
 
         return context
 
@@ -172,7 +168,6 @@ class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
     form_class = GastoForm
 
     def form_valid(self, form):
-        
         self.object = form.save(commit=False)
         self.object.ejectuado = True
         self.object.save()
@@ -203,7 +198,6 @@ class GastoEjecutarView(UpdateView, LoginRequiredMixin):
     form_class = GastoEjecutarFrom
 
     def form_valid(self, form):
-
         self.object = form.save(commit=False)
         self.object.ejecutado = True
         self.object.save()
