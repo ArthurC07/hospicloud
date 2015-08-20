@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 
 
-def fix_antecedente(apps, schema_editor):
+def fix_another_antecedente(apps, schema_editor):
     Antecedente = apps.get_model("persona", "AntecedenteFamiliar")
 
     for antecedente in Antecedente.objects.all():
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(fix_antecedente),
+        migrations.RunPython(fix_another_antecedente),
         migrations.AlterField(
             model_name='antecedentefamiliar',
             name='epoc',
