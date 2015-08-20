@@ -226,6 +226,23 @@ class Income(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('budget-income', args=[self.id])
 
+    def facturado_periodo(self, inicio, fin):
+        condition = Q(
+            recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
+            recibo__cliente__ciudad__isnull=True)
+        
+        return Pago.objects.filter(
+            condition,
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False,
+            recibo__ciudad=self.ciudad
+        ).values('tipo__nombre').annotate(
+            total=Coalesce(Sum('monto'), Decimal())).order_by()
+
+    def facturado_mes_actual(self):
+        fin, inicio = get_current_month_range()
+        return self.facturado_periodo(inicio, fin)
+
     def pagos_periodo(self, inicio, fin):
         return Pago.objects.filter(
             tipo__reembolso=False,
@@ -305,14 +322,38 @@ class Income(TimeStampedModel):
         return self.total_pago_por_reembolsar_periodo(inicio, fin)
 
     def pendiente_aseguradoras(self):
+        fin, inicio = get_current_month_range()
+
+        condition = Q(
+            recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
+            recibo__cliente__ciudad__isnull=True)
+
         return [
-            (aseguradora, Pago.objects.filter(
-                tipo__reembolso=True,
-                status__reportable=True,
-                recibo__ciudad=self.ciudad,
-                recibo__nulo=False,
-                recibo__cliente__in=Persona.objects.filter(
-                    contratos__master__aseguradora=aseguradora)
-            ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'])
+            (aseguradora,
+             Pago.objects.filter(
+                 tipo__reembolso=True,
+                 recibo__ciudad=self.ciudad,
+                 recibo__created__range=(inicio, fin),
+                 recibo__nulo=False,
+                 recibo__cliente__in=Persona.objects.filter(
+                     contratos__master__aseguradora=aseguradora)
+             ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'],
+             Pago.objects.filter(
+                 tipo__reembolso=True,
+                 recibo__ciudad=self.ciudad,
+                 status__reportable=False,
+                 modified__range=(inicio, fin),
+                 recibo__nulo=False,
+                 recibo__cliente__in=Persona.objects.filter(
+                     contratos__master__aseguradora=aseguradora)
+             ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'],
+             Pago.objects.filter(
+                 tipo__reembolso=True,
+                 status__reportable=True,
+                 recibo__ciudad=self.ciudad,
+                 recibo__nulo=False,
+                 recibo__cliente__in=Persona.objects.filter(
+                     contratos__master__aseguradora=aseguradora)
+             ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'])
             for aseguradora in Aseguradora.objects.all()
-        ]
+            ]
