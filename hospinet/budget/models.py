@@ -230,7 +230,7 @@ class Income(TimeStampedModel):
         condition = Q(
             recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
             recibo__cliente__ciudad__isnull=True)
-        
+
         return Pago.objects.filter(
             condition,
             recibo__created__range=(inicio, fin),

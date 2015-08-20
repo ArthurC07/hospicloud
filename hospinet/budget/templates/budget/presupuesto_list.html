@@ -212,7 +212,7 @@
                 <div class="row tab-pane fade in" id="ingresos">
                     <div class="col-md-12 table-responsive">
                         <h2>Ingresos</h2>
-                        <table class="table table-hover table-striped">
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th>Ciudad</th>
@@ -227,11 +227,14 @@
                                     <td class="text-right">{{ income.monto }}</td>
                                     <td class="text-right">
                                         {{ income.ingresado_mes_actual }}
-                                        <ul>
+                                        <table class="table">
                                             {% for pago in income.facturado_mes_actual %}
-                                            <li>{{ pago.tipo__nombre }} {{ pago.total }}</li>
+                                                <tr>
+                                                    <td class="text-left">{{ pago.tipo__nombre }}</td>
+                                                    <td class="text-right">{{ pago.total }}</td>
+                                                </tr>
                                             {% endfor %}
-                                        </ul>
+                                        </table>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -243,7 +246,7 @@
                                 <caption>{{ income.ciudad }}</caption>
                                 <tr>
                                     <th>Aseguradora</th>
-                                    <th>Monto En Reembolsos</th>
+                                    <th>Facturado</th>
                                     <th>Monto Reembolsado Mes Actual</th>
                                     <th>Monto Pendiente</th>
                                 </tr>
