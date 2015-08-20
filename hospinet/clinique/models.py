@@ -320,6 +320,9 @@ class OrdenMedica(TimeStampedModel):
     facturada = models.BooleanField(default=False)
 
     def __str__(self):
+        if self.consulta is None:
+            return self.orden
+
         return self.consulta.persona.nombre_completo()
 
     def get_absolute_url(self):

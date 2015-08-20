@@ -43,7 +43,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            CuentaPorCobrarDetailView, PagoSiguienteStatusView,
                            CuentaPorCobrarListView, CuentaPorCobrarCreateView,
                            CuentaPorCobrarSiguienteStatusRedirectView,
-                           PagoCuentaCreateView)
+                           PagoCuentaCreateView,
+                           CuentaPorCobrarAnteriorStatusRedirectView)
 
 urlpatterns = patterns('',
 
@@ -260,6 +261,10 @@ urlpatterns = patterns('',
                        url(r'^cpc/(?P<pk>\d+)/status/next$',
                            CuentaPorCobrarSiguienteStatusRedirectView.as_view(),
                            name='invoice-cpc-status-next'),
+
+                       url(r'^cpc/(?P<pk>\d+)/status/previous$',
+                           CuentaPorCobrarAnteriorStatusRedirectView.as_view(),
+                           name='invoice-cpc-status-previous'),
 
                        url(r'^cpc/(?P<cuenta>\d+)/pago/next$',
                            PagoCuentaCreateView.as_view(),

@@ -350,6 +350,7 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
             for instance in instances:
                 self.recibo = instance
                 self.recibo.cajero = self.request.user
+                self.recibo.ciudad = self.recibo.cajero.profile.ciudad
                 self.recibo.save()
 
             return self.form_valid(self.formset)
@@ -1574,6 +1575,21 @@ class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
     def get_redirect_url(self, **kwargs):
         cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
         cuenta.next_status()
+        messages.info(self.request, u'¡Se Actualizó la Cuenta por Cobrar!')
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return reverse('invoice-index')
+
+
+class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
+                                                 LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
+        cuenta.previous_status()
         messages.info(self.request, u'¡Se Actualizó la Cuenta por Cobrar!')
 
         if self.request.META['HTTP_REFERER']:

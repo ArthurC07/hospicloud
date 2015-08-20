@@ -22,7 +22,8 @@ from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
 from select2.fields import ModelChoiceField
 
-from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, TipoPago, \
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
+    TipoPago, \
     CuentaPorCobrar, PagoCuenta
 from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
@@ -30,7 +31,7 @@ from inventory.forms import FieldSetModelFormMixin
 from emergency.models import Emergencia
 from spital.models import Admision
 from imaging.models import Examen
-from inventory.models import ItemTemplate, ItemType
+from inventory.models import ItemTemplate, ItemType, TipoVenta
 from users.mixins import HiddenUserForm
 from users.models import Ciudad
 
@@ -62,6 +63,8 @@ class ReciboForm(FieldSetModelFormMixin):
     cliente = forms.ModelChoiceField(label="",
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
+
+    tipo_de_venta = forms.ModelChoiceField(queryset=TipoVenta.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(ReciboForm, self).__init__(*args, **kwargs)
