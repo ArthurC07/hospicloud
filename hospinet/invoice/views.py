@@ -1250,7 +1250,7 @@ class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
         persona = self.object.recibo.cliente
         if self.object.tipo.solo_asegurados and \
                         persona.contratos.filter(
-                            vencimiento__gte=timezone.now()).count() <= 0:
+                            vencimiento__lte=timezone.now()).count() <= 0:
 
             messages.info(self.request,
                           u'No se puede agregar un este tipo de pago sin '
