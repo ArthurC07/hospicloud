@@ -246,16 +246,16 @@
                                 <caption>{{ income.ciudad }}</caption>
                                 <tr>
                                     <th>Aseguradora</th>
-                                    <th>Facturado</th>
                                     <th>Monto Reembolsado Mes Actual</th>
                                     <th>Monto Pendiente</th>
+                                    <th>Facturado</th>
                                 </tr>
                                 {% for aseguradora in income.pendiente_aseguradoras %}
                                     <tr>
                                         <td>{{ aseguradora.0 }}</td>
-                                        <td class="text-right">{{ aseguradora.1 }}</td>
                                         <td class="text-right">{{ aseguradora.2 }}</td>
                                         <td class="text-right">{{ aseguradora.3 }}</td>
+                                        <td class="text-right">{{ aseguradora.1 }}</td>
                                     </tr>
                                 {% endfor %}
                             </table>
