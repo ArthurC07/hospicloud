@@ -32,6 +32,7 @@ from django_extensions.db.models import TimeStampedModel
 import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
+from hospinet.utils import make_end_day
 from inventory.models import ItemTemplate, ItemType
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
@@ -151,8 +152,7 @@ def check_line(line, vencimiento):
     master = MasterContract.objects.get(poliza=poliza_f)
 
     if line[8]:
-        venc = server_timezone.localize(datetime.strptime(line[8], '%m/%d/%Y'))
-        vencimiento_r = venc
+        vencimiento_r = make_end_day(datetime.strptime(line[8], '%m/%d/%Y'))
         
     try:
         pcd = PCD.objects.get(numero=file_pcd)
@@ -226,12 +226,10 @@ class ImportFile(TimeStampedModel):
 
     def assign_contracts(self):
         """Creates :class:`Contract`s for existing :class:`Persona`"""
-        # if self.processed:
-        # return
 
         archivo = open(self.archivo.path, 'rU')
         data = unicodecsv.reader(archivo)
-        vencimiento = self.created + timedelta(days=8)
+        vencimiento = make_end_day(self.created) + timedelta(days=8)
 
         # Create a :class:`Contract` for each identificacion on the file
         for line in data:
