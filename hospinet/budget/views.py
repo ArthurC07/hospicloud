@@ -20,12 +20,12 @@ from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
-    UpdateView
+    UpdateView, FormView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormMixin
 
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
-    GastoEjecutarFrom
+    GastoEjecutarFrom, MontoForm
 from budget.models import Presupuesto, Cuenta, Gasto, Income
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin
@@ -203,3 +203,31 @@ class GastoEjecutarView(UpdateView, LoginRequiredMixin):
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class GastoMixin(TemplateResponseMixin):
+    """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
+
+    def dispatch(self, *args, **kwargs):
+        self.gasto = get_object_or_404(Gasto, pk=kwargs['gasto'])
+        return super(GastoMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(GastoMixin, self).get_context_data(**kwargs)
+
+        context['gasto'] = self.gasto
+
+        return context
+
+
+class GastoParcialFormView(FormView, GastoMixin, LoginRequiredMixin):
+    """Permite efectuar un pago parcial a un :class:`Gasto`
+    """
+    form_class = MontoForm
+    template_name = 'budget/gasto_form.html'
+
+    def form_valid(self, form):
+
+        self.gasto.pago_parcial(form.cleaned_data['monto'])
+
+        return HttpResponseRedirect(self.gasto.get_absolute_url())

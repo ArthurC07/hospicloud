@@ -13,14 +13,15 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from crispy_forms.layout import Fieldset
+from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
 from select2.fields import ModelChoiceField
 
 from budget.models import Presupuesto, Cuenta, Gasto
 from inventory.forms import ProveedorFormMixin
-from persona.forms import FieldSetModelFormMixin, DateTimeWidget
+from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
+    FieldSetFormMixin
 from users.forms import CiudadFormMixin
 
 
@@ -99,3 +100,12 @@ class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
     def __init__(self, *args, **kwargs):
         super(GastoEjecutarFrom, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Ejecutar un Gasto', *self.field_names)
+
+
+class MontoForm(FieldSetFormMixin):
+    monto = forms.DecimalField()
+
+    def __init__(self, *args, **kwargs):
+        super(MontoForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', u'Guardar'))
+        self.helper.layout = Fieldset(u'Indicar Monto', *self.field_names)
