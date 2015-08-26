@@ -112,6 +112,7 @@
                                     <td>
                                         <a class="btn btn-block btn-danger" href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> Borrar</a>
                                         <a class="btn btn-block btn-success" href="{% url 'gasto-ejecutar' gasto.id %}"><i class="fa fa-trash-o"></i> Ejecutar</a>
+                                        <a class="btn btn-block btn-success" href="{% url 'gasto-parcial' gasto.id %}"><i class="fa fa-trash-o"></i> Pago Parcial</a>
                                     </td>
                                 </tr>
                             {% empty %}

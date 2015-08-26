@@ -31,3 +31,9 @@ def get_previous_month_range():
                                              timezone.get_current_timezone())
 
     return previous_month_end, previous_month_start
+
+
+def make_end_day(day):
+
+    day = datetime(day.year, day.month, day.day, 23, 59, 59)
+    return timezone.make_aware(day, timezone.get_current_timezone())

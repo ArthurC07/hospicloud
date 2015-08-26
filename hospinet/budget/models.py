@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from copy import deepcopy
 from decimal import Decimal
 
 from django.core.urlresolvers import reverse
@@ -214,6 +215,16 @@ class Gasto(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('budget-control', args=[self.cuenta.presupuesto.id])
 
+    def pago_parcial(self, monto):
+
+        gasto = deepcopy(self)
+        gasto.id = None
+        gasto.monto = monto
+        gasto.save()
+
+        self.monto -= monto
+        self.save()
+
 
 class Income(TimeStampedModel):
     """
@@ -323,10 +334,6 @@ class Income(TimeStampedModel):
 
     def pendiente_aseguradoras(self):
         fin, inicio = get_current_month_range()
-
-        condition = Q(
-            recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
-            recibo__cliente__ciudad__isnull=True)
 
         return [
             (aseguradora,
