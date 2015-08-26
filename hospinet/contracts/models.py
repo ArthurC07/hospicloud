@@ -38,6 +38,7 @@ from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
 
 server_timezone = timezone.get_current_timezone()
+from django.core.files.storage import default_storage as storage
 
 
 class Vendedor(TimeStampedModel):
@@ -227,7 +228,7 @@ class ImportFile(TimeStampedModel):
     def assign_contracts(self):
         """Creates :class:`Contract`s for existing :class:`Persona`"""
 
-        archivo = open(self.archivo.path, 'rU')
+        archivo = storage.open(self.archivo.name, 'rU')
         data = unicodecsv.reader(archivo)
         vencimiento = make_end_day(self.created) + timedelta(days=8)
 

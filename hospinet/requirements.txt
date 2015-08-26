@@ -15,3 +15,6 @@ pytz
 django-picklefield
 dj-database-url
 python-dateutil
+django-environ
+dj-static
+unicodecsv

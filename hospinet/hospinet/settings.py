@@ -17,27 +17,29 @@
 
 # Django settings for hospinet project.
 import os
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import environ
 
 from project_settings import *
 
+root = environ.Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+env = environ.Env(DEBUG=(bool, False), )
+environ.Env.read_env()
 
-def env_var(key, default=None):
-    """Retrieves env vars and makes Python boolean replacements"""
-    val = os.environ.get(key, default)
-    if val == 'True':
-        val = True
-    elif val == 'False':
-        val = False
-    return val
+ALLOWED_HOSTS = ['*']
+
+SITE_ROOT = root()
+
+DEBUG = env('DEBUG')
+
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = env('SECRET_KEY')
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
-
-DEBUG = env_var('DEBUG', True)
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -45,43 +47,22 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-import dj_database_url
+# Database
+# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+DATABASES = {'default': env.db()}
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=env_var('DATABASE_URL',
-                        'postgres://hospinet:hospinet@localhost:5432/hospinet')
-    )
-}
+# Internationalization
+# https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-# Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
-
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# On Unix systems, a value of None will cause Django to use the same
-# timezone as the operating system.
-# If running in a Windows environment this must be set to the same as your
-# system time zone.
-TIME_ZONE = 'America/Tegucigalpa'
-
-USE_TZ = True
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'es-MX'
 
-SITE_ID = 1
+TIME_ZONE = 'America/Tegucigalpa'
 
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
 USE_I18N = True
 
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale
 USE_L10N = True
+
+USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -112,6 +93,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    str(root.path()),
 )
 
 # List of finder classes that know how to find static files in
@@ -121,18 +103,15 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '%d3r*q0fk6#5y-j%88zn#f+pq16)v2x6ap%q_y)7dj+r59@_#^'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
+            root.path('templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
-            'debug': env_var('DEBUG', True),
+            'debug': DEBUG,
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
