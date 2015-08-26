@@ -30,11 +30,11 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
-                                  DeleteView, View)
+                                  DeleteView)
 from django.forms.models import inlineformset_factory
-
 from django.contrib.auth.decorators import permission_required
 from django.views.generic.base import TemplateResponseMixin
+
 from django.views.generic.edit import FormMixin
 
 from clinique.models import Consulta
@@ -659,7 +659,7 @@ class ReporteTipoView(ReciboPeriodoView):
         for recibo in self.recibos.all():
 
             for venta in recibo.ventas.all():
-                monto = venta.total()
+                monto = venta.total
                 categoria = venta.item.item_type.first()
 
                 categorias[categoria]['monto'] += monto
@@ -1584,7 +1584,7 @@ class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
 
 
 class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
-                                                 LoginRequiredMixin):
+                                                LoginRequiredMixin):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
