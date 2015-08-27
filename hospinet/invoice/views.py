@@ -30,11 +30,11 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
-                                  DeleteView, View)
+                                  DeleteView)
 from django.forms.models import inlineformset_factory
-
 from django.contrib.auth.decorators import permission_required
 from django.views.generic.base import TemplateResponseMixin
+
 from django.views.generic.edit import FormMixin
 
 from clinique.models import Consulta
@@ -48,7 +48,7 @@ from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
                             TipoPago, dot01, StatusPago, CuentaPorCobrar,
-                            PagoCuenta)
+                            PagoCuenta, Notification)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
@@ -659,7 +659,7 @@ class ReporteTipoView(ReciboPeriodoView):
         for recibo in self.recibos.all():
 
             for venta in recibo.ventas.all():
-                monto = venta.total()
+                monto = venta.total
                 categoria = venta.item.item_type.first()
 
                 categorias[categoria]['monto'] += monto
@@ -1248,6 +1248,7 @@ class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         persona = self.object.recibo.cliente
+
         if self.object.tipo.solo_asegurados and \
                         persona.contratos.filter(
                             vencimiento__lte=timezone.now()).count() <= 0:
@@ -1262,6 +1263,13 @@ class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
                 return HttpResponseRedirect(reverse('invoice-index'))
 
         self.object.save()
+
+        if self.object.tipo.reembolso:
+
+            notification = Notification()
+            notification.recibo = self.object.recibo
+            notification.save()
+            return HttpResponseRedirect(notification.get_absolute_url())
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -1584,7 +1592,7 @@ class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
 
 
 class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
-                                                 LoginRequiredMixin):
+                                                LoginRequiredMixin):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -1623,3 +1631,8 @@ class PagoCuentaCreateView(CuentaPorCobrarFormMixin, CreateView,
                            LoginRequiredMixin):
     model = PagoCuenta
     form_class = PagoCuentaForm
+
+
+class NotificationDetailView(DetailView, LoginRequiredMixin):
+    model = Notification
+    context_object_name = 'notification'

@@ -44,7 +44,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            CuentaPorCobrarListView, CuentaPorCobrarCreateView,
                            CuentaPorCobrarSiguienteStatusRedirectView,
                            PagoCuentaCreateView,
-                           CuentaPorCobrarAnteriorStatusRedirectView)
+                           CuentaPorCobrarAnteriorStatusRedirectView,
+                           NotificationDetailView)
 
 urlpatterns = patterns('',
 
@@ -269,5 +270,9 @@ urlpatterns = patterns('',
                        url(r'^cpc/(?P<cuenta>\d+)/pago/next$',
                            PagoCuentaCreateView.as_view(),
                            name='invoice-cpc-pago-add'),
+
+                       url(r'^notification/(?P<pk>\d+)$',
+                           NotificationDetailView.as_view(),
+                           name='notification'),
 
                        )

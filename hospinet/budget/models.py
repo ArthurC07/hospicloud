@@ -17,12 +17,18 @@
 from copy import deepcopy
 from decimal import Decimal
 
+from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db import models
+
 from django.db.models import Sum, Q
+
 from django.db.models.functions import Coalesce
+
 from django.utils import timezone
+
 from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from contracts.models import Aseguradora
@@ -136,6 +142,10 @@ class Cuenta(TimeStampedModel):
     """Define una agrupación de :class:`Gasto`s referentes a un rubro
     determinado. Estos :class:`Gasto` representan lo ejecutado y las cuentas
     por pagar"""
+
+    class Meta:
+        ordering = ('nombre',)
+
     presupuesto = models.ForeignKey(Presupuesto)
     nombre = models.CharField(max_length=255)
     limite = models.DecimalField(max_digits=11, decimal_places=2, default=0)
@@ -208,6 +218,8 @@ class Gasto(TimeStampedModel):
     periodo_de_pago = models.DateTimeField(default=timezone.now)
     ejecutado = models.BooleanField(default=False)
     aseguradora = models.ForeignKey(Aseguradora, null=True, blank=True)
+    proximo_pago = models.DateTimeField(default=timezone.now)
+    numero_pagos = models.IntegerField(default=1)
 
     def __str__(self):
         return self.descripcion
@@ -215,10 +227,32 @@ class Gasto(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('budget-control', args=[self.cuenta.presupuesto.id])
 
-    def pago_parcial(self, monto):
+    def clonar(self):
 
         gasto = deepcopy(self)
         gasto.id = None
+
+        return gasto
+
+    def schedule(self):
+
+        if self.numero_pagos <= 1:
+            return
+
+        for n in range(self.numero_pagos - 1):
+            gasto = self.clonar()
+            delta = relativedelta(months=+n)
+            gasto.numero_pagos = 1
+            gasto.proximo_pago = gasto.proximo_pago + delta
+
+            gasto.save()
+
+        self.numero_pagos = 1
+        self.save()
+
+    def pago_parcial(self, monto):
+
+        gasto = self.clonar()
         gasto.monto = monto
         gasto.save()
 
