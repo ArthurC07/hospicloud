@@ -16,14 +16,19 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from copy import deepcopy
 from decimal import Decimal
-from dateutil.relativedelta import relativedelta
 
+from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db import models
+
 from django.db.models import Sum, Q
+
 from django.db.models.functions import Coalesce
+
 from django.utils import timezone
+
 from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from contracts.models import Aseguradora
@@ -137,6 +142,7 @@ class Cuenta(TimeStampedModel):
     """Define una agrupación de :class:`Gasto`s referentes a un rubro
     determinado. Estos :class:`Gasto` representan lo ejecutado y las cuentas
     por pagar"""
+
     class Meta:
         ordering = ('nombre',)
 
@@ -233,15 +239,15 @@ class Gasto(TimeStampedModel):
         if self.numero_pagos <= 1:
             return
 
-        self.numero_pagos = 1
-        self.save()
-
         for n in range(self.numero_pagos - 1):
             gasto = self.clonar()
-            delta = relativedelta(months=n)
+            delta = relativedelta(months=+n)
             gasto.proximo_pago = gasto.proximo_pago + delta
 
             gasto.save()
+
+        self.numero_pagos = 1
+        self.save()
 
     def pago_parcial(self, monto):
 
