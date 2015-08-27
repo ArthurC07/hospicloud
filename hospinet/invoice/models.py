@@ -25,15 +25,19 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
+
 from django.utils import timezone
+
 from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum, Min
 
 from clinique.models import Consulta
 from persona.fields import ColorField
-from persona.models import Persona, persona_consolidation_functions
+from persona.models import Persona, persona_consolidation_functions, \
+    transfer_object_to_persona
 from inventory.models import ItemTemplate, TipoVenta
 from spital.models import Deposito
 from users.models import Ciudad
@@ -271,19 +275,18 @@ class Venta(TimeStampedModel):
 
     cantidad = models.IntegerField()
     descripcion = models.TextField(blank=True, null=True)
-    precio = models.DecimalField(blank=True, null=True, max_digits=7,
+    precio = models.DecimalField(blank=True, null=True, max_digits=11,
                                  decimal_places=2)
-    impuesto = models.DecimalField(blank=True, default=0, max_digits=7,
+    impuesto = models.DecimalField(blank=True, default=0, max_digits=11,
                                    decimal_places=2)
     descuento = models.IntegerField(default=0)
     item = models.ForeignKey(ItemTemplate, related_name='ventas',
                              blank=True, null=True)
     recibo = models.ForeignKey(Recibo, related_name='ventas')
-    placas = models.IntegerField(default=0)
     descontable = models.BooleanField(default=True)
-    discount = models.DecimalField(blank=True, default=0, max_digits=7,
+    discount = models.DecimalField(blank=True, default=0, max_digits=11,
                                    decimal_places=2)
-    tax = models.DecimalField(blank=True, default=0, max_digits=7,
+    tax = models.DecimalField(blank=True, default=0, max_digits=11,
                               decimal_places=2)
     total = models.DecimalField(blank=True, default=0, max_digits=11,
                                 decimal_places=2)
@@ -592,18 +595,6 @@ class PagoCuenta(TimeStampedModel):
         return self.cuenta.get_absolute_url()
 
 
-def consolidate_invoice(persona, clone):
-    """Transfers all :class:`Recibo` from a duplicate :class:`Persona` to the
-    original one"""
-    [move_invoice(persona, recibo) for recibo in clone.recibos.all()]
-
-
-def move_invoice(persona, recibo):
-    """Transfers a single :class:`Recibo` to a :class:`Persona`"""
-    recibo.paciente = persona
-    recibo.save()
-
-
 class Notification(TimeStampedModel):
     recibo = models.ForeignKey(Recibo)
     completada = models.BooleanField(default=False)
@@ -619,4 +610,141 @@ class Notification(TimeStampedModel):
         return consulta
 
 
+@python_2_unicode_compatible
+class Cotizacion(TimeStampedModel):
+    """Permite registrar pagos por productos y servicios"""
+
+    class Meta:
+        permissions = (
+            ('cajero', 'Permite al usuario gestionar caja'),
+        )
+
+    persoa = models.ForeignKey(Persona)
+    tipo_de_venta = models.ForeignKey(TipoVenta)
+    usuario = models.ForeignKey(User)
+    ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
+    discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    facturada = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('invoice-view-id', args=[self.id])
+
+    def __str__(self):
+        """Crea una representación en texto del :class:`Cotizacion`"""
+
+        return self.persona.nombre_completo()
+
+    def total(self):
+        total = self.cotizado_set.aggregate(
+            total=Coalesce(Sum('total'), Decimal())
+        )['total']
+
+        return total
+
+    def subtotal(self):
+        """Calcula el monto antes de impuestos"""
+
+        return \
+            self.ventas.aggregate(
+                total=Sum('monto', output_field=models.DecimalField()))['total']
+
+    def impuesto(self):
+        """Calcula los impuestos que se deben pagar por este :class:`Cotizacion`
+        """
+
+        return self.ventas.all().aggregate(tax=Sum('tax'))['tax']
+
+    def descuento(self):
+        """Calcula el descuento que se debe restar a este :class:`Cotizacion`"""
+        return self.ventas.all().aggregate(discount=Sum('discount'))['discount']
+
+    def conceptos(self):
+        return ', '.join(
+            v.item.descripcion for v in
+            Cotizado.objects.filter(recibo=self).all())
+
+    def save(self, *args, **kwargs):
+        if self.ciudad is None:
+            self.ciudad = self.usuario.profile.ciudad
+
+        super(Cotizacion, self).save(*args, **kwargs)
+
+
+@python_2_unicode_compatible
+class Cotizado(TimeStampedModel):
+    """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
+    realizar los cobros asociados"""
+    cotizacion = models.ForeignKey(Cotizacion)
+    item = models.ForeignKey(ItemTemplate)
+    cantidad = models.IntegerField()
+    descripcion = models.TextField(blank=True)
+    porcentaje_descuento = models.IntegerField(default=0)
+    precio = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    impuesto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    tax = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    total = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    descontable = models.BooleanField(default=True)
+
+    def __str__(self):
+
+        return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('invoice-view-id', args=[self.recibo.id])
+
+    def save(self, *args, **kwargs):
+
+        if self.precio is None:
+            self.precio = self.item.precio_de_venta
+
+        if not self.cotizacion.tipo_de_venta or not self.descontable:
+            self.discount = Decimal(0)
+
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
+        self.discount = (self.precio * disminucion).quantize(dot01)
+
+        self.impuesto = self.item.impuestos
+        self.monto = self.precio * self.cantidad
+
+        self.tax = Decimal(
+            (
+                self.precio * self.cantidad - self.discount) *
+            self.impuesto).quantize(
+            dot01)
+
+        self.total = (
+            self.tax + self.precio * self.cantidad - self.discount).quantize(
+            dot01)
+
+        super(Cotizado, self).save(*args, **kwargs)
+
+
+def consolidate_invoice(persona, clone):
+    """Transfers all :class:`Recibo` from a duplicate :class:`Persona` to the
+    original one"""
+    [move_invoice(persona, recibo) for recibo in clone.recibos.all()]
+
+
+def move_invoice(persona, recibo):
+    """Transfers a single :class:`Recibo` to a :class:`Persona`"""
+    recibo.cliente = persona
+    recibo.save()
+
+
+def consolidate_cotizacion(persona, clone):
+    """
+    Transfers all :class:`Cotizacion` from a duplicate :class:`Persona` to the
+    original one
+    """
+    [transfer_object_to_persona(cotizacion, persona) for cotizacion in
+     clone.cotizacion_set.all()]
+
+
 persona_consolidation_functions.append(consolidate_invoice)
+persona_consolidation_functions.append(consolidate_cotizacion)

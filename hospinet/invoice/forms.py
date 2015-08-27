@@ -24,7 +24,7 @@ from select2.fields import ModelChoiceField
 
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, \
-    CuentaPorCobrar, PagoCuenta
+    CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado
 from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
@@ -53,8 +53,7 @@ class ReciboForm(FieldSetModelFormMixin):
     class Meta:
         model = Recibo
         exclude = (
-            'nulo', 'cerrado', 'discount', 'radiologo', 'remite', 'ciudad',
-            'emision', 'correlativo')
+            'nulo', 'cerrado', 'discount', 'ciudad', 'emision', 'correlativo')
 
     cajero = forms.ModelChoiceField(label="",
                                     queryset=User.objects.all(),
@@ -286,3 +285,45 @@ class PagoCuentaForm(FieldSetModelFormMixin):
         super(PagoCuentaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar un Pago a la Cuenta',
                                       *self.field_names)
+
+
+class CotizacionForm(FieldSetModelFormMixin):
+    """Genera un formulario para :class:`Recibo`:"""
+
+    class Meta:
+        model = Cotizacion
+        exclude = ('ciudad',)
+
+    usuario = forms.ModelChoiceField(label="",
+                                     queryset=User.objects.all(),
+                                     widget=forms.HiddenInput(), required=False)
+
+    persona = forms.ModelChoiceField(label="",
+                                     queryset=Persona.objects.all(),
+                                     widget=forms.HiddenInput(), required=False)
+
+    tipo_de_venta = forms.ModelChoiceField(queryset=TipoVenta.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(CotizacionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Datos del Recibo', *self.field_names)
+
+
+class CotizadoForm(FieldSetModelFormMixin):
+    """Genera un formulario para :class:`Venta`"""
+
+    class Meta:
+        model = Cotizado
+        fields = ('item', 'cantidad', 'precio', 'descripcion', 'cotizacion')
+
+    cotizacion = forms.ModelChoiceField(label="",
+                                        queryset=Cotizacion.objects.all(),
+                                        widget=forms.HiddenInput(),
+                                        required=False)
+    item = ModelChoiceField(name="", model="",
+                            queryset=ItemTemplate.objects.filter(
+                                activo=True).order_by('descripcion').all())
+
+    def __init__(self, *args, **kwargs):
+        super(CotizadoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Agregar un Cargo', *self.field_names)

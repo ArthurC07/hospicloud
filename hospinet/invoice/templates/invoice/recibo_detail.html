@@ -78,8 +78,14 @@
                     {% for venta in recibo.ventas.all %}
                         <tr>
                             <td>{{ venta.cantidad }}</td>
-                            <td><a href="{% url 'venta-delete' venta.id %}"><i
-                                    class="glyphicon glyphicon-trash"></i></a>{{ venta.descripcion }} {{ venta.item }}</td>
+                            <td>
+                                {% if recibo.cerrado == False %}
+                                <a href="{% url 'venta-delete' venta.id %}">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                                {% endif %}
+                                {{ venta.descripcion }} {{ venta.item }}
+                            </td>
                             <td>{{ venta.precio }}</td>
                             <td>{{ venta.total_vendido }}</td>
                             <td>{{ venta.descuento }}</td>
