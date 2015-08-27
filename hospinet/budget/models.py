@@ -242,6 +242,7 @@ class Gasto(TimeStampedModel):
         for n in range(self.numero_pagos - 1):
             gasto = self.clonar()
             delta = relativedelta(months=+n)
+            gasto.numero_pagos = 1
             gasto.proximo_pago = gasto.proximo_pago + delta
 
             gasto.save()
