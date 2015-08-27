@@ -27,11 +27,11 @@ from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-
 from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum, Min
 
+from clinique.models import Consulta
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions
 from inventory.models import ItemTemplate, TipoVenta
@@ -602,6 +602,21 @@ def move_invoice(persona, recibo):
     """Transfers a single :class:`Recibo` to a :class:`Persona`"""
     recibo.paciente = persona
     recibo.save()
+
+
+class Notification(TimeStampedModel):
+    recibo = models.ForeignKey(Recibo)
+    completada = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        return reverse('notification', args=[self.id])
+
+    def consulta(self):
+        consulta = Consulta.objects.filter(
+            persona=self.recibo.cliente,
+            created__lte=self.recibo.created).last()
+
+        return consulta
 
 
 persona_consolidation_functions.append(consolidate_invoice)
