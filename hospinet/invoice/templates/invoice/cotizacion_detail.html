@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %} Cotizacion {{ cotizacion.id }} {% endblock %}
+{% block content %}
+    {% load humanize %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>{{ cotizacion.numero }} - {{ cotizacion }}
+                        <small>{{ cotizacion.created|date:"d/m/Y P" }}</small>
+                    </h1>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="navbar-inner">
+                        <a href="#" class="navbar-brand">Acciones</a>
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'venta-add' recibo.id %}">Agregar Venta</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'invoice-print' recibo.id %}">Imprimir Recibo</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <table class="table table-striped table-bordered">
+                    <caption>Conceptos a Facturar</caption>
+                    <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Concepto</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                        <th>Descuento {{ cotizacion.tipo_de_venta.descripcion }}</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for cotizado in cotizacion.cotizado_set.all %}
+                        <tr>
+                            <td>{{ cotizado.cantidad }}</td>
+                            <td><a href="{% url 'cotizado-delete' venta.id %}"><i
+                                    class="glyphicon glyphicon-trash"></i></a>{{ venta.descripcion }} {{ venta.item }}</td>
+                            <td>{{ venta.precio }}</td>
+                            <td>{{ venta.total_vendido }}</td>
+                            <td>{{ venta.descuento }}</td>
+                            <td>{{ venta.total }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Subtotal:</th>
+                        <th>{{ recibo.subtotal }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Impuestos:</th>
+                        <th>{{ recibo.impuesto }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Descuento:</th>
+                        <th>{{ recibo.descuento }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Total:</th>
+                        <th>{{ recibo.total }}</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
