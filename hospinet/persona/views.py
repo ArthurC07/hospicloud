@@ -17,7 +17,8 @@
 from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView,
-                                  ListView, View)
+                                  ListView)
+from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import FormMixin
 from django.shortcuts import get_object_or_404
 from django.db.models.query_utils import Q
@@ -39,12 +40,17 @@ class PersonaPermissionMixin(LoginRequiredMixin):
         return super(PersonaPermissionMixin, self).dispatch(*args, **kwargs)
 
 
-class PersonaMixin(View):
+class PersonaMixin(ContextMixin):
     """Agrega una :class:`Persona` en la vista"""
 
     def dispatch(self, *args, **kwargs):
         self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
         return super(PersonaMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(PersonaMixin, self).get_context_data(**kwargs)
+        context['persona'] = self.persona
+        return context
 
 
 class PersonaFormMixin(FormMixin, PersonaMixin):
@@ -71,7 +77,6 @@ class PersonaDetailView(DetailView, LoginRequiredMixin):
     model = Persona
 
     def get_context_data(self, **kwargs):
-
         context = super(PersonaDetailView, self).get_context_data(**kwargs)
 
         if self.object.sexo == 'F':
@@ -138,8 +143,7 @@ class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
     form_class = AntecedenteObstetricoForm
 
 
-class AntecedenteQuirurgicoCreateView(PersonaFormMixin, LoginRequiredMixin,
-                                      CreateView):
+class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin, PersonaFormMixin):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
 
@@ -165,7 +169,6 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
         form = PersonaSearchForm(self.request.GET)
 
         if form.is_valid():
-
             query = form.cleaned_data['query']
 
             queryset = Persona.objects.filter(

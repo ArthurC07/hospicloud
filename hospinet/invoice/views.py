@@ -30,16 +30,19 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
-                                  DeleteView)
+                                  DeleteView, View)
 from django.forms.models import inlineformset_factory
+
 from django.contrib.auth.decorators import permission_required
-from django.views.generic.base import TemplateResponseMixin
+
+from django.views.generic.base import TemplateResponseMixin, ContextMixin
 
 from django.views.generic.edit import FormMixin
 
 from clinique.models import Consulta
 from contracts.models import Aseguradora
 from contracts.views import AseguradoraMixin
+from persona.views import PersonaFormMixin
 from spital.forms import DepositoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from spital.models import Admision, Deposito
@@ -48,7 +51,7 @@ from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
                             TipoPago, dot01, StatusPago, CuentaPorCobrar,
-                            PagoCuenta, Notification)
+                            PagoCuenta, Notification, Cotizacion, Cotizado)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
@@ -56,7 +59,7 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
                            TipoPagoPeriodoForm, PeriodoCiudadForm,
-                           CuentaPorCobrarForm, PagoCuentaForm)
+                           CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -277,34 +280,23 @@ class EstadisticasPeriodoView(TemplateView):
         return context
 
 
-class ReciboPersonaCreateView(CreateView, LoginRequiredMixin):
+class ReciboPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
     """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
-    existente en la aplicación"""
+    existente en la aplicación
+    """
 
     model = Recibo
     form_class = ReciboForm
     template_name = 'invoice/recibo_persona_create.html'
 
-    def get_form_kwargs(self):
-        """Registra el :class:`User` que esta creando el :class:`Recibo`"""
+    def get_initial(self):
+        """Agrega el :class:`User` actual a los campos del formulario
+        """
 
-        kwargs = super(ReciboPersonaCreateView, self).get_form_kwargs()
-        kwargs.update({'initial': {'cajero': self.request.user.id,
-                                   'cliente': self.persona.id}})
-        return kwargs
-
-    def dispatch(self, *args, **kwargs):
-        """Obtiene el :class:`Recibo` que se entrego como argumento en la
-        url"""
-
-        self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
-        return super(ReciboPersonaCreateView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(ReciboPersonaCreateView, self).get_context_data(
-            **kwargs)
-        context['persona'] = self.persona
-        return context
+        initial = super(ReciboPersonaCreateView, self).get_initial()
+        initial = initial.copy()
+        initial['cajero'] = self.request.user.id
+        return initial
 
 
 class ReciboCreateView(CreateView, LoginRequiredMixin):
@@ -1265,7 +1257,6 @@ class PagoCreateView(ReciboFormMixin, LoginRequiredMixin):
         self.object.save()
 
         if self.object.tipo.reembolso:
-
             notification = Notification()
             notification.recibo = self.object.recibo
             notification.save()
@@ -1636,3 +1627,46 @@ class PagoCuentaCreateView(CuentaPorCobrarFormMixin, CreateView,
 class NotificationDetailView(DetailView, LoginRequiredMixin):
     model = Notification
     context_object_name = 'notification'
+
+
+class CotizacionCreateView(CreateView, PersonaFormMixin, CurrentUserFormMixin,
+                           LoginRequiredMixin):
+    """Permite crear un :class:`Cotizacion` utilizando una :class:`Persona`
+    existente en la aplicación
+    """
+
+    model = Cotizacion
+    form_class = CotizacionForm
+    template_name = 'invoice/recibo_persona_create.html'
+
+
+class CotizacionDetailView(DetailView, LoginRequiredMixin):
+    model = Cotizacion
+
+
+class CotizacionMixin(ContextMixin, View):
+    def dispatch(self, *args, **kwargs):
+        self.cotizacion = get_object_or_404(Cotizacion, pk=kwargs['cotizacion'])
+        return super(CotizacionMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CotizacionMixin, self).get_context_data(**kwargs)
+
+        context['cotizacion'] = self.cotizacion
+
+        return context
+
+
+class CotizacionFormMixin(CotizacionMixin, FormMixin):
+    def get_initial(self):
+        initial = super(CotizacionFormMixin, self).get_initial()
+        initial['cotizacion'] = self.cotizacion.id
+        return initial
+
+
+class CotizadoCreateView(CotizacionFormMixin, CreateView, LoginRequiredMixin):
+    model = Cotizado
+
+
+class CotizadoDelete(DeleteView, LoginRequiredMixin):
+    model = Cotizado

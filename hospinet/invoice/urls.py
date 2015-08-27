@@ -45,7 +45,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            CuentaPorCobrarSiguienteStatusRedirectView,
                            PagoCuentaCreateView,
                            CuentaPorCobrarAnteriorStatusRedirectView,
-                           NotificationDetailView)
+                           NotificationDetailView, CotizacionDetailView,
+                           CotizacionCreateView)
 
 urlpatterns = patterns('',
 
@@ -274,5 +275,13 @@ urlpatterns = patterns('',
                        url(r'^notification/(?P<pk>\d+)$',
                            NotificationDetailView.as_view(),
                            name='notification'),
+
+                       url(r'^cotizacion/(?P<pk>\d+)$',
+                           CotizacionDetailView.as_view(),
+                           name='cotizacion'),
+
+                       url(r'^(?P<persona>\d+)/cotizacion/agregar$',
+                           CotizacionCreateView.as_view(),
+                           name='cotizacion-add'),
 
                        )

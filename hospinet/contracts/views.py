@@ -29,7 +29,8 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
-from django.views.generic.base import RedirectView, TemplateResponseMixin
+from django.views.generic.base import RedirectView, TemplateResponseMixin, \
+    ContextMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
@@ -224,17 +225,18 @@ class PlanCloneView(RedirectView, LoginRequiredMixin):
         return plan.get_absolute_url()
 
 
-class PlanMixin(View):
+class PlanMixin(ContextMixin, View):
     def dispatch(self, *args, **kwargs):
         self.plan = get_object_or_404(Plan, pk=kwargs['plan'])
         return super(PlanMixin, self).dispatch(*args, **kwargs)
 
-
-class PlanFormMixin(PlanMixin, FormMixin, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
-        context = super(PlanFormMixin, self).get_context_data(**kwargs)
+        context = super(PlanMixin, self).get_context_data(**kwargs)
         context['plan'] = self.plan
         return context
+
+
+class PlanFormMixin(PlanMixin, FormMixin, LoginRequiredMixin):
 
     def get_initial(self):
         initial = super(PlanFormMixin, self).get_initial()
@@ -708,7 +710,7 @@ class BeneficiarioPersonaCreateView(ContratoFormMixin):
                                                                    *args,
                                                                    **kwargs)
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         formset = self.BeneficiarioFormset(instance=self.persona,
                                            prefix='beneficiario')
 
