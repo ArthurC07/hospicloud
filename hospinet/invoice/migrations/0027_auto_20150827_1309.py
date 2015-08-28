@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('inventory', '0019_auto_20150729_1025'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('users', '0001_squashed_0011_ciudad_tiene_presupuesto_global'),
+        ('users', '0011_ciudad_tiene_presupuesto_global'),
         ('persona', '0014_persona_ciudad'),
         ('invoice', '0026_notification'),
     ]
