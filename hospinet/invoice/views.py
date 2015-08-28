@@ -1672,3 +1672,7 @@ class CotizadoCreateView(CotizacionFormMixin, CreateView, LoginRequiredMixin):
 
 class CotizadoDelete(DeleteView, LoginRequiredMixin):
     model = Cotizado
+
+
+class CotizadoDeleteView(DeleteView, LoginRequiredMixin):
+    model = Cotizado
