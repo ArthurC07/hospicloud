@@ -296,6 +296,7 @@ class ReciboPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
 
         initial = super(ReciboPersonaCreateView, self).get_initial()
         initial = initial.copy()
+        initial['cliente'] = self.persona
         initial['cajero'] = self.request.user.id
         return initial
 
