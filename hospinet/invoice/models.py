@@ -619,7 +619,7 @@ class Cotizacion(TimeStampedModel):
             ('cajero', 'Permite al usuario gestionar caja'),
         )
 
-    persoa = models.ForeignKey(Persona)
+    persona = models.ForeignKey(Persona)
     tipo_de_venta = models.ForeignKey(TipoVenta)
     usuario = models.ForeignKey(User)
     ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
@@ -629,7 +629,7 @@ class Cotizacion(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('invoice-view-id', args=[self.id])
+        return reverse('cotizacion', args=[self.id])
 
     def __str__(self):
         """Crea una representación en texto del :class:`Cotizacion`"""
@@ -691,12 +691,12 @@ class Cotizado(TimeStampedModel):
 
     def __str__(self):
 
-        return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
+        return u"{0} a {1}".format(self.item.descripcion, self.cotizacion.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('invoice-view-id', args=[self.recibo.id])
+        return self.cotizacion.get_absolute_url()
 
     def save(self, *args, **kwargs):
 

@@ -59,7 +59,8 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
                            TipoPagoPeriodoForm, PeriodoCiudadForm,
-                           CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm)
+                           CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm,
+                           CotizadoForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -1666,6 +1667,7 @@ class CotizacionFormMixin(CotizacionMixin, FormMixin):
 
 class CotizadoCreateView(CotizacionFormMixin, CreateView, LoginRequiredMixin):
     model = Cotizado
+    form_class = CotizadoForm
 
 
 class CotizadoDelete(DeleteView, LoginRequiredMixin):

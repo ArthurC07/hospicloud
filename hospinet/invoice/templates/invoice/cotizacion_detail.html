@@ -24,10 +24,10 @@
                                 <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
                             </li>
                             <li>
-                                <a href="{% url 'venta-add' recibo.id %}">Agregar Venta</a>
+                                <a href="{% url 'cotizado-add' cotizacion.id %}">Agregar Venta</a>
                             </li>
                             <li>
-                                <a href="{% url 'invoice-print' recibo.id %}">Imprimir Recibo</a>
+                                <a href="{% url 'invoice-print' cotizacion.id %}">Imprimir Recibo</a>
                             </li>
                         </ul>
                     </div>
@@ -54,7 +54,7 @@
                     {% for cotizado in cotizacion.cotizado_set.all %}
                         <tr>
                             <td>{{ cotizado.cantidad }}</td>
-                            <td><a href="{% url 'cotizado-delete' venta.id %}"><i
+                            <td><a href="{% url 'cotizado-delete' cotizado.id %}"><i
                                     class="glyphicon glyphicon-trash"></i></a>{{ venta.descripcion }} {{ venta.item }}</td>
                             <td>{{ venta.precio }}</td>
                             <td>{{ venta.total_vendido }}</td>
