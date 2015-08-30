@@ -21,8 +21,8 @@ import subprocess
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
+
 from django_extensions.db.models import TimeStampedModel
 
 from persona.models import Persona
@@ -60,7 +60,6 @@ class Tecnico(TimeStampedModel):
     porcentaje = models.IntegerField(default=10)
 
     def __unicode__(self):
-
         return self.nombre
 
 
@@ -125,7 +124,6 @@ class Examen(models.Model):
                                        related_name="examenes")
     radiologo = models.ForeignKey(Radiologo, related_name='examenes')
     fecha = models.DateTimeField(default=datetime.now)
-    uuid = UUIDField(version=4)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='estudios_realizados')
     remitio = models.CharField(max_length=200, null=True)
@@ -137,7 +135,7 @@ class Examen(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.uuid])
+        return reverse('examen-view-id', args=[self.id])
 
     def facturar(self):
         items = defaultdict(int)
@@ -161,7 +159,7 @@ class Imagen(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.examen.uuid])
+        return self.examen.get_absolute_url()
 
 
 class Adjunto(models.Model):
@@ -175,7 +173,7 @@ class Adjunto(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.examen.uuid])
+        return self.examen.get_absolute_url()
 
 
 class Dicom(models.Model):
@@ -190,8 +188,7 @@ class Dicom(models.Model):
     descripcion = models.CharField(max_length=255, blank=True)
     convertido = models.BooleanField(default=False)
     imagen = models.ImageField(upload_to='examen/dicom/imagen/%Y/%m/%d',
-                        blank=True)
-    uuid = UUIDField(version=4)
+                               blank=True)
 
     def extraer_imagen(self):
         """Permite extraer una :class:`Imagen` que se encuentra incrustada en
@@ -210,7 +207,7 @@ class Dicom(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.examen.uuid])
+        return self.examen.get_absolute_url()
 
 
 class Estudio(TimeStampedModel):
@@ -221,4 +218,4 @@ class Estudio(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.examen.uuid])
+        return self.examen.get_absolute_url()

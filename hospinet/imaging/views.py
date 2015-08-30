@@ -14,13 +14,15 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.views.generic.base import ContextMixin
+from django.views.generic.edit import FormMixin
 from guardian.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
-                                  TemplateView, RedirectView, FormView)
+                                  TemplateView, RedirectView, FormView, View)
 from django.contrib import messages
 from templated_email import send_templated_mail
 
@@ -89,7 +91,6 @@ class ExamenDetailView(DetailView, LoginRequiredMixin):
     context_object_name = 'examen'
     model = Examen
     template_name = 'examen/examen_detail.html'
-    slug_field = 'uuid'
 
 
 class ExamenPersonaListView(DetailView, LoginRequiredMixin):
@@ -129,44 +130,26 @@ class ExamenCreateView(CreateView, LoginRequiredMixin):
         return super(ExamenCreateView, self).form_valid(form)
 
 
-class ExamenFormMixin(CreateView, LoginRequiredMixin):
+class ExamenMixin(ContextMixin, View):
     def dispatch(self, *args, **kwargs):
         self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
-        return super(ExamenFormMixin, self).dispatch(*args, **kwargs)
+        return super(ExamenMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ExamenMixin, self).get_context_data(**kwargs)
+        context['examen'] = self.examen
+        return context
+
+class ExamenFormMixin(ExamenMixin, FormMixin):
 
     def get_initial(self):
         initial = super(ExamenFormMixin, self).get_initial()
         initial = initial.copy()
-        initial['examen'] = self.examen.id
+        initial['examen'] = self.examen
         return initial
 
 
-class ExamenDocBaseCreateView(CreateView, LoginRequiredMixin):
-    """Permite crear objetos que pertenecen a un :class:`Examen`"""
-
-    def dispatch(self, *args, **kwargs):
-        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
-        return super(ExamenDocBaseCreateView, self).dispatch(*args, **kwargs)
-
-    def get_form_kwargs(self):
-        """Busca el :class:`Examen` correspondiente y lo agrega a los
-        argumentos del formulario"""
-
-        kwargs = super(ExamenDocBaseCreateView, self).get_form_kwargs()
-        kwargs.update({'initial': {'examen': self.examen.id}})
-        return kwargs
-
-    def form_valid(self, form):
-        """Agrega el :class:`Examen` al objeto"""
-
-        self.object = form.save(commit=False)
-        self.object.examen = self.examen
-        self.object.save()
-
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class ImagenCreateView(ExamenDocBaseCreateView):
+class ImagenCreateView(CreateView, ExamenFormMixin, LoginRequiredMixin):
     """Permite crear :class:`Imagen`es a un :class:`Examen`"""
 
     model = Imagen
@@ -174,7 +157,7 @@ class ImagenCreateView(ExamenDocBaseCreateView):
     template_name = "examen/imagen_create.html"
 
 
-class AdjuntoCreateView(ExamenDocBaseCreateView):
+class AdjuntoCreateView(CreateView, ExamenFormMixin, LoginRequiredMixin):
     """Permite crear :class:`Adjunto`s a un :class:`Examen`"""
 
     model = Adjunto
@@ -182,21 +165,12 @@ class AdjuntoCreateView(ExamenDocBaseCreateView):
     template_name = "examen/adjunto_create.html"
 
 
-class DicomCreateView(ExamenDocBaseCreateView):
+class DicomCreateView(CreateView, ExamenFormMixin, LoginRequiredMixin):
     """Permite agregar un archivo :class:`Dicom` a un examen"""
 
     model = Dicom
     form_class = DicomForm
     template_name = "examen/dicom_create.html"
-
-    def form_valid(self, form):
-        """Agrega y extrae la imagen del archivo DICOM"""
-
-        self.object = form.save(commit=False)
-        self.object.examen = self.examen
-        self.object.save()
-
-        return HttpResponseRedirect(self.get_success_url())
 
 
 class DicomDetailView(DetailView, LoginRequiredMixin):
