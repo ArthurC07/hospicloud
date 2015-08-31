@@ -49,6 +49,9 @@
                     <li>
                         <a href="{% url 'invoice-create' persona.id %}">Crear un Recibo</a>
                     </li>
+                    <li>
+                        <a href="{% url 'cotizacion-add' persona.id %}">Crear una Cotizacion</a>
+                    </li>
                 {% endif %}
                 {% if config.CONTRATOS_ENABLED %}
                 <li>

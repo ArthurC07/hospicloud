@@ -250,7 +250,6 @@ class AdmisionDetailView(DetailView, LoginRequiredMixin):
     context_object_name = 'admision'
     model = Admision
     template_name = 'admision/admision_detail.html'
-    slug_field = 'uuid'
 
 
 class AutorizarView(RedirectView, LoginRequiredMixin):

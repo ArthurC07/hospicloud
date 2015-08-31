@@ -26,4 +26,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         dicoms = Dicom.objects.filter(convertido=False)
-        map((lambda d: d.extraer_imagen()), dicoms)
+        images = [lambda d: d.extraer_imagen() for d in dicoms]

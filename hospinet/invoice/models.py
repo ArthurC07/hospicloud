@@ -32,8 +32,10 @@ from django_extensions.db.models import TimeStampedModel
 
 from django.db.models import F, Sum, Min
 
+from clinique.models import Consulta
 from persona.fields import ColorField
-from persona.models import Persona, persona_consolidation_functions
+from persona.models import Persona, persona_consolidation_functions, \
+    transfer_object_to_persona
 from inventory.models import ItemTemplate, TipoVenta
 from spital.models import Deposito
 from users.models import Ciudad
@@ -147,17 +149,17 @@ class Recibo(TimeStampedModel):
     def impuesto_other(self):
 
         return (self.impuesto() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            Decimal("0.01"))
+            dot01)
 
     def descuento_other(self):
 
         return (self.descuento() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            Decimal("0.01"))
+            dot01)
 
     def subtotal_other(self):
 
         return (self.subtotal() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            Decimal("0.01"))
+            dot01)
 
     def anular(self):
 
@@ -194,9 +196,10 @@ class Recibo(TimeStampedModel):
 
         """Calcula el monto antes de impuestos"""
 
-        return \
-            self.ventas.aggregate(
-                total=Sum('monto', output_field=models.DecimalField()))['total']
+        return self.ventas.aggregate(
+            total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                           Decimal())
+        )['total']
 
     def impuesto(self):
 
@@ -205,7 +208,9 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        return self.ventas.all().aggregate(tax=Sum('tax'))['tax']
+        return self.ventas.all().aggregate(
+            tax=Coalesce(Sum('tax'), Decimal())
+        )['tax']
 
     def descuento(self):
 
@@ -213,7 +218,9 @@ class Recibo(TimeStampedModel):
 
         if self.nulo:
             return Decimal(0)
-        return self.ventas.all().aggregate(discount=Sum('discount'))['discount']
+        return self.ventas.all().aggregate(
+            discount=Coalesce(Sum('discount'), Decimal())
+        )['discount']
 
     def conceptos(self):
 
@@ -271,19 +278,18 @@ class Venta(TimeStampedModel):
 
     cantidad = models.IntegerField()
     descripcion = models.TextField(blank=True, null=True)
-    precio = models.DecimalField(blank=True, null=True, max_digits=7,
+    precio = models.DecimalField(blank=True, null=True, max_digits=11,
                                  decimal_places=2)
-    impuesto = models.DecimalField(blank=True, default=0, max_digits=7,
+    impuesto = models.DecimalField(blank=True, default=0, max_digits=11,
                                    decimal_places=2)
     descuento = models.IntegerField(default=0)
     item = models.ForeignKey(ItemTemplate, related_name='ventas',
                              blank=True, null=True)
     recibo = models.ForeignKey(Recibo, related_name='ventas')
-    placas = models.IntegerField(default=0)
     descontable = models.BooleanField(default=True)
-    discount = models.DecimalField(blank=True, default=0, max_digits=7,
+    discount = models.DecimalField(blank=True, default=0, max_digits=11,
                                    decimal_places=2)
-    tax = models.DecimalField(blank=True, default=0, max_digits=7,
+    tax = models.DecimalField(blank=True, default=0, max_digits=11,
                               decimal_places=2)
     total = models.DecimalField(blank=True, default=0, max_digits=11,
                                 decimal_places=2)
@@ -370,7 +376,7 @@ class Pago(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('invoice-view-id', args=[self.recibo.id])
+        return self.recibo.get_absolute_url()
 
     def save(self, *args, **kwargs):
         if self.tipo == TipoPago.objects.get(
@@ -437,11 +443,8 @@ class TurnoCaja(TimeStampedModel):
     def ingresos(self):
 
         pagos = Pago.objects.filter(recibo__in=self.recibos()).aggregate(
-            total=Sum('monto')
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-
-        if pagos is None:
-            pagos = Decimal()
 
         return pagos
 
@@ -592,6 +595,173 @@ class PagoCuenta(TimeStampedModel):
         return self.cuenta.get_absolute_url()
 
 
+class Notification(TimeStampedModel):
+    recibo = models.ForeignKey(Recibo)
+    completada = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        return reverse('notification', args=[self.id])
+
+    def consulta(self):
+        consulta = Consulta.objects.filter(
+            persona=self.recibo.cliente,
+            created__lte=self.recibo.created).last()
+
+        return consulta
+
+
+@python_2_unicode_compatible
+class Cotizacion(TimeStampedModel):
+    """Permite registrar pagos por productos y servicios"""
+
+    class Meta:
+        permissions = (
+            ('cajero', 'Permite al usuario gestionar caja'),
+        )
+
+    persona = models.ForeignKey(Persona)
+    tipo_de_venta = models.ForeignKey(TipoVenta)
+    usuario = models.ForeignKey(User)
+    ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
+    discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    facturada = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('cotizacion', args=[self.id])
+
+    def __str__(self):
+        """Crea una representación en texto del :class:`Cotizacion`"""
+
+        return self.persona.nombre_completo()
+
+    def total(self):
+        total = self.cotizado_set.aggregate(
+            total=Coalesce(Sum('total'), Decimal())
+        )['total']
+
+        return total
+
+    def facturar(self):
+        recibo = Recibo()
+        recibo.cliente = self.persona
+        recibo.tipo_de_venta = self.tipo_de_venta
+        recibo.cajero = self.usuario
+        recibo.ciudad = self.ciudad
+        recibo.discount = self.discount
+        recibo.save()
+
+        for cotizado in self.cotizado_set.all():
+            venta = Venta()
+            venta.recibo = recibo
+            venta.item = cotizado.item
+            venta.cantidad = cotizado.cantidad
+            venta.descripcion = cotizado.descripcion
+            venta.porcentaje_descuento = cotizado.porcentaje_descuento
+            venta.precio = cotizado.precio
+            venta.impuesto = cotizado.impuesto
+            venta.discount = cotizado.discount
+            venta.tax = cotizado.tax
+            venta.total = cotizado.total
+            venta.monto = cotizado.monto
+            venta.descontable = cotizado.descontable
+            venta.save()
+
+        self.facturada = True
+        self.save()
+
+        return recibo
+
+    def subtotal(self):
+        """Calcula el monto antes de impuestos"""
+
+        return \
+            self.cotizado_set.aggregate(
+                total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                               Decimal())
+            )['total']
+
+    def impuesto(self):
+        """Calcula los impuestos que se deben pagar por este :class:`Cotizacion`
+        """
+
+        return self.cotizado_set.all().aggregate(
+            tax=Coalesce(Sum('tax'), Decimal())
+        )['tax']
+
+    def descuento(self):
+        """Calcula el descuento que se debe restar a este :class:`Cotizacion`"""
+        return self.cotizado_set.all().aggregate(
+            discount=Coalesce(Sum('discount'), Decimal())
+        )['discount']
+
+    def conceptos(self):
+        return ', '.join(
+            v.item.descripcion for v in
+            Cotizado.objects.filter(recibo=self).all())
+
+    def save(self, *args, **kwargs):
+        if self.ciudad is None:
+            self.ciudad = self.usuario.profile.ciudad
+
+        super(Cotizacion, self).save(*args, **kwargs)
+
+
+@python_2_unicode_compatible
+class Cotizado(TimeStampedModel):
+    """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
+    realizar los cobros asociados"""
+    cotizacion = models.ForeignKey(Cotizacion)
+    item = models.ForeignKey(ItemTemplate)
+    cantidad = models.IntegerField()
+    descripcion = models.TextField(blank=True)
+    porcentaje_descuento = models.IntegerField(default=0)
+    precio = models.DecimalField(max_digits=11, decimal_places=2,
+                                 null=True, blank=True)
+    impuesto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    tax = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    total = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    descontable = models.BooleanField(default=True)
+
+    def __str__(self):
+
+        return u"{0} a {1}".format(self.item.descripcion, self.cotizacion.id)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return self.cotizacion.get_absolute_url()
+
+    def save(self, *args, **kwargs):
+
+        if self.precio is None:
+            self.precio = self.item.precio_de_venta
+
+        if not self.cotizacion.tipo_de_venta or not self.descontable:
+            self.discount = Decimal(0)
+
+        disminucion = self.cotizacion.tipo_de_venta.disminucion * self.cantidad
+        self.discount = (self.precio * disminucion).quantize(dot01)
+
+        self.impuesto = self.item.impuestos
+        self.monto = self.precio * self.cantidad
+
+        self.tax = Decimal(
+            (
+                self.precio * self.cantidad - self.discount) *
+            self.impuesto).quantize(
+            dot01)
+
+        self.total = (
+            self.tax + self.precio * self.cantidad - self.discount).quantize(
+            dot01)
+
+        super(Cotizado, self).save(*args, **kwargs)
+
+
 def consolidate_invoice(persona, clone):
     """Transfers all :class:`Recibo` from a duplicate :class:`Persona` to the
     original one"""
@@ -600,8 +770,18 @@ def consolidate_invoice(persona, clone):
 
 def move_invoice(persona, recibo):
     """Transfers a single :class:`Recibo` to a :class:`Persona`"""
-    recibo.paciente = persona
+    recibo.cliente = persona
     recibo.save()
 
 
+def consolidate_cotizacion(persona, clone):
+    """
+    Transfers all :class:`Cotizacion` from a duplicate :class:`Persona` to the
+    original one
+    """
+    [transfer_object_to_persona(cotizacion, persona) for cotizacion in
+     clone.cotizacion_set.all()]
+
+
 persona_consolidation_functions.append(consolidate_invoice)
+persona_consolidation_functions.append(consolidate_cotizacion)

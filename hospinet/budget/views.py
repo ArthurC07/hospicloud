@@ -20,7 +20,7 @@ from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
-    UpdateView, FormView
+    UpdateView, FormView, RedirectView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormMixin
 
@@ -203,6 +203,16 @@ class GastoEjecutarView(UpdateView, LoginRequiredMixin):
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class GastoScheduleView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        gasto = get_object_or_404(Gasto, pk=kwargs['pk'])
+        gasto.schedule()
+
+        return gasto.get_absolute_url()
 
 
 class GastoMixin(TemplateResponseMixin):

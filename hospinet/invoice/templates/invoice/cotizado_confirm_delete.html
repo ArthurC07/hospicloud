@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <section class="col-md-9">
+            <div class="main-content col-md-12">‏
+                <form method="post">{% csrf_token %}
+                    <fieldset>
+                        <legend>Esta Seguro de Borrar la Venta?</legend>
+                        <a class="btn btn-success" href="javascript:back();">No</a>
+                        <input class="btn btn-danger" type="submit" value="S&iacute;">
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+
+                <nav class="well sidebar-nav">
+                    <ul class="nav nav-list">
+
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}

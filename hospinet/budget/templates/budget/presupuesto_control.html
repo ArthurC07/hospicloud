@@ -89,7 +89,7 @@
                                 <th>Cheque</th>
                                 <th>Comprobante</th>
                                 <th>Monto</th>
-                                <th>Acciones</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -110,9 +110,31 @@
                                     </td>
                                     <td class="text-right">{{ gasto.monto }}</td>
                                     <td>
-                                        <a class="btn btn-block btn-danger" href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> Borrar</a>
-                                        <a class="btn btn-block btn-success" href="{% url 'gasto-ejecutar' gasto.id %}"><i class="fa fa-trash-o"></i> Ejecutar</a>
-                                        <a class="btn btn-block btn-success" href="{% url 'gasto-parcial' gasto.id %}"><i class="fa fa-trash-o"></i> Pago Parcial</a>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button"
+                                                    id="dropdownMenu1" data-toggle="dropdown"
+                                                    aria-expanded="true">
+                                                Opciones
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu"
+                                                aria-labelledby="dropdownMenu1">
+                                                <li role="presentation">
+                                                    <a role="menuitem" href="{% url 'gasto-ejecutar' gasto.id %}"><i class="fa fa-play"></i> Ejecutar</a>
+                                                </li>
+                                                <li role="presentation">
+                                                    <a role="menuitem" href="{% url 'gasto-schedule' gasto.id %}"><i class="fa fa-calendar"></i> Programar</a>
+                                                </li>
+                                                <li role="presentation">
+                                                    <a role="menuitem" href="{% url 'gasto-parcial' gasto.id %}"><i class="fa fa-plus-circle"></i> Pago Parcial</a>
+                                                </li>
+                                                <li role="presentation">
+                                                    <a role="menuitem"  href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> Borrar</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+
                                     </td>
                                 </tr>
                             {% empty %}
