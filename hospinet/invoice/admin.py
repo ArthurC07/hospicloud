@@ -18,7 +18,8 @@
 from django.contrib import admin
 
 from invoice.models import (Recibo, Venta, Pago, TipoPago, TurnoCaja,
-                            CierreTurno, StatusPago, CuentaPorCobrar)
+                            CierreTurno, StatusPago, CuentaPorCobrar,
+                            Cotizacion)
 
 
 class ReciboAdmin(admin.ModelAdmin):
@@ -84,6 +85,11 @@ class StatusPagoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'reportable', 'next_status', 'previous_status',)
 
 
+class CotizacionAdmin(admin.ModelAdmin):
+    list_display = ('persona', 'usuario', 'created')
+    ordering = ['persona', 'usuario', 'created']
+    search_fields = ['persona__nombre', 'persona__apellido']
+
 
 admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta, VentaAdmin)
@@ -93,3 +99,4 @@ admin.site.register(TipoPago, TipoPagoAdmin)
 admin.site.register(TurnoCaja, TurnoCajaAdmin)
 admin.site.register(CierreTurno, CierreturnoAdmin)
 admin.site.register(CuentaPorCobrar, CuentaPorCobrarAdmin)
+admin.site.register(Cotizacion, CotizacionAdmin)

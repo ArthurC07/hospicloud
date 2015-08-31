@@ -21,27 +21,31 @@ import subprocess
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from persona.models import Persona
 from inventory.models import ItemTemplate, TipoVenta
 
 
-class TipoExamen(models.Model):
+@python_2_unicode_compatible
+class TipoExamen(TimeStampedModel):
     """Representa los diferentes examenes que se pueden efectuar en
     la institución"""
 
     nombre = models.CharField(max_length=200)
     item = models.ForeignKey(ItemTemplate, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         """Devuelve una representación en texto del objeto"""
 
         return self.nombre
 
 
+@python_2_unicode_compatible
 class Radiologo(TimeStampedModel):
     """Especifica el especialista que efectua el diagnóstico del estudio
     realizado"""
@@ -50,21 +54,22 @@ class Radiologo(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, blank=True, null=True)
     porcentaje = models.IntegerField(default=30)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class Tecnico(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
     item = models.ForeignKey(ItemTemplate, blank=True, null=True)
     porcentaje = models.IntegerField(default=10)
 
-    def __unicode__(self):
-
+    def __str__(self):
         return self.nombre
 
 
-class EstudioProgramado(models.Model):
+@python_2_unicode_compatible
+class EstudioProgramado(TimeStampedModel):
     """Permite que se planifique un :class:`Examen` antes de
     efectuarlo"""
 
@@ -75,7 +80,7 @@ class EstudioProgramado(models.Model):
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
                                        related_name="estudios_progamados")
     radiologo = models.ForeignKey(Radiologo, related_name='estudios')
-    fecha = models.DateField(default=date.today)
+    fecha = models.DateTimeField(default=timezone.now)
     remitio = models.CharField(max_length=200)
     efectuado = models.NullBooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='estudios')
@@ -103,14 +108,14 @@ class EstudioProgramado(models.Model):
         self.save()
         return examen
 
-    def __unicode__(self):
+    def __str__(self):
         """Devuelve una representación en texto del objeto"""
 
         return u"{0} de {1}, {2}".format(self.tipo_de_examen, self.persona,
                                          self.fecha)
 
 
-class Examen(models.Model):
+class Examen(TimeStampedModel):
     """Permite almacenar los datos de un estudio médico realizado a una
     :class:`Persona`"""
 
@@ -124,12 +129,11 @@ class Examen(models.Model):
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
                                        related_name="examenes")
     radiologo = models.ForeignKey(Radiologo, related_name='examenes')
-    fecha = models.DateTimeField(default=datetime.now)
-    uuid = UUIDField(version=4)
+    fecha = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='estudios_realizados')
     remitio = models.CharField(max_length=200, null=True)
-    facturado = models.NullBooleanField(default=False)
+    facturado = models.BooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='examenes')
     tecnico = models.ForeignKey(Tecnico, blank=True, null=True,
                                 related_name='examenes')
@@ -137,7 +141,7 @@ class Examen(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.uuid])
+        return reverse('examen-view-id', args=[self.id])
 
     def facturar(self):
         items = defaultdict(int)
@@ -150,7 +154,7 @@ class Examen(models.Model):
         return items
 
 
-class Imagen(models.Model):
+class Imagen(TimeStampedModel):
     """Permite adjuntar imagenes de un estudio a un :class:`Persona`"""
 
     examen = models.ForeignKey(Examen, on_delete=models.CASCADE,
@@ -161,7 +165,7 @@ class Imagen(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.examen.uuid])
+        return self.examen.get_absolute_url()
 
 
 class Adjunto(models.Model):
@@ -175,10 +179,10 @@ class Adjunto(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.examen.uuid])
+        return self.examen.get_absolute_url()
 
 
-class Dicom(models.Model):
+class Dicom(TimeStampedModel):
     """Permite agregar archivos DICOM a un :class:`Examen`, incluye funciones
     de utilidad para extraer :class:`Imagen` a partir de los datos incrustados
     dentro del archivo
@@ -190,8 +194,7 @@ class Dicom(models.Model):
     descripcion = models.CharField(max_length=255, blank=True)
     convertido = models.BooleanField(default=False)
     imagen = models.ImageField(upload_to='examen/dicom/imagen/%Y/%m/%d',
-                        blank=True)
-    uuid = UUIDField(version=4)
+                               blank=True)
 
     def extraer_imagen(self):
         """Permite extraer una :class:`Imagen` que se encuentra incrustada en
@@ -199,7 +202,6 @@ class Dicom(models.Model):
         """
 
         absolute = os.path.abspath(self.archivo.file.name)
-        archivo = os.path.splitext(os.path.basename(self.archivo.name))[0]
         self.convertido = True
         subprocess.call(
             ['dcmj2pnm', '--write-png', absolute, absolute + '.png'])
@@ -210,7 +212,7 @@ class Dicom(models.Model):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.examen.uuid])
+        return self.examen.get_absolute_url()
 
 
 class Estudio(TimeStampedModel):
@@ -221,4 +223,4 @@ class Estudio(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('examen-view-id', args=[self.examen.uuid])
+        return self.examen.get_absolute_url()

@@ -16,12 +16,13 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from crispy_forms.layout import Submit, Fieldset
+from crispy_forms.layout import Fieldset
 from select2.fields import ModelChoiceField
 
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
     Estudio, TipoExamen
-from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin
+from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
+    DateTimeWidget
 from persona.models import Persona
 
 
@@ -32,11 +33,7 @@ class ExamenForm(FieldSetModelFormMixin):
         model = Examen
         exclude = ('efectuado', 'usuario',)
 
-    fecha = forms.DateTimeField(widget=forms.DateTimeInput(
-        attrs={'class': 'datetimepicker'},
-        format='%d/%m/%Y %H:%M'),
-                                input_formats=('%d/%m/%Y %H:%M',),
-                                required=False)
+    fecha = forms.DateTimeField(widget=DateTimeWidget)
 
     persona = forms.ModelChoiceField(label="",
                                      queryset=Persona.objects.all(),

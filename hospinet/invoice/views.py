@@ -59,7 +59,8 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            CierreTurnoForm, TurnoCajaCierreForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
                            TipoPagoPeriodoForm, PeriodoCiudadForm,
-                           CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm)
+                           CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm,
+                           CotizadoForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -295,6 +296,7 @@ class ReciboPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
 
         initial = super(ReciboPersonaCreateView, self).get_initial()
         initial = initial.copy()
+        initial['cliente'] = self.persona
         initial['cajero'] = self.request.user.id
         return initial
 
@@ -1666,7 +1668,12 @@ class CotizacionFormMixin(CotizacionMixin, FormMixin):
 
 class CotizadoCreateView(CotizacionFormMixin, CreateView, LoginRequiredMixin):
     model = Cotizado
+    form_class = CotizadoForm
 
 
 class CotizadoDelete(DeleteView, LoginRequiredMixin):
+    model = Cotizado
+
+
+class CotizadoDeleteView(DeleteView, LoginRequiredMixin):
     model = Cotizado
