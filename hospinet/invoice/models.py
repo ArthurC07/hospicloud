@@ -25,9 +25,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
-
 from django.utils import timezone
-
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
@@ -151,17 +149,17 @@ class Recibo(TimeStampedModel):
     def impuesto_other(self):
 
         return (self.impuesto() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            Decimal("0.01"))
+            dot01)
 
     def descuento_other(self):
 
         return (self.descuento() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            Decimal("0.01"))
+            dot01)
 
     def subtotal_other(self):
 
         return (self.subtotal() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            Decimal("0.01"))
+            dot01)
 
     def anular(self):
 
@@ -198,9 +196,10 @@ class Recibo(TimeStampedModel):
 
         """Calcula el monto antes de impuestos"""
 
-        return \
-            self.ventas.aggregate(
-                total=Sum('monto', output_field=models.DecimalField()))['total']
+        return self.ventas.aggregate(
+            total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                           Decimal())
+        )['total']
 
     def impuesto(self):
 
@@ -209,7 +208,9 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
 
-        return self.ventas.all().aggregate(tax=Sum('tax'))['tax']
+        return self.ventas.all().aggregate(
+            tax=Coalesce(Sum('tax'), Decimal())
+        )['tax']
 
     def descuento(self):
 
@@ -217,7 +218,9 @@ class Recibo(TimeStampedModel):
 
         if self.nulo:
             return Decimal(0)
-        return self.ventas.all().aggregate(discount=Sum('discount'))['discount']
+        return self.ventas.all().aggregate(
+            discount=Coalesce(Sum('discount'), Decimal())
+        )['discount']
 
     def conceptos(self):
 
@@ -373,7 +376,7 @@ class Pago(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('invoice-view-id', args=[self.recibo.id])
+        return self.recibo.get_absolute_url()
 
     def save(self, *args, **kwargs):
         if self.tipo == TipoPago.objects.get(
@@ -440,11 +443,8 @@ class TurnoCaja(TimeStampedModel):
     def ingresos(self):
 
         pagos = Pago.objects.filter(recibo__in=self.recibos()).aggregate(
-            total=Sum('monto')
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-
-        if pagos is None:
-            pagos = Decimal()
 
         return pagos
 
@@ -643,22 +643,58 @@ class Cotizacion(TimeStampedModel):
 
         return total
 
+    def facturar(self):
+        recibo = Recibo()
+        recibo.cliente = self.persona
+        recibo.tipo_de_venta = self.tipo_de_venta
+        recibo.cajero = self.usuario
+        recibo.ciudad = self.ciudad
+        recibo.discount = self.discount
+        recibo.save()
+
+        for cotizado in self.cotizado_set.all():
+            venta = Venta()
+            venta.recibo = recibo
+            venta.item = cotizado.item
+            venta.cantidad = cotizado.cantidad
+            venta.descripcion = cotizado.descripcion
+            venta.porcentaje_descuento = cotizado.porcentaje_descuento
+            venta.precio = cotizado.precio
+            venta.impuesto = cotizado.impuesto
+            venta.discount = cotizado.discount
+            venta.tax = cotizado.tax
+            venta.total = cotizado.total
+            venta.monto = cotizado.monto
+            venta.descontable = cotizado.descontable
+            venta.save()
+
+        self.facturada = True
+        self.save()
+
+        return recibo
+
     def subtotal(self):
         """Calcula el monto antes de impuestos"""
 
         return \
-            self.ventas.aggregate(
-                total=Sum('monto', output_field=models.DecimalField()))['total']
+            self.cotizado_set.aggregate(
+                total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                               Decimal())
+            )['total']
 
     def impuesto(self):
         """Calcula los impuestos que se deben pagar por este :class:`Cotizacion`
         """
 
-        return self.ventas.all().aggregate(tax=Sum('tax'))['tax']
+        return self.cotizado_set.all().aggregate(
+            tax=Coalesce(Sum('tax'), Decimal())
+        )['tax']
 
     def descuento(self):
         """Calcula el descuento que se debe restar a este :class:`Cotizacion`"""
-        return self.ventas.all().aggregate(discount=Sum('discount'))['discount']
+        return self.cotizado_set.all().aggregate(
+            discount=Coalesce(Sum('discount'), Decimal())
+        )['discount']
 
     def conceptos(self):
         return ', '.join(
@@ -681,7 +717,8 @@ class Cotizado(TimeStampedModel):
     cantidad = models.IntegerField()
     descripcion = models.TextField(blank=True)
     porcentaje_descuento = models.IntegerField(default=0)
-    precio = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    precio = models.DecimalField(max_digits=11, decimal_places=2,
+                                 null=True, blank=True)
     impuesto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     tax = models.DecimalField(max_digits=11, decimal_places=2, default=0)
@@ -706,7 +743,7 @@ class Cotizado(TimeStampedModel):
         if not self.cotizacion.tipo_de_venta or not self.descontable:
             self.discount = Decimal(0)
 
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
+        disminucion = self.cotizacion.tipo_de_venta.disminucion * self.cantidad
         self.discount = (self.precio * disminucion).quantize(dot01)
 
         self.impuesto = self.item.impuestos

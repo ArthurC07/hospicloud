@@ -1676,9 +1676,23 @@ class CotizadoCreateView(CotizacionFormMixin, CreateView, LoginRequiredMixin):
     form_class = CotizadoForm
 
 
-class CotizadoDelete(DeleteView, LoginRequiredMixin):
-    model = Cotizado
-
-
 class CotizadoDeleteView(DeleteView, LoginRequiredMixin):
     model = Cotizado
+
+    def get_object(self, queryset=None):
+        obj = super(CotizadoDeleteView, self).get_object(queryset)
+        self.recibo = obj.cotizacion
+        return obj
+
+    def get_success_url(self):
+        return self.recibo.get_absolute_url()
+
+
+class CotizacionFacturar(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        cotizacion = get_object_or_404(Cotizacion, pk=kwargs['pk'])
+        recibo = cotizacion.facturar()
+        messages.info(self.request, u'¡Se ha facturado la cotización!')
+        return recibo.get_absolute_url()

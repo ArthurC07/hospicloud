@@ -35,7 +35,7 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            PagoPeriodoView, ReciboPrintView, PagoUpdateView,
                            StatusPagoListView, TurnoCajaUpdateView,
                            TipoPagoPeriodoView, EstadisticasPeriodoView,
-                           PagoListView, CotizadoDelete, CiudadPeriodoListView,
+                           PagoListView, CiudadPeriodoListView,
                            AseguradoraMasterFacturarView, PagoAseguradoraList,
                            CuentaPorCobrarDetailView, PagoSiguienteStatusView,
                            CuentaPorCobrarListView, CuentaPorCobrarCreateView,
@@ -43,7 +43,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            CuentaPorCobrarAnteriorStatusRedirectView,
                            NotificationDetailView, CotizacionDetailView,
                            CotizacionCreateView, CotizadoCreateView,
-                           EstadisticasView)
+                           EstadisticasView, CotizacionFacturar,
+                           CotizadoDeleteView)
 
 urlpatterns = patterns('',
 
@@ -286,6 +287,10 @@ urlpatterns = patterns('',
                            name='cotizacion-add'),
 
                        url(r'^cotizado/(?P<pk>\d+)/delete$',
-                           CotizadoDelete.as_view(),
+                           CotizadoDeleteView.as_view(),
                            name='cotizado-delete'),
+
+                       url(r'^cotizacion/(?P<pk>\d+)/facturar$',
+                           CotizacionFacturar.as_view(),
+                           name='cotizacion-facturar'),
                        )
