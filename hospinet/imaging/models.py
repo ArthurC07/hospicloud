@@ -23,6 +23,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
 
@@ -30,6 +31,7 @@ from persona.models import Persona
 from inventory.models import ItemTemplate, TipoVenta
 
 
+@python_2_unicode_compatible
 class TipoExamen(TimeStampedModel):
     """Representa los diferentes examenes que se pueden efectuar en
     la institución"""
@@ -37,12 +39,13 @@ class TipoExamen(TimeStampedModel):
     nombre = models.CharField(max_length=200)
     item = models.ForeignKey(ItemTemplate, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         """Devuelve una representación en texto del objeto"""
 
         return self.nombre
 
 
+@python_2_unicode_compatible
 class Radiologo(TimeStampedModel):
     """Especifica el especialista que efectua el diagnóstico del estudio
     realizado"""
@@ -51,19 +54,21 @@ class Radiologo(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, blank=True, null=True)
     porcentaje = models.IntegerField(default=30)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class Tecnico(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
     item = models.ForeignKey(ItemTemplate, blank=True, null=True)
     porcentaje = models.IntegerField(default=10)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class EstudioProgramado(TimeStampedModel):
     """Permite que se planifique un :class:`Examen` antes de
     efectuarlo"""
@@ -103,7 +108,7 @@ class EstudioProgramado(TimeStampedModel):
         self.save()
         return examen
 
-    def __unicode__(self):
+    def __str__(self):
         """Devuelve una representación en texto del objeto"""
 
         return u"{0} de {1}, {2}".format(self.tipo_de_examen, self.persona,
@@ -197,7 +202,6 @@ class Dicom(TimeStampedModel):
         """
 
         absolute = os.path.abspath(self.archivo.file.name)
-        archivo = os.path.splitext(os.path.basename(self.archivo.name))[0]
         self.convertido = True
         subprocess.call(
             ['dcmj2pnm', '--write-png', absolute, absolute + '.png'])
