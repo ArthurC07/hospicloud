@@ -59,5 +59,6 @@ hospinet/static
 hospinet/whoosh_index
 hospinet/media
 hospinet/.idea
+hospinet/hospinet/.env
 *.db
 *.db
