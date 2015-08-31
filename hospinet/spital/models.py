@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2015 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,11 @@ from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django_extensions.db.fields import UUIDField
+from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
-from persona.models import Persona, transfer_object_to_persona, \
-    persona_consolidation_functions
+from persona.models import Persona, persona_consolidation_functions
 from emergency.models import Emergencia
 from inventory.models import ItemTemplate, TipoVenta
 
@@ -48,7 +48,7 @@ class CargoAdapter(object):
     def __str__(self):
         return '{0} {1}'.format(self.precio_unitario, self.valor)
 
-
+@python_2_unicode_compatible
 class Habitacion(models.Model):
     """Permite llevar control acerca de las :class:`Habitacion`es que se
     encuentran en el hospital para asignar adecuadamente las mismas a cada
@@ -72,7 +72,7 @@ class Habitacion(models.Model):
     item = models.ForeignKey(ItemTemplate, related_name='habitaciones',
                              blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0} {1}'.format(self.get_tipo_display(), self.numero)
 
     def get_absolute_url(self):
@@ -164,7 +164,6 @@ class Admision(models.Model):
                                       blank=True)
     fecha_alta = models.DateTimeField(default=timezone.now, null=True,
                                       blank=True)
-    uuid = UUIDField(version=4)
     estado = models.CharField(max_length=1, blank=True, choices=ESTADOS)
     tiempo = models.IntegerField(default=0, blank=True)
     neonato = models.NullBooleanField(blank=True, null=True)
@@ -245,7 +244,9 @@ class Admision(models.Model):
         if self.hospitalizacion is None:
             dias = (timezone.now() - self.momento).days
             fraccion_dias = (
-                                timezone.now() - self.momento).total_seconds() / 3600 / 24
+                                timezone.now() - self.momento).total_seconds(
+
+            ) / 3600 / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
@@ -253,7 +254,8 @@ class Admision(models.Model):
         if self.fecha_alta > self.hospitalizacion:
             dias = (self.fecha_alta - self.hospitalizacion).days
             fraccion_dias = (
-                                self.fecha_alta - self.hospitalizacion).seconds / 3600 / 24
+                                self.fecha_alta -
+                                self.hospitalizacion).seconds / 3600 / 24
             if dias < 0:
                 dias = 0
             return Decimal(dias + fraccion_dias)
@@ -396,7 +398,7 @@ class Admision(models.Model):
     def __unicode__(self):
 
         return u"{0} en {1}".format(self.paciente.nombre_completo(),
-            self.habitacion)
+                                    self.habitacion)
 
     def tiempo_ahora(self):
 
@@ -477,10 +479,11 @@ class Doctor(TimeStampedModel):
     nombre = models.CharField(max_length=50)
 
 
+@python_2_unicode_compatible
 class Laboratorio(TimeStampedModel):
     nombre = models.CharField(max_length=50)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
@@ -494,7 +497,7 @@ class Deposito(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('admision-view-id', args=[self.admision.id])
+        return self.admision.get_absolute_url()
 
 
 def consolidate_spital(persona, clone):

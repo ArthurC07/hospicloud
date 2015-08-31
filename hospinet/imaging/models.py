@@ -22,6 +22,7 @@ import subprocess
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from django_extensions.db.models import TimeStampedModel
 
@@ -29,7 +30,7 @@ from persona.models import Persona
 from inventory.models import ItemTemplate, TipoVenta
 
 
-class TipoExamen(models.Model):
+class TipoExamen(TimeStampedModel):
     """Representa los diferentes examenes que se pueden efectuar en
     la institución"""
 
@@ -63,7 +64,7 @@ class Tecnico(TimeStampedModel):
         return self.nombre
 
 
-class EstudioProgramado(models.Model):
+class EstudioProgramado(TimeStampedModel):
     """Permite que se planifique un :class:`Examen` antes de
     efectuarlo"""
 
@@ -74,7 +75,7 @@ class EstudioProgramado(models.Model):
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
                                        related_name="estudios_progamados")
     radiologo = models.ForeignKey(Radiologo, related_name='estudios')
-    fecha = models.DateField(default=date.today)
+    fecha = models.DateTimeField(default=timezone.now)
     remitio = models.CharField(max_length=200)
     efectuado = models.NullBooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='estudios')
@@ -109,7 +110,7 @@ class EstudioProgramado(models.Model):
                                          self.fecha)
 
 
-class Examen(models.Model):
+class Examen(TimeStampedModel):
     """Permite almacenar los datos de un estudio médico realizado a una
     :class:`Persona`"""
 
@@ -123,11 +124,11 @@ class Examen(models.Model):
     tipo_de_examen = models.ForeignKey(TipoExamen, on_delete=models.CASCADE,
                                        related_name="examenes")
     radiologo = models.ForeignKey(Radiologo, related_name='examenes')
-    fecha = models.DateTimeField(default=datetime.now)
+    fecha = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='estudios_realizados')
     remitio = models.CharField(max_length=200, null=True)
-    facturado = models.NullBooleanField(default=False)
+    facturado = models.BooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='examenes')
     tecnico = models.ForeignKey(Tecnico, blank=True, null=True,
                                 related_name='examenes')
@@ -148,7 +149,7 @@ class Examen(models.Model):
         return items
 
 
-class Imagen(models.Model):
+class Imagen(TimeStampedModel):
     """Permite adjuntar imagenes de un estudio a un :class:`Persona`"""
 
     examen = models.ForeignKey(Examen, on_delete=models.CASCADE,
@@ -176,7 +177,7 @@ class Adjunto(models.Model):
         return self.examen.get_absolute_url()
 
 
-class Dicom(models.Model):
+class Dicom(TimeStampedModel):
     """Permite agregar archivos DICOM a un :class:`Examen`, incluye funciones
     de utilidad para extraer :class:`Imagen` a partir de los datos incrustados
     dentro del archivo
