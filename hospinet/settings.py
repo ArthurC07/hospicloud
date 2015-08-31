@@ -17,6 +17,7 @@
 
 # Django settings for hospinet project.
 import os
+
 import environ
 
 from project_settings import *
@@ -35,7 +36,6 @@ DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
@@ -193,7 +193,6 @@ CACHES = {
 ANONYMOUS_USER_ID = -1
 USE_THOUSAND_SEPARATOR = True
 
-
 EMAIL_HOST = env.str('MAIL_SERVER', default='localhost')
 EMAIL_PORT = env.int('MAIL_SERVER_PORT', default=587)
 EMAIL_HOST_USER = env.str('MAIL_SERVER_USER', default='me@mail.com')
@@ -217,3 +216,11 @@ LOGGING = {
         },
     },
 }
+
+# Django Storage Configuration
+
+DEFAULT_FILE_STORAGE = env.str('DEFAULT_FILE_STORAGE',
+                               default='django.core.files.storage.FileSystemStorage')
+AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='')
+AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME ', default='')

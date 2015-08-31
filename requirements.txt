@@ -18,3 +18,5 @@ python-dateutil
 django-environ
 dj-static
 unicodecsv
+django-storages
+boto
