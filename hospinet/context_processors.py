@@ -15,10 +15,35 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from constance import config
+import environ
+env = environ.Env(DEBUG=(bool, False), )
+environ.Env.read_env()
+
+
+class ModuleConfig(object):
+    def __init__(self):
+        self.caja = env.bool('INVOICE_ENABLED', default=True)
+        self.consulta = env.bool('CONSULTA_ENABLED', default=True)
+        self.contratos = env.bool('CONTRATOS_ENABLED', default=True)
+        self.emergencia = env.bool('EMERGENCIA_ENABLED', default=True)
+        self.hospitalizacion = env.bool('HOSPITALIZACION_ENABLED', default=True)
+        self.imagenes = env.bool('IMAGENES_ENABLED', default=True)
+        self.laboratorio = env.bool('LAB_ENABLED', default=True)
+        self.inventario = env.bool('INVENTARIO_ENABLED', default=True)
+        self.presupuesto = env.bool('BUDGET_ENABLED', default=True)
+        self.rrhh = env.bool('RRHH_ENABLED', default=True)
 
 
 def chat(request):
-    return {'online_help': config.ONLINE_HELP, 'chat': config.CHAT,
-            'bug_report': 'https://gitreports.com/issue/SpectralAngel'
-                          '/hospicloud',
-            'config': config}
+    return {
+        'online_help': config.ONLINE_HELP,
+        'chat': config.CHAT,
+        'bug_report': 'https://gitreports.com/issue/SpectralAngel/hospicloud',
+    }
+
+
+def configuration(request):
+    return {
+        'modules': ModuleConfig(),
+        'config': config
+    }

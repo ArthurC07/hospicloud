@@ -117,7 +117,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'hospinet.context_processors.chat'
+                'hospinet.context_processors.chat',
+                'hospinet.context_processors.configuration'
             ],
         },
     },
