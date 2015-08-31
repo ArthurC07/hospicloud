@@ -194,10 +194,26 @@ ANONYMOUS_USER_ID = -1
 USE_THOUSAND_SEPARATOR = True
 
 
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'me@gmail.com'
-# EMAIL_HOST_PASSWORD = 'password'
+EMAIL_HOST = env.str('MAIL_SERVER', default='localhost')
+EMAIL_PORT = env.int('MAIL_SERVER_PORT', default=587)
+EMAIL_HOST_USER = env.str('MAIL_SERVER_USER', default='me@mail.com')
+EMAIL_HOST_PASSWORD = env.str('MAIL_SERVER_PASSWORD', default='password')
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 WSGI_APPLICATION = 'hospinet.wsgi.application'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
