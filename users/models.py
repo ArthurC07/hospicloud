@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2015 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 
@@ -31,6 +32,20 @@ from inventory.models import Inventario, ItemTemplate
 from persona.models import Persona
 
 
+@python_2_unicode_compatible
+class Company(TimeStampedModel):
+    nombre = models.CharField(max_length=255)
+    rtn = models.CharField(max_length=14)
+    cai = models.CharField(max_length=255)
+    direccion = models.TextField()
+    telefono = models.CharField(max_length=20)
+
+    def __str__(self):
+
+        return self.nombre
+
+
+@python_2_unicode_compatible
 class Ciudad(TimeStampedModel):
     nombre = models.CharField(max_length=100)
     correlativo_de_recibo = models.IntegerField(default=0)
@@ -41,11 +56,13 @@ class Ciudad(TimeStampedModel):
     inicio_rango = models.CharField(max_length=100, blank=True)
     fin_rango = models.CharField(max_length=100, blank=True)
     tiene_presupuesto_global = models.BooleanField(default=False)
+    company = models.ForeignKey(Company, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class UserProfile(UserenaBaseProfile):
     user = models.OneToOneField(User, related_name="profile",
                                 blank=True, null=True)
@@ -61,7 +78,7 @@ class UserProfile(UserenaBaseProfile):
                             blank=True,
                             null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
 
     def get_metas(self):
