@@ -19,8 +19,85 @@
       <td>{{ persona.obtener_edad }}</td>
       <td>{{ persona.get_sexo_display }}</td>
       <td>
-          <a class="btn btn-success" href="{% url 'persona-view-id' persona.id %}">Ver</a>
-          <a class="btn btn-danger" href="{% url 'persona-duplicate' persona.id %}">Reportar Duplicado</a>
+          <div class="btn-group">
+              <a class="btn btn-success" href="{% url 'persona-view-id' persona.id %}">Ver</a>
+              <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="caret"></span>
+                  <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu">
+                  {% if modules.consulta %}
+                      <li>
+                          <a href="{% url 'consultorio-espera-u-agregar' persona.id %}">Agregar Paciente a Sala de Espera</a>
+                      </li>
+                      <li>
+                          {% for consultorio in user.consultorios.all %}
+                              <a href="{% url 'consultorio-consulta-agregar' persona.id consultorio.id %}">Agregar Consulta de {{ consultorio }}</a>
+                          {% endfor %}
+                      </li>
+                      <li>
+                          <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">Crear
+                              una Cita</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'consultorio-remision-agregar' persona.id %}">
+                              Remitir Paciente
+                          </a>
+                      </li>
+                  {% endif %}
+                  {% if modules.imagenes %}
+                      <li role="separator" class="divider"></li>
+                      <li>
+                          <a href="{% url 'examen-agregar' persona.id %}">Programar
+                              Estudio</a>
+                      </li>
+                  {% endif %}
+                  {% if modules.emergencia %}
+                      <li role="separator" class="divider"></li>
+                      <li>
+                          <a href="{% url 'emergency-create' persona.id %}">Ingresar a
+                              Emergencias</a>
+                      </li>
+                  {% endif %}
+                  {% if modules.hospitalizacion %}
+                      <li role="separator" class="divider"></li>
+                      <li>
+                          <a href="{% url 'admision-persona-agregar' persona.id %}">Hospitalizar</a>
+                      </li>
+                  {% endif %}
+                  {% if modules.caja %}
+                      <li role="separator" class="divider"></li>
+                      <li>
+                          <a href="{% url 'invoice-create' persona.id %}">Crear un Recibo</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'cotizacion-add' persona.id %}">Crear una Cotizacion</a>
+                      </li>
+                  {% endif %}
+                  {% if modules.contrato %}
+                      <li role="separator" class="divider"></li>
+                      <li>
+                          <a href="{% url 'contrato-persona-add' persona.id %}">Crear
+                              un
+                              Contrato</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'persona-beneficiario-add' persona.id %}">Convertir
+                              en Beneficiario</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'persona-empleo-add' persona.id %}">Agregar
+                              Empresa</a>
+                      </li>
+                      <li>
+                          <a href="{% url 'contrato-persona-master-add' persona.id %}">Crear
+                              Contrato desde Maestro</a>
+                      </li>
+                  {% endif %}
+                  <li role="separator" class="divider"></li>
+                  <li><a href="{% url 'persona-duplicate' persona.id %}">Reportar Duplicado</a></li>
+              </ul>
+          </div>
       </td>
     </tr>
     {% endfor %}
