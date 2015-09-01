@@ -409,11 +409,7 @@ class ItemTemplateSearchView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         form = ItemTemplateSearchForm(self.request.GET)
-
-        # if not form.is_valid():
-        #    redirect('admision-estadisticas')
         form.is_valid()
-        print(form.errors)
 
         query = form.cleaned_data['query']
 
