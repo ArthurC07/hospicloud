@@ -35,8 +35,6 @@ DEBUG = env('DEBUG')
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = env('SECRET_KEY')
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
