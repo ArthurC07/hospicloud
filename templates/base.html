@@ -25,6 +25,14 @@
 <body>
 {% include 'snippets/navbar.html' %}
 {% block heading %}{% endblock %}
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-ui-timepicker.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.pnotify.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/common.js' %}"></script>
+{% block scripts %}{% endblock scripts %}
 <div id="content" class="container">
     {% if messages %}
         <div id="system-message" class="row">
@@ -41,13 +49,5 @@
     {% block content %}{% endblock %}
 </div>
 {% include 'snippets/footer.html' %}
-<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery-ui-timepicker.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery.pnotify.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/common.js' %}"></script>
-{% block scripts %}{% endblock scripts %}
 </body>
 </html>
