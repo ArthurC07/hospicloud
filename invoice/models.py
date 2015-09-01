@@ -259,10 +259,13 @@ class Recibo(TimeStampedModel):
                 ciudad = Ciudad.objects.get(pk=ciudad.pk)
                 self.correlativo = ciudad.correlativo_de_recibo
 
-            turnos = TurnoCaja.objects.filter(usuario=self.cajero,
-                                              inicio__lte=self.created).count()
+            turnos = TurnoCaja.objects.filter(
+                usuario=self.cajero,
+                inicio__lte=timezone.now()
+            ).count()
+
             if turnos == 0:
-                turno = TurnoCaja(usuario=self.cajero, inicio=self.created)
+                turno = TurnoCaja(usuario=self.cajero, inicio=timezone.now())
                 turno.save()
 
         if self.ciudad is None and self.pk is not None:

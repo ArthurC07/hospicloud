@@ -32,11 +32,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView, View)
-
 from django.forms.models import inlineformset_factory
-
 from django.contrib.auth.decorators import permission_required
-
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 
 from django.views.generic.edit import FormMixin
