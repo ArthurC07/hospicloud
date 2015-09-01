@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView,
@@ -198,8 +199,18 @@ class EmpleoCreateView(PersonaFormMixin, CreateView):
 
 
 class PersonaDuplicateView(UpdateView, LoginRequiredMixin):
-    model = Persona
-    form_class = PersonaDuplicateForm
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        persona = get_object_or_404(Persona, pk=kwargs['pk'])
+        persona.duplicado = True
+        persona.save()
+        messages.info(self.request, u'¡Se marcado como duplicada!')
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return persona.get_absolute_url()
 
 
 class AntecedenteObstetricoCreateView(PersonaFormMixin, CreateView,
