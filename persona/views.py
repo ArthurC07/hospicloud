@@ -18,7 +18,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView,
-                                  ListView)
+                                  ListView, RedirectView)
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import FormMixin
 from django.shortcuts import get_object_or_404
@@ -198,7 +198,7 @@ class EmpleoCreateView(PersonaFormMixin, CreateView):
     form_class = EmpleoForm
 
 
-class PersonaDuplicateView(UpdateView, LoginRequiredMixin):
+class PersonaDuplicateView(RedirectView, LoginRequiredMixin):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
