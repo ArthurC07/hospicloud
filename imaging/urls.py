@@ -26,7 +26,8 @@ from imaging.views import (ExamenDetailView, ExamenCreateView,
                            EstudioProgramadoEfectuarView,
                            NotificarExamenView, EstudioPreCreateView,
                            PersonaEstudioCreateView,
-                           EstudioProgramadoDetailView, EstudioCreateView)
+                           EstudioProgramadoDetailView, EstudioCreateView,
+                           ExamenEfectuarView, ExamenCancelarView)
 
 urlpatterns = patterns('',
 
@@ -34,23 +35,31 @@ urlpatterns = patterns('',
                            ExamenIndexView.as_view(),
                            name='examen-index'),
 
+                       url(r'^(?P<persona>\d+)/agregar$',
+                           ExamenCreateView.as_view(),
+                           name='examen-agregar'),
+
+                       url(r'^(?P<pk>\d+)$',
+                           ExamenDetailView.as_view(),
+                           name='examen-view-id'),
+
+                       url(r'^(?P<pk>\d+)/editar$',
+                           ExamenUpdateView.as_view(),
+                           name='examen-edit'),
+
+                       url(r'^(?P<pk>\d+)/efectuar$',
+                           ExamenEfectuarView.as_view(),
+                           name='examen-efectuar'),
+
+                       url(r'^(?P<pk>\d+)/cancelar',
+                           ExamenCancelarView.as_view(),
+                           name='examen-cancelar'),
+
                        url(r'^(?P<pk>\d+)/notificar$',
                            NotificarExamenView.as_view(),
                            name='examen-notificar'),
 
-                       url(r'^persona/(?P<persona>\d+)$',
-                           EstudioProgramadoCreateView.as_view(),
-                           name='examen-programar'),
-
-                       url(r'^estudio/(?P<pk>\d+)$',
-                           EstudioProgramadoDetailView.as_view(),
-                           name='estudio-detail-view'),
-
-                       url(r'^estudio/(?P<pk>\d+)/efectuar$',
-                           EstudioProgramadoEfectuarView.as_view(),
-                           name='examen-efectuar'),
-
-                       url(r'^examenes$',
+                       url(r'^list$',
                            ExamenIndexView.as_view(),
                            name='examen-list'),
 
@@ -62,25 +71,9 @@ urlpatterns = patterns('',
                            PersonaEstudioCreateView.as_view(),
                            name='examen-persona-nuevo'),
 
-                       url(r'^(?P<pk>\d+)$',
-                           ExamenDetailView.as_view(),
-                           name='examen-view-id'),
-
-                       url(r'^(?P<pk>\d+)/editar$',
-                           ExamenUpdateView.as_view(),
-                           name='examen-edit'),
-
                        url(r'^persona/(?P<pk>\d+)/lista$',
                            ExamenPersonaListView.as_view(),
                            name='examen-persona-lista'),
-
-                       url(r'^(?P<persona>\d+)/agregar$',
-                           ExamenCreateView.as_view(),
-                           name='examen-agregar'),
-
-                       url(r'^(?P<pk>\d+)/editar$',
-                           ExamenUpdateView.as_view(),
-                           name='examen-editar'),
 
                        url(r'^(?P<examen>\d+)/imagen/adjuntar$',
                            ImagenCreateView.as_view(),

@@ -18,11 +18,11 @@ from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
 from guardian.decorators import permission_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
                                   TemplateView, RedirectView, FormView, View)
+
 from django.contrib import messages
 
 from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
@@ -31,8 +31,8 @@ from imaging.models import (Examen, Imagen, Adjunto, Dicom, EstudioProgramado,
                             Estudio)
 from persona.forms import PersonaForm, PersonaSearchForm
 from persona.models import Persona
-from persona.views import PersonaCreateView
-from users.mixins import LoginRequiredMixin
+from persona.views import PersonaCreateView, PersonaFormMixin
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
 class ExamenPermissionMixin(LoginRequiredMixin):
@@ -50,14 +50,13 @@ class ExamenIndexView(ListView, ExamenPermissionMixin):
     paginate_by = 20
 
     def get_queryset(self):
-        return Examen.objects.all().order_by('-fecha')
+        return Examen.objects.filter(efectuado=True).order_by('-fecha')
 
     def get_context_data(self, **kwargs):
         """Agrega los ultimos :class:`Examen`es efectuados a la vista"""
 
         context = super(ExamenIndexView, self).get_context_data(**kwargs)
-        context['estudios_programados'] = EstudioProgramado.objects.filter(
-            efectuado=False)
+        context['estudios_programados'] = Examen.objects.filter(pendiente=True)
         return context
 
 
@@ -108,25 +107,32 @@ class ExamenUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'examen/examen_update.html'
 
 
-class ExamenCreateView(CreateView, LoginRequiredMixin):
+class ExamenCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
+                       LoginRequiredMixin):
     """Permite crear un :class:`Examen` a una :class:`Persona`"""
 
     model = Examen
     form_class = ExamenForm
-    template_name = 'examen/examen_create.html'
 
-    def get_form_kwargs(self):
-        kwargs = super(ExamenCreateView, self).get_form_kwargs()
-        kwargs.update({'initial': {'persona': self.persona.id}})
-        return kwargs
 
-    def dispatch(self, *args, **kwargs):
-        self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
-        return super(ExamenCreateView, self).dispatch(*args, **kwargs)
+class ExamenEfectuarView(RedirectView, LoginRequiredMixin):
+    permanent = False
 
-    def form_valid(self, form):
-        form.instance.usuario = self.request.user
-        return super(ExamenCreateView, self).form_valid(form)
+    def get_redirect_url(self, *args, **kwargs):
+        examen = get_object_or_404(Examen, pk=kwargs['pk'])
+        examen.efectuar()
+        messages.info(self.request, u'¡Se ha efectuado el examen!')
+        return examen.get_absolute_url()
+
+
+class ExamenCancelarView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        examen = get_object_or_404(Examen, pk=kwargs['pk'])
+        examen.cancelar()
+        messages.info(self.request, u'¡Se ha efectuado el examen!')
+        return reverse('examen-index')
 
 
 class ExamenMixin(ContextMixin, View):
@@ -139,8 +145,8 @@ class ExamenMixin(ContextMixin, View):
         context['examen'] = self.examen
         return context
 
-class ExamenFormMixin(ExamenMixin, FormMixin):
 
+class ExamenFormMixin(ExamenMixin, FormMixin):
     def get_initial(self):
         initial = super(ExamenFormMixin, self).get_initial()
         initial = initial.copy()
@@ -178,7 +184,6 @@ class DicomDetailView(DetailView, LoginRequiredMixin):
     context_object_name = 'dicom'
     model = Dicom
     template_name = "examen/dicom_detail.html"
-    slug_field = 'uuid'
 
 
 class NotificarExamenView(FormView, LoginRequiredMixin):
@@ -237,34 +242,13 @@ class EstudioProgramadoDetailView(DetailView, LoginRequiredMixin):
     template_name = 'examen/estudio_detail.html'
 
 
-class EstudioProgramadoCreateView(CreateView, LoginRequiredMixin):
+class EstudioProgramadoCreateView(PersonaFormMixin, CurrentUserFormMixin,
+                                  CreateView, LoginRequiredMixin):
     """Permite recetar un :class:`Examen` a una :class:`Persona"""
 
     model = EstudioProgramado
     form_class = EstudioProgramadoForm
     template_name = 'examen/estudio_programado_create.html'
-
-    def get_form_kwargs(self):
-        kwargs = super(EstudioProgramadoCreateView, self).get_form_kwargs()
-        kwargs.update({'initial': {'persona': self.persona.id}})
-        return kwargs
-
-    def dispatch(self, *args, **kwargs):
-        """Agrega la persona como parametro del Estudio a programar"""
-
-        self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
-        return super(EstudioProgramadoCreateView, self).dispatch(*args,
-                                                                 **kwargs)
-
-    def form_valid(self, form):
-        """Asocia el estudio a realizar con la persona que se incluye en
-        los parametros"""
-
-        self.object = form.save(commit=False)
-        self.object.persona = self.persona
-        self.object.save()
-
-        return HttpResponseRedirect(self.get_success_url())
 
 
 class EstudioProgramadoListView(ListView, LoginRequiredMixin):

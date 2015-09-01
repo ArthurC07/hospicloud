@@ -46,7 +46,17 @@
                             <td>{{ estudio.persona.nombre_completo }}</td>
                             <td>{{ estudio.tipo_de_examen.nombre }}</td>
                             <td>{{ estudio.remitio }}</td>
-                            <td><a class="btn btn-danger" href="{% url 'examen-efectuar' estudio.id %}">Efectuar</a>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Acciones <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="{% url 'examen-efectuar' estudio.id %}">Efectuar</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="{% url 'examen-cancelar' estudio.id %}">Cancelar</a></li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}
