@@ -174,6 +174,7 @@ INSTALLED_APPS = (
     'bootstrap_pagination',
     'select2',
     'constance',
+    'storages',
     'constance.backends.database',
 )
 
