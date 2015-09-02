@@ -51,11 +51,14 @@
                             {% for contrato in consulta.persona.contratos.all %}
                                 Poliza: {{ contrato.poliza }}
                             {% endfor %}
+                            {% for beneficiario in consulta.persona.beneficiarios.all %}
+                                {{ beneficiario.contrato.poliza }} Certificado: {{ beneficiario.contrato.certificado }}
+                            {% endfor %}
                         </td>
                         <td>{{ consulta.consultorio.usuario.get_full_name }}</td>
                         <td>{{ consulta.consultorio.localidad }}</td>
                         <td><a class="btn btn-primary"
-                               href="{% url 'consulta' consulta.id %}">Ver</a>
+                               href="{{ consulta.get_absolute_url }}">Ver</a>
                         </td>
                     </tr>
                 {% endfor %}
