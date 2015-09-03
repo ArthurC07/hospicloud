@@ -78,11 +78,9 @@ class StatusPago(TimeStampedModel):
         return self.nombre
 
     def total(self):
-        total = Pago.objects.filter(status=self).aggregate(
+        return Pago.objects.filter(status=self).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
-
-        return total
 
 
 @python_2_unicode_compatible
@@ -238,12 +236,10 @@ class Recibo(TimeStampedModel):
         return int(self.total())
 
     def pagado(self):
-        total = Pago.objects.filter(recibo=self).aggregate(
-            total=Sum('monto')
+
+        return Pago.objects.filter(recibo=self).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-        if not total:
-            return Decimal()
-        return total
 
     def debido(self):
         return self.total() - self.pagado()
