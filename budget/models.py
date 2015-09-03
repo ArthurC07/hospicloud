@@ -220,6 +220,7 @@ class Gasto(TimeStampedModel):
     aseguradora = models.ForeignKey(Aseguradora, null=True, blank=True)
     proximo_pago = models.DateTimeField(default=timezone.now)
     numero_pagos = models.IntegerField(default=1)
+    comprobante_entregado = models.BooleanField(default=False)
 
     def __str__(self):
         return self.descripcion
