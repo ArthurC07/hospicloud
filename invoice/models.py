@@ -280,7 +280,7 @@ class Venta(TimeStampedModel):
     realizar los cobros asociados"""
 
     cantidad = models.IntegerField()
-    descripcion = models.TextField(blank=True, null=True)
+    descripcion = models.TextField(blank=True, default='')
     precio = models.DecimalField(blank=True, null=True, max_digits=11,
                                  decimal_places=2)
     impuesto = models.DecimalField(blank=True, default=0, max_digits=11,
