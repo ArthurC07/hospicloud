@@ -70,7 +70,7 @@ class DateWidget(forms.DateInput):
         else:
             self.attrs = {'class': 'datepicker'}
 
-        if not 'format' in self.attrs:
+        if 'format' not in self.attrs:
             self.attrs['format'] = '%d/%m/%Y'
 
 

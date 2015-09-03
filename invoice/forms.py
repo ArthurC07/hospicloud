@@ -24,8 +24,9 @@ from select2.fields import ModelChoiceField
 
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, \
-    CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado
-from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
+    CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado, ComprobanteDeduccion
+from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton, \
+    BasePersonaForm
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
 from emergency.models import Emergencia
@@ -327,3 +328,9 @@ class CotizadoForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(CotizadoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar un Cargo', *self.field_names)
+
+
+class ComprobanteDeduccionForm(BasePersonaForm):
+    class Meta:
+        model = ComprobanteDeduccion
+        exclude = ('correlativo', )

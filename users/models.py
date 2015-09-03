@@ -57,6 +57,8 @@ class Ciudad(TimeStampedModel):
     fin_rango = models.CharField(max_length=100, blank=True)
     tiene_presupuesto_global = models.BooleanField(default=False)
     company = models.ForeignKey(Company, blank=True, null=True)
+    correlativo_de_comprobante = models.IntegerField(default=0)
+    prefijo_comprobante = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return self.nombre
@@ -70,8 +72,6 @@ class UserProfile(UserenaBaseProfile):
                                    blank=True, null=True)
     honorario = models.ForeignKey(ItemTemplate, related_name='usuarios',
                                   blank=True, null=True)
-    persona = models.OneToOneField(Persona, related_name='profile', blank=True,
-                                   null=True)
     ciudad = models.ForeignKey(Ciudad, related_name='usuarios', blank=True,
                                null=True)
     bsc = models.ForeignKey('bsc.ScoreCard', related_name='usuarios',

@@ -25,7 +25,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
+
 from django.utils import timezone
+
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
@@ -759,6 +761,47 @@ class Cotizado(TimeStampedModel):
             dot01)
 
         super(Cotizado, self).save(*args, **kwargs)
+
+
+class ComprobanteDeduccion(TimeStampedModel):
+    persona = models.ForeignKey(Persona)
+    ciudad = models.ForeignKey(Ciudad)
+    correlativo = models.IntegerField()
+
+    def get_absolute_url(self):
+
+        return reverse('comprobante', args=[self.id])
+
+    def numero(self):
+        return u'{0}-{1}'.format(self.ciudad.prefijo_comprobante,
+                                 self.correlativo)
+
+    def total(self):
+
+        return ConceptoDeduccion.objects.filter(comprobante=self).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            ciudad = self.ciudad
+            ciudad.correlativo_de_comprobante = F(
+                'correlativo_de_comprobante') + 1
+            ciudad.save()
+            ciudad = Ciudad.objects.get(pk=ciudad.pk)
+            self.correlativo = ciudad.correlativo_de_comprobante
+
+        super(ComprobanteDeduccion, self).save(*args, **kwargs)
+
+
+class ConceptoDeduccion(TimeStampedModel):
+    comprobante = models.ForeignKey(ComprobanteDeduccion)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    concepto = models.ForeignKey(ItemTemplate)
+    descripcion = models.TextField(blank=True)
+
+    def get_absolute_url(self):
+        return self.comprobante.get_absolute_url()
 
 
 def consolidate_invoice(persona, clone):

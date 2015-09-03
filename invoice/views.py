@@ -50,7 +50,8 @@ from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
                             TipoPago, dot01, StatusPago, CuentaPorCobrar,
-                            PagoCuenta, Notification, Cotizacion, Cotizado)
+                            PagoCuenta, Notification, Cotizacion, Cotizado,
+                            ComprobanteDeduccion)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
@@ -59,7 +60,7 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
                            TipoPagoPeriodoForm, PeriodoCiudadForm,
                            CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm,
-                           CotizadoForm)
+                           CotizadoForm, ComprobanteDeduccionForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -1636,11 +1637,11 @@ class CotizadoDeleteView(DeleteView, LoginRequiredMixin):
 
     def get_object(self, queryset=None):
         obj = super(CotizadoDeleteView, self).get_object(queryset)
-        self.recibo = obj.cotizacion
+        self.cotizacion = obj.cotizacion
         return obj
 
     def get_success_url(self):
-        return self.recibo.get_absolute_url()
+        return self.cotizacion.get_absolute_url()
 
 
 class CotizacionFacturar(RedirectView, LoginRequiredMixin):
@@ -1651,3 +1652,14 @@ class CotizacionFacturar(RedirectView, LoginRequiredMixin):
         recibo = cotizacion.facturar()
         messages.info(self.request, u'¡Se ha facturado la cotización!')
         return recibo.get_absolute_url()
+
+
+class ComprobanteDeduccionCreateView(CreateView, PersonaFormMixin,
+                                     LoginRequiredMixin):
+    model = ComprobanteDeduccion
+    form_class = ComprobanteDeduccionForm
+
+
+class ComprobanteDeduccionDetailView(DetailView, LoginRequiredMixin):
+    model = ComprobanteDeduccion
+    context_object_name = 'comprobante'

@@ -52,6 +52,9 @@
                     <li>
                         <a href="{% url 'cotizacion-add' persona.id %}">Crear una Cotizacion</a>
                     </li>
+                    <li>
+                        <a href="{% url 'comprobante-agregar' persona.id %}">Crear un Comprobante de Deducci&oacute;n</a>
+                    </li>
                 {% endif %}
                 {% if modules.contrato %}
                 <li>
