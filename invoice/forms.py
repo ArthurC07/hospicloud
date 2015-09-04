@@ -24,7 +24,8 @@ from select2.fields import ModelChoiceField
 
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, \
-    CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado, ComprobanteDeduccion
+    CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado, ComprobanteDeduccion, \
+    ConceptoDeduccion
 from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton, \
     BasePersonaForm
 from persona.models import Persona
@@ -333,4 +334,18 @@ class CotizadoForm(FieldSetModelFormMixin):
 class ComprobanteDeduccionForm(BasePersonaForm):
     class Meta:
         model = ComprobanteDeduccion
-        exclude = ('correlativo', )
+        exclude = ('correlativo',)
+
+
+class ConceptoDeduccionForm(FieldSetModelFormMixin):
+    class Meta:
+        model = ConceptoDeduccion
+        fields = '__all__'
+
+    comprobante = forms.ModelChoiceField(label="",
+                                         queryset=ComprobanteDeduccion.objects.all(),
+                                         widget=forms.HiddenInput(),
+                                         required=False)
+    concepto = ModelChoiceField(name="", model="",
+                                queryset=ItemTemplate.objects.filter(
+                                    activo=True).order_by('descripcion').all())

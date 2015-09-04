@@ -27,12 +27,16 @@
                     <div class="navbar-inner">
                         <a href="#" class="navbar-brand">Acciones</a>
                         <ul class="nav navbar-nav">
-                            {% if comprobante.cerrado == False %}
-                                <li>
-                                    <a href="{% url 'invoice-index' %}">Regresar
-                                        a Caja</a>
-                                </li>
-                            {% endif %}
+                            <li>
+                                <a href="{% url 'concepto-agregar' comprobante.id %}">Agregar Deducci&oacute;n</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'comprobante-print' comprobante.id %}">Imprimir Comprobante</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'invoice-index' %}">Regresar
+                                    a Caja</a>
+                            </li>
                             {% if comprobante.credito %}
                                 <li>
                                     <a href="{% url 'invoice-print-credito' comprobante.id %}">Imprimir

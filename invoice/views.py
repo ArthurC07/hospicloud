@@ -51,7 +51,7 @@ from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
                             TipoPago, dot01, StatusPago, CuentaPorCobrar,
                             PagoCuenta, Notification, Cotizacion, Cotizado,
-                            ComprobanteDeduccion)
+                            ComprobanteDeduccion, ConceptoDeduccion)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
@@ -60,7 +60,8 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
                            TipoPagoPeriodoForm, PeriodoCiudadForm,
                            CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm,
-                           CotizadoForm, ComprobanteDeduccionForm)
+                           CotizadoForm, ComprobanteDeduccionForm,
+                           ConceptoDeduccionForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -913,12 +914,10 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
         recibo = Recibo()
         recibo.cajero = self.request.user
         recibo.cliente = consulta.persona
-        if consulta.persona.obtener_edad() >= config.ELDER_AGE:
-            tipo_de_venta = TipoVenta.objects.get(pk=config.ELDER_VENTA_TYPE)
-        else:
-            tipo_de_venta = TipoVenta.objects.get(pk=config.DEFAULT_VENTA_TYPE)
 
-        recibo.tipo_de_venta = tipo_de_venta
+        recibo.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminado=True
+        ).first()
 
         recibo.save()
 
@@ -1026,8 +1025,9 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cajero = self.request.user
         recibo.cliente = aseguradora.cardex
         recibo.credito = True
-        recibo.tipo_de_venta = TipoVenta.objects.get(
-            pk=int(config.DEFAULT_VENTA_TYPE))
+        recibo.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
 
         recibo.save()
         for master in aseguradora.master_contracts.all():
@@ -1073,8 +1073,9 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cajero = self.request.user
         recibo.cliente = aseguradora.cardex
         recibo.credito = True
-        recibo.tipo_de_venta = TipoVenta.objects.get(
-            pk=int(config.DEFAULT_VENTA_TYPE))
+        recibo.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
 
         recibo.save()
         for master in aseguradora.master_contracts.all():
@@ -1663,3 +1664,33 @@ class ComprobanteDeduccionCreateView(CreateView, PersonaFormMixin,
 class ComprobanteDeduccionDetailView(DetailView, LoginRequiredMixin):
     model = ComprobanteDeduccion
     context_object_name = 'comprobante'
+
+
+class ComprobanteDeduccionMixin(ContextMixin):
+    """Agrega una :class:`Persona` en la vista"""
+
+    def dispatch(self, *args, **kwargs):
+        self.comprobante = get_object_or_404(ComprobanteDeduccion,
+                                             pk=kwargs['comprobante'])
+        return super(ComprobanteDeduccionMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ComprobanteDeduccionMixin, self).get_context_data(**kwargs)
+        context['comprobante'] = self.comprobante
+        return context
+
+
+class ComprobanteDeduccionFormMixin(FormMixin, ComprobanteDeduccionMixin):
+    """Agrega la :class:`Persona` a los argumentos iniciales de un formulario"""
+
+    def get_initial(self):
+        initial = super(ComprobanteDeduccionFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['comprobante'] = self.comprobante
+        return initial
+
+
+class ConceptoDeduccionCreateView(ComprobanteDeduccionFormMixin, CreateView,
+                                  LoginRequiredMixin):
+    model = ConceptoDeduccion
+    form_class = ConceptoDeduccionForm

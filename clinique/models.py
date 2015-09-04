@@ -164,7 +164,7 @@ class Consulta(TimeStampedModel):
             item = contrato.plan.consulta
 
         if item is None:
-            item = ItemTemplate.objects.get(pk=config.DEFAULT_CONSULTA_ITEM)
+            item = self.consultorio.usuario.profile.honorario
 
         return item
 

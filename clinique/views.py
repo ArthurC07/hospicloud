@@ -1004,8 +1004,10 @@ class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
             emergencia.frecuencia_respiratoria = lectura.respiracion
             emergencia.temperatura = lectura.temperatura
             emergencia.presion = lectura.presion_arterial_media
-        tipo = int(config.DEFAULT_VENTA_TYPE)
-        emergencia.tipo_de_venta = TipoVenta.objects.get(pk=tipo)
+
+        emergencia.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
         emergencia.save()
 
         messages.info(self.request, u'¡Se Envio el Paciente a Emergencias!')
