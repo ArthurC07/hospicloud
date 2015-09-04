@@ -916,7 +916,7 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cliente = consulta.persona
 
         recibo.tipo_de_venta = TipoVenta.objects.filter(
-            predeterminado=True
+            predeterminada=True
         ).first()
 
         recibo.save()
