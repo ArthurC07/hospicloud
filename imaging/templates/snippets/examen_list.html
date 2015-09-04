@@ -22,7 +22,7 @@
       <td>{{ examen.persona.nacimiento }}</td>
       <td>{{ examen.radiologo }}</td>
       <td>{{ examen.usuario }}</td>
-      <td><a class="btn btn-success btn-block" href="{% url 'examen-view-id' examen.uuid %}">Ver</a></td>
+      <td><a class="btn btn-success btn-block" href="{{ examen.get_absolute_url }}">Ver</a></td>
     </tr>
     {% endfor %}
   </tbody>

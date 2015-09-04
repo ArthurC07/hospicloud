@@ -43,7 +43,10 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            CuentaPorCobrarAnteriorStatusRedirectView,
                            NotificationDetailView, CotizacionDetailView,
                            CotizacionCreateView, CotizadoCreateView,
-                           EstadisticasView, CotizacionFacturar)
+                           EstadisticasView, CotizacionFacturar,
+                           ComprobanteDeduccionCreateView,
+                           ComprobanteDeduccionDetailView,
+                           ConceptoDeduccionCreateView)
 
 urlpatterns = patterns('',
 
@@ -292,4 +295,23 @@ urlpatterns = patterns('',
                        url(r'^cotizacion/(?P<pk>\d+)/facturar$',
                            CotizacionFacturar.as_view(),
                            name='cotizacion-facturar'),
+
+                       url(r'^comprobante/(?P<persona>\d+)/agregar$',
+                           ComprobanteDeduccionCreateView.as_view(),
+                           name='comprobante-agregar'),
+
+                       url(r'^comprobante/(?P<pk>\d+)$',
+                           ComprobanteDeduccionDetailView.as_view(),
+                           name='comprobante'),
+
+                       url(r'^comprobante/(?P<pk>\d+)/imprimir$',
+                           ComprobanteDeduccionDetailView.as_view(
+                               template_name='invoice/comprobantededuccion_print.html'
+                           ),
+                           name='comprobante-print'),
+
+                       url(r'^comprobante/(?P<comprobante>\d+)/concepto/add$',
+                           ConceptoDeduccionCreateView.as_view(),
+                           name='concepto-agregar'),
+
                        )

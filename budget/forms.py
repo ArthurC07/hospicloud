@@ -75,7 +75,8 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin):
 class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin):
     class Meta:
         model = Gasto
-        exclude = ('ejecutado', 'fecha_de_pago', 'periodo_de_pago', 'cheque')
+        exclude = ('ejecutado', 'fecha_de_pago', 'periodo_de_pago', 'cheque',
+                   'comprobante_entregado')
 
     fecha_maxima_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                                required=False,
@@ -90,7 +91,7 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin):
 class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
     class Meta:
         model = Gasto
-        exclude = ('ejecutado', 'fecha_maxima_de_pago',)
+        exclude = ('ejecutado', 'fecha_maxima_de_pago', 'comprobante_entregado')
 
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)

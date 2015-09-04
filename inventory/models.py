@@ -366,6 +366,7 @@ class TipoVenta(TimeStampedModel):
                                      default=0)
     disminucion = models.DecimalField(max_digits=10, decimal_places=2,
                                       default=0)
+    predeterminada = models.BooleanField(default=False)
 
     def __str__(self):
         return self.descripcion

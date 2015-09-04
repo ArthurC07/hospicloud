@@ -75,11 +75,10 @@ class Presupuesto(TimeStampedModel):
                                     ejecutado=True)
 
     def total_gastos_por_periodo(self, inicio, fin):
-        gasto = self.gastos_por_periodo(inicio, fin).aggregate(
+
+        return self.gastos_por_periodo(inicio, fin).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
-
-        return gasto
 
     def gastos_mes_actual(self):
         fin, inicio = get_current_month_range()
@@ -172,11 +171,9 @@ class Cuenta(TimeStampedModel):
         """Obtiene el tal de :class:`Gasto`s de la :class:`Cuenta` en un periodo
         determinado de tiempo"""
 
-        gastos = self.gastos_por_periodo(inicio, fin).aggregate(
+        return self.gastos_por_periodo(inicio, fin).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
-
-        return gastos
 
     def gastos_mes_actual(self):
         """Obtiene los :class:`Gasto` del mes actual"""
@@ -186,14 +183,22 @@ class Cuenta(TimeStampedModel):
         return self.gastos_por_periodo(inicio, fin)
 
     def total_gastos_mes_actual(self):
-        gastos = self.gastos_mes_actual().aggregate(
+
+        return self.gastos_mes_actual().aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
-        return gastos
-
     def porcentaje_ejecutado_mes_actual(self):
         return self.total_gastos_mes_actual() / max(self.limite, 1) * 100
+
+
+@python_2_unicode_compatible
+class Fuente(TimeStampedModel):
+    nombre = models.CharField(max_length=255)
+
+    def __str__(self):
+
+        return self.nombre
 
 
 @python_2_unicode_compatible
@@ -206,6 +211,7 @@ class Gasto(TimeStampedModel):
     por el campo correspondiente.
     """
     cuenta = models.ForeignKey(Cuenta)
+    fuente = models.ForeignKey(Fuente, null=True, blank=True)
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
@@ -220,6 +226,7 @@ class Gasto(TimeStampedModel):
     aseguradora = models.ForeignKey(Aseguradora, null=True, blank=True)
     proximo_pago = models.DateTimeField(default=timezone.now)
     numero_pagos = models.IntegerField(default=1)
+    comprobante_entregado = models.BooleanField(default=False)
 
     def __str__(self):
         return self.descripcion

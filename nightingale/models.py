@@ -394,7 +394,6 @@ class Medicamento(TimeStampedModel):
         cargo.save()
 
         self.ultima_dosis = timezone.now()
-        print(timedelta(hours=self.intervalo))
         self.proxima_dosis = self.ultima_dosis + timedelta(hours=self.intervalo)
 
         self.suministrado += 1

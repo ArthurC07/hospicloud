@@ -25,7 +25,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
+
 from django.utils import timezone
+
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
@@ -78,11 +80,9 @@ class StatusPago(TimeStampedModel):
         return self.nombre
 
     def total(self):
-        total = Pago.objects.filter(status=self).aggregate(
+        return Pago.objects.filter(status=self).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
-
-        return total
 
 
 @python_2_unicode_compatible
@@ -238,12 +238,10 @@ class Recibo(TimeStampedModel):
         return int(self.total())
 
     def pagado(self):
-        total = Pago.objects.filter(recibo=self).aggregate(
-            total=Sum('monto')
+
+        return Pago.objects.filter(recibo=self).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
-        if not total:
-            return Decimal()
-        return total
 
     def debido(self):
         return self.total() - self.pagado()
@@ -259,10 +257,13 @@ class Recibo(TimeStampedModel):
                 ciudad = Ciudad.objects.get(pk=ciudad.pk)
                 self.correlativo = ciudad.correlativo_de_recibo
 
-            turnos = TurnoCaja.objects.filter(usuario=self.cajero,
-                                              inicio__lte=self.created).count()
+            turnos = TurnoCaja.objects.filter(
+                usuario=self.cajero,
+                inicio__lte=timezone.now()
+            ).count()
+
             if turnos == 0:
-                turno = TurnoCaja(usuario=self.cajero, inicio=self.created)
+                turno = TurnoCaja(usuario=self.cajero, inicio=timezone.now())
                 turno.save()
 
         if self.ciudad is None and self.pk is not None:
@@ -277,7 +278,7 @@ class Venta(TimeStampedModel):
     realizar los cobros asociados"""
 
     cantidad = models.IntegerField()
-    descripcion = models.TextField(blank=True, null=True)
+    descripcion = models.TextField(blank=True, default='')
     precio = models.DecimalField(blank=True, null=True, max_digits=11,
                                  decimal_places=2)
     impuesto = models.DecimalField(blank=True, default=0, max_digits=11,
@@ -760,6 +761,47 @@ class Cotizado(TimeStampedModel):
             dot01)
 
         super(Cotizado, self).save(*args, **kwargs)
+
+
+class ComprobanteDeduccion(TimeStampedModel):
+    persona = models.ForeignKey(Persona)
+    ciudad = models.ForeignKey(Ciudad)
+    correlativo = models.IntegerField()
+
+    def get_absolute_url(self):
+
+        return reverse('comprobante', args=[self.id])
+
+    def numero(self):
+        return u'{0}-{1}'.format(self.ciudad.prefijo_comprobante,
+                                 self.correlativo)
+
+    def total(self):
+
+        return ConceptoDeduccion.objects.filter(comprobante=self).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            ciudad = self.ciudad
+            ciudad.correlativo_de_comprobante = F(
+                'correlativo_de_comprobante') + 1
+            ciudad.save()
+            ciudad = Ciudad.objects.get(pk=ciudad.pk)
+            self.correlativo = ciudad.correlativo_de_comprobante
+
+        super(ComprobanteDeduccion, self).save(*args, **kwargs)
+
+
+class ConceptoDeduccion(TimeStampedModel):
+    comprobante = models.ForeignKey(ComprobanteDeduccion)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    concepto = models.ForeignKey(ItemTemplate)
+    descripcion = models.TextField(blank=True)
+
+    def get_absolute_url(self):
+        return self.comprobante.get_absolute_url()
 
 
 def consolidate_invoice(persona, clone):

@@ -14,10 +14,11 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView,
-                                  ListView)
+                                  ListView, RedirectView)
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import FormMixin
 from django.shortcuts import get_object_or_404
@@ -59,7 +60,7 @@ class PersonaFormMixin(FormMixin, PersonaMixin):
     def get_initial(self):
         initial = super(PersonaFormMixin, self).get_initial()
         initial = initial.copy()
-        initial['persona'] = self.persona.id
+        initial['persona'] = self.persona
         return initial
 
 
@@ -197,9 +198,19 @@ class EmpleoCreateView(PersonaFormMixin, CreateView):
     form_class = EmpleoForm
 
 
-class PersonaDuplicateView(UpdateView, LoginRequiredMixin):
-    model = Persona
-    form_class = PersonaDuplicateForm
+class PersonaDuplicateView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        persona = get_object_or_404(Persona, pk=kwargs['pk'])
+        persona.duplicado = True
+        persona.save()
+        messages.info(self.request, u'¡Se marcado como duplicada!')
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return persona.get_absolute_url()
 
 
 class AntecedenteObstetricoCreateView(PersonaFormMixin, CreateView,

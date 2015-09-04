@@ -56,8 +56,7 @@ target/
 *.suo
 *~
 hospinet/static
-hospinet/whoosh_index
-hospinet/media
+media
 .idea
 hospinet/.env
 *.db

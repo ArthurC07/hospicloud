@@ -25,7 +25,6 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-
 from django.utils import timezone
 
 from django_extensions.db.models import TimeStampedModel
@@ -154,29 +153,20 @@ def check_line(line, vencimiento):
 
     if line[8]:
         vencimiento_r = make_end_day(datetime.strptime(line[8], '%m/%d/%Y'))
-        
+
     try:
         pcd = PCD.objects.get(numero=file_pcd)
 
         persona = pcd.persona
-        persona.apellido = apellido_f
-        persona.nombre = nombre_f
+        persona.apellido = apellido_f.lstrip().rstrip()
+        persona.nombre = nombre_f.lstrip().rstrip()
         persona.save()
 
         contratos = Contrato.objects.filter(persona=persona,
                                             certificado=file_certificado)
 
-        for contrato in contratos.all():
-            contrato.vencimiento = vencimiento_r
-            contrato.plan = master.plan
-            contrato.master = master
-            contrato.exclusion = line[10]
-            if activo == 'S':
-                contrato.suspendido = True
-            else:
-                contrato.suspendido = False
-
-            contrato.save()
+        [update_contract(activo, contrato, line, master, vencimiento_r) for
+         contrato in contratos.all()]
 
         for beneficiario in Beneficiario.objects.filter(
                 persona=persona).all():
@@ -216,6 +206,18 @@ def check_line(line, vencimiento):
 
     except MultipleObjectsReturned:
         pass
+
+
+def update_contract(activo, contrato, line, master, vencimiento_r):
+    contrato.vencimiento = vencimiento_r
+    contrato.plan = master.plan
+    contrato.master = master
+    contrato.exclusion = line[10]
+    if activo == 'S':
+        contrato.suspendido = True
+    else:
+        contrato.suspendido = False
+    contrato.save()
 
 
 class ImportFile(TimeStampedModel):
@@ -585,7 +587,7 @@ class Autorizacion(TimeStampedModel):
     imagen = models.FileField(upload_to='contracts/autorizaciones/%Y/%m/%d')
     descripcion = models.TextField(blank=True, null=True)
     vigente = models.BooleanField(default=True)
-
+    
     def __unicode__(self):
         return self.imagen.name
 

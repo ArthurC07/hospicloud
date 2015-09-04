@@ -98,7 +98,6 @@ class Consultorio(TimeStampedModel):
         return reverse('consultorio', args=[self.id])
 
     def consultas_remitidas(self):
-
         return Consulta.objects.filter(remitida=True, revisada=False)
 
 
@@ -165,7 +164,7 @@ class Consulta(TimeStampedModel):
             item = contrato.plan.consulta
 
         if item is None:
-            item = ItemTemplate.objects.get(pk=config.DEFAULT_CONSULTA_ITEM)
+            item = self.consultorio.usuario.profile.honorario
 
         return item
 
@@ -188,7 +187,6 @@ class Consulta(TimeStampedModel):
                     vencimiento__gte=timezone.now()).all():
                 precios[cargo.item] = contrato.obtener_cobro(cargo.item)
 
-            print precios[cargo.item]
             cargo.facturado = True
             cargo.save()
 

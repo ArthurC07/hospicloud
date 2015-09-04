@@ -691,8 +691,8 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin,
     form_class = CargoForm
 
     def form_valid(self, form):
-
-        if self.request.user.profile is None:
+        user = self.request.user
+        if user.profile is None or user.profile.inventario is None:
             messages.info(self.request,
                           "Su usuario no tiene un Inventario asociado, por "
                           "favor edite su Perfil para asociar un Inventario")
@@ -701,16 +701,9 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin,
 
         self.object = form.save(commit=False)
 
-        consultorio = self.object.consulta.consultorio
-        if consultorio.inventario is None:
-            inventario = Inventario(lugar=consultorio.nombre)
-            inventario.save()
-            consultorio.inventario = inventario
-            consultorio.save()
-
-        self.request.user.profile.inventario.descargar(self.object.item,
-                                                       self.object.cantidad,
-                                                       self.request.user)
+        user.profile.inventario.descargar(self.object.item,
+                                          self.object.cantidad,
+                                          self.request.user)
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
@@ -1011,8 +1004,10 @@ class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
             emergencia.frecuencia_respiratoria = lectura.respiracion
             emergencia.temperatura = lectura.temperatura
             emergencia.presion = lectura.presion_arterial_media
-        tipo = int(config.DEFAULT_VENTA_TYPE)
-        emergencia.tipo_de_venta = TipoVenta.objects.get(pk=tipo)
+
+        emergencia.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
         emergencia.save()
 
         messages.info(self.request, u'¡Se Envio el Paciente a Emergencias!')

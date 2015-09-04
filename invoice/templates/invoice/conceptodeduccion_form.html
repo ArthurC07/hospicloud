@@ -1,31 +1,31 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
 {% block content %}
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
     <div class="row">
         <section class="col-md-12">
             <div class="main-content col-md-12">‏
-                <div class="page-header">
-                    <h1>Pacientes y Personas</h1>
-                </div>
+
             </div>
         </section>
     </div>
     <div class="row">
-        <div id="personas" class="col-md-9">
+        <section class="col-md-9">
             <div class="main-content col-md-12">‏
-                {% include 'snippets/persona_list.html' with personas=personas %}
-            </div>
-        </div>
+                {% crispy form %}</div>
+        </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
-                    <ul class="nav nav-tabs nav-stacked">
-                        <li>
-                            <a href="{% url 'persona-create' %}">Agregar Paciente</a>
-                        </li>
+                    <ul class="nav nav-list">
                     </ul>
                 </nav>
             </div>
         </aside>
     </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
 {% endblock %}

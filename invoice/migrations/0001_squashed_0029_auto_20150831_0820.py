@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from constance import config
 
 from django.db import models, migrations
 import persona.fields
@@ -17,14 +16,6 @@ from django.conf import settings
 # invoice.migrations.0015_venta_monto
 # invoice.migrations.0013_venta_total
 # invoice.migrations.0002_recibo_correlativo
-
-
-def update_correlativo(apps, schema_editor):
-    Recibo = apps.get_model("invoice", "Recibo")
-
-    for recibo in Recibo.objects.all():
-        recibo.correlativo = config.INVOICE_OFFSET + recibo.id
-        recibo.save()
 
 
 def update_ciudad(apps, schema_editor):
@@ -192,9 +183,6 @@ class Migration(migrations.Migration):
             model_name='recibo',
             name='correlativo',
             field=models.IntegerField(default=0),
-        ),
-        migrations.RunPython(
-            code=update_correlativo,
         ),
         migrations.AlterField(
             model_name='turnocaja',

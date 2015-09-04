@@ -383,7 +383,6 @@ class Admision(models.Model):
         items[self.habitacion.item] += self.tiempo_cobro()
 
         for cargo in self.cargos.all():
-            print(cargo)
             items[cargo.cargo] += cargo.cantidad
             cargo.facturada = True
             cargo.save()

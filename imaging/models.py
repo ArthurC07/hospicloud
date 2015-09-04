@@ -137,11 +137,24 @@ class Examen(TimeStampedModel):
     tipo_de_venta = models.ForeignKey(TipoVenta, related_name='examenes')
     tecnico = models.ForeignKey(Tecnico, blank=True, null=True,
                                 related_name='examenes')
+    efectuado = models.BooleanField(default=False)
+    pendiente = models.BooleanField(default=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
         return reverse('examen-view-id', args=[self.id])
+
+    def efectuar(self):
+
+        self.efectuado = True
+        self.pendiente = False
+        self.save()
+
+    def cancelar(self):
+
+        self.pendiente = False
+        self.save()
 
     def facturar(self):
         items = defaultdict(int)

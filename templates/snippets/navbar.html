@@ -15,22 +15,22 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cl&iacute;nico <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        {% if config.HOSPITALIZACION_ENABLED %}
+                        {% if modules.hospitalizacion %}
                             <li><a href="{% url 'admision-index' %}">Admisiones</a></li>
                         {% endif %}
-                        {% if config.CONSULTA_ENABLED %}
+                        {% if modules.consulta %}
                             <li><a href="{% url 'consultorio-index' %}">Consulta</a></li>
                         {% endif %}
-                        {% if config.LAB_ENABLED %}
+                        {% if modules.laboratorio %}
                             <li><a href="{% url 'lab-index' %}">Laboratorio</a></li>
                         {% endif %}
-                        {% if config.IMAGENES_ENABLED %}
+                        {% if modules.imagenes %}
                             <li><a href="{% url 'examen-index' %}">Centro de Im&aacute;genes</a></li>
                         {% endif %}
-                        {% if config.EMERGENCIA_ENABLED %}
+                        {% if modules.emergencia %}
                             <li><a href="{% url 'emergency-index' %}">Emergencias</a></li>
                         {% endif %}
-                        {% if config.HOSPITALIZACION_ENABLED %}
+                        {% if modules.hospitalizacion %}
                             <li><a href="{% url 'nightingale-index' %}">Hospitalizaci&oacute;n</a></li>
                         {% endif %}
                     </ul>
@@ -38,21 +38,21 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrativo <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        {% if config.INVOICE_ENABLED %}
+                        {% if modules.caja %}
                             <li><a href="{% url 'invoice-index' %}">Caja</a></li>
                             <li><a href="{% url 'invoice-pago-list' %}">Cuentas por Cobrar</a></li>
                         {% endif %}
-                        {% if config.CONTRATOS_ENABLED %}
+                        {% if modules.contratos %}
                             <li><a href="{% url 'contrato-index' %}">Contratos</a></li>
                         {% endif %}
-                        {% if config.RRHH_ENABLED %}
+                        {% if modules.rrhh %}
                             <li><a href="{% url 'scorecard-index' %}">BSC</a></li>
                             <li><a href="{% url 'encuesta-list' %}">Encuestas</a></li>
                         {% endif %}
-                        {% if config.INVENTARIO_ENABLED %}
+                        {% if modules.inventario %}
                             <li><a href="{% url 'inventario-index' %}">Inventario</a></li>
                         {% endif %}
-                        {% if config.BUDGET_ENABLED %}
+                        {% if modules.presupuesto %}
                             <li><a href="{% url 'budget-index' %}">Presupuesto</a></li>
                         {% endif %}
                     </ul>

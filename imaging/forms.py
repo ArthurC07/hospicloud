@@ -31,7 +31,7 @@ class ExamenForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Examen
-        exclude = ('efectuado', 'usuario',)
+        exclude = ('efectuado', 'usuario', 'pendiente')
 
     fecha = forms.DateTimeField(widget=DateTimeWidget)
 

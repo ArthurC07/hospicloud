@@ -32,11 +32,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView, View)
-
 from django.forms.models import inlineformset_factory
-
 from django.contrib.auth.decorators import permission_required
-
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 
 from django.views.generic.edit import FormMixin
@@ -53,7 +50,8 @@ from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
                             TipoPago, dot01, StatusPago, CuentaPorCobrar,
-                            PagoCuenta, Notification, Cotizacion, Cotizado)
+                            PagoCuenta, Notification, Cotizacion, Cotizado,
+                            ComprobanteDeduccion, ConceptoDeduccion)
 from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            AdmisionFacturarForm,
                            CorteForm, ExamenFacturarForm, InventarioForm,
@@ -62,7 +60,8 @@ from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
                            VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
                            TipoPagoPeriodoForm, PeriodoCiudadForm,
                            CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm,
-                           CotizadoForm)
+                           CotizadoForm, ComprobanteDeduccionForm,
+                           ConceptoDeduccionForm)
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -122,8 +121,10 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['inventarioform'] = InventarioForm(prefix='inventario')
         context['inventarioform'].set_action('invoice-inventario')
 
-        context['examenes'] = Examen.objects.filter(facturado=False).order_by(
-            '-id')
+        context['examenes'] = Examen.objects.filter(
+            facturado=False, pendiente=False
+        ).order_by('-id')
+
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(
             facturada=False).order_by('id')
@@ -913,12 +914,10 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
         recibo = Recibo()
         recibo.cajero = self.request.user
         recibo.cliente = consulta.persona
-        if consulta.persona.obtener_edad() >= config.ELDER_AGE:
-            tipo_de_venta = TipoVenta.objects.get(pk=config.ELDER_VENTA_TYPE)
-        else:
-            tipo_de_venta = TipoVenta.objects.get(pk=config.DEFAULT_VENTA_TYPE)
 
-        recibo.tipo_de_venta = tipo_de_venta
+        recibo.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminado=True
+        ).first()
 
         recibo.save()
 
@@ -1026,8 +1025,9 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cajero = self.request.user
         recibo.cliente = aseguradora.cardex
         recibo.credito = True
-        recibo.tipo_de_venta = TipoVenta.objects.get(
-            pk=int(config.DEFAULT_VENTA_TYPE))
+        recibo.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
 
         recibo.save()
         for master in aseguradora.master_contracts.all():
@@ -1073,8 +1073,9 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cajero = self.request.user
         recibo.cliente = aseguradora.cardex
         recibo.credito = True
-        recibo.tipo_de_venta = TipoVenta.objects.get(
-            pk=int(config.DEFAULT_VENTA_TYPE))
+        recibo.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
 
         recibo.save()
         for master in aseguradora.master_contracts.all():
@@ -1637,11 +1638,11 @@ class CotizadoDeleteView(DeleteView, LoginRequiredMixin):
 
     def get_object(self, queryset=None):
         obj = super(CotizadoDeleteView, self).get_object(queryset)
-        self.recibo = obj.cotizacion
+        self.cotizacion = obj.cotizacion
         return obj
 
     def get_success_url(self):
-        return self.recibo.get_absolute_url()
+        return self.cotizacion.get_absolute_url()
 
 
 class CotizacionFacturar(RedirectView, LoginRequiredMixin):
@@ -1652,3 +1653,44 @@ class CotizacionFacturar(RedirectView, LoginRequiredMixin):
         recibo = cotizacion.facturar()
         messages.info(self.request, u'¡Se ha facturado la cotización!')
         return recibo.get_absolute_url()
+
+
+class ComprobanteDeduccionCreateView(CreateView, PersonaFormMixin,
+                                     LoginRequiredMixin):
+    model = ComprobanteDeduccion
+    form_class = ComprobanteDeduccionForm
+
+
+class ComprobanteDeduccionDetailView(DetailView, LoginRequiredMixin):
+    model = ComprobanteDeduccion
+    context_object_name = 'comprobante'
+
+
+class ComprobanteDeduccionMixin(ContextMixin):
+    """Agrega una :class:`Persona` en la vista"""
+
+    def dispatch(self, *args, **kwargs):
+        self.comprobante = get_object_or_404(ComprobanteDeduccion,
+                                             pk=kwargs['comprobante'])
+        return super(ComprobanteDeduccionMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ComprobanteDeduccionMixin, self).get_context_data(**kwargs)
+        context['comprobante'] = self.comprobante
+        return context
+
+
+class ComprobanteDeduccionFormMixin(FormMixin, ComprobanteDeduccionMixin):
+    """Agrega la :class:`Persona` a los argumentos iniciales de un formulario"""
+
+    def get_initial(self):
+        initial = super(ComprobanteDeduccionFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['comprobante'] = self.comprobante
+        return initial
+
+
+class ConceptoDeduccionCreateView(ComprobanteDeduccionFormMixin, CreateView,
+                                  LoginRequiredMixin):
+    model = ConceptoDeduccion
+    form_class = ConceptoDeduccionForm

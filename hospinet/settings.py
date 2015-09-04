@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-# Django settings for hospinet project.
+# Django settings for hospicloud project.
 import os
+
 import environ
 
 from project_settings import *
@@ -33,9 +34,6 @@ DEBUG = env('DEBUG')
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = env('SECRET_KEY')
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
@@ -174,6 +172,7 @@ INSTALLED_APPS = (
     'bootstrap_pagination',
     'select2',
     'constance',
+    'storages',
     'constance.backends.database',
 )
 
@@ -192,7 +191,6 @@ CACHES = {
 # Additional Settings
 ANONYMOUS_USER_ID = -1
 USE_THOUSAND_SEPARATOR = True
-
 
 EMAIL_HOST = env.str('MAIL_SERVER', default='localhost')
 EMAIL_PORT = env.int('MAIL_SERVER_PORT', default=587)
@@ -217,3 +215,13 @@ LOGGING = {
         },
     },
 }
+
+# Django Storage Configuration
+
+DEFAULT_FILE_STORAGE = env.str('DEFAULT_FILE_STORAGE',
+                               default='django.core.files.storage.FileSystemStorage')
+AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='')
+AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME ', default='')
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+SITE_ID = 1
