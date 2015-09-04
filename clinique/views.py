@@ -14,20 +14,17 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-import calendar
 from collections import defaultdict
 from datetime import time, timedelta
 
-from constance import config
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
-from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.utils import timezone
-from django.utils.datetime_safe import date, datetime
+from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
 from django.views.generic import (DetailView, CreateView, View,
                                   ListView, UpdateView, TemplateView,
@@ -38,21 +35,18 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import FormMixin, DeleteView
 from guardian.decorators import permission_required
 
-from clinique.forms import (PacienteForm, CitaForm, EvaluacionForm,
-                            ConsultaForm, SeguimientoForm, LecturaSignosForm,
-                            DiagnosticoClinicoForm, ConsultorioForm,
-                            CitaPersonaForm, CargoForm, OrdenMedicaForm,
-                            NotaEnfermeriaForm, ExamenForm, EsperaForm,
-                            PacienteSearchForm, PrescripcionForm,
-                            IncapacidadForm, ReporteForm, RemisionForm,
-                            PrescripcionFormSet)
-from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
-                             Seguimiento, LecturaSignos, Consultorio,
-                             DiagnosticoClinico, Cargo, OrdenMedica,
-                             NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad, Reporte, Remision)
+from clinique.forms import PacienteForm, CitaForm, EvaluacionForm, \
+    ConsultaForm, SeguimientoForm, LecturaSignosForm, DiagnosticoClinicoForm, \
+    ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
+    NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
+    PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
+    PrescripcionFormSet
+from clinique.models import Paciente, Cita, Consulta, Evaluacion, Seguimiento, \
+    LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
+    NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, Remision
 from emergency.models import Emergencia
-from inventory.models import ItemTemplate, Inventario, TipoVenta
+from hospinet.utils import get_current_month_range
+from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
@@ -81,11 +75,7 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         day = timedelta(days=1)
         self.yesterday = now - day
         self.today = tz.localize(datetime.combine(now, time.min))
-        self.fin = date(now.year, now.month,
-                        calendar.monthrange(now.year, now.month)[1])
-        self.inicio = date(now.year, now.month, 1)
-        self.inicio = tz.localize(datetime.combine(self.inicio, time.min))
-        self.fin = tz.localize(datetime.combine(self.fin, time.max))
+        self.fin, self.inicio = get_current_month_range()
 
         return super(ConsultorioIndexView, self).dispatch(request, *args,
                                                           **kwargs)
@@ -152,11 +142,7 @@ class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         day = timedelta(days=1)
         self.yesterday = now - day
         self.today = tz.localize(datetime.combine(now, time.min))
-        self.fin = date(now.year, now.month,
-                        calendar.monthrange(now.year, now.month)[1])
-        self.inicio = date(now.year, now.month, 1)
-        self.inicio = tz.localize(datetime.combine(self.inicio, time.min))
-        self.fin = tz.localize(datetime.combine(self.fin, time.max))
+        self.fin, self.inicio = get_current_month_range()
 
         return super(ConsultorioDetailView, self).dispatch(request, *args,
                                                            **kwargs)
@@ -196,9 +182,6 @@ class PacienteSearchView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         form = PacienteSearchForm(self.request.GET)
-
-        # if not form.is_valid():
-        # redirect('admision-estadisticas')
         form.is_valid()
 
         query = form.cleaned_data['query']
@@ -883,8 +866,7 @@ class EsperaConsultaRedirectView(RedirectView, LoginRequiredMixin):
 
 
 class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
-    """Crea una :class:´Espera´ a partir de una :class:´Cita´ y redirige al
-    usuario al :class:´Consultorio´ asociado"""
+    """Marca una Espera como terminada y coloca como inactivas las consultas"""
 
     permanent = False
 
