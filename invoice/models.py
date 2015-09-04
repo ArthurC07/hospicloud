@@ -75,6 +75,7 @@ class StatusPago(TimeStampedModel):
     next_status = models.ForeignKey('self', null=True)
     previous_status = models.ForeignKey('self', null=True,
                                         related_name='previous')
+    pending = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre
@@ -569,7 +570,7 @@ class CuentaPorCobrar(TimeStampedModel):
 
         if self.pk is None:
 
-            pending = StatusPago.objects.get(pk=config.PAYMENT_STATUS_PENDING)
+            pending = StatusPago.objects.filter(pending=True).first()
             payments = Pago.objects.filter(status=pending)
             self.minimum = payments.aggregate(
                 minimum=Min('created')
