@@ -28,6 +28,3 @@ CONSTANCE_CONFIG = {
     'RECEIPT_DAYS': (1, u'Dias que dura una factura al credito'),
     'CURRENCY_EXCHANGE': (22.03, u'Cambio de Moneda'),
 }
-
-USERENA_ACTIVATION_REQUIRED = False
-AUTH_PROFILE_MODULE = 'users.UserProfile'

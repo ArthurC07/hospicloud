@@ -135,6 +135,9 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'hospinet.urls'
 
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -225,3 +228,5 @@ AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME ', default='')
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SITE_ID = 1
+USERENA_ACTIVATION_REQUIRED = False
+AUTH_PROFILE_MODULE = 'users.UserProfile'
