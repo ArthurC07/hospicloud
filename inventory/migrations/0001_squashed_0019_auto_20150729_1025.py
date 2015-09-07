@@ -11,8 +11,6 @@ import django_extensions.db.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'inventory', '0001_initial'), (b'inventory', '0002_auto_20141227_1857'), (b'inventory', '0003_auto_20150107_0852'), (b'inventory', '0004_auto_20150110_0056'), (b'inventory', '0005_auto_20150121_1129'), (b'inventory', '0006_item_vencimiento'), (b'inventory', '0007_itemtype_consulta'), (b'inventory', '0008_auto_20150507_1637'), (b'inventory', '0009_remove_historial_fecha'), (b'inventory', '0010_inventario_activo'), (b'inventory', '0011_transaccion'), (b'inventory', '0012_transaccion_user'), (b'inventory', '0013_cotizacion_itemcotizado'), (b'inventory', '0014_remove_compra_proveedor'), (b'inventory', '0015_compra_proveedor'), (b'inventory', '0016_itemcotizado_cantidad'), (b'inventory', '0017_itemcotizado_precio'), (b'inventory', '0018_proveedor_rtn'), (b'inventory', '0019_auto_20150729_1025')]
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]

@@ -109,14 +109,10 @@ def expand_paciente(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'clinique', '0001_initial'), (b'clinique', '0002_consultorio_activo'), (b'clinique', '0003_consulta_motivo_de_consulta'), (b'clinique', '0004_consulta_hea'), (b'clinique', '0005_cita_atendida'), (b'clinique', '0006_incapacidad_dias'), (b'clinique', '0007_tipoconsulta_habilitado'), (b'clinique', '0008_auto_20150408_1621'), (b'clinique', '0009_auto_20150408_1626'), (b'clinique', '0010_auto_20150415_1117'), (b'clinique', '0011_auto_20150422_1057'), (b'clinique', '0012_auto_20150424_1354'), (b'clinique', '0013_auto_20150424_1619'), (b'clinique', '0014_prescripcion_persona'), (b'clinique', '0015_auto_20150424_1637'), (b'clinique', '0016_auto_20150424_1723'), (b'clinique', '0017_remove_notaenfermeria_consultorio'), (b'clinique', '0018_auto_20150424_1820'), (b'clinique', '0019_remove_prescripcion_consulta'), (b'clinique', '0020_incapacidad_usuario'), (b'clinique', '0021_auto_20150426_2011'), (b'clinique', '0022_remove_incapacidad_consultorio'), (b'clinique', '0023_prescripcion_usuario'), (b'clinique', '0024_diagnosticoclinico_usuario'), (b'clinique', '0025_remove_diagnosticoclinico_consultorio'), (b'clinique', '0026_auto_20150426_2225'), (b'clinique', '0027_auto_20150427_2012'), (b'clinique', '0028_auto_20150428_0909'), (b'clinique', '0029_auto_20150429_1707'), (b'clinique', '0030_auto_20150504_1022'), (b'clinique', '0031_tipoconsulta_facturable'), (b'clinique', '0032_auto_20150504_1912'), (b'clinique', '0033_diagnosticoclinico_consulta'), (b'clinique', '0034_auto_20150506_1504'), (b'clinique', '0035_auto_20150507_1637'), (b'clinique', '0036_prescripcion_medicamento'), (b'clinique', '0037_auto_20150513_1518'), (b'clinique', '0038_auto_20150623_1406'), (b'clinique', '0039_consulta_remitida'), (b'clinique', '0040_auto_20150629_1836'), (b'clinique', '0041_consulta_encuestada'), (b'clinique', '0042_auto_20150703_1858'), (b'clinique', '0043_remove_ordenmedica_persona'), (b'clinique', '0044_prescripcion_dosis'), (b'clinique', '0045_auto_20150812_1323')]
-
     dependencies = [
-        ('inventory', '0008_auto_20150507_1637'),
-        ('inventory', '0001_initial'),
+        ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('persona', '0001_squashed_0013_persona_mostrar_en_cardex'),
-        ('inventory', '0009_remove_historial_fecha'),
     ]
 
     operations = [

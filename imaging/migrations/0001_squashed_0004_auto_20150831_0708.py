@@ -10,8 +10,6 @@ import django_extensions.db.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'imaging', '0001_initial'), (b'imaging', '0002_auto_20150829_1917'), (b'imaging', '0003_auto_20150831_0705'), (b'imaging', '0004_auto_20150831_0708')]
-
     dependencies = [
         ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

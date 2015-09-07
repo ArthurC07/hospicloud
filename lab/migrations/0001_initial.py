@@ -9,7 +9,7 @@ import django_extensions.db.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('persona', '0001_initial'),
+        ('persona', '0001_squashed_0013_persona_mostrar_en_cardex'),
     ]
 
     operations = [

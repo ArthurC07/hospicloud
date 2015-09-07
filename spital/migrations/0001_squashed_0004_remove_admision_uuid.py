@@ -10,10 +10,10 @@ import django_extensions.db.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0001_initial'),
-        ('persona', '0001_initial'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         ('emergency', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('persona', '0001_squashed_0013_persona_mostrar_en_cardex'),
     ]
 
     operations = [
@@ -37,7 +37,6 @@ class Migration(migrations.Migration):
                 ('ingreso', models.DateTimeField(null=True, blank=True)),
                 ('fecha_pago', models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)),
                 ('fecha_alta', models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)),
-                ('uuid', django_extensions.db.fields.UUIDField(editable=False, blank=True)),
                 ('estado', models.CharField(blank=True, max_length=1, choices=[(b'A', b'Admitido'), (b'B', b'Autorizado'), (b'H', b'Hospitalizar'), (b'I', b'Ingresado'), (b'C', b'Alta'), (b'Q', b'Cancelada')])),
                 ('tiempo', models.IntegerField(default=0, blank=True)),
                 ('neonato', models.NullBooleanField()),
@@ -45,12 +44,11 @@ class Migration(migrations.Migration):
                 ('facturada', models.NullBooleanField(default=False)),
                 ('ultimo_cobro', models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)),
                 ('admitio', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('fiadores', models.ManyToManyField(related_name='fianzas', null=True, to='persona.Persona', blank=True)),
+                ('fiadores', models.ManyToManyField(related_name='fianzas', null=True, to=b'persona.Persona', blank=True)),
             ],
             options={
                 'permissions': (('admision', 'Permite al usuario gestionar admision'),),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Deposito',
@@ -68,7 +66,6 @@ class Migration(migrations.Migration):
                 'abstract': False,
                 'get_latest_by': 'modified',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Doctor',
@@ -83,22 +80,6 @@ class Migration(migrations.Migration):
                 'abstract': False,
                 'get_latest_by': 'modified',
             },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Especialidad',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('created', django_extensions.db.fields.CreationDateTimeField(default=django.utils.timezone.now, verbose_name='created', editable=False, blank=True)),
-                ('modified', django_extensions.db.fields.ModificationDateTimeField(default=django.utils.timezone.now, verbose_name='modified', editable=False, blank=True)),
-                ('nombre', models.CharField(max_length=50)),
-            ],
-            options={
-                'ordering': ('-modified', '-created'),
-                'abstract': False,
-                'get_latest_by': 'modified',
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Habitacion',
@@ -109,9 +90,6 @@ class Migration(migrations.Migration):
                 ('estado', models.CharField(blank=True, max_length=1, choices=[(b'D', b'Disponible'), (b'O', b'Ocupada'), (b'M', b'Mantenimiento')])),
                 ('item', models.ForeignKey(related_name='habitaciones', blank=True, to='inventory.ItemTemplate', null=True)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Laboratorio',
@@ -126,7 +104,6 @@ class Migration(migrations.Migration):
                 'abstract': False,
                 'get_latest_by': 'modified',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='PreAdmision',
@@ -143,30 +120,30 @@ class Migration(migrations.Migration):
                 'abstract': False,
                 'get_latest_by': 'modified',
             },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='admision',
             name='habitacion',
             field=models.ForeignKey(related_name='admisiones', blank=True, to='spital.Habitacion', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='admision',
             name='paciente',
             field=models.ForeignKey(related_name='admisiones', to='persona.Persona'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='admision',
             name='referencias',
-            field=models.ManyToManyField(related_name='referencias', null=True, to='persona.Persona', blank=True),
-            preserve_default=True,
+            field=models.ManyToManyField(related_name='referencias', to=b'persona.Persona', blank=True),
         ),
         migrations.AddField(
             model_name='admision',
             name='tipo_de_venta',
             field=models.ForeignKey(blank=True, to='inventory.TipoVenta', null=True),
-            preserve_default=True,
+        ),
+        migrations.AlterField(
+            model_name='admision',
+            name='fiadores',
+            field=models.ManyToManyField(related_name='fianzas', to=b'persona.Persona', blank=True),
         ),
     ]

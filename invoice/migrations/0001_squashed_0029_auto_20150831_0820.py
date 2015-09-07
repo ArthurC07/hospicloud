@@ -46,8 +46,6 @@ def create_total(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'invoice', '0001_initial'), (b'invoice', '0002_recibo_correlativo'), (b'invoice', '0003_auto_20150522_1155'), (b'invoice', '0004_recibo_ciudad'), (b'invoice', '0005_auto_20150528_1948'), (b'invoice', '0006_recibo_emision'), (b'invoice', '0007_statuspago'), (b'invoice', '0008_pago_status'), (b'invoice', '0009_auto_20150615_1705'), (b'invoice', '0010_auto_20150615_1715'), (b'invoice', '0011_auto_20150615_1715'), (b'invoice', '0012_auto_20150615_1716'), (b'invoice', '0013_venta_total'), (b'invoice', '0014_tipopago_color'), (b'invoice', '0015_venta_monto'), (b'invoice', '0016_auto_20150704_1823'), (b'invoice', '0017_auto_20150707_1815'), (b'invoice', '0018_tipopago_solo_asegurados'), (b'invoice', '0019_statuspago_next_status'), (b'invoice', '0020_cuentaporcobrar'), (b'invoice', '0021_auto_20150810_0712'), (b'invoice', '0022_auto_20150813_1713'), (b'invoice', '0023_auto_20150813_1744'), (b'invoice', '0024_tipopago_reembolso'), (b'invoice', '0024_statuspago_previous_status'), (b'invoice', '0025_merge'), (b'invoice', '0026_notification'), (b'invoice', '0027_auto_20150827_1309'), (b'invoice', '0028_auto_20150828_0929'), (b'invoice', '0029_auto_20150831_0820')]
-
     dependencies = [
         ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         ('persona', '0014_persona_ciudad'),

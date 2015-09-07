@@ -11,12 +11,10 @@ import django_extensions.db.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'users', '0001_initial'), (b'users', '0002_auto_20150223_1703'), (b'users', '0003_userprofile_prefijo_recibo'), (b'users', '0004_auto_20150522_1118'), (b'users', '0005_auto_20150522_1140'), (b'users', '0006_auto_20150528_1948'), (b'users', '0007_auto_20150528_1950'), (b'users', '0008_auto_20150528_2006'), (b'users', '0009_ciudad_fin_rango'), (b'users', '0010_userprofile_bsc'), (b'users', '0011_ciudad_tiene_presupuesto_global')]
-
     dependencies = [
-        ('bsc', '0001_initial'),
+        ('bsc', '0001_squashed_0013_holiday_login'),
         ('auth', '0001_initial'),
-        ('inventory', '0001_initial'),
+        ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('persona', '0001_squashed_0013_persona_mostrar_en_cardex'),
     ]
