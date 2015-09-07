@@ -18,13 +18,13 @@
 from collections import defaultdict
 from decimal import Decimal
 
-from constance import config
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+
 from django_extensions.db.models import TimeStampedModel
 
 from persona.models import Persona, transfer_object_to_persona, \
@@ -78,14 +78,14 @@ class Emergencia(TimeStampedModel):
 
         horas = self.tiempo()
 
-        emergencia = ItemTemplate.objects.get(pk=config.EMERGENCIA)
+        emergencia = self.usuario.profile.ciudad.emergencia
 
         items[emergencia] = 1
         items[self.usuario.profile.honorario] = 1
 
         if horas >= 1:
             restante = horas - 1
-            extra = ItemTemplate.objects.get(pk=config.EXTRA_EMERGENCIA)
+            extra = self.usuario.profile.ciudad.emergencia_extra
             items[extra] = restante
 
         return items

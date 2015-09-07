@@ -984,13 +984,6 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
             venta.save()
             recibo.ventas.add(venta)
 
-        for deposito in self.object.depositos.all():
-            pago = Pago()
-            pago.recibo = recibo
-            pago.monto = deposito.monto
-            pago.tipo = TipoPago.objects.get(pk=config.DEPOSIT_PAYMENT)
-            pago.save()
-
         self.object.ultimo_cobro = timezone.now()
         self.object.save()
 
@@ -1345,7 +1338,7 @@ class DepositoFacturarView(UpdateView, LoginRequiredMixin):
         recibo.save()
 
         venta = Venta()
-        venta.item = ItemTemplate.objects.get(pk=config.DEPOSIT_ACCOUNT)
+        venta.item = self.request.user.profile.ciudad.company.deposito
         venta.recibo = recibo
         venta.cantidad = 1
         venta.precio = self.object.monto

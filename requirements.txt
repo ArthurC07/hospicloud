@@ -1,8 +1,6 @@
 Django
 Pillow
 django-bootstrap-pagination
-django-constance
-django-constance[database]
 django-countries
 django-crispy-forms
 django-extensions

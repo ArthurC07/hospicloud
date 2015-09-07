@@ -39,6 +39,13 @@ class Company(TimeStampedModel):
     cai = models.CharField(max_length=255)
     direccion = models.TextField()
     telefono = models.CharField(max_length=20)
+    chat = models.URLField(blank=True)
+    help = models.URLField(blank=True)
+    emergencia = models.ForeignKey(ItemTemplate, null=True, blank=True)
+    emergencia_extra = models.ForeignKey(ItemTemplate, null=True, blank=True)
+    deposito = models.ForeignKey(ItemTemplate, null=True, blank=True)
+    cambio_monetario = models.DecimalField(max_digits=11, decimal_places=4)
+    receipt_days = models.IntegerField(default=30)
 
     def __str__(self):
 
