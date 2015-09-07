@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('users', '0010_userprofile_bsc'),
-        ('persona', '0013_persona_mostrar_en_cardex'),
+        ('persona', '0001_squashed_0013_persona_mostrar_en_cardex'),
     ]
 
     operations = [
