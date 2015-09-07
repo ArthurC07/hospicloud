@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('inventory', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('spital', '0001_initial'),
+        ('spital', '0001_squashed_0019_auto_20150729_1025'),
     ]
 
     operations = [
