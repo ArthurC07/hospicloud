@@ -27,9 +27,4 @@ CONSTANCE_CONFIG = {
     'ONLINE_HELP': (u'http://www.example.com', u'Url para ayuda en línea'),
     'RECEIPT_DAYS': (1, u'Dias que dura una factura al credito'),
     'CURRENCY_EXCHANGE': (22.03, u'Cambio de Moneda'),
-    'PAYMENT_TYPE_PENDING': (1, u'Tipo de Pago Pendiente'),
-    'PAYMENT_STATUS_PENDING': (1, u'Estado de Pago Pendiente'),
 }
-
-USERENA_ACTIVATION_REQUIRED = False
-AUTH_PROFILE_MODULE = 'users.UserProfile'

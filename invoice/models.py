@@ -75,6 +75,7 @@ class StatusPago(TimeStampedModel):
     next_status = models.ForeignKey('self', null=True)
     previous_status = models.ForeignKey('self', null=True,
                                         related_name='previous')
+    pending = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nombre
@@ -380,10 +381,8 @@ class Pago(TimeStampedModel):
         return self.recibo.get_absolute_url()
 
     def save(self, *args, **kwargs):
-        if self.tipo == TipoPago.objects.get(
-                pk=config.PAYMENT_TYPE_PENDING) and self.pk is None:
-            self.status = StatusPago.objects.get(
-                pk=config.PAYMENT_STATUS_PENDING)
+        if self.tipo.reembolso and self.pk is None:
+            self.status = StatusPago.objects.filter(pending=True).first()
 
         super(Pago, self).save(*args, **kwargs)
 
@@ -569,8 +568,8 @@ class CuentaPorCobrar(TimeStampedModel):
 
         if self.pk is None:
 
-            pending = StatusPago.objects.get(pk=config.PAYMENT_STATUS_PENDING)
-            payments = Pago.objects.filter(status=pending)
+            self.status = StatusPago.objects.filter(pending=True).first()
+            payments = Pago.objects.filter(status=self.status)
             self.minimum = payments.aggregate(
                 minimum=Min('created')
             )['minimum']
@@ -579,8 +578,8 @@ class CuentaPorCobrar(TimeStampedModel):
                 self.minimum = timezone.now()
 
             self.inicial = self.monto()
-            payments.update(status=pending.next_status)
-            self.status = pending.next_status
+            self.status = self.status.next_status
+            payments.update(status=self.status.next_status)
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
 

@@ -91,7 +91,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    str(root.path()),
+    str(root.path('persona/static/')),
 )
 
 # List of finder classes that know how to find static files in
@@ -134,6 +134,9 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'hospinet.urls'
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -225,3 +228,5 @@ AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME ', default='')
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SITE_ID = 1
+USERENA_ACTIVATION_REQUIRED = False
+AUTH_PROFILE_MODULE = 'users.UserProfile'
