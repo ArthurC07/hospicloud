@@ -12,9 +12,9 @@ import django_extensions.db.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bsc', '0001_initial'),
+        ('bsc', '0001_squashed_0013_holiday_login'),
         ('auth', '0001_initial'),
-        ('inventory', '0001_initial'),
+        ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('persona', '0001_squashed_0013_persona_mostrar_en_cardex'),
     ]

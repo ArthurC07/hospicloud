@@ -110,11 +110,9 @@ def expand_paciente(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0008_auto_20150507_1637'),
-        ('inventory', '0001_initial'),
+        ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('persona', '0001_squashed_0013_persona_mostrar_en_cardex'),
-        ('inventory', '0009_remove_historial_fecha'),
     ]
 
     operations = [
