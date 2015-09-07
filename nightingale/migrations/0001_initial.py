@@ -11,7 +11,7 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0001_initial'),
+        ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('spital', '0001_squashed_0019_auto_20150729_1025'),
     ]
