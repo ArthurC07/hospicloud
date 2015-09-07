@@ -10,8 +10,6 @@ import django_extensions.db.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'bsc', '0001_initial'), (b'bsc', '0002_meta_logro_menor_que_meta'), (b'bsc', '0003_extra'), (b'bsc', '0004_auto_20150629_1836'), (b'bsc', '0005_auto_20150630_1424'), (b'bsc', '0006_auto_20150630_1622'), (b'bsc', '0007_remove_pregunta_valor'), (b'bsc', '0008_pregunta_calificable'), (b'bsc', '0009_auto_20150703_1115'), (b'bsc', '0010_voto_sugerencia'), (b'bsc', '0011_pregunta_mostrar_sugerencia'), (b'bsc', '0012_respuesta_terminada'), (b'bsc', '0013_holiday_login')]
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('clinique', '0001_squashed_0045_auto_20150812_1323'),

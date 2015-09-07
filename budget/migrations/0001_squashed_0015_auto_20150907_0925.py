@@ -9,8 +9,6 @@ import django_extensions.db.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'budget', '0001_initial'), (b'budget', '0002_presupuesto_activo'), (b'budget', '0003_auto_20150722_0923'), (b'budget', '0004_gasto_comprobante'), (b'budget', '0005_presupuesto_porcentaje_global'), (b'budget', '0006_auto_20150731_1100'), (b'budget', '0007_gasto_fecha_de_pago'), (b'budget', '0008_gasto_periodo_de_pago'), (b'budget', '0009_auto_20150731_1142'), (b'budget', '0010_presupuesto_inversion'), (b'budget', '0011_gasto_factura'), (b'budget', '0012_auto_20150814_1108'), (b'budget', '0013_auto_20150826_1801'), (b'budget', '0014_gasto_comprobante_entregado'), (b'budget', '0015_auto_20150907_0925')]
-
     dependencies = [
         ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         ('contracts', '0001_squashed_0039_auto_20150817_0933'),

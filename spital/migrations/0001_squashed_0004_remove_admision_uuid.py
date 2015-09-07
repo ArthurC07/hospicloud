@@ -9,8 +9,6 @@ import django_extensions.db.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'spital', '0001_initial'), (b'spital', '0002_delete_especialidad'), (b'spital', '0003_auto_20150507_1637'), (b'spital', '0004_remove_admision_uuid')]
-
     dependencies = [
         ('inventory', '0001_squashed_0019_auto_20150729_1025'),
         ('emergency', '0001_initial'),

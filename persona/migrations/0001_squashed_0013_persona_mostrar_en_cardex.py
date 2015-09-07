@@ -70,8 +70,6 @@ def yaaf(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'persona', '0001_initial'), (b'persona', '0002_auto_20150113_0902'), (b'persona', '0003_auto_20150426_2247'), (b'persona', '0004_auto_20150427_0843'), (b'persona', '0005_antecedentequirurgico_id'), (b'persona', '0006_auto_20150427_2015'), (b'persona', '0007_auto_20150427_2027'), (b'persona', '0008_auto_20150427_2028'), (b'persona', '0009_auto_20150428_1202'), (b'persona', '0010_auto_20150504_1025'), (b'persona', '0011_auto_20150507_1637'), (b'persona', '0012_persona_rtn'), (b'persona', '0013_persona_mostrar_en_cardex')]
-
     dependencies = [
     ]
 
