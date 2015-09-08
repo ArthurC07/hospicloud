@@ -20,15 +20,10 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db import models
-
 from django.db.models import Sum, Q
-
 from django.db.models.functions import Coalesce
-
 from django.utils import timezone
-
 from django.utils.encoding import python_2_unicode_compatible
-
 from django_extensions.db.models import TimeStampedModel
 
 from contracts.models import Aseguradora
@@ -75,7 +70,6 @@ class Presupuesto(TimeStampedModel):
                                     ejecutado=True)
 
     def total_gastos_por_periodo(self, inicio, fin):
-
         return self.gastos_por_periodo(inicio, fin).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
@@ -183,7 +177,6 @@ class Cuenta(TimeStampedModel):
         return self.gastos_por_periodo(inicio, fin)
 
     def total_gastos_mes_actual(self):
-
         return self.gastos_mes_actual().aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
@@ -197,7 +190,6 @@ class Fuente(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
-
         return self.nombre
 
 
