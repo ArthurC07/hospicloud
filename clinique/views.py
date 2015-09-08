@@ -64,10 +64,7 @@ class ConsultorioPermissionMixin(LoginRequiredMixin):
         return super(ConsultorioPermissionMixin, self).dispatch(*args, **kwargs)
 
 
-class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
-    template_name = 'clinique/index.html'
-    paginate_by = 20
-    context_object_name = 'pacientes'
+class DateBoundView(View):
 
     def dispatch(self, request, *args, **kwargs):
         tz = timezone.get_current_timezone()
@@ -77,8 +74,13 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         self.today = tz.localize(datetime.combine(now, time.min))
         self.fin, self.inicio = get_current_month_range()
 
-        return super(ConsultorioIndexView, self).dispatch(request, *args,
-                                                          **kwargs)
+        return super(DateBoundView, self).dispatch(request, *args, **kwargs)
+
+
+class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
+    template_name = 'clinique/index.html'
+    paginate_by = 20
+    context_object_name = 'pacientes'
 
     def get_queryset(self):
         return Paciente.objects.filter(
@@ -132,21 +134,10 @@ class ConsultorioIndexView(ListView, ConsultorioPermissionMixin):
         return context
 
 
-class ConsultorioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView, LoginRequiredMixin):
     paginate_by = 20
     template_name = 'clinique/consultorio_detail.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        tz = timezone.get_current_timezone()
-        now = timezone.now()
-        day = timedelta(days=1)
-        self.yesterday = now - day
-        self.today = tz.localize(datetime.combine(now, time.min))
-        self.fin, self.inicio = get_current_month_range()
-
-        return super(ConsultorioDetailView, self).dispatch(request, *args,
-                                                           **kwargs)
-
+    
     def get_context_data(self, **kwargs):
         context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
 
