@@ -37,7 +37,7 @@
                     <td>Aseguradoras</td>
                     <td>Polizas</td>
                     <th>Monto</th>
-                    <th>Acciones</th>
+                    <th class="no-print">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -73,7 +73,7 @@
                             {% endfor %}
                         </td>
                         <td class="text-right">{{ pago.monto }}</td>
-                        <td>
+                        <td  class="no-print">
                             <a class="btn btn-success btn-block"
                                href="{% url 'invoice-pago-status-next' pago.id %}">Cambiar
                                 a {{ pago.status.next_status }}</a>
@@ -84,7 +84,7 @@
                 <tfoot>
                 <tr>
                     <th colspan="6">Total:</th>
-                    <th>{{ total }}</th>
+                    <th>{{ cuenta.monto }}</th>
                     <th>&nbsp;</th>
                 </tr>
                 </tfoot>
