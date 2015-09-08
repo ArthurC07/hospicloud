@@ -20,3 +20,5 @@ dj-static
 unicodecsv
 django-storages
 boto
+gunicorn
+psycopg2
