@@ -20,8 +20,8 @@ from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
-    UpdateView, FormView, RedirectView
-from django.views.generic.base import TemplateResponseMixin
+    UpdateView, FormView, RedirectView, View
+from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import FormMixin
 
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
@@ -53,8 +53,9 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         inversiones = Presupuesto.objects.filter(inversion=True)
 
         gastos = Gasto.objects.filter(
-            created__range=(inicio, fin),
-            ejecutado=True
+            fecha_de_pago__range=(inicio, fin),
+            ejecutado=True,
+            cuenta__presupuesto__inversion=False
         ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
 
         presupuesto = Cuenta.objects.filter(
@@ -215,8 +216,10 @@ class GastoScheduleView(RedirectView, LoginRequiredMixin):
         return gasto.get_absolute_url()
 
 
-class GastoMixin(TemplateResponseMixin):
-    """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
+class GastoMixin(ContextMixin, View):
+    """
+    Permite obtener un :class:`Gasto` desde los argumentos en una url
+    """
 
     def dispatch(self, *args, **kwargs):
         self.gasto = get_object_or_404(Gasto, pk=kwargs['gasto'])
@@ -230,7 +233,7 @@ class GastoMixin(TemplateResponseMixin):
         return context
 
 
-class GastoParcialFormView(FormView, GastoMixin, LoginRequiredMixin):
+class GastoParcialFormView(GastoMixin, FormView, LoginRequiredMixin):
     """Permite efectuar un pago parcial a un :class:`Gasto`
     """
     form_class = MontoForm

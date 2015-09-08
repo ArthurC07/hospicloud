@@ -70,7 +70,7 @@ class Presupuesto(TimeStampedModel):
         )['total']
 
     def gastos_por_periodo(self, inicio, fin):
-        return Gasto.objects.filter(periodo_de_pago__range=(inicio, fin),
+        return Gasto.objects.filter(fecha_de_pago__range=(inicio, fin),
                                     cuenta__in=self.cuenta_set.all(),
                                     ejecutado=True)
 
@@ -165,7 +165,7 @@ class Cuenta(TimeStampedModel):
         """obtiene los :class:`Gasto`s que ya fueron ejecutados y que han sido
         descargado del flujo de dinero de la empresa"""
         return Gasto.objects.filter(cuenta=self, ejecutado=True,
-                                    periodo_de_pago__range=(inicio, fin))
+                                    fecha_de_pago__range=(inicio, fin))
 
     def total_gastos_por_periodo(self, inicio, fin):
         """Obtiene el tal de :class:`Gasto`s de la :class:`Cuenta` en un periodo
