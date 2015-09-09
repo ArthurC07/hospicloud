@@ -171,9 +171,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'bootstrap_pagination',
     'select2',
-    'constance',
     'storages',
-    'constance.backends.database',
 )
 
 AUTHENTICATION_BACKENDS = (
