@@ -54,7 +54,7 @@ class Emergencia(TimeStampedModel):
                                                 null=True, blank=True)
     usuario = models.ForeignKey(User, blank=True, null=True,
                                 related_name='emergencias')
-    facturada = models.NullBooleanField(default=False)
+    facturada = models.BooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
 
     def get_absolute_url(self):
