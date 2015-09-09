@@ -602,7 +602,8 @@ class ReciboPeriodoView(TemplateView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = Venta.objects.filter(
-            recibo__in=self.recibos
+            recibo__in=self.recibos,
+            recibo__nulo=False
         ).aggregate(total=Coalesce(Sum('total'), Decimal()))['total']
 
         return context

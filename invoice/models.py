@@ -124,11 +124,12 @@ class Recibo(TimeStampedModel):
 
     def total(self):
 
-        total = self.ventas.aggregate(
+        if self.nulo:
+            return Decimal()
+
+        return self.ventas.aggregate(
             total=Coalesce(Sum('total'), Decimal())
         )['total']
-
-        return total
 
     @property
     def numero(self):
@@ -196,6 +197,9 @@ class Recibo(TimeStampedModel):
     def subtotal(self):
 
         """Calcula el monto antes de impuestos"""
+
+        if self.nulo:
+            return Decimal()
 
         return self.ventas.aggregate(
             total=Coalesce(Sum('monto', output_field=models.DecimalField()),
