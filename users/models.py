@@ -46,7 +46,8 @@ class Company(TimeStampedModel):
                                          related_name='emergencia_extra_company')
     deposito = models.ForeignKey(ItemTemplate, null=True, blank=True,
                                  related_name='deposito_company')
-    cambio_monetario = models.DecimalField(max_digits=11, decimal_places=4)
+    cambio_monetario = models.DecimalField(max_digits=11, decimal_places=4,
+                                           default=0)
     receipt_days = models.IntegerField(default=30)
 
     def __str__(self):
