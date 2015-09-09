@@ -137,7 +137,7 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
 class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView, LoginRequiredMixin):
     paginate_by = 20
     template_name = 'clinique/consultorio_detail.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super(ConsultorioDetailView, self).get_context_data(**kwargs)
 

@@ -19,27 +19,21 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import (CreateView, ListView, TemplateView,
-                                  DetailView, UpdateView,
-                                  DeleteView)
-
+from django.views.generic import CreateView, ListView, TemplateView, \
+    DetailView, UpdateView, DeleteView
 from django.contrib import messages
 
-from persona.models import Persona
-from persona.views import (PersonaCreateView, FisicoUpdateView,
-                           EstiloVidaUpdateView, AntecedenteUpdateView,
-                           AntecedenteFamiliarUpdateView,
-                           AntecedenteObstetricoUpdateView,
-                           AntecedenteQuirurgicoUpdateView,
-                           AntecedenteQuirurgicoCreateView)
+from persona.views import PersonaCreateView, FisicoUpdateView, \
+    EstiloVidaUpdateView, AntecedenteUpdateView, PersonaFormMixin, \
+    AntecedenteFamiliarUpdateView, AntecedenteQuirurgicoUpdateView, \
+    AntecedenteObstetricoUpdateView, AntecedenteQuirurgicoCreateView
 from persona.forms import PersonaForm
-from emergency.models import (Emergencia, Tratamiento, RemisionInterna,
-                              RemisionExterna, Hallazgo, Cobro, Diagnostico,
-                              ExamenFisico)
-from emergency.forms import (EmergenciaForm, TratamientoForm, HallazgoForm,
-                             RemisionInternaForm, RemisionExternaForm,
-                             CobroForm, DiagnosticoForm, ExamenFisicoForm)
-from users.mixins import LoginRequiredMixin
+from emergency.models import Emergencia, Tratamiento, RemisionInterna, \
+    RemisionExterna, Hallazgo, Cobro, Diagnostico, ExamenFisico
+from emergency.forms import EmergenciaForm, TratamientoForm, HallazgoForm, \
+    RemisionInternaForm, RemisionExternaForm, CobroForm, DiagnosticoForm, \
+    ExamenFisicoForm
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
 class EmergenciaPermissionMixin(LoginRequiredMixin):
@@ -83,7 +77,8 @@ class PersonaEmergenciaCreateView(PersonaCreateView, LoginRequiredMixin):
         return reverse('emergency-create', args=[self.object.id])
 
 
-class EmergenciaCreateView(CreateView, LoginRequiredMixin):
+class EmergenciaCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
+                           LoginRequiredMixin):
     """Crea una :class:`Emergencia` para una :class:`Persona` ya existente en el
     sistema"""
 
@@ -95,30 +90,6 @@ class EmergenciaCreateView(CreateView, LoginRequiredMixin):
         context = super(EmergenciaCreateView, self).get_context_data(**kwargs)
         context['persona'] = self.persona
         return context
-
-    def get_form_kwargs(self):
-        """Agrega el id de la :class:`Persona` a los argumentos de la sesión"""
-
-        kwargs = super(EmergenciaCreateView, self).get_form_kwargs()
-        kwargs.update({'initial': {'persona': self.persona.id}})
-        return kwargs
-
-    def dispatch(self, *args, **kwargs):
-        """Carga la :class:`Persona` desde el origen de datos"""
-
-        self.persona = get_object_or_404(Persona, pk=kwargs['persona'])
-        return super(EmergenciaCreateView, self).dispatch(*args, **kwargs)
-
-    def form_valid(self, form):
-        """Agrega la :class:`Persona que se esta admitiendo y el :class:`User`
-        que esta realizando la :class:`Emergencia`"""
-
-        self.object = form.save(commit=False)
-        self.object.persona = self.persona
-        self.object.usuario = self.request.user
-        self.object.save()
-
-        return HttpResponseRedirect(self.get_success_url())
 
 
 class EmergenciaDetailView(DetailView, LoginRequiredMixin):
@@ -232,7 +203,7 @@ class CobroCreateView(BaseCreateView):
                           u'por favor modifique su perfil para indicar su '
                           u'inventario')
             return HttpResponseRedirect(self.emergencia.get_absolute_url())
-        
+
         return super(BaseCreateView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
