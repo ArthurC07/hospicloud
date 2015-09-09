@@ -23,7 +23,6 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
-
 from guardian.shortcuts import assign_perm
 
 from emergency.models import Emergencia
@@ -41,14 +40,16 @@ class Company(TimeStampedModel):
     telefono = models.CharField(max_length=20)
     chat = models.URLField(blank=True)
     help = models.URLField(blank=True)
-    emergencia = models.ForeignKey(ItemTemplate, null=True, blank=True)
-    emergencia_extra = models.ForeignKey(ItemTemplate, null=True, blank=True)
-    deposito = models.ForeignKey(ItemTemplate, null=True, blank=True)
+    emergencia = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                   related_name='emergencia_company')
+    emergencia_extra = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                         related_name='emergencia_extra_company')
+    deposito = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                 related_name='deposito_company')
     cambio_monetario = models.DecimalField(max_digits=11, decimal_places=4)
     receipt_days = models.IntegerField(default=30)
 
     def __str__(self):
-
         return self.nombre
 
 
