@@ -1,6 +1,9 @@
 html, body, .Override.container, #index-aside, #main-content {
     height: 100%;
 }
+body {
+    padding: 0;
+}
 #navigation {
     position: absolute;
     right: 0;

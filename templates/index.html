@@ -17,12 +17,9 @@
     {% block header %}{% endblock %}
     <!-- Fav and touch icons -->
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
-    <script type="text/javascript"
-            src="{% static 'js/jquery.min.js' %}"></script>
-    <script type="text/javascript"
-            src="{% static 'js/bootstrap.js' %}"></script>
 </head>
 <body>
+{% include 'javascript.html' %}
 <div id="logo">
     <img src="{% static 'images/hospinet.svg' %}" width="107" height="149"/>
 </div>
@@ -200,12 +197,6 @@
         Ayuda en L&iacute;nea
     </a>
 </div>
-<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
-<script type="text/javascript"
-        src="{% static 'js/jquery-ui.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
-<script type="text/javascript"
-        src="{% static 'js/jquery-ui-timepicker.js' %}"></script>
 <script type="text/javascript"
         src="{% static 'js/jquery.pnotify.min.js' %}"></script>
 <script type="text/javascript"
