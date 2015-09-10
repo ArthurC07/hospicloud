@@ -170,11 +170,9 @@ class Recibo(TimeStampedModel):
 
         self.nulo = True
 
-        for venta in Venta.objects.filter(recibo=self):
-            venta.delete()
+        [venta.delete() for venta in self.ventas.all()]
+        [pago.delete() for pago in self.pagos.all()]
 
-        for pago in Pago.objects.filter(recibo=self).all():
-            pago.delete()
         self.save()
 
     def cerrar(self):

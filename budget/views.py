@@ -81,6 +81,18 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             recibo__nulo=False
         )
 
+        context['credito_anterior'] = ventas_anteriores.filter(
+            recibo__credito=True
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['contado_anterior'] = ventas_anteriores.filter(
+            recibo__credito=False
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
         ingresos = ventas.values('recibo__ciudad__nombre').annotate(
             total=Coalesce(Sum('monto'), Decimal())
         ).order_by()

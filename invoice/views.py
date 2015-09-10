@@ -356,7 +356,7 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
 
     def get_success_url(self):
 
-        return reverse('invoice-view-id', args=[self.recibo.id])
+        return self.recibo.get_absolute_url()
 
 
 class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
@@ -548,7 +548,7 @@ class ReciboAnularView(RedirectView, LoginRequiredMixin):
         recibo = get_object_or_404(Recibo, pk=kwargs['pk'])
         recibo.anular()
         messages.info(self.request, u'¡El recibo ha sido marcado como anulado!')
-        return reverse('invoice-view-id', args=[recibo.id])
+        return recibo.get_absolute_url()
 
 
 class ReciboCerrarView(RedirectView, LoginRequiredMixin):
@@ -566,7 +566,7 @@ class ReciboCerrarView(RedirectView, LoginRequiredMixin):
                           u'¡El recibo no se puede cerrar, revise los pagos')
         else:
             messages.info(self.request, u'¡El recibo ha sido cerrado!')
-        return reverse('invoice-view-id', args=[recibo.id])
+        return recibo.get_absolute_url()
 
 
 class ReciboPeriodoView(TemplateView):
@@ -1562,7 +1562,7 @@ class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
             return reverse('invoice-index')
 
 
-class CuentaPorCobrarMixin(TemplateResponseMixin):
+class CuentaPorCobrarMixin(ContextMixin):
     def dispatch(self, *args, **kwargs):
         self.cuenta = get_object_or_404(CuentaPorCobrar,
                                         pk=kwargs['cuenta'])
