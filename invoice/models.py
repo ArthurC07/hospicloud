@@ -38,7 +38,7 @@ from clinique.models import Consulta
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
-from inventory.models import ItemTemplate, TipoVenta
+from inventory.models import ItemTemplate, TipoVenta, Proveedor
 from spital.models import Deposito
 from users.models import Ciudad
 
@@ -764,10 +764,15 @@ class Cotizado(TimeStampedModel):
         super(Cotizado, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class ComprobanteDeduccion(TimeStampedModel):
-    persona = models.ForeignKey(Persona)
+    proveedor = models.ForeignKey(Proveedor, null=True)
     ciudad = models.ForeignKey(Ciudad)
     correlativo = models.IntegerField()
+
+    def __str__(self):
+
+        return self.proveedor.name
 
     def get_absolute_url(self):
 

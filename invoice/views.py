@@ -1656,8 +1656,7 @@ class CotizacionFacturar(RedirectView, LoginRequiredMixin):
         return recibo.get_absolute_url()
 
 
-class ComprobanteDeduccionCreateView(CreateView, PersonaFormMixin,
-                                     LoginRequiredMixin):
+class ComprobanteDeduccionCreateView(CreateView, LoginRequiredMixin):
     model = ComprobanteDeduccion
     form_class = ComprobanteDeduccionForm
 
