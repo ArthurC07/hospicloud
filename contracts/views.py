@@ -15,8 +15,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-import calendar
-from datetime import datetime, time, date
+from datetime import datetime, time
 
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -35,7 +34,6 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
 from guardian.decorators import permission_required
-
 from constance import config
 
 from clinique.models import Cita, Consulta, Seguimiento
@@ -233,7 +231,6 @@ class PlanMixin(ContextMixin, View):
 
 
 class PlanFormMixin(PlanMixin, FormMixin, LoginRequiredMixin):
-
     def get_initial(self):
         initial = super(PlanFormMixin, self).get_initial()
         initial = initial.copy()
@@ -377,9 +374,9 @@ class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
     def form_valid(self, form):
         master = form.cleaned_data['master']
         self.object = master.create_contract(form.cleaned_data['persona'],
-                                          form.cleaned_data['vencimiento'],
-                                          form.cleaned_data['certificado'],
-                                          form.cleaned_data['numero'])
+                                             form.cleaned_data['vencimiento'],
+                                             form.cleaned_data['certificado'],
+                                             form.cleaned_data['numero'])
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -620,7 +617,7 @@ class VendedorPeriodoView(TemplateView, LoginRequiredMixin):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['comision'] = \
-        self.contratos.aggregate(total=Sum('plan__comision'))['total']
+            self.contratos.aggregate(total=Sum('plan__comision'))['total']
 
         return context
 
@@ -896,7 +893,8 @@ class AseguradoraMixin(TemplateResponseMixin):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
-        self.aseguradora = get_object_or_404(Aseguradora, pk=kwargs['aseguradora'])
+        self.aseguradora = get_object_or_404(Aseguradora,
+                                             pk=kwargs['aseguradora'])
         return super(AseguradoraMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
