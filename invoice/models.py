@@ -257,7 +257,7 @@ class Recibo(TimeStampedModel):
                 ciudad = self.cajero.profile.ciudad
                 ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
                 ciudad.save()
-                ciudad = Ciudad.objects.get(pk=ciudad.pk)
+                ciudad.refresh_from_db()
                 self.correlativo = ciudad.correlativo_de_recibo
 
             turnos = TurnoCaja.objects.filter(
