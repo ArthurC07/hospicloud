@@ -120,7 +120,7 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         return context
 
 
-class PresupuestoMixin(TemplateResponseMixin):
+class PresupuestoMixin(ContextMixin, View):
     """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
