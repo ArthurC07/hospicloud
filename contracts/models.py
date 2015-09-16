@@ -24,7 +24,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -270,6 +270,7 @@ class MasterContract(TimeStampedModel):
                                          null=True, blank=True)
     porcentaje = models.DecimalField(max_digits=3, decimal_places=2,
                                      null=True, blank=True)
+    ultimo = models.IntegerField(default=0)
 
     def __str__(self):
         nombre = self.plan.nombre
@@ -284,13 +285,34 @@ class MasterContract(TimeStampedModel):
 
         return reverse('contract-master', args=[self.id])
 
-    def create_contract(self, persona, vencimiento, certificiado, numero):
+    def create_contract(self, persona, vencimiento, certificado, numero,
+                        auto=False):
+
+        if auto:
+            self.ultimo = F('ultimo') + 1
+            self.save()
+            self.refresh_from_db()
+            certificado = self.ultimo
 
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=timezone.now(), vencimiento=vencimiento,
-                            certificado=certificiado, numero=numero,
+                            certificado=certificado, numero=numero,
                             vendedor=self.vendedor, empresa=self.contratante,
                             master=self)
+
+        if auto:
+            dependiente = Contrato.objects.filter(
+                certificado=certificado,
+                poliza=self.poliza
+            ).count()
+
+            pcd = PCD()
+            pcd.persona = persona
+            if dependiente > 0:
+                dependiente += 1
+            pcd.numero = u'{0}{1}{2}'.format(self.poliza, contract.certificado,
+                                             dependiente)
+            pcd.save()
 
         return contract
 
@@ -466,10 +488,11 @@ class Beneficiario(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
 
+@python_2_unicode_compatible
 class TipoPago(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, related_name='tipos_pago')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.item.descripcion
 
 
@@ -602,7 +625,7 @@ class Autorizacion(TimeStampedModel):
     imagen = models.FileField(upload_to='contracts/autorizaciones/%Y/%m/%d')
     descripcion = models.TextField(blank=True, null=True)
     vigente = models.BooleanField(default=True)
-    
+
     def __str__(self):
         return self.imagen.name
 
