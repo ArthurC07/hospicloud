@@ -3,6 +3,7 @@ html, body, .Override.container, #index-aside, #main-content {
 }
 body {
     padding: 0;
+    margin-top: 0;
 }
 #navigation {
     position: absolute;
