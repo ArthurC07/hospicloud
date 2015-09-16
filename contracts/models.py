@@ -26,6 +26,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
 import unicodecsv
@@ -40,12 +41,13 @@ server_timezone = timezone.get_current_timezone()
 from django.core.files.storage import default_storage as storage
 
 
+@python_2_unicode_compatible
 class Vendedor(TimeStampedModel):
     """Indica quien realizo una venta de un :clas:`Contrato`"""
     usuario = models.ForeignKey(User, related_name="vendedores")
     habilitado = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.usuario.get_full_name()
 
     def get_contratos_vendidos(self, fecha, fin):
@@ -65,19 +67,21 @@ class Vendedor(TimeStampedModel):
         return self.get_contratos_vendidos(inicio, fin).count()
 
 
+@python_2_unicode_compatible
 class Aseguradora(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
     representante = models.CharField(max_length=255, blank=True, default='')
     cardex = models.ForeignKey(Persona, null=True, blank=True,
                                related_name='cardex')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def get_absolute_url(self):
         return reverse('aseguradora', args=[self.id])
 
 
+@python_2_unicode_compatible
 class Plan(TimeStampedModel):
     """Indica los limites que presenta cada :class:`Contrato`"""
 
@@ -89,7 +93,7 @@ class Plan(TimeStampedModel):
     item = models.ForeignKey(ItemTemplate, null=True, blank=True,
                              related_name='planes_precio')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def get_absolute_url(self):
@@ -98,6 +102,7 @@ class Plan(TimeStampedModel):
         return reverse('contracts-plan', args=[self.id])
 
 
+@python_2_unicode_compatible
 class Beneficio(TimeStampedModel):
     """Permite listar los posibles cobros a efectuar dentro de un :class`Plan`
     de :class:`contrato`"""
@@ -117,19 +122,20 @@ class Beneficio(TimeStampedModel):
                                                 default=0)
     aplicar_a_suspendidos = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
 
     def get_absolute_url(self):
         return self.plan.get_absolute_url()
 
 
+@python_2_unicode_compatible
 class PCD(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name="pcds")
     numero = models.CharField(max_length=255, unique=True)
     pc = models.IntegerField(default=0)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0} {1}'.format(self.persona.nombre_completo(), self.numero)
 
     def get_absolute_url(self):
@@ -242,6 +248,7 @@ class ImportFile(TimeStampedModel):
         self.save()
 
 
+@python_2_unicode_compatible
 class MasterContract(TimeStampedModel):
     vendedor = models.ForeignKey(Vendedor, related_name='master_contracts')
     plan = models.ForeignKey(Plan, related_name='master_contracts')
@@ -264,7 +271,7 @@ class MasterContract(TimeStampedModel):
     porcentaje = models.DecimalField(max_digits=3, decimal_places=2,
                                      null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         nombre = self.plan.nombre
         if self.contratante:
             nombre += ' ' + self.contratante.nombre
@@ -302,6 +309,7 @@ class MasterContract(TimeStampedModel):
             Decimal("0.01"))
 
 
+@python_2_unicode_compatible
 class Contrato(TimeStampedModel):
     """Almacena el estado de cada contrato que se ha celebrado"""
 
@@ -336,7 +344,7 @@ class Contrato(TimeStampedModel):
 
         return reverse('contrato', args=[self.id])
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Contrato {0} de {1}".format(self.numero,
                                              self.persona.nombre_completo())
 
@@ -440,6 +448,7 @@ class Contrato(TimeStampedModel):
         return Beneficio.objects.filter(plan=self.plan).all()
 
 
+@python_2_unicode_compatible
 class Beneficiario(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='beneficiarios')
     contrato = models.ForeignKey(Contrato, related_name='beneficiarios')
@@ -448,7 +457,7 @@ class Beneficiario(TimeStampedModel):
     dependiente = models.IntegerField(default=0)
     exclusion = models.TextField(blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.persona.nombre_completo()
 
     def get_absolute_url(self):
@@ -481,18 +490,20 @@ class Pago(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
 
+@python_2_unicode_compatible
 class TipoEvento(TimeStampedModel):
     nombre = models.CharField(max_length=255, null=True, blank=True)
     tipo_items = models.ForeignKey(ItemType, related_name='tipo_eventos',
                                    null=True, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
     def get_absolute_url(self):
         return reverse('contrato-index')
 
 
+@python_2_unicode_compatible
 class LimiteEvento(TimeStampedModel):
     """Especifica la cantidad máxima de :class:`Evento` por cada
     :class:`TipoEvento` que son cubiertos por un :class:`Plan`"""
@@ -503,12 +514,13 @@ class LimiteEvento(TimeStampedModel):
     def get_absolute_url(self):
         return self.plan.get_absolute_url()
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Límite {0} de {1} en plan {2}".format(self.tipo_evento,
                                                        self.cantidad,
                                                        self.plan.nombre)
 
 
+@python_2_unicode_compatible
 class Evento(TimeStampedModel):
     """Registra el uso de los beneficios del :class:`Evento`"""
     contrato = models.ForeignKey(Contrato, related_name='eventos')
@@ -524,7 +536,7 @@ class Evento(TimeStampedModel):
 
         return reverse('contrato', args=[self.contrato.id])
 
-    def __unicode__(self):
+    def __str__(self):
         return u"Evento {0} de {1} de {2}".format(self.tipo,
                                                   self.contrato.numero,
                                                   self.contrato.persona.nombre_completo())
@@ -551,13 +563,15 @@ class Cancelacion(TimeStampedModel):
         return self.contrato.get_absolute_url()
 
 
+@python_2_unicode_compatible
 class MetodoPago(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nombre
 
 
+@python_2_unicode_compatible
 class Precontrato(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='precontratos')
     metodo_de_pago = models.ForeignKey(MetodoPago, related_name='precontratos',
@@ -567,7 +581,7 @@ class Precontrato(TimeStampedModel):
     plan = models.ForeignKey(Plan, related_name='precontratos',
                              blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'Precontrato de {0}'.format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
@@ -583,12 +597,13 @@ class Prebeneficiario(TimeStampedModel):
         return self.precontrato.get_absolute_url()
 
 
+@python_2_unicode_compatible
 class Autorizacion(TimeStampedModel):
     imagen = models.FileField(upload_to='contracts/autorizaciones/%Y/%m/%d')
     descripcion = models.TextField(blank=True, null=True)
     vigente = models.BooleanField(default=True)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.imagen.name
 
 
