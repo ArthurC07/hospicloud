@@ -270,7 +270,7 @@ class MasterContract(TimeStampedModel):
                                          null=True, blank=True)
     porcentaje = models.DecimalField(max_digits=3, decimal_places=2,
                                      null=True, blank=True)
-    ultimo = models.IntegerField(default=0)
+    ultimo_certificado = models.IntegerField(default=0)
 
     def __str__(self):
         nombre = self.plan.nombre
