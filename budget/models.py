@@ -35,9 +35,10 @@ from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
 def ingreso_global_periodo(inicio, fin):
-    return Venta.objects.filter(
+    return Venta.objects.select_related('recibo', 'recibo__ciudad').filter(
         recibo__cliente__ciudad__tiene_presupuesto_global=True,
         recibo__created__range=(inicio, fin),
+        recibo__nulo=False
     ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
 
 
@@ -116,6 +117,7 @@ class Presupuesto(TimeStampedModel):
             condition,
             recibo__created__range=(inicio, fin),
             recibo__ciudad=self.ciudad,
+            recibo__nulo=False
         ).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']

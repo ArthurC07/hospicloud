@@ -18,6 +18,7 @@
                     <th>N&uacute;mero</th>
                     <th>Fecha</th>
                     <th>Paciente</th>
+                    <th>Tipo</th>
                     <th>Total</th>
                 </tr>
                 </thead>
@@ -29,6 +30,7 @@
                         </td>
                         <td>{{ recibo.created }}</td>
                         <td>{{ recibo }}</td>
+                        <td>{{ recibo.credito|yesno:"Crédito,Contado" }}</td>
                         <td>{{ recibo.total }}</td>
                     </tr>
                 {% endfor %}

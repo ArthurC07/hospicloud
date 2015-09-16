@@ -296,7 +296,7 @@ urlpatterns = patterns('',
                            CotizacionFacturar.as_view(),
                            name='cotizacion-facturar'),
 
-                       url(r'^comprobante/(?P<persona>\d+)/agregar$',
+                       url(r'^comprobante/agregar$',
                            ComprobanteDeduccionCreateView.as_view(),
                            name='comprobante-agregar'),
 

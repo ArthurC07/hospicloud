@@ -17,9 +17,9 @@
 
 from django.contrib import admin
 
-from invoice.models import (Recibo, Venta, Pago, TipoPago, TurnoCaja,
-                            CierreTurno, StatusPago, CuentaPorCobrar,
-                            Cotizacion)
+from invoice.models import Recibo, Venta, Pago, TipoPago, TurnoCaja, \
+    CierreTurno, StatusPago, CuentaPorCobrar, Cotizacion, ComprobanteDeduccion, \
+    ConceptoDeduccion
 
 
 class ReciboAdmin(admin.ModelAdmin):
@@ -43,7 +43,7 @@ class TurnoCajaAdmin(admin.ModelAdmin):
 
 class TipoPagoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'color',)
-    ordering = ['nombre', 'color',]
+    ordering = ['nombre', 'color', ]
 
 
 class PagoAdmin(admin.ModelAdmin):
@@ -91,6 +91,16 @@ class CotizacionAdmin(admin.ModelAdmin):
     search_fields = ['persona__nombre', 'persona__apellido']
 
 
+class ComprobanteAdmin(admin.ModelAdmin):
+    list_display = ('proveedor', 'ciudad', 'correlativo', 'created')
+    ordering = ['proveedor', 'ciudad', 'correlativo', 'created']
+
+
+class ConceptoDeduccionAdmin(admin.ModelAdmin):
+    list_display = ('comprobante', 'concepto', 'monto', 'created')
+    ordering = ['comprobante', 'concepto', 'monto', 'created']
+
+
 admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta, VentaAdmin)
 admin.site.register(StatusPago, StatusPagoAdmin)
@@ -100,3 +110,5 @@ admin.site.register(TurnoCaja, TurnoCajaAdmin)
 admin.site.register(CierreTurno, CierreturnoAdmin)
 admin.site.register(CuentaPorCobrar, CuentaPorCobrarAdmin)
 admin.site.register(Cotizacion, CotizacionAdmin)
+admin.site.register(ComprobanteDeduccion, ComprobanteAdmin)
+admin.site.register(ConceptoDeduccion, ConceptoDeduccionAdmin)

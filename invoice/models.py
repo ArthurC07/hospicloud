@@ -34,7 +34,7 @@ from clinique.models import Consulta
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
-from inventory.models import ItemTemplate, TipoVenta
+from inventory.models import ItemTemplate, TipoVenta, Proveedor
 from spital.models import Deposito
 from users.models import Ciudad
 
@@ -120,11 +120,12 @@ class Recibo(TimeStampedModel):
 
     def total(self):
 
-        total = self.ventas.aggregate(
+        if self.nulo:
+            return Decimal()
+
+        return self.ventas.aggregate(
             total=Coalesce(Sum('total'), Decimal())
         )['total']
-
-        return total
 
     @property
     def numero(self):
@@ -169,11 +170,9 @@ class Recibo(TimeStampedModel):
 
         self.nulo = True
 
-        for venta in Venta.objects.filter(recibo=self):
-            venta.delete()
+        [venta.delete() for venta in self.ventas.all()]
+        [pago.delete() for pago in self.pagos.all()]
 
-        for pago in Pago.objects.filter(recibo=self).all():
-            pago.delete()
         self.save()
 
     def cerrar(self):
@@ -196,6 +195,9 @@ class Recibo(TimeStampedModel):
     def subtotal(self):
 
         """Calcula el monto antes de impuestos"""
+
+        if self.nulo:
+            return Decimal()
 
         return self.ventas.aggregate(
             total=Coalesce(Sum('monto', output_field=models.DecimalField()),
@@ -255,7 +257,7 @@ class Recibo(TimeStampedModel):
                 ciudad = self.cajero.profile.ciudad
                 ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
                 ciudad.save()
-                ciudad = Ciudad.objects.get(pk=ciudad.pk)
+                ciudad.refresh_from_db()
                 self.correlativo = ciudad.correlativo_de_recibo
 
             turnos = TurnoCaja.objects.filter(
@@ -762,10 +764,15 @@ class Cotizado(TimeStampedModel):
         super(Cotizado, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class ComprobanteDeduccion(TimeStampedModel):
-    persona = models.ForeignKey(Persona)
+    proveedor = models.ForeignKey(Proveedor, null=True)
     ciudad = models.ForeignKey(Ciudad)
     correlativo = models.IntegerField()
+
+    def __str__(self):
+
+        return self.proveedor.name
 
     def get_absolute_url(self):
         return reverse('comprobante', args=[self.id])

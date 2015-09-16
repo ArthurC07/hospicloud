@@ -68,7 +68,8 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
 
         context['porcentaje'] = gastos / max(presupuesto, 1) * 100
         ventas = Venta.objects.select_related('recibo').filter(
-            recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False
         )
 
         credito = ventas.filter(recibo__credito=True).aggregate(
@@ -76,8 +77,21 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         )['total']
 
         ventas_anteriores = Venta.objects.select_related('recibo').filter(
-            recibo__created__range=(inicio_prev, fin_prev)
+            recibo__created__range=(inicio_prev, fin_prev),
+            recibo__nulo=False
         )
+
+        context['credito_anterior'] = ventas_anteriores.filter(
+            recibo__credito=True
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['contado_anterior'] = ventas_anteriores.filter(
+            recibo__credito=False
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
 
         ingresos = ventas.values('recibo__ciudad__nombre').annotate(
             total=Coalesce(Sum('monto'), Decimal())
