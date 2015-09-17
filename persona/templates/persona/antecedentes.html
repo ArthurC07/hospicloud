@@ -1,0 +1,27 @@
+{% include 'snippets/fisico.html' with fisico=persona.fisico %}
+{% if perms.persona.persona %}
+    <a href="{% url 'persona-fisico-editar' persona.id %}"
+       class="btn btn-primary">Editar F&iacute;sico</a>
+{% endif %}
+{% include 'snippets/antecedente.html' with antecedente=persona.antecedente %}
+{% if perms.persona.persona %}
+    <a href="{% url 'persona-antecedente-editar' persona.id %}"
+       class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos
+        Personales</a>
+{% endif %}
+{% include 'snippets/antecedente_familiar.html' with antecedente=persona.antecedente_familiar %}
+{% if perms.persona.persona %}
+    <a href="{% url 'persona-antecedente-familiar-editar' persona.id %}"
+       class="btn btn-primary">Editar Antecedentes Patol&oacute;gicos Familiares</a>
+{% endif %}
+{% include 'snippets/antecedente_quirurgico.html' with persona=persona %}
+<a href="{% url 'persona-antecedente-quirurgico-agregar' persona.id %}"
+   class="btn btn-primary">Agregar Antecedentes Quir&uacute;rgico</a>
+{% ifequal persona.sexo 'F' %}
+    {% include 'snippets/antecedente_obstetrico.html' with antecedente=persona.antecedente_obstetrico %}
+    {% if perms.persona.persona %}
+        <a href="{% url 'persona-antecedente-obstetrico-editar' persona.id %}"
+           class="btn btn-primary">Editar Antecedentes
+            Obstetricos</a>
+    {% endif %}
+{% endifequal %}
