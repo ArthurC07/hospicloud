@@ -444,3 +444,7 @@ class Concepto(TimeStampedModel):
     descripcion = models.CharField(max_length=255)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
+
+    def __str__(self):
+
+        return self.descripcion
