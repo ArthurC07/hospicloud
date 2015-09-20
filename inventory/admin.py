@@ -40,8 +40,9 @@ class ItemAdmin(admin.ModelAdmin):
 
 
 class ProveedorAdmin(admin.ModelAdmin):
-    list_display = ['name', ]
-    search_fields = ['name', ]
+    list_display = ['name', 'rtn', 'telefono']
+    search_fields = ['name', 'rtn']
+    ordering = ['name', 'rtn']
 
 
 class TransaccionAdmin(admin.ModelAdmin):
