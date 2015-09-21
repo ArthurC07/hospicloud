@@ -63,15 +63,14 @@ class CuentaFormMixin(FieldSetModelFormMixin):
                               model="", widget=forms.HiddenInput())
 
 
-class GastoForm(CuentaFormMixin, ProveedorFormMixin):
+class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm,
+                FuenteFormMixin):
     class Meta:
         model = Gasto
-        exclude = ('ejecutado', 'fecha_maxima_de_pago')
+        exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos')
 
-    fecha_de_pago = forms.DateField(widget=DateTimeWidget(),
-                                    initial=timezone.now)
-    periodo_de_pago = forms.DateField(widget=DateTimeWidget(),
-                                      initial=timezone.now)
+    fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
+                                        initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoForm, self).__init__(*args, **kwargs)

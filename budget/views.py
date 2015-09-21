@@ -183,14 +183,14 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
         return initial
 
 
-class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
+class GastoCreateView(CuentaFormMixin, CreateView, CurrentUserFormMixin,
+                      LoginRequiredMixin):
     model = Gasto
     form_class = GastoForm
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.ejectuado = True
-        self.object.save()
+        self.object.ejecutar()
 
         return HttpResponseRedirect(self.get_success_url())
 

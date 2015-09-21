@@ -196,7 +196,7 @@ class Fuente(TimeStampedModel):
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def __str__(self):
-        return self.nombre
+        return u'{0} - {1}'.format(self.nombre, self.monto)
 
 
 @python_2_unicode_compatible
