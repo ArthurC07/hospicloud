@@ -18,6 +18,7 @@ from copy import deepcopy
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum, Q
@@ -192,6 +193,7 @@ class Cuenta(TimeStampedModel):
 @python_2_unicode_compatible
 class Fuente(TimeStampedModel):
     nombre = models.CharField(max_length=255)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def __str__(self):
         return self.nombre
@@ -212,23 +214,30 @@ class Gasto(TimeStampedModel):
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
     numero_de_factura = models.CharField(max_length=255, blank=True, null=True)
-    cheque = models.CharField(max_length=255, blank=True, null=True)
-    comprobante = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
-                                   blank=True, null=True)
+    numero_de_comprobante_de_pago = models.CharField(max_length=255, blank=True,
+                                                     null=True)
+    comprobante_de_pago = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
+                                           blank=True, null=True)
+    factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
+                               blank=True, null=True)
     fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
     fecha_de_pago = models.DateTimeField(default=timezone.now)
-    periodo_de_pago = models.DateTimeField(default=timezone.now)
+    fecha_en_factura = models.DateTimeField(default=timezone.now)
     ejecutado = models.BooleanField(default=False)
-    aseguradora = models.ForeignKey(Aseguradora, null=True, blank=True)
-    proximo_pago = models.DateTimeField(default=timezone.now)
     numero_pagos = models.IntegerField(default=1)
     recepcion_de_facturas_originales = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def __str__(self):
         return self.descripcion
 
     def get_absolute_url(self):
         return reverse('budget-control', args=[self.cuenta.presupuesto.id])
+
+    def ejecutar(self):
+
+        self.ejecutado = True
+        self.save()
 
     def clonar(self):
 
@@ -446,5 +455,4 @@ class Concepto(TimeStampedModel):
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
 
     def __str__(self):
-
         return self.descripcion

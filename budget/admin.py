@@ -17,7 +17,7 @@
 from django.contrib import admin
 
 from budget.models import Presupuesto, Cuenta, Gasto, Income, \
-    PresupuestoMensual, Rubro, Concepto
+    PresupuestoMensual, Rubro, Concepto, Fuente
 
 
 class PresupuestoAdmin(admin.ModelAdmin):
@@ -55,6 +55,11 @@ class GastoAdmin(admin.ModelAdmin):
 
     get_presupuesto.short_description = 'Presupuesto'
     get_presupuesto.admin_order_field = 'cuenta__presupuesto'
+
+
+class FuenteAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'monto']
+    ordering = ['nombre', 'monto']
 
 
 class IncomeAdmin(admin.ModelAdmin):
@@ -107,3 +112,4 @@ admin.site.register(Income, IncomeAdmin)
 admin.site.register(PresupuestoMensual, PresupuestoMensualAdmin)
 admin.site.register(Rubro, RubroAdmin)
 admin.site.register(Concepto, ConceptoAdmin)
+admin.site.register(Fuente, FuenteAdmin)

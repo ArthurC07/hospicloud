@@ -28,7 +28,7 @@ from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoEjecutarFrom, MontoForm
 from budget.models import Presupuesto, Cuenta, Gasto, Income
 from invoice.models import Venta
-from users.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
@@ -195,7 +195,8 @@ class GastoCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class GastoPendienteCreateView(CuentaFormMixin, CreateView, LoginRequiredMixin):
+class GastoPendienteCreateView(CuentaFormMixin, CreateView,
+                               CurrentUserFormMixin, LoginRequiredMixin):
     model = Gasto
     form_class = GastoPendienteForm
 
@@ -219,8 +220,7 @@ class GastoEjecutarView(UpdateView, LoginRequiredMixin):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.ejecutado = True
-        self.object.save()
+        self.object.ejecutar()
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -259,7 +259,6 @@ class GastoParcialFormView(GastoMixin, FormView, LoginRequiredMixin):
     template_name = 'budget/gasto_form.html'
 
     def form_valid(self, form):
-
         self.gasto.pago_parcial(form.cleaned_data['monto'])
 
         return HttpResponseRedirect(self.gasto.get_absolute_url())
