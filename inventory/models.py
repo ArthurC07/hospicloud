@@ -125,6 +125,12 @@ class ItemTemplate(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Proveedor(models.Model):
+    """
+    Represents someone that sells stuff or provides a service to the company
+    """
+    class Meta:
+        ordering = ('name', 'rtn')
+
     name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
     rtn = models.CharField(max_length=255, blank=True)
     direccion = models.CharField(max_length=255, blank=True)
@@ -132,7 +138,7 @@ class Proveedor(models.Model):
     telefono = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return self.name
+        return u'{0} - {1}'.format(self.name, self.rtn)
 
 
 @python_2_unicode_compatible

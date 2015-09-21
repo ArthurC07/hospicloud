@@ -18,12 +18,15 @@ from copy import deepcopy
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+
 from django.utils.encoding import python_2_unicode_compatible
+
 from django_extensions.db.models import TimeStampedModel
 
 from contracts.models import Aseguradora
@@ -190,9 +193,10 @@ class Cuenta(TimeStampedModel):
 @python_2_unicode_compatible
 class Fuente(TimeStampedModel):
     nombre = models.CharField(max_length=255)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def __str__(self):
-        return self.nombre
+        return u'{0} - {1}'.format(self.nombre, self.monto)
 
 
 @python_2_unicode_compatible
@@ -205,28 +209,35 @@ class Gasto(TimeStampedModel):
     por el campo correspondiente.
     """
     cuenta = models.ForeignKey(Cuenta)
-    fuente = models.ForeignKey(Fuente, null=True, blank=True)
+    fuente_de_pago = models.ForeignKey(Fuente, null=True, blank=True)
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
-    factura = models.CharField(max_length=255, blank=True, null=True)
-    cheque = models.CharField(max_length=255, blank=True, null=True)
-    comprobante = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
-                                   blank=True, null=True)
+    numero_de_factura = models.CharField(max_length=255, blank=True, null=True)
+    numero_de_comprobante_de_pago = models.CharField(max_length=255, blank=True,
+                                                     null=True)
+    comprobante_de_pago = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
+                                           blank=True, null=True)
+    factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
+                               blank=True, null=True)
     fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
     fecha_de_pago = models.DateTimeField(default=timezone.now)
-    periodo_de_pago = models.DateTimeField(default=timezone.now)
+    fecha_en_factura = models.DateTimeField(default=timezone.now)
     ejecutado = models.BooleanField(default=False)
-    aseguradora = models.ForeignKey(Aseguradora, null=True, blank=True)
-    proximo_pago = models.DateTimeField(default=timezone.now)
     numero_pagos = models.IntegerField(default=1)
-    comprobante_entregado = models.BooleanField(default=False)
+    recepcion_de_facturas_originales = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def __str__(self):
         return self.descripcion
 
     def get_absolute_url(self):
         return reverse('budget-control', args=[self.cuenta.presupuesto.id])
+
+    def ejecutar(self):
+
+        self.ejecutado = True
+        self.save()
 
     def clonar(self):
 
@@ -399,3 +410,49 @@ class Income(TimeStampedModel):
              ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'])
             for aseguradora in Aseguradora.objects.all()
             ]
+
+
+@python_2_unicode_compatible
+class PresupuestoMensual(TimeStampedModel):
+    mes = models.IntegerField()
+    anio = models.IntegerField(help_text=u'Año')
+    ciudad = models.ForeignKey(Ciudad)
+
+    def __str__(self):
+        return u'{0} de {1} en {2}'.format(self.mes, self.anio,
+                                           self.ciudad.nombre)
+
+    def total(self):
+        return Concepto.objects.select_related(
+            'rubro', 'rubro__presupuesto'
+        ).filter(rubro__presupuesto=self).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+
+@python_2_unicode_compatible
+class Rubro(TimeStampedModel):
+    presupuesto = models.ForeignKey(PresupuestoMensual)
+    nombre = models.CharField(max_length=255)
+
+    def __str__(self):
+        return u'{0} de {1} de {2} en {3}'.format(self.nombre,
+                                                  self.presupuesto.mes,
+                                                  self.presupuesto.anio,
+                                                  self.presupuesto.ciudad)
+
+    def total(self):
+        return Concepto.objects.filter(rubro=self).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+
+@python_2_unicode_compatible
+class Concepto(TimeStampedModel):
+    rubro = models.ForeignKey(Rubro)
+    descripcion = models.CharField(max_length=255)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
+
+    def __str__(self):
+        return self.descripcion

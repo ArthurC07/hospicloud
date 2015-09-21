@@ -18,11 +18,17 @@ from django import forms
 from django.utils import timezone
 from select2.fields import ModelChoiceField
 
-from budget.models import Presupuesto, Cuenta, Gasto
+from budget.models import Presupuesto, Cuenta, Gasto, Fuente
 from inventory.forms import ProveedorFormMixin
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     FieldSetFormMixin
 from users.forms import CiudadFormMixin
+from users.mixins import HiddenUserForm
+
+
+class FuenteFormMixin(FieldSetModelFormMixin):
+    fuente_de_pago = ModelChoiceField(name='', model='',
+                                      queryset=Fuente.objects.all())
 
 
 class PresupuestoForm(CiudadFormMixin):
@@ -57,26 +63,26 @@ class CuentaFormMixin(FieldSetModelFormMixin):
                               model="", widget=forms.HiddenInput())
 
 
-class GastoForm(CuentaFormMixin, ProveedorFormMixin):
+class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm,
+                FuenteFormMixin):
     class Meta:
         model = Gasto
-        exclude = ('ejecutado', 'fecha_maxima_de_pago')
+        exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos')
 
-    fecha_de_pago = forms.DateField(widget=DateTimeWidget(),
-                                    initial=timezone.now)
-    periodo_de_pago = forms.DateField(widget=DateTimeWidget(),
-                                      initial=timezone.now)
+    fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
+                                        initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Formulario de Gasto', *self.field_names)
 
 
-class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin):
+class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
     class Meta:
         model = Gasto
-        exclude = ('ejecutado', 'fecha_de_pago', 'periodo_de_pago', 'cheque',
-                   'comprobante_entregado')
+        exclude = ('ejecutado', 'fecha_de_pago', 'comprobante_de_pago',
+                   'recepcion_de_facturas_originales', 'fuente_de_pago',
+                   'numero_de_comprobante_de_pago')
 
     fecha_maxima_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                                required=False,
@@ -88,15 +94,14 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin):
                                       *self.field_names)
 
 
-class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
+class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin, FuenteFormMixin):
     class Meta:
         model = Gasto
-        exclude = ('ejecutado', 'fecha_maxima_de_pago', 'comprobante_entregado')
+        exclude = ('ejecutado', 'fecha_maxima_de_pago', 'comprobante_entregado',
+                   'numero_pagos', 'usuario')
 
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
-    periodo_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
-                                          initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoEjecutarFrom, self).__init__(*args, **kwargs)

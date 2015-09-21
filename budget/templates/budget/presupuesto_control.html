@@ -83,11 +83,12 @@
                             <caption>Cuentas Por Pagar</caption>
                             <thead>
                             <tr>
-                                <th>Fecha</th>
+                                <th>Fecha M&aacute;xima de Pago</th>
                                 <th>Descripci&oacute;n</th>
                                 <th>Proveedor</th>
-                                <th>Cheque</th>
-                                <th>Comprobante</th>
+                                <th>N&uacute;mero de Factura</th>
+                                <th>Factura</th>
+                                <th>Usuario</th>
                                 <th>Monto</th>
                                 <th></th>
                             </tr>
@@ -95,19 +96,20 @@
                             <tbody>
                             {% for gasto in cuenta.cuentas_por_pagar.all %}
                                 <tr>
-                                    <td>{{ gasto.created }}</td>
+                                    <td>{{ gasto.fecha_maxima_de_pago }}</td>
                                     <td>{{ gasto.descripcion }}</td>
                                     <td>{{ gasto.proveedor }}</td>
-                                    <td>{{ gasto.cheque }}</td>
+                                    <td>{{ gasto.numero_de_factura }}</td>
                                     <td>
-                                        {% if gasto.comprobante %}
+                                        {% if gasto.factura %}
                                             <a class="btn btn-success"
-                                               href="{{ gasto.comprobante.url }}">
+                                               href="{{ gasto.factura.url }}">
                                                 <i class="fa fa-download"></i>
                                                 Descargar
                                             </a>
                                         {% endif %}
                                     </td>
+                                    <td>{{ gasto.usuario }}</td>
                                     <td class="text-right">{{ gasto.monto }}</td>
                                     <td>
                                         <div class="dropdown">
@@ -133,8 +135,6 @@
                                                 </li>
                                             </ul>
                                         </div>
-
-
                                     </td>
                                 </tr>
                             {% empty %}
@@ -157,11 +157,11 @@
                             <caption>Gastos Completados</caption>
                             <thead>
                             <tr>
-                                <th>Fecha</th>
+                                <th>Fecha de Pago</th>
                                 <th>Descripci&oacute;n</th>
                                 <th>Proveedor</th>
-                                <th>Cheque</th>
-                                <th>Comprobante</th>
+                                <th>N&uacute;mero de Comprobante</th>
+                                <th>Comprobante de Pago</th>
                                 <th>Monto</th>
                                 <th>Acciones</th>
                             </tr>
@@ -169,14 +169,14 @@
                             <tbody>
                             {% for gasto in cuenta.gastos_mes_actual.all %}
                                 <tr>
-                                    <td>{{ gasto.created }}</td>
+                                    <td>{{ gasto.fecha_de_pago }}</td>
                                     <td>{{ gasto.descripcion }}</td>
                                     <td>{{ gasto.proveedor }}</td>
-                                    <td>{{ gasto.cheque }}</td>
+                                    <td>{{ gasto.numero_de_comprobante_de_pago }}</td>
                                     <td>
-                                        {% if gasto.comprobante %}
+                                        {% if gasto.comprobante_de_pago %}
                                             <a class="btn btn-success"
-                                               href="{{ gasto.comprobante.url }}">
+                                               href="{{ gasto.comprobante_de_pago.url }}">
                                                 <i class="fa fa-download"></i>
                                                 Descargar
                                             </a>
