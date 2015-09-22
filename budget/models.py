@@ -213,8 +213,8 @@ class Gasto(TimeStampedModel):
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
-    numero_de_factura = models.CharField(max_length=255, blank=True, null=True)
     fecha_en_factura = models.DateTimeField(default=timezone.now)
+    numero_de_factura = models.CharField(max_length=255, blank=True, null=True)
     fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
     factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                blank=True, null=True)
