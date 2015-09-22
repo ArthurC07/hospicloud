@@ -237,6 +237,8 @@ class Gasto(TimeStampedModel):
     def ejecutar(self):
 
         self.ejecutado = True
+        self.fuente_de_pago.monto -= self.monto
+        self.fuente_de_pago.save()
         self.save()
 
     def clonar(self):
