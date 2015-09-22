@@ -208,19 +208,19 @@ class Gasto(TimeStampedModel):
     pagar y puede mantenerse en espera hasta us fecha máxima de pago, reflejada
     por el campo correspondiente.
     """
-    cuenta = models.ForeignKey(Cuenta)
-    fuente_de_pago = models.ForeignKey(Fuente, null=True, blank=True)
+    tipo_de_gasto = models.ForeignKey(Cuenta)
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
     numero_de_factura = models.CharField(max_length=255, blank=True, null=True)
+    fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
+    factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
+                               blank=True, null=True)
+    fuente_de_pago = models.ForeignKey(Fuente, null=True, blank=True)
     numero_de_comprobante_de_pago = models.CharField(max_length=255, blank=True,
                                                      null=True)
     comprobante_de_pago = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                            blank=True, null=True)
-    factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
-                               blank=True, null=True)
-    fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
     fecha_de_pago = models.DateTimeField(default=timezone.now)
     fecha_en_factura = models.DateTimeField(default=timezone.now)
     ejecutado = models.BooleanField(default=False)
