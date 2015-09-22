@@ -85,10 +85,10 @@
                             <tr>
                                 <th>Fecha M&aacute;xima de Pago</th>
                                 <th>Descripci&oacute;n</th>
+                                <th>Usuario</th>
                                 <th>Proveedor</th>
                                 <th>N&uacute;mero de Factura</th>
                                 <th>Factura</th>
-                                <th>Usuario</th>
                                 <th>Monto</th>
                                 <th></th>
                             </tr>
@@ -98,6 +98,7 @@
                                 <tr>
                                     <td>{{ gasto.fecha_maxima_de_pago }}</td>
                                     <td>{{ gasto.descripcion }}</td>
+                                    <td>{{ gasto.usuario }}</td>
                                     <td>{{ gasto.proveedor }}</td>
                                     <td>{{ gasto.numero_de_factura }}</td>
                                     <td>
@@ -109,7 +110,6 @@
                                             </a>
                                         {% endif %}
                                     </td>
-                                    <td>{{ gasto.usuario }}</td>
                                     <td class="text-right">{{ gasto.monto }}</td>
                                     <td>
                                         <div class="dropdown">
@@ -159,11 +159,12 @@
                             <tr>
                                 <th>Fecha de Pago</th>
                                 <th>Descripci&oacute;n</th>
+                                <th>Usuario</th>
                                 <th>Proveedor</th>
                                 <th>N&uacute;mero de Comprobante</th>
                                 <th>Comprobante de Pago</th>
                                 <th>Monto</th>
-                                <th>Acciones</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -171,6 +172,7 @@
                                 <tr>
                                     <td>{{ gasto.fecha_de_pago }}</td>
                                     <td>{{ gasto.descripcion }}</td>
+                                    <td>{{ gasto.usuario }}</td>
                                     <td>{{ gasto.proveedor }}</td>
                                     <td>{{ gasto.numero_de_comprobante_de_pago }}</td>
                                     <td>
