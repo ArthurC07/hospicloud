@@ -208,7 +208,7 @@ class Gasto(TimeStampedModel):
     pagar y puede mantenerse en espera hasta us fecha máxima de pago, reflejada
     por el campo correspondiente.
     """
-    tipo_de_gasto = models.ForeignKey(Cuenta)
+    cuenta = models.ForeignKey(Cuenta, help_text='Tipo de Cargo')
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
