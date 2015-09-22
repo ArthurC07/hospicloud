@@ -195,6 +195,7 @@ class Cuenta(TimeStampedModel):
 class Fuente(TimeStampedModel):
     nombre = models.CharField(max_length=255)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    caja = models.BooleanField(default=False)
 
     def __str__(self):
         return u'{0} - {1}'.format(self.nombre, self.monto)
@@ -219,14 +220,14 @@ class Gasto(TimeStampedModel):
     factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                blank=True, null=True)
     fuente_de_pago = models.ForeignKey(Fuente, null=True, blank=True)
-    numero_de_comprobante_de_pago = models.CharField(max_length=255, blank=True,
-                                                     null=True)
+    numero_de_comprobante_de_pago = models.CharField(max_length=255, default='')
     comprobante_de_pago = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                            blank=True, null=True)
     fecha_de_pago = models.DateTimeField(default=timezone.now)
     ejecutado = models.BooleanField(default=False)
     numero_pagos = models.IntegerField(default=1)
     recepcion_de_facturas_originales = models.BooleanField(default=False)
+    fecha_de_recepcion_de_factura = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def __str__(self):

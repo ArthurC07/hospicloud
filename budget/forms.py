@@ -69,6 +69,9 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm,
         model = Gasto
         exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos')
 
+    fuente_de_pago = ModelChoiceField(name='', model='',
+                                      queryset=Fuente.objects.filter(caja=True))
+
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
 
