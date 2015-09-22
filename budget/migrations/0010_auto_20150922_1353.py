@@ -16,4 +16,9 @@ class Migration(migrations.Migration):
             name='numero_de_factura',
             field=models.CharField(default=b'', max_length=255),
         ),
+        migrations.AlterField(
+            model_name='gasto',
+            name='numero_de_comprobante_de_pago',
+            field=models.CharField(default=b'', max_length=255),
+        ),
     ]

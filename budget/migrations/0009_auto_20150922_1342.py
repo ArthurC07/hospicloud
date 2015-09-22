@@ -22,9 +22,4 @@ class Migration(migrations.Migration):
             name='fecha_de_recepcion_de_factura',
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
-        migrations.AlterField(
-            model_name='gasto',
-            name='numero_de_comprobante_de_pago',
-            field=models.CharField(default=b'', max_length=255),
-        ),
     ]
