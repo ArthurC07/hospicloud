@@ -20,6 +20,7 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
@@ -208,7 +209,7 @@ class Gasto(TimeStampedModel):
     pagar y puede mantenerse en espera hasta us fecha máxima de pago, reflejada
     por el campo correspondiente.
     """
-    cuenta = models.ForeignKey(Cuenta, help_text='Tipo de Cargo')
+    cuenta = models.ForeignKey(Cuenta, verbose_name=_(u'Tipo de Cargo'))
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
