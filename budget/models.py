@@ -213,6 +213,7 @@ class Gasto(TimeStampedModel):
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
     numero_de_factura = models.CharField(max_length=255, blank=True, null=True)
+    fecha_en_factura = models.DateTimeField(default=timezone.now)
     fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
     factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                blank=True, null=True)
@@ -222,7 +223,6 @@ class Gasto(TimeStampedModel):
     comprobante_de_pago = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                            blank=True, null=True)
     fecha_de_pago = models.DateTimeField(default=timezone.now)
-    fecha_en_factura = models.DateTimeField(default=timezone.now)
     ejecutado = models.BooleanField(default=False)
     numero_pagos = models.IntegerField(default=1)
     recepcion_de_facturas_originales = models.BooleanField(default=False)
