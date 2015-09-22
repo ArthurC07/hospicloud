@@ -220,7 +220,8 @@ class Gasto(TimeStampedModel):
     factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                blank=True, null=True)
     fuente_de_pago = models.ForeignKey(Fuente, null=True, blank=True)
-    numero_de_comprobante_de_pago = models.CharField(max_length=255, default='')
+    numero_de_comprobante_de_pago = models.CharField(max_length=255, blank=True,
+                                                     null=True)
     comprobante_de_pago = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                            blank=True, null=True)
     fecha_de_pago = models.DateTimeField(default=timezone.now)

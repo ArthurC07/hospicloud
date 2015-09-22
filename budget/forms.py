@@ -67,16 +67,19 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm,
                 FuenteFormMixin):
     class Meta:
         model = Gasto
-        exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos')
+        exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos',
+                   'comprobante_de_pago', 'numero_de_comprobante_de_pago')
 
     fuente_de_pago = ModelChoiceField(name='', model='',
                                       queryset=Fuente.objects.filter(caja=True))
-
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
-
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
+    fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
+                                           initial=timezone.now)
+    fecha_de_recepcion_de_factura = forms.DateTimeField(widget=DateTimeWidget(),
+                                                        initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoForm, self).__init__(*args, **kwargs)
@@ -96,6 +99,10 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
     fecha_maxima_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                                required=False,
                                                initial=timezone.now)
+    fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
+                                           initial=timezone.now)
+    fecha_de_recepcion_de_factura = forms.DateTimeField(widget=DateTimeWidget(),
+                                                        initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoPendienteForm, self).__init__(*args, **kwargs)
@@ -114,6 +121,10 @@ class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin, FuenteFormMixin):
 
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
+    fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
+                                           initial=timezone.now)
+    fecha_de_recepcion_de_factura = forms.DateTimeField(widget=DateTimeWidget(),
+                                                        initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoEjecutarFrom, self).__init__(*args, **kwargs)
