@@ -16,6 +16,7 @@
 from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from select2.fields import ModelChoiceField
 
 from budget.models import Presupuesto, Cuenta, Gasto, Fuente
@@ -60,7 +61,7 @@ class CuentaForm(PresupuestoFormMixin):
 
 class CuentaFormMixin(FieldSetModelFormMixin):
     cuenta = ModelChoiceField(queryset=Cuenta.objects.all(), name="",
-                              model="", widget=forms.HiddenInput())
+                              model="", label=_(u'Tipo de Gasto'))
 
 
 class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm,
@@ -70,8 +71,6 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm,
         exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos',
                    'comprobante_de_pago', 'numero_de_comprobante_de_pago')
 
-    fuente_de_pago = ModelChoiceField(name='', model='',
-                                      queryset=Fuente.objects.filter(caja=True))
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
