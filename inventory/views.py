@@ -457,6 +457,7 @@ class ProveedorListView(ListView, LoginRequiredMixin):
 
 
 class ProveedorDetailView(DetailView, LoginRequiredMixin):
+    model = Proveedor
     template_name = 'inventory/proveedor_detail.html'
 
 
