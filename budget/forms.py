@@ -91,7 +91,8 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
         model = Gasto
         exclude = ('ejecutado', 'fecha_de_pago', 'comprobante_de_pago',
                    'recepcion_de_facturas_originales', 'fuente_de_pago',
-                   'numero_de_comprobante_de_pago', 'numero_pagos')
+                   'numero_de_comprobante_de_pago', 'numero_pagos',
+                   'fecha_de_recepcion_de_factura')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
@@ -101,8 +102,6 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
                                                initial=timezone.now)
     fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
                                            initial=timezone.now)
-    fecha_de_recepcion_de_factura = forms.DateTimeField(widget=DateTimeWidget(),
-                                                        initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoPendienteForm, self).__init__(*args, **kwargs)

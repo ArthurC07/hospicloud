@@ -105,10 +105,10 @@
                                     <td>{{ gasto.numero_de_factura }}</td>
                                     <td>
                                         {% if gasto.factura %}
-                                            <a class="btn btn-success"
+                                            <a class="btn btn-success" target="_blank"
                                                href="{{ gasto.factura.url }}">
                                                 <i class="fa fa-download"></i>
-                                                Descargar
+                                                Documento
                                             </a>
                                         {% endif %}
                                     </td>
@@ -190,19 +190,19 @@
                                                 aria-labelledby="dropdownMenu1">
                                                 {% if gasto.comprobante_de_pago %}
                                                     <li role="presentation">
-                                                    <a role="menuitem"
+                                                    <a role="menuitem" target="_blank"
                                                        href="{{ gasto.comprobante_de_pago.url }}">
                                                         <i class="fa fa-download"></i>
-                                                        Descargar Comprobante de Pago
+                                                        Comprobante de Pago
                                                     </a>
                                                     </li>
                                                 {% endif %}
                                                 {% if gasto.factura %}
                                                     <li role="presentation">
-                                                    <a role="menuitem"
+                                                    <a role="menuitem" target="_blank"
                                                        href="{{ gasto.factura.url }}">
                                                         <i class="fa fa-download"></i>
-                                                        Descargar Factura
+                                                        Factura
                                                     </a>
                                                     </li>
                                                 {% endif %}
