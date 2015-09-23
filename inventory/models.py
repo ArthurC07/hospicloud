@@ -144,6 +144,9 @@ class Proveedor(models.Model):
     def __str__(self):
         return u'{0} - {1}'.format(self.name, self.rtn)
 
+    def get_absolute_url(self):
+        return reverse('proveedor', args=[self.id])
+
 
 @python_2_unicode_compatible
 class Item(TimeStampedModel):

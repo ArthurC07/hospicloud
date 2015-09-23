@@ -55,3 +55,8 @@
         </aside>
     </div>
 {% endblock %}
+{% block scripts %}
+    window.onunload = refreshParent() {
+        window.opener.location.reload();
+    }
+{% endblock %}
