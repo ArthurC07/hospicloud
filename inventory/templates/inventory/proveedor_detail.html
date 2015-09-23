@@ -56,7 +56,9 @@
     </div>
 {% endblock %}
 {% block scripts %}
-    window.onunload = refreshParent() {
-        window.opener.location.reload();
-    }
+    <script type="text/javascript">
+        window.onunload = refreshParent() {
+            window.opener.location.reload();
+        }
+    </script>
 {% endblock %}
