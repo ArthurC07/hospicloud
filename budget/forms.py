@@ -69,7 +69,8 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
         model = Gasto
         exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos',
                    'comprobante_de_pago', 'numero_de_comprobante_de_pago',
-                   'recepcion_de_factura', 'fecha_de_recepcion_de_factura')
+                   'recepcion_de_facturas_originales',
+                   'fecha_de_recepcion_de_factura')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
@@ -82,7 +83,8 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(GastoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Gastos', *self.field_names)
+        self.helper.layout = Fieldset(u'Formulario de Gastos',
+                                      *self.field_names)
 
 
 class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
