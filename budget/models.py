@@ -198,7 +198,7 @@ class Fuente(TimeStampedModel):
     caja = models.BooleanField(default=False)
 
     def __str__(self):
-        return u'{0} - {1}'.format(self.nombre, self.monto)
+        return self.nombre
 
 
 @python_2_unicode_compatible
