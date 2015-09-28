@@ -110,21 +110,22 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
                                       *self.field_names)
 
 
-class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin, FuenteFormMixin):
+class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_maxima_de_pago', 'comprobante_entregado',
-                   'numero_pagos', 'usuario')
+                   'numero_pagos', 'usuario', 'fecha_de_recepcion_de_factura')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
+    fuente_de_pago = ModelChoiceField(name='', model='',
+                                      queryset=Fuente.objects.filter(
+                                          caja=False))
 
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
     fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
                                            initial=timezone.now)
-    fecha_de_recepcion_de_factura = forms.DateTimeField(widget=DateTimeWidget(),
-                                                        initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoEjecutarFrom, self).__init__(*args, **kwargs)
