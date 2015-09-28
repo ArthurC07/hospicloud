@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-header">
+            <div class="page-header">
+                <h1>{{ notificacion.recibo.cliente }}
+                    <small>Notificacion</small>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9 main-content">
+            <dl class="dl-horizontal">
+                <dt>Aseguradora</dt>
+                <dd>
+                    {% for contrato in notification.recibo.cliente.contratos.all %}
+                        {{ contrato.master.aseguradora }}
+                    {% endfor %}
+                    {% for beneficiario in notification.cliente.beneficiarios.all %}
+                        {{ beneficiario.contrato.master.aseguradora }}
+                    {% endfor %}
+                </dd>
+                <dt>Titular</dt>
+                <dd>
+                    {% for contrato in notification.recibo.cliente.contratos.all %}
+                        {{ contrato.persona }}
+                    {% endfor %}
+                    {% for beneficiario in notification.cliente.beneficiarios.all %}
+                        {{ beneficiario.contrato.persona }}
+                    {% endfor %}
+                </dd>
+                <dt>Poliza</dt>
+                <dd>
+                    {% for contrato in notification.recibo.cliente.contratos.all %}
+                        {{ contrato.poliza }}
+                    {% endfor %}
+                    {% for beneficiario in notification.cliente.beneficiarios.all %}
+                        {{ beneficiario.contrato.poliza }}
+                    {% endfor %}
+                </dd>
+                <dt>Certificado</dt>
+                <dd>
+                    {% for contrato in notification.recibo.cliente.contratos.all %}
+                        {{ contrato.certificado }}
+                    {% endfor %}
+                    {% for beneficiario in notification.cliente.beneficiarios.all %}
+                        {{ beneficiario.contrato.certificado }}
+                    {% endfor %}
+                </dd>
+                <dt>Atendido</dt>
+                <dd>{{ notification.recibo.cliente }}</dd>
+                <dt>Monto Total</dt>
+                <dd>{{ notification.recibo.total }}</dd>
+                <dt>Monto Reembolsable</dt>
+                <dd></dd>
+                <dt>Diagn&oacute;stico</dt>
+                <dd>
+                    {% for diagnostico in notification.consulta.diagnosticos_clinicos.all %}
+                        {{ diagnostico }}
+                    {% endfor %}
+                </dd>
+                <dt>Fecha de Emisi&oacute;n</dt>
+                <dd>{{ notification.recibo.created }}</dd>
+
+            </dl>
+        </div>
+        <div class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li>
+                            <a href="{{ notification.recibo.get_absolute_url }}">Regresar
+                                al Recibo</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

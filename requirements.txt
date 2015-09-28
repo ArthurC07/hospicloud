@@ -1,0 +1,24 @@
+Django
+Pillow
+django-bootstrap-pagination
+django-constance
+django-constance[database]
+django-countries
+django-crispy-forms
+django-extensions
+-e git://github.com/SpectralAngel/django-select2-forms.git#egg=django-select2-forms-master
+django-userena
+django-extra-views
+simplejson
+six
+pytz
+django-picklefield
+dj-database-url
+python-dateutil
+django-environ
+dj-static
+unicodecsv
+django-storages
+boto
+gunicorn
+psycopg2

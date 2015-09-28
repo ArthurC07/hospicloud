@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load l10n %}
+{% block content %}
+    <div class="row">
+        <section class="page-header col-md-12 main-content">
+            <h1>
+                Consultas
+                <small>
+                    del {{ inicio }} al {{ fin }}
+                </small>
+            </h1>
+        </section>
+    </div>
+    <div class="row">
+        <div class="col-md-12 table-responsive main-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>Motivo de Consulta</th>
+                    <th>HEA</th>
+                    <th>Tipo de Consulta</th>
+                    <th>Cargos</th>
+                    <th>Diagnostico</th>
+                    <th>Poliza</th>
+                    <th>Usuario</th>
+                    <th>Ciudad</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for consulta in consultas.all %}
+                    <tr>
+                        <td>{{ consulta.created }}</td>
+                        <td>{{ consulta.persona }}</td>
+                        <td>{{ consulta.motivo_de_consulta }}</td>
+                        <td>{{ consulta.HEA }}</td>
+                        <td>{{ consulta.tipo }}</td>
+                        <td>
+                            {% for cargo in consulta.cargos.all %}
+                                {{ cargo.item }}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for diagnostico in consulta.diagnosticos_clinicos.all %}
+                                {{ diagnostico.diagnostico }}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for contrato in consulta.persona.contratos.all %}
+                                Poliza: {{ contrato.poliza }}
+                            {% endfor %}
+                            {% for beneficiario in consulta.persona.beneficiarios.all %}
+                                {{ beneficiario.contrato.poliza }} Certificado: {{ beneficiario.contrato.certificado }}
+                            {% endfor %}
+                        </td>
+                        <td>{{ consulta.consultorio.usuario.get_full_name }}</td>
+                        <td>{{ consulta.consultorio.localidad }}</td>
+                        <td><a class="btn btn-primary"
+                               href="{{ consulta.get_absolute_url }}">Ver</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
