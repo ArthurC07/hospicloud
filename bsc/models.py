@@ -22,9 +22,11 @@ from django.contrib.auth.models import User, user_logged_in
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.utils import timezone
-
+from django.conf import settings
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 
 from django_extensions.db.models import TimeStampedModel
 
@@ -74,17 +76,21 @@ class Escala(TimeStampedModel):
 
 class Extra(TimeStampedModel):
     EMERGENCIA = 'ER'
+    EVALUACION = 'EV'
     EXTRAS = (
-        (EMERGENCIA, u'Emergencias Atendidas'),
+        (EMERGENCIA, _(u'Emergencias Atendidas')),
+        (EVALUACION, _(u'Evaluación del Estudiante'))
     )
     tipo_extra = models.CharField(max_length=3, choices=EXTRAS,
                                   default=Emergencia)
+    descripcion = models.CharField(max_length=255, blank=True)
     score_card = models.ForeignKey(ScoreCard)
     inicio_de_rango = models.DecimalField(max_digits=11, decimal_places=2,
                                           default=0)
     fin_de_rango = models.DecimalField(max_digits=11, decimal_places=2,
                                        default=0)
     comision = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    es_puntuado = models.BooleanField(default=False)
 
     def cumplido(self, usuario, inicio, fin):
 
@@ -104,6 +110,13 @@ class Extra(TimeStampedModel):
     def emergencias(self, usuario, inicio, fin):
         return Emergencia.objects.filter(usuario=usuario,
                                          created__range=(inicio, fin))
+
+
+class Puntuacion(TimeStampedModel):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
+    extra = models.ForeignKey(Extra)
+    fecha = models.DateTimeField(default=timezone.now)
+    puntaje = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
 
 class Meta(TimeStampedModel):
@@ -231,14 +244,16 @@ class Meta(TimeStampedModel):
 
     def poll_average(self, usuario, inicio, fin):
 
-        votos = Voto.objects.filter(opcion__isnull=False,
-                                    created__range=(inicio, fin),
-                                    respuesta__consulta__consultorio__usuario=usuario,
-                                    pregunta__calificable=True)
+        votos = Voto.objects.filter(
+            opcion__isnull=False,
+            created__range=(inicio, fin),
+            respuesta__consulta__consultorio__usuario=usuario,
+            pregunta__calificable=True
+        )
 
-        total = votos.aggregate(total=Sum('opcion__valor'))['total']
-        if total is None:
-            total = Decimal()
+        total = votos.aggregate(
+            total=Coalesce(Sum('opcion__valor'), Decimal())
+        )['total']
 
         return Decimal(total) / max(votos.count(), 1)
 
@@ -376,9 +391,10 @@ def get_current_month_logins(user):
     query = Login.objects.filter(created__range=(inicio, fin),
                                  user=user)
 
-    value = {'normal': query.filter(holiday=False).count(),
-             'festivos': query.filter(holiday=True).count(),
-             }
+    value = {
+        'normal': query.filter(holiday=False).count(),
+        'festivos': query.filter(holiday=True).count(),
+    }
 
     return value
 
