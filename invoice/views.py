@@ -900,9 +900,11 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
 
     def get_redirect_url(self, **kwargs):
 
+        messages.info(
+            self.request,
+            _(u'No puede facturar sin tener ciudad en su perfil!')
+        )
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request,
-                          u'No puede facturar sin tener ciudad en su perfil!')
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
             else:
@@ -928,7 +930,7 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
         consulta.activa = False
         consulta.save()
 
-        messages.info(self.request, u'¡La consulta se marcó como facturada!')
+        messages.info(self.request, _(u'¡La consulta se marcó como facturada!'))
         return recibo.get_absolute_url()
 
     @method_decorator(permission_required('invoice.cajero'))
@@ -953,8 +955,10 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request,
-                          u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
             else:
@@ -997,8 +1001,10 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request,
-                          u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
             else:
@@ -1039,7 +1045,7 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
 
         recibo.save()
 
-        messages.info(self.request, u'¡La consulta se marcó como facturada!')
+        messages.info(self.request, _(u'¡La consulta se marcó como facturada!'))
         return recibo.get_absolute_url()
 
     @method_decorator(permission_required('invoice.cajero'))
@@ -1054,8 +1060,10 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request,
-                          u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
             else:
@@ -1113,8 +1121,10 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request,
-                          u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
             else:
@@ -1129,32 +1139,6 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         recibo.cliente = self.object.persona
         recibo.tipo_de_venta = self.object.tipo_de_venta
         recibo.save()
-
-        # Crear los honorarios de los radiologos
-        honorarios = sum(i.precio_de_venta * i.comision * dot01 for i in items)
-        venta = Venta()
-        venta.recibo = recibo
-        venta.precio = honorarios
-        venta.cantidad = 1
-        venta.item = self.object.radiologo.item
-        venta.impuesto = self.object.radiologo.item.impuestos
-        venta.save()
-
-        venta_tecnico = False
-        if not self.object.tecnico is None:
-            # Crear los honorarios de los tecnicos
-            tecnico = sum(
-                i.precio_de_venta * i.comision2 * dot01 for i in items)
-            venta = Venta()
-            venta.recibo = recibo
-            venta.precio = tecnico
-            venta.cantidad = 1
-            venta.item = self.object.tecnico.item
-            venta.impuesto = self.object.tecnico.item.impuestos
-            venta.save()
-            venta_tecnico = True
-
-        crear_ventas(items, recibo, True, venta_tecnico)
 
         self.object.save()
 
