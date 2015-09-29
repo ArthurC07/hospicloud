@@ -18,13 +18,11 @@ import calendar
 from collections import defaultdict
 from datetime import time, timedelta
 
-from constance import config
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
-from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.utils.datetime_safe import date, datetime
@@ -52,7 +50,7 @@ from clinique.models import (Paciente, Cita, Consulta, Evaluacion,
                              NotaEnfermeria, Examen, Espera, Prescripcion,
                              Incapacidad, Reporte, Remision)
 from emergency.models import Emergencia
-from inventory.models import ItemTemplate, Inventario, TipoVenta
+from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
 from invoice.forms import PeriodoForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
