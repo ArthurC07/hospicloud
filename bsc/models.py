@@ -74,6 +74,7 @@ class Escala(TimeStampedModel):
     comision = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
 
+@python_2_unicode_compatible
 class Extra(TimeStampedModel):
     EMERGENCIA = 'ER'
     EVALUACION = 'EV'
@@ -91,6 +92,13 @@ class Extra(TimeStampedModel):
                                        default=0)
     comision = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     es_puntuado = models.BooleanField(default=False)
+
+    def __str__(self):
+
+        return _(u'{0} de {1}').format(
+            self.get_tipo_extra_display(),
+            self.score_card.nombre
+        )
 
     def cumplido(self, usuario, inicio, fin):
 
@@ -119,6 +127,7 @@ class Puntuacion(TimeStampedModel):
     puntaje = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
 
+@python_2_unicode_compatible
 class Meta(TimeStampedModel):
     CONSULTA_TIME = 'CT'
     PRE_CONSULTA_TIME = 'PCT'
@@ -126,13 +135,19 @@ class Meta(TimeStampedModel):
     INCAPACIDAD_PERCENTAGE = 'IP'
     CLIENT_FEEDBACK_PERCENTAGE = 'CFP'
     CONSULTA_REMITIDA = 'CR'
+    COACHING = 'CO'
+    PUNTUALIDAD = 'PU'
+    QUEJAS = 'QJ'
     METAS = (
-        (CONSULTA_TIME, u'Tiempo de Consulta'),
-        (PRE_CONSULTA_TIME, u'Tiempo en Preconsulta'),
-        (PRESCRIPTION_PERCENTAGE, u'Porcentaje de Recetas'),
-        (INCAPACIDAD_PERCENTAGE, u'Porcentaje de Incapacidades'),
-        (CLIENT_FEEDBACK_PERCENTAGE, u'Porcentaje de Aprobación del Cliente'),
-        (CONSULTA_REMITIDA, u'Consulta Remitida a Especialista'),
+        (CONSULTA_TIME, _(u'Tiempo de Consulta')),
+        (PRE_CONSULTA_TIME, _(u'Tiempo en Preconsulta')),
+        (PRESCRIPTION_PERCENTAGE, _(u'Porcentaje de Recetas')),
+        (INCAPACIDAD_PERCENTAGE, _(u'Porcentaje de Incapacidades')),
+        (CLIENT_FEEDBACK_PERCENTAGE, _(u'Porcentaje de Aprobación del Cliente')),
+        (CONSULTA_REMITIDA, _(u'Consulta Remitida a Especialista')),
+        (COACHING, _(u'Coaching')),
+        (PUNTUALIDAD, _(u'Puntualidad')),
+        (QUEJAS, _(u'Manejo de Quejas')),
     )
     score_card = models.ForeignKey(ScoreCard)
     tipo_meta = models.CharField(max_length=3, choices=METAS,
@@ -141,8 +156,20 @@ class Meta(TimeStampedModel):
     meta = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     basado_en_tiempo = models.BooleanField(default=False)
     logro_menor_que_meta = models.BooleanField(default=False)
+    activa = models.BooleanField(default=True)
+
+    def __str__(self):
+
+        return _(u'{0} de {1}').format(
+            self.get_tipo_meta_display(),
+            self.score_card.nombre
+        )
 
     def logro(self, usuario, inicio, fin):
+        """
+        Returns the percentage value obtained by the :class:`User` during the
+        specific time frame.
+        """
 
         if self.tipo_meta == self.CONSULTA_TIME:
             return self.average_consulta_time(usuario, inicio, fin)
@@ -256,6 +283,13 @@ class Meta(TimeStampedModel):
         )['total']
 
         return Decimal(total) / max(votos.count(), 1)
+
+
+class Evaluacion(TimeStampedModel):
+    meta = models.ForeignKey(Meta)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
+    fecha = models.DateTimeField(default=timezone.now)
+    puntaje = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
 
 @python_2_unicode_compatible
