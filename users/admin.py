@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from users.models import Ciudad, Company
+from users.models import Ciudad, Company, Turno
+
 
 # admin.site.register(UserProfile)
 
@@ -20,5 +21,12 @@ class CiudadAdmin(admin.ModelAdmin):
                      'correlativo_de_comprobante', 'prefijo_comprobante']
 
 
+class TurnoAdmin(admin.ModelAdmin):
+    list_display = ['inicio', 'fin', 'lunes', 'martes', 'miercoles', 'jueves',
+                    'viernes', 'sabado', 'domingo']
+    filter_horizontal = ('usuarios', )
+
+
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Ciudad, CiudadAdmin)
+admin.site.register(Turno, TurnoAdmin)

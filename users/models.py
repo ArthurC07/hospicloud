@@ -21,6 +21,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+from django.conf import settings
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 
@@ -41,7 +42,6 @@ class Company(TimeStampedModel):
     telefono = models.CharField(max_length=20)
 
     def __str__(self):
-
         return self.nombre
 
 
@@ -124,6 +124,24 @@ class UserProfile(UserenaBaseProfile):
         return Emergencia.objects.filter(usuario=self.user,
                                          created__range=(inicio, fin)
                                          ).count()
+
+
+@python_2_unicode_compatible
+class Turno(TimeStampedModel):
+    nombre = models.CharField(max_length=255)
+    inicio = models.TimeField()
+    fin = models.TimeField()
+    lunes = models.BooleanField(default=False)
+    martes = models.BooleanField(default=False)
+    miercoles = models.BooleanField(default=False)
+    jueves = models.BooleanField(default=False)
+    viernes = models.BooleanField(default=False)
+    sabado = models.BooleanField(default=False)
+    domingo = models.BooleanField(default=False)
+    usuarios = models.ManyToManyField(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return self.nombre
 
 
 User.userena_signup = property(
