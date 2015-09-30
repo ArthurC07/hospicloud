@@ -325,7 +325,11 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
 
         self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
         self.persona_form.helper.form_tag = False
-        formset = self.ReciboFormset(instance=self.persona, prefix='recibo')
+        formset = self.ReciboFormset(
+            instance=self.persona,
+            prefix='recibo',
+            initial=[{'cajero': self.request.user}]
+        )
         return formset
 
     def get_context_data(self, **kwargs):
