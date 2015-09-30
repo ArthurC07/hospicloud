@@ -1201,8 +1201,8 @@ class CorteView(ReciboPeriodoView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = context['recibos'].annotate(
-            sold=Sum('ventas__total')
-        ).aggregate(total=Sum('sold'))['total']
+            sold=Coalesce(Sum('ventas__total'), Decimal())
+        ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
         return context
 
 
