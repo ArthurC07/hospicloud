@@ -22,9 +22,11 @@ from django.contrib.auth.models import User, user_logged_in
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.utils import timezone
-
+from django.conf import settings
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 
 from django_extensions.db.models import TimeStampedModel
 
@@ -72,19 +74,31 @@ class Escala(TimeStampedModel):
     comision = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
 
+@python_2_unicode_compatible
 class Extra(TimeStampedModel):
     EMERGENCIA = 'ER'
+    EVALUACION = 'EV'
     EXTRAS = (
-        (EMERGENCIA, u'Emergencias Atendidas'),
+        (EMERGENCIA, _(u'Emergencias Atendidas')),
+        (EVALUACION, _(u'Evaluación del Estudiante'))
     )
     tipo_extra = models.CharField(max_length=3, choices=EXTRAS,
                                   default=Emergencia)
+    descripcion = models.CharField(max_length=255, blank=True)
     score_card = models.ForeignKey(ScoreCard)
     inicio_de_rango = models.DecimalField(max_digits=11, decimal_places=2,
                                           default=0)
     fin_de_rango = models.DecimalField(max_digits=11, decimal_places=2,
                                        default=0)
     comision = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    es_puntuado = models.BooleanField(default=False)
+
+    def __str__(self):
+
+        return _(u'{0} de {1}').format(
+            self.get_tipo_extra_display(),
+            self.score_card.nombre
+        )
 
     def cumplido(self, usuario, inicio, fin):
 
@@ -106,6 +120,14 @@ class Extra(TimeStampedModel):
                                          created__range=(inicio, fin))
 
 
+class Puntuacion(TimeStampedModel):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
+    extra = models.ForeignKey(Extra)
+    fecha = models.DateTimeField(default=timezone.now)
+    puntaje = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+
+
+@python_2_unicode_compatible
 class Meta(TimeStampedModel):
     CONSULTA_TIME = 'CT'
     PRE_CONSULTA_TIME = 'PCT'
@@ -113,13 +135,19 @@ class Meta(TimeStampedModel):
     INCAPACIDAD_PERCENTAGE = 'IP'
     CLIENT_FEEDBACK_PERCENTAGE = 'CFP'
     CONSULTA_REMITIDA = 'CR'
+    COACHING = 'CO'
+    PUNTUALIDAD = 'PU'
+    QUEJAS = 'QJ'
     METAS = (
-        (CONSULTA_TIME, u'Tiempo de Consulta'),
-        (PRE_CONSULTA_TIME, u'Tiempo en Preconsulta'),
-        (PRESCRIPTION_PERCENTAGE, u'Porcentaje de Recetas'),
-        (INCAPACIDAD_PERCENTAGE, u'Porcentaje de Incapacidades'),
-        (CLIENT_FEEDBACK_PERCENTAGE, u'Porcentaje de Aprobación del Cliente'),
-        (CONSULTA_REMITIDA, u'Consulta Remitida a Especialista'),
+        (CONSULTA_TIME, _(u'Tiempo de Consulta')),
+        (PRE_CONSULTA_TIME, _(u'Tiempo en Preconsulta')),
+        (PRESCRIPTION_PERCENTAGE, _(u'Porcentaje de Recetas')),
+        (INCAPACIDAD_PERCENTAGE, _(u'Porcentaje de Incapacidades')),
+        (CLIENT_FEEDBACK_PERCENTAGE, _(u'Porcentaje de Aprobación del Cliente')),
+        (CONSULTA_REMITIDA, _(u'Consulta Remitida a Especialista')),
+        (COACHING, _(u'Coaching')),
+        (PUNTUALIDAD, _(u'Puntualidad')),
+        (QUEJAS, _(u'Manejo de Quejas')),
     )
     score_card = models.ForeignKey(ScoreCard)
     tipo_meta = models.CharField(max_length=3, choices=METAS,
@@ -128,8 +156,20 @@ class Meta(TimeStampedModel):
     meta = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     basado_en_tiempo = models.BooleanField(default=False)
     logro_menor_que_meta = models.BooleanField(default=False)
+    activa = models.BooleanField(default=True)
+
+    def __str__(self):
+
+        return _(u'{0} de {1}').format(
+            self.get_tipo_meta_display(),
+            self.score_card.nombre
+        )
 
     def logro(self, usuario, inicio, fin):
+        """
+        Returns the percentage value obtained by the :class:`User` during the
+        specific time frame.
+        """
 
         if self.tipo_meta == self.CONSULTA_TIME:
             return self.average_consulta_time(usuario, inicio, fin)
@@ -231,16 +271,25 @@ class Meta(TimeStampedModel):
 
     def poll_average(self, usuario, inicio, fin):
 
-        votos = Voto.objects.filter(opcion__isnull=False,
-                                    created__range=(inicio, fin),
-                                    respuesta__consulta__consultorio__usuario=usuario,
-                                    pregunta__calificable=True)
+        votos = Voto.objects.filter(
+            opcion__isnull=False,
+            created__range=(inicio, fin),
+            respuesta__consulta__consultorio__usuario=usuario,
+            pregunta__calificable=True
+        )
 
-        total = votos.aggregate(total=Sum('opcion__valor'))['total']
-        if total is None:
-            total = Decimal()
+        total = votos.aggregate(
+            total=Coalesce(Sum('opcion__valor'), Decimal())
+        )['total']
 
         return Decimal(total) / max(votos.count(), 1)
+
+
+class Evaluacion(TimeStampedModel):
+    meta = models.ForeignKey(Meta)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
+    fecha = models.DateTimeField(default=timezone.now)
+    puntaje = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
 
 @python_2_unicode_compatible
@@ -376,9 +425,10 @@ def get_current_month_logins(user):
     query = Login.objects.filter(created__range=(inicio, fin),
                                  user=user)
 
-    value = {'normal': query.filter(holiday=False).count(),
-             'festivos': query.filter(holiday=True).count(),
-             }
+    value = {
+        'normal': query.filter(holiday=False).count(),
+        'festivos': query.filter(holiday=True).count(),
+    }
 
     return value
 

@@ -18,17 +18,18 @@ from django.contrib import admin
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from bsc.models import Meta, ScoreCard, Escala, Extra, Encuesta, Opcion, \
-    Pregunta, Holiday, Login
+    Pregunta, Holiday, Login, Puntuacion
 
 
 class MetaAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ('score_card', 'tipo_meta', 'peso', 'meta')
-    ordering = ['score_card', 'tipo_meta', 'peso', 'meta']
+    list_display = ('score_card', 'tipo_meta', 'peso', 'meta', 'activa')
+    ordering = ['score_card', 'tipo_meta', 'peso', 'meta', 'activa']
 
 
 class EscalaAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ('score_card', 'puntaje_inicial', 'puntaje_final', 'comision')
     ordering = ['score_card', 'puntaje_inicial', 'puntaje_final', 'comision']
+
 
 class ExtraAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ('score_card', 'inicio_de_rango', 'fin_de_rango', 'comision')
@@ -55,6 +56,16 @@ class LoginAdmin(ForeignKeyAutocompleteAdmin):
     ordering = ['user', 'created', 'holiday']
 
 
+class PuntuacionAdmin(ForeignKeyAutocompleteAdmin):
+    list_display = ['usuario', 'extra', 'fecha', 'puntaje']
+    ordering = ['fecha', 'extra', 'usuario', 'puntaje']
+
+
+class EvaluacionAdmin(ForeignKeyAutocompleteAdmin):
+    list_display = ['usuario', 'meta', 'fecha', 'puntaje']
+    ordering = ['fecha', 'extra', 'usuario', 'puntaje']
+
+
 admin.site.register(Meta, MetaAdmin)
 admin.site.register(ScoreCard)
 admin.site.register(Escala, EscalaAdmin)
@@ -64,3 +75,4 @@ admin.site.register(Opcion, OpcionAdmin)
 admin.site.register(Pregunta, PreguntaAdmin)
 admin.site.register(Holiday, HolidayAdmin)
 admin.site.register(Login, LoginAdmin)
+admin.site.register(Puntuacion, PuntuacionAdmin)
