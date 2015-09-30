@@ -574,19 +574,19 @@ class ReciboCerrarView(RedirectView, LoginRequiredMixin):
         return recibo.get_absolute_url()
 
 
-class ReciboPeriodoView(TemplateView):
+class ReciboPeriodoView(FormMixin, TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
     self.form
     """
-
+    form_class = PeriodoForm
     prefix = 'recibo'
 
     def dispatch(self, request, *args, **kwargs):
         """Efectua la consulta de los :class:`Recibo` de acuerdo a los
         datos ingresados en el formulario"""
 
-        self.form = PeriodoForm(request.GET, prefix=self.prefix)
+        self.form = self.get_form_class()(request.GET, prefix=self.prefix)
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
@@ -1192,6 +1192,7 @@ class AdmisionAltaView(ListView, LoginRequiredMixin):
 class CorteView(ReciboPeriodoView):
     template_name = 'invoice/corte.html'
     prefix = 'corte'
+    form_class = CorteForm
 
     def get_context_data(self, **kwargs):
         context = super(CorteView, self).get_context_data(**kwargs)
