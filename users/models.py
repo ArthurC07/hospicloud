@@ -76,7 +76,7 @@ class UserProfile(UserenaBaseProfile):
                                null=True)
     bsc = models.ForeignKey('bsc.ScoreCard', related_name='usuarios',
                             blank=True, null=True)
-    bsc2 = models.ForeignKey('bsc.ScoreCard', related_name='usuarios',
+    bsc2 = models.ForeignKey('bsc.ScoreCard', related_name='usuarios2',
                              blank=True, null=True)
 
     def __str__(self):
