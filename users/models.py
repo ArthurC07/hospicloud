@@ -85,13 +85,16 @@ class UserProfile(UserenaBaseProfile):
     def get_metas(self):
         if self.bsc is None:
             return []
+        bsc = self.bsc
 
+        return self.calculate_bsc(bsc)
+
+    def calculate_bsc(self, bsc):
         fin, inicio = get_current_month_range()
-
         goal = {}
         total = Decimal()
         goal['metas'] = []
-        for meta in self.bsc.meta_set.filter(activa=True).all():
+        for meta in bsc.meta_set.filter(activa=True).all():
             datos = {'logro': meta.logro(self.user, inicio, fin),
                      'tipo': meta.get_tipo_meta_display(),
                      'peso': meta.peso,
@@ -104,19 +107,24 @@ class UserProfile(UserenaBaseProfile):
                 datos['ponderacion'])
             total += datos['logro_ponderado']
             goal['metas'].append(datos)
-
-        goal['escalas'] = self.bsc.get_escala(total)
+        goal['escalas'] = bsc.get_escala(total)
         goal['extras'] = []
-        for extra in self.bsc.extra_set.all():
+        for extra in bsc.extra_set.all():
             datos = {
                 'extra': extra,
                 'logro': extra.cantidad(self.user, inicio, fin),
             }
             goal['extras'].append(datos)
-        goal['extra'] = self.bsc.get_extras(self.user, inicio, fin)
+        goal['extra'] = bsc.get_extras(self.user, inicio, fin)
         goal['total'] = total
-
         return goal
+
+    def get_metas2(self):
+        if self.bsc2 is None:
+            return []
+        bsc = self.bsc2
+
+        return self.calculate_bsc(bsc)
 
     def get_current_month_emergencies(self):
 
