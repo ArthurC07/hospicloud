@@ -138,6 +138,12 @@ class Meta(TimeStampedModel):
     COACHING = 'CO'
     PUNTUALIDAD = 'PU'
     QUEJAS = 'QJ'
+    VENTAS = 'VE'
+    PRESUPUESTO = 'PR'
+    TURNOS = 'TU'
+    TEACHING = 'TE'
+    EVALUACION = 'EV'
+    CAPACITACIONES = 'CA'
     METAS = (
         (CONSULTA_TIME, _(u'Tiempo de Consulta')),
         (PRE_CONSULTA_TIME, _(u'Tiempo en Preconsulta')),
@@ -148,6 +154,12 @@ class Meta(TimeStampedModel):
         (COACHING, _(u'Coaching')),
         (PUNTUALIDAD, _(u'Puntualidad')),
         (QUEJAS, _(u'Manejo de Quejas')),
+        (VENTAS, _(u'Ventas del Mes')),
+        (PRESUPUESTO, _(u'Manejo de Presupuesto')),
+        (TURNOS, _(u'Manejo de Turnos')),
+        (TEACHING, _(u'Horas Enseñadas')),
+        (EVALUACION, _(u'Evaluación de Alumnos')),
+        (CAPACITACIONES, _(u'Capacitaciones')),
     )
     score_card = models.ForeignKey(ScoreCard)
     tipo_meta = models.CharField(max_length=3, choices=METAS,
