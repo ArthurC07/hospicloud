@@ -39,7 +39,6 @@ from inventory.views import (IndexView, ItemTemplateCreateView,
                              CotizacionCreateView, CotizacionDetailView,
                              ItemCotizadoCreateView)
 
-
 urlpatterns = patterns('',
 
                        url(r'^$',
@@ -176,5 +175,4 @@ urlpatterns = patterns('',
                            ItemCotizadoCreateView.as_view(),
                            name='itemcotizado-create'),
 
-
-)
+                       )

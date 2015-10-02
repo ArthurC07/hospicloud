@@ -292,7 +292,7 @@ class MasterContract(TimeStampedModel):
             self.ultimo = F('ultimo') + 1
             self.save()
             self.refresh_from_db()
-            certificado = self.ultimo
+            certificado = self.ultimo_certificado
 
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=timezone.now(), vencimiento=vencimiento,

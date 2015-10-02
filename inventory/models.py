@@ -55,7 +55,7 @@ class Inventario(models.Model):
     def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.disminuir(cantidad, user)
-        
+
     def cargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.aumentar(cantidad, user)
@@ -125,14 +125,27 @@ class ItemTemplate(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Proveedor(models.Model):
-    name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
+    """
+    Represents someone that sells stuff or provides a service to the company
+    """
+
+    class Meta:
+        ordering = ('name', 'rtn')
+
+    name = models.CharField(verbose_name=_(u"Nombre Completo de la Empresa"),
+                            max_length=255)
     rtn = models.CharField(max_length=255, blank=True)
     direccion = models.CharField(max_length=255, blank=True)
     contacto = models.CharField(max_length=255, blank=True)
     telefono = models.CharField(max_length=255, blank=True)
+    constancia_de_pagos_a_cuenta = models.FileField(blank=True, null=True,
+                                                    upload_to='inventory/provider/%Y/%m/%d')
 
     def __str__(self):
-        return self.name
+        return u'{0} - {1}'.format(self.name, self.rtn)
+
+    def get_absolute_url(self):
+        return reverse('proveedor', args=[self.id])
 
 
 @python_2_unicode_compatible
@@ -411,11 +424,9 @@ class Cotizacion(TimeStampedModel):
     vencimiento = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-
         return u'Cotización de {0}'.format(self.proveedor)
 
     def get_absolute_url(self):
-
         return reverse('cotizacion-view', args=[self.id])
 
 
@@ -426,5 +437,4 @@ class ItemCotizado(TimeStampedModel):
     precio = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def get_absolute_url(self):
-
         return self.cotizacion.get_absolute_url()

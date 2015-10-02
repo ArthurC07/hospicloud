@@ -25,6 +25,7 @@
                   <span class="caret"></span>
                   <span class="sr-only">Toggle Dropdown</span>
               </button>
+              {% if perms.persona.persona %}
               <ul class="dropdown-menu">
                   {% if modules.consulta %}
                       <li>
@@ -97,6 +98,7 @@
                   <li role="separator" class="divider"></li>
                   <li><a href="{% url 'persona-duplicate' persona.id %}">Reportar Duplicado</a></li>
               </ul>
+            {% endif %}
           </div>
       </td>
     </tr>

@@ -29,12 +29,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (CreateView, UpdateView, TemplateView,
                                   DetailView, ListView, RedirectView,
                                   DeleteView, View)
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
-from django.views.generic.base import TemplateResponseMixin, ContextMixin
+from django.views.generic.base import ContextMixin
 
 from django.views.generic.edit import FormMixin
 
@@ -324,7 +325,11 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
 
         self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
         self.persona_form.helper.form_tag = False
-        formset = self.ReciboFormset(instance=self.persona, prefix='recibo')
+        formset = self.ReciboFormset(
+            instance=self.persona,
+            prefix='recibo',
+            initial=[{'cajero': self.request.user}]
+        )
         return formset
 
     def get_context_data(self, **kwargs):
@@ -569,19 +574,19 @@ class ReciboCerrarView(RedirectView, LoginRequiredMixin):
         return recibo.get_absolute_url()
 
 
-class ReciboPeriodoView(TemplateView):
+class ReciboPeriodoView(FormMixin, TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
     self.form
     """
-
+    form_class = PeriodoForm
     prefix = 'recibo'
 
     def dispatch(self, request, *args, **kwargs):
         """Efectua la consulta de los :class:`Recibo` de acuerdo a los
         datos ingresados en el formulario"""
 
-        self.form = PeriodoForm(request.GET, prefix=self.prefix)
+        self.form = self.get_form_class()(request.GET, prefix=self.prefix)
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
@@ -590,6 +595,10 @@ class ReciboPeriodoView(TemplateView):
                 created__gte=self.inicio,
                 created__lte=self.fin,
             )
+        else:
+            messages.info(self.request, _(
+                u'Los Datos Ingresados en el formulario no son validos'))
+            return HttpResponseRedirect(reverse('invoice-index'))
 
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
 
@@ -859,8 +868,6 @@ def crear_ventas_consulta(items, precios, recibo):
         venta.item = item
         venta.recibo = recibo
         venta.cantidad = items[item]
-
-        precio = item.precio_de_venta
         venta.precio = precios[item]
         venta.impuesto = item.impuestos
 
@@ -1161,6 +1168,8 @@ class AdmisionAltaView(ListView, LoginRequiredMixin):
 
 class CorteView(ReciboPeriodoView):
     template_name = 'invoice/corte.html'
+    prefix = 'corte'
+    form_class = CorteForm
 
     def get_context_data(self, **kwargs):
         context = super(CorteView, self).get_context_data(**kwargs)
@@ -1169,25 +1178,14 @@ class CorteView(ReciboPeriodoView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = context['recibos'].annotate(
-            sold=Sum('ventas__total')
-        ).aggregate(total=Sum('sold'))['total']
+            sold=Coalesce(Sum('ventas__total'), Decimal())
+        ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
         return context
-
-    def dispatch(self, request, *args, **kwargs):
-        self.form = CorteForm(request.GET, prefix='corte')
-        return super(CorteView, self).dispatch(request, *args, **kwargs)
 
 
 class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
     template_name = 'invoice/recibo_inventario_list.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        """Agrega el formulario"""
-
-        self.form = InventarioForm(request.GET, prefix='inventario')
-
-        return super(ReciboInventarioView, self).dispatch(request, *args,
-                                                          **kwargs)
+    prefix = 'inventario'
 
     def get_context_data(self, **kwargs):
 
@@ -1652,7 +1650,8 @@ class ComprobanteDeduccionMixin(ContextMixin):
         return super(ComprobanteDeduccionMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(ComprobanteDeduccionMixin, self).get_context_data(**kwargs)
+        context = super(ComprobanteDeduccionMixin, self).get_context_data(
+            **kwargs)
         context['comprobante'] = self.comprobante
         return context
 

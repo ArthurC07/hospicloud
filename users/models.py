@@ -21,6 +21,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+from django.conf import settings
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 from guardian.shortcuts import assign_perm
@@ -84,8 +85,9 @@ class UserProfile(UserenaBaseProfile):
     ciudad = models.ForeignKey(Ciudad, related_name='usuarios', blank=True,
                                null=True)
     bsc = models.ForeignKey('bsc.ScoreCard', related_name='usuarios',
-                            blank=True,
-                            null=True)
+                            blank=True, null=True)
+    bsc2 = models.ForeignKey('bsc.ScoreCard', related_name='usuarios2',
+                             blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -93,13 +95,16 @@ class UserProfile(UserenaBaseProfile):
     def get_metas(self):
         if self.bsc is None:
             return []
+        bsc = self.bsc
 
+        return self.calculate_bsc(bsc)
+
+    def calculate_bsc(self, bsc):
         fin, inicio = get_current_month_range()
-
         goal = {}
         total = Decimal()
         goal['metas'] = []
-        for meta in self.bsc.meta_set.all():
+        for meta in bsc.meta_set.filter(activa=True).all():
             datos = {'logro': meta.logro(self.user, inicio, fin),
                      'tipo': meta.get_tipo_meta_display(),
                      'peso': meta.peso,
@@ -112,19 +117,24 @@ class UserProfile(UserenaBaseProfile):
                 datos['ponderacion'])
             total += datos['logro_ponderado']
             goal['metas'].append(datos)
-
-        goal['escalas'] = self.bsc.get_escala(total)
+        goal['escalas'] = bsc.get_escala(total)
         goal['extras'] = []
-        for extra in self.bsc.extra_set.all():
+        for extra in bsc.extra_set.all():
             datos = {
                 'extra': extra,
                 'logro': extra.cantidad(self.user, inicio, fin),
             }
             goal['extras'].append(datos)
-        goal['extra'] = self.bsc.get_extras(self.user, inicio, fin)
+        goal['extra'] = bsc.get_extras(self.user, inicio, fin)
         goal['total'] = total
-
         return goal
+
+    def get_metas2(self):
+        if self.bsc2 is None:
+            return []
+        bsc = self.bsc2
+
+        return self.calculate_bsc(bsc)
 
     def get_current_month_emergencies(self):
 
@@ -133,6 +143,24 @@ class UserProfile(UserenaBaseProfile):
         return Emergencia.objects.filter(usuario=self.user,
                                          created__range=(inicio, fin)
                                          ).count()
+
+
+@python_2_unicode_compatible
+class Turno(TimeStampedModel):
+    nombre = models.CharField(max_length=255)
+    inicio = models.TimeField()
+    fin = models.TimeField()
+    lunes = models.BooleanField(default=False)
+    martes = models.BooleanField(default=False)
+    miercoles = models.BooleanField(default=False)
+    jueves = models.BooleanField(default=False)
+    viernes = models.BooleanField(default=False)
+    sabado = models.BooleanField(default=False)
+    domingo = models.BooleanField(default=False)
+    usuarios = models.ManyToManyField(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return self.nombre
 
 
 User.userena_signup = property(
