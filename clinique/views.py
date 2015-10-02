@@ -34,6 +34,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import FormMixin, DeleteView
 from guardian.decorators import permission_required
+from django.utils.translation import ugettext_lazy as _
 
 from clinique.forms import PacienteForm, CitaForm, EvaluacionForm, \
     ConsultaForm, SeguimientoForm, LecturaSignosForm, DiagnosticoClinicoForm, \
@@ -90,35 +91,38 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
         context = super(ConsultorioIndexView, self).get_context_data(**kwargs)
         context['citaperiodoform'] = PeriodoForm(prefix='cita-periodo')
         context['citaperiodoform'].helper.form_action = 'cita-periodo'
-        context['citaperiodoform'].set_legend(u'Citas por Periodo')
+        context['citaperiodoform'].set_legend(_(u'Citas por Periodo'))
 
         context['diagnosticoperiodoform'] = PeriodoForm(
             prefix='diagnostico-periodo')
         context[
             'diagnosticoperiodoform'].helper.form_action = 'diagnostico-periodo'
         context['diagnosticoperiodoform'].set_legend(
-            u'Diagnosticos por Periodo')
+            _(u'Diagnosticos por Periodo'))
 
         context['cargosperiodoform'] = PeriodoForm(prefix='cargo-periodo')
         context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
-        context['cargosperiodoform'].set_legend(u'Cargos por Periodo')
+        context['cargosperiodoform'].set_legend(_(u'Cargos por Periodo'))
 
         context['consultasperiodoform'] = PeriodoForm(prefix='consulta')
         context['consultasperiodoform'].helper.form_action = 'consulta-periodo'
-        context['consultasperiodoform'].set_legend(u'Consultas por Periodo')
+        context['consultasperiodoform'].set_legend(_(u'Consultas por Periodo'))
 
         context['evaluacionperiodoform'] = PeriodoForm(
             prefix='evaluacion-periodo')
         context[
             'evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
-        context['evaluacionperiodoform'].set_legend(u'Evaluaciones por Periodo')
+        context['evaluacionperiodoform'].set_legend(
+            _(u'Evaluaciones por Periodo')
+        )
 
         context['seguimientoperiodoform'] = PeriodoForm(
             prefix='seguimiento-periodo')
         context[
             'seguimientoperiodoform'].helper.form_action = 'seguimiento-periodo'
         context['seguimientoperiodoform'].set_legend(
-            u'Seguimientos por Periodo')
+            _(u'Seguimientos por Periodo')
+        )
 
         context['pacientesearch'] = PacienteSearchForm()
         context[
@@ -437,8 +441,10 @@ class CitaAusenteView(LoginRequiredMixin, RedirectView):
         cita = get_object_or_404(Cita, pk=kwargs['pk'])
         cita.ausente = True
         cita.save()
-        messages.info(self.request,
-                      u'¡Se marco la espera como ausente!')
+        messages.info(
+            self.request,
+            _(u'¡Se marco la espera como ausente!')
+        )
         return cita.get_absolute_url()
 
 
@@ -706,7 +712,7 @@ class OrdenMedicaDetailView(DetailView, LoginRequiredMixin):
         helper = FormHelper()
         helper.form_action = reverse('prescripcion-guardar',
                                      args=[self.object.id])
-        helper.add_input(Submit('submit', u'Guardar'))
+        helper.add_input(Submit('submit', _(u'Guardar')))
         context['helper'] = helper
 
         return context
@@ -737,7 +743,7 @@ def save_prescriptions(request, orden):
         formset = PrescripcionFormSet(request.POST, instance=orden)
         if formset.is_valid():
             formset.save()
-            messages.info(request, u'Agregados los medicamentos')
+            messages.info(request, _(u'Agregados los medicamentos'))
 
     return redirect(orden)
 
@@ -781,8 +787,10 @@ class EsperaAusenteView(RedirectView, LoginRequiredMixin):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.ausente = True
         espera.save()
-        messages.info(self.request,
-                      u'¡Se marco la espera como ausente!')
+        messages.info(
+            self.request,
+            _(u'¡Se marco la espera como ausente!')
+        )
         return espera.get_absolute_url()
 
 
@@ -835,8 +843,10 @@ class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
         cita = get_object_or_404(Cita, pk=kwargs['pk'])
         espera = cita.to_espera()
         espera.save()
-        messages.info(self.request,
-                      u'¡Se envio el paciente a salada de espera!')
+        messages.info(
+            self.request,
+            _(u'¡Se envio el paciente a salada de espera!')
+        )
         return espera.get_absolute_url()
 
 
@@ -851,8 +861,10 @@ class EsperaConsultaRedirectView(RedirectView, LoginRequiredMixin):
         espera.consulta = True
         espera.inicio = timezone.now()
         espera.save()
-        messages.info(self.request,
-                      u'¡Se envio el paciente a salada de consulta!')
+        messages.info(
+            self.request,
+            _(u'¡Se envio el paciente a salada de consulta!')
+        )
         return espera.get_absolute_url()
 
 
@@ -872,8 +884,10 @@ class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
             consulta.save()
 
         espera.save()
-        messages.info(self.request,
-                      u'¡La consulta se marcó como terminada!')
+        messages.info(
+            self.request,
+            _(u'¡La consulta se marcó como terminada!')
+        )
         return espera.get_absolute_url()
 
 
@@ -900,8 +914,10 @@ class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
             espera.fin = timezone.now()
             espera.save()
 
-        messages.info(self.request,
-                      u'¡La consulta se marcó como terminada!')
+        messages.info(
+            self.request,
+            _(u'¡La consulta se marcó como terminada!')
+        )
         return consulta.get_absolute_url()
 
 
@@ -945,7 +961,10 @@ class ConsultaRemitirView(RedirectView):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
         consulta.remitida = True
         consulta.save()
-        messages.info(self.request, u'¡Se remitio la consulta a especialista!')
+        messages.info(
+            self.request,
+            _(u'¡Se remitio la consulta a especialista!')
+        )
         return consulta.get_absolute_url()
 
 
@@ -956,7 +975,7 @@ class ConsultaRevisarView(RedirectView):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
         consulta.revisada = True
         consulta.save()
-        messages.info(self.request, u'¡La Consulta ha sido revisada!')
+        messages.info(self.request, _(u'¡La Consulta ha sido revisada!'))
         return consulta.get_absolute_url()
 
 
@@ -983,5 +1002,5 @@ class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
         ).first()
         emergencia.save()
 
-        messages.info(self.request, u'¡Se Envio el Paciente a Emergencias!')
+        messages.info(self.request, _(u'¡Se Envio el Paciente a Emergencias!'))
         return emergencia.get_absolute_url()
