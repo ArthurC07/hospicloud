@@ -78,14 +78,16 @@ class CuentaPorCobrarAdmin(admin.ModelAdmin):
 
 
 class VentaAdmin(admin.ModelAdmin):
-    list_display = ('recibo', 'item', 'cantidad', 'precio', 'monto', 'total')
+    list_display = (
+        'recibo', 'item', 'cantidad', 'precio', 'monto', 'total', 'created'
+    )
     search_fields = [
         'recibo__id',
         'recibo__numero',
         'recibo__usuario__first_name',
         'recibo__usuario__last_name'
     ]
-    ordering = ['created', 'recibo', 'tipo']
+    ordering = ['created', 'recibo', 'monto']
 
 
 class StatusPagoAdmin(admin.ModelAdmin):
