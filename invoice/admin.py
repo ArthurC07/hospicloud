@@ -85,7 +85,7 @@ class VentaAdmin(admin.ModelAdmin):
         'recibo__usuario__first_name',
         'recibo__usuario__last_name'
     ]
-    ordering = ['recibo', '']
+    ordering = ['created', 'recibo', 'tipo']
 
 
 class StatusPagoAdmin(admin.ModelAdmin):
