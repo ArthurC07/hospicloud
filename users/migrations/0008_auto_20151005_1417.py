@@ -17,6 +17,14 @@ class Migration(migrations.Migration):
         ),
         migrations.RemoveField(
             model_name='turno',
+            name='fin',
+        ),
+        migrations.RemoveField(
+            model_name='turno',
+            name='inicio',
+        ),
+        migrations.RemoveField(
+            model_name='turno',
             name='jueves',
         ),
         migrations.RemoveField(
@@ -38,15 +46,5 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name='turno',
             name='viernes',
-        ),
-        migrations.AlterField(
-            model_name='turno',
-            name='fin',
-            field=models.DateTimeField(),
-        ),
-        migrations.AlterField(
-            model_name='turno',
-            name='inicio',
-            field=models.DateTimeField(),
         ),
     ]

@@ -138,8 +138,8 @@ class UserProfile(UserenaBaseProfile):
 @python_2_unicode_compatible
 class Turno(TimeStampedModel):
     nombre = models.CharField(max_length=255)
-    inicio = models.DateTimeField()
-    fin = models.DateTimeField()
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
     usuarios = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     def __str__(self):
