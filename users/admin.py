@@ -22,8 +22,7 @@ class CiudadAdmin(admin.ModelAdmin):
 
 
 class TurnoAdmin(admin.ModelAdmin):
-    list_display = ['inicio', 'fin', 'lunes', 'martes', 'miercoles', 'jueves',
-                    'viernes', 'sabado', 'domingo']
+    list_display = ['nombre', 'inicio', 'fin']
     filter_horizontal = ('usuarios', )
 
 
