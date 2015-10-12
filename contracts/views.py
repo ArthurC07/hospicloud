@@ -326,7 +326,7 @@ class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
         return super(ContratoPersonaCreateView, self).dispatch(request, *args,
                                                                **kwargs)
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         formset = self.ContratoFormset(instance=self.persona, prefix='contrato')
         return formset
 
