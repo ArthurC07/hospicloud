@@ -32,7 +32,7 @@ class BeneficioAdmin(admin.ModelAdmin):
 class PCDAdmin(admin.ModelAdmin):
     list_display = ('numero', 'persona')
     ordering = ['numero', 'persona']
-    search_fields = ['persona__nombre', 'persona__apellidos',
+    search_fields = ['persona__nombre', 'persona__apellido',
                      'numero']
 
 
