@@ -93,7 +93,8 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
         exclude = ('ejecutado', 'fecha_de_pago', 'comprobante_de_pago',
                    'recepcion_de_facturas_originales', 'fuente_de_pago',
                    'numero_de_comprobante_de_pago', 'numero_pagos',
-                   'fecha_de_recepcion_de_factura')
+                   'fecha_de_recepcion_de_factura',
+                   'recepcion_de_facturas_originales')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
@@ -114,7 +115,8 @@ class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_maxima_de_pago', 'comprobante_entregado',
-                   'numero_pagos', 'usuario', 'fecha_de_recepcion_de_factura')
+                   'numero_pagos', 'usuario', 'fecha_de_recepcion_de_factura',
+                   'recepcion_de_facturas_originales')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
