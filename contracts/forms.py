@@ -88,11 +88,11 @@ class ContratoMasterForm(FieldSetFormMixin):
     persona = forms.ModelChoiceField(label="",
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput())
+    master = ModelChoiceField(name="", model="",
+                              queryset=MasterContract.objects.all().order_by(
+                                  'plan__nombre'))
     vencimiento = forms.DateField(widget=FutureDateWidget, initial=timezone.now)
     certificado = forms.IntegerField(initial=0)
-    numero = forms.IntegerField(initial=0)
-    master = ModelChoiceField(name="", model="",
-                              queryset=MasterContract.objects.all())
 
     def __init__(self, *args, **kwargs):
         del kwargs['instance']

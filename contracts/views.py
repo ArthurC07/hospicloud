@@ -376,7 +376,7 @@ class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
         self.object = master.create_contract(form.cleaned_data['persona'],
                                              form.cleaned_data['vencimiento'],
                                              form.cleaned_data['certificado'],
-                                             form.cleaned_data['numero'], True)
+                                             0, True)
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
