@@ -771,7 +771,8 @@ class ComprobanteDeduccion(TimeStampedModel):
     correlativo = models.IntegerField()
 
     def __str__(self):
-
+        if self.proveedor is None:
+            return self.correlativo
         return self.proveedor.name
 
     def get_absolute_url(self):
