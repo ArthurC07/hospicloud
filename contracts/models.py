@@ -293,6 +293,7 @@ class MasterContract(TimeStampedModel):
             self.save()
             self.refresh_from_db()
             certificado = self.ultimo_certificado
+            numero = self.ultimo_certificado
 
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=timezone.now(), vencimiento=vencimiento,
@@ -310,8 +311,9 @@ class MasterContract(TimeStampedModel):
             pcd.persona = persona
             if dependiente > 0:
                 dependiente += 1
-            pcd.numero = u'{0}{1}{2}'.format(self.poliza, contract.certificado,
-                                             dependiente)
+            pcd.numero = u'{0}{1:0>6}{2:0>2}'.format(self.poliza,
+                                                     contract.certificado,
+                                                     dependiente)
             pcd.save()
 
         return contract
