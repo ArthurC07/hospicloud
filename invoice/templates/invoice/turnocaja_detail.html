@@ -88,10 +88,10 @@
                 <td>Apertura</td>
                 <td>{{ turno.apertura }}</td>
             </tr>
-            {% for metodo, monto in turno.pagos %}
+            {% for pago in turno.pagos %}
                 <tr>
-                    <td>{{ metodo }} Facturado</td>
-                    <td>{{ monto }}</td>
+                    <td>{{ pago.tipo__nombre }} Facturado</td>
+                    <td>{{ pago.monto }}</td>
                 </tr>
             {% endfor %}
             <tr>

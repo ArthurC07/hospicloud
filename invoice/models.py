@@ -452,19 +452,10 @@ class TurnoCaja(TimeStampedModel):
 
     def pagos(self):
 
-        pagos = Pago.objects.filter(recibo__in=self.recibos())
-
-        metodos = defaultdict(Decimal)
-        for tipo in TipoPago.objects.all():
-            metodos[tipo] = 0
-
-        for pago in pagos.all():
-            if pago.monto is None:
-                pago.monto = Decimal()
-                pago.save()
-            metodos[pago.tipo] += pago.monto
-
-        return metodos.iteritems()
+        return Pago.objects.filter(recibo__in=self.recibos()).values(
+            'tipo__nombre').annotate(
+            monto=Sum('monto'),
+        )
 
     def total_cierres(self):
         total = CierreTurno.objects.filter(turno=self).aggregate(
