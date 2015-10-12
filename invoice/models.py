@@ -772,7 +772,7 @@ class ComprobanteDeduccion(TimeStampedModel):
 
     def __str__(self):
         if self.proveedor is None:
-            return self.correlativo
+            return str(self.correlativo)
         return self.proveedor.name
 
     def get_absolute_url(self):
