@@ -786,7 +786,7 @@ class ComprobanteDeduccion(TimeStampedModel):
             ciudad.correlativo_de_comprobante = F(
                 'correlativo_de_comprobante') + 1
             ciudad.save()
-            ciudad = Ciudad.objects.get(pk=ciudad.pk)
+            ciudad.refresh_from_db()
             self.correlativo = ciudad.correlativo_de_comprobante
 
         super(ComprobanteDeduccion, self).save(*args, **kwargs)
