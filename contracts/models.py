@@ -29,6 +29,7 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
+from django.utils.translation import ugettext_lazy as _
 import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
