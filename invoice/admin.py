@@ -23,8 +23,8 @@ from invoice.models import Recibo, Venta, Pago, TipoPago, TurnoCaja, \
 
 
 class ReciboAdmin(admin.ModelAdmin):
-    list_display = ('cliente', 'numero', 'cajero', 'created')
-    ordering = ['cliente', 'cajero', 'created']
+    list_display = ('cliente', 'numero', 'cajero', 'created', 'cerrado', 'nulo')
+    ordering = ['cliente', 'cajero', 'created', 'cerrado', 'nulo']
     search_fields = ['cliente__nombre']
 
 
