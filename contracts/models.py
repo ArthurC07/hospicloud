@@ -273,7 +273,7 @@ class MasterContract(TimeStampedModel):
     ultimo_certificado = models.IntegerField(default=0)
 
     def __str__(self):
-        nombre = self.plan.nombre
+        nombre = u'{0} {1}'.format(self.poliza, self.plan.nombre)
         if self.contratante:
             nombre += ' ' + self.contratante.nombre
         if self.aseguradora:
