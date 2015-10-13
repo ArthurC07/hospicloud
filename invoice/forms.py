@@ -331,10 +331,14 @@ class CotizadoForm(FieldSetModelFormMixin):
         self.helper.layout = Fieldset(u'Agregar un Cargo', *self.field_names)
 
 
-class ComprobanteDeduccionForm(BasePersonaForm):
+class ComprobanteDeduccionForm(FieldSetModelFormMixin):
     class Meta:
         model = ComprobanteDeduccion
         exclude = ('correlativo',)
+
+    def __init__(self, *args, **kwargs):
+        super(ComprobanteDeduccionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(u'Guardar comprobante', *self.field_names)
 
 
 class ConceptoDeduccionForm(FieldSetModelFormMixin):
