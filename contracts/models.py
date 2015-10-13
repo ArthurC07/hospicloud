@@ -273,11 +273,11 @@ class MasterContract(TimeStampedModel):
     ultimo_certificado = models.IntegerField(default=0)
 
     def __str__(self):
-        nombre = u'{0} {1}'.format(self.poliza, self.plan.nombre)
+        nombre = _(u'Poliza {0} {1}').format(self.poliza, self.plan.nombre)
         if self.contratante:
-            nombre += ' ' + self.contratante.nombre
+            nombre += ' - ' + self.contratante.nombre
         if self.aseguradora:
-            nombre += ' ' + self.aseguradora.nombre
+            nombre += ' - ' + self.aseguradora.nombre
         return nombre
 
     def get_absolute_url(self):
