@@ -34,7 +34,7 @@ from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from emergency.models import Emergencia
 from invoice.models import Recibo
 from persona.models import Persona
-from users.models import UserProfile
+from users.models import UserProfile, Turno
 
 
 @python_2_unicode_compatible
@@ -150,7 +150,8 @@ class Meta(TimeStampedModel):
         (PRESCRIPTION_PERCENTAGE, _(u'Porcentaje de Recetas')),
         (INCAPACIDAD_PERCENTAGE, _(u'Porcentaje de Incapacidades')),
         (
-        CLIENT_FEEDBACK_PERCENTAGE, _(u'Porcentaje de Aprobación del Cliente')),
+            CLIENT_FEEDBACK_PERCENTAGE,
+            _(u'Porcentaje de Aprobación del Cliente')),
         (CONSULTA_REMITIDA, _(u'Consulta Remitida a Especialista')),
         (COACHING, _(u'Coaching')),
         (PUNTUALIDAD, _(u'Puntualidad')),
@@ -183,6 +184,14 @@ class Meta(TimeStampedModel):
         Returns the percentage value obtained by the :class:`User` during the
         specific time frame.
         """
+
+        logins = Login.objects.filter(user=usuario,
+                                      created__range=(inicio, fin)).count()
+
+        turnos = usuario.turno_set.count()
+
+        if logins < 5 < turnos:
+            return Decimal()
 
         if self.tipo_meta == self.CONSULTA_TIME:
             return self.average_consulta_time(usuario, inicio, fin)
