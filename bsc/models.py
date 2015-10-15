@@ -149,7 +149,8 @@ class Meta(TimeStampedModel):
         (PRE_CONSULTA_TIME, _(u'Tiempo en Preconsulta')),
         (PRESCRIPTION_PERCENTAGE, _(u'Porcentaje de Recetas')),
         (INCAPACIDAD_PERCENTAGE, _(u'Porcentaje de Incapacidades')),
-        (CLIENT_FEEDBACK_PERCENTAGE, _(u'Porcentaje de Aprobación del Cliente')),
+        (
+        CLIENT_FEEDBACK_PERCENTAGE, _(u'Porcentaje de Aprobación del Cliente')),
         (CONSULTA_REMITIDA, _(u'Consulta Remitida a Especialista')),
         (COACHING, _(u'Coaching')),
         (PUNTUALIDAD, _(u'Puntualidad')),
@@ -201,7 +202,10 @@ class Meta(TimeStampedModel):
         if self.tipo_meta == self.INCAPACIDAD_PERCENTAGE:
             return self.average_incapacidad(usuario, inicio, fin)
 
-        return Decimal()
+        evaluaciones = Evaluacion.objects.filter(meta=self, usuario=usuario,
+                                                 fecha__range=(inicio, fin))
+
+        return evaluaciones.aggregate(total=Coalesce(Sum('puntaje'), Decimal()))
 
     def ponderacion(self, logro):
         if self.basado_en_tiempo or self.logro_menor_que_meta:
@@ -392,7 +396,6 @@ class Login(TimeStampedModel):
 
 
 def register_login(sender, user, request, **kwargs):
-
     day = timezone.now().date()
     holidays = Holiday.objects.filter(day=day)
     logins = Login.objects.filter(created__range=(
