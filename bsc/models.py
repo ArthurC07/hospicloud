@@ -214,7 +214,9 @@ class Meta(TimeStampedModel):
         evaluaciones = Evaluacion.objects.filter(meta=self, usuario=usuario,
                                                  fecha__range=(inicio, fin))
 
-        return evaluaciones.aggregate(total=Coalesce(Sum('puntaje'), Decimal()))
+        return evaluaciones.aggregate(
+            total=Coalesce(Sum('puntaje'), Decimal())
+        )['total']
 
     def ponderacion(self, logro):
         if self.basado_en_tiempo or self.logro_menor_que_meta:
