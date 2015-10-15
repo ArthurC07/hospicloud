@@ -409,16 +409,7 @@ class Login(TimeStampedModel):
 def register_login(sender, user, request, **kwargs):
     day = timezone.now().date()
     holidays = Holiday.objects.filter(day=day)
-    logins = Login.objects.filter(created__range=(
-        timezone.make_aware(datetime.combine(day, time.min),
-                            timezone.get_current_timezone()),
-        timezone.make_aware(datetime.combine(day, time.max),
-                            timezone.get_current_timezone())
-    )).count()
-
-    if logins > 0:
-        return
-
+    
     login = Login(user=user)
     if holidays.count() > 0 or day.weekday() not in range(1, 6):
         login.holiday = True
