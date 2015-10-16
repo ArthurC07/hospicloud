@@ -48,6 +48,8 @@ class Company(TimeStampedModel):
 @python_2_unicode_compatible
 class Ciudad(TimeStampedModel):
     nombre = models.CharField(max_length=100)
+    cai_recibo = models.CharField(max_length=255, blank=True)
+    cai_comprobante = models.CharField(max_length=255, blank=True)
     correlativo_de_recibo = models.IntegerField(default=0)
     direccion = models.CharField(max_length=255, blank=True)
     telefono = models.CharField(max_length=100, blank=True)
