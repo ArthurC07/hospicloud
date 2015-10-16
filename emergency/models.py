@@ -25,6 +25,7 @@ from django.contrib.auth.models import User
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
 from persona.models import Persona, transfer_object_to_persona, \
@@ -202,7 +203,7 @@ class Cobro(TimeStampedModel):
         return reverse('emergencia-cobro-agregar', args=[self.emergencia.id])
 
     def __unicode__(self):
-        return u'{1}: {0}'.format(self.cargo.descripcion, self.created)
+        return _(u'{1}: {0}').format(self.cargo.descripcion, self.created)
 
     def total(self):
         return self.cargo.precio_de_venta * self.cantidad
