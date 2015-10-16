@@ -25,6 +25,7 @@ from django.contrib.auth.models import User
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
@@ -189,6 +190,7 @@ class RemisionExterna(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 
+@python_2_unicode_compatible
 class Cobro(TimeStampedModel):
     """Permite registrar los distintos cargos"""
 
@@ -202,7 +204,7 @@ class Cobro(TimeStampedModel):
 
         return reverse('emergencia-cobro-agregar', args=[self.emergencia.id])
 
-    def __unicode__(self):
+    def __str__(self):
         return _(u'{1}: {0}').format(self.cargo.descripcion, self.created)
 
     def total(self):
