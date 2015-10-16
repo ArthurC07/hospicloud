@@ -153,7 +153,7 @@ class EstiloVidaForm(BasePersonaForm):
 
     class Meta:
         model = EstiloVida
-        fields = '__all__'
+        exclude = ('cantidad', )
 
     def __init__(self, *args, **kwargs):
         super(EstiloVidaForm, self).__init__(*args, **kwargs)

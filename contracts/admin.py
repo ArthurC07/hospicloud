@@ -32,14 +32,14 @@ class BeneficioAdmin(admin.ModelAdmin):
 class PCDAdmin(admin.ModelAdmin):
     list_display = ('numero', 'persona')
     ordering = ['numero', 'persona']
-    search_fields = ['persona__nombre', 'persona__apellidos',
+    search_fields = ['persona__nombre', 'persona__apellido',
                      'numero']
 
 
 class ContratoAdmin(admin.ModelAdmin):
     list_display = ('numero', 'persona', 'plan', 'master', 'vencimiento', 'activo')
     ordering = ['numero', 'persona', 'plan', 'master', 'vencimiento']
-    search_fields = ['persona__nombre', 'persona__apellidos',
+    search_fields = ['persona__nombre', 'persona__apellido',
                      'numero']
 
 

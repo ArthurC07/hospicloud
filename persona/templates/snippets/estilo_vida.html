@@ -30,13 +30,11 @@
     <tr>
       <td class="data-label">Tipo de Dieta</td>
       <td class="patient-data">{{ estilo_vida.dieta }}</td>
-      <td class="data-label">Cuantitativamente</td>
-      <td class="patient-data">{{ estilo_vida.cantidad }}</td>
       <td class="data-label">Comidas:</td>
       <td class="patient-data">{{ estilo_vida.numero_comidas }}</td>
     </tr>
     <tr>
-      <td class="data-label">Tipos de Comida</td>
+      <td class="data-label">Tipo de Comidas</td>
       <td class="patient-data" colspan="5">{{ estilo_vida.tipo_de_comidas }}</td>
     </tr>
     <tr>
@@ -44,6 +42,16 @@
       <td class="patient-data">{{ estilo_vida.consume_drogas|yesno:"Sí,No" }}</td>
       <td class="data-label">Drogas</td>
       <td class="patient-data" colspan="3">{{ estilo_vida.drogas }}</td>
+    </tr>
+    <tr>
+        <td>Cafe:</td>
+        <td>{{ estilo_vida.cafe }}</td>
+        <td>{{ estilo_vida.cantidad_cafe }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Otros</td>
+        <td colspan="3">{{ estilo_vida.otros }}</td>
     </tr>
   </tbody>
 </table>

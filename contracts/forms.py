@@ -20,6 +20,7 @@ from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
 from select2.fields import ModelChoiceField
+from django.utils.translation import ugettext_lazy as _
 
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
@@ -88,11 +89,11 @@ class ContratoMasterForm(FieldSetFormMixin):
     persona = forms.ModelChoiceField(label="",
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput())
-    vencimiento = forms.DateField(widget=FutureDateWidget, initial=timezone.now)
+    master = ModelChoiceField(name="", model="", label=_(u'Contrato Maestro'),
+                              queryset=MasterContract.objects.all().order_by(
+                                  'plan__nombre'))
     certificado = forms.IntegerField(initial=0)
-    numero = forms.IntegerField(initial=0)
-    master = ModelChoiceField(name="", model="",
-                              queryset=MasterContract.objects.all())
+    vencimiento = forms.DateField(widget=FutureDateWidget, initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         del kwargs['instance']

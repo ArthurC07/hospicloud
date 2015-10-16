@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User, user_logged_in
@@ -34,7 +34,7 @@ from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from emergency.models import Emergencia
 from invoice.models import Recibo
 from persona.models import Persona
-from users.models import UserProfile
+from users.models import UserProfile, Turno
 
 
 @python_2_unicode_compatible
@@ -149,7 +149,9 @@ class Meta(TimeStampedModel):
         (PRE_CONSULTA_TIME, _(u'Tiempo en Preconsulta')),
         (PRESCRIPTION_PERCENTAGE, _(u'Porcentaje de Recetas')),
         (INCAPACIDAD_PERCENTAGE, _(u'Porcentaje de Incapacidades')),
-        (CLIENT_FEEDBACK_PERCENTAGE, _(u'Porcentaje de Aprobación del Cliente')),
+        (
+            CLIENT_FEEDBACK_PERCENTAGE,
+            _(u'Porcentaje de Aprobación del Cliente')),
         (CONSULTA_REMITIDA, _(u'Consulta Remitida a Especialista')),
         (COACHING, _(u'Coaching')),
         (PUNTUALIDAD, _(u'Puntualidad')),
@@ -183,6 +185,14 @@ class Meta(TimeStampedModel):
         specific time frame.
         """
 
+        logins = Login.objects.filter(user=usuario,
+                                      created__range=(inicio, fin)).count()
+
+        turnos = usuario.turno_set.filter(inicio__range=(inicio, fin))
+
+        if logins < 5 and turnos.count() < 5:
+            return Decimal()
+
         if self.tipo_meta == self.CONSULTA_TIME:
             return self.average_consulta_time(usuario, inicio, fin)
 
@@ -201,7 +211,18 @@ class Meta(TimeStampedModel):
         if self.tipo_meta == self.INCAPACIDAD_PERCENTAGE:
             return self.average_incapacidad(usuario, inicio, fin)
 
-        return Decimal()
+        if self.tipo_meta == self.QUEJAS:
+            return self.quejas(usuario, inicio, fin)
+
+        if self.tipo_meta == self.PUNTUALIDAD:
+            return self.puntualidad(usuario, turnos)
+
+        evaluaciones = Evaluacion.objects.filter(meta=self, usuario=usuario,
+                                                 fecha__range=(inicio, fin))
+
+        return evaluaciones.aggregate(
+            total=Coalesce(Sum('puntaje'), Decimal())
+        )['total']
 
     def ponderacion(self, logro):
         if self.basado_en_tiempo or self.logro_menor_que_meta:
@@ -251,12 +272,11 @@ class Meta(TimeStampedModel):
         return Decimal(sum(tiempos)) / max(len(tiempos), 1)
 
     def average_preconsulta(self, usuario, inicio, fin):
-        tiempos = []
+        tiempos = 0
         for espera in self.esperas(usuario, inicio, fin):
             segundos = (espera.inicio - espera.fecha).total_seconds()
             minutos = Decimal(segundos) / 60
-            tiempos.append(minutos)
-            tiempos.append(minutos)
+            tiempos += minutos
 
         return Decimal(sum(tiempos)) / max(len(tiempos), 1)
 
@@ -295,6 +315,33 @@ class Meta(TimeStampedModel):
         )['total']
 
         return Decimal(total) / max(votos.count(), 1)
+
+    def puntualidad(self, usuario, turnos):
+
+        logins = 0
+        rango_fin = timedelta(minutes=10)
+        rango_inicio = timedelta(minutes=20)
+
+        for turno in turnos:
+            inicio = turno.inicio - rango_inicio
+            fin = turno.fin + rango_fin
+            logins += Login.objects.filter(user=usuario,
+                                           created__range=(inicio, fin)).count()
+
+        return logins / max(turnos.count(), 1)
+    
+    def quejas(self, usuario, inicio, fin):
+        
+        quejas = Queja.objects.select_related(
+            'respuesta__consulta__consultorio__usuario__ciudad'
+        ).filter(
+            created__range=(inicio, fin),
+            respuesta__consulta__consultorio__usuario__ciudad=usuario.ciudad
+        )
+
+        incompletas = quejas.filter(resueltas=False)
+
+        return incompletas.count() / max(quejas, 1)
 
 
 class Evaluacion(TimeStampedModel):
@@ -382,6 +429,17 @@ class Voto(TimeStampedModel):
         return reverse('respuesta', args=[self.respuesta.id])
 
 
+class Queja(TimeStampedModel):
+    respuesta = models.ForeignKey(Respuesta)
+    queja = models.TextField()
+    resuelta = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('respuesta', args=[self.respuesta.id])
+
+
 class Holiday(TimeStampedModel):
     day = models.DateField()
 
@@ -392,18 +450,8 @@ class Login(TimeStampedModel):
 
 
 def register_login(sender, user, request, **kwargs):
-
     day = timezone.now().date()
     holidays = Holiday.objects.filter(day=day)
-    logins = Login.objects.filter(created__range=(
-        timezone.make_aware(datetime.combine(day, time.min),
-                            timezone.get_current_timezone()),
-        timezone.make_aware(datetime.combine(day, time.max),
-                            timezone.get_current_timezone())
-    )).count()
-
-    if logins > 0:
-        return
 
     login = Login(user=user)
     if holidays.count() > 0 or day.weekday() not in range(1, 6):

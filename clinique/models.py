@@ -16,10 +16,10 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
 
-from constance import config
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -113,8 +113,8 @@ class Paciente(TimeStampedModel):
                                     blank=True, null=True)
 
     def __str__(self):
-        return u"Paciente {0} de {1}".format(self.persona.nombre_completo(),
-                                             self.consultorio.usuario.get_full_name())
+        return _(u"Paciente {0} de {1}").format(self.persona.nombre_completo(),
+                                                self.consultorio.usuario.get_full_name())
 
     def identificacion(self):
         return self.persona.identificacion
@@ -149,7 +149,7 @@ class Consulta(TimeStampedModel):
 
     def __str__(self):
 
-        return u'Consulta de {0}'.format(self.persona.nombre_completo())
+        return _(u'Consulta de {0}').format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -401,8 +401,8 @@ class Espera(TimeStampedModel):
     fin = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return u"{0} en {1}".format(self.persona.nombre_completo(),
-                                    self.consultorio.nombre)
+        return _(u"{0} en {1}").format(self.persona.nombre_completo(),
+                                       self.consultorio.nombre)
 
     def get_absolute_url(self):
         return self.consultorio.get_absolute_url()

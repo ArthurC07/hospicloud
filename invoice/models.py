@@ -452,19 +452,10 @@ class TurnoCaja(TimeStampedModel):
 
     def pagos(self):
 
-        pagos = Pago.objects.filter(recibo__in=self.recibos())
-
-        metodos = defaultdict(Decimal)
-        for tipo in TipoPago.objects.all():
-            metodos[tipo] = 0
-
-        for pago in pagos.all():
-            if pago.monto is None:
-                pago.monto = Decimal()
-                pago.save()
-            metodos[pago.tipo] += pago.monto
-
-        return metodos.iteritems()
+        return Pago.objects.filter(recibo__in=self.recibos()).values(
+            'tipo__nombre').annotate(
+            monto=Sum('monto'),
+        )
 
     def total_cierres(self):
         total = CierreTurno.objects.filter(turno=self).aggregate(
@@ -771,7 +762,8 @@ class ComprobanteDeduccion(TimeStampedModel):
     correlativo = models.IntegerField()
 
     def __str__(self):
-
+        if self.proveedor is None:
+            return str(self.correlativo)
         return self.proveedor.name
 
     def get_absolute_url(self):
@@ -792,7 +784,7 @@ class ComprobanteDeduccion(TimeStampedModel):
             ciudad.correlativo_de_comprobante = F(
                 'correlativo_de_comprobante') + 1
             ciudad.save()
-            ciudad = Ciudad.objects.get(pk=ciudad.pk)
+            ciudad.refresh_from_db()
             self.correlativo = ciudad.correlativo_de_comprobante
 
         super(ComprobanteDeduccion, self).save(*args, **kwargs)

@@ -40,6 +40,16 @@
                     </ul>
                 {% else %}
                     {% crispy formset helper %}
+                    <h2>En caso de Existir una queja usar el formulario siguiente</h2>
+                    {% if respuesta.queja_set.count > 0 %}
+                        <p>Quejas registradas:</p>
+                        <ul>
+                            {% for queja in respuesta.queja_set.all %}
+                                <li>{{ queja.queja }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% crispy queja %}
                 {% endif %}
             </div>
         </section>

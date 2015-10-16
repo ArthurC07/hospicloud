@@ -29,6 +29,7 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
+from django.utils.translation import ugettext_lazy as _
 import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
@@ -36,9 +37,9 @@ from hospinet.utils import make_end_day
 from inventory.models import ItemTemplate, ItemType
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
+from django.core.files.storage import default_storage as storage
 
 server_timezone = timezone.get_current_timezone()
-from django.core.files.storage import default_storage as storage
 
 
 @python_2_unicode_compatible
@@ -273,11 +274,11 @@ class MasterContract(TimeStampedModel):
     ultimo_certificado = models.IntegerField(default=0)
 
     def __str__(self):
-        nombre = self.plan.nombre
+        nombre = _(u'Poliza {0} {1}').format(self.poliza, self.plan.nombre)
         if self.contratante:
-            nombre += ' ' + self.contratante.nombre
+            nombre += ' - ' + self.contratante.nombre
         if self.aseguradora:
-            nombre += ' ' + self.aseguradora.nombre
+            nombre += ' - ' + self.aseguradora.nombre
         return nombre
 
     def get_absolute_url(self):
@@ -293,6 +294,7 @@ class MasterContract(TimeStampedModel):
             self.save()
             self.refresh_from_db()
             certificado = self.ultimo_certificado
+            numero = self.ultimo_certificado
 
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=timezone.now(), vencimiento=vencimiento,
@@ -310,8 +312,9 @@ class MasterContract(TimeStampedModel):
             pcd.persona = persona
             if dependiente > 0:
                 dependiente += 1
-            pcd.numero = u'{0}{1}{2}'.format(self.poliza, contract.certificado,
-                                             dependiente)
+            pcd.numero = u'{0}{1:0>6}{2:0>2}'.format(self.poliza,
+                                                     contract.certificado,
+                                                     dependiente)
             pcd.save()
 
         return contract

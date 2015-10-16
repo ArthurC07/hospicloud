@@ -326,7 +326,7 @@ class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
         return super(ContratoPersonaCreateView, self).dispatch(request, *args,
                                                                **kwargs)
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         formset = self.ContratoFormset(instance=self.persona, prefix='contrato')
         return formset
 
@@ -376,7 +376,7 @@ class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
         self.object = master.create_contract(form.cleaned_data['persona'],
                                              form.cleaned_data['vencimiento'],
                                              form.cleaned_data['certificado'],
-                                             form.cleaned_data['numero'], True)
+                                             0, True)
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
