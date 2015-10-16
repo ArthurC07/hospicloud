@@ -211,6 +211,9 @@ class Meta(TimeStampedModel):
         if self.tipo_meta == self.INCAPACIDAD_PERCENTAGE:
             return self.average_incapacidad(usuario, inicio, fin)
 
+        if self.tipo_meta == self.QUEJAS:
+            return self.quejas(usuario, inicio, fin)
+
         if self.tipo_meta == self.PUNTUALIDAD:
             return self.puntualidad(usuario, turnos)
 
@@ -326,6 +329,19 @@ class Meta(TimeStampedModel):
                                            created__range=(inicio, fin)).count()
 
         return logins / max(turnos.count(), 1)
+    
+    def quejas(self, usuario, inicio, fin):
+        
+        quejas = Queja.objects.select_related(
+            'respuesta__consulta__consultorio__usuario__ciudad'
+        ).filter(
+            created__range=(inicio, fin),
+            respuesta__consulta__consultorio__usuario__ciudad=usuario.ciudad
+        )
+
+        incompletas = quejas.filter(resueltas=False)
+
+        return incompletas.count() / max(quejas, 1)
 
 
 class Evaluacion(TimeStampedModel):
@@ -406,6 +422,17 @@ class Voto(TimeStampedModel):
     pregunta = models.ForeignKey(Pregunta)
     opcion = models.ForeignKey(Opcion, blank=True, null=True)
     sugerencia = models.TextField(blank=True, null=True)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('respuesta', args=[self.respuesta.id])
+
+
+class Queja(TimeStampedModel):
+    respuesta = models.ForeignKey(Respuesta)
+    queja = models.TextField()
+    resuelta = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

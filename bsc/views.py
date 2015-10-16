@@ -23,14 +23,15 @@ from django import forms
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
-    RedirectView
+    RedirectView, View
 
-from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.base import ContextMixin
 
 from django.views.generic.edit import FormMixin
+from django.utils.translation import ugettext_lazy as _
 
-from bsc.forms import RespuestaForm, VotoForm, VotoFormSet
-from bsc.models import ScoreCard, Encuesta, Respuesta, Voto
+from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm
+from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
 from users.mixins import LoginRequiredMixin
@@ -66,7 +67,7 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class EncuestaMixin(TemplateResponseMixin):
+class EncuestaMixin(ContextMixin, View):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -131,7 +132,11 @@ class RespuestaDetailView(DetailView):
         context['helper'] = FormHelper()
         context['helper'].form_action = reverse('votos-guardar',
                                                 args=[self.object.id])
-        context['helper'].add_input(Submit('submit', u'Guardar'))
+        context['helper'].add_input(Submit('submit', _(u'Guardar')))
+
+        context['queja'] = QuejaForm(initial={'respuesta': self.object})
+        context['queja'].helper.form_action = reverse('queja-agregar',
+                                                      args=[self.object.id])
 
         return context
 
@@ -145,24 +150,24 @@ def save_votes(request, respuesta):
             respuesta.terminada = True
             respuesta.save()
         else:
-            messages.info(request, u'La respuesta está incompleta')
+            messages.info(request, _(u'La respuesta está incompleta'))
             return redirect(respuesta)
     else:
-        messages.info(request, u'La respuesta está incompleta')
+        messages.info(request, _(u'La respuesta está incompleta'))
         return redirect(respuesta)
 
-    messages.info(request, u'Encuesta guardada!')
+    messages.info(request, _(u'Encuesta guardada!'))
     respuesta.consulta.encuestada = True
     respuesta.consulta.save()
 
     return redirect(respuesta.encuesta)
 
 
-class RespuestaMixin(TemplateResponseMixin):
+class RespuestaMixin(ContextMixin, View):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
-        self.respuesta = get_object_or_404(Encuesta, pk=kwargs['respuesta'])
+        self.respuesta = get_object_or_404(Respuesta, pk=kwargs['respuesta'])
         return super(RespuestaMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -183,7 +188,7 @@ class RespuestaFormMixin(RespuestaMixin, FormMixin):
         return initial
 
 
-class PreguntaMixin(TemplateResponseMixin):
+class PreguntaMixin(ContextMixin, View):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -256,3 +261,8 @@ class ConsultaEncuestadaRedirectView(RedirectView):
         consulta.save()
 
         return encuesta.get_absolute_url()
+
+
+class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
+    model = Queja
+    form_class = QuejaForm
