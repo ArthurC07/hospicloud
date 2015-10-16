@@ -269,12 +269,11 @@ class Meta(TimeStampedModel):
         return Decimal(sum(tiempos)) / max(len(tiempos), 1)
 
     def average_preconsulta(self, usuario, inicio, fin):
-        tiempos = []
+        tiempos = 0
         for espera in self.esperas(usuario, inicio, fin):
             segundos = (espera.inicio - espera.fecha).total_seconds()
             minutos = Decimal(segundos) / 60
-            tiempos.append(minutos)
-            tiempos.append(minutos)
+            tiempos += minutos
 
         return Decimal(sum(tiempos)) / max(len(tiempos), 1)
 
