@@ -37,9 +37,9 @@ from hospinet.utils import make_end_day
 from inventory.models import ItemTemplate, ItemType
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
+from django.core.files.storage import default_storage as storage
 
 server_timezone = timezone.get_current_timezone()
-from django.core.files.storage import default_storage as storage
 
 
 @python_2_unicode_compatible
