@@ -329,14 +329,14 @@ class Meta(TimeStampedModel):
                                            created__range=(inicio, fin)).count()
 
         return logins / max(turnos.count(), 1)
-    
+
     def quejas(self, usuario, inicio, fin):
-        
+
         quejas = Queja.objects.select_related(
             'respuesta__consulta__consultorio__usuario__ciudad'
         ).filter(
             created__range=(inicio, fin),
-            respuesta__consulta__consultorio__usuario__ciudad=usuario.ciudad
+            respuesta__consulta__consultorio__usuario__ciudad=usuario.profile.ciudad
         )
 
         incompletas = quejas.filter(resueltas=False)
