@@ -278,7 +278,7 @@ class Meta(TimeStampedModel):
             minutos = Decimal(segundos) / 60
             tiempos += minutos
 
-        return Decimal(sum(tiempos)) / max(len(tiempos), 1)
+        return Decimal(tiempos) / max(len(tiempos), 1)
 
     def average_medical_order(self, usuario, inicio, fin):
         ordenes = self.orden_medicas(usuario, inicio, fin).count()
