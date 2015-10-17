@@ -335,8 +335,7 @@ class Meta(TimeStampedModel):
         quejas = Queja.objects.select_related(
             'respuesta__consulta__consultorio__usuario__ciudad'
         ).filter(
-            created__range=(inicio, fin),
-            respuesta__consulta__consultorio__usuario__ciudad=usuario.profile.ciudad
+            created__range=(inicio, fin)
         )
 
         incompletas = quejas.filter(resueltas=False)
