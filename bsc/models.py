@@ -341,7 +341,7 @@ class Meta(TimeStampedModel):
 
         incompletas = quejas.filter(resuelta=False)
 
-        return incompletas.count() / max(quejas, 1)
+        return incompletas.count() / max(quejas.count(), 1)
 
 
 class Evaluacion(TimeStampedModel):
