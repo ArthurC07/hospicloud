@@ -452,7 +452,7 @@ class TurnoCaja(TimeStampedModel):
 
     def pagos(self):
 
-        return Pago.objects.filter(recibo__in=self.recibos()).values(
+        return Pago.objects.filter(recibo__in=self.recibos()).order_by().values(
             'tipo__nombre').annotate(
             monto=Sum('monto'),
         )

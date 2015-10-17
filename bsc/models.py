@@ -273,12 +273,13 @@ class Meta(TimeStampedModel):
 
     def average_preconsulta(self, usuario, inicio, fin):
         tiempos = 0
-        for espera in self.esperas(usuario, inicio, fin):
+        esperas = self.esperas(usuario, inicio, fin)
+        for espera in esperas:
             segundos = (espera.inicio - espera.fecha).total_seconds()
             minutos = Decimal(segundos) / 60
             tiempos += minutos
 
-        return Decimal(sum(tiempos)) / max(len(tiempos), 1)
+        return Decimal(tiempos) / max(esperas.count(), 1)
 
     def average_medical_order(self, usuario, inicio, fin):
         ordenes = self.orden_medicas(usuario, inicio, fin).count()
@@ -329,19 +330,18 @@ class Meta(TimeStampedModel):
                                            created__range=(inicio, fin)).count()
 
         return logins / max(turnos.count(), 1)
-    
+
     def quejas(self, usuario, inicio, fin):
-        
+
         quejas = Queja.objects.select_related(
             'respuesta__consulta__consultorio__usuario__ciudad'
         ).filter(
-            created__range=(inicio, fin),
-            respuesta__consulta__consultorio__usuario__ciudad=usuario.ciudad
+            created__range=(inicio, fin)
         )
 
-        incompletas = quejas.filter(resueltas=False)
+        incompletas = quejas.filter(resuelta=False)
 
-        return incompletas.count() / max(quejas, 1)
+        return incompletas.count() / max(quejas.count(), 1)
 
 
 class Evaluacion(TimeStampedModel):

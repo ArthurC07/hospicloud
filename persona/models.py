@@ -26,6 +26,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
 from persona.fields import OrderedCountryField
@@ -41,22 +42,22 @@ class Persona(models.Model):
         )
 
     GENEROS = (
-        ('M', u'Masculino'),
-        ('F', u'Femenino'),
+        ('M', _(u'Masculino')),
+        ('F', _(u'Femenino')),
     )
 
     ESTADOS_CIVILES = (
-        ('S', u'Soltero/a'),
-        ('D', u'Divorciado/a'),
-        ('C', u'Casado/a'),
-        ('U', u'Union Libre')
+        ('S', _(u'Soltero/a')),
+        ('D', _(u'Divorciado/a')),
+        ('C', _(u'Casado/a')),
+        ('U', _(u'Union Libre'))
     )
     TIPOS_IDENTIDAD = (
-        ("R", u"Carnet de Residencia"),
-        ("L", u"Licencia"),
-        ("P", u"Pasaporte"),
-        ("T", u"Tarjeta de Identidad"),
-        ("N", u"Ninguno"),
+        ("R", _(u"Carnet de Residencia")),
+        ("L", _(u"Licencia")),
+        ("P", _(u"Pasaporte")),
+        ("T", _(u"Tarjeta de Identidad")),
+        ("N", _(u"Ninguno")),
     )
 
     __expresion__ = re.compile(r'\d{4}-\d{4}-\d{5}')
@@ -114,7 +115,7 @@ class Persona(models.Model):
 
         """Obtiene el nombre completo de la :class:`Persona`"""
 
-        return u'{0} {1}'.format(self.nombre, self.apellido).upper()
+        return _(u'{0} {1}').format(self.nombre, self.apellido).upper()
 
     def obtener_edad(self):
 
@@ -156,8 +157,8 @@ class Fisico(models.Model):
     )
 
     LATERALIDAD = (
-        ('D', u'Derecha'),
-        ('I', u'Izquierda'),
+        ('D', _(u'Derecha')),
+        ('I', _(u'Izquierda')),
     )
 
     persona = models.OneToOneField(Persona, primary_key=True)
@@ -218,9 +219,6 @@ class Antecedente(models.Model):
 
     persona = models.OneToOneField(Persona, primary_key=True)
 
-    # complete = models.BooleanField(default=False, blank=True)
-    # reaction = models.BooleanField(default=False, blank=True)
-
     cardiopatia = models.BooleanField(default=False, blank=True)
     hipertension = models.BooleanField(default=False, blank=True)
     diabetes = models.BooleanField(default=False, blank=True)
@@ -235,7 +233,7 @@ class Antecedente(models.Model):
     hipertrigliceridemia = models.BooleanField(default=False, blank=True)
     colelitiasis = models.BooleanField(default=False, blank=True)
     migrana = models.BooleanField(default=False, blank=True,
-                                  verbose_name=u'Migraña')
+                                  verbose_name=_(u'Migraña'))
     obesidad = models.BooleanField(default=False, blank=True)
     colesterol = models.BooleanField(default=False, blank=True)
     trigliceridos = models.BooleanField(default=False, blank=True)
@@ -245,7 +243,7 @@ class Antecedente(models.Model):
     alergias = models.CharField(max_length=200, blank=True, null=True)
 
     congenital = models.CharField(max_length=200, blank=True,
-                                  verbose_name=u'Congenitas')
+                                  verbose_name=_(u'Congenitas'))
 
     general = models.CharField(max_length=200, blank=True)
     nutricional = models.CharField(max_length=200, blank=True)
@@ -264,13 +262,14 @@ class AntecedenteFamiliar(models.Model):
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='antecedente_familiar')
     sindrome_coronario_agudo = models.BooleanField(default=False, blank=True,
-                                                   verbose_name=u'cardiopatia')
+                                                   verbose_name=_(
+                                                       u'cardiopatia'))
     hipertension = models.BooleanField(default=False, blank=True,
-                                       verbose_name=u'Hipertensión Arterial')
+                                       verbose_name=_(u'Hipertensión Arterial'))
     tabaquismo = models.BooleanField(default=False, blank=True)
     epoc = models.BooleanField(default=False, blank=True)
     diabetes = models.BooleanField(default=False, blank=True,
-                                   verbose_name=u'Diabetes Mellitus')
+                                   verbose_name=_(u'Diabetes Mellitus'))
     tuberculosis = models.BooleanField(default=False, blank=True)
     asma = models.BooleanField(default=False, blank=True)
     colitis = models.BooleanField(default=False, blank=True)
@@ -337,7 +336,7 @@ class Sede(TimeStampedModel):
     direccion = models.TextField()
 
     def __str__(self):
-        return u'{0} de {1}'.format(self.lugar, self.empleador.nombre)
+        return _(u'{0} de {1}').format(self.lugar, self.empleador.nombre)
 
 
 class Empleo(TimeStampedModel):
@@ -403,11 +402,13 @@ def remove_duplicates():
 
 
 def consolidate_into_persona(persona):
-    clones = Persona.objects.filter(nombre__iexact=persona.nombre,
-                                    duplicado=True,
-                                    apellido__iexact=persona.apellido,
-                                    identificacion=persona.identificacion).exclude(
-        pk=persona.pk)
+    clones = Persona.objects.filter(
+        nombre__iexact=persona.nombre,
+        duplicado=True,
+        apellido__iexact=persona.apellido,
+        identificacion=persona.identificacion
+    ).exclude(pk=persona.pk)
+
     print(clones.count())
     for clone in clones.all():
         print(clone)
@@ -419,7 +420,7 @@ def consolidate_into_persona(persona):
 
 def move_persona(persona, clone):
     [function(persona, clone) for function in persona_consolidation_functions]
-    print(u"Removing persona")
+    print(_(u"Eliminando Persona"))
     clone.delete()
 
 

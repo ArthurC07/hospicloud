@@ -20,6 +20,7 @@ from decimal import Decimal
 
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_extensions.db.models import TimeStampedModel
@@ -203,9 +204,9 @@ class Excreta(models.Model, Turno):
     :class:`Admision`"""
 
     MEDIOS = (
-        ("S", u"Succión"),
-        ("O", "Orina"),
-        ("V", "Vomito"),
+        ("S", _(u"Succión")),
+        ("O", _("Orina")),
+        ("V", _("Vomito")),
     )
 
     admision = models.ForeignKey(Admision, related_name='excretas')
@@ -345,17 +346,17 @@ class Medicamento(TimeStampedModel):
     """
 
     INTERVALOS = (
-        (24, u"Cada 24 Horas"),
-        (12, u"Cada 12 Horas"),
-        (8, u"Cada 8 Horas"),
-        (6, u"Cada 6 Horas"),
-        (4, u"Cada 4 Horas"),
+        (24, _(u"Cada 24 Horas")),
+        (12, _(u"Cada 12 Horas")),
+        (8, _(u"Cada 8 Horas")),
+        (6, _(u"Cada 6 Horas")),
+        (4, _(u"Cada 4 Horas")),
     )
 
     ESTADOS = (
-        (1, u"Activo"),
-        (2, u"Suspendido"),
-        (3, u"Terminado"),
+        (1, _(u"Activo")),
+        (2, _(u"Suspendido")),
+        (3, _(u"Terminado")),
     )
 
     admision = models.ForeignKey(Admision, related_name='medicamentos')
@@ -421,9 +422,9 @@ class Dosis(TimeStampedModel, Turno):
     :class:`Persona`"""
 
     ESTADOS = (
-        (1, u"Pendiente"),
-        (2, u"Rechazada"),
-        (3, u"Administrada"),
+        (1, _(u"Pendiente")),
+        (2, _(u"Rechazada")),
+        (3, _(u"Administrada")),
     )
 
     medicamento = models.ForeignKey(Medicamento, related_name='dosis',

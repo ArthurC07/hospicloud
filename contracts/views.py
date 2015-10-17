@@ -25,11 +25,11 @@ from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
                                   TemplateView, UpdateView, FormView, View)
-from django.views.generic.base import RedirectView, TemplateResponseMixin, \
-    ContextMixin
+from django.views.generic.base import RedirectView, ContextMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
@@ -215,7 +215,7 @@ class PlanCloneView(RedirectView, LoginRequiredMixin):
             beneficio.pk = None
             beneficio.save()
 
-        messages.info(self.request, u'¡Plan Copiado Exitosamente!')
+        messages.info(self.request, _(u'¡Plan Copiado Exitosamente!'))
         return plan.get_absolute_url()
 
 
@@ -770,7 +770,7 @@ class PrecontratoCreateView(CreateWithInlinesView):
         url = self.request.build_absolute_uri(precontrato.get_absolute_url())
 
         send_mail('PreContrato Registrado',
-                  u'Ir al contrato {0}'.format(url), config.SYSTEM_EMAIL,
+                  _(u'Ir al contrato {0}').format(url), config.SYSTEM_EMAIL,
                   config.NOTIFICATION_EMAIL.split(','), fail_silently=True)
 
         return precontrato.get_absolute_url()
@@ -839,7 +839,7 @@ class MasterContractProcessView(RedirectView, LoginRequiredMixin):
         master = get_object_or_404(MasterContract, pk=kwargs['pk'])
         master.assign_contracts()
 
-        messages.info(self.request, u'¡Creados los contratos!')
+        messages.info(self.request, _(u'¡Creados los contratos!'))
         return master.get_absolute_url()
 
 
@@ -860,7 +860,7 @@ class ImportFileProcessView(RedirectView, LoginRequiredMixin):
         import_file = get_object_or_404(ImportFile, pk=kwargs['pk'])
         import_file.assign_contracts()
 
-        messages.info(self.request, u'¡Archivo Importado Exitosamente!')
+        messages.info(self.request, _(u'¡Archivo Importado Exitosamente!'))
         return import_file.get_absolute_url()
 
 
@@ -889,7 +889,7 @@ class AseguradoraUpdateView(LoginRequiredMixin, UpdateView):
     form_class = AseguradoraForm
 
 
-class AseguradoraMixin(TemplateResponseMixin):
+class AseguradoraMixin(ContextMixin, View):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):

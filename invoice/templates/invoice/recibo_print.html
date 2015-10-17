@@ -20,7 +20,7 @@
                 {{ recibo.ciudad.company.address }}<br>
                 RTN: {{ recibo.ciudad.company.rtn }}<br >
                 Factura: {{ recibo.numero }}<br>
-                C.A.I: {{ recibo.ciudad.company.cai }}
+                C.A.I: {{ recibo.ciudad.cai_recibo }}
                 Fecha: {{ recibo.created }}<br>
                 Cliente: {{ recibo.cliente }} {% if not cliente.rtn %} CONSUMIDOR FINAL {% endif %}<br>
                 RTN Cliente: {{ recibo.cliente.rtn }}<br>
