@@ -339,7 +339,7 @@ class Meta(TimeStampedModel):
             created__range=(inicio, fin)
         )
 
-        incompletas = quejas.filter(resueltas=False)
+        incompletas = quejas.filter(resuelta=False)
 
         return incompletas.count() / max(quejas, 1)
 
