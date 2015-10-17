@@ -273,13 +273,13 @@ class Meta(TimeStampedModel):
 
     def average_preconsulta(self, usuario, inicio, fin):
         tiempos = 0
-        esperas = self.esperas(usuario, inicio, fin).count()
+        esperas = self.esperas(usuario, inicio, fin)
         for espera in esperas:
             segundos = (espera.inicio - espera.fecha).total_seconds()
             minutos = Decimal(segundos) / 60
             tiempos += minutos
 
-        return Decimal(tiempos) / max(esperas, 1)
+        return Decimal(tiempos) / max(esperas.count(), 1)
 
     def average_medical_order(self, usuario, inicio, fin):
         ordenes = self.orden_medicas(usuario, inicio, fin).count()
