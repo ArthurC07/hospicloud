@@ -109,6 +109,22 @@
                             {% endfor %}
                             </tbody>
                         </table>
+                        <table class="table table-striped">
+                            <caption>Inicios de Sesi&oacute;n</caption>
+                            <thead>
+                            <tr>
+                                <th>Creaci&oacute;n</th>
+                                <th>Fin</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for login in profile.get_current_month_logins_list %}
+                                <tr>
+                                    <td>{{ login.created }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </article>

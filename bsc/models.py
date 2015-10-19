@@ -32,6 +32,7 @@ from django_extensions.db.models import TimeStampedModel
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from emergency.models import Emergencia
+from hospinet.utils import get_current_month_range
 from invoice.models import Recibo
 from persona.models import Persona
 from users.models import UserProfile, Turno
@@ -465,29 +466,21 @@ Persona.ultima_encuesta = property(lambda p: Respuesta.objects.filter(
 
 
 def get_login(turno, usuario):
-
-
     inicio = turno.login_inicio()
     fin = turno.login_fin()
 
     return Login.objects.filter(user=usuario, created__range=(inicio, fin))
 
 
+def get_current_month_logins_list(user):
+
+    fin, inicio = get_current_month_range()
+    return Login.objects.filter(created__range=(inicio, fin), user=user)
+
+
 def get_current_month_logins(user):
-    now = timezone.now()
-    fin = date(now.year, now.month,
-               calendar.monthrange(now.year, now.month)[1])
-    inicio = date(now.year, now.month, 1)
-
-    fin = datetime.combine(fin, time.max)
-    inicio = datetime.combine(inicio, time.min)
-
-    fin = timezone.make_aware(fin, timezone.get_current_timezone())
-    inicio = timezone.make_aware(inicio,
-                                 timezone.get_current_timezone())
-
-    query = Login.objects.filter(created__range=(inicio, fin),
-                                 user=user)
+    fin, inicio = get_current_month_range()
+    query = Login.objects.filter(created__range=(inicio, fin), user=user)
 
     value = {
         'normal': query.filter(holiday=False).count(),
@@ -499,3 +492,7 @@ def get_current_month_logins(user):
 
 UserProfile.get_current_month_logins = property(
     lambda p: get_current_month_logins(p.user))
+
+
+UserProfile.get_current_month_logins_list = property(
+    lambda p: get_current_month_logins_list(p.user))
