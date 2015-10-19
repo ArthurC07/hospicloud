@@ -20,6 +20,7 @@ from datetime import time, timedelta
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
 from django.http import HttpResponseRedirect
@@ -57,6 +58,10 @@ from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
     AntecedenteObstetrico, AntecedenteQuirurgico, EstiloVida, Persona
 from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
+
+
+get_user_model().consultorios_activos = property(
+    lambda u: Consultorio.objects.filter(usuario=u, activo=True))
 
 
 class ConsultorioPermissionMixin(LoginRequiredMixin):

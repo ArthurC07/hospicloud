@@ -17,10 +17,10 @@
 
 from collections import defaultdict
 from decimal import Decimal
+from django.conf import settings
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -55,7 +55,7 @@ class Emergencia(TimeStampedModel):
     observacion = models.TextField(blank=True, null=True)
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True, blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='emergencias')
     facturada = models.BooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
@@ -107,7 +107,7 @@ class Tratamiento(TimeStampedModel):
 
     emergencia = models.ForeignKey(Emergencia, related_name='tratamientos')
     indicaciones = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='er_tratamientos')
 
     def get_absolute_url(self):
@@ -122,7 +122,7 @@ class Diagnostico(TimeStampedModel):
 
     emergencia = models.ForeignKey(Emergencia, related_name='diagnosticos')
     diagnostico = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='er_diagnosticos')
 
     def get_absolute_url(self):
@@ -141,7 +141,7 @@ class ExamenFisico(TimeStampedModel):
     gastrointestinal = models.TextField()
     extremidades = models.TextField()
     otras = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='examenes_fisicos')
 
     def get_absolute_url(self):
@@ -154,7 +154,7 @@ class Hallazgo(TimeStampedModel):
     emergencia = models.ForeignKey(Emergencia,
                                    related_name='hallazgos')
     hallazgo = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='hallazgos')
 
     def get_absolute_url(self):
@@ -167,7 +167,7 @@ class RemisionInterna(TimeStampedModel):
     emergencia = models.ForeignKey(Emergencia,
                                    related_name='remisiones_internas')
     doctor = models.CharField(max_length=100)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='er_rinternas')
 
     def get_absolute_url(self):
@@ -182,7 +182,7 @@ class RemisionExterna(TimeStampedModel):
     destino = models.CharField(max_length=100)
     diagnostico = models.TextField()
     notas = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='er_rexternas')
 
     def get_absolute_url(self):

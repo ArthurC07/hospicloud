@@ -19,9 +19,9 @@ from decimal import Decimal
 from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -94,7 +94,7 @@ class Recibo(TimeStampedModel):
     cliente = models.ForeignKey(Persona, related_name='recibos')
     ciudad = models.ForeignKey(Ciudad, blank=True, null=True,
                                related_name='recibos')
-    cajero = models.ForeignKey(User, blank=True, null=True,
+    cajero = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                related_name='recibos')
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
     discount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
@@ -394,7 +394,8 @@ class TurnoCaja(TimeStampedModel):
     """Allows tracking the :class:`Invoice`s created by a :class:`User` and
     to handle the amounts payed by clients"""
 
-    usuario = models.ForeignKey(User, related_name='turno_caja')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='turno_caja')
     inicio = models.DateTimeField(null=True, blank=True)
     fin = models.DateTimeField(null=True, blank=True)
     apertura = models.DecimalField(default=0, max_digits=7, decimal_places=2)
@@ -614,7 +615,7 @@ class Cotizacion(TimeStampedModel):
 
     persona = models.ForeignKey(Persona)
     tipo_de_venta = models.ForeignKey(TipoVenta)
-    usuario = models.ForeignKey(User)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
     discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     facturada = models.BooleanField(default=False)

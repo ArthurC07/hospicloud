@@ -13,12 +13,14 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormMixin
+from userena.models import UserenaSignup
 from persona.forms import (PersonaForm, AntecedenteForm, FisicoForm,
                            AntecedenteFamiliarForm, AntecedenteObstetricoForm,
                            AntecedenteQuirurgicoForm, EstiloVidaForm)
@@ -197,3 +199,7 @@ class CiudadFormMixin(CiudadMixin, FormMixin):
         initial = initial.copy()
         initial['ciudad'] = self.ciudad
         return initial
+
+
+get_user_model().userena_signup = property(
+    lambda u: UserenaSignup.objects.get_or_create(user=u)[0])
