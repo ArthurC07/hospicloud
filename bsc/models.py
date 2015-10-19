@@ -190,7 +190,7 @@ class Meta(TimeStampedModel):
 
         turnos = usuario.turno_set.filter(inicio__range=(inicio, fin))
 
-        if logins < 5 and turnos.count() < 5:
+        if logins < 5:
             return Decimal()
 
         if self.tipo_meta == self.CONSULTA_TIME:
