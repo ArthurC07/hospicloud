@@ -323,7 +323,7 @@ class Meta(TimeStampedModel):
         for turno in turnos:
             logins += get_login(turno, usuario).count()
 
-        return logins / max(turnos.count(), 1)
+        return Decimal(logins) / max(turnos.count(), 1) * 100
 
     def quejas(self, usuario, inicio, fin):
 
