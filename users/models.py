@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -145,6 +146,10 @@ class UserProfile(UserenaBaseProfile):
 
 @python_2_unicode_compatible
 class Turno(TimeStampedModel):
+
+    rango_inicio = timedelta(minutes=20)
+    rango_fin = timedelta(minutes=10)
+
     nombre = models.CharField(max_length=255)
     inicio = models.DateTimeField(default=timezone.now)
     fin = models.DateTimeField(default=timezone.now)
@@ -152,6 +157,13 @@ class Turno(TimeStampedModel):
 
     def __str__(self):
         return self.nombre
+
+    def login_inicio(self):
+
+        return self.inicio - self.rango_inicio
+
+    def login_fin(self):
+        return self.fin + self.rango_fin
 
 
 User.userena_signup = property(

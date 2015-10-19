@@ -320,14 +320,8 @@ class Meta(TimeStampedModel):
     def puntualidad(self, usuario, turnos):
 
         logins = 0
-        rango_fin = timedelta(minutes=10)
-        rango_inicio = timedelta(minutes=20)
-
         for turno in turnos:
-            inicio = turno.inicio - rango_inicio
-            fin = turno.fin + rango_fin
-            logins += Login.objects.filter(user=usuario,
-                                           created__range=(inicio, fin)).count()
+            logins += get_login(turno, usuario)
 
         return logins / max(turnos.count(), 1)
 
@@ -468,6 +462,15 @@ Persona.cantidad_encuestas = property(lambda p: Respuesta.objects.filter(
 
 Persona.ultima_encuesta = property(lambda p: Respuesta.objects.filter(
     consulta__persona=p).order_by('created').last())
+
+
+def get_login(turno, usuario):
+
+
+    inicio = turno.login_inicio()
+    fin = turno.login_fin()
+
+    return Login.objects.filter(user=usuario, created__range=(inicio, fin))
 
 
 def get_current_month_logins(user):
