@@ -136,6 +136,12 @@ class UserProfile(UserenaBaseProfile):
                                          created__range=(inicio, fin)
                                          ).count()
 
+    def current_month_turns(self):
+
+        fin, inicio = get_current_month_range()
+
+        return self.user.turno_set.filter(inicio__range=(inicio, fin)).all()
+
 
 @python_2_unicode_compatible
 class Turno(TimeStampedModel):
