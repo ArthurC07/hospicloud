@@ -4,18 +4,33 @@ from datetime import date, datetime, time
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
+cache = {}
+
+
+def make_day_start(day):
+    inicio = date(day.year, day.month, 1)
+    inicio = datetime.combine(inicio, time.min)
+    return inicio
+
+
+def make_end_day(day):
+    day = datetime.combine(day, time.max)
+    return timezone.make_aware(day, timezone.get_current_timezone())
+
 
 def get_current_month_range():
     now = timezone.now()
-    fin = date(now.year, now.month,
-               calendar.monthrange(now.year, now.month)[1])
-    inicio = date(now.year, now.month, 1)
-    fin = datetime.combine(fin, time.max)
-    inicio = datetime.combine(inicio, time.min)
-    fin = timezone.make_aware(fin, timezone.get_current_timezone())
-    inicio = timezone.make_aware(inicio,
-                                 timezone.get_current_timezone())
-    return fin, inicio
+    month = now.month
+
+    if 'inicio' not in cache or 'fin' not in cache or cache[
+        'inicio'].month != month or cache['fin'].month != month:
+        fin = date(now.year, now.month,
+                   calendar.monthrange(now.year, now.month)[1])
+        inicio = make_day_start(now)
+        cache['fin'] = make_end_day(fin)
+        cache['inicio'] = timezone.make_aware(inicio,
+                                              timezone.get_current_timezone())
+    return cache['fin'], cache['inicio']
 
 
 def get_previous_month_range():
@@ -26,14 +41,6 @@ def get_previous_month_range():
                               calendar.monthrange(previous_month_start.year,
                                                   previous_month_start.month)[
                                   1])
-    previous_month_end = datetime.combine(previous_month_end, time.max)
-    previous_month_end = timezone.make_aware(previous_month_end,
-                                             timezone.get_current_timezone())
+    previous_month_end = make_end_day(previous_month_end)
 
     return previous_month_end, previous_month_start
-
-
-def make_end_day(day):
-
-    day = datetime(day.year, day.month, day.day, 23, 59, 59)
-    return timezone.make_aware(day, timezone.get_current_timezone())
