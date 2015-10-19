@@ -24,7 +24,7 @@
         <div class="tab-content">
             <ul class="nav nav-tabs">
                 <li><a class="active" href="#profile" data-toggle="tab">Perfil de Usuario</a></li>
-                <li><a href="#persona" data-toggle="tab">Datos Personales</a></li>
+                <li><a href="#turno" data-toggle="tab">Turnos</a></li>
             </ul>
             <article id="profile" class="tab-pane">
                 <div class="row">
@@ -86,6 +86,45 @@
                                 <a class="btn btn-lg btn-primary" href="{% url 'user-persona-create' %}">Agregar Mis Datos Personales</a>
                             {% endifnotequal %}
                         {% endif %}
+                    </div>
+                </div>
+            </article>
+            <article id="turno" class="tab-pane">
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table class="table table-striped">
+                            <caption>Turnos del Mes Actual</caption>
+                            <thead>
+                                <tr>
+                                    <th>Inicio</th>
+                                    <th>Fin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for turno in profile.current_month_turns %}
+                                <tr>
+                                    <td>{{ turno.inicio }}</td>
+                                    <td>{{ turno.fin }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <table class="table table-striped">
+                            <caption>Inicios de Sesi&oacute;n</caption>
+                            <thead>
+                            <tr>
+                                <th>Creaci&oacute;n</th>
+                                <th>Fin</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for login in profile.get_current_month_logins_list %}
+                                <tr>
+                                    <td>{{ login.created }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </article>

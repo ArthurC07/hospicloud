@@ -32,6 +32,7 @@ from django_extensions.db.models import TimeStampedModel
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from emergency.models import Emergencia
+from hospinet.utils import get_current_month_range
 from invoice.models import Recibo
 from persona.models import Persona
 from users.models import UserProfile, Turno
@@ -320,23 +321,18 @@ class Meta(TimeStampedModel):
     def puntualidad(self, usuario, turnos):
 
         logins = 0
-        rango_fin = timedelta(minutes=10)
-        rango_inicio = timedelta(minutes=20)
-
         for turno in turnos:
-            inicio = turno.inicio - rango_inicio
-            fin = turno.fin + rango_fin
-            logins += Login.objects.filter(user=usuario,
-                                           created__range=(inicio, fin)).count()
+            logins += get_login(turno, usuario).count()
 
-        return logins / max(turnos.count(), 1)
+        return Decimal(logins) / max(turnos.count(), 1) * 100
 
     def quejas(self, usuario, inicio, fin):
 
         quejas = Queja.objects.select_related(
-            'respuesta__consulta__consultorio__usuario__ciudad'
+            'respuesta__consulta__consultorio__usuario__profile__ciudad'
         ).filter(
-            created__range=(inicio, fin)
+            created__range=(inicio, fin),
+            respuesta__consulta__consultorio__usuario__profile__ciudad=usuario.profile.ciudad,
         )
 
         incompletas = quejas.filter(resuelta=False)
@@ -469,21 +465,22 @@ Persona.ultima_encuesta = property(lambda p: Respuesta.objects.filter(
     consulta__persona=p).order_by('created').last())
 
 
+def get_login(turno, usuario):
+    inicio = turno.login_inicio()
+    fin = turno.login_fin()
+
+    return Login.objects.filter(user=usuario, created__range=(inicio, fin))
+
+
+def get_current_month_logins_list(user):
+
+    fin, inicio = get_current_month_range()
+    return Login.objects.filter(created__range=(inicio, fin), user=user)
+
+
 def get_current_month_logins(user):
-    now = timezone.now()
-    fin = date(now.year, now.month,
-               calendar.monthrange(now.year, now.month)[1])
-    inicio = date(now.year, now.month, 1)
-
-    fin = datetime.combine(fin, time.max)
-    inicio = datetime.combine(inicio, time.min)
-
-    fin = timezone.make_aware(fin, timezone.get_current_timezone())
-    inicio = timezone.make_aware(inicio,
-                                 timezone.get_current_timezone())
-
-    query = Login.objects.filter(created__range=(inicio, fin),
-                                 user=user)
+    fin, inicio = get_current_month_range()
+    query = Login.objects.filter(created__range=(inicio, fin), user=user)
 
     value = {
         'normal': query.filter(holiday=False).count(),
@@ -495,3 +492,7 @@ def get_current_month_logins(user):
 
 UserProfile.get_current_month_logins = property(
     lambda p: get_current_month_logins(p.user))
+
+
+UserProfile.get_current_month_logins_list = property(
+    lambda p: get_current_month_logins_list(p.user))
