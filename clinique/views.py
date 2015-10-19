@@ -20,7 +20,6 @@ from datetime import time, timedelta
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
 from django.http import HttpResponseRedirect
@@ -60,10 +59,6 @@ from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
-get_user_model().consultorios_activos = property(
-    lambda u: Consultorio.objects.filter(usuario=u, activo=True))
-
-
 class ConsultorioPermissionMixin(LoginRequiredMixin):
     @method_decorator(permission_required('clinique.consultorio'))
     def dispatch(self, *args, **kwargs):
@@ -71,7 +66,6 @@ class ConsultorioPermissionMixin(LoginRequiredMixin):
 
 
 class DateBoundView(View):
-
     def dispatch(self, request, *args, **kwargs):
         tz = timezone.get_current_timezone()
         now = timezone.now()
@@ -143,7 +137,8 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
         return context
 
 
-class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView, LoginRequiredMixin):
+class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView,
+                            LoginRequiredMixin):
     paginate_by = 20
     template_name = 'clinique/consultorio_detail.html'
 

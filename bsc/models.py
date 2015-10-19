@@ -14,8 +14,6 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-import calendar
-from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User, user_logged_in
