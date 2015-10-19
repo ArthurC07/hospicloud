@@ -321,7 +321,7 @@ class Meta(TimeStampedModel):
 
         logins = 0
         for turno in turnos:
-            logins += get_login(turno, usuario)
+            logins += get_login(turno, usuario).count()
 
         return logins / max(turnos.count(), 1)
 
