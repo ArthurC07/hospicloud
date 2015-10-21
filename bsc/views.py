@@ -30,8 +30,9 @@ from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
 from django.utils.translation import ugettext_lazy as _
 
-from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm
-from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja
+from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
+    ArchivoNotasForm
+from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, ArchivoNotas
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
 from users.mixins import LoginRequiredMixin
@@ -266,3 +267,24 @@ class ConsultaEncuestadaRedirectView(RedirectView):
 class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
     model = Queja
     form_class = QuejaForm
+
+
+class ArchivoNotasCreateView(CreateView, LoginRequiredMixin):
+    model = ArchivoNotas
+    form_class = ArchivoNotasForm
+
+
+class ArchivoNotasDetailView(DetailView, LoginRequiredMixin):
+    model = ArchivoNotas
+    context_object_name = 'archivonotas'
+
+
+class ArchivoNotasProcesarView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        archivonotas = get_object_or_404(ArchivoNotas, pk=kwargs['pk'])
+        archivonotas.procesar()
+
+        messages.info(self.request, _(u'¡Archivo Importado Exitosamente!'))
+        return archivonotas.get_absolute_url()

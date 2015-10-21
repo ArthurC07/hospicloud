@@ -19,7 +19,7 @@ from django import forms
 from django.forms import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 
-from bsc.models import Encuesta, Respuesta, Voto, Opcion, Queja
+from bsc.models import Encuesta, Respuesta, Voto, Opcion, Queja, ArchivoNotas
 from persona.forms import FieldSetModelFormMixin, FieldSetModelFormMixinNoButton
 
 
@@ -79,3 +79,14 @@ class QuejaForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(QuejaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_(u'Registrar Queja'), *self.field_names)
+
+
+class ArchivoNotasForm(FieldSetModelFormMixin):
+    class Meta:
+        model = ArchivoNotas
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(ArchivoNotasForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_(u'Subir Archivo de Notas'),
+                                      *self.field_names)
