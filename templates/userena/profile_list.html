@@ -15,6 +15,7 @@
                     <th>{% trans 'Valor Actual BSC' %}</th>
                     <th>{% trans 'Escala Obtenida' %}</th>
                     <th>{% trans 'Bonificacion BSC' %}</th>
+                    <th>{% trans 'Otras Bonificaciones' %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -26,21 +27,29 @@
                                 {{ profile.user.username }}
                             </a>
                         </td>
-                        <td>{{ profile.ciudad }}</td>
                         <td>{{ profile.user.get_full_name }}</td>
+                        <td>{{ profile.ciudad }}</td>
                         <td>{{ goal.total|floatformat:2 }}</td>
                         <td>
                         {% for escala in goal.escalas %}
                             Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}
                         {% empty %}
-                            No se Alcanz&oacute; ninguna escala
+                            Ninguna
                         {% endfor %}
                         </td>
                         <td>
                         {% for escala in goal.escalas %}
                             Comisi&oacute;n: {{ escala.comision }}
                         {% empty %}
-                            No se Alcanz&oacute; ninguna escala
+                            Ninguna
+                        {% endfor %}
+                        </td>
+                        <td>
+                        {% for extra in goal.extra %}
+                            Bonificaci&oacute;n Obtenida:
+                                {{ extra.tipo_extra }} {{ extra.get_tipo_extra_display }}
+                                de {{ extra.inicio_de_rango }} al {{ extra.fin_de_rango }}
+                            Comisi&oacute;n: {{ extra.comision }}
                         {% endfor %}
                         </td>
                     </tr>
