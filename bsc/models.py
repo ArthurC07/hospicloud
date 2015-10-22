@@ -18,6 +18,7 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User, user_logged_in
 from django.core.urlresolvers import reverse
+from django.core.files.storage import default_storage as storage
 from django.db import models
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
@@ -27,8 +28,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from django_extensions.db.models import TimeStampedModel
+import unicodecsv
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
+from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from invoice.models import Recibo
@@ -216,6 +219,9 @@ class Meta(TimeStampedModel):
         if self.tipo_meta == self.PUNTUALIDAD:
             return self.puntualidad(usuario, turnos)
 
+        if self.tipo_meta == self.VENTAS:
+            return self.ventas(usuario, inicio, fin)
+
         evaluaciones = Evaluacion.objects.filter(meta=self, usuario=usuario,
                                                  fecha__range=(inicio, fin))
 
@@ -316,6 +322,15 @@ class Meta(TimeStampedModel):
 
         return Decimal(total) / max(votos.count(), 1)
 
+    def ventas(self, usuario, inicio, fin):
+
+        ventas = MasterContract.objects.filter(
+            vendedor__usuario=usuario,
+            created__range=(inicio, fin),
+        ).count()
+
+        return ventas
+
     def puntualidad(self, usuario, turnos):
 
         logins = 0
@@ -338,11 +353,49 @@ class Meta(TimeStampedModel):
         return incompletas.count() / max(quejas.count(), 1)
 
 
+@python_2_unicode_compatible
 class Evaluacion(TimeStampedModel):
     meta = models.ForeignKey(Meta)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     fecha = models.DateTimeField(default=timezone.now)
     puntaje = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+
+    def __str__(self):
+        return self.meta.get_tipo_meta_display()
+
+
+@python_2_unicode_compatible
+class ArchivoNotas(TimeStampedModel):
+    meta = models.ForeignKey(Meta)
+    fecha = models.DateTimeField(default=timezone.now)
+    columna_de_usuarios = models.IntegerField()
+    columna_de_puntaje = models.IntegerField()
+
+    def __str__(self):
+        return self.meta.get_tipo_meta_display()
+
+    def get_absolute_url(self):
+        return reverse('archivoNotas', args=[self.id])
+
+    def procesar(self):
+        archivo = storage.open(self.archivo.name, 'rU')
+        data = unicodecsv.reader(archivo)
+        [procesar_notas(
+            linea,
+            self.fecha,
+            self.meta,
+            self.columna_de_usuarios - 1,
+            self.columna_de_puntaje - 1
+        ) for linea in data]
+
+
+def procesar_notas(linea, fecha, meta, usuario, puntaje):
+    evaluacion = Evaluacion()
+    evaluacion.puntaje = linea[puntaje]
+    evaluacion.usuario = linea[usuario]
+    evaluacion.fecha = fecha
+    evaluacion.meta = meta
+    evaluacion.save()
 
 
 @python_2_unicode_compatible
@@ -471,7 +524,6 @@ def get_login(turno, usuario):
 
 
 def get_current_month_logins_list(user):
-
     fin, inicio = get_current_month_range()
     return Login.objects.filter(created__range=(inicio, fin), user=user)
 
@@ -490,7 +542,6 @@ def get_current_month_logins(user):
 
 UserProfile.get_current_month_logins = property(
     lambda p: get_current_month_logins(p.user))
-
 
 UserProfile.get_current_month_logins_list = property(
     lambda p: get_current_month_logins_list(p.user))

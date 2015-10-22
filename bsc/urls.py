@@ -19,7 +19,7 @@ from django.conf.urls import patterns, url
 from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView, \
     EncuestaListView, EncuestaDetailView, RespuestaDetailView, VotoUpdateView, \
     RespuestaRedirectView, save_votes, ConsultaEncuestadaRedirectView, \
-    QuejaCreateView
+    QuejaCreateView, ArchivoNotasDetailView, ArchivoNotasProcesarView
 
 urlpatterns = patterns('',
 
@@ -69,4 +69,12 @@ urlpatterns = patterns('',
                        url(r'^queja/(?P<respuesta>\d+)/agregar$',
                            QuejaCreateView.as_view(),
                            name='queja-agregar'),
+
+                       url(r'^notas/(?P<pk>\d+)$',
+                           ArchivoNotasDetailView.as_view(),
+                           name='archivonotas'),
+
+                       url(r'^notas/(?P<pk>\d+)/procesar$',
+                           ArchivoNotasProcesarView.as_view(),
+                           name='archivonotas-process'),
                        )
