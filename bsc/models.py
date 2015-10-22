@@ -29,6 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_extensions.db.models import TimeStampedModel
 import unicodecsv
+from budget.models import Presupuesto
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from contracts.models import MasterContract
@@ -222,6 +223,9 @@ class Meta(TimeStampedModel):
         if self.tipo_meta == self.VENTAS:
             return self.ventas(usuario, inicio, fin)
 
+        if self.tipo_meta == self.PRESUPUESTO:
+            return self.presupuesto(usuario)
+
         evaluaciones = Evaluacion.objects.filter(meta=self, usuario=usuario,
                                                  fecha__range=(inicio, fin))
 
@@ -351,6 +355,19 @@ class Meta(TimeStampedModel):
         incompletas = quejas.filter(resuelta=False)
 
         return incompletas.count() / max(quejas.count(), 1)
+
+
+    def presupuesto(self, usuario):
+
+        presupuesto = Presupuesto.objects.filter(
+            ciudad=usuario.profile.ciudad,
+            activo=True
+        ).first()
+
+        if presupuesto is None:
+            return Decimal()
+
+        return presupuesto.porcentaje_consumido()
 
 
 @python_2_unicode_compatible
