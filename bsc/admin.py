@@ -68,7 +68,7 @@ class EvaluacionAdmin(ForeignKeyAutocompleteAdmin):
 
 class QuejaAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ['respuesta', 'queja', 'resuelta', 'created']
-    ordering = ['queja', 'resuelta', 'created']
+    ordering = ['queja', 'resuelta', 'resuelta', 'created']
 
 
 admin.site.register(Meta, MetaAdmin)
