@@ -31,6 +31,7 @@ from django_extensions.db.models import TimeStampedModel
 import unicodecsv
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
+from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from invoice.models import Recibo
@@ -218,6 +219,9 @@ class Meta(TimeStampedModel):
         if self.tipo_meta == self.PUNTUALIDAD:
             return self.puntualidad(usuario, turnos)
 
+        if self.tipo_meta == self.VENTAS:
+            return self.ventas(usuario, inicio, fin)
+
         evaluaciones = Evaluacion.objects.filter(meta=self, usuario=usuario,
                                                  fecha__range=(inicio, fin))
 
@@ -317,6 +321,15 @@ class Meta(TimeStampedModel):
         )['total']
 
         return Decimal(total) / max(votos.count(), 1)
+
+    def ventas(self, usuario, inicio, fin):
+
+        ventas = MasterContract.objects.filter(
+            vendedor__usuario=usuario,
+            created__range=(inicio, fin),
+        ).count()
+
+        return ventas
 
     def puntualidad(self, usuario, turnos):
 
