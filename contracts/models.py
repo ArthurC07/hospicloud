@@ -316,6 +316,8 @@ class MasterContract(TimeStampedModel):
                                                      contract.certificado,
                                                      dependiente)
             pcd.save()
+            contract.numero = pcd.numero
+            contract.save()
 
         return contract
 
