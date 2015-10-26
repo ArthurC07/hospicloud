@@ -67,8 +67,12 @@ class EvaluacionAdmin(ForeignKeyAutocompleteAdmin):
 
 
 class QuejaAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ['respuesta', 'queja', 'resuelta', 'created']
+    list_display = ['respuesta', 'get_usuario', 'queja', 'resuelta', 'created']
     ordering = ['queja', 'resuelta', 'resuelta', 'created']
+
+    def get_usuario(self, object):
+
+        return object.respuesta.consulta.consultorio.usuario.get_full_name()
 
 
 admin.site.register(Meta, MetaAdmin)
