@@ -270,15 +270,16 @@ class Meta(TimeStampedModel):
                                      consultorio__usuario=usuario)
 
     def average_consulta_time(self, usuario, inicio, fin):
-        tiempos = []
-        for consulta in self.consultas(usuario, inicio, fin):
+        tiempos = 0
+        consultas = self.consultas(usuario, inicio, fin)
+        for consulta in consultas:
             if consulta.final is None:
                 continue
             segundos = (consulta.final - consulta.created).total_seconds()
             minutos = Decimal(segundos) / 60
-            tiempos.append(minutos)
+            tiempos += minutos
 
-        return Decimal(sum(tiempos)) / max(len(tiempos), 1)
+        return Decimal(tiempos) / max(consultas.count(), 1)
 
     def average_preconsulta(self, usuario, inicio, fin):
         tiempos = 0
@@ -356,7 +357,6 @@ class Meta(TimeStampedModel):
 
         return incompletas.count() / max(quejas.count(), 1)
 
-
     def presupuesto(self, usuario):
 
         presupuesto = Presupuesto.objects.filter(
@@ -367,7 +367,7 @@ class Meta(TimeStampedModel):
         if presupuesto is None:
             return Decimal()
 
-        return presupuesto.porcentaje_consumido()
+        return presupuesto.porcentaje_ejecutado_mes_actual()
 
 
 @python_2_unicode_compatible
