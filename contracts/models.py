@@ -290,7 +290,7 @@ class MasterContract(TimeStampedModel):
                         auto=False):
 
         if auto:
-            self.ultimo = F('ultimo') + 1
+            self.ultimo_certificado = F('ultimo_certificado') + 1
             self.save()
             self.refresh_from_db()
             certificado = self.ultimo_certificado
