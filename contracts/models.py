@@ -203,8 +203,10 @@ def check_line(line, vencimiento):
             contract.exclusion = line[10]
             contract.save()
         else:
-            contract = Contrato.objects.filter(poliza=poliza_f,
-                                               certificado=file_certificado).first()
+            contract = Contrato.objects.filter(
+                poliza=poliza_f,
+                certificado=file_certificado
+            ).first()
 
             if contract:
                 beneficiario = Beneficiario(persona=persona, contrato=contract)
