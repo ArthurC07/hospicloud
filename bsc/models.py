@@ -191,7 +191,10 @@ class Meta(TimeStampedModel):
         logins = Login.objects.filter(user=usuario,
                                       created__range=(inicio, fin)).count()
 
-        turnos = usuario.turno_set.filter(inicio__range=(inicio, fin))
+        turnos = usuario.turno_set.filter(
+            inicio__range=(inicio, fin),
+            contabilizable=True
+        )
 
         if logins < 5 and turnos.count() < 5:
             return Decimal()

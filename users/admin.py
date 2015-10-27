@@ -22,7 +22,7 @@ class CiudadAdmin(admin.ModelAdmin):
 
 
 class TurnoAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'inicio', 'fin']
+    list_display = ['nombre', 'inicio', 'fin', 'contabilizable']
     filter_horizontal = ('usuarios', )
 
 
