@@ -19,8 +19,10 @@ from django import forms
 from django.forms import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 
-from bsc.models import Encuesta, Respuesta, Voto, Opcion, Queja, ArchivoNotas
+from bsc.models import Encuesta, Respuesta, Voto, Opcion, Queja, ArchivoNotas, \
+    Solucion
 from persona.forms import FieldSetModelFormMixin, FieldSetModelFormMixinNoButton
+from users.mixins import HiddenUserForm
 
 
 class EncuestaFormMixin(FieldSetModelFormMixin):
@@ -79,6 +81,24 @@ class QuejaForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(QuejaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_(u'Registrar Queja'), *self.field_names)
+
+
+class QuejaFormMixin(FieldSetModelFormMixin):
+    queja = forms.ModelChoiceField(label='',
+                                   queryset=Queja.objects.all(),
+                                   widget=forms.HiddenInput(),
+                                   required=False)
+
+
+class SolucionForm(QuejaFormMixin, HiddenUserForm):
+    class Meta:
+        model = Solucion
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(SolucionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_(u'Registrar Solución'),
+                                      *self.field_names)
 
 
 class ArchivoNotasForm(FieldSetModelFormMixin):

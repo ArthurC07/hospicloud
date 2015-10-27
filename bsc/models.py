@@ -493,15 +493,30 @@ class Voto(TimeStampedModel):
         return reverse('respuesta', args=[self.respuesta.id])
 
 
+@python_2_unicode_compatible
 class Queja(TimeStampedModel):
     respuesta = models.ForeignKey(Respuesta)
     queja = models.TextField()
     resuelta = models.BooleanField(default=False)
 
+    def __str__(self):
+
+        return self.queja
+
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('respuesta', args=[self.respuesta.id])
+        return reverse('queja', args=[self.id])
+
+
+class Solucion(TimeStampedModel):
+    queja = models.ForeignKey(Queja)
+    solucion = models.TextField()
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def get_absolute_url(self):
+
+        return reverse('queja', args=[self.queja.id])
 
 
 class Holiday(TimeStampedModel):

@@ -31,11 +31,12 @@ from django.views.generic.edit import FormMixin
 from django.utils.translation import ugettext_lazy as _
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
-    ArchivoNotasForm
-from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, ArchivoNotas
+    ArchivoNotasForm, SolucionForm
+from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, ArchivoNotas, \
+    Pregunta, Solucion
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
-from users.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
 class ScoreCardListView(LoginRequiredMixin, ListView):
@@ -193,13 +194,13 @@ class PreguntaMixin(ContextMixin, View):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
-        self.respuesta = get_object_or_404(Encuesta, pk=kwargs['respuesta'])
+        self.pregunta = get_object_or_404(Pregunta, pk=kwargs['pregunta'])
         return super(PreguntaMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(PreguntaMixin, self).get_context_data(**kwargs)
 
-        context['encuesta'] = self.respuesta
+        context['pregunta'] = self.pregunta
 
         return context
 
@@ -210,7 +211,7 @@ class PreguntaFormMixin(PreguntaMixin, FormMixin):
     def get_initial(self):
         initial = super(PreguntaFormMixin, self).get_initial()
         initial = initial.copy()
-        initial['respuesta'] = self.respuesta
+        initial['pregunta'] = self.pregunta
         return initial
 
 
@@ -267,6 +268,50 @@ class ConsultaEncuestadaRedirectView(RedirectView):
 class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
     model = Queja
     form_class = QuejaForm
+
+    def get_success_url(self):
+
+        return self.object.respuesta.get_absolute_url()
+
+
+class QuejaDetailView(DetailView, LoginRequiredMixin):
+    model = Queja
+
+
+class QuejaListView(ListView, LoginRequiredMixin):
+    model = Queja
+    queryset = Queja.objects.filter(resuelta=False)
+    context_object_name = 'quejas'
+
+
+class QuejaMixin(ContextMixin, View):
+
+    def dispatch(self, *args, **kwargs):
+        self.queja = get_object_or_404(Queja, pk=kwargs['queja'])
+        return super(QuejaMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(QuejaMixin, self).get_context_data(**kwargs)
+
+        context['queja'] = self.queja
+
+        return context
+
+
+class QuejaFormMixin(QuejaMixin, FormMixin):
+    """Permite inicializar el paciente que se utilizará en un formulario"""
+
+    def get_initial(self):
+        initial = super(QuejaFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['queja'] = self.queja
+        return initial
+
+
+class SolucionCreateView(QuejaFormMixin, CurrentUserFormMixin, CreateView,
+                         LoginRequiredMixin):
+    model = Solucion
+    form_class = SolucionForm
 
 
 class ArchivoNotasCreateView(CreateView, LoginRequiredMixin):
