@@ -27,7 +27,7 @@ from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 
 from django.utils import timezone
-
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
@@ -188,7 +188,7 @@ class Recibo(TimeStampedModel):
         """Crea una representación en texto del :class:`Recibo`"""
 
         if self.nulo:
-            return u'{0} **NULO**'.format(self.cliente.nombre_completo())
+            return _(u'{0} **NULO**').format(self.cliente.nombre_completo())
 
         return self.cliente.nombre_completo()
 
@@ -302,7 +302,7 @@ class Venta(TimeStampedModel):
 
     def __str__(self):
 
-        return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
+        return _(u"{0} a {1}").format(self.item.descripcion, self.recibo.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -401,7 +401,7 @@ class TurnoCaja(TimeStampedModel):
     finalizado = models.BooleanField(default=False)
 
     def __str__(self):
-        return u"Turno de {0}".format(self.usuario.get_full_name())
+        return _(u"Turno de {0}").format(self.usuario.get_full_name())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -721,7 +721,7 @@ class Cotizado(TimeStampedModel):
 
     def __str__(self):
 
-        return u"{0} a {1}".format(self.item.descripcion, self.cotizacion.id)
+        return _(u"{0} a {1}").format(self.item.descripcion, self.cotizacion.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -771,8 +771,8 @@ class ComprobanteDeduccion(TimeStampedModel):
         return reverse('comprobante', args=[self.id])
 
     def numero(self):
-        return u'{0}-{1}'.format(self.ciudad.prefijo_comprobante,
-                                 self.correlativo)
+        return _(u'{0}-{1}').format(self.ciudad.prefijo_comprobante,
+                                    self.correlativo)
 
     def total(self):
 
