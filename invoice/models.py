@@ -572,7 +572,7 @@ class CuentaPorCobrar(TimeStampedModel):
 
             self.inicial = self.monto()
             self.status = self.status.next_status
-            payments.update(status=self.status.next_status)
+            payments.update(status=self.status)
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
 
