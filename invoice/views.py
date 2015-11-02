@@ -51,7 +51,7 @@ from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, StatusPago, CuentaPorCobrar, Notification, Cotizacion, Cotizado, \
-    ComprobanteDeduccion, ConceptoDeduccion
+    ComprobanteDeduccion, ConceptoDeduccion, PagoCuenta
 from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
     AdmisionFacturarForm, CorteForm, ExamenFacturarForm, InventarioForm, \
     PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm, \
