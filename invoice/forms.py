@@ -22,6 +22,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
 from select2.fields import ModelChoiceField
+from hospinet.utils.forms import PeriodoForm
 
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado, \
@@ -91,27 +92,6 @@ class VentaForm(FieldSetModelFormMixin):
         self.helper.layout = Fieldset(_(u'Agregar un Cargo'), *self.field_names)
 
 
-class PeriodoForm(forms.Form):
-    inicio = forms.DateTimeField(widget=DateTimeWidget)
-
-    fin = forms.DateTimeField(widget=DateTimeWidget)
-
-    def __init__(self, *args, **kwargs):
-        super(PeriodoForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', 'Mostrar'))
-        self.helper.form_method = 'get'
-        self.helper.layout = Fieldset(_(u'Por Periodo'), *self.field_names)
-
-    def set_legend(self, text):
-        self.helper.layout = Fieldset(text, *self.field_names)
-
-    def set_action(self, action):
-        self.helper.form_action = action
-
-
 class EmergenciaFacturarForm(FieldSetModelFormMixin):
     class Meta:
         model = Emergencia
@@ -156,7 +136,7 @@ class CorteForm(PeriodoForm):
 class InventarioForm(PeriodoForm):
     def __init__(self, *args, **kwargs):
         super(InventarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Relación entre Ventas e Inventario',
+        self.helper.layout = Fieldset(_(u'Relación entre Ventas e Inventario'),
                                       *self.field_names)
 
 
@@ -338,7 +318,8 @@ class ComprobanteDeduccionForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ComprobanteDeduccionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Guardar comprobante'), *self.field_names)
+        self.helper.layout = Fieldset(_(u'Guardar comprobante'),
+                                      *self.field_names)
 
 
 class ConceptoDeduccionForm(FieldSetModelFormMixin):
