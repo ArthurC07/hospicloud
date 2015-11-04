@@ -33,14 +33,27 @@ from django.utils.translation import ugettext_lazy as _
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, ArchivoNotas, \
-    Pregunta, Solucion
+    Pregunta, Solucion, Login
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
+from hospinet.utils.forms import PeriodoForm
+from hospinet.utils.views import PeriodoView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
 class ScoreCardListView(LoginRequiredMixin, ListView):
     model = ScoreCard
+
+    def get_context_data(self, **kwargs):
+        context = super(ScoreCardListView, self).get_context_data(**kwargs)
+
+        context['loginperiodo'] = PeriodoForm(prefix='login')
+        context['loginperiodo'].set_legend(
+            _(u'Inicios de Sesi&oacute;n por Periodo')
+        )
+        context['loginperiodo'].set_action('login-periodo')
+
+        return context
 
 
 class ScoreCardDetailView(LoginRequiredMixin, DetailView):
@@ -333,3 +346,19 @@ class ArchivoNotasProcesarView(RedirectView, LoginRequiredMixin):
 
         messages.info(self.request, _(u'¡Archivo Importado Exitosamente!'))
         return archivonotas.get_absolute_url()
+
+
+class LoginPeriodoView(PeriodoView, LoginRequiredMixin):
+    prefix = 'login'
+    redirect_on_invalid = 'scorecard-index'
+    model = Login
+    template_name = 'bsc/login_list.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(LoginPeriodoView, self).get_context_data(**kwargs)
+        context['object_list'] = Login.objects.filter(
+            created__range=(self.inicio, self.fin)
+        ).order_by('user', 'created')
+
+        return context

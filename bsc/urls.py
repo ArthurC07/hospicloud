@@ -20,7 +20,7 @@ from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView, \
     EncuestaListView, EncuestaDetailView, RespuestaDetailView, VotoUpdateView, \
     RespuestaRedirectView, save_votes, ConsultaEncuestadaRedirectView, \
     QuejaCreateView, ArchivoNotasDetailView, ArchivoNotasProcesarView, \
-    QuejaDetailView, QuejaListView, SolucionCreateView
+    QuejaDetailView, QuejaListView, SolucionCreateView, LoginPeriodoView
 
 urlpatterns = patterns('',
 
@@ -90,4 +90,9 @@ urlpatterns = patterns('',
                        url(r'^notas/(?P<pk>\d+)/procesar$',
                            ArchivoNotasProcesarView.as_view(),
                            name='archivonotas-process'),
+
+                       url(r'^login/periodo',
+                           LoginPeriodoView.as_view(),
+                           name='login-periodo')
+
                        )
