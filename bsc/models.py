@@ -226,6 +226,9 @@ class Meta(TimeStampedModel):
         if self.tipo_meta == self.VENTAS:
             return self.ventas(usuario, inicio, fin)
 
+        if self.tipo_meta == self.TURNOS:
+            return self.turnos(usuario, inicio, fin)
+
         if self.tipo_meta == self.PRESUPUESTO:
             return self.presupuesto(usuario)
 
@@ -371,6 +374,15 @@ class Meta(TimeStampedModel):
             return Decimal()
 
         return presupuesto.porcentaje_ejecutado_mes_actual()
+
+    def turnos(self, usuario, inicio, fin):
+
+        turnos = Turno.objects.filter(
+            created__range=(inicio, fin),
+            ciudad=usuario.profile.ciudad,
+        )
+
+        return turnos.count() / max(turnos.count(), 1)
 
 
 @python_2_unicode_compatible

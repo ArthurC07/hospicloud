@@ -13,16 +13,16 @@
         <section class="col-md-12 main-content">
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th>{% trans 'Fecha' %}</th>
-                        <th>{% trans 'Usuario' %}</th>
-                    </tr>
+                <tr>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                </tr>
                 </thead>
                 <tbody>
                 {% for login in object_list %}
                     <tr>
-                        <td>{{ login.created }}</td>
-                        <td>{{ login.user.get_full_name }}</td>
+                    <td>{{ login.created }}</td>
+                    <td>{{ login.user.get_full_name }}</td>
                     {% empty %}
                     <li>{% trans 'No se encontraron inicios de sesi&oacute;n' %}</li>
                 {% endfor %}
