@@ -14,18 +14,21 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from decimal import Decimal
+from django.contrib import messages
+from django.core.urlresolvers import reverse
 
 from django.db.models import Sum
+from django.utils.translation import ugettext_lazy as _
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
-    UpdateView, FormView, RedirectView, View
+    UpdateView, FormView, RedirectView, View, TemplateView
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import FormMixin
 
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
-    GastoEjecutarFrom, MontoForm
+    GastoEjecutarFrom, MontoForm, GastoPeriodoCuentaForm
 from budget.models import Presupuesto, Cuenta, Gasto, Income
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -116,6 +119,9 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         context['disponible'] = disponible
 
         context['incomes'] = Income.objects.all()
+
+        context['gasto-periodo'] = GastoPeriodoCuentaForm(prefix='gasto-cuenta-periodo')
+        context['gasto-periodo'].set_action('gasto-periodo')
 
         return context
 
@@ -262,3 +268,50 @@ class GastoParcialFormView(GastoMixin, FormView, LoginRequiredMixin):
         self.gasto.pago_parcial(form.cleaned_data['monto'])
 
         return HttpResponseRedirect(self.gasto.get_absolute_url())
+
+
+class GastoCuentaPeriodoView(FormMixin, TemplateView):
+    """
+    Obtiene los :class:`Gastos` de un periodo y cuenta determinados
+    """
+    form_class = GastoPeriodoCuentaForm
+    prefix = 'gasto-cuenta-periodo'
+    template_name = 'budget/gasto_list.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Efectua la consulta de los :class:`Gastos` de acuerdo a los
+        datos ingresados en el formulario"""
+
+        self.form = self.get_form_class()(request.GET, prefix=self.prefix)
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+            self.cuenta = self.form.cleaned_data['cuenta']
+            self.gastos = Gasto.objects.filter(
+                cuenta=self.cuenta,
+                fecha_de_pago__range=(self.inicio, self.fin),
+                ejecutado=True
+            ).all()
+        else:
+            messages.info(
+                self.request,
+                _(u'Los Datos Ingresados en el formulario no son validos')
+            )
+            return HttpResponseRedirect(reverse('invoice-index'))
+
+        return super(GastoCuentaPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        context = super(GastoCuentaPeriodoView, self).get_context_data(**kwargs)
+
+        context['gastos'] = self.gastos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = self.gastos.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+        context['cuenta'] = self.cuenta
+
+        return context

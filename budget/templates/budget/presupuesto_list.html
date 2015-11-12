@@ -1,28 +1,33 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-    {% load crispy_forms_tags %}
+{% load crispy_forms_tags %}{% load l10n %}{% load i18n %}
     <div class="row">
         <div class="col-md-12 main-content">
             <ul class="nav nav-tabs">
                 <li class="active" role="presentation">
                     <a data-toggle="tab" href="#presupuesto">
-                        Presupuesto Financiero
+                        {% trans 'Presupuesto Financiero' %}
                     </a>
                 </li>
                 <li role="presentation">
                     <a data-toggle="tab" href="#punto-equilibrio">
-                        Ingresos y Egresos
+                        {% trans 'Ingresos y Egresos' %}
                     </a>
                 </li>
                 <li role="presentation">
                     <a data-toggle="tab" href="#inversion">
-                        Inversi&oacute;n
+                        {% trans 'Inversi&oacute;n' %}
                     </a>
                 </li>
                 <li role="presentation">
                     <a data-toggle="tab" href="#ingresos">
-                        Ingresos
+                        {% trans 'Ingresos' %}
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a data-toggle="tab" href="#reportes">
+                        {% trans 'Reportes' %}
                     </a>
                 </li>
             </ul>
@@ -263,6 +268,11 @@
                                 {% endfor %}
                             </table>
                         {% endfor %}
+                    </div>
+                </div>
+                <div class="row tab-pane fade in" id="reportes">
+                    <div class="col-md-3">
+                        {% crispy gasto-periodo %}
                     </div>
                 </div>
             </div>

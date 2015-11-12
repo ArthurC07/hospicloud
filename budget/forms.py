@@ -18,9 +18,9 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from select2.fields import ModelChoiceField
-
 from budget.models import Presupuesto, Cuenta, Gasto, Fuente
 from inventory.forms import ProveedorFormMixin
+from invoice.forms import PeriodoForm
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     FieldSetFormMixin
 from users.forms import CiudadFormMixin
@@ -39,7 +39,7 @@ class PresupuestoForm(CiudadFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PresupuestoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Presupuesto',
+        self.helper.layout = Fieldset(_(u'Formulario de Presupuesto'),
                                       *self.field_names)
 
 
@@ -55,7 +55,7 @@ class CuentaForm(PresupuestoFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CuentaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Cuenta',
+        self.helper.layout = Fieldset(_(u'Formulario de Cuenta'),
                                       *self.field_names)
 
 
@@ -83,7 +83,7 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(GastoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Gastos',
+        self.helper.layout = Fieldset(_(u'Formulario de Gastos'),
                                       *self.field_names)
 
 
@@ -107,7 +107,7 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(GastoPendienteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Cuenta por Pagar',
+        self.helper.layout = Fieldset(_(u'Formulario de Cuenta por Pagar'),
                                       *self.field_names)
 
 
@@ -131,7 +131,8 @@ class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(GastoEjecutarFrom, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Ejecutar un Gasto', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Ejecutar un Gasto'),
+                                      *self.field_names)
 
 
 class MontoForm(FieldSetFormMixin):
@@ -139,5 +140,14 @@ class MontoForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(MontoForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', u'Guardar'))
-        self.helper.layout = Fieldset(u'Indicar Monto', *self.field_names)
+        self.helper.add_input(Submit('submit', _(u'Guardar')))
+        self.helper.layout = Fieldset(_(u'Indicar Monto'), *self.field_names)
+
+
+class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
+    cuenta = ModelChoiceField(name='', model='', queryset=Cuenta.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(GastoPeriodoCuentaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_(u'Gastos Por Periodo y Cuenta'),
+                                      *self.field_names)
