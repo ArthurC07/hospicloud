@@ -188,6 +188,11 @@ class Cuenta(TimeStampedModel):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
+    def total_cuentas_por_pagar(self):
+        return self.cuentas_por_pagar().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
     def porcentaje_ejecutado_mes_actual(self):
         return self.total_gastos_mes_actual() / max(self.limite, 1) * 100
 

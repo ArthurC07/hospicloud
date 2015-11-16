@@ -1,23 +1,34 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
         <div class="main-content col-md-12">
             <section class="page-header">
-                <h1>Encuestas</h1>
+                <h1>{% trans 'Encuestas' %}</h1>
             </section>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-12 main-content">
+        <section class="col-md-9 main-content">
             <ul>
                 {% for encuesta in object_list.all %}
-                    <li><a href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a></li>
-                {% empty %}
+                    <li>
+                        <a href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a>
+                    </li>
+                    {% empty %}
                     <li>No hay Encuestas Disponibles</li>
                 {% endfor %}
             </ul>
         </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li><a href="{% url 'quejas' %}">{% trans 'Quejas' %}</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
     </div>
 {% endblock %}

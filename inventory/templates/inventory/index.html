@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
@@ -32,6 +32,7 @@
                         <li><a href="{% url 'inventario-create' %}">Agregar Almacen de Inventario</a></li>
                         <li><a href="{% url 'cotizacion-create' %}">Agregar Cotizaci&oacute;n</a></li>
                         <li><a href="{% url 'itemtemplate-list' %}">Mostrar Lista de Productos</a></li>
+                        <li><a href="{% url 'itemtype-list' %}">{% trans 'Tipos de Producto' %}</a></li>
                     </ul>
                 </nav>
                 <form action="{% url 'itemtemplate-search' %}">

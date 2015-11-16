@@ -162,6 +162,8 @@ class Turno(TimeStampedModel):
     inicio = models.DateTimeField(default=timezone.now)
     fin = models.DateTimeField(default=timezone.now)
     usuarios = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    contabilizable = models.BooleanField(default=False)
+    ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
 
     def __str__(self):
         return self.nombre

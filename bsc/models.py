@@ -29,6 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_extensions.db.models import TimeStampedModel
 import unicodecsv
+from budget.models import Presupuesto
 
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from contracts.models import MasterContract
@@ -190,7 +191,10 @@ class Meta(TimeStampedModel):
         logins = Login.objects.filter(user=usuario,
                                       created__range=(inicio, fin)).count()
 
-        turnos = usuario.turno_set.filter(inicio__range=(inicio, fin))
+        turnos = usuario.turno_set.filter(
+            inicio__range=(inicio, fin),
+            contabilizable=True
+        )
 
         if logins < 5 and turnos.count() < 5:
             return Decimal()
@@ -221,6 +225,12 @@ class Meta(TimeStampedModel):
 
         if self.tipo_meta == self.VENTAS:
             return self.ventas(usuario, inicio, fin)
+
+        if self.tipo_meta == self.TURNOS:
+            return self.turnos(usuario, inicio, fin)
+
+        if self.tipo_meta == self.PRESUPUESTO:
+            return self.presupuesto(usuario)
 
         evaluaciones = Evaluacion.objects.filter(meta=self, usuario=usuario,
                                                  fecha__range=(inicio, fin))
@@ -266,15 +276,16 @@ class Meta(TimeStampedModel):
                                      consultorio__usuario=usuario)
 
     def average_consulta_time(self, usuario, inicio, fin):
-        tiempos = []
-        for consulta in self.consultas(usuario, inicio, fin):
+        tiempos = 0
+        consultas = self.consultas(usuario, inicio, fin)
+        for consulta in consultas:
             if consulta.final is None:
                 continue
             segundos = (consulta.final - consulta.created).total_seconds()
             minutos = Decimal(segundos) / 60
-            tiempos.append(minutos)
+            tiempos += minutos
 
-        return Decimal(sum(tiempos)) / max(len(tiempos), 1)
+        return Decimal(tiempos) / max(consultas.count(), 1)
 
     def average_preconsulta(self, usuario, inicio, fin):
         tiempos = 0
@@ -351,6 +362,27 @@ class Meta(TimeStampedModel):
         incompletas = quejas.filter(resuelta=False)
 
         return incompletas.count() / max(quejas.count(), 1)
+
+    def presupuesto(self, usuario):
+
+        presupuesto = Presupuesto.objects.filter(
+            ciudad=usuario.profile.ciudad,
+            activo=True
+        ).first()
+
+        if presupuesto is None:
+            return Decimal()
+
+        return presupuesto.porcentaje_ejecutado_mes_actual()
+
+    def turnos(self, usuario, inicio, fin):
+
+        turnos = Turno.objects.filter(
+            created__range=(inicio, fin),
+            ciudad=usuario.profile.ciudad,
+        )
+
+        return turnos.count() / max(turnos.count(), 1)
 
 
 @python_2_unicode_compatible
@@ -476,15 +508,30 @@ class Voto(TimeStampedModel):
         return reverse('respuesta', args=[self.respuesta.id])
 
 
+@python_2_unicode_compatible
 class Queja(TimeStampedModel):
     respuesta = models.ForeignKey(Respuesta)
     queja = models.TextField()
     resuelta = models.BooleanField(default=False)
 
+    def __str__(self):
+
+        return self.queja
+
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
-        return reverse('respuesta', args=[self.respuesta.id])
+        return reverse('queja', args=[self.id])
+
+
+class Solucion(TimeStampedModel):
+    queja = models.ForeignKey(Queja)
+    solucion = models.TextField()
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def get_absolute_url(self):
+
+        return reverse('queja', args=[self.queja.id])
 
 
 class Holiday(TimeStampedModel):

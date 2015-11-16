@@ -49,20 +49,15 @@ from spital.models import Admision, Deposito
 from emergency.models import Emergencia
 from imaging.models import Examen
 from persona.models import Persona
-from invoice.models import (Recibo, Venta, Pago, TurnoCaja, CierreTurno,
-                            TipoPago, dot01, StatusPago, CuentaPorCobrar,
-                            PagoCuenta, Notification, Cotizacion, Cotizado,
-                            ComprobanteDeduccion, ConceptoDeduccion)
-from invoice.forms import (ReciboForm, VentaForm, PeriodoForm,
-                           AdmisionFacturarForm,
-                           CorteForm, ExamenFacturarForm, InventarioForm,
-                           PagoForm, PersonaForm, TurnoCajaForm,
-                           CierreTurnoForm, TurnoCajaCierreForm,
-                           VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm,
-                           TipoPagoPeriodoForm, PeriodoCiudadForm,
-                           CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm,
-                           CotizadoForm, ComprobanteDeduccionForm,
-                           ConceptoDeduccionForm)
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
+    TipoPago, StatusPago, CuentaPorCobrar, Notification, Cotizacion, Cotizado, \
+    ComprobanteDeduccion, ConceptoDeduccion, PagoCuenta
+from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
+    AdmisionFacturarForm, CorteForm, ExamenFacturarForm, InventarioForm, \
+    PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm, \
+    VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm, TipoPagoPeriodoForm, \
+    PeriodoCiudadForm, CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm, \
+    CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -912,6 +907,10 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
             _(u'No puede facturar sin tener ciudad en su perfil!')
         )
         if self.request.user.profile.ciudad is None:
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
             else:
@@ -936,8 +935,10 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
         consulta.facturada = True
         consulta.activa = False
         consulta.save()
-
-        messages.info(self.request, _(u'¡La consulta se marcó como facturada!'))
+        messages.info(
+            self.request,
+            _(u'¡La consulta se marcó como facturada!')
+        )
         return recibo.get_absolute_url()
 
     @method_decorator(permission_required('invoice.cajero'))
@@ -1020,9 +1021,10 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
         aseguradora = get_object_or_404(Aseguradora, pk=kwargs['pk'])
 
         if not aseguradora.cardex:
-            messages.info(self.request,
-                          u'La aseguradora no tiene representante en el '
-                          u'cardex!')
+            messages.info(
+                self.request,
+                _(u'La aseguradora no tiene representante en el cardex!')
+            )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
             else:
@@ -1041,8 +1043,10 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
             venta = Venta()
             venta.item = master.plan.item
             venta.recibo = recibo
-            venta.descripcion = u'Poliza {0}  {1}'.format(master.poliza,
-                                                          master.contratante.nombre)
+            venta.descripcion = _(u'Poliza {0}  {1}').format(
+                master.poliza,
+                master.contratante.nombre
+            )
             venta.cantidad = master.active_contracts_count()
             venta.precio = master.plan.item.precio_de_venta
             venta.impuesto = master.plan.item.impuestos
@@ -1052,8 +1056,10 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
 
         recibo.save()
 
-        messages.info(self.request, _(u'¡La consulta se marcó como facturada!'))
-        return recibo.get_absolute_url()
+        messages.info(
+            self.request,
+            _(u'¡La consulta se marcó como facturada!')
+        )
 
     @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
@@ -1091,8 +1097,10 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
             venta = Venta()
             venta.item = master.plan.item
             venta.recibo = recibo
-            venta.descripcion = u'Poliza {0}  {1}'.format(master.poliza,
-                                                          master.contratante.nombre)
+            venta.descripcion = _(u'Poliza {0}  {1}').format(
+                master.poliza,
+                master.contratante.nombre
+            )
             venta.cantidad = 1
             venta.precio = master.comision_administrativa()
             venta.impuesto = master.plan.item.impuestos
@@ -1102,7 +1110,10 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
 
         recibo.save()
 
-        messages.info(self.request, u'¡La consulta se marcó como facturada!')
+        messages.info(
+            self.request,
+            _(u'¡La consulta se marcó como facturada!')
+        )
         return recibo.get_absolute_url()
 
     @method_decorator(permission_required('invoice.cajero'))
@@ -1147,6 +1158,7 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
         recibo.tipo_de_venta = self.object.tipo_de_venta
         recibo.save()
 
+        crear_ventas(items, recibo)
         self.object.save()
 
         return HttpResponseRedirect(recibo.get_absolute_url())
@@ -1275,15 +1287,17 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
         cerrable = True
 
         if recibos > 0 or consultas > 0 or emergencias > 0:
-            messages.info(self.request,
-                          u'No se puede cerrar el turno, aún hay items'
-                          u'pendientes de facturacion')
+            messages.info(
+                self.request,
+                _(u'Aún hay items pendientes de facturacion')
+            )
             cerrable = False
 
         if self.object.diferencia_total() != 0:
-            messages.info(self.request,
-                          u'No se puede cerrar el turno, tiene diferencias en '
-                          u'saldos')
+            messages.info(
+                self.request,
+                _(u'No se puede cerrar el turno, tiene diferencias en saldos')
+            )
             cerrable = False
 
         if cerrable:
@@ -1306,8 +1320,10 @@ class DepositoFacturarView(UpdateView, LoginRequiredMixin):
     def form_valid(self, form):
 
         if self.request.user.profile.ciudad is None:
-            messages.info(self.request,
-                          u'No puede facturar sin tener ciudad en su perfil!')
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
             else:
@@ -1499,7 +1515,7 @@ class PagoSiguienteStatusView(RedirectView, LoginRequiredMixin):
         pago = get_object_or_404(Pago, pk=kwargs['pk'])
         pago.status = pago.status.next_status
         pago.save()
-        messages.info(self.request, u'¡El Pago se ha actualizado!')
+        messages.info(self.request, _(u'¡El Pago se ha actualizado!'))
 
         if self.request.META['HTTP_REFERER']:
             return self.request.META['HTTP_REFERER']
@@ -1514,7 +1530,7 @@ class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
     def get_redirect_url(self, **kwargs):
         cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
         cuenta.next_status()
-        messages.info(self.request, u'¡Se Actualizó la Cuenta por Cobrar!')
+        messages.info(self.request, _(u'¡Se Actualizó la Cuenta por Cobrar!'))
 
         if self.request.META['HTTP_REFERER']:
             return self.request.META['HTTP_REFERER']
@@ -1529,7 +1545,7 @@ class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
     def get_redirect_url(self, **kwargs):
         cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
         cuenta.previous_status()
-        messages.info(self.request, u'¡Se Actualizó la Cuenta por Cobrar!')
+        messages.info(self.request, _(u'¡Se Actualizó la Cuenta por Cobrar!'))
 
         if self.request.META['HTTP_REFERER']:
             return self.request.META['HTTP_REFERER']
@@ -1627,7 +1643,7 @@ class CotizacionFacturar(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, *args, **kwargs):
         cotizacion = get_object_or_404(Cotizacion, pk=kwargs['pk'])
         recibo = cotizacion.facturar()
-        messages.info(self.request, u'¡Se ha facturado la cotización!')
+        messages.info(self.request, _(u'¡Se ha facturado la cotización!'))
         return recibo.get_absolute_url()
 
 

@@ -17,7 +17,6 @@
 from collections import defaultdict
 from decimal import Decimal
 from datetime import timedelta
-
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -25,11 +24,10 @@ from django.db import models
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
-
 from django.db.models import F, Sum, Min
-
 from clinique.models import Consulta
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
@@ -188,7 +186,7 @@ class Recibo(TimeStampedModel):
         """Crea una representación en texto del :class:`Recibo`"""
 
         if self.nulo:
-            return u'{0} **NULO**'.format(self.cliente.nombre_completo())
+            return _(u'{0} **NULO**').format(self.cliente.nombre_completo())
 
         return self.cliente.nombre_completo()
 
@@ -302,7 +300,7 @@ class Venta(TimeStampedModel):
 
     def __str__(self):
 
-        return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
+        return _(u"{0} a {1}").format(self.item.descripcion, self.recibo.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -402,7 +400,7 @@ class TurnoCaja(TimeStampedModel):
     finalizado = models.BooleanField(default=False)
 
     def __str__(self):
-        return u"Turno de {0}".format(self.usuario.get_full_name())
+        return _(u"Turno de {0}").format(self.usuario.get_full_name())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -573,7 +571,7 @@ class CuentaPorCobrar(TimeStampedModel):
 
             self.inicial = self.monto()
             self.status = self.status.next_status
-            payments.update(status=self.status.next_status)
+            payments.update(status=self.status)
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
 
@@ -722,7 +720,7 @@ class Cotizado(TimeStampedModel):
 
     def __str__(self):
 
-        return u"{0} a {1}".format(self.item.descripcion, self.cotizacion.id)
+        return _(u"{0} a {1}").format(self.item.descripcion, self.cotizacion.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -771,8 +769,8 @@ class ComprobanteDeduccion(TimeStampedModel):
         return reverse('comprobante', args=[self.id])
 
     def numero(self):
-        return u'{0}-{1}'.format(self.ciudad.prefijo_comprobante,
-                                 self.correlativo)
+        return _(u'{0}-{1}').format(self.ciudad.prefijo_comprobante,
+                                    self.correlativo)
 
     def total(self):
         return ConceptoDeduccion.objects.filter(comprobante=self).aggregate(

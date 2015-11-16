@@ -16,95 +16,15 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
+from hospinet.utils.forms import FieldSetModelFormMixin, DateWidget, \
+    DateTimeWidget, FutureDateWidget, FieldSetFormMixin, \
+    FieldSetModelFormMixinNoButton
 
-from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
-                            AntecedenteFamiliar, AntecedenteObstetrico,
-                            AntecedenteQuirurgico, Empleador, Empleo)
-
-
-class FieldSetFormMixin(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(FieldSetFormMixin, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-md-4'
-        self.helper.field_class = 'col-md-7'
-        self.field_names = self.fields.keys()
-
-
-class FieldSetModelFormMixinNoButton(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(FieldSetModelFormMixinNoButton, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-md-4'
-        self.helper.field_class = 'col-md-7'
-        self.field_names = self.fields.keys()
-
-
-class FieldSetModelFormMixin(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(FieldSetModelFormMixin, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-md-4'
-        self.helper.field_class = 'col-md-7'
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', u'Guardar'))
-
-
-class DateWidget(forms.DateInput):
-    """Permite mostrar un input preparado para fecha y hora utilizando
-    JQuery UI DatePicker"""
-
-    def __init__(self, attrs=None):
-        super(DateWidget, self).__init__(attrs)
-        if attrs is not None:
-            self.attrs = attrs.copy()
-        else:
-            self.attrs = {'class': 'datepicker'}
-
-        if 'format' not in self.attrs:
-            self.attrs['format'] = '%d/%m/%Y'
-
-
-class FutureDateWidget(forms.DateInput):
-    """Permite mostrar un input preparado para fecha y hora utilizando
-    JQuery UI DatePicker"""
-
-    def __init__(self, attrs=None):
-        super(FutureDateWidget, self).__init__(attrs)
-        if attrs is not None:
-            self.attrs = attrs.copy()
-        else:
-            self.attrs = {'class': 'future-datepicker'}
-
-        if not 'format' in self.attrs:
-            self.attrs['format'] = '%d/%m/%Y'
-
-
-class DateTimeWidget(forms.DateTimeInput):
-    """Permite mostrar un input preparado para fecha y hora utilizando
-    JQuery UI DateTimePicker"""
-
-    class Media:
-        js = ('js/jquery-ui-timepicker.js',)
-
-    def __init__(self, attrs=None):
-        super(DateTimeWidget, self).__init__(attrs)
-        if attrs is not None:
-            self.attrs = attrs.copy()
-        else:
-            self.attrs = {'class': 'datetimepicker'}
-
-        if 'format' not in self.attrs:
-            self.attrs['format'] = '%d/%m/%Y %H:%M'
+from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
+    AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, \
+    Empleador, Empleo
 
 
 class PersonaForm(FieldSetModelFormMixin):
@@ -153,7 +73,7 @@ class EstiloVidaForm(BasePersonaForm):
 
     class Meta:
         model = EstiloVida
-        exclude = ('cantidad', )
+        exclude = ('cantidad',)
 
     def __init__(self, *args, **kwargs):
         super(EstiloVidaForm, self).__init__(*args, **kwargs)
