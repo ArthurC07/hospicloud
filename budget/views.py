@@ -16,7 +16,6 @@
 from decimal import Decimal
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-
 from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.functions import Coalesce
@@ -26,9 +25,9 @@ from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
     UpdateView, FormView, RedirectView, View, TemplateView
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import FormMixin
-
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
-    GastoEjecutarFrom, MontoForm, GastoPeriodoCuentaForm
+    GastoEjecutarFrom, MontoForm, GastoPeriodoCuentaForm, \
+    GastoPresupuestoPeriodoCuentaForm
 from budget.models import Presupuesto, Cuenta, Gasto, Income
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -120,8 +119,17 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
 
         context['incomes'] = Income.objects.all()
 
-        context['gasto-periodo'] = GastoPeriodoCuentaForm(prefix='gasto-cuenta-periodo')
+        context['gasto-periodo'] = GastoPeriodoCuentaForm(
+            prefix='gasto-cuenta-periodo')
         context['gasto-periodo'].set_action('gasto-periodo')
+
+        context[
+            'gasto-presupuesto-periodo'] = GastoPresupuestoPeriodoCuentaForm(
+            prefix='gasto-presupuesto-periodo'
+        )
+        context['gasto-presupuesto-periodo'].set_action(
+            'gasto-presupuesto-periodo'
+        )
 
         return context
 
@@ -300,7 +308,8 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
-        return super(GastoCuentaPeriodoView, self).dispatch(request, *args, **kwargs)
+        return super(GastoCuentaPeriodoView, self).dispatch(request, *args,
+                                                            **kwargs)
 
     def get_context_data(self, **kwargs):
 
@@ -312,6 +321,55 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
         context['total'] = self.gastos.aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
-        context['cuenta'] = self.cuenta
+        context['motivo'] = self.cuenta
+
+        return context
+
+
+class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
+    """
+    Obtiene los :class:`Gastos` de un periodo y cuenta determinados
+    """
+    form_class = GastoPresupuestoPeriodoCuentaForm
+    prefix = 'gasto-presupuesto-periodo'
+    template_name = 'budget/gasto_list.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Efectua la consulta de los :class:`Gastos` de acuerdo a los
+        datos ingresados en el formulario"""
+
+        self.form = self.get_form_class()(request.GET, prefix=self.prefix)
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+            self.presupuesto = self.form.cleaned_data['presupuesto']
+            self.gastos = Gasto.objects.filter(
+                cuenta__presupuesto=self.presupuesto,
+                fecha_de_pago__range=(self.inicio, self.fin),
+                ejecutado=True
+            ).all()
+        else:
+            messages.info(
+                self.request,
+                _(u'Los Datos Ingresados en el formulario no son validos')
+            )
+            return HttpResponseRedirect(reverse('invoice-index'))
+
+        return super(GastoPresupuestoPeriodoView, self).dispatch(request, *args,
+                                                                 **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        context = super(GastoPresupuestoPeriodoView, self).get_context_data(
+            **kwargs)
+
+        context['gastos'] = self.gastos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = self.gastos.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+        context['motivo'] = self.presupuesto
 
         return context

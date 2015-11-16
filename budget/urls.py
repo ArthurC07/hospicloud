@@ -19,7 +19,7 @@ from django.conf.urls import patterns, url
 from budget.views import PresupuestoDetailView, CuentaCreateView, \
     GastoCreateView, PresupuestoListView, GastoDeleteView, \
     GastoPendienteCreateView, GastoEjecutarView, GastoParcialFormView, \
-    GastoScheduleView, GastoCuentaPeriodoView
+    GastoScheduleView, GastoCuentaPeriodoView, GastoPresupuestoPeriodoView
 
 urlpatterns = patterns('',
 
@@ -67,4 +67,8 @@ urlpatterns = patterns('',
                        url(r'^gasto/periodo$',
                            GastoCuentaPeriodoView.as_view(),
                            name='gasto-periodo'),
+
+                       url(r'^presupuesto/gasto/periodo$',
+                           GastoPresupuestoPeriodoView.as_view(),
+                           name='gasto-presupuesto-periodo'),
                        )
