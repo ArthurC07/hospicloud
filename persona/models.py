@@ -25,6 +25,7 @@ from datetime import date
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
@@ -33,7 +34,7 @@ from persona.fields import OrderedCountryField
 
 
 @python_2_unicode_compatible
-class Persona(models.Model):
+class Persona(TimeStampedModel):
     """Representación de una :class:`Persona` en la aplicación"""
 
     class Meta:
@@ -141,7 +142,7 @@ class Persona(models.Model):
             return today.year - born.year
 
 
-class Fisico(models.Model):
+class Fisico(TimeStampedModel):
     """Describe el estado fisico de una :class:`Persona`"""
 
     TIPOS_SANGRE = (
@@ -166,7 +167,6 @@ class Fisico(models.Model):
     lateralidad = models.CharField(max_length=1, choices=LATERALIDAD,
                                    blank=True)
     altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
-
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
@@ -178,8 +178,26 @@ class Fisico(models.Model):
 
         return reverse('persona-view-id', args=[self.persona.id])
 
+    def save(self, **kwargs):
 
-class EstiloVida(models.Model):
+        historia = HistoriaFisica()
+        historia.persona = self.persona
+        historia.peso = self.peso
+        historia.altura = self.altura
+        historia.fecha = self.modified
+        historia.save()
+
+        super(Fisico, self).save(**kwargs)
+
+
+class HistoriaFisica(TimeStampedModel):
+    persona = models.ForeignKey(Persona)
+    fecha = models.DateTimeField(default=timezone.now)
+    peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+
+
+class EstiloVida(TimeStampedModel):
     """Resumen del estilo de vida de una :class:`Persona`"""
 
     persona = models.OneToOneField(Persona, primary_key=True,
@@ -212,7 +230,7 @@ class EstiloVida(models.Model):
         return reverse('persona-view-id', args=[self.persona.id])
 
 
-class Antecedente(models.Model):
+class Antecedente(TimeStampedModel):
     """Describe el historial clínico de una :class:`Persona` al llegar a
     consulta por primera vez
     """
@@ -256,7 +274,7 @@ class Antecedente(models.Model):
         return reverse('persona-view-id', args=[self.persona.id])
 
 
-class AntecedenteFamiliar(models.Model):
+class AntecedenteFamiliar(TimeStampedModel):
     """Registra los antecedentes familiares de una :class:`Persona`"""
 
     persona = models.OneToOneField(Persona, primary_key=True,
@@ -295,7 +313,7 @@ class AntecedenteFamiliar(models.Model):
         return reverse('persona-view-id', args=[self.persona.id])
 
 
-class AntecedenteObstetrico(models.Model):
+class AntecedenteObstetrico(TimeStampedModel):
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
 
     persona = models.OneToOneField(Persona, primary_key=True,
@@ -351,7 +369,7 @@ class Empleo(TimeStampedModel):
         return self.persona.get_absolute_url()
 
 
-class AntecedenteQuirurgico(models.Model):
+class AntecedenteQuirurgico(TimeStampedModel):
     """Registra los antecendentes quirurgicos de una :class:`Persona`"""
 
     persona = models.ForeignKey(Persona,

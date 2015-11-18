@@ -151,3 +151,14 @@ class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
         super(GastoPeriodoCuentaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_(u'Gastos Por Periodo y Cuenta'),
                                       *self.field_names)
+
+
+class GastoPresupuestoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
+    presupuesto = ModelChoiceField(
+        name='', model='', queryset=Presupuesto.objects.all()
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(GastoPresupuestoPeriodoCuentaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_(u'Gastos Por Periodo y Presupuesto'),
+                                      *self.field_names)
