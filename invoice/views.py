@@ -18,7 +18,6 @@ import calendar
 from collections import defaultdict, OrderedDict
 from datetime import datetime, time, date
 from decimal import Decimal
-
 from constance import config
 from django.contrib import messages
 from django.db import models
@@ -36,9 +35,7 @@ from django.views.generic import (CreateView, UpdateView, TemplateView,
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
 from django.views.generic.base import ContextMixin
-
-from django.views.generic.edit import FormMixin
-
+from django.views.generic.edit import FormMixin, FormView
 from clinique.models import Consulta
 from contracts.models import Aseguradora
 from contracts.views import AseguradoraMixin
@@ -57,7 +54,7 @@ from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
     PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm, \
     VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm, TipoPagoPeriodoForm, \
     PeriodoCiudadForm, CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm, \
-    CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm
+    CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm, ReembolsoForm
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -497,6 +494,18 @@ class PagoUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('invoice-pago-status-index')
 
 
+class PagoDeleteView(DeleteView, LoginRequiredMixin):
+    model = Pago
+
+    def get_object(self, queryset=None):
+        obj = super(PagoDeleteView, self).get_object(queryset)
+        self.recibo = obj.recibo
+        return obj
+
+    def get_success_url(self):
+        return self.recibo.get_absolute_url()
+
+
 class ReciboDetailView(DetailView, LoginRequiredMixin):
     """Muestra los detalles del :class:`Recibo` para agregar :class:`Producto`s
     ir a la vista de impresión y realizar otras tareas relacionadas con
@@ -519,6 +528,11 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
         context['pago_form'] = PagoForm(initial={'recibo': self.object.id})
         context['pago_form'].helper.form_action = reverse('pago-add',
                                                           args=[self.object.id])
+
+        context['reembolso_form'] = ReembolsoForm(
+            initial={'recibo': self.object.id}
+        )
+        context['reembolso_form'].helper.form_action = reverse('reembolso-add')
 
         return context
 
@@ -1686,3 +1700,20 @@ class ConceptoDeduccionCreateView(ComprobanteDeduccionFormMixin, CreateView,
                                   LoginRequiredMixin):
     model = ConceptoDeduccion
     form_class = ConceptoDeduccionForm
+
+
+class ReembolsoCreateView(FormView, LoginRequiredMixin):
+    form_class = ReembolsoForm
+    template_name = 'invoice/reembolso_form.html'
+
+    def form_valid(self, form):
+        porcentaje = form.cleaned_data['porcentaje']
+
+        pago = Pago()
+        pago.tipo = form.cleaned_data['tipo_de_pago']
+        pago.recibo = form.cleaned_data['recibo']
+        pago.monto = pago.recibo.total() * porcentaje / 100
+        pago.comprobante = 'Reembolso'
+        pago.save()
+
+        return HttpResponseRedirect(pago.recibo.get_absolute_url())

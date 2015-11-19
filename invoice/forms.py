@@ -22,8 +22,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
 from select2.fields import ModelChoiceField
-from hospinet.utils.forms import PeriodoForm
-
+from hospinet.utils.forms import PeriodoForm, FieldSetFormMixin
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado, \
     ComprobanteDeduccion, ConceptoDeduccion
@@ -334,3 +333,18 @@ class ConceptoDeduccionForm(FieldSetModelFormMixin):
     concepto = ModelChoiceField(name="", model="",
                                 queryset=ItemTemplate.objects.filter(
                                     activo=True).order_by('descripcion').all())
+
+
+class ReembolsoForm(FieldSetFormMixin):
+    porcentaje = forms.IntegerField()
+    tipo_de_pago = forms.ModelChoiceField(queryset=TipoPago.objects.all())
+    recibo = forms.ModelChoiceField(
+        queryset=Recibo.objects.all(),
+        widget=forms.HiddenInput()
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ReembolsoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_(u'Agregar Reembolso'),
+                                      *self.field_names)
+        self.helper.add_input(Submit('submit', _(u'Guardar')))
