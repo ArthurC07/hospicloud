@@ -46,7 +46,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            EstadisticasView, CotizacionFacturar,
                            ComprobanteDeduccionCreateView,
                            ComprobanteDeduccionDetailView,
-                           ConceptoDeduccionCreateView)
+                           ConceptoDeduccionCreateView, ReembolsoCreateView,
+                           PagoDeleteView)
 
 urlpatterns = patterns('',
 
@@ -94,6 +95,10 @@ urlpatterns = patterns('',
                        url(r'^venta/(?P<pk>\d+)/delete$',
                            VentaDeleteView.as_view(),
                            name='venta-delete'),
+
+                       url(r'^pago/(?P<pk>\d+)/delete$',
+                           PagoDeleteView.as_view(),
+                           name='pago-delete'),
 
                        url(r'^periodo$',
                            ReporteReciboView.as_view(),
@@ -313,5 +318,9 @@ urlpatterns = patterns('',
                        url(r'^comprobante/(?P<comprobante>\d+)/concepto/add$',
                            ConceptoDeduccionCreateView.as_view(),
                            name='concepto-agregar'),
+
+                       url(r'^reembolso/agregar$',
+                           ReembolsoCreateView.as_view(),
+                           name='reembolso-add'),
 
                        )

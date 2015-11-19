@@ -2,24 +2,21 @@
 {% block title %} Recibo {{ recibo.numero }} {% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
-    {% load humanize %}
+    {% load humanize %}{% load i18n %}{% load l10n %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
+        <div class="main-content col-md-12">
                 <section class="page-header">
                     <h1>{{ recibo.numero }} - {{ recibo }}
                         <small>{{ recibo.created|date:"d/m/Y P" }}</small>
                     </h1>
                 </section>
-            </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
+        <div class="main-content col-md-12">
                 <nav class="navbar navbar-default" role="navigation">
                     <div class="navbar-inner">
                         <a href="#" class="navbar-brand">Acciones</a>
@@ -56,22 +53,16 @@
                         </ul>
                     </div>
                 </nav>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
                 <table class="table table-striped table-bordered">
-                    <caption>Conceptos a Facturar</caption>
+                    <caption>{% trans 'Conceptos a Facturar' %}</caption>
                     <thead>
                     <tr>
-                        <th>Cantidad</th>
-                        <th>Concepto</th>
-                        <th>Precio unitario</th>
-                        <th>Subtotal</th>
-                        <th>Descuento {{ recibo.tipo_de_venta.descripcion }}</th>
-                        <th>Total</th>
+                        <th>{% trans 'Cantidad' %}</th>
+                        <th>{% trans 'Concepto' %}</th>
+                        <th>{% trans 'Precio unitario' %}</th>
+                        <th>{% trans 'Subtotal' %}</th>
+                        <th>{% trans 'Descuento' %} {{ recibo.tipo_de_venta.descripcion }}</th>
+                        <th>{% trans 'Total' %}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -96,45 +87,51 @@
                     <tfoot>
                     <tr>
                         <th colspan="4">&nbsp;</th>
-                        <th>Subtotal:</th>
+                        <th>{% trans 'Subtotal:' %}</th>
                         <th>{{ recibo.subtotal }}</th>
                     </tr>
                     <tr>
                         <th colspan="4">&nbsp;</th>
-                        <th>Impuestos:</th>
+                        <th>{% trans 'Impuestos:' %}</th>
                         <th>{{ recibo.impuesto }}</th>
                     </tr>
                     <tr>
                         <th colspan="4">&nbsp;</th>
-                        <th>Descuento:</th>
+                        <th>{% trans 'Descuento:' %}</th>
                         <th>{{ recibo.descuento }}</th>
                     </tr>
                     <tr>
                         <th colspan="4">&nbsp;</th>
-                        <th>Total:</th>
+                        <th>{% trans 'Total:' %}</th>
                         <th>{{ recibo.total }}</th>
                     </tr>
                     </tfoot>
                 </table>
-            </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
+        <div class="main-content col-md-12">
+        <div class="col-md-6">
                 <table class="table table-striped table-bordered">
-                    <caption>Pagos</caption>
+                    <caption>{% trans 'Pagos' %}</caption>
                     <thead>
                     <tr>
-                        <th>M&eacute;todo</th>
-                        <th>Monto</th>
-                        <th>Comprobante</th>
+                        <th>{% trans 'M&eacute;todo' %}</th>
+                        <th>{% trans 'Monto' %}</th>
+                        <th>{% trans 'Comprobante' %}</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for pago in recibo.pagos.all %}
                         <tr>
-                            <td>{{ pago.tipo }}</td>
+                            <td>
+                                {% if recibo.cerrado == False %}
+                                    <a class="btn btn-danger btn-sm" href="{% url 'pago-delete' pago.id %}">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </a>
+                                {% endif %}
+                                {{ pago.tipo }}
+                            </td>
                             <td>{{ pago.monto }}</td>
                             <td>{{ pago.comprobante }}</td>
                         </tr>
@@ -142,16 +139,19 @@
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th>Total Pagado</th>
+                        <th>{% trans 'Total Pagado' %}</th>
                         <th>{{ recibo.pagado }}</th>
                     </tr>
                     <tr>
-                        <th>Monto Debido</th>
+                        <th>{% trans 'Monto Debido' %}</th>
                         <th>{{ recibo.debido }}</th>
                     </tr>
                     </tfoot>
                 </table>
-            </div>
+        </div>
+        <div class="col-md-6">
+            {% crispy reembolso_form %}
+        </div>
         </div>
     </div>
 {% endblock %}
