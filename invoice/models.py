@@ -254,11 +254,7 @@ class Recibo(TimeStampedModel):
         if self.pk is None:
             if self.cajero.profile is not None and self.cajero.profile.ciudad \
                     is not None:
-                ciudad = self.cajero.profile.ciudad
-                ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
-                ciudad.save()
-                ciudad.refresh_from_db()
-                self.correlativo = ciudad.correlativo_de_recibo
+                self.crear_correlativo()
 
             turnos = TurnoCaja.objects.filter(
                 usuario=self.cajero,
@@ -269,10 +265,21 @@ class Recibo(TimeStampedModel):
                 turno = TurnoCaja(usuario=self.cajero, inicio=timezone.now())
                 turno.save()
 
+        self.asignar_ciudad()
+
+        super(Recibo, self).save(*args, **kwargs)
+
+    def asignar_ciudad(self):
         if self.ciudad is None and self.pk is not None:
             self.ciudad = self.cajero.profile.ciudad
 
-        super(Recibo, self).save(*args, **kwargs)
+    def crear_correlativo(self):
+
+        ciudad = self.cajero.profile.ciudad
+        ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
+        ciudad.save()
+        ciudad.refresh_from_db()
+        self.correlativo = ciudad.correlativo_de_recibo
 
 
 @python_2_unicode_compatible

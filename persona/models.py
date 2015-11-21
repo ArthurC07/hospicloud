@@ -187,7 +187,7 @@ class Fisico(TimeStampedModel):
         historia.fecha = self.modified
         if historia.fecha is None:
             historia.fecha = timezone.now()
-        
+
         historia.save()
 
         super(Fisico, self).save(**kwargs)
