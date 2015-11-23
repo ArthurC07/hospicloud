@@ -18,7 +18,6 @@ import calendar
 from collections import defaultdict, OrderedDict
 from datetime import datetime, time, date
 from decimal import Decimal
-from constance import config
 from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -1081,6 +1080,120 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
                                                                       **kwargs)
 
 
+class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+
+        if self.request.user.profile.ciudad is None:
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
+            if self.request.META['HTTP_REFERER']:
+                return self.request.META['HTTP_REFERER']
+            else:
+                return reverse('invoice-index')
+
+        aseguradora = get_object_or_404(Aseguradora, pk=kwargs['pk'])
+
+        if not aseguradora.cardex:
+            messages.info(
+                self.request,
+                _(u'La aseguradora no tiene representante en el cardex!')
+            )
+            if self.request.META['HTTP_REFERER']:
+                return self.request.META['HTTP_REFERER']
+            else:
+                return reverse('invoice-index')
+
+        cotizacion = Cotizacion()
+        cotizacion.usuario = self.request.user
+        cotizacion.persona = aseguradora.cardex
+        cotizacion.credito = True
+        cotizacion.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
+
+        cotizacion.save()
+        for master in aseguradora.master_contracts.all():
+            cotizado = Cotizado()
+            cotizado.item = master.plan.item
+            cotizado.cotizacion = cotizacion
+            cotizado.descripcion = _(u'Poliza {0}  {1}').format(
+                master.poliza,
+                master.contratante.nombre
+            )
+            cotizado.cantidad = master.active_contracts_count()
+            cotizado.precio = master.plan.item.precio_de_venta
+            cotizado.impuesto = master.plan.item.impuestos
+            cotizado.save()
+            cotizacion.ventas.add(cotizado)
+            cotizado.save()
+
+        cotizacion.save()
+
+        messages.info(
+            self.request,
+            _(u'¡La consulta se marcó como facturada!')
+        )
+
+    @method_decorator(permission_required('invoice.cajero'))
+    def dispatch(self, *args, **kwargs):
+        return super(AseguradoraContractsFacturarView, self).dispatch(*args,
+                                                                      **kwargs)
+
+
+class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        if self.request.user.profile.ciudad is None:
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
+            if self.request.META['HTTP_REFERER']:
+                return self.request.META['HTTP_REFERER']
+            else:
+                return reverse('invoice-index')
+
+        aseguradora = get_object_or_404(Aseguradora, pk=kwargs['pk'])
+
+        cotizacion = Cotizacion()
+        cotizacion.usuario = self.request.user
+        cotizacion.persona = aseguradora.cardex
+        cotizacion.credito = True
+        cotizacion.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
+
+        cotizacion.save()
+        for master in aseguradora.master_contracts.all():
+            cotizado = Cotizado()
+            cotizado.item = master.plan.item
+            cotizado.cotizacion = cotizacion
+            cotizado.descripcion = _(u'Poliza {0}  {1}').format(
+                master.poliza,
+                master.contratante.nombre
+            )
+            cotizado.cantidad = 1
+            cotizado.precio = master.item.precio_de_venta
+            cotizado.impuesto = master.plan.item.impuestos
+            cotizado.save()
+            cotizacion.cotizado_set.add(cotizado)
+            cotizado.save()
+
+        cotizacion.save()
+
+        messages.info(
+            self.request,
+            _(u'¡La consulta se marcó como facturada!')
+        )
+        return cotizacion.get_absolute_url()
+
+
 class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
     permanent = False
 
@@ -1116,7 +1229,7 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
                 master.contratante.nombre
             )
             venta.cantidad = 1
-            venta.precio = master.comision_administrativa()
+            venta.precio = master.item.precio_de_venta
             venta.impuesto = master.plan.item.impuestos
             venta.save()
             recibo.ventas.add(venta)

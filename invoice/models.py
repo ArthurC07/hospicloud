@@ -624,6 +624,7 @@ class Cotizacion(TimeStampedModel):
     ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
     discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     facturada = models.BooleanField(default=False)
+    credito = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -649,6 +650,7 @@ class Cotizacion(TimeStampedModel):
         recibo.cajero = self.usuario
         recibo.ciudad = self.ciudad
         recibo.discount = self.discount
+        recibo.credito = self.credito
         recibo.save()
 
         for cotizado in self.cotizado_set.all():
@@ -675,11 +677,10 @@ class Cotizacion(TimeStampedModel):
     def subtotal(self):
         """Calcula el monto antes de impuestos"""
 
-        return \
-            self.cotizado_set.aggregate(
-                total=Coalesce(Sum('monto', output_field=models.DecimalField()),
-                               Decimal())
-            )['total']
+        return self.cotizado_set.aggregate(
+            total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                           Decimal())
+        )['total']
 
     def impuesto(self):
         """Calcula los impuestos que se deben pagar por este :class:`Cotizacion`

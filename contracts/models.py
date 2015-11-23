@@ -259,23 +259,21 @@ class MasterContract(TimeStampedModel):
     plan = models.ForeignKey(Plan, related_name='master_contracts')
     aseguradora = models.ForeignKey(Aseguradora,
                                     related_name='master_contracts')
+    administrador = models.ForeignKey(Persona, null=True, blank=True)
     inicio = models.DateField(default=timezone.now)
-    vencimiento = models.DateField(default=timezone.now)
     contratante = models.ForeignKey(Empleador, blank=True, null=True,
                                     related_name='master_contracts')
     poliza = models.CharField(max_length=255, null=True, blank=True)
     adicionales = models.IntegerField(default=0)
     comision = models.IntegerField(default=0)
-
     processed = models.BooleanField(default=False)
     item = models.ForeignKey(ItemTemplate, null=True, blank=True)
-    vida = models.DecimalField(max_digits=11, decimal_places=2, null=True,
-                               blank=True)
     gastos_medicos = models.DecimalField(max_digits=11, decimal_places=2,
                                          null=True, blank=True)
     porcentaje = models.DecimalField(max_digits=3, decimal_places=2,
                                      null=True, blank=True)
     ultimo_certificado = models.IntegerField(default=0)
+    facturar_al_administrador = models.BooleanField(default=False)
 
     def __str__(self):
         nombre = _(u'Poliza {0} {1}').format(self.poliza, self.plan.nombre)
@@ -336,8 +334,7 @@ class MasterContract(TimeStampedModel):
 
     def comision_administrativa(self):
 
-        return ((self.vida + self.gastos_medicos) * self.porcentaje).quantize(
-            Decimal("0.01"))
+        return (self.gastos_medicos * self.porcentaje).quantize(Decimal("0.01"))
 
 
 @python_2_unicode_compatible
