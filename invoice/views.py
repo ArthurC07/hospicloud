@@ -118,6 +118,9 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         )
 
         context['aseguradoras'] = Aseguradora.objects.all()
+        context['cotizaciones'] = Cotizacion.objects.filter(
+            facturada=False, terminada=False
+        ).all()
 
         context['examenes'] = Examen.objects.filter(
             facturado=False, pendiente=False
@@ -1123,7 +1126,8 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         cotizacion.save()
-        for master in aseguradora.master_contracts.all():
+        for master in aseguradora.master_contracts.filter(
+                facturar_al_administrador=False).all():
             cotizado = Cotizado()
             cotizado.item = master.plan.item
             cotizado.cotizacion = cotizacion
@@ -1177,7 +1181,8 @@ class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         cotizacion.save()
-        for master in aseguradora.master_contracts.all():
+        for master in aseguradora.master_contracts.filter(
+                facturar_al_administrador=False).all():
             cotizado = Cotizado()
             cotizado.item = master.plan.item
             cotizado.cotizacion = cotizacion

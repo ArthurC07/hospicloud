@@ -625,6 +625,7 @@ class Cotizacion(TimeStampedModel):
     discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     facturada = models.BooleanField(default=False)
     credito = models.BooleanField(default=False)
+    terminada = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

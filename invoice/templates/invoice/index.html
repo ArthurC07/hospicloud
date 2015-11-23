@@ -51,7 +51,7 @@
                                     <a href="{% url 'invoice-turno' turno.id %}">{{ turno }}</a>
                                 </h1>
                                 <dl class="dl-horizontal">
-                                    <dt>Total de Ventas</dt>
+                                    <dt>{% trans 'Total de Ventas' %}</dt>
                                     <dd>{{ turno.venta }}</dd>
                                     <dt>Recibos nulos</dt>
                                     <dd>{{ turno.nulos.count }}</dd>
@@ -121,7 +121,7 @@
                                 <caption>Recibos Pendientes</caption>
                                 <thead class="gradient">
                                 <tr>
-                                    <th>C&oacute;digo</th>
+                                    <th>{% trans 'C&oacute;digo' %}</th>
                                     <th>Nombre</th>
                                     <th>Cajero</th>
                                     <th>Acciones</th>
@@ -132,7 +132,7 @@
                                     <tr>
                                         <td>
                                             <a class="btn btn-primary"
-                                               href="{% url 'persona-view-id' recibo.cliente.id %}">
+                                               href="{{ recibo.cliente.get_absolute_url }}">
                                                 {% if recibo.cliente.identificacion %}
                                                     {{ recibo.cliente.identificacion }}
                                                 {% else %}
@@ -144,8 +144,44 @@
                                         </td>
                                         <td>{{ recibo.cajero }}</td>
                                         <td><a class="btn btn-success"
-                                               href="{% url 'invoice-view-id' recibo.id %}">Ver
+                                               href="{{ recibo.get_absolute_url }}">Ver
                                             Recibo</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <table class="table table-striped">
+                                <caption>{% trans 'Cotizaciones Pendientes' %}</caption>
+                                <thead>
+                                <tr>
+                                    <th>{% trans 'C&oacute;digo' %}</th>
+                                    <th>{% trans 'Nombre' %}</th>
+                                    <th>{% trans 'Cajero' %}</th>
+                                    <th>{% trans 'Acciones' %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for cotizacion in cotizaciones %}
+                                    <tr>
+                                        <td>
+                                            <a class="btn btn-primary"
+                                               href="{{ cotizacion.persona.get_absolute_url }}">
+                                                {% if cotizacion.persona.identificacion %}
+                                                    {{ cotizacion.persona.identificacion }}
+                                                {% else %}
+                                                    {{ cotizacion.persona.id }}
+                                                {% endif %}
+                                            </a></td>
+                                        <td>
+                                            {{ cotizacion.persona.nombre_completo }}
+                                        </td>
+                                        <td>{{ cotizacion.usuario }}</td>
+                                        <td>
+                                            <a class="btn btn-success"
+                                               href="{{ cotizacion.get_absolute_url }}">
+                                                {% trans 'Ver Cotizacion' %}
+                                            </a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -367,15 +403,18 @@
                                                     <ul>
                                                         {% for master in aseguradora.master_contracts.all %}
                                                             <li>
-                                                                {{ master.poliza }} {{ master.plan }} {{ master.contratante }} -
+                                                                {{ master.poliza }} {{ master.plan }} {{ master.contratante }}
+                                                                -
                                                                 Activos: {{ master.active_contracts_count }}
                                                             </li>
                                                         {% endfor %}
                                                     </ul>
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-block btn-primary" href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">{% trans 'Cotizar Contratos' %}</a>
-                                                    <a class="btn btn-block btn-primary" href="{% url 'aseguradora-cotizar-master' aseguradora.id %}">{% trans 'Cotizar Polizas' %}</a>
+                                                    <a class="btn btn-block btn-primary"
+                                                       href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">{% trans 'Cotizar Contratos' %}</a>
+                                                    <a class="btn btn-block btn-primary"
+                                                       href="{% url 'aseguradora-cotizar-master' aseguradora.id %}">{% trans 'Cotizar Polizas' %}</a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
