@@ -285,9 +285,13 @@ class MasterContractForm(FieldSetModelFormMixin):
                             queryset=ItemTemplate.objects.filter(
                                 activo=True).order_by('descripcion').all())
 
+    administrador = ModelChoiceField(
+        queryset=Persona.objects.filter(mostrar_en_cardex=True).all(),
+        name="", model="")
+
     def __init__(self, *args, **kwargs):
         super(MasterContractForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Crear un Contrato Maestro',
+        self.helper.layout = Fieldset(u'Formulario de Contrato Maestro',
                                       *self.field_names)
 
 

@@ -36,7 +36,7 @@ from django.contrib.auth.decorators import permission_required
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin, FormView
 from clinique.models import Consulta
-from contracts.models import Aseguradora
+from contracts.models import Aseguradora, MasterContract
 from contracts.views import AseguradoraMixin
 from persona.views import PersonaFormMixin
 from spital.forms import DepositoForm
@@ -113,13 +113,20 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['inventarioform'] = InventarioForm(prefix='inventario')
         context['inventarioform'].set_action('invoice-inventario')
 
+        context['contratos'] = MasterContract.objects.filter(
+            facturar_al_administrador=True
+        )
+
+        context['aseguradoras'] = Aseguradora.objects.all()
+
         context['examenes'] = Examen.objects.filter(
             facturado=False, pendiente=False
         ).order_by('-id')
 
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(
-            facturada=False).order_by('id')
+            facturada=False
+        ).order_by('id')
         context['consultas'] = Consulta.objects.filter(facturada=False,
                                                        activa=False,
                                                        tipo__facturable=True)
@@ -1140,8 +1147,8 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
 
     @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
-        return super(AseguradoraContractsFacturarView, self).dispatch(*args,
-                                                                      **kwargs)
+        return super(AseguradoraContractsCotizarView, self).dispatch(*args,
+                                                                     **kwargs)
 
 
 class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
@@ -1184,6 +1191,56 @@ class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
             cotizado.save()
             cotizacion.cotizado_set.add(cotizado)
             cotizado.save()
+
+        cotizacion.save()
+
+        messages.info(
+            self.request,
+            _(u'¡La consulta se marcó como facturada!')
+        )
+        return cotizacion.get_absolute_url()
+
+
+class MasterCotizarView(RedirectView, LoginRequiredMixin):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        if self.request.user.profile.ciudad is None:
+            messages.info(
+                self.request,
+                _(u'No puede facturar sin tener ciudad en su perfil!')
+            )
+            if self.request.META['HTTP_REFERER']:
+                return self.request.META['HTTP_REFERER']
+            else:
+                return reverse('invoice-index')
+
+        master = get_object_or_404(MasterContract, pk=kwargs['pk'])
+
+        cotizacion = Cotizacion()
+        cotizacion.usuario = self.request.user
+        cotizacion.persona = master.administrador
+        cotizacion.credito = True
+        cotizacion.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
+
+        cotizacion.save()
+
+        cotizado = Cotizado()
+        cotizado.item = master.plan.item
+        cotizado.cotizacion = cotizacion
+        cotizado.descripcion = _(u'Poliza {0}  {1}').format(
+            master.poliza,
+            master.contratante.nombre
+        )
+        cotizado.cantidad = 1
+        cotizado.precio = master.item.precio_de_venta
+        cotizado.impuesto = master.plan.item.impuestos
+        cotizado.save()
+        cotizacion.cotizado_set.add(cotizado)
+        cotizado.save()
 
         cotizacion.save()
 
