@@ -72,7 +72,9 @@
                                     </tr>
                                     {% for pago in turno.pagos %}
                                         <tr>
-                                            <td>{{ pago.tipo__nombre }} Facturado</td>
+                                            <td>{{ pago.tipo__nombre }}
+                                                Facturado
+                                            </td>
                                             <td>{{ pago.monto }}</td>
                                         </tr>
                                     {% endfor %}
@@ -227,7 +229,8 @@
                                         <td>{{ emergencia.persona.nombre_completo }}</td>
                                         <td>{{ emergencia.persona.obtener_edad }}</td>
                                         <td>{{ emergencia.persona.get_sexo_display }}</td>
-                                        <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            {{ emergencia.created|date:"d/m/Y H:i" }}</td>
                                         <td>{{ emergencia.usuario }}</td>
                                         <td>
                                             {% if not emergencia.facturada %}
@@ -270,7 +273,8 @@
                                         <td>{{ consulta.persona.nombre_completo }}</td>
                                         <td>{{ consulta.persona.obtener_edad }}</td>
                                         <td>{{ consulta.persona.get_sexo_display }}</td>
-                                        <td>{{ consulta.created|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            {{ consulta.created|date:"d/m/Y H:i" }}</td>
                                         <td>{{ consulta.consultorio }}</td>
                                         <td>
                                             {% if not consulta.facturada %}
@@ -323,12 +327,12 @@
                                     <table class="table table-striped">
                                         <caption>{% trans 'Contratos' %}</caption>
                                         <thead>
-                                            <tr>
-                                                <th>{% trans 'Poliza' %}</th>
-                                                <th>{% trans 'Aseguradora' %}</th>
-                                                <th>{% trans 'Contratante' %}</th>
-                                                <th>{% trans 'Acciones' %}</th>
-                                            </tr>
+                                        <tr>
+                                            <th>{% trans 'Poliza' %}</th>
+                                            <th>{% trans 'Aseguradora' %}</th>
+                                            <th>{% trans 'Contratante' %}</th>
+                                            <th>{% trans 'Acciones' %}</th>
+                                        </tr>
                                         </thead>
                                         <tbody>
                                         {% for contrato in contratos.all %}
@@ -337,9 +341,41 @@
                                                 <td>{{ contrato.aseguradora }}</td>
                                                 <td>{{ contrato.contratante }}</td>
                                                 <td>
-                                                    <a class="btn btn-primary" href="{% url 'master-cotizar' contrato.id %}">
+                                                    <a class="btn btn-primary"
+                                                       href="{% url 'master-cotizar' contrato.id %}">
                                                         {% trans 'Cotizar' %}
                                                     </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped">
+                                        <caption>{% trans 'Aseguradoras' %}</caption>
+                                        <thead>
+                                        <tr>
+                                            <th>{% trans 'Aseguradora' %}</th>
+                                            <th>{% trans 'Polizas' %}</th>
+                                            <th>{% trans 'Acciones' %}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for aseguradora in aseguradoras.all %}
+                                            <tr>
+                                                <td>{{ aseguradora }}</td>
+                                                <td>
+                                                    <ul>
+                                                        {% for master in aseguradora.master_contracts.all %}
+                                                            <li>
+                                                                {{ master.poliza }} {{ master.plan }} {{ master.contratante }} -
+                                                                Activos: {{ master.active_contracts_count }}
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-block btn-primary" href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">{% trans 'Cotizar Contratos' %}</a>
+                                                    <a class="btn btn-block btn-primary" href="{% url 'aseguradora-cotizar-master' aseguradora.id %}">{% trans 'Cotizar Polizas' %}</a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -423,13 +459,16 @@
                             <a href="{% url 'invoice-estadisticas' %}">Estad&iacute;sticas</a>
                         </li>
                         <li>
-                            <a href="{% url 'invoice-pago-status-index' %}">Ver Status de los pagos</a>
+                            <a href="{% url 'invoice-pago-status-index' %}">Ver
+                                Status de los pagos</a>
                         </li>
                         <li>
-                            <a href="{% url 'invoice-cpc-list' %}">Cuentas Por Cobrar</a>
+                            <a href="{% url 'invoice-cpc-list' %}">Cuentas Por
+                                Cobrar</a>
                         </li>
                         <li>
-                            <a href="{% url 'comprobante-agregar' %}">Crear un Comprobante de Deducci&oacute;n</a>
+                            <a href="{% url 'comprobante-agregar' %}">Crear un
+                                Comprobante de Deducci&oacute;n</a>
                         </li>
                     </ul>
                 </nav>
