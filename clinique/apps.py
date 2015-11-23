@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#
 # Copyright (C) 2015 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -15,16 +14,18 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-# Django settings for hospicloud project.
+from django.apps import AppConfig
+from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 
-CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
-CONSTANCE_CONFIG = {
-    'EMERGENCIA': (1, u'Cuenta utilizada para estadia en emergencias'),
-    'DEPOSIT_ACCOUNT': (1, u'Cuenta utilizada para disminuir depositos'),
-    'EXTRA_EMERGENCIA': (1, u'Cuenta utilizada para agregar tiempo extra de emergencias'),
-    'DEPOSIT_PAYMENT': (1, u'Tipo de Pago para Abonos a cuenta'),
-    'CHAT': (u'http://www.example.com', u'Url para el chat interno'),
-    'ONLINE_HELP': (u'http://www.example.com', u'Url para ayuda en línea'),
-    'RECEIPT_DAYS': (1, u'Dias que dura una factura al credito'),
-    'CURRENCY_EXCHANGE': (22.03, u'Cambio de Moneda'),
-}
+
+class CliniqueConfig(AppConfig):
+    name = 'clinique'
+    verbose_name = _(u'Clínica y Consultorios')
+
+    def ready(self):
+
+        Consultorio = self.get_model('Consultorio')
+        get_user_model().consultorios_activos = property(
+            lambda u: Consultorio.objects.filter(usuario=u, activo=True))
+

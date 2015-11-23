@@ -17,11 +17,11 @@
 
 from collections import defaultdict
 from decimal import Decimal
+from django.conf import settings
 
 from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -150,7 +150,7 @@ class Admision(models.Model):
     deposito = models.CharField(max_length=200, blank=True)
 
     observaciones = models.CharField(max_length=200, blank=True)
-    admitio = models.ForeignKey(User)
+    admitio = models.ForeignKey(settings.AUTH_USER_MODEL)
     admision = models.DateTimeField(default=timezone.now, null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue ingresada en
     admisiones"""

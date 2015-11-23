@@ -17,7 +17,6 @@
 from datetime import timedelta
 from decimal import Decimal
 
-from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
@@ -25,7 +24,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
-
 from guardian.shortcuts import assign_perm
 
 from emergency.models import Emergencia
@@ -41,6 +39,17 @@ class Company(TimeStampedModel):
     cai = models.CharField(max_length=255)
     direccion = models.TextField()
     telefono = models.CharField(max_length=20)
+    chat = models.URLField(blank=True)
+    help = models.URLField(blank=True)
+    emergencia = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                   related_name='emergencia_company')
+    emergencia_extra = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                         related_name='emergencia_extra_company')
+    deposito = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                 related_name='deposito_company')
+    cambio_monetario = models.DecimalField(max_digits=11, decimal_places=4,
+                                           default=0)
+    receipt_days = models.IntegerField(default=30)
 
     def __str__(self):
         return self.nombre
@@ -69,8 +78,8 @@ class Ciudad(TimeStampedModel):
 
 @python_2_unicode_compatible
 class UserProfile(UserenaBaseProfile):
-    user = models.OneToOneField(User, related_name="profile",
-                                blank=True, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                related_name="profile", blank=True, null=True)
     inventario = models.ForeignKey(Inventario, related_name='usuarios',
                                    blank=True, null=True)
     honorario = models.ForeignKey(ItemTemplate, related_name='usuarios',
@@ -146,7 +155,6 @@ class UserProfile(UserenaBaseProfile):
 
 @python_2_unicode_compatible
 class Turno(TimeStampedModel):
-
     rango_inicio = timedelta(minutes=20)
     rango_fin = timedelta(minutes=10)
 
@@ -161,15 +169,10 @@ class Turno(TimeStampedModel):
         return self.nombre
 
     def login_inicio(self):
-
         return self.inicio - self.rango_inicio
 
     def login_fin(self):
         return self.fin + self.rango_fin
-
-
-User.userena_signup = property(
-    lambda u: UserenaSignup.objects.get_or_create(user=u)[0])
 
 
 def create_user_profile(sender, instance, created, **kwargs):
@@ -179,9 +182,9 @@ def create_user_profile(sender, instance, created, **kwargs):
         assign_perm('change_profile', instance, instance.profile)
 
 
-post_save.connect(create_user_profile, sender=User)
+post_save.connect(create_user_profile, sender=settings.AUTH_USER_MODEL)
 
 
 class UserAction(TimeStampedModel):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     action = models.TextField()

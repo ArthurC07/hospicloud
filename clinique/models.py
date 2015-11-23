@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from inventory.models import ItemTemplate, Inventario, ItemType
@@ -76,11 +77,14 @@ class Consultorio(TimeStampedModel):
         ordering = ["nombre", ]
 
     nombre = models.CharField(max_length=50, blank=True, null=True)
-    usuario = models.ForeignKey(User, related_name='consultorios')
-    secretaria = models.ForeignKey(User, related_name='secretarias')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='consultorios')
+    secretaria = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                   related_name='secretarias')
     inventario = models.ForeignKey(Inventario, related_name='consultorios',
                                    blank=True, null=True)
-    administradores = models.ManyToManyField(User, blank=True,
+    administradores = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                             blank=True,
                                              related_name='consultorios_administrados')
     localidad = models.ForeignKey(Localidad, related_name='consultorios',
                                   blank=True, null=True)
@@ -224,7 +228,8 @@ class Evaluacion(TimeStampedModel):
     """Registra los análisis que se le efectua a la :class:`Persona`"""
     persona = models.ForeignKey(Persona, related_name='evaluaciones',
                                 blank=True, null=True)
-    usuario = models.ForeignKey(User, related_name='evaluaciones',
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='evaluaciones',
                                 blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='evaluaciones',
                                  blank=True, null=True)
@@ -280,7 +285,8 @@ class Seguimiento(TimeStampedModel):
     consultorio = models.ForeignKey(Consultorio, related_name='seguimientos',
                                     blank=True, null=True)
     observaciones = models.TextField()
-    usuario = models.ForeignKey(User, related_name='seguimientos')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='seguimientos')
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
@@ -291,7 +297,8 @@ class Seguimiento(TimeStampedModel):
 class DiagnosticoClinico(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='diagnosticos_clinicos',
                                 blank=True, null=True)
-    usuario = models.ForeignKey(User, related_name='diagnosticos_clinicos',
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='diagnosticos_clinicos',
                                 blank=True, null=True)
     afeccion = models.ForeignKey(Afeccion, related_name='diagnosticos_clinicos',
                                  blank=True, null=True)
@@ -309,7 +316,8 @@ class DiagnosticoClinico(TimeStampedModel):
 class OrdenMedica(TimeStampedModel):
     """Registra las indicaciones dadas al paciente de parte del
     :class:`Doctor`"""
-    usuario = models.ForeignKey(User, related_name='ordenes_clinicas',
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='ordenes_clinicas',
                                 blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='ordenes_medicas',
                                  blank=True, null=True)
@@ -345,7 +353,8 @@ class Cargo(TimeStampedModel):
     """Permite registrar diversos cobros durante una :class:`Consulta`"""
     consulta = models.ForeignKey(Consulta, related_name='cargos', blank=True,
                                  null=True)
-    usuario = models.ForeignKey(User, related_name='cargos_clinicos',
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='cargos_clinicos',
                                 blank=True,
                                 null=True)
     tipo = models.ForeignKey(ItemType, related_name='cargos')
@@ -365,7 +374,7 @@ class NotaEnfermeria(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='notas_enfermeria',
                                 blank=True, null=True)
     nota = models.TextField(blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='consultorio_notas_enfermeria')
 
     def get_absolute_url(self):
@@ -430,7 +439,8 @@ class Prescripcion(TimeStampedModel):
 class Incapacidad(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='incapacidades',
                                 blank=True, null=True)
-    usuario = models.ForeignKey(User, related_name='incapacidades',
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='incapacidades',
                                 blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='incapacidades',
                                  blank=True, null=True)
@@ -491,9 +501,6 @@ def consolidate_clinique(persona, clone):
 
 
 persona_consolidation_functions.append(consolidate_clinique)
-
-User.consultorios_activos = property(
-    lambda u: Consultorio.objects.filter(usuario=u, activo=True))
 
 Persona.consultas_activas = property(
     lambda p: Consulta.objects.filter(persona=p, activa=True))

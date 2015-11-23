@@ -17,23 +17,17 @@
 from collections import defaultdict
 from decimal import Decimal
 from datetime import timedelta
-
-from constance import config
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
-
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
-
 from django_extensions.db.models import TimeStampedModel
-
 from django.db.models import F, Sum, Min
-
 from clinique.models import Consulta
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
@@ -98,7 +92,7 @@ class Recibo(TimeStampedModel):
     cliente = models.ForeignKey(Persona, related_name='recibos')
     ciudad = models.ForeignKey(Ciudad, blank=True, null=True,
                                related_name='recibos')
-    cajero = models.ForeignKey(User, blank=True, null=True,
+    cajero = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                related_name='recibos')
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
     discount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
@@ -116,7 +110,7 @@ class Recibo(TimeStampedModel):
 
     def vencimiento(self):
 
-        return self.emision + timedelta(days=config.RECEIPT_DAYS)
+        return self.emision + timedelta(days=self.ciudad.company.receipt_days)
 
     def facturacion(self):
 
@@ -145,23 +139,27 @@ class Recibo(TimeStampedModel):
 
     def other_currency(self):
 
-        return (self.total() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            Decimal("0.01"))
+        return (
+            self.total() / self.ciudad.company.cambio_monetario
+        ).quantize(dot01)
 
     def impuesto_other(self):
 
-        return (self.impuesto() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            dot01)
+        return (
+            self.impuesto() / self.ciudad.company.cambio_monetario
+        ).quantize(dot01)
 
     def descuento_other(self):
 
-        return (self.descuento() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            dot01)
+        return (
+            self.descuento() / self.ciudad.company.cambio_monetario
+        ).quantize(dot01)
 
     def subtotal_other(self):
 
-        return (self.subtotal() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            dot01)
+        return (
+            self.subtotal() / self.ciudad.company.cambio_monetario
+        ).quantize(dot01)
 
     def anular(self):
 
@@ -401,7 +399,8 @@ class TurnoCaja(TimeStampedModel):
     """Allows tracking the :class:`Invoice`s created by a :class:`User` and
     to handle the amounts payed by clients"""
 
-    usuario = models.ForeignKey(User, related_name='turno_caja')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='turno_caja')
     inicio = models.DateTimeField(null=True, blank=True)
     fin = models.DateTimeField(null=True, blank=True)
     apertura = models.DecimalField(default=0, max_digits=7, decimal_places=2)
@@ -621,10 +620,11 @@ class Cotizacion(TimeStampedModel):
 
     persona = models.ForeignKey(Persona)
     tipo_de_venta = models.ForeignKey(TipoVenta)
-    usuario = models.ForeignKey(User)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
     discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     facturada = models.BooleanField(default=False)
+    credito = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -650,6 +650,7 @@ class Cotizacion(TimeStampedModel):
         recibo.cajero = self.usuario
         recibo.ciudad = self.ciudad
         recibo.discount = self.discount
+        recibo.credito = self.credito
         recibo.save()
 
         for cotizado in self.cotizado_set.all():
@@ -676,11 +677,10 @@ class Cotizacion(TimeStampedModel):
     def subtotal(self):
         """Calcula el monto antes de impuestos"""
 
-        return \
-            self.cotizado_set.aggregate(
-                total=Coalesce(Sum('monto', output_field=models.DecimalField()),
-                               Decimal())
-            )['total']
+        return self.cotizado_set.aggregate(
+            total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                           Decimal())
+        )['total']
 
     def impuesto(self):
         """Calcula los impuestos que se deben pagar por este :class:`Cotizacion`
@@ -774,7 +774,6 @@ class ComprobanteDeduccion(TimeStampedModel):
         return self.proveedor.name
 
     def get_absolute_url(self):
-
         return reverse('comprobante', args=[self.id])
 
     def numero(self):
@@ -782,7 +781,6 @@ class ComprobanteDeduccion(TimeStampedModel):
                                     self.correlativo)
 
     def total(self):
-
         return ConceptoDeduccion.objects.filter(comprobante=self).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']

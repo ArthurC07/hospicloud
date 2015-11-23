@@ -47,7 +47,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            ComprobanteDeduccionCreateView,
                            ComprobanteDeduccionDetailView,
                            ConceptoDeduccionCreateView, ReembolsoCreateView,
-                           PagoDeleteView)
+                           PagoDeleteView, AseguradoraContractsCotizarView,
+                           AseguradoraMasterCotizarView, MasterCotizarView)
 
 urlpatterns = patterns('',
 
@@ -203,6 +204,18 @@ urlpatterns = patterns('',
                        url(r'^aseguradora/(?P<pk>\d+)$',
                            AseguradoraMasterFacturarView.as_view(),
                            name='aseguradora-invoice-master'),
+
+                       url(r'^aseguradora/contratos/cotizar/(?P<pk>\d+)$',
+                           AseguradoraContractsCotizarView.as_view(),
+                           name='aseguradora-cotizar-contrato'),
+
+                       url(r'^aseguradora/maestro/cotizar/(?P<pk>\d+)$',
+                           AseguradoraMasterCotizarView.as_view(),
+                           name='aseguradora-cotizar-master'),
+
+                       url(r'^master/cotizar/(?P<pk>\d+)$',
+                           MasterCotizarView.as_view(),
+                           name='master-cotizar'),
 
                        url(r'^(?P<recibo>\d+)/pago/add$',
                            PagoCreateView.as_view(),

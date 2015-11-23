@@ -1,8 +1,6 @@
 Django
 Pillow
 django-bootstrap-pagination
-django-constance
-django-constance[database]
 django-countries
 django-crispy-forms
 django-extensions
@@ -12,7 +10,6 @@ django-extra-views
 simplejson
 six
 pytz
-django-picklefield
 dj-database-url
 python-dateutil
 django-environ

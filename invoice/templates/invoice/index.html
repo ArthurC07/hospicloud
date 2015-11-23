@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %} Caja {% endblock %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block header %}
     {{ ventaperiodoform.media.css }}
 {% endblock %}
@@ -36,10 +36,12 @@
                             </li>
                         {% endif %}
                         <li>
-                            <a href="#pagos" data-toggle="tab">Estado de
-                                Pagos</a>
+                            <a href="#contratos" data-toggle="tab">
+                                {% trans 'Contratos' %}
+                            </a>
                         </li>
-                        <li><a href="#reporte" data-toggle="tab">Reportes</a>
+                        <li>
+                            <a href="#reporte" data-toggle="tab">Reportes</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -315,8 +317,36 @@
                                 </table>
                             </article>
                         {% endif %}
-                        <article id="pagos" class="tab-pane">
-
+                        <article id="contratos" class="tab-pane">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-striped">
+                                        <caption>{% trans 'Contratos' %}</caption>
+                                        <thead>
+                                            <tr>
+                                                <th>{% trans 'Poliza' %}</th>
+                                                <th>{% trans 'Aseguradora' %}</th>
+                                                <th>{% trans 'Contratante' %}</th>
+                                                <th>{% trans 'Acciones' %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for contrato in contratos.all %}
+                                            <tr>
+                                                <td>{{ contrato.poliza }}</td>
+                                                <td>{{ contrato.aseguradora }}</td>
+                                                <td>{{ contrato.contratante }}</td>
+                                                <td>
+                                                    <a class="btn btn-primary" href="{% url 'master-cotizar' contrato.id %}">
+                                                        {% trans 'Cotizar' %}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </article>
                         <article id="reporte" class="tab-pane">
                             <div class="row">
