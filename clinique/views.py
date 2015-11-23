@@ -356,8 +356,8 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         context['fin'] = self.fin
         context['total'] = self.diagnosticos.count()
 
-        DiagnosticoClinico.objects.values('paciente__consultorio').annotate(
-            consultorio_count=Count('paciente__consultorio')
+        DiagnosticoClinico.objects.values('consulta__consultorio').annotate(
+            consultorio_count=Count('consulta__consultorio')
         ).filter(created__gte=self.inicio, created__lte=self.fin)
 
         cons = defaultdict(int)
