@@ -28,9 +28,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import (CreateView, UpdateView, TemplateView,
-                                  DetailView, ListView, RedirectView,
-                                  DeleteView, View)
+from django.views.generic import CreateView, UpdateView, TemplateView, \
+    DetailView, ListView, RedirectView, DeleteView, View
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
 from django.views.generic.base import ContextMixin
@@ -50,7 +49,7 @@ from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     ComprobanteDeduccion, ConceptoDeduccion, PagoCuenta
 from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
     AdmisionFacturarForm, CorteForm, ExamenFacturarForm, InventarioForm, \
-    PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm, \
+    PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm,\
     VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm, TipoPagoPeriodoForm, \
     PeriodoCiudadForm, CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm, \
     CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm, ReembolsoForm

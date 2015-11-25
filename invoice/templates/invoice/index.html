@@ -411,10 +411,9 @@
                                                     </ul>
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-block btn-primary"
-                                                       href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">{% trans 'Cotizar Contratos' %}</a>
-                                                    <a class="btn btn-block btn-primary"
-                                                       href="{% url 'aseguradora-cotizar-master' aseguradora.id %}">{% trans 'Cotizar Polizas' %}</a>
+                                                    <a class="btn btn-block btn-primary" href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">
+                                                        {% trans 'Cotizar Contratos' %}
+                                                    </a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
