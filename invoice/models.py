@@ -268,7 +268,7 @@ class Recibo(TimeStampedModel):
         super(Recibo, self).save(*args, **kwargs)
 
     def asignar_ciudad(self):
-        if self.ciudad is None and self.pk is not None:
+        if self.ciudad is None:
             self.ciudad = self.cajero.profile.ciudad
 
     def crear_correlativo(self):
