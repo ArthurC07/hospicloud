@@ -15,8 +15,10 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
-
+from django import forms
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
+
+from bsc import models
 from bsc.models import Meta, ScoreCard, Escala, Extra, Encuesta, Opcion, \
     Pregunta, Holiday, Login, Puntuacion, Queja, Evaluacion
 
@@ -61,9 +63,20 @@ class PuntuacionAdmin(ForeignKeyAutocompleteAdmin):
     ordering = ['fecha', 'extra', 'usuario', 'puntaje']
 
 
+class EvaluacionForm(forms.ModelForm):
+    class Meta:
+        model = Evaluacion
+        fields = '__all__'
+
+    meta = forms.ModelChoiceField(
+        queryset=models.Meta.objects.order_by('tipo_meta')
+    )
+
+
 class EvaluacionAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ['usuario', 'meta', 'fecha', 'puntaje']
     ordering = ['fecha', 'meta', 'usuario', 'puntaje']
+    form = EvaluacionForm
 
 
 class QuejaAdmin(ForeignKeyAutocompleteAdmin):
