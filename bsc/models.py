@@ -132,6 +132,10 @@ class Puntuacion(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Meta(TimeStampedModel):
+
+    class Meta:
+        ordering = ('tipo_meta', )
+
     CONSULTA_TIME = 'CT'
     PRE_CONSULTA_TIME = 'PCT'
     PRESCRIPTION_PERCENTAGE = 'PP'
