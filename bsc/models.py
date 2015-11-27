@@ -196,7 +196,7 @@ class Meta(TimeStampedModel):
                                       created__range=(inicio, fin)).count()
 
         turnos = usuario.turno_set.filter(
-            inicio__range=(inicio, fin),
+            inicio__range=(inicio, timezone.now()),
             contabilizable=True
         )
 
