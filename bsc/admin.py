@@ -63,7 +63,7 @@ class PuntuacionAdmin(ForeignKeyAutocompleteAdmin):
 
 class EvaluacionAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ['usuario', 'meta', 'fecha', 'puntaje']
-    ordering = ['fecha', 'extra', 'usuario', 'puntaje']
+    ordering = ['fecha', 'meta', 'usuario', 'puntaje']
 
 
 class QuejaAdmin(ForeignKeyAutocompleteAdmin):
