@@ -18,7 +18,7 @@ from django.contrib import admin
 
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from bsc.models import Meta, ScoreCard, Escala, Extra, Encuesta, Opcion, \
-    Pregunta, Holiday, Login, Puntuacion, Queja
+    Pregunta, Holiday, Login, Puntuacion, Queja, Evaluacion
 
 
 class MetaAdmin(ForeignKeyAutocompleteAdmin):
@@ -86,3 +86,4 @@ admin.site.register(Holiday, HolidayAdmin)
 admin.site.register(Login, LoginAdmin)
 admin.site.register(Puntuacion, PuntuacionAdmin)
 admin.site.register(Queja, QuejaAdmin)
+admin.site.register(Evaluacion, EvaluacionAdmin)
