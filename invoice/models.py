@@ -29,6 +29,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 from django.db.models import F, Sum, Min
 from clinique.models import Consulta
+from contracts.models import Aseguradora
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
@@ -249,10 +250,15 @@ class Recibo(TimeStampedModel):
 
     def save(self, *args, **kwargs):
 
+        """
+        Guarda el recibo asignando :class:`Ciudad` y luego generando el
+        correlativo correspondiente a la ciudad
+        """
+
         if self.pk is None:
             if self.cajero.profile is not None and self.cajero.profile.ciudad \
                     is not None:
-                self.crear_correlativo()
+                self.asignar_correlativo()
 
             turnos = TurnoCaja.objects.filter(
                 usuario=self.cajero,
@@ -271,7 +277,7 @@ class Recibo(TimeStampedModel):
         if self.ciudad is None:
             self.ciudad = self.cajero.profile.ciudad
 
-    def crear_correlativo(self):
+    def asignar_correlativo(self):
 
         ciudad = self.cajero.profile.ciudad
         ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
@@ -375,6 +381,7 @@ class Pago(TimeStampedModel):
     monto = models.DecimalField(default=Decimal(), max_digits=11,
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
+    aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
 
     def __str__(self):
         return "Pago en {2} de {0} al recibo {1} {3}".format(self.monto,
@@ -518,10 +525,12 @@ class CierreTurno(TimeStampedModel):
 class CuentaPorCobrar(TimeStampedModel):
     """Represents all the pending :class:`Pago` que deben recolectarse como un
     grupo"""
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     descripcion = models.TextField()
     status = models.ForeignKey(StatusPago)
     minimum = models.DateTimeField(default=timezone.now)
     inicial = models.DecimalField(default=0, max_digits=11, decimal_places=2)
+    enviadas = models.IntegerField(default=0)
 
     def __str__(self):
 
@@ -578,6 +587,7 @@ class CuentaPorCobrar(TimeStampedModel):
 
             self.inicial = self.monto()
             self.status = self.status.next_status
+            self.enviadas = payments.count()
             payments.update(status=self.status)
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
@@ -589,6 +599,7 @@ class PagoCuenta(TimeStampedModel):
     monto = models.DecimalField(default=0, max_digits=11, decimal_places=2)
     fecha = models.DateTimeField(default=timezone.now)
     observaciones = models.TextField()
+    archivo = models.FileField(blank=True, null=True, )
 
     def get_absolute_url(self):
         return self.cuenta.get_absolute_url()
@@ -751,10 +762,8 @@ class Cotizado(TimeStampedModel):
         self.monto = self.precio * self.cantidad
 
         self.tax = Decimal(
-            (
-                self.precio * self.cantidad - self.discount) *
-            self.impuesto).quantize(
-            dot01)
+            (self.precio * self.cantidad - self.discount) * self.impuesto
+        ).quantize(dot01)
 
         self.total = (
             self.tax + self.precio * self.cantidad - self.discount).quantize(

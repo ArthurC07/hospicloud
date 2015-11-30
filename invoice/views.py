@@ -1679,7 +1679,8 @@ class PagoAseguradoraList(ListView, AseguradoraMixin, LoginRequiredMixin):
         return context
 
 
-class CuentaPorCobrarCreateView(CreateView, LoginRequiredMixin):
+class CuentaPorCobrarCreateView(CreateView, CurrentUserFormMixin,
+                                LoginRequiredMixin):
     model = CuentaPorCobrar
     form_class = CuentaPorCobrarForm
 
@@ -1887,7 +1888,8 @@ class ReembolsoCreateView(FormView, LoginRequiredMixin):
         pago.tipo = form.cleaned_data['tipo_de_pago']
         pago.recibo = form.cleaned_data['recibo']
         pago.monto = pago.recibo.total() * porcentaje / 100
-        pago.comprobante = 'Reembolso'
+        pago.comprobante = _('Reembolso')
+        pago.aseguradora = form.cleaned_data['aseguradora']
         pago.save()
 
         return HttpResponseRedirect(pago.recibo.get_absolute_url())
