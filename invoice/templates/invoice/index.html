@@ -19,18 +19,20 @@
             <div class="main-content col-md-12">‏
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#turno" data-toggle="tab">{% trans 'Turno' %}</a>
+                        <li class="active"><a href="#turno"
+                                              data-toggle="tab">{% trans 'Turno' %}</a>
                         </li>
                         <li>
                             <a href="#pendientes" data-toggle="tab">
-                            {% trans 'Recibo Pendiente' %}
+                                {% trans 'Recibo Pendiente' %}
                             </a>
                         </li>
                         <li><a href="#consulta" data-toggle="tab">Consulta</a>
                         </li>
                         {% if config.HOSPITALIZACION_ENABLED %}
                             <li><a href="#admisiones"
-                                   data-toggle="tab">{% trans 'Admisiones' %}</a></li>
+                                   data-toggle="tab">{% trans 'Admisiones' %}</a>
+                            </li>
                         {% endif %}
                         <li>
                             <a href="#emergencias" data-toggle="tab">
@@ -139,7 +141,7 @@
                                 {% for recibo in pendientes %}
                                     <tr>
                                         <td>
-                                            <a class="btn btn-primary"
+                                            <a class="btn btn-primary btn-block"
                                                href="{{ recibo.cliente.get_absolute_url }}">
                                                 {% if recibo.cliente.identificacion %}
                                                     {{ recibo.cliente.identificacion }}
@@ -154,7 +156,7 @@
                                         <td>
                                             <a class="btn btn-success"
                                                href="{{ recibo.get_absolute_url }}">
-                                                Ver Recibo' %}</a>
+                                                {% trans 'Ver Recibo' %}</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -174,7 +176,7 @@
                                 {% for cotizacion in cotizaciones %}
                                     <tr>
                                         <td>
-                                            <a class="btn btn-primary"
+                                            <a class="btn btn-primary btn-block"
                                                href="{{ cotizacion.persona.get_absolute_url }}">
                                                 {% if cotizacion.persona.identificacion %}
                                                     {{ cotizacion.persona.identificacion }}
@@ -214,7 +216,8 @@
                                     {% for admision in admisiones %}
                                         <tr>
                                             <td>
-                                                <a href="{% url 'persona-view-id' admision.paciente.id %}">
+                                                <a class="btn btn-primary btn-block"
+                                                   href="{% url 'persona-view-id' admision.paciente.id %}">
                                                     {% if admision.paciente.identificacion %}
                                                         {{ admision.paciente.identificacion }}
                                                     {% else %}
@@ -237,7 +240,7 @@
                                             <td>{{ admision.paciente.get_sexo_display }}</td>
                                             <td>
                                                 <a class="btn btn-block btn-primary"
-                                                   href="{% url 'admision-invoice' admision.id %}">Facturar</a>
+                                                   href="{% url 'admision-invoice' admision.id %}">{% trans 'Facturar' %}</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -263,7 +266,8 @@
                                 {% for emergencia in emergencias %}
                                     <tr>
                                         <td>
-                                            <a href="{% url 'persona-view-id' emergencia.persona.id %}">
+                                            <a class="btn btn-primary btn-block"
+                                               href="{% url 'persona-view-id' emergencia.persona.id %}">
                                                 {% if emergencia.persona.identificacion %}
                                                     {{ emergencia.persona.identificacion }}
                                                 {% else %}
@@ -306,7 +310,7 @@
                                 {% for consulta in consultas %}
                                     <tr>
                                         <td>
-                                            <a class="btn btn-info"
+                                            <a class="btn btn-info btn-block"
                                                href="{% url 'persona-view-id' consulta.persona.id %}">
                                                 {% if consulta.persona.identificacion %}
                                                     {{ consulta.persona.identificacion }}
@@ -326,7 +330,7 @@
                                                 <a class="btn btn-block btn-primary"
                                                    href="{% url 'consulta-invoice' consulta.id %}">
                                                     {% trans 'Facturar' %}
-                                                    </a>
+                                                </a>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -360,7 +364,7 @@
                                             <td>{{ examen.persona.nacimiento }}</td>
                                             <td>
                                                 <a class="btn btn-block btn-primary"
-                                                   href="{% url 'examen-invoice' examen.id %}">Facturar</a>
+                                                   href="{% url 'examen-invoice' examen.id %}">{% trans 'Facturar' %}</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -422,7 +426,8 @@
                                                     </ul>
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-block btn-primary" href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">
+                                                    <a class="btn btn-block btn-primary"
+                                                       href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">
                                                         {% trans 'Cotizar Contratos' %}
                                                     </a>
                                                 </td>
@@ -493,31 +498,41 @@
                 <nav class="sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked">
                         <li>
-                            <a href="{% url 'invoice-new' %}">Crear
-                                Recibo</a>
+                            <a href="{% url 'invoice-new' %}">
+                                {% trans 'Crear Recibo' %}
+                            </a>
                         </li>
                         {% if not turno %}
-                            <li><a href="{% url 'invoice-turno-nuevo' %}">Abrir
-                                Turno</a></li>
+                            <li>
+                                <a href="{% url 'invoice-turno-nuevo' %}">
+                                    {% trans 'Abrir Turno' %}
+                                </a>
+                            </li>
                         {% endif %}
                         <li>
-                            <a href="{% url 'invoice-turno-activo' %}">Turnos
-                                Activos</a>
+                            <a href="{% url 'invoice-turno-activo' %}">
+                                {% trans 'Turnos Activos' %}
+                            </a>
                         </li>
                         <li>
-                            <a href="{% url 'invoice-estadisticas' %}">Estad&iacute;sticas</a>
+                            <a href="{% url 'invoice-estadisticas' %}">
+                                {% trans 'Estad&iacute;sticas' %}
+                            </a>
                         </li>
                         <li>
-                            <a href="{% url 'invoice-pago-status-index' %}">Ver
-                                Status de los pagos</a>
+                            <a href="{% url 'invoice-pago-status-index' %}">
+                                {% trans 'Ver Status de los pagos' %}
+                            </a>
                         </li>
                         <li>
-                            <a href="{% url 'invoice-cpc-list' %}">Cuentas Por
-                                Cobrar</a>
+                            <a href="{% url 'invoice-cpc-list' %}">
+                                {% trans 'Cuentas Por Cobrar' %}
+                            </a>
                         </li>
                         <li>
-                            <a href="{% url 'comprobante-agregar' %}">Crear un
-                                Comprobante de Deducci&oacute;n</a>
+                            <a href="{% url 'comprobante-agregar' %}">
+                                {% trans 'Crear un Comprobante de Deducci&oacute;n' %}
+                            </a>
                         </li>
                     </ul>
                 </nav>
