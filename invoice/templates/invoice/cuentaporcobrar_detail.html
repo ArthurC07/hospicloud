@@ -80,15 +80,16 @@
                         <td class="text-right">{{ pago.monto }}</td>
                         <td class="no-print">
                             <a class="btn btn-success btn-block"
-                               href="{% url 'invoice-pago-status-next' pago.id %}">Cambiar
-                                a {{ pago.status.next_status }}</a>
+                               href="{% url 'invoice-pago-status-next' pago.id %}">
+                                {% trans 'Cambiar a' %} {{ pago.status.next_status }}
+                            </a>
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="6">Total:</th>
+                    <th colspan="6">{% trans 'Total:' %}</th>
                     <th>{{ cuenta.monto }}</th>
                     <th>&nbsp;</th>
                 </tr>
