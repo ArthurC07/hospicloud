@@ -28,10 +28,8 @@ def get_current_month_range():
         'inicio'].month != month or cache['fin'].month != month:
         fin = date(now.year, now.month,
                    calendar.monthrange(now.year, now.month)[1])
-        inicio = make_day_start(now)
         cache['fin'] = make_end_day(fin)
-        cache['inicio'] = timezone.make_aware(inicio,
-                                              timezone.get_current_timezone())
+        cache['inicio'] = make_day_start(now)
     return cache['fin'], cache['inicio']
 
 
