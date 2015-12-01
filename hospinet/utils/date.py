@@ -22,12 +22,18 @@ def make_end_day(day):
 
 def get_current_month_range():
     now = timezone.now()
-    month = now.month
+    if now.day == 1 and now.month != 1:
+        now = now.replace(month=now.month-1)
+    if now.day == 1 and now.month == 1:
+        now = now.replace(month=12)
 
     if 'inicio' not in cache or 'fin' not in cache or cache[
-        'inicio'].month != month or cache['fin'].month != month:
-        fin = date(now.year, now.month,
-                   calendar.monthrange(now.year, now.month)[1])
+        'inicio'].month != now.month or cache['fin'].month != now.month:
+        fin = date(
+            now.year,
+            now.month,
+            calendar.monthrange(now.year, now.month)[1]
+        )
         cache['fin'] = make_end_day(fin)
         cache['inicio'] = make_day_start(now)
     return cache['fin'], cache['inicio']
