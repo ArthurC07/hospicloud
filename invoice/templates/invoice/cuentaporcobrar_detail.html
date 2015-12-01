@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}{% load l10n %}
 {% block content %}
     <div class="row">
         <div class="main-header col-md-12">‏
@@ -10,34 +11,34 @@
     <div class="row">
         <div class="col-md-12 col-xs-12 main-content">
             <dl class="dl-horizontal col-md-8 col-xs-8">
-                <dt>Descripci&oacute;n</dt>
+                <dt>{% trans 'Descripci&oacute;n' %}</dt>
                 <dd>{{ cuenta }}</dd>
-                <dt>Monto</dt>
+                <dt>{% trans 'Monto' %}</dt>
                 <dd>{{ cuenta.monto }}</dd>
             </dl>
             <div class="col-md-4 col-md-4 no-print">
                 <a class="btn btn-block btn-success"
-                   href="{% url 'invoice-cpc-status-next' cuenta.id %}">Cambiar
-                    a {{ cuenta.status.next_status }}</a>
+                   href="{% url 'invoice-cpc-status-next' cuenta.id %}">
+                    {% trans 'Cambiar a' %} {{ cuenta.status.next_status }}</a>
                 <a class="btn btn-block btn-success"
                    href="{% url 'invoice-cpc-pago-add' cuenta.id %}">
-                    Agregar un Pago a la Cuenta
+                    {% trans 'Agregar un Pago a la Cuenta' %}
                 </a>
             </div>
             <table class="table table-striped table-bordered">
                 <caption>
-                    Recibos y Montos
+                    {% trans 'Recibos y Montos' %}
                 </caption>
                 <thead>
                 <tr>
-                    <th>Recibo</th>
-                    <th>Fecha</th>
-                    <th>Nombre</th>
-                    <th>Ciudad</th>
-                    <td>Aseguradoras</td>
-                    <td>Polizas</td>
-                    <th>Monto</th>
-                    <th class="no-print">Acciones</th>
+                    <th>{% trans 'Recibo' %}</th>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Nombre' %}</th>
+                    <th>{% trans 'Ciudad' %}</th>
+                    <td>{% trans 'Aseguradoras' %}</td>
+                    <td>{% trans 'Polizas' %}</td>
+                    <th>{% trans 'Monto' %}</th>
+                    <th class="no-print">{% trans 'Acciones' %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -54,12 +55,16 @@
                         </td>
                         <td>{{ pago.recibo.ciudad }}</td>
                         <td>
-                            {% for contrato in pago.recibo.cliente.contratos.all %}
-                                {{ contrato.master.aseguradora }}
-                            {% endfor %}
-                            {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
-                                {{ beneficiario.contrato.master.aseguradora }}
-                            {% endfor %}
+                            {% if pago.recibo.aseguradora %}
+                                {% trans 'Registrado' %}{{ pago.recibo.aseguradora }}
+                            {% else %}
+                                {% for contrato in pago.recibo.cliente.contratos.all %}
+                                    {{ contrato.master.aseguradora }}
+                                {% endfor %}
+                                {% for beneficiario in pago.recibo.cliente.beneficiarios.all %}
+                                    {{ beneficiario.contrato.master.aseguradora }}
+                                {% endfor %}
+                            {% endif %}
                         </td>
                         <td>
                             {% for contrato in pago.recibo.cliente.contratos.all %}
@@ -73,7 +78,7 @@
                             {% endfor %}
                         </td>
                         <td class="text-right">{{ pago.monto }}</td>
-                        <td  class="no-print">
+                        <td class="no-print">
                             <a class="btn btn-success btn-block"
                                href="{% url 'invoice-pago-status-next' pago.id %}">Cambiar
                                 a {{ pago.status.next_status }}</a>
@@ -91,20 +96,20 @@
             </table>
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Observaciones</th>
-                        <th>Monto</th>
-                    </tr>
+                <tr>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Observaciones' %}</th>
+                    <th>{% trans 'Monto' %}</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {% for pago in cuenta.pagocuenta_set.all %}
-                        <tr>
-                            <td>{{ pago.fecha }}</td>
-                            <td>{{ pago.observaciones }}</td>
-                            <td>{{ pago.monto }}</td>
-                        </tr>
-                    {% endfor %}
+                {% for pago in cuenta.pagocuenta_set.all %}
+                    <tr>
+                        <td>{{ pago.fecha }}</td>
+                        <td>{{ pago.observaciones }}</td>
+                        <td>{{ pago.monto }}</td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>

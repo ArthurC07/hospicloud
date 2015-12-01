@@ -413,7 +413,8 @@ class ContratoListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         return Contrato.objects.filter(
             cancelado=False,
-            vencimiento__gte=timezone.now().date).all()
+            vencimiento__gte=timezone.now()
+        ).all()
 
     def get_context_data(self, **kwargs):
         """Calculates the total morarorium and makes it available to the
@@ -437,7 +438,8 @@ class ContratoEmpresarialListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         return Contrato.objects.filter(
             cancelado=False,
-            vencimiento__gte=timezone.now().date).all()
+            vencimiento__gte=timezone.now()
+        ).all()
 
 
 class ContratoPeriodoView(TemplateView, LoginRequiredMixin):

@@ -37,6 +37,7 @@ from django.views.generic.edit import FormMixin, FormView
 from clinique.models import Consulta
 from contracts.models import Aseguradora, MasterContract
 from contracts.views import AseguradoraMixin
+from hospinet.utils.date import make_end_day, make_day_start
 from persona.views import PersonaFormMixin
 from spital.forms import DepositoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -49,7 +50,7 @@ from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     ComprobanteDeduccion, ConceptoDeduccion, PagoCuenta
 from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
     AdmisionFacturarForm, CorteForm, ExamenFacturarForm, InventarioForm, \
-    PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm,\
+    PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm, \
     VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm, TipoPagoPeriodoForm, \
     PeriodoCiudadForm, CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm, \
     CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm, ReembolsoForm
@@ -171,13 +172,8 @@ class EstadisticasView(TemplateView):
         context['tipos'] = {}
         context['meses'] = OrderedDict()
 
-        fin = date(now.year, 12, 31)
-        inicio = datetime.combine(date(now.year, 1, 1), time.min)
-        fin = datetime.combine(fin, time.max)
-
-        fin = timezone.make_aware(fin, timezone.get_current_timezone())
-        inicio = timezone.make_aware(inicio,
-                                     timezone.get_current_timezone())
+        fin = make_end_day(date(now.year, 12, 31))
+        inicio = make_day_start(date(now.year, 1, 1))
 
         for tipo in TipoPago.objects.all():
             context['pagos'][tipo] = OrderedDict()
@@ -191,38 +187,28 @@ class EstadisticasView(TemplateView):
             context['tipos'][tipo] = pagado
 
         for n in range(1, 13):
-            fin = date(now.year, n, calendar.monthrange(now.year, n)[1])
-            inicio = datetime.combine(date(now.year, n, 1), time.min)
-            fin = datetime.combine(fin, time.max)
+            inicio = make_day_start(date(now.year, n, 1))
+            fin = make_end_day(
+                date(now.year, n, calendar.monthrange(now.year, n)[1])
+            )
 
-            fin = timezone.make_aware(fin, timezone.get_current_timezone())
-            inicio = timezone.make_aware(inicio,
-                                         timezone.get_current_timezone())
             total = recibos.filter(
                 created__range=(inicio, fin)
-            ).aggregate(total=Sum('sold'))['total']
+            ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
 
-            if total is None:
-                total = Decimal()
             context['meses'][inicio] = []
             context['recibos'].append(total)
 
             for tipo in TipoPago.objects.all():
                 pagado = tipo.pagos.filter(
                     recibo__created__range=(inicio, fin)
-                ).aggregate(total=Sum('monto'))['total']
-                if pagado is None:
-                    pagado = Decimal()
+                ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
                 context['meses'][inicio].append((tipo, pagado))
 
             for tipo in context['pagos']:
-
                 pagado = tipo.pagos.filter(
                     recibo__created__range=(inicio, fin)
-                ).aggregate(total=Sum('monto'))['total']
-                if pagado is None:
-                    pagado = Decimal()
-
+                ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
                 context['pagos'][tipo][inicio] = pagado
             context['months'].append(inicio)
 
@@ -254,30 +240,25 @@ class EstadisticasPeriodoView(TemplateView):
 
         context['pagos'] = []
 
-        total = Recibo.objects.annotate(sold=Sum('ventas__total')).filter(
+        total = Recibo.objects.annotate(sold=Coalesce(
+            Sum('ventas__total'), Decimal())
+        ).filter(
             created__range=(self.inicio, self.fin)
-        ).aggregate(total=Sum('sold'))['total']
+        ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
 
         ventas = Venta.objects.filter(
             recibo__created__range=(self.inicio, self.fin))
         context['ventas'] = ventas.values('item__descripcion').annotate(
-            monto=Sum('monto'),
-            cantidad=Sum('cantidad')
+            monto=Coalesce(Sum('monto'), Decimal()),
+            cantidad=Coalesce(Sum('cantidad'), Decimal())
         ).order_by('-monto')[:20]
-
-        if total is None:
-            total = Decimal()
 
         context['recibos'] = total
 
         for tipo in TipoPago.objects.all():
-
             pagado = tipo.pagos.filter(
                 recibo__created__range=(self.inicio, self.fin)
-            ).aggregate(total=Sum('monto'))['total']
-            if pagado is None:
-                pagado = Decimal()
-
+            ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
             context['pagos'].append((tipo, pagado))
 
         context['inicio'] = self.inicio
@@ -470,13 +451,14 @@ class PagoCreateView(ReciboFormMixin, CreateView, LoginRequiredMixin):
         self.object = form.save(commit=False)
         persona = self.object.recibo.cliente
 
-        if self.object.tipo.solo_asegurados and \
-                        persona.contratos.filter(
-                            vencimiento__lte=timezone.now()).count() <= 0:
+        if self.object.tipo.solo_asegurados and persona.contratos.filter(
+                vencimiento__lte=timezone.now()
+        ).count() <= 0:
 
-            messages.info(self.request,
-                          u'No se puede agregar un este tipo de pago sin '
-                          u'contrato!')
+            messages.info(
+                self.request,
+                _(u'No se puede agregar un este tipo de pago sin ' u'contrato!')
+            )
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(
                     self.request.META['HTTP_REFERER'])
@@ -554,7 +536,7 @@ class ReciboPrintView(LoginRequiredMixin, DetailView):
         self.object = self.get_object()
 
         if not self.object.cerrado:
-            messages.info(self.request, u'El recibo aún no ha sido cerrado')
+            messages.info(self.request, _(u'El recibo aún no ha sido cerrado'))
             return redirect(self.object.get_absolute_url())
 
         return super(ReciboPrintView, self).get(request, *args, **kwargs)
@@ -569,7 +551,10 @@ class ReciboAnularView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         recibo = get_object_or_404(Recibo, pk=kwargs['pk'])
         recibo.anular()
-        messages.info(self.request, u'¡El recibo ha sido marcado como anulado!')
+        messages.info(
+            self.request,
+            _(u'¡El recibo ha sido marcado como anulado!')
+        )
         return recibo.get_absolute_url()
 
 
@@ -585,9 +570,9 @@ class ReciboCerrarView(RedirectView, LoginRequiredMixin):
 
         if not recibo.cerrado:
             messages.info(self.request,
-                          u'¡El recibo no se puede cerrar, revise los pagos')
+                          _(u'¡El recibo no se puede cerrar, revise los pagos'))
         else:
-            messages.info(self.request, u'¡El recibo ha sido cerrado!')
+            messages.info(self.request, _(u'¡El recibo ha sido cerrado!'))
         return recibo.get_absolute_url()
 
 
@@ -613,8 +598,10 @@ class ReciboPeriodoView(FormMixin, TemplateView):
                 created__lte=self.fin,
             )
         else:
-            messages.info(self.request, _(
-                u'Los Datos Ingresados en el formulario no son validos'))
+            messages.info(
+                self.request,
+                _(u'Los Datos Ingresados en el formulario no son validos')
+            )
             return HttpResponseRedirect(reverse('invoice-index'))
 
         return super(ReciboPeriodoView, self).dispatch(request, *args, **kwargs)
@@ -658,10 +645,12 @@ class PagoPeriodoView(TemplateView):
         pagos = Pago.objects.filter(
             recibo__created__range=(self.inicio, self.fin))
         context['group'] = pagos.values('tipo__nombre').annotate(
-            monto=Sum('monto')
+            monto=Coalesce(Sum('monto'), Decimal())
         ).order_by()
         context['pagos'] = pagos
-        context['total'] = pagos.aggregate(total=Sum('monto'))
+        context['total'] = pagos.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )
 
         context['inicio'] = self.inicio
         context['fin'] = self.fin

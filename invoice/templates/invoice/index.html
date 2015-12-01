@@ -9,7 +9,7 @@
         <div class="col-md-12">
             <div class="main-content col-md-12">‏
                 <section class="page-header">
-                    <h1>Caja</h1>
+                    <h1>{% trans 'Caja' %}</h1>
                 </section>
             </div>
         </div>
@@ -19,18 +19,24 @@
             <div class="main-content col-md-12">‏
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#turno" data-toggle="tab">Turno</a>
+                        <li class="active"><a href="#turno" data-toggle="tab">{% trans 'Turno' %}</a>
                         </li>
-                        <li><a href="#pendientes" data-toggle="tab">Recibo
-                            Pendiente</a></li>
+                        <li>
+                            <a href="#pendientes" data-toggle="tab">
+                            {% trans 'Recibo Pendiente' %}
+                            </a>
+                        </li>
                         <li><a href="#consulta" data-toggle="tab">Consulta</a>
                         </li>
                         {% if config.HOSPITALIZACION_ENABLED %}
                             <li><a href="#admisiones"
-                                   data-toggle="tab">Admisiones</a></li>
+                                   data-toggle="tab">{% trans 'Admisiones' %}</a></li>
                         {% endif %}
-                        <li><a href="#emergencias"
-                               data-toggle="tab">Emergencias</a></li>
+                        <li>
+                            <a href="#emergencias" data-toggle="tab">
+                                {% trans 'Emergencias' %}
+                            </a>
+                        </li>
                         {% if config.IMAGENES_ENABLED %}
                             <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
                             </li>
@@ -41,7 +47,9 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#reporte" data-toggle="tab">Reportes</a>
+                            <a href="#reporte" data-toggle="tab">
+                                {% trans 'Reportes' %}
+                            </a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -53,63 +61,63 @@
                                 <dl class="dl-horizontal">
                                     <dt>{% trans 'Total de Ventas' %}</dt>
                                     <dd>{{ turno.venta }}</dd>
-                                    <dt>Recibos nulos</dt>
+                                    <dt>{% trans 'Recibos nulos' %}</dt>
                                     <dd>{{ turno.nulos.count }}</dd>
                                 </dl>
                                 <table class="table table-striped table-bordered table-condensed">
-                                    <caption>Reporte de Facturaci&oacute;n
+                                    <caption>{% trans 'Reporte de Facturaci&oacute;n' %}
                                     </caption>
                                     <thead>
                                     <tr>
-                                        <th>Tipo de Pago</th>
-                                        <th>Monto</th>
+                                        <th>Tipo de Pago' %}</th>
+                                        <th>{% trans 'Monto' %}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td>Apertura</td>
+                                        <td>{% trans 'Apertura' %}</td>
                                         <td>{{ turno.apertura }}</td>
                                     </tr>
                                     {% for pago in turno.pagos %}
                                         <tr>
                                             <td>{{ pago.tipo__nombre }}
-                                                Facturado
+                                                {% trans 'Facturado' %}
                                             </td>
                                             <td>{{ pago.monto }}</td>
                                         </tr>
                                     {% endfor %}
                                     <tr>
-                                        <th>Total de Ingresos</th>
+                                        <th>{% trans 'Total de Ingresos' %}</th>
                                         <th>{{ turno.ingresos }}</th>
                                     </tr>
                                     {% for cierre in turno.cierres.all %}
                                         <tr>
-                                            <td>En Caja {{ cierre.pago }}</td>
+                                            <td>{% trans 'En Caja' %} {{ cierre.pago }}</td>
                                             <td>{{ cierre.monto }}</td>
                                         </tr>
                                     {% endfor %}
                                     <tr>
-                                        <th>Total en Caja</th>
+                                        <th>{% trans 'Total en Caja' %}</th>
                                         <th>{{ turno.total_cierres }}</th>
                                     </tr>
                                     {% for diferencia, monto in turno.diferencia %}
                                         <tr>
-                                            <td>Diferencia {{ diferencia }}</td>
+                                            <td>{% trans 'Diferencia' %} {{ diferencia }}</td>
                                             <td>{{ monto }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <td>Menos Apertura</td>
+                                        <td>{% trans 'Menos Apertura' %}</td>
                                         <td>{{ turno.apertura }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Diferencia Total de Cierre</th>
+                                        <th>Diferencia Total de Cierre' %}</th>
                                         <th>{{ turno.diferencia_total }}</th>
                                     </tr>
                                     <tr>
-                                        <th>Dep&oacute;sitos de Admisiones</th>
+                                        <th>{% trans 'Dep&oacute;sitos de Admisiones' %}</th>
                                         <th>{{ turno.depositado }}</th>
                                     </tr>
                                     </tfoot>
@@ -118,13 +126,13 @@
                         </article>
                         <article id="pendientes" class="tab-pane">
                             <table class="table table-striped">
-                                <caption>Recibos Pendientes</caption>
+                                <caption>{% trans 'Recibos Pendientes' %}</caption>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'C&oacute;digo' %}</th>
-                                    <th>Nombre</th>
-                                    <th>Cajero</th>
-                                    <th>Acciones</th>
+                                    <th>{% trans 'Nombre' %}</th>
+                                    <th>{% trans 'Cajero' %}</th>
+                                    <th>{% trans 'Acciones' %}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -143,9 +151,10 @@
                                             {{ recibo.cliente.nombre_completo }}
                                         </td>
                                         <td>{{ recibo.cajero }}</td>
-                                        <td><a class="btn btn-success"
-                                               href="{{ recibo.get_absolute_url }}">Ver
-                                            Recibo</a>
+                                        <td>
+                                            <a class="btn btn-success"
+                                               href="{{ recibo.get_absolute_url }}">
+                                                Ver Recibo' %}</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -194,11 +203,11 @@
                                     <caption>Admisiones sin Facturar</caption>
                                     <thead class="gradient">
                                     <tr>
-                                        <th>C&oacute;digo</th>
-                                        <th>Nombre</th>
-                                        <th>Edad</th>
-                                        <th>Sexo</th>
-                                        <th>Acciones</th>
+                                        <th>{% trans 'C&oacute;digo' %}</th>
+                                        <th>{% trans 'Nombre' %}</th>
+                                        <th>{% trans 'Edad' %}</th>
+                                        <th>{% trans 'Sexo' %}</th>
+                                        <th>{% trans 'Acciones' %}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -241,13 +250,13 @@
                                 <caption>Emergencias sin Facturar</caption>
                                 <thead class="gradient">
                                 <tr>
-                                    <th>Identificaci&oacute;n</th>
-                                    <th>Nombre</th>
-                                    <th>Edad</th>
-                                    <th>Sexo</th>
-                                    <th>Fecha</th>
-                                    <th>Atendi&oacute;</th>
-                                    <th>Acciones</th>
+                                    <th>{% trans 'Identificaci&oacute;n' %}</th>
+                                    <th>{% trans 'Nombre' %}</th>
+                                    <th>{% trans 'Edad' %}</th>
+                                    <th>{% trans 'Sexo' %}</th>
+                                    <th>{% trans 'Fecha' %}</th>
+                                    <th>{% trans 'Atendi&oacute;' %}</th>
+                                    <th>{% trans 'Acciones' %}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -284,13 +293,13 @@
                                 <caption>Consultas sin Facturar</caption>
                                 <thead class="gradient">
                                 <tr>
-                                    <th>Identificaci&oacute;n</th>
-                                    <th>Nombre</th>
-                                    <th>Edad</th>
-                                    <th>Sexo</th>
-                                    <th>Fecha</th>
-                                    <th>Consultorio</th>
-                                    <th>Acciones</th>
+                                    <th>{% trans 'Identificaci&oacute;n' %}</th>
+                                    <th>{% trans 'Nombre' %}</th>
+                                    <th>{% trans 'Edad' %}</th>
+                                    <th>{% trans 'Sexo' %}</th>
+                                    <th>{% trans 'Fecha' %}</th>
+                                    <th>{% trans 'Consultorio' %}</th>
+                                    <th>{% trans 'Acciones' %}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -315,7 +324,9 @@
                                         <td>
                                             {% if not consulta.facturada %}
                                                 <a class="btn btn-block btn-primary"
-                                                   href="{% url 'consulta-invoice' consulta.id %}">Facturar</a>
+                                                   href="{% url 'consulta-invoice' consulta.id %}">
+                                                    {% trans 'Facturar' %}
+                                                    </a>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -326,17 +337,17 @@
                         {% if config.IMAGENES_ENABLED %}
                             <article id="imagenes" class="tab-pane">
                                 <table class="table table-striped no-more-tables">
-                                    <caption>Estudios de Im&aacute;genes sin
-                                        Facturar
+                                    <caption>
+                                        {% trans 'Estudios de Im&aacute;genes sin Facturar' %}
                                     </caption>
                                     <thead>
                                     <tr>
-                                        <th>Fecha</th>
-                                        <th>Paciente</th>
-                                        <th>Examen</th>
-                                        <th>Identificaci&oacute;n</th>
-                                        <th>Nacimiento</th>
-                                        <th>Acciones</th>
+                                        <th>{% trans 'Fecha' %}</th>
+                                        <th>{% trans 'Paciente' %}</th>
+                                        <th>{% trans 'Examen' %}</th>
+                                        <th>{% trans 'Identificaci&oacute;n' %}</th>
+                                        <th>{% trans 'Nacimiento' %}</th>
+                                        <th>{% trans 'Acciones' %}</th>
                                     </tr>
                                     </thead>
                                     <tbody>

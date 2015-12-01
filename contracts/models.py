@@ -34,6 +34,7 @@ import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
 from hospinet.utils import make_end_day
+from hospinet.utils.date import make_day_start, get_current_month_range
 from inventory.models import ItemTemplate, ItemType
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
@@ -62,10 +63,8 @@ class Vendedor(TimeStampedModel):
         return reverse('contracts-vendedor', args=[self.id])
 
     def get_contratos_mes(self):
-        now = date.today()
-        inicio = date(now.year, now.month, 1)
-        fin = date(now.year, now.month,
-                   calendar.monthrange(now.year, now.month)[1])
+
+        fin, inicio = get_current_month_range()
         return self.get_contratos_vendidos(inicio, fin).count()
 
 
@@ -424,7 +423,7 @@ class Contrato(TimeStampedModel):
     def dias_mora(self):
         """Dias extra que pasaron desde el ultimo pago"""
         pagos = self.pagos.filter(precio=self.plan.precio, ciclo=True).count()
-        ahora = timezone.now().date()
+        ahora = timezone.now()
         cobertura = self.inicio + timedelta(pagos * 30)
         delta = ahora - cobertura
         dias = delta.days
