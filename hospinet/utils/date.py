@@ -11,6 +11,7 @@ cache = {}
 def make_day_start(day):
     inicio = date(day.year, day.month, 1)
     inicio = datetime.combine(inicio, time.min)
+    inicio = timezone.make_aware(inicio, timezone.get_current_timezone())
     return inicio
 
 
