@@ -344,7 +344,7 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
             self.diagnosticos = DiagnosticoClinico.objects.filter(
                 created__gte=self.inicio,
                 created__lte=self.fin
-            ).order_by('paciente__consultorio')
+            ).order_by('consulta__consultorio')
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
 
@@ -356,8 +356,8 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         context['fin'] = self.fin
         context['total'] = self.diagnosticos.count()
 
-        DiagnosticoClinico.objects.values('paciente__consultorio').annotate(
-            consultorio_count=Count('paciente__consultorio')
+        DiagnosticoClinico.objects.values('consulta__consultorio').annotate(
+            consultorio_count=Count('consulta__consultorio')
         ).filter(created__gte=self.inicio, created__lte=self.fin)
 
         cons = defaultdict(int)
@@ -365,7 +365,7 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         for consultorio in consultorios:
             cons[consultorio] = DiagnosticoClinico.objects.filter(
                 created__gte=self.inicio, created__lte=self.fin,
-                paciente__consultorio=consultorio).count()
+                consulta__consultorio=consultorio).count()
 
         cons = dict((k, v) for k, v in cons.items() if v > 0)
 

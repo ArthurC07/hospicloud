@@ -6,7 +6,7 @@ from invoice.models import Recibo
 def corregir_recibo(recibo):
     print(recibo)
     recibo.asignar_ciudad()
-    recibo.crear_correlativo()
+    recibo.asignar_correlativo()
     recibo.save()
 
 

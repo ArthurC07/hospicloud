@@ -18,10 +18,11 @@
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
 from select2.fields import ModelChoiceField
+
+from contracts.models import Aseguradora
 from hospinet.utils.forms import PeriodoForm, FieldSetFormMixin
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado, \
@@ -241,7 +242,7 @@ class PagoStatusForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-class CuentaPorCobrarForm(FieldSetModelFormMixin):
+class CuentaPorCobrarForm(HiddenUserForm):
     class Meta:
         model = CuentaPorCobrar
         fields = ('descripcion',)
@@ -341,6 +342,9 @@ class ReembolsoForm(FieldSetFormMixin):
     recibo = forms.ModelChoiceField(
         queryset=Recibo.objects.all(),
         widget=forms.HiddenInput()
+    )
+    aseguradora = forms.ModelChoiceField(
+        queryset=Aseguradora.objects.all()
     )
 
     def __init__(self, *args, **kwargs):

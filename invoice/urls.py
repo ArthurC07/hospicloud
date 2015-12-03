@@ -48,7 +48,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            ComprobanteDeduccionDetailView,
                            ConceptoDeduccionCreateView, ReembolsoCreateView,
                            PagoDeleteView, AseguradoraContractsCotizarView,
-                           AseguradoraMasterCotizarView, MasterCotizarView)
+                           AseguradoraMasterCotizarView, MasterCotizarView,
+                           TurnoCajaPeriodoView)
 
 urlpatterns = patterns('',
 
@@ -152,6 +153,10 @@ urlpatterns = patterns('',
                        url(r'^periodo/ciudad$',
                            CiudadPeriodoListView.as_view(),
                            name='periodo-ciudad'),
+
+                       url(r'^periodo/turno',
+                           TurnoCajaPeriodoView.as_view(),
+                           name='turno-periodo'),
 
                        url(r'^periodo/venta/area$',
                            VentaAreaListView.as_view(),

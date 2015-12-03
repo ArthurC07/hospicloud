@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-header">
+            <div class="page-header">
+                <h1>
+                    {% trans 'Reporte Condensado de Turnos' %}
+                    <small>del {{ inicio }} al {{ fin }}</small>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{% trans 'Fecha' %}</th>
+                <th>{% trans 'Total' %}</th>
+                {% for tipo in tipos %}
+                <th>{{ tipo }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            {% for dia in dias %}
+                <tr>
+                    <td>{{ dia.fecha }}</td>
+                    <td class="text-right">{{ dia.total }}</td>
+                    {% for pago in dia.pagos %}
+                    <td class="text-right">{{ pago.1 }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
+</div>

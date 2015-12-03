@@ -14,7 +14,8 @@ class CompanyAdmin(admin.ModelAdmin):
 
 class CiudadAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'correlativo_de_recibo', 'prefijo_recibo',
-                    'correlativo_de_comprobante', 'prefijo_comprobante')
+                    'correlativo_de_comprobante', 'prefijo_comprobante',
+                    'cai_recibo', 'cai_comprobante')
     ordering = ['nombre', 'correlativo_de_recibo', 'prefijo_recibo',
                 'correlativo_de_comprobante', 'prefijo_comprobante']
     search_fields = ['nombre', 'correlativo_de_recibo', 'prefijo_recibo',

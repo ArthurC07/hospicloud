@@ -132,6 +132,10 @@ class Puntuacion(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Meta(TimeStampedModel):
+
+    class Meta:
+        ordering = ('tipo_meta', )
+
     CONSULTA_TIME = 'CT'
     PRE_CONSULTA_TIME = 'PCT'
     PRESCRIPTION_PERCENTAGE = 'PP'
@@ -192,7 +196,7 @@ class Meta(TimeStampedModel):
                                       created__range=(inicio, fin)).count()
 
         turnos = usuario.turno_set.filter(
-            inicio__range=(inicio, fin),
+            inicio__range=(inicio, timezone.now()),
             contabilizable=True
         )
 
