@@ -83,9 +83,8 @@ class VentaForm(FieldSetModelFormMixin):
     recibo = forms.ModelChoiceField(label="",
                                     queryset=Recibo.objects.all(),
                                     widget=forms.HiddenInput(), required=False)
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
+    item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
+        activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
