@@ -9,8 +9,7 @@ cache = {}
 
 
 def make_day_start(day):
-    inicio = date(day.year, day.month, 1)
-    inicio = datetime.combine(inicio, time.min)
+    inicio = datetime.combine(day.date(), time.min)
     inicio = timezone.make_aware(inicio, timezone.get_current_timezone())
     return inicio
 
@@ -22,10 +21,7 @@ def make_end_day(day):
 
 def get_current_month_range():
     now = timezone.now()
-    if now.day == 1 and now.month != 1:
-        now = now.replace(month=now.month-1)
-    if now.day == 1 and now.month == 1:
-        now = now.replace(month=12)
+    now = now.replace(day=1)
 
     if 'inicio' not in cache or 'fin' not in cache or cache[
         'inicio'].month != now.month or cache['fin'].month != now.month:

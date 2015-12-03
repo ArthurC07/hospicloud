@@ -16,12 +16,12 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
 from collections import defaultdict, OrderedDict
-from datetime import datetime, time, date
+from datetime import datetime, time, date, timedelta
 from decimal import Decimal
 from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.db.models import Sum
+from django.db.models import Sum, Min, Max
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -34,6 +34,8 @@ from django.forms.models import inlineformset_factory
 from django.contrib.auth.decorators import permission_required
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin, FormView
+from extra_views.dates import daterange
+
 from clinique.models import Consulta
 from contracts.models import Aseguradora, MasterContract
 from contracts.views import AseguradoraMixin
@@ -152,6 +154,10 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['ciudadform'] = PeriodoCiudadForm(prefix='ciudad-periodo')
         context['ciudadform'].set_action('periodo-ciudad')
+
+        context['turnoform'] = PeriodoCiudadForm(prefix='turno-periodo')
+        context['turnoform'].set_action('turno-periodo')
+        context['turnoform'].helper.layout.legend = _(u'Resumen de Turnos')
 
         return context
 
@@ -1483,6 +1489,82 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
             self.object.save()
 
         return HttpResponseRedirect(self.object.get_absolute_url())
+
+
+class TurnoCajaPeriodoView(FormMixin, TemplateView):
+    """
+    Obtiene los :class:`TurnoCaja` que han sido cerrados en un  periodo
+    determinado
+    """
+    form_class = PeriodoCiudadForm
+    prefix = 'turno-periodo'
+    template_name = 'invoice/turno_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Efectua la consulta de los :class:`TurnoCaja` de acuerdo a los
+        datos ingresados en el formulario"""
+
+        self.form = self.get_form_class()(request.GET, prefix=self.prefix)
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+            self.recibos = Recibo.objects.filter(
+                created__gte=self.inicio,
+                created__lte=self.fin,
+            )
+            self.turnos = TurnoCaja.objects.filter(
+                fin__gte=self.inicio,
+                fin__lte=self.fin,
+            )
+        else:
+            messages.info(
+                self.request,
+                _(u'Los Datos Ingresados en el formulario no son validos')
+            )
+            return HttpResponseRedirect(reverse('invoice-index'))
+
+        return super(TurnoCajaPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """Agrega el formulario de :class:`Recibo`"""
+
+        context = super(TurnoCajaPeriodoView, self).get_context_data(**kwargs)
+        context['turnos'] = self.turnos
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        context['total'] = Venta.objects.filter(
+            recibo__in=self.recibos,
+            recibo__nulo=False
+        ).aggregate(total=Coalesce(Sum('total'), Decimal()))['total']
+        context['dias'] = []
+
+        tipos = TipoPago.objects.order_by('nombre').all()
+        context['tipos'] = tipos
+
+        for day in daterange(self.inicio, self.fin + timedelta(1)):
+            inicio = make_day_start(day)
+            fin = make_end_day(day)
+            pagos = CierreTurno.objects.filter(
+                turno__fin__gte=inicio,
+                turno__fin__lte=fin
+            )
+            pagos_list = []
+            for tipo in tipos:
+                pagos_set = (tipo.nombre, pagos.filter(
+                    pago=tipo
+                ).aggregate(
+                    monto=Coalesce(Sum('monto'), Decimal())
+                )['monto'])
+                pagos_list.append(pagos_set)
+
+            total = pagos.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+            )['total']
+            dia = {'fecha': day, 'pagos': pagos_list, 'total': total}
+            context['dias'].append(dia)
+
+        return context
 
 
 class DepositoDetailView(DetailView, LoginRequiredMixin):
