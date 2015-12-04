@@ -17,6 +17,7 @@
             <thead>
             <tr>
                 <th>{% trans 'Fecha' %}</th>
+                <th>{% trans 'Apertura' %}</th>
                 {% for tipo in tipos %}
                 <th>{{ tipo }}</th>
                 {% endfor %}
@@ -26,6 +27,7 @@
             {% for dia in dias %}
                 <tr>
                     <td>{{ dia.fecha }}</td>
+                    <td>{{ dia.apertura }}</td>
                     {% for pago in dia.pagos %}
                     <td class="text-right">{{ pago.1 }}</td>
                     {% endfor %}
