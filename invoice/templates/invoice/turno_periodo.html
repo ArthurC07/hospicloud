@@ -17,19 +17,21 @@
             <thead>
             <tr>
                 <th>{% trans 'Fecha' %}</th>
-                <th>{% trans 'Total' %}</th>
+                <th>{% trans 'Apertura' %}</th>
                 {% for tipo in tipos %}
                 <th>{{ tipo }}</th>
                 {% endfor %}
+                <th>{% trans 'Total' %}</th>
             </tr>
             </thead>
             {% for dia in dias %}
                 <tr>
                     <td>{{ dia.fecha }}</td>
-                    <td class="text-right">{{ dia.total }}</td>
+                    <td>{{ dia.apertura }}</td>
                     {% for pago in dia.pagos %}
                     <td class="text-right">{{ pago.1 }}</td>
                     {% endfor %}
+                    <td class="text-right">{{ dia.total }}</td>
                 </tr>
             {% endfor %}
             </table>

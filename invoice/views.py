@@ -35,7 +35,6 @@ from django.contrib.auth.decorators import permission_required
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin, FormView
 from extra_views.dates import daterange
-
 from clinique.models import Consulta
 from contracts.models import Aseguradora, MasterContract
 from contracts.views import AseguradoraMixin
@@ -1509,6 +1508,7 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = self.form.cleaned_data['fin']
+            self.ciudad = self.form.cleaned_data['ciudad']
             self.recibos = Recibo.objects.filter(
                 created__gte=self.inicio,
                 created__lte=self.fin,
@@ -1524,7 +1524,8 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
-        return super(TurnoCajaPeriodoView, self).dispatch(request, *args, **kwargs)
+        return super(TurnoCajaPeriodoView, self).dispatch(request, *args,
+                                                          **kwargs)
 
     def get_context_data(self, **kwargs):
         """Agrega el formulario de :class:`Recibo`"""
@@ -1539,16 +1540,20 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
         ).aggregate(total=Coalesce(Sum('total'), Decimal()))['total']
         context['dias'] = []
 
-        tipos = TipoPago.objects.order_by('nombre').all()
+        tipos = TipoPago.objects.order_by('orden').filter(reportable=True).all()
         context['tipos'] = tipos
 
         for day in daterange(self.inicio, self.fin + timedelta(1)):
             inicio = make_day_start(day)
             fin = make_end_day(day)
             pagos = CierreTurno.objects.filter(
-                turno__fin__gte=inicio,
-                turno__fin__lte=fin
+                turno__inicio__gte=inicio,
+                turno__inicio__lte=fin,
+                turno__usuario__profile__ciudad=self.ciudad
             )
+            apertura = TurnoCaja.objects.filter(
+                inicio__gte=inicio, inicio__lte=fin
+            ).aggregate(apertura=Coalesce(Sum('apertura'), Decimal))['apertura']
             pagos_list = []
             for tipo in tipos:
                 pagos_set = (tipo.nombre, pagos.filter(
@@ -1561,7 +1566,8 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
             total = pagos.aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
             )['total']
-            dia = {'fecha': day, 'pagos': pagos_list, 'total': total}
+            dia = {'fecha': day, 'pagos': pagos_list, 'total': total,
+                   'apertura': apertura}
             context['dias'].append(dia)
 
         return context

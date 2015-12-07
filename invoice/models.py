@@ -58,6 +58,8 @@ class TipoPago(TimeStampedModel):
     color = ColorField(default='')
     solo_asegurados = models.BooleanField(default=False)
     reembolso = models.BooleanField(default=False)
+    reportable = models.BooleanField(default=True)
+    orden = models.IntegerField(default=0)
 
     def __str__(self):
         return self.nombre
