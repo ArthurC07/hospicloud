@@ -280,10 +280,6 @@ class MasterContractForm(FieldSetModelFormMixin):
         model = MasterContract
         exclude = ('processed',)
 
-    item = forms.ModelChoiceField(
-        queryset=ItemTemplate.objects.filter(activo=True).order_by(
-            'descripcion').all())
-
     administrador = forms.ModelChoiceField(
         queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
     )
