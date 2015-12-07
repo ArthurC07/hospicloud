@@ -266,7 +266,6 @@ class MasterContract(TimeStampedModel):
     adicionales = models.IntegerField(default=0)
     comision = models.IntegerField(default=0)
     processed = models.BooleanField(default=False)
-    item = models.ForeignKey(ItemTemplate, null=True, blank=True)
     gastos_medicos = models.DecimalField(max_digits=11, decimal_places=2,
                                          null=True, blank=True)
     porcentaje = models.DecimalField(max_digits=3, decimal_places=2,
