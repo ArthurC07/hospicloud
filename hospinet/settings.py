@@ -170,7 +170,6 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'crispy_forms',
     'bootstrap_pagination',
-    'select2',
     'storages',
 )
 

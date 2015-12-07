@@ -17,7 +17,6 @@ from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from select2.fields import ModelChoiceField
 from budget.models import Presupuesto, Cuenta, Gasto, Fuente
 from inventory.forms import ProveedorFormMixin
 from invoice.forms import PeriodoForm
@@ -28,8 +27,7 @@ from users.mixins import HiddenUserForm
 
 
 class FuenteFormMixin(FieldSetModelFormMixin):
-    fuente_de_pago = ModelChoiceField(name='', model='',
-                                      queryset=Fuente.objects.all())
+    fuente_de_pago = forms.ModelChoiceField(queryset=Fuente.objects.all())
 
 
 class PresupuestoForm(CiudadFormMixin):
@@ -44,8 +42,8 @@ class PresupuestoForm(CiudadFormMixin):
 
 
 class PresupuestoFormMixin(FieldSetModelFormMixin):
-    presupuesto = ModelChoiceField(queryset=Presupuesto.objects.all(), name="",
-                                   model="", widget=forms.HiddenInput())
+    presupuesto = forms.ModelChoiceField(queryset=Presupuesto.objects.all(),
+                                         widget=forms.HiddenInput())
 
 
 class CuentaForm(PresupuestoFormMixin):
@@ -60,8 +58,8 @@ class CuentaForm(PresupuestoFormMixin):
 
 
 class CuentaFormMixin(FieldSetModelFormMixin):
-    cuenta = ModelChoiceField(queryset=Cuenta.objects.all(), name="",
-                              model="", label=_(u'Tipo de Gasto'))
+    cuenta = forms.ModelChoiceField(queryset=Cuenta.objects.all(),
+                                    label=_(u'Tipo de Gasto'))
 
 
 class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
@@ -76,8 +74,9 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
         attrs={'rows': 2, 'cols': 40}))
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
-    fuente_de_pago = ModelChoiceField(name='', model='',
-                                      queryset=Fuente.objects.filter(caja=True))
+    fuente_de_pago = forms.ModelChoiceField(queryset=Fuente.objects.filter(
+        caja=True)
+    )
     fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
                                            initial=timezone.now)
 
@@ -120,10 +119,9 @@ class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
         attrs={'rows': 2, 'cols': 40}))
-    fuente_de_pago = ModelChoiceField(name='', model='',
-                                      queryset=Fuente.objects.filter(
-                                          caja=False))
-
+    fuente_de_pago = forms.ModelChoiceField(queryset=Fuente.objects.filter(
+                                          caja=False)
+    )
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
     fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
@@ -145,7 +143,7 @@ class MontoForm(FieldSetFormMixin):
 
 
 class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
-    cuenta = ModelChoiceField(name='', model='', queryset=Cuenta.objects.all())
+    cuenta = forms.ModelChoiceField(queryset=Cuenta.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(GastoPeriodoCuentaForm, self).__init__(*args, **kwargs)
@@ -154,9 +152,7 @@ class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
 
 
 class GastoPresupuestoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
-    presupuesto = ModelChoiceField(
-        name='', model='', queryset=Presupuesto.objects.all()
-    )
+    presupuesto = forms.ModelChoiceField(queryset=Presupuesto.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(GastoPresupuestoPeriodoCuentaForm, self).__init__(*args, **kwargs)

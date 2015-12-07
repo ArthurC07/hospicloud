@@ -19,8 +19,6 @@ from django import forms
 from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
                               Tratamiento, Hallazgo, Cobro, Diagnostico,
                               ExamenFisico)
-
-from select2.fields import ModelChoiceField
 from crispy_forms.layout import Fieldset
 from persona.forms import FieldSetModelFormMixin
 from persona.models import Persona
@@ -33,7 +31,7 @@ class EmergenciaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Emergencia
-        exclude = ('facturada', )
+        exclude = ('facturada',)
 
     persona = forms.ModelChoiceField(label="",
                                      queryset=Persona.objects.all(),
@@ -136,11 +134,11 @@ class CobroForm(EmergenciaBaseForm):
 
     class Meta:
         model = Cobro
-        exclude = ('facturado', )
+        exclude = ('facturado',)
 
-    cargo = ModelChoiceField(name="", model="",
-                             queryset=ItemTemplate.objects.filter(
-                                 activo=True).order_by('descripcion').all())
+    cargo = forms.ModelChoiceField(
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(CobroForm, self).__init__(*args, **kwargs)

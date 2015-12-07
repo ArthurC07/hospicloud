@@ -20,7 +20,6 @@ from django import forms
 from django.forms import inlineformset_factory
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from select2.fields import ModelChoiceField
 
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
                              Consulta, LecturaSignos, Consultorio,
@@ -57,10 +56,10 @@ class PacienteForm(FieldSetModelFormMixin):
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
-    consultorio = ModelChoiceField(
+    consultorio = forms.ModelChoiceField(
         queryset=Consultorio.objects.filter(activo=True).order_by(
-            'nombre').all(),
-        name="", model="", )
+            'nombre').all()
+    )
 
 
 class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
@@ -112,8 +111,7 @@ class CitaForm(ConsultorioFormMixin):
         model = Cita
         exclude = ('ausente', 'atendida',)
 
-    persona = ModelChoiceField(queryset=Persona.objects.all(), name="",
-                               model="")
+    persona = forms.ModelChoiceField(queryset=Persona.objects.all())
     fecha = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                 initial=timezone.now)
 
@@ -158,9 +156,9 @@ class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin,
         model = DiagnosticoClinico
         fields = '__all__'
 
-    afeccion = ModelChoiceField(
-        queryset=Afeccion.objects.all().order_by('nombre'), name="",
-        model="", required=False)
+    afeccion = forms.ModelChoiceField(
+        queryset=Afeccion.objects.all().order_by('nombre'),
+        required=False)
 
     def __init__(self, *args, **kwargs):
         super(DiagnosticoClinicoForm, self).__init__(*args, **kwargs)
@@ -184,9 +182,9 @@ class CargoForm(HiddenConsultaFormMixin, ItemTemplateFormMixin, HiddenUserForm):
         model = Cargo
         exclude = ('facturado',)
 
-    tipo = ModelChoiceField(
-        queryset=ItemType.objects.filter(consulta=True).all(), name="",
-        model="")
+    tipo = forms.ModelChoiceField(
+        queryset=ItemType.objects.filter(consulta=True).all()
+    )
 
     def __init__(self, *args, **kwargs):
         super(CargoForm, self).__init__(*args, **kwargs)
@@ -275,10 +273,9 @@ class PrescripcionForm(HiddenOrdenMedicaFormMixin):
         model = Prescripcion
         fields = '__all__'
 
-    medicamento = ModelChoiceField(
+    medicamento = forms.ModelChoiceField(
         queryset=ItemTemplate.objects.filter(activo=True).order_by(
-            'descripcion'), name="",
-        model="", required=False)
+            'descripcion'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)

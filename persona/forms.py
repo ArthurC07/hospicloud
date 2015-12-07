@@ -21,7 +21,6 @@ from django.utils import timezone
 from hospinet.utils.forms import FieldSetModelFormMixin, DateWidget, \
     DateTimeWidget, FutureDateWidget, FieldSetFormMixin, \
     FieldSetModelFormMixinNoButton
-
 from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, \
     Empleador, Empleo

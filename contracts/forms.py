@@ -19,9 +19,7 @@
 from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
-from select2.fields import ModelChoiceField
 from django.utils.translation import ugettext_lazy as _
-
 from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
                               Vendedor, Beneficiario, LimiteEvento, Meta,
                               Cancelacion, Precontrato, Beneficio,
@@ -60,9 +58,9 @@ class PlanForm(FieldSetModelFormMixin):
         model = Plan
         fields = '__all__'
 
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
+    item = forms.ModelChoiceField(
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(PlanForm, self).__init__(*args, **kwargs)
@@ -89,9 +87,10 @@ class ContratoMasterForm(FieldSetFormMixin):
     persona = forms.ModelChoiceField(label="",
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput())
-    master = ModelChoiceField(name="", model="", label=_(u'Contrato Maestro'),
-                              queryset=MasterContract.objects.all().order_by(
-                                  'plan__nombre'))
+    master = forms.ModelChoiceField(
+        label=_(u'Contrato Maestro'),
+        queryset=MasterContract.objects.all().order_by('plan__nombre')
+    )
     certificado = forms.IntegerField(initial=0)
     vencimiento = forms.DateField(widget=FutureDateWidget, initial=timezone.now)
 
@@ -216,9 +215,9 @@ class BeneficiarioPersonaForm(BasePersonaForm):
         model = Beneficiario
         exclude = ('activo', 'dependiente',)
 
-    contrato = ModelChoiceField(
-        queryset=Contrato.objects.all(),
-        name="nombre", model="")
+    contrato = forms.ModelChoiceField(
+        queryset=Contrato.objects.all()
+    )
     inscripcion = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)
 
@@ -281,13 +280,13 @@ class MasterContractForm(FieldSetModelFormMixin):
         model = MasterContract
         exclude = ('processed',)
 
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
+    item = forms.ModelChoiceField(
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion').all())
 
-    administrador = ModelChoiceField(
-        queryset=Persona.objects.filter(mostrar_en_cardex=True).all(),
-        name="", model="")
+    administrador = forms.ModelChoiceField(
+        queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
+    )
 
     def __init__(self, *args, **kwargs):
         super(MasterContractForm, self).__init__(*args, **kwargs)
@@ -358,12 +357,12 @@ class AseguradoraForm(FieldSetModelFormMixin):
         model = Aseguradora
         fields = '__all__'
 
-    representante = ModelChoiceField(
-        queryset=Persona.objects.filter(mostrar_en_cardex=True).all(),
-        name="representante", model="")
-    cardex = ModelChoiceField(
-        queryset=Persona.objects.filter(mostrar_en_cardex=True).all(),
-        name="representante", model="")
+    representante = forms.ModelChoiceField(
+        queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
+    )
+    cardex = forms.ModelChoiceField(
+        queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
+    )
 
     def __init__(self, *args, **kwargs):
         super(AseguradoraForm, self).__init__(*args, **kwargs)

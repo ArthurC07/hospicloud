@@ -20,7 +20,6 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.layout import Submit, Fieldset
 from django.utils import timezone
-from select2.fields import ModelChoiceField
 
 from contracts.models import Aseguradora
 from hospinet.utils.forms import PeriodoForm, FieldSetFormMixin
@@ -198,8 +197,7 @@ class TurnoCajaCierreForm(FieldSetModelFormMixin):
 
 
 class VentaPeriodoForm(PeriodoForm):
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
+    item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
                                 activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
@@ -209,7 +207,7 @@ class VentaPeriodoForm(PeriodoForm):
 
 
 class TipoPagoPeriodoForm(PeriodoForm):
-    tipo = ModelChoiceField(name="", model="", queryset=TipoPago.objects.all())
+    tipo = forms.ModelChoiceField(queryset=TipoPago.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(TipoPagoPeriodoForm, self).__init__(*args, **kwargs)
@@ -218,11 +216,11 @@ class TipoPagoPeriodoForm(PeriodoForm):
 
 
 class PeriodoAreaForm(PeriodoForm):
-    area = ModelChoiceField(name="", model="", queryset=ItemType.objects.all())
+    area = forms.ModelChoiceField(queryset=ItemType.objects.all())
 
 
 class PeriodoCiudadForm(PeriodoForm):
-    ciudad = ModelChoiceField(name="", model="", queryset=Ciudad.objects.all())
+    ciudad = forms.ModelChoiceField(queryset=Ciudad.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(PeriodoCiudadForm, self).__init__(*args, **kwargs)
@@ -301,8 +299,7 @@ class CotizadoForm(FieldSetModelFormMixin):
                                         queryset=Cotizacion.objects.all(),
                                         widget=forms.HiddenInput(),
                                         required=False)
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
+    item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
                                 activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
@@ -330,8 +327,7 @@ class ConceptoDeduccionForm(FieldSetModelFormMixin):
                                          queryset=ComprobanteDeduccion.objects.all(),
                                          widget=forms.HiddenInput(),
                                          required=False)
-    concepto = ModelChoiceField(name="", model="",
-                                queryset=ItemTemplate.objects.filter(
+    concepto = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
                                     activo=True).order_by('descripcion').all())
 
 

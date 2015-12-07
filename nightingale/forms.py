@@ -19,9 +19,7 @@ from django import forms
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
-from select2.fields import ModelChoiceField
 from django.utils import timezone
-
 from spital.models import Admision
 from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
                                 Glucosuria, Ingesta, Excreta, NotaEnfermeria,
@@ -61,11 +59,11 @@ class CargoForm(AdmisionBaseForm):
 
     class Meta:
         model = Cargo
-        exclude = ('facturada', )
+        exclude = ('facturada',)
 
-    cargo = ModelChoiceField(
+    cargo = forms.ModelChoiceField(
         queryset=ItemTemplate.objects.filter(activo=True).order_by(
-            'descripcion').all(), name="nombre", model="")
+            'descripcion').all())
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                  initial=timezone.now)
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
@@ -82,7 +80,7 @@ class PreCargoForm(AdmisionBaseForm):
 
     class Meta:
         model = Cargo
-        exclude = ('facturada', )
+        exclude = ('facturada',)
 
     cargo = forms.ModelChoiceField(label="",
                                    queryset=ItemTemplate.objects.filter(
@@ -216,7 +214,6 @@ class NotaEnfermeriaForm(BaseForm):
                                       widget=forms.HiddenInput(),
                                       required=False)
 
-
     def __init__(self, *args, **kwargs):
         super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(u'Agregar Nota Enfermeria',
@@ -244,7 +241,7 @@ class SignoVitalForm(BaseForm):
 
     class Meta:
         model = SignoVital
-        exclude = ("presion_arterial_media", )
+        exclude = ("presion_arterial_media",)
 
     def __init__(self, *args, **kwargs):
         super(SignoVitalForm, self).__init__(*args, **kwargs)
@@ -260,9 +257,8 @@ class MedicamentoForm(AdmisionBaseForm):
         exclude = ('proxima_dosis', 'suministrado')
 
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False)
-    cargo = ModelChoiceField(name='cargo', model='',
-                             queryset=ItemTemplate.objects.filter(
-                                 activo=True).order_by('descripcion').all())
+    cargo = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
+        activo=True).order_by('descripcion').all())
 
     admision = forms.ModelChoiceField(label="",
                                       queryset=Admision.objects.all(),
@@ -367,9 +363,8 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                               initial=timezone.now)
 
-    cargo = ModelChoiceField(name="", model="",
-                             queryset=ItemTemplate.objects.filter(
-                                 activo=True).order_by('descripcion').all())
+    cargo = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
+        activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(OxigenoTerapiaForm, self).__init__(*args, **kwargs)
@@ -381,9 +376,8 @@ class HonorarioForm(AdmisionBaseForm):
         model = Honorario
         fields = '__all__'
 
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
+    item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
+        activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(HonorarioForm, self).__init__(*args, **kwargs)
