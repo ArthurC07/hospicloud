@@ -20,6 +20,7 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
@@ -56,7 +57,7 @@ class Presupuesto(TimeStampedModel):
     inversion = models.BooleanField(default=False)
 
     def __str__(self):
-        return u'Presupuesto de {0}'.format(self.ciudad.nombre)
+        return _(u'Presupuesto de {0}').format(self.ciudad.nombre)
 
     def get_absolute_url(self):
         return reverse('budget', args=[self.id])
@@ -149,7 +150,8 @@ class Cuenta(TimeStampedModel):
     limite = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def __str__(self):
-        return u'{0} en {1}'.format(self.nombre, self.presupuesto.ciudad.nombre)
+        return _(u'{0} en {1}').format(self.nombre,
+                                       self.presupuesto.ciudad.nombre)
 
     def get_absolute_url(self):
         return reverse('budget-control', args=[self.presupuesto.id])
@@ -186,17 +188,26 @@ class Cuenta(TimeStampedModel):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
+    def total_cuentas_por_pagar(self):
+        return self.cuentas_por_pagar().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
     def porcentaje_ejecutado_mes_actual(self):
         return self.total_gastos_mes_actual() / max(self.limite, 1) * 100
 
 
 @python_2_unicode_compatible
 class Fuente(TimeStampedModel):
+    class Meta:
+        ordering = ('nombre',)
+
     nombre = models.CharField(max_length=255)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    caja = models.BooleanField(default=False)
 
     def __str__(self):
-        return u'{0} - {1}'.format(self.nombre, self.monto)
+        return self.nombre
 
 
 @python_2_unicode_compatible
@@ -208,24 +219,25 @@ class Gasto(TimeStampedModel):
     pagar y puede mantenerse en espera hasta us fecha máxima de pago, reflejada
     por el campo correspondiente.
     """
-    cuenta = models.ForeignKey(Cuenta)
-    fuente_de_pago = models.ForeignKey(Fuente, null=True, blank=True)
+    cuenta = models.ForeignKey(Cuenta, verbose_name=_(u'Tipo de Cargo'))
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
-    numero_de_factura = models.CharField(max_length=255, blank=True, null=True)
+    fecha_en_factura = models.DateTimeField(default=timezone.now)
+    numero_de_factura = models.CharField(max_length=255, default='')
+    fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
+    factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
+                               blank=True, null=True)
+    fuente_de_pago = models.ForeignKey(Fuente, null=True, blank=True)
     numero_de_comprobante_de_pago = models.CharField(max_length=255, blank=True,
                                                      null=True)
     comprobante_de_pago = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
                                            blank=True, null=True)
-    factura = models.FileField(upload_to='budget/gasto/%Y/%m/%d',
-                               blank=True, null=True)
-    fecha_maxima_de_pago = models.DateTimeField(default=timezone.now)
     fecha_de_pago = models.DateTimeField(default=timezone.now)
-    fecha_en_factura = models.DateTimeField(default=timezone.now)
     ejecutado = models.BooleanField(default=False)
     numero_pagos = models.IntegerField(default=1)
     recepcion_de_facturas_originales = models.BooleanField(default=False)
+    fecha_de_recepcion_de_factura = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def __str__(self):
@@ -237,6 +249,8 @@ class Gasto(TimeStampedModel):
     def ejecutar(self):
 
         self.ejecutado = True
+        self.fuente_de_pago.monto -= self.monto
+        self.fuente_de_pago.save()
         self.save()
 
     def clonar(self):
@@ -255,7 +269,7 @@ class Gasto(TimeStampedModel):
             gasto = self.clonar()
             delta = relativedelta(months=+n)
             gasto.numero_pagos = 1
-            gasto.proximo_pago = gasto.proximo_pago + delta
+            gasto.fecha_maxima_de_pago = gasto.fecha_maxima_de_pago + delta
 
             gasto.save()
 
@@ -419,8 +433,8 @@ class PresupuestoMensual(TimeStampedModel):
     ciudad = models.ForeignKey(Ciudad)
 
     def __str__(self):
-        return u'{0} de {1} en {2}'.format(self.mes, self.anio,
-                                           self.ciudad.nombre)
+        return _(u'{0} de {1} en {2}').format(self.mes, self.anio,
+                                              self.ciudad.nombre)
 
     def total(self):
         return Concepto.objects.select_related(
@@ -436,10 +450,10 @@ class Rubro(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
-        return u'{0} de {1} de {2} en {3}'.format(self.nombre,
-                                                  self.presupuesto.mes,
-                                                  self.presupuesto.anio,
-                                                  self.presupuesto.ciudad)
+        return _(u'{0} de {1} de {2} en {3}').format(self.nombre,
+                                                     self.presupuesto.mes,
+                                                     self.presupuesto.anio,
+                                                     self.presupuesto.ciudad)
 
     def total(self):
         return Concepto.objects.filter(rubro=self).aggregate(

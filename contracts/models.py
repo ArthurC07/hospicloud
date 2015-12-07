@@ -19,8 +19,8 @@ import calendar
 from datetime import date, timedelta, datetime
 from decimal import Decimal
 import operator
+from django.conf import settings
 
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -29,22 +29,25 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
+from django.utils.translation import ugettext_lazy as _
 import unicodecsv
 
 from clinique.models import Consulta, Seguimiento, Cita
 from hospinet.utils import make_end_day
+from hospinet.utils.date import make_day_start, get_current_month_range
 from inventory.models import ItemTemplate, ItemType
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
+from django.core.files.storage import default_storage as storage
 
 server_timezone = timezone.get_current_timezone()
-from django.core.files.storage import default_storage as storage
 
 
 @python_2_unicode_compatible
 class Vendedor(TimeStampedModel):
     """Indica quien realizo una venta de un :clas:`Contrato`"""
-    usuario = models.ForeignKey(User, related_name="vendedores")
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name="vendedores")
     habilitado = models.BooleanField(default=True)
 
     def __str__(self):
@@ -60,10 +63,8 @@ class Vendedor(TimeStampedModel):
         return reverse('contracts-vendedor', args=[self.id])
 
     def get_contratos_mes(self):
-        now = date.today()
-        inicio = date(now.year, now.month, 1)
-        fin = date(now.year, now.month,
-                   calendar.monthrange(now.year, now.month)[1])
+
+        fin, inicio = get_current_month_range()
         return self.get_contratos_vendidos(inicio, fin).count()
 
 
@@ -117,7 +118,8 @@ class Beneficio(TimeStampedModel):
     activo = models.BooleanField(default=True)
     tipo_items = models.ForeignKey(ItemType, related_name='beneficios',
                                    null=True, blank=True)
-    limite = models.IntegerField(default=0, verbose_name=u'Límite de Eventos')
+    limite = models.IntegerField(default=0,
+                                 verbose_name=_(u'Límite de Eventos'))
     descuento_post_limite = models.DecimalField(max_digits=10, decimal_places=2,
                                                 default=0)
     aplicar_a_suspendidos = models.BooleanField(default=False)
@@ -136,7 +138,7 @@ class PCD(TimeStampedModel):
     pc = models.IntegerField(default=0)
 
     def __str__(self):
-        return u'{0} {1}'.format(self.persona.nombre_completo(), self.numero)
+        return _(u'{0} {1}').format(self.persona.nombre_completo(), self.numero)
 
     def get_absolute_url(self):
         return self.persona.get_absolute_url()
@@ -202,8 +204,10 @@ def check_line(line, vencimiento):
             contract.exclusion = line[10]
             contract.save()
         else:
-            contract = Contrato.objects.filter(poliza=poliza_f,
-                                               certificado=file_certificado).first()
+            contract = Contrato.objects.filter(
+                poliza=poliza_f,
+                certificado=file_certificado
+            ).first()
 
             if contract:
                 beneficiario = Beneficiario(persona=persona, contrato=contract)
@@ -254,30 +258,27 @@ class MasterContract(TimeStampedModel):
     plan = models.ForeignKey(Plan, related_name='master_contracts')
     aseguradora = models.ForeignKey(Aseguradora,
                                     related_name='master_contracts')
+    administrador = models.ForeignKey(Persona, null=True, blank=True)
     inicio = models.DateField(default=timezone.now)
-    vencimiento = models.DateField(default=timezone.now)
     contratante = models.ForeignKey(Empleador, blank=True, null=True,
                                     related_name='master_contracts')
     poliza = models.CharField(max_length=255, null=True, blank=True)
     adicionales = models.IntegerField(default=0)
     comision = models.IntegerField(default=0)
-
     processed = models.BooleanField(default=False)
-    item = models.ForeignKey(ItemTemplate, null=True, blank=True)
-    vida = models.DecimalField(max_digits=11, decimal_places=2, null=True,
-                               blank=True)
     gastos_medicos = models.DecimalField(max_digits=11, decimal_places=2,
                                          null=True, blank=True)
     porcentaje = models.DecimalField(max_digits=3, decimal_places=2,
                                      null=True, blank=True)
     ultimo_certificado = models.IntegerField(default=0)
+    facturar_al_administrador = models.BooleanField(default=False)
 
     def __str__(self):
-        nombre = self.plan.nombre
+        nombre = _(u'Poliza {0} {1}').format(self.poliza, self.plan.nombre)
         if self.contratante:
-            nombre += ' ' + self.contratante.nombre
+            nombre += ' - ' + self.contratante.nombre
         if self.aseguradora:
-            nombre += ' ' + self.aseguradora.nombre
+            nombre += ' - ' + self.aseguradora.nombre
         return nombre
 
     def get_absolute_url(self):
@@ -289,10 +290,11 @@ class MasterContract(TimeStampedModel):
                         auto=False):
 
         if auto:
-            self.ultimo = F('ultimo') + 1
+            self.ultimo_certificado = F('ultimo_certificado') + 1
             self.save()
             self.refresh_from_db()
             certificado = self.ultimo_certificado
+            numero = self.ultimo_certificado
 
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=timezone.now(), vencimiento=vencimiento,
@@ -310,9 +312,12 @@ class MasterContract(TimeStampedModel):
             pcd.persona = persona
             if dependiente > 0:
                 dependiente += 1
-            pcd.numero = u'{0}{1}{2}'.format(self.poliza, contract.certificado,
-                                             dependiente)
+            pcd.numero = u'{0}{1:0>6}{2:0>2}'.format(self.poliza,
+                                                     contract.certificado,
+                                                     dependiente)
             pcd.save()
+            contract.numero = pcd.numero
+            contract.save()
 
         return contract
 
@@ -327,8 +332,7 @@ class MasterContract(TimeStampedModel):
 
     def comision_administrativa(self):
 
-        return ((self.vida + self.gastos_medicos) * self.porcentaje).quantize(
-            Decimal("0.01"))
+        return (self.gastos_medicos * self.porcentaje).quantize(Decimal("0.01"))
 
 
 @python_2_unicode_compatible
@@ -347,7 +351,8 @@ class Contrato(TimeStampedModel):
     inicio = models.DateField()
     vencimiento = models.DateTimeField()
     ultimo_pago = models.DateTimeField(default=timezone.now)
-    administradores = models.ManyToManyField(User, related_name='contratos',
+    administradores = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                             related_name='contratos',
                                              blank=True)
     renovacion = models.DateField(null=True, blank=True)
     cancelado = models.BooleanField(default=False)
@@ -367,8 +372,8 @@ class Contrato(TimeStampedModel):
         return reverse('contrato', args=[self.id])
 
     def __str__(self):
-        return u"Contrato {0} de {1}".format(self.numero,
-                                             self.persona.nombre_completo())
+        return _(u"Contrato {0} de {1}").format(self.numero,
+                                                self.persona.nombre_completo())
 
     def total_consultas(self):
         """"Obtiene el total de :class:`Consulta` que los usuarios del contrato
@@ -417,7 +422,7 @@ class Contrato(TimeStampedModel):
     def dias_mora(self):
         """Dias extra que pasaron desde el ultimo pago"""
         pagos = self.pagos.filter(precio=self.plan.precio, ciclo=True).count()
-        ahora = timezone.now().date()
+        ahora = timezone.now()
         cobertura = self.inicio + timedelta(pagos * 30)
         delta = ahora - cobertura
         dias = delta.days
@@ -538,9 +543,9 @@ class LimiteEvento(TimeStampedModel):
         return self.plan.get_absolute_url()
 
     def __str__(self):
-        return u"Límite {0} de {1} en plan {2}".format(self.tipo_evento,
-                                                       self.cantidad,
-                                                       self.plan.nombre)
+        return _(u"Límite {0} de {1} en plan {2}").format(self.tipo_evento,
+                                                          self.cantidad,
+                                                          self.plan.nombre)
 
 
 @python_2_unicode_compatible
@@ -560,9 +565,9 @@ class Evento(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
     def __str__(self):
-        return u"Evento {0} de {1} de {2}".format(self.tipo,
-                                                  self.contrato.numero,
-                                                  self.contrato.persona.nombre_completo())
+        return _(u"Evento {0} de {1} de {2}").format(self.tipo,
+                                                     self.contrato.numero,
+                                                     self.contrato.persona.nombre_completo())
 
 
 class Meta(TimeStampedModel):
@@ -605,7 +610,7 @@ class Precontrato(TimeStampedModel):
                              blank=True, null=True)
 
     def __str__(self):
-        return u'Precontrato de {0}'.format(self.persona.nombre_completo())
+        return _(u'Precontrato de {0}').format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
         return reverse('precontrato', args=[self.id])

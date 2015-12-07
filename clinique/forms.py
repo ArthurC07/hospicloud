@@ -19,6 +19,7 @@ from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.forms import inlineformset_factory
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from select2.fields import ModelChoiceField
 
 from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
@@ -51,7 +52,7 @@ class PacienteForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PacienteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Convertir en Paciente',
+        self.helper.layout = Fieldset(_(u'Convertir en Paciente'),
                                       *self.field_names)
 
 
@@ -92,7 +93,7 @@ class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(ConsultaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Consulta', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Agregar Consulta'), *self.field_names)
 
 
 class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
@@ -102,7 +103,7 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EvaluacionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Evaluación',
+        self.helper.layout = Fieldset(_(u'Agregar Evaluación'),
                                       *self.field_names)
 
 
@@ -118,7 +119,7 @@ class CitaForm(ConsultorioFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CitaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar una Cita', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Agregar una Cita'), *self.field_names)
 
 
 class CitaPersonaForm(CitaForm):
@@ -133,7 +134,7 @@ class SeguimientoForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(SeguimientoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar una Segumiento',
+        self.helper.layout = Fieldset(_(u'Agregar una Segumiento'),
                                       *self.field_names)
 
 
@@ -147,7 +148,7 @@ class LecturaSignosForm(PacienteFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(LecturaSignosForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar una Lectura de Signos',
+        self.helper.layout = Fieldset(_(u'Agregar una Lectura de Signos'),
                                       *self.field_names)
 
 
@@ -163,7 +164,7 @@ class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin,
 
     def __init__(self, *args, **kwargs):
         super(DiagnosticoClinicoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar un Diagnóstico',
+        self.helper.layout = Fieldset(_(u'Agregar un Diagnóstico'),
                                       *self.field_names)
 
 
@@ -174,7 +175,7 @@ class ConsultorioForm(HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(ConsultorioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Crear Consultorio',
+        self.helper.layout = Fieldset(_(u'Crear Consultorio'),
                                       *self.field_names)
 
 
@@ -189,7 +190,7 @@ class CargoForm(HiddenConsultaFormMixin, ItemTemplateFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(CargoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Agregar Cargo'), *self.field_names)
 
 
 class OrdenMedicaForm(HiddenConsultaFormMixin, HiddenUserForm):
@@ -199,7 +200,7 @@ class OrdenMedicaForm(HiddenConsultaFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(OrdenMedicaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Orden Médica',
+        self.helper.layout = Fieldset(_(u'Agregar Orden Médica'),
                                       *self.field_names)
 
 
@@ -210,7 +211,7 @@ class NotaEnfermeriaForm(BasePersonaForm, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Nota de Enfermeria',
+        self.helper.layout = Fieldset(_(u'Agregar Nota de Enfermeria'),
                                       *self.field_names)
 
 
@@ -221,7 +222,7 @@ class ExamenForm(PacienteFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ExamenForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Examen', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Agregar Examen'), *self.field_names)
 
 
 class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
@@ -231,7 +232,7 @@ class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EsperaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Persona a la Sala de Espera',
+        self.helper.layout = Fieldset(_(u'Agregar Persona a la Sala de Espera'),
                                       *self.field_names)
 
 
@@ -242,7 +243,7 @@ class EsperaAusenteForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EsperaAusenteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Marcar Espera como Ausente',
+        self.helper.layout = Fieldset(_(u'Marcar Espera como Ausente'),
                                       *self.field_names)
 
 
@@ -253,18 +254,18 @@ class CitaAusenteForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CitaAusenteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Marcar Cita como Ausente',
+        self.helper.layout = Fieldset(_(u'Marcar Cita como Ausente'),
                                       *self.field_names)
 
 
 class PacienteSearchForm(FieldSetFormMixin):
-    query = forms.CharField(label=u"Nombre o Identidad")
+    query = forms.CharField(label=_(u"Nombre o Identidad"))
     consultorio = forms.ModelChoiceField(queryset=Consultorio.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(PacienteSearchForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', u'Buscar'))
-        self.helper.layout = Fieldset(u'Buscar Paciente', *self.field_names)
+        self.helper.add_input(Submit('submit', _(u'Buscar')))
+        self.helper.layout = Fieldset(_(u'Buscar Paciente'), *self.field_names)
         self.helper.form_method = 'GET'
         self.helper.form_action = 'clinique-paciente-search'
 
@@ -281,7 +282,7 @@ class PrescripcionForm(HiddenOrdenMedicaFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Prescripcion',
+        self.helper.layout = Fieldset(_(u'Agregar Prescripcion'),
                                       *self.field_names)
 
 
@@ -296,7 +297,8 @@ class IncapacidadForm(BasePersonaForm, HiddenConsultaFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(IncapacidadForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Incapacidad', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Agregar Incapacidad'),
+                                      *self.field_names)
 
 
 class ReporteForm(ConsultorioFormMixin):
@@ -306,7 +308,7 @@ class ReporteForm(ConsultorioFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ReporteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Reporte', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Agregar Reporte'), *self.field_names)
 
 
 class RemisionForm(ConsultorioFormMixin, BasePersonaForm):
@@ -316,4 +318,4 @@ class RemisionForm(ConsultorioFormMixin, BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(RemisionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Remitir Paciente', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Remitir Paciente'), *self.field_names)

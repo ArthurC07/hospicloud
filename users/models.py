@@ -14,16 +14,16 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from datetime import timedelta
 from decimal import Decimal
 
-from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+from django.conf import settings
 from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
-
 from guardian.shortcuts import assign_perm
 
 from emergency.models import Emergencia
@@ -39,15 +39,27 @@ class Company(TimeStampedModel):
     cai = models.CharField(max_length=255)
     direccion = models.TextField()
     telefono = models.CharField(max_length=20)
+    chat = models.URLField(blank=True)
+    help = models.URLField(blank=True)
+    emergencia = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                   related_name='emergencia_company')
+    emergencia_extra = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                         related_name='emergencia_extra_company')
+    deposito = models.ForeignKey(ItemTemplate, null=True, blank=True,
+                                 related_name='deposito_company')
+    cambio_monetario = models.DecimalField(max_digits=11, decimal_places=4,
+                                           default=0)
+    receipt_days = models.IntegerField(default=30)
 
     def __str__(self):
-
         return self.nombre
 
 
 @python_2_unicode_compatible
 class Ciudad(TimeStampedModel):
     nombre = models.CharField(max_length=100)
+    cai_recibo = models.CharField(max_length=255, blank=True)
+    cai_comprobante = models.CharField(max_length=255, blank=True)
     correlativo_de_recibo = models.IntegerField(default=0)
     direccion = models.CharField(max_length=255, blank=True)
     telefono = models.CharField(max_length=100, blank=True)
@@ -66,8 +78,8 @@ class Ciudad(TimeStampedModel):
 
 @python_2_unicode_compatible
 class UserProfile(UserenaBaseProfile):
-    user = models.OneToOneField(User, related_name="profile",
-                                blank=True, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                related_name="profile", blank=True, null=True)
     inventario = models.ForeignKey(Inventario, related_name='usuarios',
                                    blank=True, null=True)
     honorario = models.ForeignKey(ItemTemplate, related_name='usuarios',
@@ -75,8 +87,9 @@ class UserProfile(UserenaBaseProfile):
     ciudad = models.ForeignKey(Ciudad, related_name='usuarios', blank=True,
                                null=True)
     bsc = models.ForeignKey('bsc.ScoreCard', related_name='usuarios',
-                            blank=True,
-                            null=True)
+                            blank=True, null=True)
+    bsc2 = models.ForeignKey('bsc.ScoreCard', related_name='usuarios2',
+                             blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -84,13 +97,16 @@ class UserProfile(UserenaBaseProfile):
     def get_metas(self):
         if self.bsc is None:
             return []
+        bsc = self.bsc
 
+        return self.calculate_bsc(bsc)
+
+    def calculate_bsc(self, bsc):
         fin, inicio = get_current_month_range()
-
         goal = {}
         total = Decimal()
         goal['metas'] = []
-        for meta in self.bsc.meta_set.all():
+        for meta in bsc.meta_set.filter(activa=True).all():
             datos = {'logro': meta.logro(self.user, inicio, fin),
                      'tipo': meta.get_tipo_meta_display(),
                      'peso': meta.peso,
@@ -103,19 +119,24 @@ class UserProfile(UserenaBaseProfile):
                 datos['ponderacion'])
             total += datos['logro_ponderado']
             goal['metas'].append(datos)
-
-        goal['escalas'] = self.bsc.get_escala(total)
+        goal['escalas'] = bsc.get_escala(total)
         goal['extras'] = []
-        for extra in self.bsc.extra_set.all():
+        for extra in bsc.extra_set.all():
             datos = {
                 'extra': extra,
                 'logro': extra.cantidad(self.user, inicio, fin),
             }
             goal['extras'].append(datos)
-        goal['extra'] = self.bsc.get_extras(self.user, inicio, fin)
+        goal['extra'] = bsc.get_extras(self.user, inicio, fin)
         goal['total'] = total
-
         return goal
+
+    def get_metas2(self):
+        if self.bsc2 is None:
+            return []
+        bsc = self.bsc2
+
+        return self.calculate_bsc(bsc)
 
     def get_current_month_emergencies(self):
 
@@ -125,9 +146,33 @@ class UserProfile(UserenaBaseProfile):
                                          created__range=(inicio, fin)
                                          ).count()
 
+    def current_month_turns(self):
 
-User.userena_signup = property(
-    lambda u: UserenaSignup.objects.get_or_create(user=u)[0])
+        fin, inicio = get_current_month_range()
+
+        return self.user.turno_set.filter(inicio__range=(inicio, fin)).all()
+
+
+@python_2_unicode_compatible
+class Turno(TimeStampedModel):
+    rango_inicio = timedelta(minutes=20)
+    rango_fin = timedelta(minutes=10)
+
+    nombre = models.CharField(max_length=255)
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    usuarios = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    contabilizable = models.BooleanField(default=False)
+    ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
+
+    def __str__(self):
+        return self.nombre
+
+    def login_inicio(self):
+        return self.inicio - self.rango_inicio
+
+    def login_fin(self):
+        return self.fin + self.rango_fin
 
 
 def create_user_profile(sender, instance, created, **kwargs):
@@ -137,9 +182,9 @@ def create_user_profile(sender, instance, created, **kwargs):
         assign_perm('change_profile', instance, instance.profile)
 
 
-post_save.connect(create_user_profile, sender=User)
+post_save.connect(create_user_profile, sender=settings.AUTH_USER_MODEL)
 
 
 class UserAction(TimeStampedModel):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     action = models.TextField()

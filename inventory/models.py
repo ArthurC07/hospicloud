@@ -41,7 +41,7 @@ class Inventario(models.Model):
     activo = models.BooleanField(default=True)
 
     def __str__(self):
-        return u"Inventario de {0}".format(self.lugar)
+        return _(u"Inventario de {0}").format(self.lugar)
 
     def buscar_item(self, item_template):
         item = self.items.filter(plantilla=item_template).first()
@@ -55,7 +55,7 @@ class Inventario(models.Model):
     def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.disminuir(cantidad, user)
-        
+
     def cargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.aumentar(cantidad, user)
@@ -85,7 +85,7 @@ class ItemType(TimeStampedModel):
         return self.nombre
 
     def get_absolute_url(self):
-        return reverse('inventario-index')
+        return reverse('item-type', args=[self.id])
 
 
 @python_2_unicode_compatible
@@ -128,17 +128,24 @@ class Proveedor(models.Model):
     """
     Represents someone that sells stuff or provides a service to the company
     """
+
     class Meta:
         ordering = ('name', 'rtn')
 
-    name = models.CharField(verbose_name=_(u"descripción"), max_length=255)
+    name = models.CharField(verbose_name=_(u"Nombre Completo de la Empresa"),
+                            max_length=255)
     rtn = models.CharField(max_length=255, blank=True)
     direccion = models.CharField(max_length=255, blank=True)
     contacto = models.CharField(max_length=255, blank=True)
     telefono = models.CharField(max_length=255, blank=True)
+    constancia_de_pagos_a_cuenta = models.FileField(blank=True, null=True,
+                                                    upload_to='inventory/provider/%Y/%m/%d')
 
     def __str__(self):
-        return u'{0} - {1}'.format(self.name, self.rtn)
+        return _(u'{0} - {1}').format(self.name, self.rtn)
+
+    def get_absolute_url(self):
+        return reverse('proveedor', args=[self.id])
 
 
 @python_2_unicode_compatible
@@ -224,7 +231,7 @@ class Requisicion(TimeStampedModel):
         return reverse('requisicion', args=[self.id])
 
     def __str__(self):
-        return u'Requisición Número {1} de {0}'.format(self.inventario.lugar,
+        return _(u'Requisición Número {1} de {0}').format(self.inventario.lugar,
                                                        self.id)
 
     def buscar_item(self, item_template):
@@ -278,7 +285,7 @@ class Transferencia(TimeStampedModel):
             origen = self.origen.lugar
         if self.destino:
             destino = self.destino.lugar
-        return u'Transferencia desde {0} hacia {1}'.format(origen, destino)
+        return _(u'Transferencia desde {0} hacia {1}').format(origen, destino)
 
     def transferir(self):
 
@@ -314,7 +321,7 @@ class Transferido(TimeStampedModel):
     aplicada = models.BooleanField(default=False)
 
     def __str__(self):
-        return u'Transferir {1} {0}'.format(self.item.descripcion,
+        return _(u'Transferir {1} {0}').format(self.item.descripcion,
                                             self.cantidad)
 
     def get_absolute_url(self):
@@ -331,7 +338,7 @@ class Compra(TimeStampedModel):
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
 
     def __str__(self):
-        return u"Compra efectuada el {0}".format(self.created)
+        return _(u"Compra efectuada el {0}").format(self.created)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -383,7 +390,7 @@ class Historial(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='historiales')
 
     def __str__(self):
-        return u'{0} el {1}'.format(self.inventario.lugar,
+        return _(u'{0} el {1}').format(self.inventario.lugar,
                                     self.fecha.strftime('%d/%m/Y'))
 
     def get_absolute_url(self):
@@ -399,7 +406,7 @@ class ItemHistorial(TimeStampedModel):
     cantidad = models.IntegerField(default=0)
 
     def __str__(self):
-        return u'{0} {1} el {2}'.format(self.item.descripcion,
+        return _(u'{0} {1} el {2}').format(self.item.descripcion,
                                         self.historial.inventario.lugar,
                                         self.historial.created.strftime(
                                             '%d/%m/Y'))
@@ -417,11 +424,9 @@ class Cotizacion(TimeStampedModel):
     vencimiento = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-
-        return u'Cotización de {0}'.format(self.proveedor)
+        return _(u'Cotización de {0}').format(self.proveedor)
 
     def get_absolute_url(self):
-
         return reverse('cotizacion-view', args=[self.id])
 
 
@@ -432,5 +437,4 @@ class ItemCotizado(TimeStampedModel):
     precio = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def get_absolute_url(self):
-
         return self.cotizacion.get_absolute_url()

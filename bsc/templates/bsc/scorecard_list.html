@@ -3,13 +3,11 @@
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
-        <div class="col-md-12">
             <div class="main-content col-md-12">
                 <section class="page-header">
                     <h1>Balanced Score Card</h1>
                 </section>
             </div>
-        </div>
     </div>
     <div class="row">
         <section class="col-md-12 main-content">
@@ -21,5 +19,12 @@
                 {% endfor %}
             </ul>
         </section>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content">
+        <div class="col-md-6">
+            {% crispy loginperiodo %}
+        </div>
+        </div>
     </div>
 {% endblock %}

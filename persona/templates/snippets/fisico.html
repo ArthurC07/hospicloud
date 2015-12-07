@@ -1,3 +1,4 @@
+{% load i18n %}{% load l10n %}
 <div class="table-responsive">
 <table class="table table-striped">
 	<caption>Caracter&iacute;sticas F&iacute;sicas</caption>
@@ -21,5 +22,24 @@
       <td class="patient-data">{{ fisico.get_factor_rh_display }}</td>
     </tr>
   </tbody>
+</table>
+<table class="table table-striped">
+    <caption>{% trans 'Histora F&iacute;sica' %}</caption>
+    <thead>
+        <tr>
+            <th>{% trans 'Fecha' %}</th>
+            <th>{% trans 'Altura' %}</th>
+            <th>{% trans 'Peso' %}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for historia in fisico.persona.historiafisica_set.all %}
+        <tr>
+            <td>{{ historia.fecha }}</td>
+            <td>{{ historia.altura }}</td>
+            <td>{{ historia.peso }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
 </table>
 </div>

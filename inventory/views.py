@@ -94,6 +94,14 @@ class ItemTypeCreateView(CreateView, LoginRequiredMixin):
     form_class = ItemTypeForm
 
 
+class ItemTypeDetailView(DetailView, LoginRequiredMixin):
+    model = ItemType
+
+
+class ItemTypeListView(ListView, LoginRequiredMixin):
+    model = ItemType
+
+
 class ItemTemplateUpdateView(UpdateView, LoginRequiredMixin):
     model = ItemTemplate
     form_class = ItemTemplateForm
@@ -457,6 +465,7 @@ class ProveedorListView(ListView, LoginRequiredMixin):
 
 
 class ProveedorDetailView(DetailView, LoginRequiredMixin):
+    model = Proveedor
     template_name = 'inventory/proveedor_detail.html'
 
 

@@ -33,7 +33,7 @@ class EmergenciaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Emergencia
-        fields = '__all__'
+        exclude = ('facturada', )
 
     persona = forms.ModelChoiceField(label="",
                                      queryset=Persona.objects.all(),

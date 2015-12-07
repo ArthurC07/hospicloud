@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from users.models import Ciudad, Company
+from users.models import Ciudad, Company, Turno
+
 
 # admin.site.register(UserProfile)
 
@@ -13,12 +14,19 @@ class CompanyAdmin(admin.ModelAdmin):
 
 class CiudadAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'correlativo_de_recibo', 'prefijo_recibo',
-                    'correlativo_de_comprobante', 'prefijo_comprobante')
+                    'correlativo_de_comprobante', 'prefijo_comprobante',
+                    'cai_recibo', 'cai_comprobante')
     ordering = ['nombre', 'correlativo_de_recibo', 'prefijo_recibo',
                 'correlativo_de_comprobante', 'prefijo_comprobante']
     search_fields = ['nombre', 'correlativo_de_recibo', 'prefijo_recibo',
                      'correlativo_de_comprobante', 'prefijo_comprobante']
 
 
+class TurnoAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'ciudad', 'inicio', 'fin', 'contabilizable']
+    filter_horizontal = ('usuarios', )
+
+
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Ciudad, CiudadAdmin)
+admin.site.register(Turno, TurnoAdmin)

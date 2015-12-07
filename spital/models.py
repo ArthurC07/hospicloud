@@ -17,12 +17,13 @@
 
 from collections import defaultdict
 from decimal import Decimal
+from django.conf import settings
 
 from django.db import models
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 
 from django_extensions.db.models import TimeStampedModel
 
@@ -33,6 +34,7 @@ from inventory.models import ItemTemplate, TipoVenta
 dot01 = Decimal("0.01")
 
 
+@python_2_unicode_compatible
 class CargoAdapter(object):
     def __init__(self):
         self.cantidad = 0
@@ -42,11 +44,9 @@ class CargoAdapter(object):
         self.descuento = Decimal(0)
         self.subtotal = Decimal(0)
 
-    def __unicode__(self):
-        return u'{0} {1}'.format(self.precio_unitario, self.valor)
-
     def __str__(self):
-        return '{0} {1}'.format(self.precio_unitario, self.valor)
+        return _(u'{0} {1}').format(self.precio_unitario, self.valor)
+
 
 @python_2_unicode_compatible
 class Habitacion(models.Model):
@@ -73,7 +73,7 @@ class Habitacion(models.Model):
                              blank=True, null=True)
 
     def __str__(self):
-        return u'{0} {1}'.format(self.get_tipo_display(), self.numero)
+        return _(u'{0} {1}').format(self.get_tipo_display(), self.numero)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta de la :class:`Habitacion`"""
@@ -81,6 +81,7 @@ class Habitacion(models.Model):
         return reverse('habitacion-view', args=[self.id])
 
 
+@python_2_unicode_compatible
 class Admision(models.Model):
     """Permite registrar el Ingreso y estadía de una :class:`Persona` en el
     Hospital.
@@ -106,18 +107,18 @@ class Admision(models.Model):
     )
 
     ARANCELES = (
-        ('E', u"Empleado"),
-        ('J', u"Ejecutivo"),
-        ('X', u"Extranjero"),
+        ('E', _(u"Empleado")),
+        ('J', _(u"Ejecutivo")),
+        ('X', _(u"Extranjero")),
     )
 
     PAGOS = (
-        ('EF', u"Efectivo"),
-        ('CK', u"Cheque"),
-        ('CO', u"Empresa"),
-        ("OC", u"Orden de Compra"),
-        ('TC', u"Tarjeta Crédito"),
-        ('TB', u"Transferencia Bancaria"),
+        ('EF', _(u"Efectivo")),
+        ('CK', _(u"Cheque")),
+        ('CO', _(u"Empresa")),
+        ("OC", _(u"Orden de Compra")),
+        ('TC', _(u"Tarjeta Crédito")),
+        ('TB', _(u"Transferencia Bancaria")),
     )
 
     TIPOS_INGRESOS = (
@@ -149,7 +150,7 @@ class Admision(models.Model):
     deposito = models.CharField(max_length=200, blank=True)
 
     observaciones = models.CharField(max_length=200, blank=True)
-    admitio = models.ForeignKey(User)
+    admitio = models.ForeignKey(settings.AUTH_USER_MODEL)
     admision = models.DateTimeField(default=timezone.now, null=True, blank=True)
     """Indica la fecha y hora en que la :class:`Persona` fue ingresada en
     admisiones"""
@@ -394,10 +395,10 @@ class Admision(models.Model):
 
         return items
 
-    def __unicode__(self):
+    def __str__(self):
 
-        return u"{0} en {1}".format(self.paciente.nombre_completo(),
-                                    self.habitacion)
+        return _(u"{0} en {1}").format(self.paciente.nombre_completo(),
+                                       self.habitacion)
 
     def tiempo_ahora(self):
 
@@ -456,6 +457,7 @@ class Admision(models.Model):
         return self.estado_de_cuenta(True)
 
 
+@python_2_unicode_compatible
 class PreAdmision(TimeStampedModel):
     """Permite ingresar :class:`Personas` desde una :class:`Emergencia` que se
     haya atendido"""
@@ -469,8 +471,8 @@ class PreAdmision(TimeStampedModel):
 
         return reverse('admision-index')
 
-    def __unicode__(self):
-        return u"Preadmision de {0} {1}".format(
+    def __str__(self):
+        return _(u"Preadmision de {0} {1}").format(
             self.emergencia.persona.nombre_completo(), self.completada)
 
 

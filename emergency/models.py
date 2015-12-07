@@ -17,14 +17,17 @@
 
 from collections import defaultdict
 from decimal import Decimal
+from django.conf import settings
 
-from constance import config
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
+
 from django_extensions.db.models import TimeStampedModel
 
 from persona.models import Persona, transfer_object_to_persona, \
@@ -52,9 +55,9 @@ class Emergencia(TimeStampedModel):
     observacion = models.TextField(blank=True, null=True)
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True, blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='emergencias')
-    facturada = models.NullBooleanField(default=False)
+    facturada = models.BooleanField(default=False)
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
 
     def get_absolute_url(self):
@@ -78,14 +81,14 @@ class Emergencia(TimeStampedModel):
 
         horas = self.tiempo()
 
-        emergencia = ItemTemplate.objects.get(pk=config.EMERGENCIA)
+        emergencia = self.usuario.profile.ciudad.emergencia
 
         items[emergencia] = 1
         items[self.usuario.profile.honorario] = 1
 
         if horas >= 1:
             restante = horas - 1
-            extra = ItemTemplate.objects.get(pk=config.EXTRA_EMERGENCIA)
+            extra = self.usuario.profile.ciudad.emergencia_extra
             items[extra] = restante
 
         return items
@@ -104,7 +107,7 @@ class Tratamiento(TimeStampedModel):
 
     emergencia = models.ForeignKey(Emergencia, related_name='tratamientos')
     indicaciones = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='er_tratamientos')
 
     def get_absolute_url(self):
@@ -119,7 +122,7 @@ class Diagnostico(TimeStampedModel):
 
     emergencia = models.ForeignKey(Emergencia, related_name='diagnosticos')
     diagnostico = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='er_diagnosticos')
 
     def get_absolute_url(self):
@@ -138,7 +141,7 @@ class ExamenFisico(TimeStampedModel):
     gastrointestinal = models.TextField()
     extremidades = models.TextField()
     otras = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='examenes_fisicos')
 
     def get_absolute_url(self):
@@ -151,7 +154,7 @@ class Hallazgo(TimeStampedModel):
     emergencia = models.ForeignKey(Emergencia,
                                    related_name='hallazgos')
     hallazgo = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='hallazgos')
 
     def get_absolute_url(self):
@@ -164,7 +167,7 @@ class RemisionInterna(TimeStampedModel):
     emergencia = models.ForeignKey(Emergencia,
                                    related_name='remisiones_internas')
     doctor = models.CharField(max_length=100)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='er_rinternas')
 
     def get_absolute_url(self):
@@ -179,7 +182,7 @@ class RemisionExterna(TimeStampedModel):
     destino = models.CharField(max_length=100)
     diagnostico = models.TextField()
     notas = models.TextField()
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='er_rexternas')
 
     def get_absolute_url(self):
@@ -188,6 +191,7 @@ class RemisionExterna(TimeStampedModel):
         return reverse('emergency-view-id', args=[self.emergencia.id])
 
 
+@python_2_unicode_compatible
 class Cobro(TimeStampedModel):
     """Permite registrar los distintos cargos"""
 
@@ -201,8 +205,8 @@ class Cobro(TimeStampedModel):
 
         return reverse('emergencia-cobro-agregar', args=[self.emergencia.id])
 
-    def __unicode__(self):
-        return u'{1}: {0}'.format(self.cargo.descripcion, self.created)
+    def __str__(self):
+        return _(u'{1}: {0}').format(self.cargo.descripcion, self.created)
 
     def total(self):
         return self.cargo.precio_de_venta * self.cantidad

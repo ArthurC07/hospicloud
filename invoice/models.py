@@ -17,24 +17,19 @@
 from collections import defaultdict
 from decimal import Decimal
 from datetime import timedelta
-
-from constance import config
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
-
 from django.utils import timezone
-
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
-
 from django_extensions.db.models import TimeStampedModel
-
 from django.db.models import F, Sum, Min
-
 from clinique.models import Consulta
+from contracts.models import Aseguradora
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
@@ -63,6 +58,8 @@ class TipoPago(TimeStampedModel):
     color = ColorField(default='')
     solo_asegurados = models.BooleanField(default=False)
     reembolso = models.BooleanField(default=False)
+    reportable = models.BooleanField(default=True)
+    orden = models.IntegerField(default=0)
 
     def __str__(self):
         return self.nombre
@@ -98,7 +95,7 @@ class Recibo(TimeStampedModel):
     cliente = models.ForeignKey(Persona, related_name='recibos')
     ciudad = models.ForeignKey(Ciudad, blank=True, null=True,
                                related_name='recibos')
-    cajero = models.ForeignKey(User, blank=True, null=True,
+    cajero = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                related_name='recibos')
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
     discount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
@@ -116,7 +113,7 @@ class Recibo(TimeStampedModel):
 
     def vencimiento(self):
 
-        return self.emision + timedelta(days=config.RECEIPT_DAYS)
+        return self.emision + timedelta(days=self.ciudad.company.receipt_days)
 
     def facturacion(self):
 
@@ -145,23 +142,27 @@ class Recibo(TimeStampedModel):
 
     def other_currency(self):
 
-        return (self.total() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            Decimal("0.01"))
+        return (
+            self.total() / self.ciudad.company.cambio_monetario
+        ).quantize(dot01)
 
     def impuesto_other(self):
 
-        return (self.impuesto() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            dot01)
+        return (
+            self.impuesto() / self.ciudad.company.cambio_monetario
+        ).quantize(dot01)
 
     def descuento_other(self):
 
-        return (self.descuento() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            dot01)
+        return (
+            self.descuento() / self.ciudad.company.cambio_monetario
+        ).quantize(dot01)
 
     def subtotal_other(self):
 
-        return (self.subtotal() / Decimal(config.CURRENCY_EXCHANGE)).quantize(
-            dot01)
+        return (
+            self.subtotal() / self.ciudad.company.cambio_monetario
+        ).quantize(dot01)
 
     def anular(self):
 
@@ -188,7 +189,7 @@ class Recibo(TimeStampedModel):
         """Crea una representación en texto del :class:`Recibo`"""
 
         if self.nulo:
-            return u'{0} **NULO**'.format(self.cliente.nombre_completo())
+            return _(u'{0} **NULO**').format(self.cliente.nombre_completo())
 
         return self.cliente.nombre_completo()
 
@@ -251,14 +252,15 @@ class Recibo(TimeStampedModel):
 
     def save(self, *args, **kwargs):
 
+        """
+        Guarda el recibo asignando :class:`Ciudad` y luego generando el
+        correlativo correspondiente a la ciudad
+        """
+
         if self.pk is None:
             if self.cajero.profile is not None and self.cajero.profile.ciudad \
                     is not None:
-                ciudad = self.cajero.profile.ciudad
-                ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
-                ciudad.save()
-                ciudad.refresh_from_db()
-                self.correlativo = ciudad.correlativo_de_recibo
+                self.asignar_correlativo()
 
             turnos = TurnoCaja.objects.filter(
                 usuario=self.cajero,
@@ -269,10 +271,21 @@ class Recibo(TimeStampedModel):
                 turno = TurnoCaja(usuario=self.cajero, inicio=timezone.now())
                 turno.save()
 
-        if self.ciudad is None and self.pk is not None:
-            self.ciudad = self.cajero.profile.ciudad
+        self.asignar_ciudad()
 
         super(Recibo, self).save(*args, **kwargs)
+
+    def asignar_ciudad(self):
+        if self.ciudad is None:
+            self.ciudad = self.cajero.profile.ciudad
+
+    def asignar_correlativo(self):
+
+        ciudad = self.cajero.profile.ciudad
+        ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
+        ciudad.save()
+        ciudad.refresh_from_db()
+        self.correlativo = ciudad.correlativo_de_recibo
 
 
 @python_2_unicode_compatible
@@ -302,7 +315,7 @@ class Venta(TimeStampedModel):
 
     def __str__(self):
 
-        return u"{0} a {1}".format(self.item.descripcion, self.recibo.id)
+        return _(u"{0} a {1}").format(self.item.descripcion, self.recibo.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -370,6 +383,7 @@ class Pago(TimeStampedModel):
     monto = models.DecimalField(default=Decimal(), max_digits=11,
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
+    aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
 
     def __str__(self):
         return "Pago en {2} de {0} al recibo {1} {3}".format(self.monto,
@@ -394,14 +408,15 @@ class TurnoCaja(TimeStampedModel):
     """Allows tracking the :class:`Invoice`s created by a :class:`User` and
     to handle the amounts payed by clients"""
 
-    usuario = models.ForeignKey(User, related_name='turno_caja')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='turno_caja')
     inicio = models.DateTimeField(null=True, blank=True)
     fin = models.DateTimeField(null=True, blank=True)
     apertura = models.DecimalField(default=0, max_digits=7, decimal_places=2)
     finalizado = models.BooleanField(default=False)
 
     def __str__(self):
-        return u"Turno de {0}".format(self.usuario.get_full_name())
+        return _(u"Turno de {0}").format(self.usuario.get_full_name())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -452,19 +467,10 @@ class TurnoCaja(TimeStampedModel):
 
     def pagos(self):
 
-        pagos = Pago.objects.filter(recibo__in=self.recibos())
-
-        metodos = defaultdict(Decimal)
-        for tipo in TipoPago.objects.all():
-            metodos[tipo] = 0
-
-        for pago in pagos.all():
-            if pago.monto is None:
-                pago.monto = Decimal()
-                pago.save()
-            metodos[pago.tipo] += pago.monto
-
-        return metodos.iteritems()
+        return Pago.objects.filter(recibo__in=self.recibos()).order_by().values(
+            'tipo__nombre').annotate(
+            monto=Sum('monto'),
+        )
 
     def total_cierres(self):
         total = CierreTurno.objects.filter(turno=self).aggregate(
@@ -521,10 +527,12 @@ class CierreTurno(TimeStampedModel):
 class CuentaPorCobrar(TimeStampedModel):
     """Represents all the pending :class:`Pago` que deben recolectarse como un
     grupo"""
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     descripcion = models.TextField()
     status = models.ForeignKey(StatusPago)
     minimum = models.DateTimeField(default=timezone.now)
     inicial = models.DecimalField(default=0, max_digits=11, decimal_places=2)
+    enviadas = models.IntegerField(default=0)
 
     def __str__(self):
 
@@ -581,7 +589,8 @@ class CuentaPorCobrar(TimeStampedModel):
 
             self.inicial = self.monto()
             self.status = self.status.next_status
-            payments.update(status=self.status.next_status)
+            self.enviadas = payments.count()
+            payments.update(status=self.status)
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
 
@@ -592,6 +601,7 @@ class PagoCuenta(TimeStampedModel):
     monto = models.DecimalField(default=0, max_digits=11, decimal_places=2)
     fecha = models.DateTimeField(default=timezone.now)
     observaciones = models.TextField()
+    archivo = models.FileField(blank=True, null=True, )
 
     def get_absolute_url(self):
         return self.cuenta.get_absolute_url()
@@ -623,10 +633,12 @@ class Cotizacion(TimeStampedModel):
 
     persona = models.ForeignKey(Persona)
     tipo_de_venta = models.ForeignKey(TipoVenta)
-    usuario = models.ForeignKey(User)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     ciudad = models.ForeignKey(Ciudad, null=True, blank=True)
     discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     facturada = models.BooleanField(default=False)
+    credito = models.BooleanField(default=False)
+    terminada = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -652,6 +664,7 @@ class Cotizacion(TimeStampedModel):
         recibo.cajero = self.usuario
         recibo.ciudad = self.ciudad
         recibo.discount = self.discount
+        recibo.credito = self.credito
         recibo.save()
 
         for cotizado in self.cotizado_set.all():
@@ -678,11 +691,10 @@ class Cotizacion(TimeStampedModel):
     def subtotal(self):
         """Calcula el monto antes de impuestos"""
 
-        return \
-            self.cotizado_set.aggregate(
-                total=Coalesce(Sum('monto', output_field=models.DecimalField()),
-                               Decimal())
-            )['total']
+        return self.cotizado_set.aggregate(
+            total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                           Decimal())
+        )['total']
 
     def impuesto(self):
         """Calcula los impuestos que se deben pagar por este :class:`Cotizacion`
@@ -730,7 +742,7 @@ class Cotizado(TimeStampedModel):
 
     def __str__(self):
 
-        return u"{0} a {1}".format(self.item.descripcion, self.cotizacion.id)
+        return _(u"{0} a {1}").format(self.item.descripcion, self.cotizacion.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -752,10 +764,8 @@ class Cotizado(TimeStampedModel):
         self.monto = self.precio * self.cantidad
 
         self.tax = Decimal(
-            (
-                self.precio * self.cantidad - self.discount) *
-            self.impuesto).quantize(
-            dot01)
+            (self.precio * self.cantidad - self.discount) * self.impuesto
+        ).quantize(dot01)
 
         self.total = (
             self.tax + self.precio * self.cantidad - self.discount).quantize(
@@ -771,19 +781,18 @@ class ComprobanteDeduccion(TimeStampedModel):
     correlativo = models.IntegerField()
 
     def __str__(self):
-
+        if self.proveedor is None:
+            return str(self.correlativo)
         return self.proveedor.name
 
     def get_absolute_url(self):
-
         return reverse('comprobante', args=[self.id])
 
     def numero(self):
-        return u'{0}-{1}'.format(self.ciudad.prefijo_comprobante,
-                                 self.correlativo)
+        return _(u'{0}-{1}').format(self.ciudad.prefijo_comprobante,
+                                    self.correlativo)
 
     def total(self):
-
         return ConceptoDeduccion.objects.filter(comprobante=self).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
@@ -794,7 +803,7 @@ class ComprobanteDeduccion(TimeStampedModel):
             ciudad.correlativo_de_comprobante = F(
                 'correlativo_de_comprobante') + 1
             ciudad.save()
-            ciudad = Ciudad.objects.get(pk=ciudad.pk)
+            ciudad.refresh_from_db()
             self.correlativo = ciudad.correlativo_de_comprobante
 
         super(ComprobanteDeduccion, self).save(*args, **kwargs)

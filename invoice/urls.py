@@ -46,7 +46,10 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            EstadisticasView, CotizacionFacturar,
                            ComprobanteDeduccionCreateView,
                            ComprobanteDeduccionDetailView,
-                           ConceptoDeduccionCreateView)
+                           ConceptoDeduccionCreateView, ReembolsoCreateView,
+                           PagoDeleteView, AseguradoraContractsCotizarView,
+                           AseguradoraMasterCotizarView, MasterCotizarView,
+                           TurnoCajaPeriodoView)
 
 urlpatterns = patterns('',
 
@@ -94,6 +97,10 @@ urlpatterns = patterns('',
                        url(r'^venta/(?P<pk>\d+)/delete$',
                            VentaDeleteView.as_view(),
                            name='venta-delete'),
+
+                       url(r'^pago/(?P<pk>\d+)/delete$',
+                           PagoDeleteView.as_view(),
+                           name='pago-delete'),
 
                        url(r'^periodo$',
                            ReporteReciboView.as_view(),
@@ -147,6 +154,10 @@ urlpatterns = patterns('',
                            CiudadPeriodoListView.as_view(),
                            name='periodo-ciudad'),
 
+                       url(r'^periodo/turno',
+                           TurnoCajaPeriodoView.as_view(),
+                           name='turno-periodo'),
+
                        url(r'^periodo/venta/area$',
                            VentaAreaListView.as_view(),
                            name='periodo-venta-area'),
@@ -198,6 +209,18 @@ urlpatterns = patterns('',
                        url(r'^aseguradora/(?P<pk>\d+)$',
                            AseguradoraMasterFacturarView.as_view(),
                            name='aseguradora-invoice-master'),
+
+                       url(r'^aseguradora/contratos/cotizar/(?P<pk>\d+)$',
+                           AseguradoraContractsCotizarView.as_view(),
+                           name='aseguradora-cotizar-contrato'),
+
+                       url(r'^aseguradora/maestro/cotizar/(?P<pk>\d+)$',
+                           AseguradoraMasterCotizarView.as_view(),
+                           name='aseguradora-cotizar-master'),
+
+                       url(r'^master/cotizar/(?P<pk>\d+)$',
+                           MasterCotizarView.as_view(),
+                           name='master-cotizar'),
 
                        url(r'^(?P<recibo>\d+)/pago/add$',
                            PagoCreateView.as_view(),
@@ -313,5 +336,9 @@ urlpatterns = patterns('',
                        url(r'^comprobante/(?P<comprobante>\d+)/concepto/add$',
                            ConceptoDeduccionCreateView.as_view(),
                            name='concepto-agregar'),
+
+                       url(r'^reembolso/agregar$',
+                           ReembolsoCreateView.as_view(),
+                           name='reembolso-add'),
 
                        )

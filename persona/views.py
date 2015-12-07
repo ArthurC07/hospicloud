@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView,
                                   ListView, RedirectView)
@@ -82,6 +83,7 @@ class PersonaDetailView(DetailView, LoginRequiredMixin):
 
         if self.object.sexo == 'F':
             antecedente_obstetrico = AntecedenteObstetrico(persona=self.object)
+            antecedente_obstetrico.created = timezone.now()
             antecedente_obstetrico.save()
 
         self.object.save()
