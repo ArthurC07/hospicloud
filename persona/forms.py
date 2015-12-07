@@ -35,7 +35,10 @@ class PersonaForm(FieldSetModelFormMixin):
         exclude = ('duplicado',)
 
     class Media:
-        js = ('js/jquery.validate.min.js', 'js/persona.validator.js',)
+        js = (
+            'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js',
+            'js/persona.validator.js',
+        )
 
     nacimiento = forms.DateField(widget=DateWidget(), required=True,
                                  initial=timezone.now)
