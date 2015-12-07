@@ -14,7 +14,8 @@ class CompanyAdmin(admin.ModelAdmin):
 
 class CiudadAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'correlativo_de_recibo', 'prefijo_recibo',
-                    'correlativo_de_comprobante', 'prefijo_comprobante')
+                    'correlativo_de_comprobante', 'prefijo_comprobante',
+                    'cai_recibo', 'cai_comprobante')
     ordering = ['nombre', 'correlativo_de_recibo', 'prefijo_recibo',
                 'correlativo_de_comprobante', 'prefijo_comprobante']
     search_fields = ['nombre', 'correlativo_de_recibo', 'prefijo_recibo',
@@ -22,8 +23,7 @@ class CiudadAdmin(admin.ModelAdmin):
 
 
 class TurnoAdmin(admin.ModelAdmin):
-    list_display = ['inicio', 'fin', 'lunes', 'martes', 'miercoles', 'jueves',
-                    'viernes', 'sabado', 'domingo']
+    list_display = ['nombre', 'ciudad', 'inicio', 'fin', 'contabilizable']
     filter_horizontal = ('usuarios', )
 
 

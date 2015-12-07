@@ -57,7 +57,7 @@ class Presupuesto(TimeStampedModel):
     inversion = models.BooleanField(default=False)
 
     def __str__(self):
-        return u'Presupuesto de {0}'.format(self.ciudad.nombre)
+        return _(u'Presupuesto de {0}').format(self.ciudad.nombre)
 
     def get_absolute_url(self):
         return reverse('budget', args=[self.id])
@@ -150,7 +150,8 @@ class Cuenta(TimeStampedModel):
     limite = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def __str__(self):
-        return u'{0} en {1}'.format(self.nombre, self.presupuesto.ciudad.nombre)
+        return _(u'{0} en {1}').format(self.nombre,
+                                       self.presupuesto.ciudad.nombre)
 
     def get_absolute_url(self):
         return reverse('budget-control', args=[self.presupuesto.id])
@@ -184,6 +185,11 @@ class Cuenta(TimeStampedModel):
 
     def total_gastos_mes_actual(self):
         return self.gastos_mes_actual().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+    def total_cuentas_por_pagar(self):
+        return self.cuentas_por_pagar().aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
@@ -263,7 +269,7 @@ class Gasto(TimeStampedModel):
             gasto = self.clonar()
             delta = relativedelta(months=+n)
             gasto.numero_pagos = 1
-            gasto.proximo_pago = gasto.proximo_pago + delta
+            gasto.fecha_maxima_de_pago = gasto.fecha_maxima_de_pago + delta
 
             gasto.save()
 
@@ -427,8 +433,8 @@ class PresupuestoMensual(TimeStampedModel):
     ciudad = models.ForeignKey(Ciudad)
 
     def __str__(self):
-        return u'{0} de {1} en {2}'.format(self.mes, self.anio,
-                                           self.ciudad.nombre)
+        return _(u'{0} de {1} en {2}').format(self.mes, self.anio,
+                                              self.ciudad.nombre)
 
     def total(self):
         return Concepto.objects.select_related(
@@ -444,10 +450,10 @@ class Rubro(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
-        return u'{0} de {1} de {2} en {3}'.format(self.nombre,
-                                                  self.presupuesto.mes,
-                                                  self.presupuesto.anio,
-                                                  self.presupuesto.ciudad)
+        return _(u'{0} de {1} de {2} en {3}').format(self.nombre,
+                                                     self.presupuesto.mes,
+                                                     self.presupuesto.anio,
+                                                     self.presupuesto.ciudad)
 
     def total(self):
         return Concepto.objects.filter(rubro=self).aggregate(

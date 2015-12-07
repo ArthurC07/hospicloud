@@ -38,9 +38,9 @@ class Resultado(TimeStampedModel):
         return self.persona.get_absolute_url()
 
 
-def consolidate_contracts(persona, clone):
+def consolidate_lab(persona, clone):
     [transfer_object_to_persona(resultado, persona) for resultado in
      clone.resultados.all()]
 
 
-persona_consolidation_functions.append(consolidate_contracts)
+persona_consolidation_functions.append(consolidate_lab)

@@ -17,16 +17,16 @@
 
 from datetime import timedelta
 from decimal import Decimal
+from django.conf import settings
 
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django_extensions.db.models import TimeStampedModel
 
 from spital.models import Admision
 from inventory.models import ItemTemplate
-
 
 dot01 = Decimal('0.01')
 
@@ -79,7 +79,7 @@ class SignoVital(models.Model, Turno):
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True)
     presion_arterial_media = models.CharField(max_length=200, blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='signos_vitales')
 
     def get_absolute_url(self):
@@ -125,7 +125,7 @@ class Evolucion(models.Model):
     admision = models.ForeignKey(Admision, related_name='evoluciones')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     nota = models.TextField(blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='evoluciones')
 
     def get_absolute_url(self):
@@ -147,7 +147,7 @@ class Cargo(TimeStampedModel, Precio):
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                               related_name='cargos')
     cantidad = models.DecimalField(max_digits=8, decimal_places=2, default=1)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='cargos')
     facturada = models.NullBooleanField(default=False)
 
@@ -171,7 +171,7 @@ class OrdenMedica(models.Model):
     orden = models.TextField(blank=True)
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     doctor = models.CharField(blank=True, null=True, max_length=255)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='ordenes_medicas')
 
     def get_absolute_url(self):
@@ -189,7 +189,7 @@ class Ingesta(models.Model, Turno):
     cantidad = models.IntegerField()
     liquido = models.NullBooleanField(blank=True, null=True)
     via = models.CharField(max_length=200, blank=True, null=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='ingestas')
 
     def get_absolute_url(self):
@@ -203,9 +203,9 @@ class Excreta(models.Model, Turno):
     :class:`Admision`"""
 
     MEDIOS = (
-        ("S", u"Succión"),
-        ("O", "Orina"),
-        ("V", "Vomito"),
+        ("S", _(u"Succión")),
+        ("O", _("Orina")),
+        ("V", _("Vomito")),
     )
 
     admision = models.ForeignKey(Admision, related_name='excretas')
@@ -215,7 +215,7 @@ class Excreta(models.Model, Turno):
     descripcion = models.CharField(max_length=200, blank=True)
     otro = models.CharField(max_length=200, blank=True)
     otros = models.CharField(max_length=200, blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='excretas')
 
     def get_absolute_url(self):
@@ -230,7 +230,7 @@ class NotaEnfermeria(models.Model, Turno):
     admision = models.ForeignKey(Admision, related_name='notas_enfermeria')
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     nota = models.TextField(blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='notas_enfermeria')
     autor = models.CharField(max_length=200, blank=True)
     cerrada = models.BooleanField(default=False)
@@ -249,7 +249,7 @@ class Glicemia(models.Model, Turno):
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.CharField(max_length=200, blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='glicemias')
 
     def get_absolute_url(self):
@@ -265,7 +265,7 @@ class Glucosuria(models.Model, Turno):
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.TextField(blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='glucosurias')
 
     def get_absolute_url(self):
@@ -281,7 +281,7 @@ class Insulina(models.Model, Turno):
     fecha_y_hora = models.DateTimeField(default=timezone.now)
     control = models.CharField(max_length=200, blank=True)
     observacion = models.CharField(max_length=200, blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='insulinas')
 
     def get_absolute_url(self):
@@ -299,7 +299,7 @@ class Sumario(TimeStampedModel):
     procedimiento_efectuado = models.TextField(blank=True)
     condicion = models.TextField(blank=True)
     recomendaciones = models.TextField(blank=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='sumarios')
     fecha = models.DateTimeField(blank=True, null=True)
 
@@ -345,17 +345,17 @@ class Medicamento(TimeStampedModel):
     """
 
     INTERVALOS = (
-        (24, u"Cada 24 Horas"),
-        (12, u"Cada 12 Horas"),
-        (8, u"Cada 8 Horas"),
-        (6, u"Cada 6 Horas"),
-        (4, u"Cada 4 Horas"),
+        (24, _(u"Cada 24 Horas")),
+        (12, _(u"Cada 12 Horas")),
+        (8, _(u"Cada 8 Horas")),
+        (6, _(u"Cada 6 Horas")),
+        (4, _(u"Cada 4 Horas")),
     )
 
     ESTADOS = (
-        (1, u"Activo"),
-        (2, u"Suspendido"),
-        (3, u"Terminado"),
+        (1, _(u"Activo")),
+        (2, _(u"Suspendido")),
+        (3, _(u"Terminado")),
     )
 
     admision = models.ForeignKey(Admision, related_name='medicamentos')
@@ -365,7 +365,7 @@ class Medicamento(TimeStampedModel):
     intervalo = models.IntegerField(blank=True, null=True, choices=INTERVALOS)
     unidades = models.CharField(max_length=200, blank=True)
     repeticiones = models.IntegerField(blank=True, null=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='medicamentos')
     estado = models.IntegerField(blank=True, null=True, choices=ESTADOS,
                                  default=1)
@@ -421,9 +421,9 @@ class Dosis(TimeStampedModel, Turno):
     :class:`Persona`"""
 
     ESTADOS = (
-        (1, u"Pendiente"),
-        (2, u"Rechazada"),
-        (3, u"Administrada"),
+        (1, _(u"Pendiente")),
+        (2, _(u"Rechazada")),
+        (3, _(u"Administrada")),
     )
 
     medicamento = models.ForeignKey(Medicamento, related_name='dosis',
@@ -431,7 +431,7 @@ class Dosis(TimeStampedModel, Turno):
     estado = models.IntegerField(blank=True, null=True, choices=ESTADOS,
                                  default=1)
     recomendacion = models.CharField(max_length=200, blank=True, null=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='dosis')
 
     def get_absolute_url(self):
@@ -448,7 +448,7 @@ class Devolucion(TimeStampedModel, Turno):
     cargo = models.ForeignKey(ItemTemplate, blank=True, null=True,
                               related_name='devoluciones')
     descripcion = models.TextField(max_length=200, blank=True, null=True)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='devoluciones')
 
     def get_absolute_url(self):
@@ -520,7 +520,7 @@ class Honorario(TimeStampedModel):
     monto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     medico = models.CharField(max_length=200, blank=True)
     facturada = models.NullBooleanField(default=False)
-    usuario = models.ForeignKey(User, blank=True, null=True,
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='honorarios')
 
     def get_absolute_url(self):

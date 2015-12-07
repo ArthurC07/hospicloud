@@ -26,6 +26,6 @@ class CustomEditProfileForm(EditProfileForm):
         exclude = EditProfileForm.Meta.exclude + ['id', 'inventario',
                                                   'honorario', 'persona']
 
-class CiudadFormMixin(FieldSetModelFormMixin):
 
+class CiudadFormMixin(FieldSetModelFormMixin):
     ciudad = ModelChoiceField(queryset=Ciudad.objects.all(), name="", model="")

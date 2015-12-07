@@ -31,13 +31,3 @@ $(document).ready(function ($) {
         return false;
     });
 });
-$(document).delegate('a, :button', 'click', function (e) {
-    var lastClicked = $.data(this, 'lastClicked'),
-        now = new Date().getTime();
-
-    if (lastClicked && (now - lastClicked < 1000)) {
-        e.preventDefault();
-    } else {
-        $.data(this, 'lastClicked', now);
-    }
-});

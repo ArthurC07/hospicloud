@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from collections import defaultdict
-from datetime import datetime, date
 import os
 import subprocess
 
@@ -23,6 +22,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_extensions.db.models import TimeStampedModel
@@ -111,8 +111,8 @@ class EstudioProgramado(TimeStampedModel):
     def __str__(self):
         """Devuelve una representación en texto del objeto"""
 
-        return u"{0} de {1}, {2}".format(self.tipo_de_examen, self.persona,
-                                         self.fecha)
+        return _(u"{0} de {1}, {2}").format(self.tipo_de_examen, self.persona,
+                                            self.fecha)
 
 
 class Examen(TimeStampedModel):
@@ -146,13 +146,11 @@ class Examen(TimeStampedModel):
         return reverse('examen-view-id', args=[self.id])
 
     def efectuar(self):
-
         self.efectuado = True
         self.pendiente = False
         self.save()
 
     def cancelar(self):
-
         self.pendiente = False
         self.save()
 

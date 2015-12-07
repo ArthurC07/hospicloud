@@ -18,13 +18,18 @@ from django.contrib import admin
 
 from persona.models import (Persona, EstiloVida, Fisico, Antecedente,
                             AntecedenteQuirurgico, AntecedenteObstetrico,
-                            AntecedenteFamiliar, Empleador, Empleo, Sede)
+                            AntecedenteFamiliar, Empleador, Empleo, Sede,
+                            HistoriaFisica)
 
 
 class PersonaAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'apellido', 'id', 'identificacion')
     ordering = ['id', 'nombre', 'apellido', 'identificacion']
     search_fields = ['nombre', 'apellido', 'identificacion']
+
+
+class HistoriaFisicaAdmin(admin.ModelAdmin):
+    list_display = ['persona', 'fecha', 'altura', 'peso']
 
 
 admin.site.register(Persona, PersonaAdmin)
@@ -37,3 +42,4 @@ admin.site.register(AntecedenteFamiliar)
 admin.site.register(Empleador)
 admin.site.register(Empleo)
 admin.site.register(Sede)
+admin.site.register(HistoriaFisica, HistoriaFisicaAdmin)

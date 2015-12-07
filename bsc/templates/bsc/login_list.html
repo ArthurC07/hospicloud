@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="main-content col-md-12">
+            <section class="page-header">
+                <h1>{% trans 'Quejas Pendientes de Soluci&oacute;n' %}</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12 main-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for login in object_list %}
+                    <tr>
+                    <td>{{ login.created }}</td>
+                    <td>{{ login.user.get_full_name }}</td>
+                    {% empty %}
+                    <li>{% trans 'No se encontraron inicios de sesi&oacute;n' %}</li>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+{% endblock %}

@@ -17,10 +17,7 @@
 
 # Django settings for hospicloud project.
 import os
-
 import environ
-
-from project_settings import *
 
 root = environ.Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 env = environ.Env(DEBUG=(bool, False), )
@@ -174,9 +171,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'bootstrap_pagination',
     'select2',
-    'constance',
     'storages',
-    'constance.backends.database',
 )
 
 AUTHENTICATION_BACKENDS = (

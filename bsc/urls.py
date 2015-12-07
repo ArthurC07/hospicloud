@@ -18,7 +18,9 @@ from django.conf.urls import patterns, url
 
 from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView, \
     EncuestaListView, EncuestaDetailView, RespuestaDetailView, VotoUpdateView, \
-    RespuestaRedirectView, save_votes, ConsultaEncuestadaRedirectView
+    RespuestaRedirectView, save_votes, ConsultaEncuestadaRedirectView, \
+    QuejaCreateView, ArchivoNotasDetailView, ArchivoNotasProcesarView, \
+    QuejaDetailView, QuejaListView, SolucionCreateView, LoginPeriodoView
 
 urlpatterns = patterns('',
 
@@ -64,5 +66,33 @@ urlpatterns = patterns('',
                        url(r'^voto/(?P<pk>\d+)/editar$',
                            VotoUpdateView.as_view(),
                            name='voto-editar'),
+
+                       url(r'^queja/(?P<respuesta>\d+)/agregar$',
+                           QuejaCreateView.as_view(),
+                           name='queja-agregar'),
+
+                       url(r'^quejas/$',
+                           QuejaListView.as_view(),
+                           name='quejas'),
+
+                       url(r'^queja/(?P<pk>\d+)$',
+                           QuejaDetailView.as_view(),
+                           name='queja'),
+
+                       url(r'^queja/(?P<queja>\d+)/solucion/agregar$',
+                           SolucionCreateView.as_view(),
+                           name='solucion-agregar'),
+
+                       url(r'^notas/(?P<pk>\d+)$',
+                           ArchivoNotasDetailView.as_view(),
+                           name='archivonotas'),
+
+                       url(r'^notas/(?P<pk>\d+)/procesar$',
+                           ArchivoNotasProcesarView.as_view(),
+                           name='archivonotas-process'),
+
+                       url(r'^login/periodo',
+                           LoginPeriodoView.as_view(),
+                           name='login-periodo')
 
                        )
