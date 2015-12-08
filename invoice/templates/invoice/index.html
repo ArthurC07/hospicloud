@@ -419,15 +419,22 @@
                                             <tr>
                                                 <td>{{ aseguradora }}</td>
                                                 <td>
-                                                    <ul>
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{% trans 'Poliza' %}</th>
+                                                                <th>{% trans 'Activos' %}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
                                                         {% for master in aseguradora.master_contracts.all %}
-                                                            <li>
-                                                                {{ master.poliza }} {{ master.plan }} {{ master.contratante }}
-                                                                -
-                                                                Activos: {{ master.active_contracts_count }}
-                                                            </li>
+                                                            <tr>
+                                                                <td>{{ master.poliza }} {{ master.plan }} {{ master.contratante }}</td>
+                                                                <td>{{ master.active_contracts_count }}</td>
+                                                            </tr>
                                                         {% endfor %}
-                                                    </ul>
+                                                        </tbody>
+                                                    </table>
                                                 </td>
                                                 <td>
                                                     <a class="btn btn-block btn-primary"

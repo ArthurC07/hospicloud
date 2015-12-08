@@ -120,7 +120,7 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['aseguradoras'] = Aseguradora.objects.all()
         context['cotizaciones'] = Cotizacion.objects.filter(
-            facturada=False, terminada=False
+            facturada=False
         ).all()
 
         context['examenes'] = Examen.objects.filter(
