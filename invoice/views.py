@@ -1075,6 +1075,8 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
             _(u'¡La consulta se marcó como facturada!')
         )
 
+        return recibo.get_absolute_url()
+
     @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
         return super(AseguradoraContractsFacturarView, self).dispatch(*args,
@@ -1137,6 +1139,8 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
             self.request,
             _(u'¡La consulta se marcó como facturada!')
         )
+
+        return cotizacion.get_absolute_url()
 
     @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
@@ -1879,6 +1883,11 @@ class CotizacionFormMixin(CotizacionMixin, FormMixin):
 
 
 class CotizadoCreateView(CotizacionFormMixin, CreateView, LoginRequiredMixin):
+    model = Cotizado
+    form_class = CotizadoForm
+
+
+class CotizadoUpdateView(UpdateView, LoginRequiredMixin):
     model = Cotizado
     form_class = CotizadoForm
 
