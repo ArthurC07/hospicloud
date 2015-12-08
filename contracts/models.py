@@ -16,22 +16,19 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 from decimal import Decimal
 import operator
 from django.conf import settings
-
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, F
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-
 from django_extensions.db.models import TimeStampedModel
 from django.utils.translation import ugettext_lazy as _
 import unicodecsv
-
 from clinique.models import Consulta, Seguimiento, Cita
 from hospinet.utils import make_end_day
 from hospinet.utils.date import make_day_start, get_current_month_range
@@ -63,7 +60,6 @@ class Vendedor(TimeStampedModel):
         return reverse('contracts-vendedor', args=[self.id])
 
     def get_contratos_mes(self):
-
         fin, inicio = get_current_month_range()
         return self.get_contratos_vendidos(inicio, fin).count()
 
@@ -423,7 +419,8 @@ class Contrato(TimeStampedModel):
         """Dias extra que pasaron desde el ultimo pago"""
         pagos = self.pagos.filter(precio=self.plan.precio, ciclo=True).count()
         ahora = timezone.now()
-        cobertura = make_day_start(self.inicio) + timedelta(pagos * 30)
+        cobertura = datetime.combine(self.inicio, time.min) + timedelta(
+            pagos * 30)
         delta = ahora - cobertura
         dias = delta.days
         if dias < 0:
