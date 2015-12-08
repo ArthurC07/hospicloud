@@ -1055,7 +1055,7 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         recibo.save()
-        for master in aseguradora.master_contracts.all():
+        for master in aseguradora.master_contracts().all():
             venta = Venta()
             venta.item = master.plan.item
             venta.recibo = recibo
@@ -1119,7 +1119,7 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         cotizacion.save()
-        for master in aseguradora.master_contracts.filter(
+        for master in aseguradora.master_contracts().filter(
                 facturar_al_administrador=False).all():
             cotizado = Cotizado()
             cotizado.item = master.plan.item
@@ -1174,7 +1174,7 @@ class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         cotizacion.save()
-        for master in aseguradora.master_contracts.filter(
+        for master in aseguradora.master_contracts().filter(
                 facturar_al_administrador=False).all():
             cotizado = Cotizado()
             cotizado.item = master.plan.item
@@ -1275,7 +1275,7 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         recibo.save()
-        for master in aseguradora.master_contracts.all():
+        for master in aseguradora.master_contracts().all():
             venta = Venta()
             venta.item = master.plan.item
             venta.recibo = recibo
