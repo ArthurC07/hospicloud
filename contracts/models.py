@@ -77,6 +77,10 @@ class Aseguradora(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('aseguradora', args=[self.id])
 
+    def master_contracts(self):
+
+        return self.mastercontract_set.order_by('contratante__nombre')
+
 
 @python_2_unicode_compatible
 class Plan(TimeStampedModel):
@@ -252,8 +256,7 @@ class ImportFile(TimeStampedModel):
 class MasterContract(TimeStampedModel):
     vendedor = models.ForeignKey(Vendedor, related_name='master_contracts')
     plan = models.ForeignKey(Plan, related_name='master_contracts')
-    aseguradora = models.ForeignKey(Aseguradora,
-                                    related_name='master_contracts')
+    aseguradora = models.ForeignKey(Aseguradora)
     administrador = models.ForeignKey(Persona, null=True, blank=True)
     inicio = models.DateField(default=timezone.now)
     contratante = models.ForeignKey(Empleador, blank=True, null=True,
