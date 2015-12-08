@@ -378,10 +378,14 @@ class Contrato(TimeStampedModel):
             self.renovacion = self.inicio
             self.save()
 
-        consultas = Consulta.objects.filter(persona=self.persona,
-                                            created__gte=self.renovacion).count()
-        seguimientos = Seguimiento.objects.filter(persona=self.persona,
-                                                  created__gte=self.renovacion).count()
+        consultas = Consulta.objects.filter(
+            persona=self.persona,
+            created__gte=self.renovacion
+        ).count()
+        seguimientos = Seguimiento.objects.filter(
+            persona=self.persona,
+            created__gte=self.renovacion
+        ).count()
         total = seguimientos + consultas
 
         predicates = [Q(persona=beneficiario.persona) for beneficiario
@@ -563,9 +567,11 @@ class Evento(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
     def __str__(self):
-        return _(u"Evento {0} de {1} de {2}").format(self.tipo,
-                                                     self.contrato.numero,
-                                                     self.contrato.persona.nombre_completo())
+        return _(u"Evento {0} de {1} de {2}").format(
+            self.tipo,
+            self.contrato.numero,
+            self.contrato.persona.nombre_completo()
+        )
 
 
 class Meta(TimeStampedModel):
