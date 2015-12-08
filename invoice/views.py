@@ -1067,8 +1067,6 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
             venta.precio = master.plan.item.precio_de_venta
             venta.impuesto = master.plan.item.impuestos
             venta.save()
-            recibo.ventas.add(venta)
-            venta.save()
 
         recibo.save()
 
@@ -1131,8 +1129,6 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
             cotizado.cantidad = master.active_contracts_count()
             cotizado.precio = master.plan.item.precio_de_venta
             cotizado.impuesto = master.plan.item.impuestos
-            cotizado.save()
-            cotizacion.ventas.add(cotizado)
             cotizado.save()
 
         cotizacion.save()
@@ -1237,8 +1233,6 @@ class MasterCotizarView(RedirectView, LoginRequiredMixin):
         cotizado.precio = master.item.precio_de_venta
         cotizado.impuesto = master.plan.item.impuestos
         cotizado.save()
-        cotizacion.cotizado_set.add(cotizado)
-        cotizado.save()
 
         cotizacion.save()
 
@@ -1286,8 +1280,6 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
             venta.cantidad = 1
             venta.precio = master.item.precio_de_venta
             venta.impuesto = master.plan.item.impuestos
-            venta.save()
-            recibo.ventas.add(venta)
             venta.save()
 
         recibo.save()
