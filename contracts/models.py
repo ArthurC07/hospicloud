@@ -423,7 +423,7 @@ class Contrato(TimeStampedModel):
         """Dias extra que pasaron desde el ultimo pago"""
         pagos = self.pagos.filter(precio=self.plan.precio, ciclo=True).count()
         ahora = timezone.now()
-        cobertura = self.inicio + timedelta(pagos * 30)
+        cobertura = make_day_start(self.inicio) + timedelta(pagos * 30)
         delta = ahora - cobertura
         dias = delta.days
         if dias < 0:
