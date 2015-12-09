@@ -75,7 +75,7 @@
                                     </caption>
                                     <thead>
                                     <tr>
-                                        <th>Tipo de Pago' %}</th>
+                                        <th>{% trans 'Tipo de Pago' %}</th>
                                         <th>{% trans 'Monto' %}</th>
                                     </tr>
                                     </thead>
@@ -119,7 +119,7 @@
                                         <td>{{ turno.apertura }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Diferencia Total de Cierre' %}</th>
+                                        <th>{% trans 'Diferencia Total de Cierre' %}</th>
                                         <th>{{ turno.diferencia_total }}</th>
                                     </tr>
                                     <tr>
@@ -152,9 +152,12 @@
                                                 {% else %}
                                                     {{ recibo.cliente.id }}
                                                 {% endif %}
-                                            </a></td>
+                                            </a>
+                                        </td>
                                         <td>
                                             {{ recibo.cliente.nombre_completo }}
+                                            {{ recibo.numero }}
+                                            {{ recibo.created }}
                                         </td>
                                         <td>{{ recibo.cajero }}</td>
                                         <td>
@@ -187,7 +190,8 @@
                                                 {% else %}
                                                     {{ cotizacion.persona.id }}
                                                 {% endif %}
-                                            </a></td>
+                                            </a>
+                                        </td>
                                         <td>
                                             {{ cotizacion.persona.nombre_completo }}
                                         </td>
@@ -206,7 +210,7 @@
                         {% if config.HOSPITALIZACION_ENABLED %}
                             <article id="admisiones" class="tab-pane">
                                 <table class="table table-striped">
-                                    <caption>Admisiones sin Facturar</caption>
+                                    <caption>{% trans 'Admisiones sin Facturar' %}</caption>
                                     <thead class="gradient">
                                     <tr>
                                         <th>{% trans 'C&oacute;digo' %}</th>
@@ -254,7 +258,7 @@
                         {% endif %}
                         <article id="emergencias" class="tab-pane">
                             <table class="table table-striped no-more-tables">
-                                <caption>Emergencias sin Facturar</caption>
+                                <caption>{% trans 'Emergencias sin Facturar' %}</caption>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'Identificaci&oacute;n' %}</th>
