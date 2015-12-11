@@ -21,7 +21,7 @@
                 {% trans 'RTN:' %} {{ recibo.ciudad.company.rtn }}<br>
                 {% trans 'Factura:' %} {% if recibo.nulo %}
                 {% trans 'NULO---NULO---' %} {% endif %}{{ recibo.numero }}<br>
-                {% trans 'C.A.I:' %} {{ recibo.ciudad.cai_recibo }}
+                {% trans 'C.A.I:' %} {{ recibo.ciudad.cai_recibo }}<br>
                 {% trans 'Fecha:' %} {{ recibo.created }}<br>
                 {% trans 'Cliente:' %} {{ recibo.cliente }}
                 {% if not cliente.rtn %} CONSUMIDOR FINAL {% endif %}<br>
