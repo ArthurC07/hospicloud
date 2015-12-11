@@ -1530,6 +1530,7 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
         context['turnos'] = self.turnos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
+        context['ciudad'] = self.ciudad
         context['total'] = Venta.objects.filter(
             recibo__in=self.recibos,
             recibo__nulo=False
