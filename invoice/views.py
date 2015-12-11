@@ -1549,7 +1549,7 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
             )
             apertura = TurnoCaja.objects.filter(
                 inicio__gte=inicio, inicio__lte=fin
-            ).aggregate(apertura=Coalesce(Sum('apertura'), Decimal))['apertura']
+            ).aggregate(apertura=Coalesce(Sum('apertura'), Decimal()))['apertura']
             pagos_list = []
             for tipo in tipos:
                 pagos_set = (tipo.nombre, pagos.filter(
