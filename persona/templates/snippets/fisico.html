@@ -1,24 +1,24 @@
 {% load i18n %}{% load l10n %}
 <div class="table-responsive">
 <table class="table table-striped">
-	<caption>Caracter&iacute;sticas F&iacute;sicas</caption>
+	<caption>{% trans 'Caracter&iacute;sticas F&iacute;sicas' %}</caption>
   <tbody>
     <tr>
-      <th class="data-label">Estatura:</td>
+      <th class="data-label">{% trans 'Estatura:' %}</th>
       <td class="patient-data">{{ fisico.altura }}</td>
-      <th class="data-label">Peso:</th>
+      <th class="data-label">{% trans '' %}Peso:</th>
       <td class="patient-data">{{ fisico.peso }}</td>
     </tr>
     <tr>
-      <th class="data-label">Color de Ojos:</th>
+      <th class="data-label">{% trans 'Color de Ojos:' %}</th>
       <td class="patient-data">{{ fisico.color_de_ojos }}</td>
-      <th class="data-label">Color de Cabello:</th>
+      <th class="data-label">{% trans 'Color de Cabello:' %}</th>
       <td class="patient-data">{{ fisico.color_de_cabello }}</td>
     </tr>
     <tr>
-      <th class="data-label">Tipo de Sangre:</th>
+      <th class="data-label">{% trans 'Tipo de Sangre:' %}</th>
       <td class="patient-data">{{ fisico.get_tipo_de_sangre_display }}</td>
-      <th class="data-label">Factor RH:</th>
+      <th class="data-label">{% trans 'Factor RH:' %}</th>
       <td class="patient-data">{{ fisico.get_factor_rh_display }}</td>
     </tr>
   </tbody>
