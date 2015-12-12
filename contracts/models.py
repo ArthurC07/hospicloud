@@ -16,22 +16,19 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 import calendar
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time
 from decimal import Decimal
 import operator
 from django.conf import settings
-
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, F
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-
 from django_extensions.db.models import TimeStampedModel
 from django.utils.translation import ugettext_lazy as _
 import unicodecsv
-
 from clinique.models import Consulta, Seguimiento, Cita
 from hospinet.utils import make_end_day
 from hospinet.utils.date import make_day_start, get_current_month_range
@@ -63,7 +60,6 @@ class Vendedor(TimeStampedModel):
         return reverse('contracts-vendedor', args=[self.id])
 
     def get_contratos_mes(self):
-
         fin, inicio = get_current_month_range()
         return self.get_contratos_vendidos(inicio, fin).count()
 
@@ -80,6 +76,10 @@ class Aseguradora(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('aseguradora', args=[self.id])
+
+    def master_contracts(self):
+
+        return self.mastercontract_set.order_by('contratante__nombre')
 
 
 @python_2_unicode_compatible
@@ -256,8 +256,7 @@ class ImportFile(TimeStampedModel):
 class MasterContract(TimeStampedModel):
     vendedor = models.ForeignKey(Vendedor, related_name='master_contracts')
     plan = models.ForeignKey(Plan, related_name='master_contracts')
-    aseguradora = models.ForeignKey(Aseguradora,
-                                    related_name='master_contracts')
+    aseguradora = models.ForeignKey(Aseguradora)
     administrador = models.ForeignKey(Persona, null=True, blank=True)
     inicio = models.DateField(default=timezone.now)
     contratante = models.ForeignKey(Empleador, blank=True, null=True,
@@ -382,10 +381,14 @@ class Contrato(TimeStampedModel):
             self.renovacion = self.inicio
             self.save()
 
-        consultas = Consulta.objects.filter(persona=self.persona,
-                                            created__gte=self.renovacion).count()
-        seguimientos = Seguimiento.objects.filter(persona=self.persona,
-                                                  created__gte=self.renovacion).count()
+        consultas = Consulta.objects.filter(
+            persona=self.persona,
+            created__gte=self.renovacion
+        ).count()
+        seguimientos = Seguimiento.objects.filter(
+            persona=self.persona,
+            created__gte=self.renovacion
+        ).count()
         total = seguimientos + consultas
 
         predicates = [Q(persona=beneficiario.persona) for beneficiario
@@ -423,7 +426,9 @@ class Contrato(TimeStampedModel):
         """Dias extra que pasaron desde el ultimo pago"""
         pagos = self.pagos.filter(precio=self.plan.precio, ciclo=True).count()
         ahora = timezone.now()
-        cobertura = self.inicio + timedelta(pagos * 30)
+        cobertura = timezone.make_aware(
+            datetime.combine(self.inicio, time.min)
+        ) + timedelta(pagos * 30)
         delta = ahora - cobertura
         dias = delta.days
         if dias < 0:
@@ -565,9 +570,11 @@ class Evento(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
     def __str__(self):
-        return _(u"Evento {0} de {1} de {2}").format(self.tipo,
-                                                     self.contrato.numero,
-                                                     self.contrato.persona.nombre_completo())
+        return _(u"Evento {0} de {1} de {2}").format(
+            self.tipo,
+            self.contrato.numero,
+            self.contrato.persona.nombre_completo()
+        )
 
 
 class Meta(TimeStampedModel):

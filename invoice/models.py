@@ -171,9 +171,6 @@ class Recibo(TimeStampedModel):
 
         self.nulo = True
 
-        [venta.delete() for venta in self.ventas.all()]
-        [pago.delete() for pago in self.pagos.all()]
-
         self.save()
 
     def cerrar(self):

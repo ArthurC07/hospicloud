@@ -120,7 +120,7 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['aseguradoras'] = Aseguradora.objects.all()
         context['cotizaciones'] = Cotizacion.objects.filter(
-            facturada=False, terminada=False
+            facturada=False
         ).all()
 
         context['examenes'] = Examen.objects.filter(
@@ -1055,7 +1055,7 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         recibo.save()
-        for master in aseguradora.master_contracts.all():
+        for master in aseguradora.master_contracts().all():
             venta = Venta()
             venta.item = master.plan.item
             venta.recibo = recibo
@@ -1067,8 +1067,6 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
             venta.precio = master.plan.item.precio_de_venta
             venta.impuesto = master.plan.item.impuestos
             venta.save()
-            recibo.ventas.add(venta)
-            venta.save()
 
         recibo.save()
 
@@ -1076,6 +1074,8 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
             self.request,
             _(u'¡La consulta se marcó como facturada!')
         )
+
+        return recibo.get_absolute_url()
 
     @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
@@ -1119,7 +1119,7 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         cotizacion.save()
-        for master in aseguradora.master_contracts.filter(
+        for master in aseguradora.master_contracts().filter(
                 facturar_al_administrador=False).all():
             cotizado = Cotizado()
             cotizado.item = master.plan.item
@@ -1132,8 +1132,6 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
             cotizado.precio = master.plan.item.precio_de_venta
             cotizado.impuesto = master.plan.item.impuestos
             cotizado.save()
-            cotizacion.ventas.add(cotizado)
-            cotizado.save()
 
         cotizacion.save()
 
@@ -1141,6 +1139,8 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
             self.request,
             _(u'¡La consulta se marcó como facturada!')
         )
+
+        return cotizacion.get_absolute_url()
 
     @method_decorator(permission_required('invoice.cajero'))
     def dispatch(self, *args, **kwargs):
@@ -1174,7 +1174,7 @@ class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         cotizacion.save()
-        for master in aseguradora.master_contracts.filter(
+        for master in aseguradora.master_contracts().filter(
                 facturar_al_administrador=False).all():
             cotizado = Cotizado()
             cotizado.item = master.plan.item
@@ -1237,8 +1237,6 @@ class MasterCotizarView(RedirectView, LoginRequiredMixin):
         cotizado.precio = master.item.precio_de_venta
         cotizado.impuesto = master.plan.item.impuestos
         cotizado.save()
-        cotizacion.cotizado_set.add(cotizado)
-        cotizado.save()
 
         cotizacion.save()
 
@@ -1275,7 +1273,7 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
         ).first()
 
         recibo.save()
-        for master in aseguradora.master_contracts.all():
+        for master in aseguradora.master_contracts().all():
             venta = Venta()
             venta.item = master.plan.item
             venta.recibo = recibo
@@ -1286,8 +1284,6 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
             venta.cantidad = 1
             venta.precio = master.item.precio_de_venta
             venta.impuesto = master.plan.item.impuestos
-            venta.save()
-            recibo.ventas.add(venta)
             venta.save()
 
         recibo.save()
@@ -1534,6 +1530,7 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
         context['turnos'] = self.turnos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
+        context['ciudad'] = self.ciudad
         context['total'] = Venta.objects.filter(
             recibo__in=self.recibos,
             recibo__nulo=False
@@ -1553,7 +1550,7 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
             )
             apertura = TurnoCaja.objects.filter(
                 inicio__gte=inicio, inicio__lte=fin
-            ).aggregate(apertura=Coalesce(Sum('apertura'), Decimal))['apertura']
+            ).aggregate(apertura=Coalesce(Sum('apertura'), Decimal()))['apertura']
             pagos_list = []
             for tipo in tipos:
                 pagos_set = (tipo.nombre, pagos.filter(
@@ -1887,6 +1884,11 @@ class CotizacionFormMixin(CotizacionMixin, FormMixin):
 
 
 class CotizadoCreateView(CotizacionFormMixin, CreateView, LoginRequiredMixin):
+    model = Cotizado
+    form_class = CotizadoForm
+
+
+class CotizadoUpdateView(UpdateView, LoginRequiredMixin):
     model = Cotizado
     form_class = CotizadoForm
 
