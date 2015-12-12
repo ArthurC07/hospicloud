@@ -95,8 +95,8 @@ class StatusPagoAdmin(admin.ModelAdmin):
 
 
 class CotizacionAdmin(admin.ModelAdmin):
-    list_display = ('persona', 'usuario', 'created')
-    ordering = ['persona', 'usuario', 'created']
+    list_display = ('persona', 'usuario', 'created', 'facturada')
+    ordering = ['persona', 'usuario', 'created', 'facturada']
     search_fields = ['persona__nombre', 'persona__apellido']
 
 
