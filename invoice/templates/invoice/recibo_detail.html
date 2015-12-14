@@ -1,117 +1,134 @@
 {% extends 'base.html' %}
 {% block title %} Recibo {{ recibo.numero }} {% endblock %}
+{% load crispy_forms_tags %}
+{% load humanize %}{% load i18n %}{% load l10n %}
+{% block header %}
+    {{ form.media.css }}
+{% endblock %}
 {% block content %}
-    {% load crispy_forms_tags %}
-    {% load humanize %}{% load i18n %}{% load l10n %}
-    {% block header %}
-        {{ form.media.css }}
-    {% endblock %}
     <div class="row">
         <div class="main-content col-md-12">
-                <section class="page-header">
-                    <h1>{{ recibo.numero }} - {{ recibo }}
-                        <small>{{ recibo.created|date:"d/m/Y P" }}</small>
-                    </h1>
-                </section>
+            <section class="page-header">
+                <h1>{{ recibo.numero }} - {{ recibo }}
+                    <small>{{ recibo.created|date:"d/m/Y P" }}</small>
+                </h1>
+            </section>
         </div>
     </div>
     <div class="row">
         <div class="main-content col-md-12">
-                <nav class="navbar navbar-default" role="navigation">
-                    <div class="navbar-inner">
-                        <a href="#" class="navbar-brand">Acciones</a>
-                        <ul class="nav navbar-nav">
-                            {% if recibo.cerrado == False %}
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-inner">
+                    <a href="#" class="navbar-brand">{% trans 'Acciones' %}</a>
+                    <ul class="nav navbar-nav">
+                        {% if recibo.cerrado == False %}
                             <li>
-                                <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                                <a href="{% url 'invoice-index' %}">
+                                    {% trans 'Regresar a Caja' %}
+                                </a>
                             </li>
                             <li>
-                                <a href="{% url 'invoice-nullify' recibo.id %}">Anular Recibo</a>
+                                <a href="{% url 'invoice-nullify' recibo.id %}">
+                                    {% trans 'Anular Recibo' %}
+                                </a>
                             </li>
                             <li>
-                                <a href="{% url 'venta-add' recibo.id %}">Agregar Venta</a>
+                                <a href="{% url 'venta-add' recibo.id %}">
+                                    {% trans 'Agregar Venta' %}
+                                </a>
                             </li>
                             <li>
-                                <a href="{% url 'pago-add' recibo.id %}">Agregar Pago</a>
+                                <a href="{% url 'pago-add' recibo.id %}">
+                                    {% trans 'Agregar Pago' %}
+                                </a>
                             </li>
                             <li>
-                                <a href="{% url 'invoice-close' recibo.id %}">Cerrar Recibo</a>
+                                <a href="{% url 'invoice-close' recibo.id %}">
+                                    {% trans 'Cerrar Recibo' %}
+                                </a>
                             </li>
-                            {% endif %}
-                            {% if recibo.credito %}
-                                <li>
-                                    <a href="{% url 'invoice-print-credito' recibo.id %}">Imprimir Recibo</a>
-                                </li>
-                            {% else %}
+                        {% endif %}
+                        {% if recibo.credito %}
                             <li>
-                                <a href="{% url 'invoice-print' recibo.id %}">Imprimir Recibo</a>
+                                <a href="{% url 'invoice-print-credito' recibo.id %}">
+                                    {% trans 'Imprimir Recibo' %}
+                                </a>
                             </li>
-                            {% endif %}
+                        {% else %}
                             <li>
-                                <a href="{% url 'invoice-index' %}">Volver a Caja</a>
+                                <a href="{% url 'invoice-print' recibo.id %}">
+                                    {% trans 'Imprimir Recibo' %}
+                                </a>
                             </li>
-                        </ul>
-                    </div>
-                </nav>
-                <table class="table table-striped table-bordered">
-                    <caption>{% trans 'Conceptos a Facturar' %}</caption>
-                    <thead>
+                        {% endif %}
+                        <li>
+                            <a href="{% url 'invoice-change-type' recibo.id %}">
+                                {% trans 'Cambiar Tipo de Cambio' %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <table class="table table-striped table-bordered">
+                <caption>{% trans 'Conceptos a Facturar' %}</caption>
+                <thead>
+                <tr>
+                    <th>{% trans 'Cantidad' %}</th>
+                    <th>{% trans 'Concepto' %}</th>
+                    <th>{% trans 'Precio unitario' %}</th>
+                    <th>{% trans 'Subtotal' %}</th>
+                    <th>{% trans 'Descuento' %} {{ recibo.tipo_de_venta.descripcion }}</th>
+                    <th>{% trans 'Total' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for venta in recibo.ventas.all %}
                     <tr>
-                        <th>{% trans 'Cantidad' %}</th>
-                        <th>{% trans 'Concepto' %}</th>
-                        <th>{% trans 'Precio unitario' %}</th>
-                        <th>{% trans 'Subtotal' %}</th>
-                        <th>{% trans 'Descuento' %} {{ recibo.tipo_de_venta.descripcion }}</th>
-                        <th>{% trans 'Total' %}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for venta in recibo.ventas.all %}
-                        <tr>
-                            <td>{{ venta.cantidad }}</td>
-                            <td>
-                                {% if recibo.cerrado == False %}
-                                <a class="btn btn-danger btn-sm" href="{% url 'venta-delete' venta.id %}">
+                        <td>{{ venta.cantidad }}</td>
+                        <td>
+                            {% if recibo.cerrado == False %}
+                                <a class="btn btn-danger btn-sm"
+                                   href="{% url 'venta-delete' venta.id %}">
                                     <i class="glyphicon glyphicon-trash"></i>
                                 </a>
-                                {% endif %}
-                                {{ venta.descripcion }} {{ venta.item }}
-                            </td>
-                            <td>{{ venta.precio }}</td>
-                            <td>{{ venta.total_vendido }}</td>
-                            <td>{{ venta.descuento }}</td>
-                            <td>{{ venta.total }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <th colspan="4">&nbsp;</th>
-                        <th>{% trans 'Subtotal:' %}</th>
-                        <th>{{ recibo.subtotal }}</th>
+                            {% endif %}
+                            {{ venta.descripcion }} {{ venta.item }}
+                        </td>
+                        <td>{{ venta.precio }}</td>
+                        <td>{{ venta.total_vendido }}</td>
+                        <td>{{ venta.descuento }}</td>
+                        <td>{{ venta.total }}</td>
                     </tr>
-                    <tr>
-                        <th colspan="4">&nbsp;</th>
-                        <th>{% trans 'Impuestos:' %}</th>
-                        <th>{{ recibo.impuesto }}</th>
-                    </tr>
-                    <tr>
-                        <th colspan="4">&nbsp;</th>
-                        <th>{% trans 'Descuento:' %}</th>
-                        <th>{{ recibo.descuento }}</th>
-                    </tr>
-                    <tr>
-                        <th colspan="4">&nbsp;</th>
-                        <th>{% trans 'Total:' %}</th>
-                        <th>{{ recibo.total }}</th>
-                    </tr>
-                    </tfoot>
-                </table>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="4">&nbsp;</th>
+                    <th>{% trans 'Subtotal:' %}</th>
+                    <th>{{ recibo.subtotal }}</th>
+                </tr>
+                <tr>
+                    <th colspan="4">&nbsp;</th>
+                    <th>{% trans 'Impuestos:' %}</th>
+                    <th>{{ recibo.impuesto }}</th>
+                </tr>
+                <tr>
+                    <th colspan="4">&nbsp;</th>
+                    <th>{% trans 'Descuento:' %}</th>
+                    <th>{{ recibo.descuento }}</th>
+                </tr>
+                <tr>
+                    <th colspan="4">&nbsp;</th>
+                    <th>{% trans 'Total:' %}</th>
+                    <th>{{ recibo.total }}</th>
+                </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
     <div class="row">
         <div class="main-content col-md-12">
-        <div class="col-md-6">
+            <div class="col-md-6">
                 <table class="table table-striped table-bordered">
                     <caption>{% trans 'Pagos' %}</caption>
                     <thead>
@@ -126,7 +143,8 @@
                         <tr>
                             <td>
                                 {% if recibo.cerrado == False %}
-                                    <a class="btn btn-danger btn-sm" href="{% url 'pago-delete' pago.id %}">
+                                    <a class="btn btn-danger btn-sm"
+                                       href="{% url 'pago-delete' pago.id %}">
                                         <i class="glyphicon glyphicon-trash"></i>
                                     </a>
                                 {% endif %}
@@ -148,10 +166,10 @@
                     </tr>
                     </tfoot>
                 </table>
-        </div>
-        <div class="col-md-6">
-            {% crispy reembolso_form %}
-        </div>
+            </div>
+            <div class="col-md-6">
+                {% crispy reembolso_form %}
+            </div>
         </div>
     </div>
 {% endblock %}

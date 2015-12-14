@@ -54,7 +54,8 @@ from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
     PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm, \
     VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm, TipoPagoPeriodoForm, \
     PeriodoCiudadForm, CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm, \
-    CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm, ReembolsoForm
+    CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm, ReembolsoForm, \
+    ReciboTipoForm
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -348,6 +349,22 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
     def get_success_url(self):
 
         return self.recibo.get_absolute_url()
+
+
+class ReciboTipoFormUpdateView(UpdateView, LoginRequiredMixin):
+    model = Recibo
+    form_class = ReciboTipoForm
+    template_name = 'invoice/recibo_cambio_form.html'
+
+    def form_valid(self, form):
+
+        self.object = form.save(commit=False)
+
+        self.object.save()
+
+        [v.save() for v in self.object.ventas.all()]
+
+        return HttpResponseRedirect(self.object.get_absolute_url())
 
 
 class ReciboExamenCreateView(CreateView, LoginRequiredMixin):
