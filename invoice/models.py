@@ -79,7 +79,7 @@ class StatusPago(TimeStampedModel):
 
     def total(self):
         return Pago.objects.filter(status=self).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
 
@@ -125,11 +125,17 @@ class Recibo(TimeStampedModel):
             return Decimal()
 
         return self.ventas.aggregate(
-            total=Coalesce(Sum('total'), Decimal())
+                total=Coalesce(Sum('total'), Decimal())
         )['total']
 
     @property
     def numero(self):
+        """
+        Crea el número segun los requerimientos de la DEI, permitiendo de este
+        modo tener múltiples lugares que emitan recibos y que tengan diferentes
+        prefijos para sus recibos.
+        :return:
+        """
         ciudad = self.ciudad
         if ciudad is None:
             if self.cajero is None or self.cajero.profile is None or \
@@ -198,8 +204,8 @@ class Recibo(TimeStampedModel):
             return Decimal()
 
         return self.ventas.aggregate(
-            total=Coalesce(Sum('monto', output_field=models.DecimalField()),
-                           Decimal())
+                total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                               Decimal())
         )['total']
 
     def impuesto(self):
@@ -210,7 +216,7 @@ class Recibo(TimeStampedModel):
             return Decimal(0)
 
         return self.ventas.all().aggregate(
-            tax=Coalesce(Sum('tax'), Decimal())
+                tax=Coalesce(Sum('tax'), Decimal())
         )['tax']
 
     def descuento(self):
@@ -220,13 +226,14 @@ class Recibo(TimeStampedModel):
         if self.nulo:
             return Decimal(0)
         return self.ventas.all().aggregate(
-            discount=Coalesce(Sum('discount'), Decimal())
+                discount=Coalesce(Sum('discount'), Decimal())
         )['discount']
 
     def conceptos(self):
 
         return ', '.join(
-            v.item.descripcion for v in Venta.objects.filter(recibo=self).all())
+                v.item.descripcion for v in
+                Venta.objects.filter(recibo=self).all())
 
     def fractional(self):
         """Obtiene la parte decimal del total del :class:`Recibo`"""
@@ -241,7 +248,7 @@ class Recibo(TimeStampedModel):
     def pagado(self):
 
         return Pago.objects.filter(recibo=self).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def debido(self):
@@ -260,8 +267,8 @@ class Recibo(TimeStampedModel):
                 self.asignar_correlativo()
 
             turnos = TurnoCaja.objects.filter(
-                usuario=self.cajero,
-                inicio__lte=timezone.now()
+                    usuario=self.cajero,
+                    inicio__lte=timezone.now()
             ).count()
 
             if turnos == 0:
@@ -277,6 +284,12 @@ class Recibo(TimeStampedModel):
             self.ciudad = self.cajero.profile.ciudad
 
     def asignar_correlativo(self):
+        """
+        Crea el correlativo del recibo correspondiente a la :class:`Ciudad` que
+        emite el recibo, esto sirve para crear el número según los
+        requerimientos de la DEI
+        :return:
+        """
 
         ciudad = self.cajero.profile.ciudad
         ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
@@ -343,29 +356,29 @@ class Venta(TimeStampedModel):
 
     def save(self, *args, **kwargs):
 
-        if self.precio is None:
-            self.precio = self.item.precio_de_venta
-
-        if not self.recibo.tipo_de_venta or not self.descontable:
-            self.discount = Decimal(0)
-
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
-        self.discount = (self.precio * disminucion).quantize(dot01)
-
-        self.impuesto = self.item.impuestos
-        self.monto = self.precio * self.cantidad
-
-        self.tax = Decimal(
-            (
-                self.precio * self.cantidad - self.discount) *
-            self.impuesto).quantize(
-            dot01)
-
-        self.total = (
-            self.tax + self.precio * self.cantidad - self.discount).quantize(
-            dot01)
+        self.recalculate()
 
         super(Venta, self).save(*args, **kwargs)
+
+    def recalculate(self):
+        """
+        Calculates values for the different monetary values implicit in each
+        sale.
+        :return:
+        """
+        if self.precio is None:
+            self.precio = self.item.precio_de_venta
+        if not self.recibo.tipo_de_venta or not self.descontable:
+            self.discount = Decimal(0)
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
+        self.discount = (self.precio * disminucion).quantize(dot01)
+        self.impuesto = self.item.impuestos
+        self.monto = self.precio * self.cantidad
+        self.tax = Decimal((self.precio * self.cantidad - self.discount) *
+                           self.impuesto).quantize(dot01)
+        self.total = (
+            self.tax + self.precio * self.cantidad - self.discount
+        ).quantize(dot01)
 
 
 @python_2_unicode_compatible
@@ -440,12 +453,12 @@ class TurnoCaja(TimeStampedModel):
             fin = timezone.now()
 
         return Deposito.objects.filter(
-            created__range=(self.inicio, fin)).all()
+                created__range=(self.inicio, fin)).all()
 
     def venta(self):
 
         total = Venta.objects.filter(recibo__in=self.recibos()).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         return total
@@ -457,7 +470,7 @@ class TurnoCaja(TimeStampedModel):
     def ingresos(self):
 
         pagos = Pago.objects.filter(recibo__in=self.recibos()).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         return pagos
@@ -465,13 +478,13 @@ class TurnoCaja(TimeStampedModel):
     def pagos(self):
 
         return Pago.objects.filter(recibo__in=self.recibos()).order_by().values(
-            'tipo__nombre').annotate(
-            monto=Sum('monto'),
+                'tipo__nombre').annotate(
+                monto=Sum('monto'),
         )
 
     def total_cierres(self):
         total = CierreTurno.objects.filter(turno=self).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         return total
@@ -522,8 +535,10 @@ class CierreTurno(TimeStampedModel):
 
 @python_2_unicode_compatible
 class CuentaPorCobrar(TimeStampedModel):
-    """Represents all the pending :class:`Pago` que deben recolectarse como un
-    grupo"""
+    """
+    Represents all the pending :class:`Pago` que deben recolectarse como un
+    grupo
+    """
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     descripcion = models.TextField()
     status = models.ForeignKey(StatusPago)
@@ -538,12 +553,12 @@ class CuentaPorCobrar(TimeStampedModel):
     def monto(self):
 
         return self.payments().aggregate(
-            total=Coalesce(Sum('monto'), Decimal()))['total']
+                total=Coalesce(Sum('monto'), Decimal()))['total']
 
     def pagado(self):
 
         return self.pagocuenta_set.aggregate(
-            total=Coalesce(Sum('monto'), Decimal()))['total']
+                total=Coalesce(Sum('monto'), Decimal()))['total']
 
     def get_absolute_url(self):
 
@@ -552,8 +567,8 @@ class CuentaPorCobrar(TimeStampedModel):
     def payments(self):
 
         payments = Pago.objects.filter(
-            created__range=(self.minimum, self.created),
-            status=self.status)
+                created__range=(self.minimum, self.created),
+                status=self.status)
         return payments
 
     def next_status(self):
@@ -578,7 +593,7 @@ class CuentaPorCobrar(TimeStampedModel):
             self.status = StatusPago.objects.filter(pending=True).first()
             payments = Pago.objects.filter(status=self.status)
             self.minimum = payments.aggregate(
-                minimum=Min('created')
+                    minimum=Min('created')
             )['minimum']
 
             if self.minimum is None:
@@ -613,8 +628,8 @@ class Notification(TimeStampedModel):
 
     def consulta(self):
         consulta = Consulta.objects.filter(
-            persona=self.recibo.cliente,
-            created__lte=self.recibo.created).last()
+                persona=self.recibo.cliente,
+                created__lte=self.recibo.created).last()
 
         return consulta
 
@@ -649,7 +664,7 @@ class Cotizacion(TimeStampedModel):
 
     def total(self):
         total = self.cotizado_set.aggregate(
-            total=Coalesce(Sum('total'), Decimal())
+                total=Coalesce(Sum('total'), Decimal())
         )['total']
 
         return total
@@ -689,8 +704,8 @@ class Cotizacion(TimeStampedModel):
         """Calcula el monto antes de impuestos"""
 
         return self.cotizado_set.aggregate(
-            total=Coalesce(Sum('monto', output_field=models.DecimalField()),
-                           Decimal())
+                total=Coalesce(Sum('monto', output_field=models.DecimalField()),
+                               Decimal())
         )['total']
 
     def impuesto(self):
@@ -698,19 +713,19 @@ class Cotizacion(TimeStampedModel):
         """
 
         return self.cotizado_set.all().aggregate(
-            tax=Coalesce(Sum('tax'), Decimal())
+                tax=Coalesce(Sum('tax'), Decimal())
         )['tax']
 
     def descuento(self):
         """Calcula el descuento que se debe restar a este :class:`Cotizacion`"""
         return self.cotizado_set.all().aggregate(
-            discount=Coalesce(Sum('discount'), Decimal())
+                discount=Coalesce(Sum('discount'), Decimal())
         )['discount']
 
     def conceptos(self):
         return ', '.join(
-            v.item.descripcion for v in
-            Cotizado.objects.filter(recibo=self).all())
+                v.item.descripcion for v in
+                Cotizado.objects.filter(recibo=self).all())
 
     def save(self, *args, **kwargs):
         if self.ciudad is None:
@@ -761,12 +776,12 @@ class Cotizado(TimeStampedModel):
         self.monto = self.precio * self.cantidad
 
         self.tax = Decimal(
-            (self.precio * self.cantidad - self.discount) * self.impuesto
+                (self.precio * self.cantidad - self.discount) * self.impuesto
         ).quantize(dot01)
 
         self.total = (
             self.tax + self.precio * self.cantidad - self.discount).quantize(
-            dot01)
+                dot01)
 
         super(Cotizado, self).save(*args, **kwargs)
 
@@ -791,14 +806,14 @@ class ComprobanteDeduccion(TimeStampedModel):
 
     def total(self):
         return ConceptoDeduccion.objects.filter(comprobante=self).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def save(self, *args, **kwargs):
         if self.pk is None:
             ciudad = self.ciudad
             ciudad.correlativo_de_comprobante = F(
-                'correlativo_de_comprobante') + 1
+                    'correlativo_de_comprobante') + 1
             ciudad.save()
             ciudad.refresh_from_db()
             self.correlativo = ciudad.correlativo_de_comprobante

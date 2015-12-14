@@ -17,14 +17,16 @@
         <div class="col-md-12 text-center">
             <p>
                 {{ recibo.ciudad.company.nombre }}<br>
-                {{ recibo.ciudad.company.address }}<br>
+                {{ recibo.ciudad.direccion }}<br>
+                {% trans 'Tel&eacute;fono:' %} {{ recibo.ciudad.telefono }}
+                {% trans 'Email:' %} {{ recibo.ciudad.company.email }}
                 {% trans 'RTN:' %} {{ recibo.ciudad.company.rtn }}<br>
                 {% trans 'Factura:' %} {% if recibo.nulo %}
-                {% trans 'NULO---NULO---' %} {% endif %}{{ recibo.numero }}<br>
+                {% trans '---NULO---' %} {% endif %}{{ recibo.numero }}<br>
                 {% trans 'C.A.I:' %} {{ recibo.ciudad.cai_recibo }}<br>
                 {% trans 'Fecha:' %} {{ recibo.created }}<br>
                 {% trans 'Cliente:' %} {{ recibo.cliente }}
-                {% if not cliente.rtn %} CONSUMIDOR FINAL {% endif %}<br>
+                {% if not cliente.rtn %} {% trans 'CONSUMIDOR FINAL' %} {% endif %}<br>
                 {% trans 'RTN Cliente:' %} {{ recibo.cliente.rtn }}<br>
                 {% trans 'Cajero:' %} {{ recibo.cajero }}
             </p>
@@ -59,10 +61,10 @@
     </div>
     <div class="row">
         <div class="col-md-12 text-right">
-            {% trans 'Subtotal:' %}{{ recibo.subtotal }}<br>
-            {% trans 'Descuento:' %} {{ recibo.descuento }}<br>
-            {% trans 'Impuestos:' %} {{ recibo.impuesto }}<br>
-            {% trans 'Total:' %} {{ recibo.total }}
+            {% trans 'Subtotal:' %} {{ recibo.ciudad.company.moneda }} {{ recibo.subtotal }}<br>
+            {% trans 'Descuento:' %} {{ recibo.ciudad.company.moneda }} {{ recibo.descuento }}<br>
+            {% trans 'Impuestos:' %} {{ recibo.ciudad.company.moneda }} {{ recibo.impuesto }}<br>
+            {% trans 'Total:' %} {{ recibo.ciudad.company.moneda }} {{ recibo.total }}
         </div>
     </div>
     {% for pago in recibo.pagos.all %}
@@ -94,6 +96,7 @@
     <div class="row">
         <div class="col-md-12 text-center">
             {% trans '"La factura es beneficio de todos, ex&iacute;jala"' %}
+            {% trans 'ORIGINAL: Cliente COPIA: Emisor' %}
         </div>
     </div>
     <div class="row">

@@ -72,6 +72,17 @@ class ReciboForm(FieldSetModelFormMixin):
         self.helper.layout = Fieldset(_(u'Datos del Recibo'), *self.field_names)
 
 
+class ReciboTipoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Recibo
+        fields = ('tipo_de_venta', )
+
+    def __init__(self, *args, **kwargs):
+        super(ReciboTipoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_(u'Cambiar Tipo de Venta'),
+                                      *self.field_names)
+
+
 class VentaForm(FieldSetModelFormMixin):
     """Genera un formulario para :class:`Venta`"""
 

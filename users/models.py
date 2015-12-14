@@ -39,6 +39,8 @@ class Company(TimeStampedModel):
     cai = models.CharField(max_length=255)
     direccion = models.TextField()
     telefono = models.CharField(max_length=20)
+    email = models.EmailField(blank=True)
+    moneda = models.CharField(max_length=20, blank=True)
     chat = models.URLField(blank=True)
     help = models.URLField(blank=True)
     emergencia = models.ForeignKey(ItemTemplate, null=True, blank=True,
