@@ -17,7 +17,7 @@
         <div class="col-md-12 text-center">
             <p>
                 {{ recibo.ciudad.company.nombre }}<br>
-                {{ recibo.ciudad.company.address }}<br>
+                {{ recibo.ciudad.direccion }}<br>
                 {% trans 'Tel&eacute;fono:' %} {{ recibo.ciudad.telefono }}
                 {% trans 'Email:' %} {{ recibo.ciudad.company.email }}
                 {% trans 'RTN:' %} {{ recibo.ciudad.company.rtn }}<br>
@@ -26,7 +26,7 @@
                 {% trans 'C.A.I:' %} {{ recibo.ciudad.cai_recibo }}<br>
                 {% trans 'Fecha:' %} {{ recibo.created }}<br>
                 {% trans 'Cliente:' %} {{ recibo.cliente }}
-                {% if not cliente.rtn %} CONSUMIDOR FINAL {% endif %}<br>
+                {% if not cliente.rtn %} {% trans 'CONSUMIDOR FINAL' %} {% endif %}<br>
                 {% trans 'RTN Cliente:' %} {{ recibo.cliente.rtn }}<br>
                 {% trans 'Cajero:' %} {{ recibo.cajero }}
             </p>
