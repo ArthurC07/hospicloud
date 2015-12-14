@@ -22,7 +22,7 @@
                 {% trans 'Email:' %} {{ recibo.ciudad.company.email }}
                 {% trans 'RTN:' %} {{ recibo.ciudad.company.rtn }}<br>
                 {% trans 'Factura:' %} {% if recibo.nulo %}
-                {% trans 'NULO---NULO---' %} {% endif %}{{ recibo.numero }}<br>
+                {% trans '---NULO---' %} {% endif %}{{ recibo.numero }}<br>
                 {% trans 'C.A.I:' %} {{ recibo.ciudad.cai_recibo }}<br>
                 {% trans 'Fecha:' %} {{ recibo.created }}<br>
                 {% trans 'Cliente:' %} {{ recibo.cliente }}
@@ -96,6 +96,7 @@
     <div class="row">
         <div class="col-md-12 text-center">
             {% trans '"La factura es beneficio de todos, ex&iacute;jala"' %}
+            {% trans 'ORIGINAL: Cliente COPIA: Emisor' %}
         </div>
     </div>
     <div class="row">
