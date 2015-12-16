@@ -81,14 +81,14 @@ class Emergencia(TimeStampedModel):
 
         horas = self.tiempo()
 
-        emergencia = self.usuario.profile.ciudad.emergencia
+        emergencia = self.usuario.profile.ciudad.company.emergencia
 
         items[emergencia] = 1
         items[self.usuario.profile.honorario] = 1
 
         if horas >= 1:
             restante = horas - 1
-            extra = self.usuario.profile.ciudad.emergencia_extra
+            extra = self.usuario.profile.ciudad.company.emergencia_extra
             items[extra] = restante
 
         return items
