@@ -24,6 +24,7 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
+from django.utils.translation import ugettext_lazy as _
 
 from budget.models import Fuente
 from invoice.models import Pago, CuentaPorCobrar
@@ -34,7 +35,6 @@ class Banco(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
-
         return self.nombre
 
 
@@ -52,12 +52,11 @@ class Deposito(TimeStampedModel):
 
     def __str__(self):
 
-        return self.cuenta
+        return self.cuenta.nombre
 
     def save(self, **kwargs):
 
         if not self.aplicado:
-
             self.cuenta.monto += self.monto
             self.aplicado = True
 
@@ -66,7 +65,6 @@ class Deposito(TimeStampedModel):
     def delete(self, **kw):
 
         if self.aplicado:
-
             self.cuenta.monto -= self.monto
             self.aplicado = False
 
@@ -82,6 +80,7 @@ class Deposito(TimeStampedModel):
         )['liquidado']
 
 
+@python_2_unicode_compatible
 class Cheque(Deposito):
     """
     Represents a cheque that has been sent
@@ -91,6 +90,13 @@ class Cheque(Deposito):
     fecha_de_emision = models.DateTimeField(default=timezone.now)
     numero_de_cheque = models.CharField(max_length=255)
     cuenta_por_cobrar = models.ForeignKey(CuentaPorCobrar, null=True)
+
+    def __str__(self):
+        return _(u'{0} - {1} - {2}').format(
+            self.banco_de_emision.nombre,
+            self.numero_de_cheque,
+            self.monto,
+        )
 
 
 @python_2_unicode_compatible
@@ -102,7 +108,6 @@ class CierrePOS(TimeStampedModel):
     banco = models.ForeignKey(Banco)
 
     def __str__(self):
-
         return self.banco.nombre
 
 

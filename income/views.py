@@ -43,7 +43,9 @@ class CobrosListView(ListView, LoginRequiredMixin):
 
         objects = []
         for cuenta in self.object_list.all():
-            form = ChequeCobroForm(initial={'cuenta': cuenta})
+            form = ChequeCobroForm(
+                initial={'cuenta_por_cobrar': cuenta, 'usuario': self.request.user}
+            )
             form.helper.form_action = 'cheque-create'
             objects.append({
                 'cuenta': cuenta,

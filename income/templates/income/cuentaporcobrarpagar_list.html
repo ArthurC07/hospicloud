@@ -20,7 +20,9 @@
                                 {{ cuenta.descripcion }}<br>
                                 {% trans 'Del' %} {{ cuenta.minimum }}<br>
                                 {% trans 'al' %} {{ cuenta.created }}<br>
-                                {% trans 'Saldo Inicial' %} {{ cuenta.inicial }}
+                                {% trans 'Saldo Inicial' %}
+                                {{ cuenta.inicial }}<br>
+                                {% trans 'Saldo Actual' %} {{ cuenta.monto }}
                             {% endwith %}
                         </td>
                         <td>{% crispy cuenta.form %}</td>

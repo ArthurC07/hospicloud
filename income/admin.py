@@ -18,7 +18,11 @@ from django.contrib import admin
 
 
 # Register your models here.
-from income.models import Deposito, Cheque
+from income.models import Deposito, Cheque, Banco, DetallePago
+
+
+class BancoAdmin(admin.ModelAdmin):
+    list_display = ['nombre']
 
 
 class DepositoAdmin(admin.ModelAdmin):
@@ -32,5 +36,12 @@ class ChequeAdmin(admin.ModelAdmin):
     search_fields = ['cuenta__nombre', 'banco_de_emision__nombre',
                      'numero_de_cheque']
 
+
+class DetallePagoAdmin(admin.ModelAdmin):
+    list_display = ['deposito', 'pago', 'monto']
+
+
 admin.site.register(Deposito, DepositoAdmin)
 admin.site.register(Cheque, ChequeAdmin)
+admin.site.register(Banco, BancoAdmin)
+admin.site.register(DetallePago, DetallePagoAdmin)
