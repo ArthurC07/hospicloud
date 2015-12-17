@@ -550,7 +550,10 @@ class CuentaPorCobrar(TimeStampedModel):
         return reverse('invoice-cpc', args=[self.id])
 
     def payments(self):
-
+        """
+        :return: A query to all the payments registered to a
+        :class:`CuentaPorCobrar`
+        """
         payments = Pago.objects.filter(
             created__range=(self.minimum, self.created),
             status=self.status)

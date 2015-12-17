@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <script type="text/javascript"
+            src="{% static 'js/jquery-ui-timepicker.js' %}"></script>
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Cuenta' %}</th>
+                    <th>{% trans 'Pago' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cuenta in cuentas %}
+                    <tr>
+                        <td>
+                            {% with cuenta.cuenta as cuenta %}
+                                {{ cuenta.descripcion }}<br>
+                                {% trans 'Del' %} {{ cuenta.minimum }}<br>
+                                {% trans 'al' %} {{ cuenta.created }}<br>
+                                {% trans 'Saldo Inicial' %} {{ cuenta.inicial }}
+                            {% endwith %}
+                        </td>
+                        <td>{% crispy cuenta.form %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
