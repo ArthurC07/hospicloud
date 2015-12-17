@@ -567,7 +567,7 @@ class CuentaPorCobrar(TimeStampedModel):
     def payments(self):
 
         payments = Pago.objects.filter(
-                created__range=(self.minimum, self.created),
+                recibo__created__range=(self.minimum, self.created),
                 status=self.status).order_by('recibo__created')
         return payments
 
