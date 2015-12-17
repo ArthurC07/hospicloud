@@ -791,6 +791,10 @@ class Cotizado(TimeStampedModel):
 
 @python_2_unicode_compatible
 class ComprobanteDeduccion(TimeStampedModel):
+    """
+    Registra las deducciones que se hacen a los :class:`Proveedor`es de acuerdo
+    a las leyes del país.
+    """
     proveedor = models.ForeignKey(Proveedor, null=True)
     ciudad = models.ForeignKey(Ciudad)
     correlativo = models.IntegerField()
@@ -808,6 +812,10 @@ class ComprobanteDeduccion(TimeStampedModel):
                                     self.correlativo)
 
     def total(self):
+        """
+        :return: El total de los :class:`ConceptoDeduccion` que han sido
+        ingresados en este comprobante
+        """
         return ConceptoDeduccion.objects.filter(comprobante=self).aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
@@ -825,6 +833,10 @@ class ComprobanteDeduccion(TimeStampedModel):
 
 
 class ConceptoDeduccion(TimeStampedModel):
+    """
+    Describe el concepto de una deducción que ha sido sustraida de un pago a
+    proveedor
+    """
     comprobante = models.ForeignKey(ComprobanteDeduccion)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     concepto = models.ForeignKey(ItemTemplate)

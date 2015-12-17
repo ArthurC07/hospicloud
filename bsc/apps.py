@@ -14,4 +14,10 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-default_app_config = 'clinique.apps.CliniqueConfig'
+from django.apps import AppConfig
+from django.utils.translation import ugettext_lazy as _
+
+
+class BscConfig(AppConfig):
+    name = 'bsc'
+    verbose_name = _('Balanced Score Card')

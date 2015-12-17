@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2015 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -1833,10 +1833,9 @@ class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
             return reverse('invoice-index')
 
 
-class CuentaPorCobrarMixin(ContextMixin):
+class CuentaPorCobrarMixin(ContextMixin, View):
     def dispatch(self, *args, **kwargs):
-        self.cuenta = get_object_or_404(CuentaPorCobrar,
-                                        pk=kwargs['cuenta'])
+        self.cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['cuenta'])
         return super(CuentaPorCobrarMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
