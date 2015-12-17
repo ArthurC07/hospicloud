@@ -14,61 +14,53 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-from budget.views import PresupuestoDetailView, CuentaCreateView, \
-    GastoCreateView, PresupuestoListView, GastoDeleteView, \
-    GastoPendienteCreateView, GastoEjecutarView, GastoParcialFormView, \
-    GastoScheduleView, GastoCuentaPeriodoView, GastoPresupuestoPeriodoView
+from budget import views
 
-urlpatterns = patterns('',
+urlpatterns = [
 
-                       url(r'^$',
-                           PresupuestoListView.as_view(),
-                           name='budget-index'),
+    url(r'^$', views.PresupuestoListView.as_view(), name='budget-index'),
 
-                       url(r'^(?P<pk>\d+)$',
-                           PresupuestoDetailView.as_view(),
-                           name='budget'),
+    url(r'^(?P<pk>\d+)$', views.PresupuestoDetailView.as_view(), name='budget'),
 
-                       url(r'^(?P<pk>\d+)/control$',
-                           PresupuestoDetailView.as_view(
-                               template_name='budget/presupuesto_control.html'),
-                           name='budget-control'),
+    url(r'^(?P<pk>\d+)/control$', views.PresupuestoDetailView.as_view(
+            template_name='budget/presupuesto_control.html'),
+        name='budget-control'),
 
-                       url(r'^(?P<presupuesto>\d+)/cuenta/agregar$',
-                           CuentaCreateView.as_view(),
-                           name='budget-cuenta-agregar'),
+    url(r'^(?P<presupuesto>\d+)/cuenta/agregar$',
+        views.CuentaCreateView.as_view(),
+        name='budget-cuenta-agregar'),
 
-                       url(r'^cuenta/(?P<cuenta>\d+)/gasto/agregar$',
-                           GastoCreateView.as_view(),
-                           name='budget-gasto-agregar'),
+    url(r'^cuenta/(?P<cuenta>\d+)/gasto/agregar$',
+        views.GastoCreateView.as_view(),
+        name='budget-gasto-agregar'),
 
-                       url(r'^cuenta/(?P<cuenta>\d+)/gasto/pendiente/agregar$',
-                           GastoPendienteCreateView.as_view(),
-                           name='budget-gasto-pendiente-agregar'),
+    url(r'^cuenta/(?P<cuenta>\d+)/gasto/pendiente/agregar$',
+        views.GastoPendienteCreateView.as_view(),
+        name='budget-gasto-pendiente-agregar'),
 
-                       url(r'^gasto/(?P<pk>\d+)$',
-                           GastoDeleteView.as_view(),
-                           name='gasto-delete'),
+    url(r'^gasto/(?P<pk>\d+)$',
+        views.GastoDeleteView.as_view(),
+        name='gasto-delete'),
 
-                       url(r'^gasto/(?P<pk>\d+)/ejecutar$',
-                           GastoEjecutarView.as_view(),
-                           name='gasto-ejecutar'),
+    url(r'^gasto/(?P<pk>\d+)/ejecutar$',
+        views.GastoEjecutarView.as_view(),
+        name='gasto-ejecutar'),
 
-                       url(r'^gasto/(?P<pk>\d+)/schedule$',
-                           GastoScheduleView.as_view(),
-                           name='gasto-schedule'),
+    url(r'^gasto/(?P<pk>\d+)/schedule$',
+        views.GastoScheduleView.as_view(),
+        name='gasto-schedule'),
 
-                       url(r'^gasto/(?P<gasto>\d+)/parcial$',
-                           GastoParcialFormView.as_view(),
-                           name='gasto-parcial'),
+    url(r'^gasto/(?P<gasto>\d+)/parcial$',
+        views.GastoParcialFormView.as_view(),
+        name='gasto-parcial'),
 
-                       url(r'^gasto/periodo$',
-                           GastoCuentaPeriodoView.as_view(),
-                           name='gasto-periodo'),
+    url(r'^gasto/periodo$',
+        views.GastoCuentaPeriodoView.as_view(),
+        name='gasto-periodo'),
 
-                       url(r'^presupuesto/gasto/periodo$',
-                           GastoPresupuestoPeriodoView.as_view(),
-                           name='gasto-presupuesto-periodo'),
-                       )
+    url(r'^presupuesto/gasto/periodo$',
+        views.GastoPresupuestoPeriodoView.as_view(),
+        name='gasto-presupuesto-periodo'),
+]
