@@ -49,7 +49,8 @@ from invoice.views import (IndexView, ReciboPersonaCreateView, ReciboAnularView,
                            ConceptoDeduccionCreateView, ReembolsoCreateView,
                            PagoDeleteView, AseguradoraContractsCotizarView,
                            AseguradoraMasterCotizarView, MasterCotizarView,
-                           TurnoCajaPeriodoView, CotizadoUpdateView)
+                           TurnoCajaPeriodoView, CotizadoUpdateView,
+                           ReciboTipoFormUpdateView)
 
 urlpatterns = patterns('',
 
@@ -85,6 +86,10 @@ urlpatterns = patterns('',
                        url(r'^(?P<pk>\d+)/anular$',
                            ReciboAnularView.as_view(),
                            name='invoice-nullify'),
+
+                       url(r'^(?P<pk>\d+)/cambiar/tipo$',
+                           ReciboTipoFormUpdateView.as_view(),
+                           name='invoice-change-type'),
 
                        url(r'^(?P<pk>\d+)/cerrar$',
                            ReciboCerrarView.as_view(),
