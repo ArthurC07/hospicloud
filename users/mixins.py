@@ -25,17 +25,21 @@ from select2.fields import ModelChoiceField
 
 from persona.forms import FieldSetModelFormMixin
 
+try:
+    from django.contrib.auth.mixins import LoginRequiredMixin
+except ImportError:
+    class LoginRequiredMixin(View):
+        """Clase base para crear vistas que requieren inicio de sesión"""
 
-class LoginRequiredMixin(View):
-    """Clase base para crear vistas que requieren inicio de sesión"""
+        @method_decorator(login_required)
+        def dispatch(self, request, *args, **kwargs):
+            """
+            Permite despachar la petición en caso que el usuario tiniciada
+            su sesión en la aplicación
+            """
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        """Permite despachar la petición en caso que el usuario tenga iniciada
-        su sesión en la aplicación"""
-
-        return super(LoginRequiredMixin, self).dispatch(request, *args,
-                                                        **kwargs)
+            return super(LoginRequiredMixin, self).dispatch(request, *args,
+                                                            **kwargs)
 
 
 class CurrentUserFormMixin(FormMixin, LoginRequiredMixin):
