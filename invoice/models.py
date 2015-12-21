@@ -394,12 +394,15 @@ class Pago(TimeStampedModel):
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
     aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
+    completado = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Pago en {2} de {0} al recibo {1} {3}".format(self.monto,
-                                                             self.recibo.id,
-                                                             self.tipo.nombre,
-                                                             self.created)
+        return _(u"Pago en {2} de {0} al recibo {1} {3}").format(
+                self.monto,
+                self.recibo.id,
+                self.tipo.nombre,
+                self.created
+        )
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
