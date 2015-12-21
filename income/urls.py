@@ -23,4 +23,8 @@ urlpatterns = [
     url(r'^$', views.CobrosListView.as_view(), name='income-index'),
     url(r'^cheque/crear$', views.ChequeCobroCreateView.as_view(),
         name='cheque-create'),
+    url(r'^cheque/(?P<pk>\d+)$', views.ChequeCobroDetailView.as_view(),
+        name='cheque-detail'),
+    url(r'^cheque/detalle/crear$', views.DetallePagoCreateView.as_view(),
+        name='detallepago-create'),
 ]

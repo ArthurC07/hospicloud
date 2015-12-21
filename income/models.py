@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 
 from decimal import Decimal
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
@@ -98,6 +99,10 @@ class Cheque(Deposito):
             self.monto,
         )
 
+    def get_absolute_url(self):
+
+        return reverse('cheque-detail', args=[self.id])
+
 
 @python_2_unicode_compatible
 class CierrePOS(TimeStampedModel):
@@ -118,3 +123,6 @@ class DetallePago(TimeStampedModel):
     deposito = models.ForeignKey(Deposito)
     pago = models.ForeignKey(Pago)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+
+    def get_absolute_url(self):
+        return self.deposito.get_absolute_url()

@@ -19,13 +19,16 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from hospinet.utils.forms import DateTimeWidget
-from income.models import Cheque
+from hospinet.utils.forms import DateTimeWidget, FieldSetModelFormMixin
+from income.models import Cheque, DetallePago
 from invoice.models import CuentaPorCobrar
 from users.mixins import HiddenUserForm
 
 
 class ChequeCobroForm(HiddenUserForm):
+    """
+    Creates the UI and validation required to create :class:`Cheque`s
+    """
     class Meta:
         model = Cheque
         exclude = ('aplicado',)
@@ -50,5 +53,18 @@ class ChequeCobroForm(HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(ChequeCobroForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Datos del Pago'),
+        self.helper.layout = Fieldset(_(u'Datos del Cheque de Pago'),
+                                      *self.field_names)
+
+
+class DetallePagoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = DetallePago
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(DetallePagoForm, self).__init__(*args, **kwargs)
+        self.fields['deposito'].widget.attrs['readonly'] = True
+        self.fields['pago'].widget.attrs['readonly'] = True
+        self.helper.layout = Fieldset(_(u'Registrar Detalle del Pago'),
                                       *self.field_names)

@@ -14,9 +14,9 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView
 
-from income.forms import ChequeCobroForm
+from income.forms import ChequeCobroForm, DetallePagoForm
 from income.models import Cheque, DetallePago
 from invoice.models import CuentaPorCobrar
 from users.mixins import LoginRequiredMixin
@@ -44,7 +44,8 @@ class CobrosListView(ListView, LoginRequiredMixin):
         objects = []
         for cuenta in self.object_list.all():
             form = ChequeCobroForm(
-                initial={'cuenta_por_cobrar': cuenta, 'usuario': self.request.user}
+                    initial={'cuenta_por_cobrar': cuenta,
+                             'usuario': self.request.user}
             )
             form.helper.form_action = 'cheque-create'
             objects.append({
@@ -78,3 +79,42 @@ class ChequeCobroCreateView(CreateView, LoginRequiredMixin):
                 detalle.save()
 
         return self.get_success_url()
+
+
+class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
+    """
+    Shows the GUI with the data from the payments that require consolidation,
+    adding the forms that collect the information related to each :class:`Pago`
+    """
+    model = Cheque
+
+    def get_context_data(self, **kwargs):
+        """
+        Builds the data that will be shown in the GUI
+        :param kwargs: dictionary with data arguments
+        :return: The dictionary with the built data
+        """
+        context = super(ChequeCobroDetailView, self).get_context_data(**kwargs)
+
+        context['pagos'] = []
+        for pago in self.object.cuenta_por_cobrar.payments().all():
+            form = DetallePagoForm(initial={
+                'pago': pago,
+                'deposito': self.object
+            })
+            form.helper.form_action = 'detallepago-create'
+            context['pagos'].append({
+                'form': form,
+                'pago': pago
+            })
+
+        return context
+
+
+class DetallePagoCreateView(CreateView, LoginRequiredMixin):
+    """
+    Creates the :class:`DetallePago` based in the information handled by a
+    :class:`DetallePagoForm`
+    """
+    model = DetallePago
+    form_class = DetallePagoForm
