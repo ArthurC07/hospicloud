@@ -20,8 +20,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from hospinet.utils.forms import DateTimeWidget, FieldSetModelFormMixin
-from income.models import Cheque, DetallePago
-from invoice.models import CuentaPorCobrar
+from income.models import Cheque, DetallePago, Deposito
+from invoice.models import CuentaPorCobrar, Pago
 from users.mixins import HiddenUserForm
 
 
@@ -29,6 +29,7 @@ class ChequeCobroForm(HiddenUserForm):
     """
     Creates the UI and validation required to create :class:`Cheque`s
     """
+
     class Meta:
         model = Cheque
         exclude = ('aplicado',)
@@ -61,6 +62,15 @@ class DetallePagoForm(FieldSetModelFormMixin):
     class Meta:
         model = DetallePago
         fields = '__all__'
+
+    deposito = forms.ModelChoiceField(label='',
+                                      queryset=Deposito.objects.all(),
+                                      widget=forms.HiddenInput(),
+                                      required=False)
+    pago = forms.ModelChoiceField(label='',
+                                  queryset=Pago.objects.all(),
+                                  widget=forms.HiddenInput(),
+                                  required=False)
 
     def __init__(self, *args, **kwargs):
         super(DetallePagoForm, self).__init__(*args, **kwargs)

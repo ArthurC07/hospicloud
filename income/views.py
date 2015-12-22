@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, ListView, DetailView
 
 from income.forms import ChequeCobroForm, DetallePagoForm
@@ -54,6 +55,7 @@ class CobrosListView(ListView, LoginRequiredMixin):
             })
 
         context['cuentas'] = objects
+        context['cheques'] = Cheque.objects.all()
 
         return context
 
@@ -97,10 +99,12 @@ class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
         context = super(ChequeCobroDetailView, self).get_context_data(**kwargs)
 
         context['pagos'] = []
-        for pago in self.object.cuenta_por_cobrar.payments().all():
+        for pago in self.object.cuenta_por_cobrar.payments().filter(
+                completado=False):
             form = DetallePagoForm(initial={
                 'pago': pago,
-                'deposito': self.object
+                'deposito': self.object,
+                'monto': pago.monto
             })
             form.helper.form_action = 'detallepago-create'
             context['pagos'].append({

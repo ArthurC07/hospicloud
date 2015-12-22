@@ -56,7 +56,12 @@ class Deposito(TimeStampedModel):
         return self.cuenta.nombre
 
     def save(self, **kwargs):
-
+        """
+        During saving the program increases the money available in the
+        :class:`Fuente`
+        :param kwargs:
+        :return:
+        """
         if not self.aplicado:
             self.cuenta.monto += self.monto
             self.aplicado = True
@@ -64,7 +69,11 @@ class Deposito(TimeStampedModel):
         super(Deposito, self).save(**kwargs)
 
     def delete(self, **kw):
-
+        """
+        During deletion the money available in the :class:`Fuente` decreases
+        :param kw:
+        :return:
+        """
         if self.aplicado:
             self.cuenta.monto -= self.monto
             self.aplicado = False
@@ -94,14 +103,19 @@ class Cheque(Deposito):
 
     def __str__(self):
         return _(u'{0} - {1} - {2}').format(
-            self.banco_de_emision.nombre,
-            self.numero_de_cheque,
-            self.monto,
+                self.banco_de_emision.nombre,
+                self.numero_de_cheque,
+                self.monto,
         )
 
     def get_absolute_url(self):
-
         return reverse('cheque-detail', args=[self.id])
+
+    def pendiente(self):
+
+        return self.monto - self.detallepago_set.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
 
 
 @python_2_unicode_compatible
@@ -118,7 +132,7 @@ class CierrePOS(TimeStampedModel):
 
 class DetallePago(TimeStampedModel):
     """
-    Describes how an account will be payed
+    Describes how an account got payed.
     """
     deposito = models.ForeignKey(Deposito)
     pago = models.ForeignKey(Pago)
@@ -126,3 +140,29 @@ class DetallePago(TimeStampedModel):
 
     def get_absolute_url(self):
         return self.deposito.get_absolute_url()
+
+    def save(self, **kwargs):
+        """
+        Marks the original :class:`Pago` as completed when a
+        :class:`DetallePago` is saved.
+        :param kwargs:
+        :return:
+        """
+        self.pago.completado = True
+        self.pago.status = self.pago.status.next_status
+        self.pago.save()
+
+        super(DetallePago, self).save(**kwargs)
+
+    def delete(self, **kwargs):
+        """
+        Removes the completition mark from a :class:`Pago` when a
+        :class:`DetallePago` is deleted.
+        :param kwargs:
+        :return:
+        """
+        self.pago.completado = False
+        self.pago.status = self.pago.status.previous_status
+        self.pago.save()
+
+        super(DetallePago, self).delete(**kwargs)
