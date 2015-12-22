@@ -100,6 +100,8 @@ class Cheque(Deposito):
     fecha_de_emision = models.DateTimeField(default=timezone.now)
     numero_de_cheque = models.CharField(max_length=255)
     cuenta_por_cobrar = models.ForeignKey(CuentaPorCobrar, null=True)
+    monto_retenido = models.DecimalField(max_digits=11, decimal_places=2,
+                                         default=0)
 
     def __str__(self):
         return _(u'{0} - {1} - {2}').format(
@@ -112,10 +114,13 @@ class Cheque(Deposito):
         return reverse('cheque-detail', args=[self.id])
 
     def pendiente(self):
-
         return self.monto - self.detallepago_set.aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
+
+    def monto_total(self):
+
+        return self.monto + self.monto_retenido
 
 
 @python_2_unicode_compatible

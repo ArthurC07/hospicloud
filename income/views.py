@@ -72,7 +72,7 @@ class ChequeCobroCreateView(CreateView, LoginRequiredMixin):
     def form_valid(self, form):
 
         self.object = form.save()
-        if self.object.monto == self.object.cuenta_por_cobrar.monto():
+        if self.object.monto_total() == self.object.cuenta_por_cobrar.monto():
             for pago in self.object.cuenta_por_cobrar.payments().all():
                 detalle = DetallePago()
                 detalle.deposito = self.object
