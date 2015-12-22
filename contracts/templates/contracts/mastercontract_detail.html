@@ -22,15 +22,17 @@
             </ul>
             <table class="table table-striped">
                 <thead>
-                    <tr>{% trans 'Contratante' %}</tr>
-                    <tr>{% trans 'Vencimiento' %}</tr>
+                <tr>
+                    <td>{% trans 'Contratante' %}</td>
+                    <td>{% trans 'Vencimiento' %}</td>
+                </tr>
                 </thead>
                 <tbody>
                 {% for contrato in master_contract.active_contracts %}
-                    <tr>
+                <tr>
                     <td>{{ contrato.persona }}</td>
                     <td>{{ contrato.vencimiento }}</td>
-                    </tr>
+                </tr>
                 {% endfor %}
                 </tbody>
             </table>
