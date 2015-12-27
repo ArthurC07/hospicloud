@@ -1460,6 +1460,20 @@ class CierreTurnoCreateView(TurnoCajaFormMixin):
     form_class = CierreTurnoForm
 
 
+class CierreTurnoDeleteView(DeleteView, LoginRequiredMixin):
+    """Permite eliminar un :class:`CierreTurno` que sea incorrecto en el
+    :class:`TurnoCaja`"""
+    model = CierreTurno
+
+    def get_object(self, queryset=None):
+        obj = super(CierreTurnoDeleteView, self).get_object(queryset)
+        self.turno = obj.turno
+        return obj
+
+    def get_success_url(self):
+        return self.turno.get_absolute_url()
+
+
 class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
     model = TurnoCaja
     form_class = TurnoCajaCierreForm
