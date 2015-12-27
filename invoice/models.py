@@ -573,8 +573,8 @@ class CuentaPorCobrar(TimeStampedModel):
         :class:`CuentaPorCobrar`
         """
         payments = Pago.objects.filter(
-                created__range=(self.minimum, self.created),
-                status=self.status)
+                recibo__created__range=(self.minimum, self.created),
+                status=self.status).order_by('recibo__created')
         return payments
 
     def next_status(self):

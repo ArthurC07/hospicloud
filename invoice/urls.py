@@ -213,6 +213,10 @@ urlpatterns = [
         views.CierreTurnoCreateView.as_view(),
         name='invoice-cierre-nuevo'),
 
+    url(r'^cierre/(?P<pk>\d+)/delete$',
+        views.CierreTurnoDeleteView.as_view(),
+        name='cierre-delete'),
+
     url(r'^turno/(?P<pk>\d+)/update$',
         views.TurnoCajaUpdateView.as_view(),
         name='invoice-turno-edit'),
