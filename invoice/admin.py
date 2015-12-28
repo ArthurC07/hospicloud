@@ -19,7 +19,7 @@ from django.contrib import admin
 
 from invoice.models import Recibo, Venta, Pago, TipoPago, TurnoCaja, \
     CierreTurno, StatusPago, CuentaPorCobrar, Cotizacion, ComprobanteDeduccion, \
-    ConceptoDeduccion
+    ConceptoDeduccion, NotaCredito, DetalleCredito
 
 
 class ReciboAdmin(admin.ModelAdmin):
@@ -110,6 +110,16 @@ class ConceptoDeduccionAdmin(admin.ModelAdmin):
     ordering = ['comprobante', 'concepto', 'monto', 'created']
 
 
+class NotaCreditoAdmin(admin.ModelAdmin):
+    list_display = ['recibo', 'correlativo', 'created']
+    search_fields = ['recibo__persona__nombre', 'recibo__persona__apellido',
+                     'recibo__correlativo', 'correlativo']
+
+
+class DetalleCreditoAdmin(admin.ModelAdmin):
+    list_display = ['nota', 'item', 'cantidad']
+
+
 admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta, VentaAdmin)
 admin.site.register(StatusPago, StatusPagoAdmin)
@@ -121,3 +131,5 @@ admin.site.register(CuentaPorCobrar, CuentaPorCobrarAdmin)
 admin.site.register(Cotizacion, CotizacionAdmin)
 admin.site.register(ComprobanteDeduccion, ComprobanteAdmin)
 admin.site.register(ConceptoDeduccion, ConceptoDeduccionAdmin)
+admin.site.register(NotaCredito, NotaCreditoAdmin)
+admin.site.register(DetalleCredito, DetalleCreditoAdmin)

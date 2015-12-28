@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -25,7 +25,7 @@ from contracts.models import Aseguradora
 from hospinet.utils.forms import PeriodoForm, FieldSetFormMixin
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado, \
-    ComprobanteDeduccion, ConceptoDeduccion
+    ComprobanteDeduccion, ConceptoDeduccion, NotaCredito, DetalleCredito
 from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
 from inventory.forms import FieldSetModelFormMixin
@@ -44,7 +44,7 @@ class PersonaForm(FieldSetModelFormMixinNoButton):
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Datos del Cliente'),
+        self.helper.layout = Fieldset(_('Datos del Cliente'),
                                       *self.field_names)
         self.helper.form_id = "persona_form"
 
@@ -69,17 +69,17 @@ class ReciboForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ReciboForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Datos del Recibo'), *self.field_names)
+        self.helper.layout = Fieldset(_('Datos del Recibo'), *self.field_names)
 
 
 class ReciboTipoForm(FieldSetModelFormMixin):
     class Meta:
         model = Recibo
-        fields = ('tipo_de_venta', )
+        fields = ('tipo_de_venta',)
 
     def __init__(self, *args, **kwargs):
         super(ReciboTipoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Cambiar Tipo de Venta'),
+        self.helper.layout = Fieldset(_('Cambiar Tipo de Venta'),
                                       *self.field_names)
 
 
@@ -94,11 +94,11 @@ class VentaForm(FieldSetModelFormMixin):
                                     queryset=Recibo.objects.all(),
                                     widget=forms.HiddenInput(), required=False)
     item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
-        activo=True).order_by('descripcion').all())
+            activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Agregar un Cargo'), *self.field_names)
+        self.helper.layout = Fieldset(_('Agregar un Cargo'), *self.field_names)
 
 
 class EmergenciaFacturarForm(FieldSetModelFormMixin):
@@ -108,7 +108,7 @@ class EmergenciaFacturarForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EmergenciaFacturarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Facturar Emergencia'),
+        self.helper.layout = Fieldset(_('Facturar Emergencia'),
                                       *self.field_names)
 
 
@@ -119,7 +119,7 @@ class AdmisionFacturarForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(AdmisionFacturarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Facturar Admisión'),
+        self.helper.layout = Fieldset(_('Facturar Admisión'),
                                       *self.field_names)
 
 
@@ -130,7 +130,7 @@ class ExamenFacturarForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ExamenFacturarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Facturar Examen'),
+        self.helper.layout = Fieldset(_('Facturar Examen'),
                                       *self.field_names)
 
 
@@ -139,13 +139,13 @@ class CorteForm(PeriodoForm):
 
     def __init__(self, *args, **kwargs):
         super(CorteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Corte de Caja'), *self.field_names)
+        self.helper.layout = Fieldset(_('Corte de Caja'), *self.field_names)
 
 
 class InventarioForm(PeriodoForm):
     def __init__(self, *args, **kwargs):
         super(InventarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Relación entre Ventas e Inventario'),
+        self.helper.layout = Fieldset(_('Relación entre Ventas e Inventario'),
                                       *self.field_names)
 
 
@@ -160,7 +160,7 @@ class PagoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PagoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Agregar un método de Pago'),
+        self.helper.layout = Fieldset(_('Agregar un método de Pago'),
                                       *self.field_names)
 
 
@@ -174,7 +174,7 @@ class TurnoCajaForm(HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(TurnoCajaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Iniciar un Turno'), *self.field_names)
+        self.helper.layout = Fieldset(_('Iniciar un Turno'), *self.field_names)
 
 
 class CierreTurnoForm(FieldSetModelFormMixin):
@@ -188,7 +188,7 @@ class CierreTurnoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CierreTurnoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Agregar cierre de Turno'),
+        self.helper.layout = Fieldset(_('Agregar cierre de Turno'),
                                       *self.field_names)
 
 
@@ -203,17 +203,17 @@ class TurnoCajaCierreForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(TurnoCajaCierreForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Cerrar Turno'),
+        self.helper.layout = Fieldset(_('Cerrar Turno'),
                                       *self.field_names)
 
 
 class VentaPeriodoForm(PeriodoForm):
     item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
+            activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaPeriodoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Detalle de Ventas de un Periodo'),
+        self.helper.layout = Fieldset(_('Detalle de Ventas de un Periodo'),
                                       *self.field_names)
 
 
@@ -222,7 +222,7 @@ class TipoPagoPeriodoForm(PeriodoForm):
 
     def __init__(self, *args, **kwargs):
         super(TipoPagoPeriodoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Pagos por Tipo y Periodo'),
+        self.helper.layout = Fieldset(_('Pagos por Tipo y Periodo'),
                                       *self.field_names)
 
 
@@ -235,7 +235,7 @@ class PeriodoCiudadForm(PeriodoForm):
 
     def __init__(self, *args, **kwargs):
         super(PeriodoCiudadForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Recibos por Periodo y Ciudad'),
+        self.helper.layout = Fieldset(_('Recibos por Periodo y Ciudad'),
                                       *self.field_names)
 
 
@@ -246,7 +246,7 @@ class PagoStatusForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PagoStatusForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Cambiar Estado de Pago'),
+        self.helper.layout = Fieldset(_('Cambiar Estado de Pago'),
                                       *self.field_names)
 
 
@@ -257,7 +257,7 @@ class CuentaPorCobrarForm(HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(CuentaPorCobrarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Formulario de Cuenta por Cobrar'),
+        self.helper.layout = Fieldset(_('Formulario de Cuenta por Cobrar'),
                                       *self.field_names)
 
 
@@ -273,7 +273,7 @@ class PagoCuentaForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PagoCuentaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Agregar un Pago a la Cuenta'),
+        self.helper.layout = Fieldset(_('Agregar un Pago a la Cuenta'),
                                       *self.field_names)
 
 
@@ -296,7 +296,7 @@ class CotizacionForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CotizacionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Datos del Recibo'), *self.field_names)
+        self.helper.layout = Fieldset(_('Datos del Recibo'), *self.field_names)
 
 
 class CotizadoForm(FieldSetModelFormMixin):
@@ -311,11 +311,11 @@ class CotizadoForm(FieldSetModelFormMixin):
                                         widget=forms.HiddenInput(),
                                         required=False)
     item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
+            activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(CotizadoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Agregar un Cargo'), *self.field_names)
+        self.helper.layout = Fieldset(_('Agregar un Cargo'), *self.field_names)
 
 
 class ComprobanteDeduccionForm(FieldSetModelFormMixin):
@@ -325,7 +325,7 @@ class ComprobanteDeduccionForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ComprobanteDeduccionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Guardar comprobante'),
+        self.helper.layout = Fieldset(_('Guardar comprobante'),
                                       *self.field_names)
 
 
@@ -334,27 +334,52 @@ class ConceptoDeduccionForm(FieldSetModelFormMixin):
         model = ConceptoDeduccion
         fields = '__all__'
 
-    comprobante = forms.ModelChoiceField(label="",
-                                         queryset=ComprobanteDeduccion.objects.all(),
-                                         widget=forms.HiddenInput(),
-                                         required=False)
+    comprobante = forms.ModelChoiceField(
+            label="",
+            queryset=ComprobanteDeduccion.objects.all(),
+            widget=forms.HiddenInput(),
+            required=False)
     concepto = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
-                                    activo=True).order_by('descripcion').all())
+            activo=True).order_by('descripcion').all())
 
 
 class ReembolsoForm(FieldSetFormMixin):
     porcentaje = forms.IntegerField()
     tipo_de_pago = forms.ModelChoiceField(queryset=TipoPago.objects.all())
     recibo = forms.ModelChoiceField(
-        queryset=Recibo.objects.all(),
-        widget=forms.HiddenInput()
+            queryset=Recibo.objects.all(),
+            widget=forms.HiddenInput()
     )
     aseguradora = forms.ModelChoiceField(
-        queryset=Aseguradora.objects.all()
+            queryset=Aseguradora.objects.all()
     )
 
     def __init__(self, *args, **kwargs):
         super(ReembolsoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Agregar Reembolso'),
+        self.helper.layout = Fieldset(_('Agregar Reembolso'),
                                       *self.field_names)
-        self.helper.add_input(Submit('submit', _(u'Guardar')))
+        self.helper.add_input(Submit('submit', _('Guardar')))
+
+
+class NotaCreditoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = NotaCredito
+        exclude = ('correlativo',)
+
+        recibo = forms.ModelChoiceField(
+            label='',
+            queryset=Recibo.objects.all(),
+            widget=forms.HiddenInput()
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(NotaCreditoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Crear Nota de Credito'),
+                                      *self.field_names)
+        self.helper.add_input(Submit('submit', _('Guardar')))
+
+
+class DetalleCreditoForm(FieldSetModelFormMixin):
+    class Meta:
+        model = DetalleCredito
+        fields = ('nota', 'item', 'monto')

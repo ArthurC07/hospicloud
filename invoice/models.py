@@ -849,6 +849,60 @@ class ConceptoDeduccion(TimeStampedModel):
         return self.comprobante.get_absolute_url()
 
 
+@python_2_unicode_compatible
+class NotaCredito(TimeStampedModel):
+    """
+    Reflects an legal document used to nullify emited :class:`Invoice`s when
+    they have been handled to the :class:`Persona`.
+    """
+    recibo = models.ForeignKey(Recibo)
+    correlativo = models.IntegerField(default=0)
+
+    def numero(self):
+        return u'{0}-{1:08d}'.format(self.recibo.ciudad.prefijo_recibo,
+                                     self.correlativo)
+
+    def __str__(self):
+        return str(self.correlativo)
+
+    def save(self, *args, **kwargs):
+        """
+        Guarda la :class:`NotaCredito` asignando :class:`Ciudad` y luego
+        generando el correlativo correspondiente a la ciudad.
+        """
+        if self.pk is None:
+            ciudad = self.recibo.cajero.profile.ciudad
+            ciudad.correlativo_de_nota_de_credito = F(
+                    'correlativo_de_nota_de_credito') + 1
+            ciudad.save()
+            ciudad.refresh_from_db()
+            self.correlativo = ciudad.correlativo_de_nota_de_credito
+
+        super(NotaCredito, self).save(*args, **kwargs)
+
+
+class DetalleCredito(TimeStampedModel):
+    """
+    Holds the description of an :class:`ItemTemplate` that has been discounted
+    or diminished
+    """
+    nota = models.ForeignKey(NotaCredito)
+    item = models.ForeignKey(ItemTemplate)
+    cantidad = models.IntegerField()
+    precio = models.DecimalField(max_digits=11, decimal_places=2)
+    impuesto = models.DecimalField(max_digits=11, decimal_places=2)
+    monto_impuesto = models.DecimalField(max_digits=11, decimal_places=2)
+    monto = models.DecimalField(max_digits=11, decimal_places=2)
+
+    def save(self, **kwargs):
+        self.precio = self.item.precio_de_venta
+        self.monto = self.precio * self.cantidad
+        self.impuesto = self.item.impuestos
+        self.monto_impuesto = self.impuesto * self.monto
+
+        super(DetalleCredito, self).save(**kwargs)
+
+
 def consolidate_invoice(persona, clone):
     """Transfers all :class:`Recibo` from a duplicate :class:`Persona` to the
     original one"""
