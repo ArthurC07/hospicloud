@@ -14,14 +14,16 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from crispy_forms.layout import Fieldset
+from __future__ import unicode_literals
+from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from hospinet.utils.forms import DateTimeWidget, FieldSetModelFormMixin
+from hospinet.utils.forms import DateTimeWidget, FieldSetModelFormMixin, \
+    FieldSetFormMixin
 from income.models import Cheque, DetallePago, Deposito
-from invoice.models import CuentaPorCobrar, Pago
+from invoice.models import Pago
 from users.mixins import HiddenUserForm
 
 
@@ -45,16 +47,9 @@ class ChequeCobroForm(HiddenUserForm):
                                            required=False,
                                            initial=timezone.now)
 
-    cuenta_por_cobrar = forms.ModelChoiceField(
-            label="",
-            queryset=CuentaPorCobrar.objects.filter(status__pending=True).all(),
-            widget=forms.HiddenInput(),
-            required=False
-    )
-
     def __init__(self, *args, **kwargs):
         super(ChequeCobroForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Datos del Cheque de Pago'),
+        self.helper.layout = Fieldset(_('Datos del Cheque de Pago'),
                                       *self.field_names)
 
 
@@ -76,5 +71,16 @@ class DetallePagoForm(FieldSetModelFormMixin):
         super(DetallePagoForm, self).__init__(*args, **kwargs)
         self.fields['deposito'].widget.attrs['readonly'] = True
         self.fields['pago'].widget.attrs['readonly'] = True
-        self.helper.layout = Fieldset(_(u'Registrar Detalle del Pago'),
+        self.helper.layout = Fieldset(_('Registrar Detalle del Pago'),
+                                      *self.field_names)
+
+
+class NumeroForm(FieldSetFormMixin):
+
+    numero = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super(NumeroForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', _('Buscar')))
+        self.helper.layout = Fieldset(_('Búsqueda por Número'),
                                       *self.field_names)

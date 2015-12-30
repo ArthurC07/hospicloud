@@ -20,13 +20,16 @@ from django.conf.urls import url
 from income import views
 
 urlpatterns = [
-    url(r'^$', views.CobrosListView.as_view(), name='income-index'),
+    url(r'^$', views.IncomeIndexView.as_view(), name='income-index'),
     url(r'^cheque/crear$', views.ChequeCobroCreateView.as_view(),
         name='cheque-create'),
     url(r'^cheque/(?P<pk>\d+)$', views.ChequeCobroDetailView.as_view(),
         name='cheque-detail'),
+    url(r'^cheque/numero$', views.ChequeNumeroListView.as_view(),
+        name='cheque-numero'),
     url(r'^cheque/detalle/crear$', views.DetallePagoCreateView.as_view(),
         name='detallepago-create'),
     url(r'^deposito/(?P<pk>\d+)$', views.ChequeCobroDetailView.as_view(),
         name='income-deposito'),
+
 ]

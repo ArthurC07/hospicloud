@@ -15,13 +15,34 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
-from django.http import HttpResponseRedirect
-from django.views.generic import CreateView, ListView, DetailView
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic import CreateView, ListView, DetailView, TemplateView
 
-from income.forms import ChequeCobroForm, DetallePagoForm
+from income.forms import ChequeCobroForm, DetallePagoForm, NumeroForm
 from income.models import Cheque, DetallePago, Deposito
 from invoice.models import CuentaPorCobrar, Pago
 from users.mixins import LoginRequiredMixin
+
+
+class IncomeIndexView(TemplateView, LoginRequiredMixin):
+    """
+    Shows the forms associated with income related querys
+    """
+    template_name = 'income/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IncomeIndexView, self).get_context_data(**kwargs)
+
+        context['cheque_form'] = ChequeCobroForm(
+                initial={'usuario': self.request.user}
+        )
+        context['cheque_form'].helper.form_action = 'cheque-create'
+        context['numero_form'] = NumeroForm()
+        context['numero_form'].set_legend(_('Buscar Cheque por Número'))
+        context['numero_form'].helper.form_method = 'get'
+        context['numero_form'].set_action('cheque-numero')
+
+        return context
 
 
 class CobrosListView(ListView, LoginRequiredMixin):
@@ -105,6 +126,18 @@ class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
             })
 
         return context
+
+
+class ChequeNumeroListView(ListView, LoginRequiredMixin):
+    context_object_name = 'cheques'
+
+    def get_queryset(self):
+        form = NumeroForm(self.request.GET)
+        if form.is_valid():
+            return Cheque.objects.filter(
+                    numero_de_cheque__contains=form.cleaned_data['numero']
+            )
+        return Cheque.objects.all()
 
 
 class DetallePagoCreateView(CreateView, LoginRequiredMixin):

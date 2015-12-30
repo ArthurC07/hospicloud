@@ -103,15 +103,13 @@ class Cheque(Deposito):
     fecha_de_entrega = models.DateTimeField(default=timezone.now)
     fecha_de_emision = models.DateTimeField(default=timezone.now)
     numero_de_cheque = models.CharField(max_length=255)
-    cuenta_por_cobrar = models.ForeignKey(CuentaPorCobrar, null=True)
     monto_retenido = models.DecimalField(max_digits=11, decimal_places=2,
                                          default=0)
 
     def __str__(self):
-        return _(u'{0} - {1} - {2}').format(
+        return _(u'{0} - {1}').format(
                 self.banco_de_emision.nombre,
-                self.numero_de_cheque,
-                self.monto,
+                self.numero_de_cheque
         )
 
     def get_absolute_url(self):
@@ -120,7 +118,9 @@ class Cheque(Deposito):
     def pendiente(self):
         return self.monto - self.detallepago_set.aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
-        )['total']
+        )['total'] + self.monto_retenido
+
+
 
     def monto_total(self):
 

@@ -16,6 +16,12 @@ class FieldSetFormMixin(forms.Form):
         self.helper.field_class = 'col-md-7'
         self.field_names = self.fields.keys()
 
+    def set_legend(self, text):
+        self.helper.layout = Fieldset(text, *self.field_names)
+
+    def set_action(self, action):
+        self.helper.form_action = action
+
 
 class FieldSetModelFormMixinNoButton(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -26,6 +32,12 @@ class FieldSetModelFormMixinNoButton(forms.ModelForm):
         self.helper.label_class = 'col-md-4'
         self.helper.field_class = 'col-md-7'
         self.field_names = self.fields.keys()
+
+    def set_legend(self, text):
+        self.helper.layout = Fieldset(text, *self.field_names)
+
+    def set_action(self, action):
+        self.helper.form_action = action
 
 
 class FieldSetModelFormMixin(FieldSetModelFormMixinNoButton):
@@ -94,7 +106,7 @@ class PeriodoForm(forms.Form):
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Mostrar'))
         self.helper.form_method = 'get'
-        self.helper.layout = Fieldset(_('Por Periodo'), *self.field_names)
+        self.helper.layout = Fieldset(_(u'Por Periodo'), *self.field_names)
 
     def set_legend(self, text):
         self.helper.layout = Fieldset(text, *self.field_names)

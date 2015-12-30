@@ -32,7 +32,7 @@ class DepositoAdmin(admin.ModelAdmin):
 
 class ChequeAdmin(admin.ModelAdmin):
     list_display = ['cuenta', 'monto', 'fecha_de_deposito', 'banco_de_emision',
-                    'numero_de_cheque']
+                    'numero_de_cheque', 'monto_retenido']
     search_fields = ['cuenta__nombre', 'banco_de_emision__nombre',
                      'numero_de_cheque']
 

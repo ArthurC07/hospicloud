@@ -7,6 +7,8 @@
                 <h1>
                     {% trans 'Cheque' %} {{ cheque }}
                     <small>
+                        {% trans 'Monto Total' %}
+                        {{ cheque.monto_total }}
                         {% trans 'Monto Pendiente' %}
                         {{ cheque.pendiente }}
                     </small>
@@ -31,6 +33,7 @@
                 </ul>
                 <div class="tab-content">
                     <div id="pagos" class="tab-pane active">
+                    {% ifnotequal cheque.pendiente 0 %}
                         <table id="pago-table" class="table table-striped">
                             <thead>
                             <tr>
@@ -60,6 +63,7 @@
                             {% endfor %}
                             </tbody>
                         </table>
+                    {% endifnotequal %}
                     </div>
                     <div id="detalles" class="tab-pane">
                         <table class="table table-striped">
