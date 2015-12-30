@@ -1251,7 +1251,7 @@ class MasterCotizarView(RedirectView, LoginRequiredMixin):
             master.contratante.nombre
         )
         cotizado.cantidad = 1
-        cotizado.precio = master.item.precio_de_venta
+        cotizado.precio = master.plan.item.precio_de_venta
         cotizado.impuesto = master.plan.item.impuestos
         cotizado.save()
 
