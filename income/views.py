@@ -14,12 +14,13 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, ListView, DetailView
 
 from income.forms import ChequeCobroForm, DetallePagoForm
 from income.models import Cheque, DetallePago
-from invoice.models import CuentaPorCobrar
+from invoice.models import CuentaPorCobrar, Pago
 from users.mixins import LoginRequiredMixin
 
 
@@ -69,19 +70,6 @@ class ChequeCobroCreateView(CreateView, LoginRequiredMixin):
     model = Cheque
     form_class = ChequeCobroForm
 
-    def form_valid(self, form):
-
-        self.object = form.save()
-        if self.object.monto_total() == self.object.cuenta_por_cobrar.monto():
-            for pago in self.object.cuenta_por_cobrar.payments().all():
-                detalle = DetallePago()
-                detalle.deposito = self.object
-                detalle.monto = pago.monto
-                detalle.pago = pago
-                detalle.save()
-
-        return HttpResponseRedirect(self.get_success_url())
-
 
 class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
     """
@@ -99,8 +87,8 @@ class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
         context = super(ChequeCobroDetailView, self).get_context_data(**kwargs)
 
         context['pagos'] = []
-        for pago in self.object.cuenta_por_cobrar.payments().filter(
-                completado=False):
+        for pago in Pago.objects.filter(status__pending=True, completado=False,
+                                        tipo__reembolso=True):
             form = DetallePagoForm(initial={
                 'pago': pago,
                 'deposito': self.object,

@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from collections import defaultdict
 from decimal import Decimal
 from datetime import timedelta
@@ -144,7 +145,7 @@ class Recibo(TimeStampedModel):
 
             ciudad = self.cajero.profile.ciudad
 
-        return u'{0}-{1:08d}'.format(ciudad.prefijo_recibo, self.correlativo)
+        return '{0}-{1:08d}'.format(ciudad.prefijo_recibo, self.correlativo)
 
     def other_currency(self):
 
@@ -192,7 +193,7 @@ class Recibo(TimeStampedModel):
         """Crea una representación en texto del :class:`Recibo`"""
 
         if self.nulo:
-            return _(u'{0} **NULO**').format(self.cliente.nombre_completo())
+            return _('{0} **NULO**').format(self.cliente.nombre_completo())
 
         return self.cliente.nombre_completo()
 
@@ -325,7 +326,7 @@ class Venta(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u"{0} a {1}").format(self.item.descripcion, self.recibo.id)
+        return _("{0} a {1}").format(self.item.descripcion, self.recibo.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -397,7 +398,7 @@ class Pago(TimeStampedModel):
     completado = models.BooleanField(default=False)
 
     def __str__(self):
-        return _(u"Pago en {2} de {0} al recibo {1} {3}").format(
+        return _("Pago en {2} de {0} al recibo {1} {3}").format(
                 self.monto,
                 self.recibo.id,
                 self.tipo.nombre,
@@ -429,7 +430,7 @@ class TurnoCaja(TimeStampedModel):
     finalizado = models.BooleanField(default=False)
 
     def __str__(self):
-        return _(u"Turno de {0}").format(self.usuario.get_full_name())
+        return _("Turno de {0}").format(self.usuario.get_full_name())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -760,7 +761,7 @@ class Cotizado(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u"{0} a {1}").format(self.item.descripcion, self.cotizacion.id)
+        return _("{0} a {1}").format(self.item.descripcion, self.cotizacion.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -811,8 +812,8 @@ class ComprobanteDeduccion(TimeStampedModel):
         return reverse('comprobante', args=[self.id])
 
     def numero(self):
-        return _(u'{0}-{1}').format(self.ciudad.prefijo_comprobante,
-                                    self.correlativo)
+        return _('{0}-{1}').format(self.ciudad.prefijo_comprobante,
+                                   self.correlativo)
 
     def total(self):
         """
@@ -852,15 +853,31 @@ class ConceptoDeduccion(TimeStampedModel):
 @python_2_unicode_compatible
 class NotaCredito(TimeStampedModel):
     """
-    Reflects an legal document used to nullify emited :class:`Invoice`s when
+    Reflects an legal document used to nullify emited :class:`Recibo`s when
     they have been handled to the :class:`Persona`.
+
+    recibo: :class:`Recibo` that has :class:`Item`s to be nullified
+    correlativo: numerical identifier based in the :class:`Ciudad` it is
+                 extended
+    motivo_de_emision: Specifies the reason the :class:`Recibo` is being
+                       modified
     """
+
+    MOTIVOS = (
+        ('AN', _('Anulación')),
+        ('DV', _('Devolución')),
+        ('DE', _('Descuento')),
+    )
+
     recibo = models.ForeignKey(Recibo)
     correlativo = models.IntegerField(default=0)
+    motivo_de_emision = models.CharField(max_length=1, choices=MOTIVOS,
+                                         blank=True)
+    cerrada = models.BooleanField(default=False)
 
     def numero(self):
-        return u'{0}-{1:08d}'.format(self.recibo.ciudad.prefijo_recibo,
-                                     self.correlativo)
+        return '{0}-{1:08d}'.format(self.recibo.ciudad.prefijo_recibo,
+                                    self.correlativo)
 
     def __str__(self):
         return str(self.correlativo)
@@ -884,7 +901,7 @@ class NotaCredito(TimeStampedModel):
 class DetalleCredito(TimeStampedModel):
     """
     Holds the description of an :class:`ItemTemplate` that has been discounted
-    or diminished
+    or diminished.
     """
     nota = models.ForeignKey(NotaCredito)
     item = models.ForeignKey(ItemTemplate)

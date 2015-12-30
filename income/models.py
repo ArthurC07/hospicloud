@@ -55,6 +55,10 @@ class Deposito(TimeStampedModel):
 
         return self.cuenta.nombre
 
+    def get_absolute_url(self):
+
+        raise NotImplementedError()
+
     def save(self, **kwargs):
         """
         During saving the program increases the money available in the
