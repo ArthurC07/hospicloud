@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django import forms
@@ -27,16 +28,10 @@ class FieldSetModelFormMixinNoButton(forms.ModelForm):
         self.field_names = self.fields.keys()
 
 
-class FieldSetModelFormMixin(forms.ModelForm):
+class FieldSetModelFormMixin(FieldSetModelFormMixinNoButton):
     def __init__(self, *args, **kwargs):
         super(FieldSetModelFormMixin, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-md-4'
-        self.helper.field_class = 'col-md-7'
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', _(u'Guardar')))
+        self.helper.add_input(Submit('submit', _('Guardar')))
 
 
 class DateWidget(forms.DateInput):
@@ -99,7 +94,7 @@ class PeriodoForm(forms.Form):
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Mostrar'))
         self.helper.form_method = 'get'
-        self.helper.layout = Fieldset(_(u'Por Periodo'), *self.field_names)
+        self.helper.layout = Fieldset(_('Por Periodo'), *self.field_names)
 
     def set_legend(self, text):
         self.helper.layout = Fieldset(text, *self.field_names)
