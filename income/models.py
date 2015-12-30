@@ -57,7 +57,7 @@ class Deposito(TimeStampedModel):
 
     def get_absolute_url(self):
 
-        raise NotImplementedError()
+        return reverse('income-deposito', args=[self.id])
 
     def save(self, **kwargs):
         """

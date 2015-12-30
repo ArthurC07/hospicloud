@@ -19,7 +19,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, ListView, DetailView
 
 from income.forms import ChequeCobroForm, DetallePagoForm
-from income.models import Cheque, DetallePago
+from income.models import Cheque, DetallePago, Deposito
 from invoice.models import CuentaPorCobrar, Pago
 from users.mixins import LoginRequiredMixin
 
@@ -59,6 +59,10 @@ class CobrosListView(ListView, LoginRequiredMixin):
         context['cheques'] = Cheque.objects.all()
 
         return context
+
+
+class DepositoDetailView(DetailView, LoginRequiredMixin):
+    model = Deposito
 
 
 class ChequeCobroCreateView(CreateView, LoginRequiredMixin):

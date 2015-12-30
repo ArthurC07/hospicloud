@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import unicode_literals
 from django.conf.urls import url
 
 from income import views
@@ -27,4 +27,6 @@ urlpatterns = [
         name='cheque-detail'),
     url(r'^cheque/detalle/crear$', views.DetallePagoCreateView.as_view(),
         name='detallepago-create'),
+    url(r'^deposito/(?P<pk>\d+)$', views.ChequeCobroDetailView.as_view(),
+        name='income-deposito'),
 ]

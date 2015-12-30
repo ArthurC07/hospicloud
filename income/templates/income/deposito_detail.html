@@ -31,7 +31,7 @@
                 </ul>
                 <div class="tab-content">
                     <div id="pagos" class="tab-pane active">
-                        <table id="pago-table" class="table table-striped">
+                        <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th>{% trans 'Recibo' %}</th>
@@ -64,11 +64,11 @@
                     <div id="detalles" class="tab-pane">
                         <table class="table table-striped">
                             <thead>
-                            <tr>
-                                <th>{% trans 'Pago' %}</th>
-                                <th>{% trans 'Fecha de Registro' %}</th>
-                                <th>{% trans 'Acciones' %}</th>
-                            </tr>
+                                <tr>
+                                    <th>{% trans 'Pago' %}</th>
+                                    <th>{% trans 'Fecha de Registro' %}</th>
+                                    <th>{% trans 'Acciones' %}</th>
+                                </tr>
                             </thead>
                             <tbody>
                             {% for detalle in cheque.detallepago_set.all %}
@@ -97,15 +97,11 @@
         </div>
     </div>
 {% endblock %}
-{% block scripts %}
+{% block javascript %}
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#pagos form').submit(function() {
-                $(this).ajaxSubmit();
-                $(this).parent().parent().hide('slow');
-                return false;
-            });
+        $(document).ready(function() {
+           $('#pagos form').ajaxForm(function("Pagado!"));
         });
     </script>
 {% endblock %}
