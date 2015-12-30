@@ -40,6 +40,9 @@ urlpatterns = [
         views.ReciboPrintView.as_view(),
         name='invoice-print'),
 
+    url(r'^(?P<pk>\d+)/cambiar/tipo$', views.ReciboTipoFormUpdateView.as_view(),
+        name='invoice-change-type'),
+
     url(r'^(?P<pk>\d+)/impresion/credito$',
         views.ReciboDetailView.as_view(
                 template_name='invoice/recibo_credito.html'),
