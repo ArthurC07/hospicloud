@@ -117,7 +117,7 @@ class Recibo(TimeStampedModel):
 
     def facturacion(self):
 
-        return self.created - relativedelta(months=1)
+        return self.created
 
     def total(self):
 
