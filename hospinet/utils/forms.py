@@ -113,3 +113,13 @@ class PeriodoForm(forms.Form):
 
     def set_action(self, action):
         self.helper.form_action = action
+
+
+class NumeroForm(FieldSetFormMixin):
+    numero = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super(NumeroForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', _('Buscar')))
+        self.helper.layout = Fieldset(_('Búsqueda por Número'),
+                                      *self.field_names)

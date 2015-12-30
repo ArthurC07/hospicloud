@@ -76,6 +76,10 @@ urlpatterns = [
         views.EstadisticasView.as_view(),
         name='invoice-estadisticas'),
 
+    url(r'^numero$',
+        views.ReciboNumeroListView.as_view(),
+        name='invoice-numero'),
+
     url(r'^estadistica/periodo$',
         views.EstadisticasPeriodoView.as_view(),
         name='invoice-estadisticas-periodo'),

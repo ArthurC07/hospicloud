@@ -18,7 +18,8 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, ListView, DetailView, TemplateView
 
-from income.forms import ChequeCobroForm, DetallePagoForm, NumeroForm
+from hospinet.utils.forms import NumeroForm
+from income.forms import ChequeCobroForm, DetallePagoForm
 from income.models import Cheque, DetallePago, Deposito
 from invoice.models import CuentaPorCobrar, Pago
 from users.mixins import LoginRequiredMixin

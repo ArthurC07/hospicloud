@@ -73,14 +73,3 @@ class DetallePagoForm(FieldSetModelFormMixin):
         self.fields['pago'].widget.attrs['readonly'] = True
         self.helper.layout = Fieldset(_('Registrar Detalle del Pago'),
                                       *self.field_names)
-
-
-class NumeroForm(FieldSetFormMixin):
-
-    numero = forms.CharField()
-
-    def __init__(self, *args, **kwargs):
-        super(NumeroForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', _('Buscar')))
-        self.helper.layout = Fieldset(_('Búsqueda por Número'),
-                                      *self.field_names)

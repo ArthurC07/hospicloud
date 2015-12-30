@@ -90,7 +90,7 @@
                                         </dl>
                                     </td>
                                     <td>{{ detalle.created }}</td>
-                                    <td></td>
+                                    <td><a class="btn btn-primary" href="{{ detalle.pago.recibo.get_absolute_url }}">{% trans 'Ver Recibo' %}</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
