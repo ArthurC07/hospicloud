@@ -14,23 +14,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import unicode_literals
 from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.forms import inlineformset_factory
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from clinique.models import (Paciente, Cita, Evaluacion, Seguimiento,
-                             Consulta, LecturaSignos, Consultorio,
-                             DiagnosticoClinico, Cargo, OrdenMedica,
-                             NotaEnfermeria, Examen, Espera, Prescripcion,
-                             Incapacidad, Reporte, TipoConsulta, Remision,
-                             Afeccion)
+from clinique.models import Paciente, Cita, Evaluacion, Seguimiento, Consulta, \
+    LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
+    NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
+    TipoConsulta, Remision, Afeccion
 from inventory.forms import ItemTemplateFormMixin
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
-    BasePersonaForm, \
-    FieldSetFormMixin
+    BasePersonaForm, FieldSetFormMixin
 from persona.models import Persona
 from users.mixins import HiddenUserForm
 from inventory.models import ItemTemplate, ItemType
@@ -57,16 +54,16 @@ class PacienteForm(FieldSetModelFormMixin):
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
     consultorio = forms.ModelChoiceField(
-        queryset=Consultorio.objects.filter(activo=True).order_by(
-            'nombre').all()
+            queryset=Consultorio.objects.filter(activo=True).order_by(
+                    'nombre').all()
     )
 
 
 class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
     consultorio = forms.ModelChoiceField(label="",
                                          queryset=Consultorio.objects.filter(
-                                             activo=True).order_by(
-                                             'nombre').all(),
+                                                 activo=True).order_by(
+                                                 'nombre').all(),
                                          widget=forms.HiddenInput())
 
 
@@ -88,7 +85,7 @@ class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
         exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada')
 
     tipo = forms.ModelChoiceField(
-        queryset=TipoConsulta.objects.filter(habilitado=True).all())
+            queryset=TipoConsulta.objects.filter(habilitado=True).all())
 
     def __init__(self, *args, **kwargs):
         super(ConsultaForm, self).__init__(*args, **kwargs)
@@ -157,8 +154,8 @@ class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin,
         fields = '__all__'
 
     afeccion = forms.ModelChoiceField(
-        queryset=Afeccion.objects.all().order_by('nombre'),
-        required=False)
+            queryset=Afeccion.objects.all().order_by('nombre'),
+            required=False)
 
     def __init__(self, *args, **kwargs):
         super(DiagnosticoClinicoForm, self).__init__(*args, **kwargs)
@@ -183,7 +180,7 @@ class CargoForm(HiddenConsultaFormMixin, ItemTemplateFormMixin, HiddenUserForm):
         exclude = ('facturado',)
 
     tipo = forms.ModelChoiceField(
-        queryset=ItemType.objects.filter(consulta=True).all()
+            queryset=ItemType.objects.filter(consulta=True).all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -274,8 +271,8 @@ class PrescripcionForm(HiddenOrdenMedicaFormMixin):
         fields = '__all__'
 
     medicamento = forms.ModelChoiceField(
-        queryset=ItemTemplate.objects.filter(activo=True).order_by(
-            'descripcion'), required=False)
+            queryset=ItemTemplate.objects.filter(activo=True).order_by(
+                    'descripcion'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)

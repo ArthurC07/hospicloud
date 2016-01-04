@@ -14,12 +14,12 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import unicode_literals
 from django.contrib import admin
 
 from invoice.models import Recibo, Venta, Pago, TipoPago, TurnoCaja, \
-    CierreTurno, StatusPago, CuentaPorCobrar, Cotizacion, ComprobanteDeduccion, \
-    ConceptoDeduccion
+    CierreTurno, StatusPago, CuentaPorCobrar, Cotizacion, DetalleCredito, \
+    ComprobanteDeduccion, ConceptoDeduccion, NotaCredito
 
 
 class ReciboAdmin(admin.ModelAdmin):
@@ -42,8 +42,8 @@ class TurnoCajaAdmin(admin.ModelAdmin):
 
 
 class TipoPagoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'color',)
-    ordering = ['nombre', 'color', ]
+    list_display = ('nombre', 'color', 'reembolso')
+    ordering = ['nombre', 'color', 'reembolso']
 
 
 class PagoAdmin(admin.ModelAdmin):
@@ -51,9 +51,9 @@ class PagoAdmin(admin.ModelAdmin):
         'tipo', 'get_recibo_number', 'recibo', 'get_recibo_cajero', 'monto',
         'created', 'status')
     ordering = ['tipo', 'recibo', 'monto', 'created', 'status']
-    search_fields = ['recibo__usuario__first_name',
-                     'recibo__usuario__last_name',
-                     'tipo__nombre', 'monto']
+    search_fields = ['recibo__cajero__first_name',
+                     'recibo__cajero__last_name',
+                     'tipo__nombre', 'monto', 'recibo__correlativo']
 
     def get_recibo_number(self, instance):
         ciudad = instance.recibo.ciudad
@@ -65,7 +65,7 @@ class PagoAdmin(admin.ModelAdmin):
 
             ciudad = instance.recibo.cajero.profile.ciudad
 
-        return u'{0}-{1:08d}'.format(ciudad.prefijo_recibo,
+        return '{0}-{1:08d}'.format(ciudad.prefijo_recibo,
                                      instance.recibo.correlativo)
 
     def get_recibo_cajero(self, instance):
@@ -91,7 +91,8 @@ class VentaAdmin(admin.ModelAdmin):
 
 
 class StatusPagoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'reportable', 'next_status', 'previous_status',)
+    list_display = ('nombre', 'reportable', 'pending', 'next_status',
+                    'previous_status',)
 
 
 class CotizacionAdmin(admin.ModelAdmin):
@@ -110,6 +111,16 @@ class ConceptoDeduccionAdmin(admin.ModelAdmin):
     ordering = ['comprobante', 'concepto', 'monto', 'created']
 
 
+class NotaCreditoAdmin(admin.ModelAdmin):
+    list_display = ['recibo', 'correlativo', 'created']
+    search_fields = ['recibo__persona__nombre', 'recibo__persona__apellido',
+                     'recibo__correlativo', 'correlativo']
+
+
+class DetalleCreditoAdmin(admin.ModelAdmin):
+    list_display = ['nota', 'item', 'cantidad']
+
+
 admin.site.register(Recibo, ReciboAdmin)
 admin.site.register(Venta, VentaAdmin)
 admin.site.register(StatusPago, StatusPagoAdmin)
@@ -121,3 +132,5 @@ admin.site.register(CuentaPorCobrar, CuentaPorCobrarAdmin)
 admin.site.register(Cotizacion, CotizacionAdmin)
 admin.site.register(ComprobanteDeduccion, ComprobanteAdmin)
 admin.site.register(ConceptoDeduccion, ConceptoDeduccionAdmin)
+admin.site.register(NotaCredito, NotaCreditoAdmin)
+admin.site.register(DetalleCredito, DetalleCreditoAdmin)

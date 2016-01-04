@@ -149,6 +149,11 @@
                                     </a>
                                 {% endif %}
                                 {{ pago.tipo }}
+                                {% for detalle in pago.detallepago_set.all %}
+                                    <a class="btn btn-info" href="{{ detalle.get_absolute_url }}">
+                                        {{ detalle.monto }} {% trans 'Pagado' %}
+                                    </a>
+                                {% endfor %}
                             </td>
                             <td>{{ pago.monto }}</td>
                             <td>{{ pago.comprobante }}</td>

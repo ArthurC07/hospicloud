@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block header %}
+    {{ cheque_form.media.css }}
+{% endblock %}
+{% block scripts %}
+    {{ cheque_form.media.js }}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-header">
+            <section class="page-header">
+                <h1>Gesti&oacute;n de Pagos e Ingresos</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <div class="row">
+                <div class="col-md-6">
+                    {% crispy cheque_form %}
+                </div>
+                <div class="col-md-6">
+                    {% crispy numero_form %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

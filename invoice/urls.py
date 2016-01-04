@@ -14,7 +14,9 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from django.conf.urls import url
+
 from invoice import views
 
 urlpatterns = [
@@ -37,6 +39,9 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/impresion$',
         views.ReciboPrintView.as_view(),
         name='invoice-print'),
+
+    url(r'^(?P<pk>\d+)/cambiar/tipo$', views.ReciboTipoFormUpdateView.as_view(),
+        name='invoice-change-type'),
 
     url(r'^(?P<pk>\d+)/impresion/credito$',
         views.ReciboDetailView.as_view(
@@ -70,6 +75,10 @@ urlpatterns = [
     url(r'^estadisticas$',
         views.EstadisticasView.as_view(),
         name='invoice-estadisticas'),
+
+    url(r'^numero$',
+        views.ReciboNumeroListView.as_view(),
+        name='invoice-numero'),
 
     url(r'^estadistica/periodo$',
         views.EstadisticasPeriodoView.as_view(),
@@ -211,6 +220,10 @@ urlpatterns = [
     url(r'^turno/(?P<turno>\d+)/cierre/nuevo$',
         views.CierreTurnoCreateView.as_view(),
         name='invoice-cierre-nuevo'),
+
+    url(r'^cierre/(?P<pk>\d+)/delete$',
+        views.CierreTurnoDeleteView.as_view(),
+        name='cierre-delete'),
 
     url(r'^turno/(?P<pk>\d+)/update$',
         views.TurnoCajaUpdateView.as_view(),
