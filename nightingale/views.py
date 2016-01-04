@@ -24,7 +24,7 @@ from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
 from django.contrib import messages
 from django.utils import timezone
 
-from guardian.decorators import permission_required
+from django.contrib.auth.decorators import permission_required
 
 from inventory.models import ItemTemplate
 from inventory.views import UserInventarioRequiredMixin
