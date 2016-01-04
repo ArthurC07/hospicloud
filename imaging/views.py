@@ -16,7 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
-from guardian.decorators import permission_required
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
