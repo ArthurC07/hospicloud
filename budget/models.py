@@ -247,14 +247,20 @@ class Gasto(TimeStampedModel):
         return reverse('budget-control', args=[self.cuenta.presupuesto.id])
 
     def ejecutar(self):
-
+        """
+        Registra el pago del :class:`Gasto` actual
+        """
         self.ejecutado = True
         self.fuente_de_pago.monto -= self.monto
         self.fuente_de_pago.save()
         self.save()
 
     def clonar(self):
-
+        """
+        Crea una copia identica del :class:`Gasto` actual pero que aun no ha
+        sido guardada en la BD.
+        :return: Replica del :class:`Gasto` actual sin guardar.
+        """
         gasto = deepcopy(self)
         gasto.id = None
 
@@ -277,7 +283,11 @@ class Gasto(TimeStampedModel):
         self.save()
 
     def pago_parcial(self, monto):
-
+        """
+        Crea un pago parcial para el :class:`Gasto` y lo aplica dividiendo el
+        gasto en dos segun la cantidad especificada.
+        :param monto: Valor monetario del pago a ingresar
+        """
         gasto = self.clonar()
         gasto.monto = monto
         gasto.save()

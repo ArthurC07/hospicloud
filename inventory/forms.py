@@ -18,8 +18,6 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
-from select2.fields import ModelChoiceField
-
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
     DateTimeWidget, FutureDateWidget
 from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
@@ -27,6 +25,7 @@ from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
                               Transferido, ItemComprado, Historial, Proveedor,
                               Cotizacion, ItemCotizado)
 from users.mixins import HiddenUserForm
+from django.utils.translation import ugettext_lazy as _
 
 
 class ItemTemplateForm(FieldSetModelFormMixin):
@@ -40,12 +39,11 @@ class ItemTemplateForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
-
 class ItemTemplateFormMixin(FieldSetModelFormMixin):
-
-    item = ModelChoiceField(
+    item = forms.ModelChoiceField(
         queryset=ItemTemplate.objects.filter(activo=True).order_by(
-            'descripcion'), name="", model="")
+            'descripcion')
+    )
 
 
 class InventarioForm(FieldSetModelFormMixin):
@@ -60,9 +58,8 @@ class InventarioForm(FieldSetModelFormMixin):
 
 
 class InventarioFormMixin(FieldSetFormMixin):
-    inventario = ModelChoiceField(label="", name='', model='',
-                                  queryset=Inventario.objects.all(),
-                                  widget=forms.HiddenInput())
+    inventario = forms.ModelChoiceField(queryset=Inventario.objects.all(),
+                                        widget=forms.HiddenInput())
 
 
 class ItemForm(FieldSetModelFormMixin):
@@ -70,9 +67,10 @@ class ItemForm(FieldSetModelFormMixin):
         model = Item
         fields = ("inventario", "plantilla", "cantidad", 'vencimiento')
 
-    plantilla = ModelChoiceField(name="", model="", label="Item",
-                                 queryset=ItemTemplate.objects.filter(
-                                     activo=True).order_by('descripcion').all())
+    plantilla = forms.ModelChoiceField(label=_("Item"),
+                                       queryset=ItemTemplate.objects.filter(
+                                           activo=True).order_by(
+                                           'descripcion').all())
 
     vencimiento = forms.DateTimeField(widget=DateTimeWidget())
 
@@ -136,13 +134,13 @@ class TransferenciaForm(HiddenUserForm):
         model = Transferencia
         exclude = ('aplicada',)
 
-    origen = ModelChoiceField(name="", model="",
-                              queryset=Inventario.objects.filter(
-                                  activo=True).all())
+    origen = forms.ModelChoiceField(
+        queryset=Inventario.objects.filter(activo=True).all()
+    )
 
-    destino = ModelChoiceField(name="", model="",
-                               queryset=Inventario.objects.filter(
-                                   activo=True).all())
+    destino = forms.ModelChoiceField(
+        queryset=Inventario.objects.filter(activo=True).all()
+    )
 
     def __init__(self, *args, **kwargs):
         super(TransferenciaForm, self).__init__(*args, **kwargs)
@@ -155,9 +153,9 @@ class TransferirForm(FieldSetModelFormMixin):
     class Meta:
         model = Transferencia
         fields = ('aplicada',)
-        item = ModelChoiceField(name="", model="",
-                                queryset=Requisicion.objects.filter(
-                                    entregada=False).all())
+        item = forms.ModelChoiceField(
+            queryset=Requisicion.objects.filter(entregada=False).all()
+        )
 
     def __init__(self, *args, **kwargs):
         super(TransferirForm, self).__init__(*args, **kwargs)
@@ -220,8 +218,7 @@ class ProveedorForm(FieldSetModelFormMixin):
 
 
 class ProveedorFormMixin(FieldSetModelFormMixin):
-    proveedor = ModelChoiceField(name='', model='',
-                                 queryset=Proveedor.objects.all())
+    proveedor = forms.ModelChoiceField(queryset=Proveedor.objects.all())
 
 
 class CompraForm(ProveedorFormMixin):

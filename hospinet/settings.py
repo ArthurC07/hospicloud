@@ -89,6 +89,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     str(root.path('persona/static/')),
+    str(root.path('assets'))
 )
 
 # List of finder classes that know how to find static files in
@@ -162,6 +163,7 @@ INSTALLED_APPS = (
     'contracts',
     'lab',
     'budget',
+    'income',
     # Third party apps go here
     'django_extensions',
     'django_countries',
@@ -170,7 +172,6 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'crispy_forms',
     'bootstrap_pagination',
-    'select2',
     'storages',
 )
 

@@ -14,86 +14,76 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
-from persona.views import (PersonaDetailView, PersonaCreateView,
-                           PersonaUpdateView, EstiloVidaUpdateView,
-                           AntecedenteUpdateView,
-                           AntecedenteFamiliarUpdateView,
-                           AntecedenteObstetricoUpdateView,
-                           PersonaIndexView, FisicoUpdateView,
-                           AntecedenteQuirurgicoUpdateView,
-                           AntecedenteQuirurgicoCreateView, PersonaSearchView,
-                           EmpleoCreateView, PersonaDuplicateView,
-                           EmpleadorDetailView, EmpleadorCreateView)
+from django.conf.urls import url
+from persona import views
 
-urlpatterns = patterns('',
+urlpatterns = [
+    url(r'^$',
+        views.PersonaIndexView.as_view(),
+        name='persona-index'),
 
-                       url(r'^$',
-                           PersonaIndexView.as_view(),
-                           name='persona-index'),
+    url(r'^(?P<pk>\d+)$',
+        views.PersonaDetailView.as_view(),
+        name='persona-view-id'),
 
-                       url(r'^(?P<pk>\d+)$',
-                           PersonaDetailView.as_view(),
-                           name='persona-view-id'),
+    url(r'^(?P<pk>\d+)/estilovida$',
+        views.PersonaDetailView.as_view(
+                template_name='persona/estilo_detail.html'),
+        name='persona-estilo'),
 
-                       url(r'^(?P<pk>\d+)/estilovida$',
-                           PersonaDetailView.as_view(
-                               template_name='persona/estilo_detail.html'),
-                           name='persona-estilo'),
+    url(r'^agregar$',
+        views.PersonaCreateView.as_view(),
+        name='persona-create'),
 
-                       url(r'^agregar$',
-                           PersonaCreateView.as_view(),
-                           name='persona-create'),
+    url(r'^empresa/(?P<pk>\d+)$',
+        views.EmpleadorDetailView.as_view(),
+        name='empresa'),
 
-                       url(r'^empresa/(?P<pk>\d+)$',
-                           EmpleadorDetailView.as_view(),
-                           name='empresa'),
+    url(r'^empresa/agregar$',
+        views.EmpleadorCreateView.as_view(),
+        name='empresa-add'),
 
-                       url(r'^empresa/agregar$',
-                           EmpleadorCreateView.as_view(),
-                           name='empresa-add'),
+    url(r'^buscar$',
+        views.PersonaSearchView.as_view(),
+        name='persona-search'),
 
-                       url(r'^buscar$',
-                           PersonaSearchView.as_view(),
-                           name='persona-search'),
+    url(r'^(?P<pk>\d+)/editar$',
+        views.PersonaUpdateView.as_view(),
+        name='persona-editar'),
 
-                       url(r'^(?P<pk>\d+)/editar$',
-                           PersonaUpdateView.as_view(),
-                           name='persona-editar'),
+    url(r'^(?P<pk>\d+)/duplicada$',
+        views.PersonaDuplicateView.as_view(),
+        name='persona-duplicate'),
 
-                       url(r'^(?P<pk>\d+)/duplicada$',
-                           PersonaDuplicateView.as_view(),
-                           name='persona-duplicate'),
+    url(r'^(?P<persona>\d+)/empleo/add$',
+        views.EmpleoCreateView.as_view(),
+        name='persona-empleo-add'),
 
-                       url(r'^(?P<persona>\d+)/empleo/add$',
-                           EmpleoCreateView.as_view(),
-                           name='persona-empleo-add'),
+    url(r'^(?P<pk>\d+)/fisico/editar$',
+        views.FisicoUpdateView.as_view(),
+        name='persona-fisico-editar'),
 
-                       url(r'^(?P<pk>\d+)/fisico/editar$',
-                           FisicoUpdateView.as_view(),
-                           name='persona-fisico-editar'),
+    url(r'^(?P<pk>\d+)/estilovida/editar$',
+        views.EstiloVidaUpdateView.as_view(),
+        name='persona-estilovida-editar'),
 
-                       url(r'^(?P<pk>\d+)/estilovida/editar$',
-                           EstiloVidaUpdateView.as_view(),
-                           name='persona-estilovida-editar'),
+    url(r'^(?P<pk>\d+)/antecedente/editar$',
+        views.AntecedenteUpdateView.as_view(),
+        name='persona-antecedente-editar'),
 
-                       url(r'^(?P<pk>\d+)/antecedente/editar$',
-                           AntecedenteUpdateView.as_view(),
-                           name='persona-antecedente-editar'),
+    url(r'^(?P<pk>\d+)/antecedente/familiar/editar$',
+        views.AntecedenteFamiliarUpdateView.as_view(),
+        name='persona-antecedente-familiar-editar'),
 
-                       url(r'^(?P<pk>\d+)/antecedente/familiar/editar$',
-                           AntecedenteFamiliarUpdateView.as_view(),
-                           name='persona-antecedente-familiar-editar'),
+    url(r'^(?P<pk>\d+)/antecedente/quirurgico/editar$',
+        views.AntecedenteQuirurgicoUpdateView.as_view(),
+        name='persona-antecedente-quirurgico-editar'),
 
-                       url(r'^(?P<pk>\d+)/antecedente/quirurgico/editar$',
-                           AntecedenteQuirurgicoUpdateView.as_view(),
-                           name='persona-antecedente-quirurgico-editar'),
+    url(r'^(?P<persona>\d+)/antecedente/quirurgico/agregar$',
+        views.AntecedenteQuirurgicoCreateView.as_view(),
+        name='persona-antecedente-quirurgico-agregar'),
 
-                       url(r'^(?P<persona>\d+)/antecedente/quirurgico/agregar$',
-                           AntecedenteQuirurgicoCreateView.as_view(),
-                           name='persona-antecedente-quirurgico-agregar'),
-
-                       url(r'^(?P<pk>\d+)/antecedente/obstetrico/editar$',
-                           AntecedenteObstetricoUpdateView.as_view(),
-                           name='persona-antecedente-obstetrico-editar'),
-)
+    url(r'^(?P<pk>\d+)/antecedente/obstetrico/editar$',
+        views.AntecedenteObstetricoUpdateView.as_view(),
+        name='persona-antecedente-obstetrico-editar'),
+]

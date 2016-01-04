@@ -17,7 +17,6 @@
 
 from django import forms
 from crispy_forms.layout import Fieldset
-from select2.fields import ModelChoiceField
 
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
     Estudio, TipoExamen
@@ -142,8 +141,9 @@ class EstudioForm(FieldSetModelFormMixin):
     examen = forms.ModelChoiceField(label="",
                                     queryset=Examen.objects.all(),
                                     widget=forms.HiddenInput())
-    tipo_de_examen = ModelChoiceField(queryset=TipoExamen.objects.all(),
-                                      name="nombre", model="")
+    tipo_de_examen = forms.ModelChoiceField(
+        queryset=TipoExamen.objects.all()
+    )
 
     def __init__(self, *args, **kwargs):
         super(EstudioForm, self).__init__(*args, **kwargs)

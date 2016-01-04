@@ -14,11 +14,10 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from select2.fields import ModelChoiceField
-
 from userena.forms import EditProfileForm
 from persona.forms import FieldSetModelFormMixin
 from users.models import Ciudad
+from django import forms
 
 
 class CustomEditProfileForm(EditProfileForm):
@@ -28,4 +27,4 @@ class CustomEditProfileForm(EditProfileForm):
 
 
 class CiudadFormMixin(FieldSetModelFormMixin):
-    ciudad = ModelChoiceField(queryset=Ciudad.objects.all(), name="", model="")
+    ciudad = forms.ModelChoiceField(queryset=Ciudad.objects.all())
