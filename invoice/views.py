@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 import calendar
 from collections import defaultdict, OrderedDict
 from datetime import datetime, time, date, timedelta
@@ -21,7 +22,7 @@ from decimal import Decimal
 from django.contrib import messages
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, Min, Max
+from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -39,6 +40,7 @@ from clinique.models import Consulta
 from contracts.models import Aseguradora, MasterContract
 from contracts.views import AseguradoraMixin
 from hospinet.utils.date import make_end_day, make_day_start
+from hospinet.utils.forms import NumeroForm
 from persona.views import PersonaFormMixin
 from spital.forms import DepositoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -48,14 +50,15 @@ from imaging.models import Examen
 from persona.models import Persona
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, StatusPago, CuentaPorCobrar, Notification, Cotizacion, Cotizado, \
-    ComprobanteDeduccion, ConceptoDeduccion, PagoCuenta
+    ComprobanteDeduccion, ConceptoDeduccion, PagoCuenta, NotaCredito, \
+    DetalleCredito
 from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
     AdmisionFacturarForm, CorteForm, ExamenFacturarForm, InventarioForm, \
-    PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, TurnoCajaCierreForm, \
+    PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, \
     VentaPeriodoForm, PeriodoAreaForm, PagoStatusForm, TipoPagoPeriodoForm, \
     PeriodoCiudadForm, CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm, \
-    CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm, ReembolsoForm, \
-    ReciboTipoForm
+    CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm, \
+    ReembolsoForm, ReciboTipoForm, NotaCreditoForm, TurnoCajaCierreForm
 from inventory.models import ItemTemplate, TipoVenta
 
 
@@ -80,30 +83,30 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context = super(IndexView, self).get_context_data(**kwargs)
         self.create_periodo_form(context, 'reciboperiodoform', 'recibo',
-                                 u'Recibos de un Periodo', 'invoice-periodo')
+                                 'Recibos de un Periodo', 'invoice-periodo')
 
         self.create_periodo_form(context, 'recibodetailform', 'recibodetail',
-                                 u'Detalle de Recibos de un Periodo',
+                                 'Detalle de Recibos de un Periodo',
                                  'invoice-periodo-detail')
 
         self.create_periodo_form(context, 'tipoform', 'tipo',
-                                 u'Productos por Área y Periodo',
+                                 'Productos por Área y Periodo',
                                  'invoice-tipo')
 
         self.create_periodo_form(context, 'productoperiodoform', 'producto',
-                                 u'Productos Facturados en un Periodo',
+                                 'Productos Facturados en un Periodo',
                                  'invoice-periodo-producto')
 
         self.create_periodo_form(context, 'emerperiodoform', 'emergencia',
-                                 u'Emergencias de un Periodo',
+                                 'Emergencias de un Periodo',
                                  'invoice-periodo-emergencia')
 
         self.create_periodo_form(context, 'pagoform', 'pago',
-                                 u'Pagos por Tipo y Periodo',
+                                 'Pagos por Tipo y Periodo',
                                  'invoice-periodo-pago')
 
         self.create_periodo_form(context, 'estadisticasform', 'estadisticas',
-                                 u'Estadísticas por periodo',
+                                 'Estadísticas por periodo',
                                  'invoice-estadisticas-periodo')
 
         context['corteform'] = CorteForm(prefix='corte')
@@ -116,21 +119,21 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['inventarioform'].set_action('invoice-inventario')
 
         context['contratos'] = MasterContract.objects.filter(
-            facturar_al_administrador=True
+                facturar_al_administrador=True
         )
 
         context['aseguradoras'] = Aseguradora.objects.all()
         context['cotizaciones'] = Cotizacion.objects.filter(
-            facturada=False
+                facturada=False
         ).all()
 
         context['examenes'] = Examen.objects.filter(
-            facturado=False, pendiente=False
+                facturado=False, pendiente=False
         ).order_by('-id')
 
         context['admisiones'] = Admision.objects.filter(facturada=False)
         context['emergencias'] = Emergencia.objects.filter(
-            facturada=False
+                facturada=False
         ).order_by('id')
         context['consultas'] = Consulta.objects.filter(facturada=False,
                                                        activa=False,
@@ -157,7 +160,12 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['turnoform'] = PeriodoCiudadForm(prefix='turno-periodo')
         context['turnoform'].set_action('turno-periodo')
-        context['turnoform'].helper.layout.legend = _(u'Resumen de Turnos')
+        context['turnoform'].helper.layout.legend = _('Resumen de Turnos')
+
+        context['numero_form'] = NumeroForm()
+        context['numero_form'].set_legend(_('Buscar Recibo por Número'))
+        context['numero_form'].helper.form_method = 'get'
+        context['numero_form'].set_action('invoice-numero')
 
         return context
 
@@ -185,7 +193,7 @@ class EstadisticasView(TemplateView):
             context['pagos'][tipo] = OrderedDict()
 
             pagado = tipo.pagos.filter(
-                recibo__created__range=(inicio, fin)
+                    recibo__created__range=(inicio, fin)
             ).aggregate(total=Sum('monto'))['total']
             if pagado is None:
                 pagado = Decimal()
@@ -195,11 +203,11 @@ class EstadisticasView(TemplateView):
         for n in range(1, 13):
             inicio = make_day_start(date(now.year, n, 1))
             fin = make_end_day(
-                date(now.year, n, calendar.monthrange(now.year, n)[1])
+                    date(now.year, n, calendar.monthrange(now.year, n)[1])
             )
 
             total = recibos.filter(
-                created__range=(inicio, fin)
+                    created__range=(inicio, fin)
             ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
 
             context['meses'][inicio] = []
@@ -207,13 +215,13 @@ class EstadisticasView(TemplateView):
 
             for tipo in TipoPago.objects.all():
                 pagado = tipo.pagos.filter(
-                    recibo__created__range=(inicio, fin)
+                        recibo__created__range=(inicio, fin)
                 ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
                 context['meses'][inicio].append((tipo, pagado))
 
             for tipo in context['pagos']:
                 pagado = tipo.pagos.filter(
-                    recibo__created__range=(inicio, fin)
+                        recibo__created__range=(inicio, fin)
                 ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
                 context['pagos'][tipo][inicio] = pagado
             context['months'].append(inicio)
@@ -242,28 +250,28 @@ class EstadisticasPeriodoView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EstadisticasPeriodoView, self).get_context_data(
-            **kwargs)
+                **kwargs)
 
         context['pagos'] = []
 
         total = Recibo.objects.annotate(sold=Coalesce(
-            Sum('ventas__total'), Decimal())
+                Sum('ventas__total'), Decimal())
         ).filter(
-            created__range=(self.inicio, self.fin)
+                created__range=(self.inicio, self.fin)
         ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
 
         ventas = Venta.objects.filter(
-            recibo__created__range=(self.inicio, self.fin))
+                recibo__created__range=(self.inicio, self.fin))
         context['ventas'] = ventas.values('item__descripcion').annotate(
-            monto=Coalesce(Sum('monto'), Decimal()),
-            cantidad=Coalesce(Sum('cantidad'), Decimal())
+                monto=Coalesce(Sum('monto'), Decimal()),
+                cantidad=Coalesce(Sum('cantidad'), Decimal())
         ).order_by('-monto')[:20]
 
         context['recibos'] = total
 
         for tipo in TipoPago.objects.all():
             pagado = tipo.pagos.filter(
-                recibo__created__range=(self.inicio, self.fin)
+                    recibo__created__range=(self.inicio, self.fin)
             ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
             context['pagos'].append((tipo, pagado))
 
@@ -313,9 +321,9 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
         self.persona_form = PersonaForm(instance=self.persona, prefix='persona')
         self.persona_form.helper.form_tag = False
         formset = self.ReciboFormset(
-            instance=self.persona,
-            prefix='recibo',
-            initial=[{'cajero': self.request.user}]
+                instance=self.persona,
+                prefix='recibo',
+                initial=[{'cajero': self.request.user}]
         )
         return formset
 
@@ -357,7 +365,6 @@ class ReciboTipoFormUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'invoice/recibo_cambio_form.html'
 
     def form_valid(self, form):
-
         self.object = form.save(commit=False)
 
         self.object.save()
@@ -478,12 +485,12 @@ class PagoCreateView(ReciboFormMixin, CreateView, LoginRequiredMixin):
         ).count() <= 0:
 
             messages.info(
-                self.request,
-                _(u'No se puede agregar un este tipo de pago sin ' u'contrato!')
+                    self.request,
+                    _('No se puede agregar un este tipo de pago sin contrato!')
             )
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(
-                    self.request.META['HTTP_REFERER'])
+                        self.request.META['HTTP_REFERER'])
             else:
                 return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -542,11 +549,25 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
                                                           args=[self.object.id])
 
         context['reembolso_form'] = ReembolsoForm(
-            initial={'recibo': self.object.id}
+                initial={'recibo': self.object.id}
         )
         context['reembolso_form'].helper.form_action = reverse('reembolso-add')
 
         return context
+
+
+class ReciboNumeroListView(ListView, LoginRequiredMixin):
+    context_object_name = 'recibos'
+
+    def get_queryset(self):
+        form = NumeroForm(self.request.GET)
+
+        if form.is_valid():
+            return Recibo.objects.filter(
+                    correlativo=form.cleaned_data['numero']
+            )
+
+        return Recibo.objects.all()
 
 
 class ReciboPrintView(LoginRequiredMixin, DetailView):
@@ -558,7 +579,7 @@ class ReciboPrintView(LoginRequiredMixin, DetailView):
         self.object = self.get_object()
 
         if not self.object.cerrado:
-            messages.info(self.request, _(u'El recibo aún no ha sido cerrado'))
+            messages.info(self.request, _('El recibo aún no ha sido cerrado'))
             return redirect(self.object.get_absolute_url())
 
         return super(ReciboPrintView, self).get(request, *args, **kwargs)
@@ -574,8 +595,8 @@ class ReciboAnularView(RedirectView, LoginRequiredMixin):
         recibo = get_object_or_404(Recibo, pk=kwargs['pk'])
         recibo.anular()
         messages.info(
-            self.request,
-            _(u'¡El recibo ha sido marcado como anulado!')
+                self.request,
+                _('¡El recibo ha sido marcado como anulado!')
         )
         return recibo.get_absolute_url()
 
@@ -592,9 +613,9 @@ class ReciboCerrarView(RedirectView, LoginRequiredMixin):
 
         if not recibo.cerrado:
             messages.info(self.request,
-                          _(u'¡El recibo no se puede cerrar, revise los pagos'))
+                          _('¡El recibo no se puede cerrar, revise los pagos'))
         else:
-            messages.info(self.request, _(u'¡El recibo ha sido cerrado!'))
+            messages.info(self.request, _('¡El recibo ha sido cerrado!'))
         return recibo.get_absolute_url()
 
 
@@ -616,13 +637,13 @@ class ReciboPeriodoView(FormMixin, TemplateView):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = self.form.cleaned_data['fin']
             self.recibos = Recibo.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin,
+                    created__gte=self.inicio,
+                    created__lte=self.fin,
             )
         else:
             messages.info(
-                self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                    self.request,
+                    _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -637,8 +658,8 @@ class ReciboPeriodoView(FormMixin, TemplateView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = Venta.objects.filter(
-            recibo__in=self.recibos,
-            recibo__nulo=False
+                recibo__in=self.recibos,
+                recibo__nulo=False
         ).aggregate(total=Coalesce(Sum('total'), Decimal()))['total']
 
         return context
@@ -665,13 +686,13 @@ class PagoPeriodoView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PagoPeriodoView, self).get_context_data(**kwargs)
         pagos = Pago.objects.filter(
-            recibo__created__range=(self.inicio, self.fin))
+                recibo__created__range=(self.inicio, self.fin))
         context['group'] = pagos.values('tipo__nombre').annotate(
-            monto=Coalesce(Sum('monto'), Decimal())
+                monto=Coalesce(Sum('monto'), Decimal())
         ).order_by()
         context['pagos'] = pagos
         context['total'] = pagos.aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )
 
         context['inicio'] = self.inicio
@@ -749,19 +770,19 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
         productos = defaultdict(lambda: defaultdict(Decimal))
 
         ventas = Venta.objects.filter(
-            recibo__created__range=(self.inicio, self.fin))
+                recibo__created__range=(self.inicio, self.fin))
 
         context['recibos'] = self.recibos
         context['productos'] = ventas.values('item__descripcion').annotate(
-            monto=Sum('monto'), count=Sum('cantidad')
+                monto=Sum('monto'), count=Sum('cantidad')
         ).order_by('-monto')
 
         context['impuesto'] = Venta.objects.filter(
-            recibo__created__range=(self.inicio, self.fin)
+                recibo__created__range=(self.inicio, self.fin)
         ).aggregate(tax=Sum('tax'))['tax']
 
         context['total'] = Venta.objects.filter(
-            recibo__created__range=(self.inicio, self.fin)
+                recibo__created__range=(self.inicio, self.fin)
         ).aggregate(total=Sum('total'))['total']
 
         context['inicio'] = self.inicio
@@ -783,10 +804,10 @@ class VentaListView(ListView):
 
     def get_queryset(self):
         return Venta.objects.filter(
-            recibo__created__gte=self.inicio,
-            recibo__created__lte=self.fin,
-            recibo__nulo=False,
-            item=self.item,
+                recibo__created__gte=self.inicio,
+                recibo__created__lte=self.fin,
+                recibo__nulo=False,
+                item=self.item,
         )
 
     def get_context_data(self, **kwargs):
@@ -817,8 +838,8 @@ class EmergenciaPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.emergencias = Emergencia.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin
+                    created__gte=self.inicio,
+                    created__lte=self.fin
             )
 
         else:
@@ -936,13 +957,13 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
 
         messages.info(
-            self.request,
-            _(u'No puede facturar sin tener ciudad en su perfil!')
+                self.request,
+                _('No puede facturar sin tener ciudad en su perfil!')
         )
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
@@ -958,7 +979,7 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cliente = consulta.persona
 
         recibo.tipo_de_venta = TipoVenta.objects.filter(
-            predeterminada=True
+                predeterminada=True
         ).first()
 
         recibo.save()
@@ -969,8 +990,8 @@ class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
         consulta.activa = False
         consulta.save()
         messages.info(
-            self.request,
-            _(u'¡La consulta se marcó como facturada!')
+                self.request,
+                _('¡La consulta se marcó como facturada!')
         )
         return recibo.get_absolute_url()
 
@@ -997,8 +1018,8 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
 
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
@@ -1043,8 +1064,8 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
 
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
@@ -1055,8 +1076,8 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
 
         if not aseguradora.cardex:
             messages.info(
-                self.request,
-                _(u'La aseguradora no tiene representante en el cardex!')
+                    self.request,
+                    _('La aseguradora no tiene representante en el cardex!')
             )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
@@ -1068,7 +1089,7 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cliente = aseguradora.cardex
         recibo.credito = True
         recibo.tipo_de_venta = TipoVenta.objects.filter(
-            predeterminada=True
+                predeterminada=True
         ).first()
 
         recibo.save()
@@ -1076,9 +1097,9 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
             venta = Venta()
             venta.item = master.plan.item
             venta.recibo = recibo
-            venta.descripcion = _(u'Poliza {0}  {1}').format(
-                master.poliza,
-                master.contratante.nombre
+            venta.descripcion = _('Poliza {0}  {1}').format(
+                    master.poliza,
+                    master.contratante.nombre
             )
             venta.cantidad = master.active_contracts_count()
             venta.precio = master.plan.item.precio_de_venta
@@ -1088,8 +1109,8 @@ class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
         recibo.save()
 
         messages.info(
-            self.request,
-            _(u'¡La consulta se marcó como facturada!')
+                self.request,
+                _('¡La consulta se marcó como facturada!')
         )
 
         return recibo.get_absolute_url()
@@ -1107,8 +1128,8 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
 
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
@@ -1119,8 +1140,8 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
 
         if not aseguradora.cardex:
             messages.info(
-                self.request,
-                _(u'La aseguradora no tiene representante en el cardex!')
+                    self.request,
+                    _('La aseguradora no tiene representante en el cardex!')
             )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
@@ -1132,7 +1153,7 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
         cotizacion.persona = aseguradora.cardex
         cotizacion.credito = True
         cotizacion.tipo_de_venta = TipoVenta.objects.filter(
-            predeterminada=True
+                predeterminada=True
         ).first()
 
         cotizacion.save()
@@ -1141,9 +1162,9 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
             cotizado = Cotizado()
             cotizado.item = master.plan.item
             cotizado.cotizacion = cotizacion
-            cotizado.descripcion = _(u'Poliza {0}  {1}').format(
-                master.poliza,
-                master.contratante.nombre
+            cotizado.descripcion = _('Poliza {0}  {1}').format(
+                    master.poliza,
+                    master.contratante.nombre
             )
             cotizado.cantidad = master.active_contracts_count()
             cotizado.precio = master.plan.item.precio_de_venta
@@ -1153,8 +1174,8 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
         cotizacion.save()
 
         messages.info(
-            self.request,
-            _(u'¡La consulta se marcó como facturada!')
+                self.request,
+                _('¡La consulta se marcó como facturada!')
         )
 
         return cotizacion.get_absolute_url()
@@ -1172,8 +1193,8 @@ class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
 
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
@@ -1187,7 +1208,7 @@ class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
         cotizacion.persona = aseguradora.cardex
         cotizacion.credito = True
         cotizacion.tipo_de_venta = TipoVenta.objects.filter(
-            predeterminada=True
+                predeterminada=True
         ).first()
 
         cotizacion.save()
@@ -1196,9 +1217,9 @@ class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
             cotizado = Cotizado()
             cotizado.item = master.plan.item
             cotizado.cotizacion = cotizacion
-            cotizado.descripcion = _(u'Poliza {0}  {1}').format(
-                master.poliza,
-                master.contratante.nombre
+            cotizado.descripcion = _('Poliza {0}  {1}').format(
+                    master.poliza,
+                    master.contratante.nombre
             )
             cotizado.cantidad = 1
             cotizado.precio = master.item.precio_de_venta
@@ -1210,8 +1231,8 @@ class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
         cotizacion.save()
 
         messages.info(
-            self.request,
-            _(u'¡La consulta se marcó como facturada!')
+                self.request,
+                _('¡La consulta se marcó como facturada!')
         )
         return cotizacion.get_absolute_url()
 
@@ -1223,8 +1244,8 @@ class MasterCotizarView(RedirectView, LoginRequiredMixin):
 
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
@@ -1238,7 +1259,7 @@ class MasterCotizarView(RedirectView, LoginRequiredMixin):
         cotizacion.persona = master.administrador
         cotizacion.credito = True
         cotizacion.tipo_de_venta = TipoVenta.objects.filter(
-            predeterminada=True
+                predeterminada=True
         ).first()
 
         cotizacion.save()
@@ -1246,20 +1267,20 @@ class MasterCotizarView(RedirectView, LoginRequiredMixin):
         cotizado = Cotizado()
         cotizado.item = master.plan.item
         cotizado.cotizacion = cotizacion
-        cotizado.descripcion = _(u'Poliza {0}  {1}').format(
-            master.poliza,
-            master.contratante.nombre
+        cotizado.descripcion = _('Poliza {0}  {1}').format(
+                master.poliza,
+                master.contratante.nombre
         )
         cotizado.cantidad = 1
-        cotizado.precio = master.item.precio_de_venta
+        cotizado.precio = master.plan.item.precio_de_venta
         cotizado.impuesto = master.plan.item.impuestos
         cotizado.save()
 
         cotizacion.save()
 
         messages.info(
-            self.request,
-            _(u'¡La consulta se marcó como facturada!')
+                self.request,
+                _('¡La consulta se marcó como facturada!')
         )
         return cotizacion.get_absolute_url()
 
@@ -1271,8 +1292,8 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
 
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return self.request.META['HTTP_REFERER']
@@ -1286,7 +1307,7 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
         recibo.cliente = aseguradora.cardex
         recibo.credito = True
         recibo.tipo_de_venta = TipoVenta.objects.filter(
-            predeterminada=True
+                predeterminada=True
         ).first()
 
         recibo.save()
@@ -1294,9 +1315,9 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
             venta = Venta()
             venta.item = master.plan.item
             venta.recibo = recibo
-            venta.descripcion = _(u'Poliza {0}  {1}').format(
-                master.poliza,
-                master.contratante.nombre
+            venta.descripcion = _('Poliza {0}  {1}').format(
+                    master.poliza,
+                    master.contratante.nombre
             )
             venta.cantidad = 1
             venta.precio = master.item.precio_de_venta
@@ -1306,8 +1327,8 @@ class AseguradoraMasterFacturarView(RedirectView, LoginRequiredMixin):
         recibo.save()
 
         messages.info(
-            self.request,
-            _(u'¡La consulta se marcó como facturada!')
+                self.request,
+                _('¡La consulta se marcó como facturada!')
         )
         return recibo.get_absolute_url()
 
@@ -1335,8 +1356,8 @@ class ExamenFacturarView(UpdateView, LoginRequiredMixin):
 
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
@@ -1385,7 +1406,7 @@ class CorteView(ReciboPeriodoView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = context['recibos'].annotate(
-            sold=Coalesce(Sum('ventas__total'), Decimal())
+                sold=Coalesce(Sum('ventas__total'), Decimal())
         ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
         return context
 
@@ -1407,7 +1428,7 @@ class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
             items[venta.item]['cantidad'] += venta.cantidad
 
         queryset = ItemTemplate.objects.annotate(
-            total=models.Sum('items__cantidad'))
+                total=models.Sum('items__cantidad'))
 
         for item in queryset.all():
 
@@ -1460,6 +1481,20 @@ class CierreTurnoCreateView(TurnoCajaFormMixin):
     form_class = CierreTurnoForm
 
 
+class CierreTurnoDeleteView(DeleteView, LoginRequiredMixin):
+    """Permite eliminar un :class:`CierreTurno` que sea incorrecto en el
+    :class:`TurnoCaja`"""
+    model = CierreTurno
+
+    def get_object(self, queryset=None):
+        obj = super(CierreTurnoDeleteView, self).get_object(queryset)
+        self.turno = obj.turno
+        return obj
+
+    def get_success_url(self):
+        return self.turno.get_absolute_url()
+
+
 class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
     model = TurnoCaja
     form_class = TurnoCajaCierreForm
@@ -1469,29 +1504,30 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
 
         recibos = self.object.recibos().filter(cerrado=False).count()
         consultas = Consulta.objects.filter(
-            consultorio__usuario__profile__ciudad=self.object.usuario.profile
-                .ciudad,
-            facturada=False,
-            activa=False
+                consultorio__usuario__profile__ciudad=self.object.usuario.profile
+                    .ciudad,
+                facturada=False,
+                activa=False
         ).count()
         emergencias = Emergencia.objects.filter(
-            facturada=False,
-            usuario__profile__ciudad=self.object.usuario.profile.ciudad
+                facturada=False,
+                usuario__profile__ciudad=self.object.usuario.profile.ciudad
         ).count()
 
         cerrable = True
 
         if recibos > 0 or consultas > 0 or emergencias > 0:
             messages.info(
-                self.request,
-                _(u'Aún hay items pendientes de facturacion')
+                    self.request,
+                    _('Aún hay items pendientes de facturacion')
             )
             cerrable = False
 
         if self.object.diferencia_total() != 0:
             messages.info(
-                self.request,
-                _(u'No se puede cerrar el turno, tiene diferencias en saldos')
+                    self.request,
+                    _(
+                            'No se puede cerrar el turno, tiene diferencias en saldos')
             )
             cerrable = False
 
@@ -1523,17 +1559,17 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
             self.fin = self.form.cleaned_data['fin']
             self.ciudad = self.form.cleaned_data['ciudad']
             self.recibos = Recibo.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin,
+                    created__gte=self.inicio,
+                    created__lte=self.fin,
             )
             self.turnos = TurnoCaja.objects.filter(
-                fin__gte=self.inicio,
-                fin__lte=self.fin,
+                    fin__gte=self.inicio,
+                    fin__lte=self.fin,
             )
         else:
             messages.info(
-                self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                    self.request,
+                    _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -1549,8 +1585,8 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
         context['fin'] = self.fin
         context['ciudad'] = self.ciudad
         context['total'] = Venta.objects.filter(
-            recibo__in=self.recibos,
-            recibo__nulo=False
+                recibo__in=self.recibos,
+                recibo__nulo=False
         ).aggregate(total=Coalesce(Sum('total'), Decimal()))['total']
         context['dias'] = []
 
@@ -1561,24 +1597,25 @@ class TurnoCajaPeriodoView(FormMixin, TemplateView):
             inicio = make_day_start(day)
             fin = make_end_day(day)
             pagos = CierreTurno.objects.filter(
-                turno__inicio__gte=inicio,
-                turno__inicio__lte=fin,
-                turno__usuario__profile__ciudad=self.ciudad
+                    turno__inicio__gte=inicio,
+                    turno__inicio__lte=fin,
+                    turno__usuario__profile__ciudad=self.ciudad
             )
             apertura = TurnoCaja.objects.filter(
-                inicio__gte=inicio, inicio__lte=fin
-            ).aggregate(apertura=Coalesce(Sum('apertura'), Decimal()))['apertura']
+                    inicio__gte=inicio, inicio__lte=fin
+            ).aggregate(apertura=Coalesce(Sum('apertura'), Decimal()))[
+                'apertura']
             pagos_list = []
             for tipo in tipos:
                 pagos_set = (tipo.nombre, pagos.filter(
-                    pago=tipo
+                        pago=tipo
                 ).aggregate(
-                    monto=Coalesce(Sum('monto'), Decimal())
+                        monto=Coalesce(Sum('monto'), Decimal())
                 )['monto'])
                 pagos_list.append(pagos_set)
 
             total = pagos.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+                    total=Coalesce(Sum('monto'), Decimal())
             )['total']
             dia = {'fecha': day, 'pagos': pagos_list, 'total': total,
                    'apertura': apertura}
@@ -1600,8 +1637,8 @@ class DepositoFacturarView(UpdateView, LoginRequiredMixin):
 
         if self.request.user.profile.ciudad is None:
             messages.info(
-                self.request,
-                _(u'No puede facturar sin tener ciudad en su perfil!')
+                    self.request,
+                    _('No puede facturar sin tener ciudad en su perfil!')
             )
             if self.request.META['HTTP_REFERER']:
                 return HttpResponseRedirect(self.request.META['HTTP_REFERER'])
@@ -1641,10 +1678,10 @@ class VentaAreaListView(ListView):
 
     def get_queryset(self):
         return Venta.objects.filter(
-            recibo__created__gte=self.inicio,
-            recibo__created__lte=self.fin,
-            recibo__nulo=False,
-            item__item_type=self.item_type,
+                recibo__created__gte=self.inicio,
+                recibo__created__lte=self.fin,
+                recibo__nulo=False,
+                item__item_type=self.item_type,
         )
 
     def get_context_data(self, **kwargs):
@@ -1653,7 +1690,7 @@ class VentaAreaListView(ListView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = self.get_queryset().aggregate(
-            total=Sum('total')
+                total=Sum('total')
         )['total']
         return context
 
@@ -1681,7 +1718,7 @@ class CiudadPeriodoListView(ListView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = self.get_queryset().aggregate(
-            total=Sum('ventas__total')
+                total=Sum('ventas__total')
         )['total']
         return context
 
@@ -1701,8 +1738,8 @@ class TipoPagoPeriodoView(ListView):
 
     def get_queryset(self):
         return Pago.objects.filter(
-            recibo__created__range=(self.inicio, self.fin),
-            tipo=self.tipo_pago,
+                recibo__created__range=(self.inicio, self.fin),
+                tipo=self.tipo_pago,
         ).select_related('recibo__cliente')
 
     def get_context_data(self, **kwargs):
@@ -1711,7 +1748,7 @@ class TipoPagoPeriodoView(ListView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = self.get_queryset().aggregate(
-            total=Sum('monto')
+                total=Sum('monto')
         )['total']
         return context
 
@@ -1738,13 +1775,13 @@ class PagoListView(ListView, LoginRequiredMixin):
         total = []
         for aseguradora in Aseguradora.objects.all():
             total.append((aseguradora, Pago.objects.filter(
-                status__reportable=True,
-                recibo__cliente__in=Persona.objects.filter(
-                    contratos__master__aseguradora=aseguradora)
+                    status__reportable=True,
+                    recibo__cliente__in=Persona.objects.filter(
+                            contratos__master__aseguradora=aseguradora)
             ).aggregate(total=Sum('monto'))['total']))
 
         context['total'] = self.get_queryset().aggregate(
-            total=Sum('monto')
+                total=Sum('monto')
         )['total']
 
         context['aseguradoras'] = total
@@ -1760,12 +1797,12 @@ class PagoAseguradoraList(ListView, AseguradoraMixin, LoginRequiredMixin):
     def get_queryset(self):
         return Pago.objects.filter(status__reportable=True,
                                    recibo__cliente__in=Persona.objects.filter(
-                                       contratos__master__aseguradora=self.aseguradora))
+                                           contratos__master__aseguradora=self.aseguradora))
 
     def get_context_data(self, **kwargs):
         context = super(PagoAseguradoraList, self).get_context_data(**kwargs)
         context['total'] = self.get_queryset().aggregate(
-            total=Sum('monto')
+                total=Sum('monto')
         )['total']
         return context
 
@@ -1795,7 +1832,7 @@ class PagoSiguienteStatusView(RedirectView, LoginRequiredMixin):
         pago = get_object_or_404(Pago, pk=kwargs['pk'])
         pago.status = pago.status.next_status
         pago.save()
-        messages.info(self.request, _(u'¡El Pago se ha actualizado!'))
+        messages.info(self.request, _('¡El Pago se ha actualizado!'))
 
         if self.request.META['HTTP_REFERER']:
             return self.request.META['HTTP_REFERER']
@@ -1810,7 +1847,7 @@ class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
     def get_redirect_url(self, **kwargs):
         cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
         cuenta.next_status()
-        messages.info(self.request, _(u'¡Se Actualizó la Cuenta por Cobrar!'))
+        messages.info(self.request, _('¡Se Actualizó la Cuenta por Cobrar!'))
 
         if self.request.META['HTTP_REFERER']:
             return self.request.META['HTTP_REFERER']
@@ -1825,7 +1862,7 @@ class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
     def get_redirect_url(self, **kwargs):
         cuenta = get_object_or_404(CuentaPorCobrar, pk=kwargs['pk'])
         cuenta.previous_status()
-        messages.info(self.request, _(u'¡Se Actualizó la Cuenta por Cobrar!'))
+        messages.info(self.request, _('¡Se Actualizó la Cuenta por Cobrar!'))
 
         if self.request.META['HTTP_REFERER']:
             return self.request.META['HTTP_REFERER']
@@ -1927,7 +1964,7 @@ class CotizacionFacturar(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, *args, **kwargs):
         cotizacion = get_object_or_404(Cotizacion, pk=kwargs['pk'])
         recibo = cotizacion.facturar()
-        messages.info(self.request, _(u'¡Se ha facturado la cotización!'))
+        messages.info(self.request, _('¡Se ha facturado la cotización!'))
         return recibo.get_absolute_url()
 
 
@@ -1951,7 +1988,7 @@ class ComprobanteDeduccionMixin(ContextMixin):
 
     def get_context_data(self, **kwargs):
         context = super(ComprobanteDeduccionMixin, self).get_context_data(
-            **kwargs)
+                **kwargs)
         context['comprobante'] = self.comprobante
         return context
 
@@ -1970,6 +2007,43 @@ class ConceptoDeduccionCreateView(ComprobanteDeduccionFormMixin, CreateView,
                                   LoginRequiredMixin):
     model = ConceptoDeduccion
     form_class = ConceptoDeduccionForm
+
+
+class NotaCreditoCreateView(CreateView, LoginRequiredMixin):
+    model = NotaCredito
+    form_class = NotaCreditoForm
+
+
+class NotaCreditoMixin(ContextMixin):
+    """Agrega una :class:`NotaCredito` en la vista"""
+
+    def dispatch(self, *args, **kwargs):
+        self.nota_credito = get_object_or_404(ComprobanteDeduccion,
+                                              pk=kwargs['nota_credito'])
+        return super(NotaCreditoMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(NotaCreditoMixin, self).get_context_data(
+                **kwargs)
+        context['nota_credito'] = self.nota_credito
+        return context
+
+
+class NotaCreditoFormMixin(FormMixin, ComprobanteDeduccionMixin):
+    """
+    Agrega la :class:`NotaCredito` a los argumentos iniciales de un formulario
+    """
+
+    def get_initial(self):
+        initial = super(NotaCreditoFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['nota'] = self.nota_credito
+        return initial
+
+
+class DetalleCreditoCreateView(CreateView, NotaCreditoFormMixin,
+                               LoginRequiredMixin):
+    model = DetalleCredito
 
 
 class ReembolsoCreateView(FormView, LoginRequiredMixin):

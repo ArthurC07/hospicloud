@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <script type="text/javascript"
+            src="{% static 'js/jquery-ui-timepicker.js' %}"></script>
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <section class="tabbable">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#cuentas" data-toggle="tab">
+                            {% trans 'Cuentas Por Cobrar' %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#cheques" data-toggle="tab">
+                            {% trans 'Cheques por Conciliar' %}
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="cuentas" class="tab-pane active">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Cuenta' %}</th>
+                                <th>{% trans 'Pago' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for cuenta in cuentas %}
+                                <tr>
+                                    <td>
+                                        {% with cuenta.cuenta as cuenta %}
+                                            {{ cuenta.descripcion }}<br>
+                                            {% trans 'Del' %}
+                                            {{ cuenta.minimum }}
+                                            <br>
+                                            {% trans 'al' %}
+                                            {{ cuenta.created }}
+                                            <br>
+                                            {% trans 'Saldo Inicial' %}
+                                            {{ cuenta.inicial }}<br>
+                                            {% trans 'Saldo Actual' %}
+                                            {{ cuenta.monto }}
+                                        {% endwith %}
+                                    </td>
+                                    <td>{% crispy cuenta.form %}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="cheques" class="tab-pane">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Cheque' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for cheque in cheques %}
+                                <tr>
+                                    <td>{{ cheque }}</td>
+                                    <td>
+                                        <a href="{{ cheque.get_absolute_url }}"
+                                           class="btn btn-primary">
+                                            {% trans 'Ver' %}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

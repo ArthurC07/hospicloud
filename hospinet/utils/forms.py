@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
 from django import forms
@@ -15,6 +16,12 @@ class FieldSetFormMixin(forms.Form):
         self.helper.field_class = 'col-md-7'
         self.field_names = self.fields.keys()
 
+    def set_legend(self, text):
+        self.helper.layout = Fieldset(text, *self.field_names)
+
+    def set_action(self, action):
+        self.helper.form_action = action
+
 
 class FieldSetModelFormMixinNoButton(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -26,17 +33,17 @@ class FieldSetModelFormMixinNoButton(forms.ModelForm):
         self.helper.field_class = 'col-md-7'
         self.field_names = self.fields.keys()
 
+    def set_legend(self, text):
+        self.helper.layout = Fieldset(text, *self.field_names)
 
-class FieldSetModelFormMixin(forms.ModelForm):
+    def set_action(self, action):
+        self.helper.form_action = action
+
+
+class FieldSetModelFormMixin(FieldSetModelFormMixinNoButton):
     def __init__(self, *args, **kwargs):
         super(FieldSetModelFormMixin, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-md-4'
-        self.helper.field_class = 'col-md-7'
-        self.field_names = self.fields.keys()
-        self.helper.add_input(Submit('submit', _(u'Guardar')))
+        self.helper.add_input(Submit('submit', _('Guardar')))
 
 
 class DateWidget(forms.DateInput):
@@ -106,3 +113,13 @@ class PeriodoForm(forms.Form):
 
     def set_action(self, action):
         self.helper.form_action = action
+
+
+class NumeroForm(FieldSetFormMixin):
+    numero = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super(NumeroForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', _('Buscar')))
+        self.helper.layout = Fieldset(_('Búsqueda por Número'),
+                                      *self.field_names)

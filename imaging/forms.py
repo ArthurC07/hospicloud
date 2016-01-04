@@ -23,6 +23,7 @@ from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
     DateTimeWidget
 from persona.models import Persona
+from django.utils.translation import ugettext_lazy as _
 
 
 class ExamenForm(FieldSetModelFormMixin):
@@ -40,7 +41,7 @@ class ExamenForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ExamenForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Examen', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Editar Examen'), *self.field_names)
 
 
 class ImagenForm(FieldSetModelFormMixin):
@@ -57,7 +58,7 @@ class ImagenForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ImagenForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Adjuntar Imagen',
+        self.helper.layout = Fieldset(_(u'Adjuntar Imagen'),
                                       *self.field_names)
 
 
@@ -75,7 +76,7 @@ class AdjuntoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(AdjuntoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Adjuntar Archivo',
+        self.helper.layout = Fieldset(_(u'Adjuntar Archivo'),
                                       *self.field_names)
 
 
@@ -93,7 +94,7 @@ class DicomForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(DicomForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Imagen Dicom',
+        self.helper.layout = Fieldset(_(u'Agregar Imagen Dicom'),
                                       *self.field_names)
 
 
@@ -110,7 +111,7 @@ class EstudioProgramadoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EstudioProgramadoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Estudio Programado',
+        self.helper.layout = Fieldset(_(u'Formulario de Estudio Programado'),
                                       *self.field_names)
 
 
@@ -125,7 +126,7 @@ class EmailForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EmailForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Enviar Correo', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Enviar Correo'), *self.field_names)
 
     def send_email(self):
         """Realiza el envio del correo electrónico"""
@@ -142,9 +143,9 @@ class EstudioForm(FieldSetModelFormMixin):
                                     queryset=Examen.objects.all(),
                                     widget=forms.HiddenInput())
     tipo_de_examen = forms.ModelChoiceField(
-        queryset=TipoExamen.objects.all()
+            queryset=TipoExamen.objects.all()
     )
 
     def __init__(self, *args, **kwargs):
         super(EstudioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Examen', *self.field_names)
+        self.helper.layout = Fieldset(_(u'Agregar Examen'), *self.field_names)

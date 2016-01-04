@@ -78,7 +78,6 @@ class Aseguradora(TimeStampedModel):
         return reverse('aseguradora', args=[self.id])
 
     def master_contracts(self):
-
         return self.mastercontract_set.order_by('contratante__nombre')
 
 
@@ -150,7 +149,7 @@ def check_line(line, vencimiento):
     poliza_f = line[1]
     apellido_f, nombre_f = line[4].split(",")
     nacimiento_f = server_timezone.localize(
-        datetime.strptime(line[6], "%m/%d/%Y"))
+            datetime.strptime(line[6], "%m/%d/%Y"))
     sexo_f = line[5]
     identificacion = line[9]
     vencimiento_r = vencimiento
@@ -205,8 +204,8 @@ def check_line(line, vencimiento):
             contract.save()
         else:
             contract = Contrato.objects.filter(
-                poliza=poliza_f,
-                certificado=file_certificado
+                    poliza=poliza_f,
+                    certificado=file_certificado
             ).first()
 
             if contract:
@@ -303,8 +302,8 @@ class MasterContract(TimeStampedModel):
 
         if auto:
             dependiente = Contrato.objects.filter(
-                certificado=certificado,
-                poliza=self.poliza
+                    certificado=certificado,
+                    poliza=self.poliza
             ).count()
 
             pcd = PCD()
@@ -322,8 +321,10 @@ class MasterContract(TimeStampedModel):
 
     def active_contracts(self):
 
-        return Contrato.objects.filter(master=self,
-                                       vencimiento__gte=timezone.now().date())
+        return Contrato.objects.filter(
+                master=self,
+                vencimiento__gte=timezone.now()
+        ).all()
 
     def active_contracts_count(self):
 
@@ -382,12 +383,12 @@ class Contrato(TimeStampedModel):
             self.save()
 
         consultas = Consulta.objects.filter(
-            persona=self.persona,
-            created__gte=self.renovacion
+                persona=self.persona,
+                created__gte=self.renovacion
         ).count()
         seguimientos = Seguimiento.objects.filter(
-            persona=self.persona,
-            created__gte=self.renovacion
+                persona=self.persona,
+                created__gte=self.renovacion
         ).count()
         total = seguimientos + consultas
 
@@ -397,9 +398,9 @@ class Contrato(TimeStampedModel):
         query = reduce(operator.or_, predicates, Q())
 
         seguimientos = Seguimiento.objects.filter(
-            created__gte=self.renovacion).filter(query).count()
+                created__gte=self.renovacion).filter(query).count()
         consultas = Consulta.objects.filter(
-            created__gte=self.renovacion).filter(query).count()
+                created__gte=self.renovacion).filter(query).count()
 
         return total + seguimientos + consultas
 
@@ -411,15 +412,15 @@ class Contrato(TimeStampedModel):
                       in self.beneficiarios.all()]
 
         total += Cita.objects.filter(created__gte=self.renovacion).filter(
-            reduce(operator.or_, predicates, Q())).count()
+                reduce(operator.or_, predicates, Q())).count()
 
         return total
 
     def total_hospitalizaciones(self):
         total = self.persona.admisiones.filter(ingresado__isnull=False).count()
         total += sum(
-            b.persona.admisiones.filter(ingresado__isnull=False).count()
-            for b in self.beneficiarios.all())
+                b.persona.admisiones.filter(ingresado__isnull=False).count()
+                for b in self.beneficiarios.all())
         return total
 
     def dias_mora(self):
@@ -427,7 +428,7 @@ class Contrato(TimeStampedModel):
         pagos = self.pagos.filter(precio=self.plan.precio, ciclo=True).count()
         ahora = timezone.now()
         cobertura = timezone.make_aware(
-            datetime.combine(self.inicio, time.min)
+                datetime.combine(self.inicio, time.min)
         ) + timedelta(pagos * 30)
         delta = ahora - cobertura
         dias = delta.days
@@ -571,9 +572,9 @@ class Evento(TimeStampedModel):
 
     def __str__(self):
         return _(u"Evento {0} de {1} de {2}").format(
-            self.tipo,
-            self.contrato.numero,
-            self.contrato.persona.nombre_completo()
+                self.tipo,
+                self.contrato.numero,
+                self.contrato.persona.nombre_completo()
         )
 
 

@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>{% trans 'Factura al Cr&eacute;dito' %} {{ recibo.numero }}</title>
     {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+    <title>{% trans 'Factura al Cr&eacute;dito' %} {{ recibo.numero }}</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <style type="text/css">
         thead {
@@ -153,7 +153,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         $ {{ recibo.other_currency }}
         {% trans 'Tasa de cambio de mercado' %}
-        {{ config.CURRENCY_EXCHANGE }}<br>
+        {{ recibo.ciudad.company.cambio_monetario }}<br>
     </div>
     <div class="row">
         <div class="col-md-12">

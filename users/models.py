@@ -59,6 +59,10 @@ class Company(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Ciudad(TimeStampedModel):
+    """
+    Consolidates all City specific legal information for legal tending of
+    :class:`Recibo`
+    """
     nombre = models.CharField(max_length=100)
     cai_recibo = models.CharField(max_length=255, blank=True)
     cai_comprobante = models.CharField(max_length=255, blank=True)
@@ -73,6 +77,12 @@ class Ciudad(TimeStampedModel):
     company = models.ForeignKey(Company, blank=True, null=True)
     correlativo_de_comprobante = models.IntegerField(default=0)
     prefijo_comprobante = models.CharField(max_length=100, blank=True)
+    correlativo_de_nota_de_credito = models.IntegerField(default=0)
+    cai_nota_credito = models.CharField(max_length=255, blank=True)
+    prefijo_nota_credito = models.CharField(max_length=255, blank=True)
+    inicio_rango_nota_credito = models.CharField(max_length=100, blank=True)
+    fin_rango_nota_credito = models.CharField(max_length=100, blank=True)
+    limite_de_emision_nota_credito = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.nombre
