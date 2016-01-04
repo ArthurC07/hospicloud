@@ -18,7 +18,7 @@ from django.utils.decorators import method_decorator
 
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from guardian.decorators import permission_required
+from django.contrib.auth.decorators import permission_required
 from lab.forms import ResultadoForm
 from lab.models import Resultado
 from persona.forms import PersonaSearchForm

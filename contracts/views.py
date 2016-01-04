@@ -33,7 +33,7 @@ from django.views.generic.base import RedirectView, ContextMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
-from guardian.decorators import permission_required
+from django.contrib.auth.decorators import permission_required
 from constance import config
 
 from clinique.models import Cita, Consulta, Seguimiento

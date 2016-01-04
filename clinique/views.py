@@ -33,7 +33,7 @@ from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import FormMixin, DeleteView
-from guardian.decorators import permission_required
+from django.contrib.auth.decorators import permission_required
 from django.utils.translation import ugettext_lazy as _
 
 from clinique.forms import PacienteForm, CitaForm, EvaluacionForm, \
