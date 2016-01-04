@@ -34,7 +34,6 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
 from django.contrib.auth.decorators import permission_required
-from constance import config
 
 from clinique.models import Cita, Consulta, Seguimiento
 from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
@@ -771,9 +770,7 @@ class PrecontratoCreateView(CreateWithInlinesView):
 
         url = self.request.build_absolute_uri(precontrato.get_absolute_url())
 
-        send_mail('PreContrato Registrado',
-                  _(u'Ir al contrato {0}').format(url), config.SYSTEM_EMAIL,
-                  config.NOTIFICATION_EMAIL.split(','), fail_silently=True)
+        #TODO: Send email containing the URL
 
         return precontrato.get_absolute_url()
 
