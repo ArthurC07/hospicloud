@@ -64,11 +64,11 @@
                     <div id="detalles" class="tab-pane">
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>{% trans 'Pago' %}</th>
-                                    <th>{% trans 'Fecha de Registro' %}</th>
-                                    <th>{% trans 'Acciones' %}</th>
-                                </tr>
+                            <tr>
+                                <th>{% trans 'Pago' %}</th>
+                                <th>{% trans 'Fecha de Registro' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
+                            </tr>
                             </thead>
                             <tbody>
                             {% for detalle in cheque.detallepago_set.all %}
@@ -100,8 +100,10 @@
 {% block javascript %}
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-           $('#pagos form').ajaxForm(function("Pagado!"));
+        $(document).ready(function () {
+            $('#pagos form').ajaxForm(function () {
+                alert("Pagado!");
+            });
         });
     </script>
 {% endblock %}

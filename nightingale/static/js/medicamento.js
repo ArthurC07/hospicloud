@@ -19,4 +19,4 @@ Medicamento.prototype.notificar = function() {
 			});
 		});
 	});
-}
+};
