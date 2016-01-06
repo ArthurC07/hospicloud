@@ -85,15 +85,6 @@ class Deposito(TimeStampedModel):
 
         super(Deposito, self).delete(**kw)
 
-    def liquidado(self):
-        """
-        :return: The amount that has been already consolidated
-        """
-
-        return self.detallepago_set.aggregate(
-                liquidado=Coalesce(Sum('monto'), Decimal())
-        )['liquidado']
-
 
 @python_2_unicode_compatible
 class Cheque(Deposito):
@@ -109,7 +100,7 @@ class Cheque(Deposito):
                                          default=0)
 
     def __str__(self):
-        return _(u'{0} - {1}').format(
+        return _('{0} - {1}').format(
                 self.banco_de_emision.nombre,
                 self.numero_de_cheque
         )
@@ -118,16 +109,31 @@ class Cheque(Deposito):
         return reverse('cheque-detail', args=[self.id])
 
     def pendiente(self):
+        """
+        Calculates how much money is still not liquidated from the
+        :class:`Cheque`
+
+        :return: The amount of leftover money
+        """
         return self.monto - self.detallepago_set.aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
         )['total'] + self.monto_retenido
+
+    def liquidado(self):
+        """
+        :return: The amount that has been already consolidated
+        """
+
+        return self.detallepago_set.aggregate(
+                liquidado=Coalesce(Sum('monto'), Decimal())
+        )['liquidado']
 
     def monto_total(self):
         return self.monto + self.monto_retenido
 
 
 @python_2_unicode_compatible
-class CierrePOS(TimeStampedModel):
+class CierrePOS(Deposito):
     """
     Describes the closing of the the POS.
     """
@@ -140,7 +146,7 @@ class CierrePOS(TimeStampedModel):
 
 class DetallePago(TimeStampedModel):
     """
-    Describes how an account got payed.
+    Describes how a :class:`Pago` got liquidated.
     """
     cheque = models.ForeignKey(Cheque, null=True)
     pago = models.ForeignKey(Pago)

@@ -22,15 +22,27 @@ from income.models import Deposito, Cheque, Banco, DetallePago
 
 
 class BancoAdmin(admin.ModelAdmin):
+    """
+    Describes the interface to manage :class:`Banco`s in the Django
+    administrative interface
+    """
     list_display = ['nombre']
 
 
 class DepositoAdmin(admin.ModelAdmin):
+    """
+    Describes the interface to manage :class:`Deposito`s in the Django
+    administrative interface
+    """
     list_display = ['cuenta', 'monto', 'fecha_de_deposito']
     ordering = ['monto', 'cuenta__nombre']
 
 
 class ChequeAdmin(admin.ModelAdmin):
+    """
+    Describes the interface to manage :class:`Cheque`s in the Django
+    administrative interface
+    """
     list_display = ['cuenta', 'monto', 'fecha_de_deposito', 'banco_de_emision',
                     'numero_de_cheque', 'monto_retenido']
     search_fields = ['cuenta__nombre', 'banco_de_emision__nombre',
@@ -38,6 +50,10 @@ class ChequeAdmin(admin.ModelAdmin):
 
 
 class DetallePagoAdmin(admin.ModelAdmin):
+    """
+    Describes the interface to manage :class:`DetallePago`s in the Django
+    administrative interface
+    """
     list_display = ['cheque', 'pago', 'monto']
 
 

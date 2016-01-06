@@ -21,13 +21,32 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from hospinet.utils.forms import DateTimeWidget, FieldSetModelFormMixin
-from income.models import Cheque, DetallePago, Deposito
+from income.models import Cheque, DetallePago, Deposito, CierrePOS
 from invoice.models import Pago
 from persona.models import Persona
 from users.mixins import HiddenUserForm
 
 
-class ChequeCobroForm(HiddenUserForm):
+class DepositoForm(HiddenUserForm):
+    """
+    Defines the UI and validation required to create :class:`Deposito`
+    """
+
+    class Meta:
+        model = Deposito
+        exclude = ('aplicado',)
+
+    fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
+                                            required=False,
+                                            initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(DepositoForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Datos del Dep&oacute;sito'),
+                                      *self.field_names)
+
+
+class ChequeForm(HiddenUserForm):
     """
     Creates the UI and validation required to create :class:`Cheque`s
     """
@@ -51,20 +70,42 @@ class ChequeCobroForm(HiddenUserForm):
                                            initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
-        super(ChequeCobroForm, self).__init__(*args, **kwargs)
+        super(ChequeForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Datos del Cheque de Pago'),
                                       *self.field_names)
 
 
+class CierrePOSForm(HiddenUserForm):
+    """
+    Defines a form that will be used to create and edit :class:`CierrePOS`
+    """
+    class Meta:
+        model = CierrePOS
+        exclude = ('aplicado', )
+
+    fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
+                                            required=False,
+                                            initial=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(CierrePOSForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Datos del Cierre de POS'),
+                                      *self.field_names)
+
+
 class DetallePagoForm(FieldSetModelFormMixin):
+    """
+    Defines the form that will be used to register :class:`DetallePago`
+    """
+
     class Meta:
         model = DetallePago
         fields = '__all__'
 
-    deposito = forms.ModelChoiceField(label='',
-                                      queryset=Deposito.objects.all(),
-                                      widget=forms.HiddenInput(),
-                                      required=False)
+    cheque = forms.ModelChoiceField(label='',
+                                    queryset=Cheque.objects.all(),
+                                    widget=forms.HiddenInput(),
+                                    required=False)
     pago = forms.ModelChoiceField(label='',
                                   queryset=Pago.objects.all(),
                                   widget=forms.HiddenInput(),

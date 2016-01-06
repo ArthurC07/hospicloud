@@ -20,5 +20,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class IncomeConfig(AppConfig):
+    """
+    Income application Django configuration
+    """
     name = 'income'
     verbose_name = _('Ingresos')
