@@ -38,7 +38,7 @@ class ChequeAdmin(admin.ModelAdmin):
 
 
 class DetallePagoAdmin(admin.ModelAdmin):
-    list_display = ['deposito', 'pago', 'monto']
+    list_display = ['cheque', 'pago', 'monto']
 
 
 admin.site.register(Deposito, DepositoAdmin)

@@ -29,6 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from budget.models import Fuente
 from invoice.models import Pago, CuentaPorCobrar
+from persona.models import Persona
 
 
 @python_2_unicode_compatible
@@ -100,6 +101,7 @@ class Cheque(Deposito):
     Represents a cheque that has been sent
     """
     banco_de_emision = models.ForeignKey(Banco)
+    emisor = models.ForeignKey(Persona, null=True)
     fecha_de_entrega = models.DateTimeField(default=timezone.now)
     fecha_de_emision = models.DateTimeField(default=timezone.now)
     numero_de_cheque = models.CharField(max_length=255)
@@ -120,10 +122,7 @@ class Cheque(Deposito):
                 total=Coalesce(Sum('monto'), Decimal())
         )['total'] + self.monto_retenido
 
-
-
     def monto_total(self):
-
         return self.monto + self.monto_retenido
 
 
@@ -143,12 +142,12 @@ class DetallePago(TimeStampedModel):
     """
     Describes how an account got payed.
     """
-    deposito = models.ForeignKey(Deposito)
+    cheque = models.ForeignKey(Cheque, null=True)
     pago = models.ForeignKey(Pago)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def get_absolute_url(self):
-        return self.deposito.get_absolute_url()
+        return self.cheque.get_absolute_url()
 
     def save(self, **kwargs):
         """

@@ -15,15 +15,15 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
-from crispy_forms.layout import Fieldset, Submit
+from crispy_forms.layout import Fieldset
 from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from hospinet.utils.forms import DateTimeWidget, FieldSetModelFormMixin, \
-    FieldSetFormMixin
+from hospinet.utils.forms import DateTimeWidget, FieldSetModelFormMixin
 from income.models import Cheque, DetallePago, Deposito
 from invoice.models import Pago
+from persona.models import Persona
 from users.mixins import HiddenUserForm
 
 
@@ -36,6 +36,9 @@ class ChequeCobroForm(HiddenUserForm):
         model = Cheque
         exclude = ('aplicado',)
 
+    emisor = forms.ModelChoiceField(
+            queryset=Persona.objects.filter(cardex=True)
+    )
     fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
                                             required=False,
                                             initial=timezone.now)
