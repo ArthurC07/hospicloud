@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}{% load i18n %}{% load l10n %}
+{% block title %} Contrato {{ contrato.numero }}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>{% trans 'Contrato Maestro' %} {{ master_contract }}
+                <small>{% trans 'Plan' %} {{ master_contract.plan }} </small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-9 main-content">
+            <ul>
+                <li>{{ master_contract.vendedor }}</li>
+                <li>{{ master_contract.plan }}</li>
+                <li>{{ master_contract.aseguradora }}</li>
+                <li>{{ master_contract.inicio }}</li>
+                <li>{{ master_contract.vencimiento }}</li>
+                <li>{{ master_contract.contratante }}</li>
+                <li>{{ master_contract.processed }}</li>
+            </ul>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <td>{% trans 'Contratante' %}</td>
+                    <td>{% trans 'Vencimiento' %}</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for contrato in master_contract.active_contracts %}
+                <tr>
+                    <td>{{ contrato.persona }}</td>
+                    <td>{{ contrato.vencimiento }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li>
+                            <a href="{% url 'contract-master-edit' master_contract.id %}">
+                                {% trans 'Editar Contrato Maestro' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contract-master-list' %}">
+                                {% trans 'Regresar a Contrato' %}
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}

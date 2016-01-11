@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>HospiNet :: {% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width"/>
+    {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+    {% include 'styles.html' %}
+    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet"/>
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="{% static 'js/html5shiv.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'js/respond.min.js' %}"></script>
+    <![endif]-->
+    {% block header %}{% endblock %}
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
+</head>
+<body>
+{% if user.is_staff %}
+    {% include 'snippets/navbar.html' %}
+{% endif %}
+<div id="content" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            {% block content %}{% endblock content %}
+        </div>
+    </div>
+</div>
+{% include 'javascript.html' %}
+<script type="text/javascript" src="{% static 'js/jquery.backstretch.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/common.js' %}"></script>
+<script type="text/javascript">
+    $.backstretch([
+        "{% static 'images/slide1.jpg' %}",
+        "{% static 'images/slide2.jpg' %}",
+        "{% static 'images/slide3.jpg' %}",
+        "{% static 'images/slide4.jpg' %}",
+        "{% static 'images/slide5.jpg' %}",
+        "{% static 'images/slide6.jpg' %}",
+        "{% static 'images/slide7.jpg' %}"
+    ], {duration: 10000, fade: 'slow'});
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

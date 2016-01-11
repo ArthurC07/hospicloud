@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Factura {{ recibo.numero }}</title>
+    {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <style type="text/css">
+        thead {
+            border-bottom: 2px dashed;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <p>
+                {{ recibo.ciudad.company.nombre }}<br>
+                {{ recibo.ciudad.direccion }}<br>
+                {% trans 'Tel&eacute;fono:' %} {{ recibo.ciudad.telefono }}
+                {% trans 'Email:' %} {{ recibo.ciudad.company.email }}
+                {% trans 'RTN:' %} {{ recibo.ciudad.company.rtn }}<br>
+                {% trans 'Factura:' %} {% if recibo.nulo %}
+                {% trans '---NULO---' %} {% endif %}{{ recibo.numero }}<br>
+                {% trans 'C.A.I:' %} {{ recibo.ciudad.cai_recibo }}<br>
+                {% trans 'Fecha:' %} {{ recibo.created }}<br>
+                {% trans 'Cliente:' %} {{ recibo.cliente }}
+                {% if not cliente.rtn %} {% trans 'CONSUMIDOR FINAL' %} {% endif %}<br>
+                {% trans 'RTN Cliente:' %} {{ recibo.cliente.rtn }}<br>
+                {% trans 'Cajero:' %} {{ recibo.cajero }}
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table style="width: 100%;">
+                <thead>
+                <tr>
+                    <th>{% trans 'Qty' %}</th>
+                    <th>{% trans 'Concepto' %}</th>
+                    <th>{% trans 'Precio Unitario' %}</th>
+                    <th>{% trans 'Subtotal' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for venta in recibo.ventas.all %}
+                    <tr>
+                        <td>{{ venta.cantidad }}</td>
+                        <td>{{ venta.item }}</td>
+                        <td>{{ venta.precio_unitario }}</td>
+                        <td>{{ venta.monto }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4" class="text-center">::::Ultima L&iacute;nea::::</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            {% trans 'Subtotal:' %} {{ recibo.ciudad.company.moneda }} {{ recibo.subtotal }}<br>
+            {% trans 'Descuento:' %} {{ recibo.ciudad.company.moneda }} {{ recibo.descuento }}<br>
+            {% trans 'Impuestos:' %} {{ recibo.ciudad.company.moneda }} {{ recibo.impuesto }}<br>
+            {% trans 'Total:' %} {{ recibo.ciudad.company.moneda }} {{ recibo.total }}
+        </div>
+    </div>
+    {% for pago in recibo.pagos.all %}
+        <div class="row">
+            <div class="col-md-12 text-right">
+                {{ pago.tipo }}: {{ pago.monto }} {{ pago.aseguradora }}
+            </div>
+        </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col-md-12">
+            <br/>
+            <br/>
+            <br/>
+
+            <p class="text-center">_________________________________________</p>
+
+            <p class="text-center">{% trans 'Firma Cliente' %}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% trans 'Fecha L&iacute;mite de Emisi&oacute;n:' %}
+            {{ recibo.ciudad.limite_de_emision }}<br>
+            {% trans 'Rango Autorizado:' %} {{ recibo.ciudad.inicio_rango }} a
+            la {{ recibo.ciudad.fin_rango }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            {% trans '"La factura es beneficio de todos, ex&iacute;jala"' %}
+            {% trans 'ORIGINAL: Cliente COPIA: Emisor' %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% for contrato in recibo.cliente.contratos.all %}
+                {% trans 'Poliza:' %} {{ contrato.poliza }}
+                {% trans 'Certificado:' %} {{ contrato.certificado }}
+            {% endfor %}
+            {% for beneficiario in recibo.cliente.beneficiarios.all %}
+                {{ beneficiario.contrato.poliza }} Certificado:
+                {{ beneficiario.contrato.certificado }}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    window.onload = function () {
+        window.print();
+    }
+</script>
+</body>
+</html>

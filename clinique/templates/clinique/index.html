@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load crispy_forms_tags %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>Consultorios Médicos
+                        <small>{{ user.get_full_name }}</small>
+                    </h1>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+            <div class="main-content col-md-12">‏
+                <div class="row">
+                    <div class="col-md-12">
+                        <section class="page-header">
+                            <h2>
+                                Sala de Espera
+                                <small>Promedio de Espera Ultimo
+                                    mes {{ total }} minutos
+                                </small>
+                            </h2>
+                        </section>
+                        {% for espera in esperas %}
+                            {% include 'clinique/snippets/espera.html' with espera=espera %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% for consultorio in user.consultorios_activos.all %}
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="page-header">
+                                <h2>
+                                    {{ consultorio }}
+                                    <small>{{ consultorio.pacientes.count }}
+                                        pacientes M&eacute;dico
+                                    </small>
+                                    <a class="pull-right btn btn-primary"
+                                       href="{% url 'consultorio' consultorio.id %}">Ver</a>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% for consultorio in user.consultorios_administrados.all %}
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="page-header">
+                                <h2>
+                                    {{ consultorio }}
+                                    <small>{{ consultorio.pacientes.count }}
+                                        pacientes Administrador
+                                    </small>
+                                    <a class="pull-right btn btn-primary"
+                                       href="{% url 'consultorio' consultorio.id %}">Ver</a>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% for consultorio in user.secretarias.all %}
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="page-header">
+                                <h2>
+                                    {{ consultorio }}
+                                    <small>{{ consultorio.pacientes.count }}
+                                        pacientes Secretaria
+                                    </small>
+                                    <a class="pull-right btn btn-primary"
+                                       href="{% url 'consultorio' consultorio.id %}">Ver</a>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="main-content col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        {% crispy citaperiodoform %}
+                    </div>
+                    <div class="col-md-4">
+                        {% crispy diagnosticoperiodoform %}
+                    </div>
+                    <div class="col-md-4">
+                        {% crispy cargosperiodoform %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        {% crispy evaluacionperiodoform %}
+                    </div>
+                    <div class="col-md-4">
+                        {% crispy seguimientoperiodoform %}
+                    </div>
+                    <div class="col-md-4">
+                        {% crispy consultasperiodoform %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <aside class="col-md-3">
+            <div class="col-md-12 toolbox">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li><a href="{% url 'consultorio-agregar' %}">Agregar
+                            Consultorio</a></li>
+                        <li><a href="{% url 'clinique-orden-list' %}">Lista de
+                            Ordenes M&eacute;dicas</a></li>
+                        <li><a href="{% url 'clinique-incapacidad-list' %}">Lista de
+                            Incapacidades</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}

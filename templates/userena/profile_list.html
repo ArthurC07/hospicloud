@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content_title %}<h2>{% trans 'Profiles' %}</h2>{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-content table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Nombre de Usuario' %}</th>
+                    <th>{% trans 'Nombre Completo' %}</th>
+                    <th>{% trans 'Ciudad' %}</th>
+                    <th>{% trans 'Valor Actual BSC' %}</th>
+                    <th>{% trans 'Escala Obtenida' %}</th>
+                    <th>{% trans 'Bonificacion BSC' %}</th>
+                    <th>{% trans 'Otras Bonificaciones' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for profile in profile_list %}
+                    {% with goal=profile.get_metas bsc=profile.bsc %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'userena_profile_detail' profile.user.username %}">
+                                {{ profile.user.username }}
+                            </a>
+                        </td>
+                        <td>{{ profile.user.get_full_name }}</td>
+                        <td>{{ profile.ciudad }}</td>
+                        <td>{{ goal.total|floatformat:2 }}</td>
+                        <td>
+                        {% for escala in goal.escalas %}
+                            Escala Obtenida: de {{ escala.puntaje_inicial }} al {{ escala.puntaje_final }}
+                        {% empty %}
+                            Ninguna
+                        {% endfor %}
+                        </td>
+                        <td>
+                        {% for escala in goal.escalas %}
+                            Comisi&oacute;n: {{ escala.comision }}
+                        {% empty %}
+                            Ninguna
+                        {% endfor %}
+                        </td>
+                        <td>
+                        {% for extra in goal.extra %}
+                            Bonificaci&oacute;n Obtenida:
+                                {{ extra.tipo_extra }} {{ extra.get_tipo_extra_display }}
+                                de {{ extra.inicio_de_rango }} al {{ extra.fin_de_rango }}
+                            Comisi&oacute;n: {{ extra.comision }}
+                        {% endfor %}
+                        </td>
+                    </tr>
+                    {% endwith %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if is_paginated %}
+        {% load bootstrap_pagination %}
+        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,99 @@
+{% load i18n %}{% load l10n %}
+<aside class="col-md-3">
+    <div class="col-md-12 toolbox">
+        <nav class="sidebar-nav">
+            <ul class="nav nav-stacked">
+                {% if modules.consulta %}
+                <li>
+                    <a href="{% url 'consultorio-espera-u-agregar' persona.id %}">
+                    {% trans 'Agregar Paciente a Sala de Espera' %}</a>
+                </li>
+                <li>
+                    {% for consultorio in user.consultorios.all %}
+                        <a href="{% url 'consultorio-consulta-agregar' persona.id consultorio.id %}">
+                            {% trans 'Agregar Consulta de' %} {{ consultorio }}
+                        </a>
+                    {% endfor %}
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-citapersona-agregar' persona.id %}">
+                        {% trans 'Crear una Cita' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'clinique-notas' persona.id %}">
+                        <i class="fa fa-pencil"></i>
+                        {% trans 'Notas de Enfermeria' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'clinique-signos' persona.id %}">
+                        <i class="fa fa-heart"></i> {% trans 'Signos Vitales' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'consultorio-remision-agregar' persona.id %}">
+                        {% trans 'Remitir Paciente' %}
+                    </a>
+                </li>
+                {% endif %}
+                {% if modules.imagenes %}
+                <li>
+                    <a href="{% url 'examen-agregar' persona.id %}">
+                        {% trans 'Programar Estudio' %}
+                    </a>
+                </li>
+                {% endif %}
+                {% if modules.emergencia %}
+                <li>
+                    <a href="{% url 'emergency-create' persona.id %}">
+                        {% trans 'Ingresar a Emergencias' %}
+                    </a>
+                </li>
+                {% endif %}
+                {% if modules.hospitalizacion %}
+                <li>
+                    <a href="{% url 'admision-persona-agregar' persona.id %}">
+                        {% trans 'Hospitalizar' %}
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if modules.caja %}
+                    <li>
+                        <a href="{% url 'invoice-create' persona.id %}">
+                            {% trans 'Crear un Recibo' %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'cotizacion-add' persona.id %}">
+                            {% trans 'Crear una Cotizacion' %}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if modules.contratos %}
+                <li>
+                    <a href="{% url 'contrato-persona-add' persona.id %}">
+                        {% trans 'Crear un Contrato' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'persona-beneficiario-add' persona.id %}">
+                        {% trans 'Convertir en Beneficiario' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'persona-empleo-add' persona.id %}">
+                        {% trans 'Agregar Empresa' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'contrato-persona-master-add' persona.id %}">
+                        {% trans 'Crear Contrato desde Maestro' %}
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</aside>
