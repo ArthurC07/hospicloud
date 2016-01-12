@@ -56,7 +56,7 @@ class ChequeForm(HiddenUserForm):
         exclude = ('aplicado',)
 
     emisor = forms.ModelChoiceField(
-            queryset=Persona.objects.filter(cardex=True)
+            queryset=Persona.objects.filter(mostrar_en_cardex=True)
     )
     fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
                                             required=False,
