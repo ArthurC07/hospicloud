@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from decimal import Decimal
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -35,11 +36,19 @@ from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
 class PresupuestoDetailView(DetailView, LoginRequiredMixin):
+    """
+    Shows a :class:`Presupuesto` detailed data view, describing the accounting
+    break up from every expense category.
+    """
     model = Presupuesto
     context_object_name = 'presupuesto'
 
 
 class PresupuestoListView(ListView, LoginRequiredMixin):
+    """
+    Allows viewing data related to all :class:`Presupuesto`s in the
+    :class:`Company`.
+    """
     model = Presupuesto
     context_object_name = 'presupuestos'
 
@@ -131,6 +140,10 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             'gasto-presupuesto-periodo'
         )
 
+        context['years'] = [d for d in Gasto.objects.all().datetimes(
+                'fecha_de_pago', 'year'
+        )]
+
         return context
 
 
@@ -162,6 +175,9 @@ class PresupuestoFormMixin(PresupuestoMixin, FormMixin):
 
 
 class CuentaDetailView(DetailView, LoginRequiredMixin):
+    """
+    Displays the data contained :class:`Cuenta`
+    """
     model = Cuenta
     context_object_name = 'cuenta'
 
@@ -171,7 +187,7 @@ class CuentaCreateView(PresupuestoFormMixin, CreateView, LoginRequiredMixin):
     form_class = CuentaForm
 
 
-class CuentaMixin(TemplateResponseMixin):
+class CuentaMixin(ContextMixin, View):
     """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -304,7 +320,7 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
         else:
             messages.info(
                 self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -352,7 +368,7 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
         else:
             messages.info(
                 self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 

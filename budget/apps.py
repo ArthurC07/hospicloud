@@ -14,4 +14,14 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-default_app_config = 'budget.apps.BudgetConfig'
+from __future__ import unicode_literals
+from django.apps import AppConfig
+from django.utils.translation import ugettext_lazy as _
+
+
+class BudgetConfig(AppConfig):
+    """
+    Implements the configuration required by Django 1.8+
+    """
+    name = 'budget'
+    verbose_name = _('Presupuesto')
