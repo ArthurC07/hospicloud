@@ -162,9 +162,10 @@ class DetallePago(TimeStampedModel):
         :param kwargs:
         :return:
         """
-        self.pago.completado = True
-        self.pago.status = self.pago.status.next_status
-        self.pago.save()
+        if self.monto >= self.pago.monto:
+            self.pago.completado = True
+            self.pago.status = self.pago.status.next_status
+            self.pago.save()
 
         super(DetallePago, self).save(**kwargs)
 
