@@ -477,7 +477,7 @@ class PresupuestoMes(TimeStampedModel):
     mes = models.IntegerField()
     anio = models.IntegerField(verbose_name=_('Año'))
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
-    procesado = models.BooleanField(default=False)
+    procesado = models.BooleanField(default=False, verbose_name=_('Completar Año'))
 
     def get_absolute_url(self):
         """
