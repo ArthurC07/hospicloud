@@ -36,6 +36,9 @@ class FuenteFormMixin(FieldSetModelFormMixin):
 
 
 class PresupuestoForm(CiudadFormMixin):
+    """
+    Builds a form to add new :class:`Presupuesto`
+    """
     class Meta:
         model = Presupuesto
         fields = '__all__'
@@ -56,6 +59,9 @@ class PresupuestoFormMixin(FieldSetModelFormMixin):
 
 
 class CuentaForm(PresupuestoFormMixin):
+    """
+    Builds forms used for :class:`Cuenta`
+    """
     class Meta:
         model = Cuenta
         fields = '__all__'
@@ -77,6 +83,9 @@ class CuentaFormMixin(FieldSetModelFormMixin):
 
 
 class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
+    """
+    Builds forms to create :class:`Gasto`
+    """
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos',
@@ -101,6 +110,9 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
 
 
 class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
+    """
+    Builds forms to create :class:`Gasto` that have not been completely payed.
+    """
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_de_pago', 'comprobante_de_pago',

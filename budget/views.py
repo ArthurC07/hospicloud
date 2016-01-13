@@ -159,7 +159,9 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
 
 
 class PresupuestoMixin(ContextMixin, View):
-    """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
+    """
+    Permite obtener un :class:`Cotizacion` desde los argumentos en una url
+    """
 
     def dispatch(self, *args, **kwargs):
         self.presupuesto = get_object_or_404(Presupuesto,
@@ -175,8 +177,10 @@ class PresupuestoMixin(ContextMixin, View):
 
 
 class PresupuestoFormMixin(PresupuestoMixin, FormMixin):
-    """Permite inicializar el :class:`Presupuesto` que se utilizará en un
-    formulario"""
+    """
+    Permite inicializar el :class:`Presupuesto` que se utilizará en un
+    formulario
+    """
 
     def get_initial(self):
         initial = super(PresupuestoFormMixin, self).get_initial()
@@ -187,13 +191,16 @@ class PresupuestoFormMixin(PresupuestoMixin, FormMixin):
 
 class CuentaDetailView(DetailView, LoginRequiredMixin):
     """
-    Displays the data contained :class:`Cuenta`
+    Allows the user to review the data of a :class:`Cuenta`
     """
     model = Cuenta
     context_object_name = 'cuenta'
 
 
 class CuentaCreateView(PresupuestoFormMixin, CreateView, LoginRequiredMixin):
+    """
+    Allows the user to create :class:`Cuenta` objects
+    """
     model = Cuenta
     form_class = CuentaForm
 
@@ -226,6 +233,9 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
 
 class GastoCreateView(CuentaFormMixin, CreateView, CurrentUserFormMixin,
                       LoginRequiredMixin):
+    """
+    Allows the user to create a :class:`Gasto`
+    """
     model = Gasto
     form_class = GastoForm
 
@@ -256,6 +266,9 @@ class GastoDeleteView(DeleteView, LoginRequiredMixin):
 
 
 class GastoEjecutarView(UpdateView, LoginRequiredMixin):
+    """
+    Allows a :class:`Gasto` to be marked as completed
+    """
     model = Gasto
     form_class = GastoEjecutarFrom
 
@@ -314,8 +327,10 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
     template_name = 'budget/gasto_list.html'
 
     def dispatch(self, request, *args, **kwargs):
-        """Efectua la consulta de los :class:`Gastos` de acuerdo a los
-        datos ingresados en el formulario"""
+        """
+        Efectua la consulta de los :class:`Gastos` de acuerdo a los
+        datos ingresados en el formulario
+        """
 
         self.form = self.get_form_class()(request.GET, prefix=self.prefix)
 
@@ -387,7 +402,11 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
                                                                  **kwargs)
 
     def get_context_data(self, **kwargs):
-
+        """
+        Allows adding the calculated data into the template
+        :param kwargs: 
+        :return: The context that will be rendered in the template
+        """
         context = super(GastoPresupuestoPeriodoView, self).get_context_data(
             **kwargs)
 
