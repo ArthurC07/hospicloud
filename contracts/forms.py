@@ -15,20 +15,21 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from contracts.models import (Plan, Contrato, TipoEvento, Evento, Pago,
-                              Vendedor, Beneficiario, LimiteEvento, Meta,
-                              Cancelacion, Precontrato, Beneficio,
-                              MasterContract, ImportFile, PCD, Aseguradora)
+
+from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago,\
+    Vendedor,  Beneficiario, LimiteEvento, Meta, Cancelacion, Precontrato, \
+    Beneficio,  MasterContract, ImportFile, PCD, Aseguradora
 from inventory.models import ItemTemplate
 from invoice.forms import PeriodoForm
-from persona.forms import (FieldSetModelFormMixin, DateTimeWidget,
-                           FieldSetFormMixin, FieldSetModelFormMixinNoButton,
-                           FutureDateWidget, BasePersonaForm)
+from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
+    FieldSetFormMixin, FieldSetModelFormMixinNoButton, FutureDateWidget, \
+    BasePersonaForm
 from persona.models import Persona, Empleador
 
 
@@ -59,8 +60,8 @@ class PlanForm(FieldSetModelFormMixin):
         fields = '__all__'
 
     item = forms.ModelChoiceField(
-        queryset=ItemTemplate.objects.filter(activo=True).order_by(
-            'descripcion').all())
+            queryset=ItemTemplate.objects.filter(activo=True).order_by(
+                    'descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(PlanForm, self).__init__(*args, **kwargs)
@@ -88,8 +89,8 @@ class ContratoMasterForm(FieldSetFormMixin):
                                      queryset=Persona.objects.all(),
                                      widget=forms.HiddenInput())
     master = forms.ModelChoiceField(
-        label=_(u'Contrato Maestro'),
-        queryset=MasterContract.objects.all().order_by('plan__nombre')
+            label=_(u'Contrato Maestro'),
+            queryset=MasterContract.objects.all().order_by('plan__nombre')
     )
     certificado = forms.IntegerField(initial=0)
     vencimiento = forms.DateField(widget=FutureDateWidget, initial=timezone.now)
@@ -216,7 +217,7 @@ class BeneficiarioPersonaForm(BasePersonaForm):
         exclude = ('activo', 'dependiente',)
 
     contrato = forms.ModelChoiceField(
-        queryset=Contrato.objects.all()
+            queryset=Contrato.objects.all()
     )
     inscripcion = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)
@@ -281,7 +282,7 @@ class MasterContractForm(FieldSetModelFormMixin):
         exclude = ('processed',)
 
     administrador = forms.ModelChoiceField(
-        queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
+            queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -354,10 +355,10 @@ class AseguradoraForm(FieldSetModelFormMixin):
         fields = '__all__'
 
     representante = forms.ModelChoiceField(
-        queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
+            queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
     )
     cardex = forms.ModelChoiceField(
-        queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
+            queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
     )
 
     def __init__(self, *args, **kwargs):

@@ -15,13 +15,13 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.contrib import admin
 
-from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago, PCD,
-                              Beneficiario, Vendedor, LimiteEvento, TipoPago,
-                              Meta, Autorizacion, Precontrato, MetodoPago,
-                              Beneficio, Aseguradora, MasterContract,
-                              ImportFile)
+from contracts.models import TipoEvento, Plan, Contrato, Evento, Pago, PCD, \
+    Beneficiario, Vendedor, LimiteEvento, TipoPago, Meta, Autorizacion, \
+    Precontrato, MetodoPago, Beneficio, Aseguradora, MasterContract, ImportFile
 
 
 class BeneficioAdmin(admin.ModelAdmin):
@@ -37,7 +37,8 @@ class PCDAdmin(admin.ModelAdmin):
 
 
 class ContratoAdmin(admin.ModelAdmin):
-    list_display = ('numero', 'persona', 'plan', 'master', 'vencimiento', 'activo')
+    list_display = (
+        'numero', 'persona', 'plan', 'master', 'vencimiento', 'activo')
     ordering = ['numero', 'persona', 'plan', 'master', 'vencimiento']
     search_fields = ['persona__nombre', 'persona__apellido',
                      'numero']
