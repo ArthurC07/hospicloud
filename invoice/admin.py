@@ -107,8 +107,31 @@ class ComprobanteAdmin(admin.ModelAdmin):
 
 
 class ConceptoDeduccionAdmin(admin.ModelAdmin):
-    list_display = ('comprobante', 'concepto', 'monto', 'created')
-    ordering = ['comprobante', 'concepto', 'monto', 'created']
+    """
+    Enables management of :class:`ConceptoDeduccion` instances
+    """
+    list_display = (
+        'comprobante',
+        'concepto',
+        'get_correlativo',
+        'monto',
+        'created'
+    )
+    ordering = [
+        'comprobante',
+        'concepto',
+        'monto',
+        'created',
+    ]
+    search_fields = [
+        'comprobante__correlativo',
+        'comprobante__persona__nombre',
+        'comprobante__persona__apellido',
+    ]
+
+    def get_correlativo(self, instance):
+
+        return instance.comprobante.correlativo
 
 
 class NotaCreditoAdmin(admin.ModelAdmin):
