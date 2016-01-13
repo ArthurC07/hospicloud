@@ -17,7 +17,7 @@
 from django.contrib import admin
 
 from budget.models import Presupuesto, Cuenta, Gasto, Income, \
-    PresupuestoMensual, Rubro, Concepto, Fuente
+    Fuente, PresupuestoMes
 
 
 class PresupuestoAdmin(admin.ModelAdmin):
@@ -68,48 +68,14 @@ class IncomeAdmin(admin.ModelAdmin):
     search_fields = ['ciudad', ]
 
 
-class PresupuestoMensualAdmin(admin.ModelAdmin):
-    list_display = ['ciudad', 'mes', 'anio']
-    ordering = ('ciudad', 'mes', 'anio')
-
-
-class RubroAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'get_mes', 'get_anio', 'get_ciudad']
-    ordering = ('nombre',)
-
-    def get_mes(self, obj):
-        return obj.presupuesto.mes
-
-    def get_anio(self, obj):
-        return obj.presupuesto.anio
-
-    def get_ciudad(self, obj):
-        return obj.presupuesto.ciudad
-
-
-class ConceptoAdmin(admin.ModelAdmin):
-    list_display = ['descripcion', 'get_rubro', 'get_mes', 'get_anio',
-                    'get_ciudad']
-    ordering = ('descripcion',)
-
-    def get_mes(self, obj):
-        return obj.rubro.presupuesto.mes
-
-    def get_anio(self, obj):
-        return obj.rubro.presupuesto.anio
-
-    def get_ciudad(self, obj):
-        return obj.rubro.presupuesto.ciudad
-
-    def get_rubro(self, obj):
-        return obj.rubro.nombre
+class PresupuestoMesAdmin(admin.ModelAdmin):
+    list_display = ['cuenta', 'mes', 'anio']
+    ordering = ('cuenta', 'mes', 'anio')
 
 
 admin.site.register(Presupuesto, PresupuestoAdmin)
 admin.site.register(Cuenta, CuentaAdmin)
 admin.site.register(Gasto, GastoAdmin)
 admin.site.register(Income, IncomeAdmin)
-admin.site.register(PresupuestoMensual, PresupuestoMensualAdmin)
-admin.site.register(Rubro, RubroAdmin)
-admin.site.register(Concepto, ConceptoAdmin)
+admin.site.register(PresupuestoMes, PresupuestoMesAdmin)
 admin.site.register(Fuente, FuenteAdmin)
