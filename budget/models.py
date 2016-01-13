@@ -60,6 +60,9 @@ class Presupuesto(TimeStampedModel):
         return _('Presupuesto de {0}').format(self.ciudad.nombre)
 
     def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
         return reverse('budget', args=[self.id])
 
     def total_presupuestado(self):
@@ -156,6 +159,9 @@ class Cuenta(TimeStampedModel):
                                        self.presupuesto.ciudad.nombre)
 
     def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
         return reverse('budget-control', args=[self.presupuesto.id])
 
     def cuentas_por_pagar(self):
@@ -264,6 +270,9 @@ class Gasto(TimeStampedModel):
         return self.descripcion
 
     def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
         return reverse('budget-control', args=[self.cuenta.presupuesto.id])
 
     def ejecutar(self):
@@ -325,6 +334,9 @@ class Income(TimeStampedModel):
     activo = models.BooleanField(default=True)
 
     def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
         return reverse('budget-income', args=[self.id])
 
     def facturado_periodo(self, inicio, fin):
@@ -465,12 +477,42 @@ class PresupuestoMes(TimeStampedModel):
     mes = models.IntegerField()
     anio = models.IntegerField(verbose_name=_('Año'))
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    procesado = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
+        return reverse('monthly-budget', args=[self.id])
 
     def __str__(self):
-
+        """
+        :return: String representation of the current model
+        """
         return _('Presupuesto de {0} para {1} de {2} en {3}').format(
             self.cuenta.nombre,
             self.mes,
             self.anio,
             self.cuenta.presupuesto.ciudad.nombre
         )
+
+    def save(self, **kwargs):
+        """
+        Saves the :class:`PresupuestoMes` and replicates it if needed
+        :param kwargs:
+        :return:
+        """
+        if not self.procesado:
+            for n in range(1, 13):
+                if n == self.mes:
+                    continue
+                presupuesto = PresupuestoMes()
+                presupuesto.cuenta = self.cuenta
+                presupuesto.monto = self.monto
+                presupuesto.mes = n
+                presupuesto.anio = self.anio
+                presupuesto.procesado = True
+                presupuesto.save()
+            self.procesado = True
+
+        super(PresupuestoMes, self).save(**kwargs)

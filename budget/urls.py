@@ -30,6 +30,12 @@ urlpatterns = [
             template_name='budget/presupuesto_control.html'),
         name='budget-control'),
 
+    url(r'^mes/(?P<pk>\d+)$', views.PresupuestoMesDetailView.as_view(),
+        name='monthly-budget'),
+
+    url(r'^mes/agregar$', views.PresupuestoMesCreateView.as_view(),
+        name='monthly-budget-add'),
+
     url(r'^(?P<presupuesto>\d+)/cuenta/agregar$',
         views.CuentaCreateView.as_view(),
         name='budget-cuenta-agregar'),
