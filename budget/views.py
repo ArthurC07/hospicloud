@@ -15,6 +15,9 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 from decimal import Decimal
+
+from crispy_forms.layout import Submit
+from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
@@ -24,12 +27,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
     UpdateView, FormView, RedirectView, View, TemplateView
-from django.views.generic.base import TemplateResponseMixin, ContextMixin
+from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoEjecutarFrom, MontoForm, GastoPeriodoCuentaForm, \
     GastoPresupuestoPeriodoCuentaForm
 from budget.models import Presupuesto, Cuenta, Gasto, Income
+from hospinet.utils.forms import YearForm
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from hospinet.utils import get_current_month_range, get_previous_month_range
@@ -139,11 +143,18 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         context['gasto-presupuesto-periodo'].set_action(
             'gasto-presupuesto-periodo'
         )
-
-        context['years'] = [d for d in Gasto.objects.all().datetimes(
+        years = [d.year for d in Gasto.objects.all().datetimes(
                 'fecha_de_pago', 'year'
         )]
 
+        context['years'] = []
+
+        for year in years:
+            form = YearForm(initial={'year': year})
+            form.fields['year'].widget = forms.HiddenInput()
+            form.helper.add_input(Submit('submit', str(year)))
+            context['years'].append(form)
+        
         return context
 
 
@@ -387,5 +398,18 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
         context['motivo'] = self.presupuesto
+
+        return context
+
+
+class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
+    def get_context_data(self, **kwargs):
+
+        context = super(PresupuestoAnualView, self).get_context_data(**kwargs)
+        form = YearForm(self.request.GET)
+
+        if form.is_valid():
+            year = form.cleaned_data['year']
+
 
         return context
