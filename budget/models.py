@@ -15,28 +15,27 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from copy import deepcopy
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-
 from django.utils.encoding import python_2_unicode_compatible
-
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
 from contracts.models import Aseguradora
+from hospinet.utils import get_current_month_range, get_previous_month_range
 from inventory.models import Proveedor
 from invoice.models import Venta, Pago, PagoCuenta
 from persona.models import Persona
 from users.models import Ciudad
-from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
 def ingreso_global_periodo(inicio, fin):
