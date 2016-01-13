@@ -23,7 +23,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q, F
+from django.db.models import Q, F, Max
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
@@ -288,9 +288,17 @@ class MasterContract(TimeStampedModel):
                         auto=False):
 
         if auto:
-            self.ultimo_certificado = F('ultimo_certificado') + 1
+            ultimo_certificado = self.contratos.aggregate(
+                    Max('certificado')
+            )['certificado__max']
+            if self.ultimo_certificado >= ultimo_certificado:
+                self.ultimo_certificado = F('ultimo_certificado') + 1
+            else:
+                self.ultimo_certificado = ultimo_certificado + 1
+
             self.save()
             self.refresh_from_db()
+
             certificado = self.ultimo_certificado
             numero = self.ultimo_certificado
 

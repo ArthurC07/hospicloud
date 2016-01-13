@@ -56,7 +56,7 @@ class ChequeForm(HiddenUserForm):
         exclude = ('aplicado',)
 
     emisor = forms.ModelChoiceField(
-            queryset=Persona.objects.filter(cardex=True)
+            queryset=Persona.objects.filter(mostrar_en_cardex=True)
     )
     fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
                                             required=False,
@@ -113,7 +113,7 @@ class DetallePagoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(DetallePagoForm, self).__init__(*args, **kwargs)
-        self.fields['deposito'].widget.attrs['readonly'] = True
+        self.fields['cheque'].widget.attrs['readonly'] = True
         self.fields['pago'].widget.attrs['readonly'] = True
         self.helper.layout = Fieldset(_('Registrar Detalle del Pago'),
                                       *self.field_names)
