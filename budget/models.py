@@ -457,46 +457,20 @@ class Income(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class PresupuestoMensual(TimeStampedModel):
+class PresupuestoMes(TimeStampedModel):
+    """
+    Describe el monto mensual de un presupuesto asignado a una :class:`Cuenta`
+    """
+    cuenta = models.ForeignKey(Cuenta)
     mes = models.IntegerField()
-    anio = models.IntegerField(help_text='Año')
-    ciudad = models.ForeignKey(Ciudad)
-
-    def __str__(self):
-        return _('{0} de {1} en {2}').format(self.mes, self.anio,
-                                              self.ciudad.nombre)
-
-    def total(self):
-        return Concepto.objects.select_related(
-            'rubro', 'rubro__presupuesto'
-        ).filter(rubro__presupuesto=self).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
-        )['total']
-
-
-@python_2_unicode_compatible
-class Rubro(TimeStampedModel):
-    presupuesto = models.ForeignKey(PresupuestoMensual)
-    nombre = models.CharField(max_length=255)
-
-    def __str__(self):
-        return _('{0} de {1} de {2} en {3}').format(self.nombre,
-                                                     self.presupuesto.mes,
-                                                     self.presupuesto.anio,
-                                                     self.presupuesto.ciudad)
-
-    def total(self):
-        return Concepto.objects.filter(rubro=self).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
-        )['total']
-
-
-@python_2_unicode_compatible
-class Concepto(TimeStampedModel):
-    rubro = models.ForeignKey(Rubro)
-    descripcion = models.CharField(max_length=255)
+    anio = models.IntegerField(verbose_name=_('Año'))
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
-    proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
 
     def __str__(self):
-        return self.descripcion
+
+        return _('Presupuesto de {0} para {1} de {2} en {3}').format(
+            self.cuenta.nombre,
+            self.mes,
+            self.anio,
+            self.cuenta.presupuesto.ciudad.nombre
+        )
