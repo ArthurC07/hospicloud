@@ -5,7 +5,7 @@
     <div class="row">
         <div class="main-content col-md-12">
             <section class="page-header">
-                <h1>{{ presupuesto }}</h1>
+                <h1>{{ object }}</h1>
             </section>
         </div>
     </div>
@@ -15,7 +15,7 @@
                 <div class="col-md-6">
                     <div class="page-header">
                         <h2>{% trans 'Total Presupuestado:' %}
-                            {{ presupuesto.total_presupuestado }}
+                            {{ object.monto }}
                         </h2>
                     </div>
                 </div>

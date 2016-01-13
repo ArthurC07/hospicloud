@@ -20,7 +20,7 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from budget.models import Presupuesto, Cuenta, Gasto, Fuente
+from budget.models import Presupuesto, Cuenta, Gasto, Fuente, PresupuestoMes
 from inventory.forms import ProveedorFormMixin
 from invoice.forms import PeriodoForm
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
@@ -185,4 +185,24 @@ class GastoPresupuestoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
     def __init__(self, *args, **kwargs):
         super(GastoPresupuestoPeriodoCuentaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Gastos Por Periodo y Presupuesto'),
+                                      *self.field_names)
+
+
+class PresupuestoMesForm(FieldSetModelFormMixin):
+    """
+    Builds the form required to create new :class:`PresupuestoMes` instances
+    """
+    class Meta:
+        model = PresupuestoMes
+        exclude = ('procesado', )
+
+    def __init__(self, *args, **kwargs):
+        """
+        Initializes the form
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        super(PresupuestoMesForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Datos del Presupuesto Mensual'),
                                       *self.field_names)

@@ -33,8 +33,8 @@ from django.views.generic.edit import FormMixin
 
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoEjecutarFrom, MontoForm, GastoPeriodoCuentaForm, \
-    GastoPresupuestoPeriodoCuentaForm
-from budget.models import Presupuesto, Cuenta, Gasto, Income
+    GastoPresupuestoPeriodoCuentaForm, PresupuestoMesForm
+from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes
 from hospinet.utils import get_current_month_range, get_previous_month_range
 from hospinet.utils.forms import YearForm
 from invoice.models import Venta
@@ -150,6 +150,9 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         )]
 
         context['years'] = []
+
+        context['budget-month'] = PresupuestoMesForm()
+        context['budget-month'].set_action('monthly-budget-add')
 
         for year in years:
             form = YearForm(initial={'year': year})
@@ -434,3 +437,19 @@ class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
 
 
         return context
+
+
+class PresupuestoMesDetailView(DetailView, LoginRequiredMixin):
+    """
+    Allows displaying the data for :class:`PresupuestoMes` instances
+    """
+    model = PresupuestoMes
+
+
+class PresupuestoMesCreateView(CreateView, LoginRequiredMixin):
+    """
+    Creates :class:`PresupuestoMes` instances based on data entered into a
+    :class:`PresupuestoMesForm`
+    """
+    model = PresupuestoMes
+    form_class = PresupuestoMesForm
