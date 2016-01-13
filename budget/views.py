@@ -13,33 +13,48 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from decimal import Decimal
+
+from crispy_forms.layout import Submit
+from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
-from django.utils.translation import ugettext_lazy as _
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
     UpdateView, FormView, RedirectView, View, TemplateView
-from django.views.generic.base import TemplateResponseMixin, ContextMixin
+from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
+
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoEjecutarFrom, MontoForm, GastoPeriodoCuentaForm, \
     GastoPresupuestoPeriodoCuentaForm
 from budget.models import Presupuesto, Cuenta, Gasto, Income
+from hospinet.utils import get_current_month_range, get_previous_month_range
+from hospinet.utils.forms import YearForm
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
-from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
 class PresupuestoDetailView(DetailView, LoginRequiredMixin):
+    """
+    Shows a :class:`Presupuesto` detailed data view, describing the accounting
+    break up from every expense category.
+    """
     model = Presupuesto
     context_object_name = 'presupuesto'
 
 
 class PresupuestoListView(ListView, LoginRequiredMixin):
+    """
+    Allows viewing data related to all :class:`Presupuesto`s in the
+    :class:`Company`.
+    """
     model = Presupuesto
     context_object_name = 'presupuestos'
 
@@ -130,12 +145,25 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         context['gasto-presupuesto-periodo'].set_action(
             'gasto-presupuesto-periodo'
         )
+        years = [d.year for d in Gasto.objects.all().datetimes(
+                'fecha_de_pago', 'year'
+        )]
 
+        context['years'] = []
+
+        for year in years:
+            form = YearForm(initial={'year': year})
+            form.fields['year'].widget = forms.HiddenInput()
+            form.helper.add_input(Submit('submit', str(year)))
+            context['years'].append(form)
+        
         return context
 
 
 class PresupuestoMixin(ContextMixin, View):
-    """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
+    """
+    Permite obtener un :class:`Cotizacion` desde los argumentos en una url
+    """
 
     def dispatch(self, *args, **kwargs):
         self.presupuesto = get_object_or_404(Presupuesto,
@@ -151,8 +179,10 @@ class PresupuestoMixin(ContextMixin, View):
 
 
 class PresupuestoFormMixin(PresupuestoMixin, FormMixin):
-    """Permite inicializar el :class:`Presupuesto` que se utilizará en un
-    formulario"""
+    """
+    Permite inicializar el :class:`Presupuesto` que se utilizará en un
+    formulario
+    """
 
     def get_initial(self):
         initial = super(PresupuestoFormMixin, self).get_initial()
@@ -162,16 +192,22 @@ class PresupuestoFormMixin(PresupuestoMixin, FormMixin):
 
 
 class CuentaDetailView(DetailView, LoginRequiredMixin):
+    """
+    Allows the user to review the data of a :class:`Cuenta`
+    """
     model = Cuenta
     context_object_name = 'cuenta'
 
 
 class CuentaCreateView(PresupuestoFormMixin, CreateView, LoginRequiredMixin):
+    """
+    Allows the user to create :class:`Cuenta` objects
+    """
     model = Cuenta
     form_class = CuentaForm
 
 
-class CuentaMixin(TemplateResponseMixin):
+class CuentaMixin(ContextMixin, View):
     """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -199,6 +235,9 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
 
 class GastoCreateView(CuentaFormMixin, CreateView, CurrentUserFormMixin,
                       LoginRequiredMixin):
+    """
+    Allows the user to create a :class:`Gasto`
+    """
     model = Gasto
     form_class = GastoForm
 
@@ -229,6 +268,9 @@ class GastoDeleteView(DeleteView, LoginRequiredMixin):
 
 
 class GastoEjecutarView(UpdateView, LoginRequiredMixin):
+    """
+    Allows a :class:`Gasto` to be marked as completed
+    """
     model = Gasto
     form_class = GastoEjecutarFrom
 
@@ -287,8 +329,10 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
     template_name = 'budget/gasto_list.html'
 
     def dispatch(self, request, *args, **kwargs):
-        """Efectua la consulta de los :class:`Gastos` de acuerdo a los
-        datos ingresados en el formulario"""
+        """
+        Efectua la consulta de los :class:`Gastos` de acuerdo a los
+        datos ingresados en el formulario
+        """
 
         self.form = self.get_form_class()(request.GET, prefix=self.prefix)
 
@@ -304,7 +348,7 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
         else:
             messages.info(
                 self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -352,7 +396,7 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
         else:
             messages.info(
                 self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -360,7 +404,11 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
                                                                  **kwargs)
 
     def get_context_data(self, **kwargs):
-
+        """
+        Allows adding the calculated data into the template
+        :param kwargs: 
+        :return: The context that will be rendered in the template
+        """
         context = super(GastoPresupuestoPeriodoView, self).get_context_data(
             **kwargs)
 
@@ -371,5 +419,18 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
         context['motivo'] = self.presupuesto
+
+        return context
+
+
+class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
+    def get_context_data(self, **kwargs):
+
+        context = super(PresupuestoAnualView, self).get_context_data(**kwargs)
+        form = YearForm(self.request.GET)
+
+        if form.is_valid():
+            year = form.cleaned_data['year']
+
 
         return context

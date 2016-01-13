@@ -11,24 +11,24 @@
             </section>
             <div class="col-md-2 col-xs-2">
                 <a class="btn btn-block btn-primary"
-                   href="{% url 'budget-index' %}">Volver a Presupuesto</a>
+                   href="{% url 'budget-index' %}">{% trans 'Volver a Presupuesto' %}</a>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12 table-responsive main-content">
             <table class="table">
-                <caption>Gastos Completados</caption>
+                <caption>{% trans 'Gastos Completados' %}</caption>
                 <thead>
                 <tr>
-                    <th>Fecha en Factura</th>
-                    <th>Fecha de Pago</th>
-                    <th>Descripci&oacute;n</th>
-                    <th>Usuario</th>
-                    <th>Proveedor</th>
-                    <th>N&uacute;mero de Comprobante</th>
-                    <th>Descargas</th>
-                    <th>Monto</th>
+                    <th>{% trans 'Fecha en Factura' %}</th>
+                    <th>{% trans 'Fecha de Pago' %}</th>
+                    <th>{% trans 'Descripci&oacute;n' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                    <th>{% trans 'Proveedor' %}</th>
+                    <th>{% trans 'N&uacute;mero de Comprobante' %}</th>
+                    <th>{% trans 'Descargas' %}</th>
+                    <th>{% trans 'Monto' %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -47,7 +47,7 @@
                                         id="dropdownMenu1"
                                         data-toggle="dropdown"
                                         aria-expanded="true">
-                                    Documentos
+                                    {% trans 'Documentos' %}
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu"
@@ -57,7 +57,7 @@
                                             <a role="menuitem" target="_blank"
                                                href="{{ gasto.comprobante_de_pago.url }}">
                                                 <i class="fa fa-download"></i>
-                                                Comprobante de Pago
+                                                {% trans 'Comprobante de Pago' %}
                                             </a>
                                         </li>
                                     {% endif %}
@@ -66,7 +66,7 @@
                                             <a role="menuitem" target="_blank"
                                                href="{{ gasto.factura.url }}">
                                                 <i class="fa fa-download"></i>
-                                                Factura
+                                                {% trans 'Factura' %}
                                             </a>
                                         </li>
                                     {% endif %}
@@ -77,15 +77,15 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center">No hay
-                            gastos registrados
+                        <td colspan="7" class="text-center">
+                            {% trans 'No hay gastos registrados' %}
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="6">Total de Gastos</th>
+                    <th colspan="6">{% trans 'Total de Gastos' %}</th>
                     <th class="text-right">{{ total }}</th>
                     <th>&nbsp;</th>
                 </tr>
