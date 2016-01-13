@@ -287,7 +287,7 @@ class MasterContract(TimeStampedModel):
     def create_contract(self, persona, vencimiento, certificado, numero,
                         auto=False):
 
-        if auto:
+        if auto and certificado == 0:
             ultimo_certificado = self.contratos.aggregate(
                     Max('certificado')
             )['certificado__max']
