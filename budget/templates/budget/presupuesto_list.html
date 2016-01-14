@@ -277,14 +277,23 @@
                     </div>
                 </div>
                 <div class="row tab-pane fade in" id="reportes">
-                    <div class="col-md-3">
-                        {% crispy gasto-periodo %}
-                    </div>
-                    <div class="col-md-3">
-                        {% crispy gasto-presupuesto-periodo %}
-                    </div>
-                    <div class="col-md-6 col-xs-6">
-                        {% crispy budget-month %}
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                {% crispy gasto-periodo %}
+                            </div>
+                            <div class="col-md-3">
+                                {% crispy gasto-presupuesto-periodo %}
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                {% crispy budget-month %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% for form in years %}
+                                {% crispy form %}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

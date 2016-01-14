@@ -26,6 +26,8 @@ urlpatterns = [
 
     url(r'^(?P<pk>\d+)$', views.PresupuestoDetailView.as_view(), name='budget'),
 
+    url(r'^anual', views.PresupuestoAnualView.as_view(), name='anual-budget'),
+
     url(r'^(?P<pk>\d+)/control$', views.PresupuestoDetailView.as_view(
             template_name='budget/presupuesto_control.html'),
         name='budget-control'),

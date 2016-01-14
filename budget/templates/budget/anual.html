@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12 col-xs-12 main-content">
+        <canvas id="chart" width="400" height="400"></canvas>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript"
+            src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var data = {
+                labels: [
+                    "{% trans '0' %}",
+                    "{% trans 'Enero' %}", "{% trans 'Febrero' %}",
+                    "{% trans 'Marzo' %}", "{% trans 'Abril' %}",
+                    "{% trans 'Mayo' %}", "{% trans 'Junio' %}",
+                    "{% trans 'Julio' %}", "{% trans 'Agosto' %}",
+                    "{% trans 'Septiembre' %}", "{% trans 'Octubre' %}",
+                    "{% trans 'Noviembre' %}", "{% trans 'Diciembre' %}"
+                ],
+                datasets: [
+                    {
+                        label: "{% trans 'Presupuesto' %}",
+                        data: [ 0, {% for linea in presupuesto %} {{ linea.total|unlocalize }}, {% endfor %}]
+                    }
+                ]
+            };
+            var ctx = $("#chart").get(0).getContext("2d");
+            var chart = new Chart(ctx).Line(data);
+        });
+    </script>
+{% endblock %}
