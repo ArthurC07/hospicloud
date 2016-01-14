@@ -25,7 +25,7 @@
                 datasets: [
                     {
                         label: "{% trans 'Presupuesto' %}",
-                        data: [ 0, {% for linea in presupuesto %} {{ linea.total|unlocalize }}, {% endfor %}]
+                        data: [ 0, {% for linea in presupuesto %} {{ linea.total|unlocalize }}, {% endfor %} 0]
                     }
                 ]
             };
