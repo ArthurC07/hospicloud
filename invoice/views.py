@@ -79,7 +79,10 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context[object_name].set_action(action)
 
     def get_context_data(self, **kwargs):
-        """Agrega el formulario de :class:`Recibo`"""
+        """
+        Agrega todos los formularios que permiten ver los diversos reportes
+        relacionados con los :class:`Recibo`
+        """
 
         context = super(IndexView, self).get_context_data(**kwargs)
         self.create_periodo_form(context, 'reciboperiodoform', 'recibo',
@@ -360,6 +363,9 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
 
 
 class ReciboTipoFormUpdateView(UpdateView, LoginRequiredMixin):
+    """
+    Allows changing the :class:`TipoVenta` of a :class:`Recibo`
+    """
     model = Recibo
     form_class = ReciboTipoForm
     template_name = 'invoice/recibo_cambio_form.html'
@@ -506,6 +512,9 @@ class PagoCreateView(ReciboFormMixin, CreateView, LoginRequiredMixin):
 
 
 class PagoUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows updating a :class:`Pago`
+    """
     model = Pago
     form_class = PagoStatusForm
 
@@ -514,6 +523,9 @@ class PagoUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class PagoDeleteView(DeleteView, LoginRequiredMixin):
+    """
+    Deletes a :class:`Pago` instance
+    """
     model = Pago
 
     def get_object(self, queryset=None):
@@ -557,6 +569,10 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
 
 
 class ReciboNumeroListView(ListView, LoginRequiredMixin):
+    """
+    Shows :class:`Recibo` whose correlativo matches the number from a
+    :class:`NumeroForm`
+    """
     context_object_name = 'recibos'
 
     def get_queryset(self):
@@ -571,6 +587,9 @@ class ReciboNumeroListView(ListView, LoginRequiredMixin):
 
 
 class ReciboPrintView(LoginRequiredMixin, DetailView):
+    """
+    Displays the UI to print a :class:`Recibo`
+    """
     model = Recibo
     object_context_name = 'recibo'
     template_name = 'invoice/recibo_print.html'
@@ -925,6 +944,9 @@ def crear_ventas_consulta(items, precios, recibo):
 
 
 class EmergenciaFacturarView(RedirectView, LoginRequiredMixin):
+    """
+    Creates a :class:`Recibo` object from a :class:`Emergencia` instance
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -952,6 +974,9 @@ class EmergenciaFacturarView(RedirectView, LoginRequiredMixin):
 
 
 class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
+    """
+    Creates a :class:`Recibo` object from a :class:`Consulta` instance
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -1058,6 +1083,10 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
 
 
 class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
+    """
+    Creates a :class:`Recibo` from the :class:`MasterContract`s that are
+    associated to a single :class:`Aseguradora` instance
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
