@@ -21,7 +21,7 @@ from crispy_forms.layout import Submit
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db.models import Sum
+from django.db.models import Sum, Max
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -221,15 +221,15 @@ class CuentaMixin(ContextMixin, View):
 
     def get_context_data(self, **kwargs):
         context = super(CuentaMixin, self).get_context_data(**kwargs)
-
         context['cuenta'] = self.cuenta
-
         return context
 
 
 class CuentaFormMixin(CuentaMixin, FormMixin):
-    """Permite inicializar el :class:`Presupuesto` que se utilizará en un
-    formulario"""
+    """
+    Permite inicializar el :class:`Presupuesto` que se utilizará en un
+    formulario
+    """
 
     def get_initial(self):
         initial = super(CuentaFormMixin, self).get_initial()
@@ -260,7 +260,9 @@ class GastoPendienteCreateView(CuentaFormMixin, CreateView,
 
 
 class GastoDeleteView(DeleteView, LoginRequiredMixin):
-    """Permite eliminar un :class:`Gasto`"""
+    """
+    Permite eliminar un :class:`Gasto`
+    """
     model = Gasto
 
     def get_object(self, queryset=None):
@@ -433,6 +435,7 @@ class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
     Shows the data related to the :class:`PresupuestoMes`
     """
     template_name = 'budget/anual.html'
+
     def get_context_data(self, **kwargs):
         context = super(PresupuestoAnualView, self).get_context_data(**kwargs)
         form = YearForm(self.request.GET)
@@ -447,6 +450,12 @@ class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
             ).annotate(
                     total=Coalesce(Sum('monto'), Decimal())
             ).order_by()
+            context['total'] = PresupuestoMes.objects.filter(
+                    anio=year
+            ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
+            context['mayor'] = PresupuestoMes.objects.filter(
+                    anio=year
+            ).aggregate(Max('monto'))
 
         return context
 
