@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-{% load crispy_forms_tags %}{% load l10n %}{% load i18n %}
+    {% load crispy_forms_tags %}{% load l10n %}{% load i18n %}
     <div class="row">
         <div class="col-md-12 main-content">
             <ul class="nav nav-tabs">
@@ -38,20 +38,20 @@
                             <article class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-3 col-xs-3">
-                                        <h2>Presupuesto Global</h2>
+                                        <h2>{% trans 'Presupuesto Global' %}</h2>
                                     </div>
                                     <div class="col-md-3 col-xs-3">
                                         <h3>
-                                            Presupuestado: {{ presupuesto }}</h3>
+                                            {% trans 'Presupuestado:' %} {{ presupuesto }}</h3>
                                     </div>
                                     <div class="col-md-3 col-xs-3">
                                         <h3>
-                                            Ejecutado: {{ gastos }}</h3>
+                                            {% trans 'Ejecutado:' %} {{ gastos }}</h3>
                                     </div>
                                     <div class="col-md-3 col-xs-3">
-                                        <h3>Monto Disponible: {{ disponible }}</h3>
-                                        <h5>Credito {{ credito_anterior }}</h5>
-                                        <h5>Contado {{ contado_anterior }}</h5>
+                                        <h3>{% trans 'Monto Disponible:' %} {{ disponible }}</h3>
+                                        <h5>{% trans 'Cr&eacute;dito' %} {{ credito_anterior }}</h5>
+                                        <h5>{% trans 'Contado' %} {{ contado_anterior }}</h5>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -84,11 +84,11 @@
                                             <div class="row">
                                                 <div class="col-md-12 col-xs-12">
                                                     <dl class="dl-horizontal">
-                                                        <dt>Presupuestado</dt>
+                                                        <dt>{% trans 'Presupuestado' %}</dt>
                                                         <dd>{{ presupuesto.total_presupuestado }}</dd>
-                                                        <dt>Ejecutado</dt>
+                                                        <dt>{% trans 'Ejecutado' %}</dt>
                                                         <dd>{{ presupuesto.total_gastos_mes_actual }}</dd>
-                                                        <dt>Total de Ingresos</dt>
+                                                        <dt>{% trans 'Total de Ingresos' %}</dt>
                                                         <dd>{{ presupuesto.ingresos_mes_actual }}</dd>
                                                     </dl>
                                                 </div>
@@ -112,34 +112,35 @@
                                         </div>
                                         <div class="panel-footer">
                                             <a class="btn btn-primary"
-                                               href="{% url 'budget-control' presupuesto.id %}">Ver
-                                                Control Presupuestal</a>
+                                               href="{% url 'budget-control' presupuesto.id %}">
+                                                {% trans 'Ver Control Presupuestal' %}
+                                            </a>
                                         </div>
                                     </div>
                                 </article>
-                            {% empty %}
-                                <h3>No hay Presupuestos Disponibles</h3>
+                                {% empty %}
+                                <h3>{% trans 'No hay Presupuestos Disponibles' %}</h3>
                             {% endfor %}
                         </div>
                     </section>
                 </div>
                 <div class="row tab-pane fade in" id="punto-equilibrio">
                     <div class="col-md-12">
-                        <h2>Punto de Equilibrio</h2>
+                        <h2>{% trans 'Punto de Equilibrio' %}</h2>
                         <table class="table table-hover table-striped">
                             <thead>
                             <tr>
-                                <th>Presupuesto</th>
-                                <th>Proyectado</th>
-                                <th>Monto Disponible</th>
-                                <th>Ingresos</th>
-                                <th>Ganacia o P&eacute;rdida del Periodo</th>
-                                <th>Egresos</th>
+                                <th>{% trans 'Presupuesto' %}</th>
+                                <th>{% trans 'Proyectado' %}</th>
+                                <th>{% trans 'Monto Disponible' %}</th>
+                                <th>{% trans 'Ingresos' %}</th>
+                                <th>{% trans 'Ganacia o P&eacute;rdida del Periodo' %}</th>
+                                <th>{% trans 'Egresos' %}</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td>Presupuesto Global</td>
+                                <td>{% trans 'Presupuesto Global' %}</td>
                                 <td class="text-right">{{ presupuesto }}</td>
                                 <td class="text-right">{{ disponible }}</td>
                                 <td class="text-right">{{ total_ingresos }}</td>
@@ -167,18 +168,18 @@
                         <article class="col-md-6 col-xs-6">
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
-                                            <span class="lead">{{ presupuesto }}
-                                            </span>
+                                    <span class="lead">{{ presupuesto }}
+                                    </span>
                                 </div>
                                 <div class="panel-body ">
                                     <div class="row">
                                         <div class="col-md-12 col-xs-12">
                                             <dl class="dl-horizontal">
-                                                <dt>Presupuestado</dt>
+                                                <dt>{% trans 'Presupuestado' %}</dt>
                                                 <dd>{{ presupuesto.total_presupuestado }}</dd>
-                                                <dt>Ejecutado</dt>
+                                                <dt>{% trans 'Ejecutado' %}</dt>
                                                 <dd>{{ presupuesto.total_gastos_mes_actual }}</dd>
-                                                <dt>Total de Ingresos</dt>
+                                                <dt>{% trans 'Total de Ingresos' %}</dt>
                                                 <dd>{{ presupuesto.ingresos_mes_actual }}</dd>
                                             </dl>
                                         </div>
@@ -202,30 +203,35 @@
                                 </div>
                                 <div class="panel-footer">
                                     <a class="btn btn-primary"
-                                       href="{{ presupuesto.get_absolute_url }}">Ver
-                                        Detalle de Presupuesto</a>
+                                       href="{{ presupuesto.get_absolute_url }}">
+                                        {% trans 'Ver Detalle de Presupuesto' %}
+                                    </a>
                                     <a class="btn btn-primary"
-                                       href="{% url 'budget-control' presupuesto.id %}">Ver
-                                        Control Presupuestal</a>
+                                       href="{% url 'budget-control' presupuesto.id %}">
+                                        {% trans 'Ver Control Presupuestal' %}
+                                    </a>
                                 </div>
                             </div>
                         </article>
-                    {% empty %}
+                        {% empty %}
                         <div class="col-md-12 col-xs-12">
-                            <h3>No hay Presupuestos Disponibles</h3>
+                            <h3>{% trans 'No hay Presupuestos Disponibles' %}</h3>
                         </div>
                     {% endfor %}
                 </div>
                 <div class="row tab-pane fade in" id="ingresos">
                     <div class="col-md-12 table-responsive">
-                        <h2>Ingresos</h2>
-                        <h3>Ingresos al Credito Mes Anterior {{ credito_anterior }}</h3>
+                        <h2>{% trans 'Ingresos' %}</h2>
+                        <h3>
+                            {% trans 'Ingresos al Credito Mes Anterior' %}
+                            {{ credito_anterior }}
+                        </h3>
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>Ciudad</th>
-                                <th>Proyectado</th>
-                                <th>Ingresado</th>
+                                <th>{% trans 'Ciudad' %}</th>
+                                <th>{% trans 'Proyectado' %}</th>
+                                <th>{% trans 'Ingresado' %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -248,15 +254,15 @@
                             {% endfor %}
                             </tbody>
                         </table>
-                        <h2>Aseguradoras</h2>
+                        <h2>{% trans 'Aseguradoras' %}</h2>
                         {% for income in incomes %}
                             <table class="table">
                                 <caption>{{ income.ciudad }}</caption>
                                 <tr>
-                                    <th>Aseguradora</th>
-                                    <th>Monto Reembolsado Mes Actual</th>
-                                    <th>Monto Pendiente</th>
-                                    <th>Facturado</th>
+                                    <th>{% trans 'Aseguradora' %}</th>
+                                    <th>{% trans 'Monto Reembolsado Mes Actual' %}</th>
+                                    <th>{% trans 'Monto Pendiente' %}</th>
+                                    <th>{% trans 'Facturado' %}</th>
                                 </tr>
                                 {% for aseguradora in income.pendiente_aseguradoras %}
                                     <tr>
@@ -271,11 +277,23 @@
                     </div>
                 </div>
                 <div class="row tab-pane fade in" id="reportes">
-                    <div class="col-md-3">
-                        {% crispy gasto-periodo %}
-                    </div>
-                    <div class="col-md-3">
-                        {% crispy gasto-presupuesto-periodo %}
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                {% crispy gasto-periodo %}
+                            </div>
+                            <div class="col-md-3">
+                                {% crispy gasto-presupuesto-periodo %}
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                {% crispy budget-month %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% for form in years %}
+                                {% crispy form %}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -15,27 +15,30 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-import calendar
-from datetime import date, timedelta, datetime, time
-from decimal import Decimal
+from __future__ import unicode_literals
+
 import operator
+from datetime import timedelta, datetime, time
+from decimal import Decimal
+
+import unicodecsv
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.files.storage import default_storage as storage
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q, F
+from django.db.models import Q, F, Max
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-from django_extensions.db.models import TimeStampedModel
 from django.utils.translation import ugettext_lazy as _
-import unicodecsv
+from django_extensions.db.models import TimeStampedModel
+
 from clinique.models import Consulta, Seguimiento, Cita
 from hospinet.utils import make_end_day
-from hospinet.utils.date import make_day_start, get_current_month_range
+from hospinet.utils.date import get_current_month_range
 from inventory.models import ItemTemplate, ItemType
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
-from django.core.files.storage import default_storage as storage
 
 server_timezone = timezone.get_current_timezone()
 
@@ -104,8 +107,10 @@ class Plan(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Beneficio(TimeStampedModel):
-    """Permite listar los posibles cobros a efectuar dentro de un :class`Plan`
-    de :class:`contrato`"""
+    """
+    Permite listar los posibles cobros a efectuar dentro de un :class`Plan`
+    de :class:`Contrato`
+    """
 
     class Meta:
         ordering = ["nombre"]
@@ -286,11 +291,30 @@ class MasterContract(TimeStampedModel):
 
     def create_contract(self, persona, vencimiento, certificado, numero,
                         auto=False):
+        """
+        Allows the creation of :class:`Contrato by using the data from
+        :class:`MasterContract` as a base to create it.
 
-        if auto:
-            self.ultimo_certificado = F('ultimo_certificado') + 1
+        :param persona:
+        :param vencimiento:
+        :param certificado:
+        :param numero:
+        :param auto:
+        :return:
+        """
+
+        if auto and certificado == 0:
+            ultimo_certificado = self.contratos.aggregate(
+                    Max('certificado')
+            )['certificado__max']
+            if self.ultimo_certificado >= ultimo_certificado:
+                self.ultimo_certificado = F('ultimo_certificado') + 1
+            else:
+                self.ultimo_certificado = ultimo_certificado + 1
+
             self.save()
             self.refresh_from_db()
+
             certificado = self.ultimo_certificado
             numero = self.ultimo_certificado
 

@@ -15,12 +15,14 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, ListView, DetailView, TemplateView
 
 from hospinet.utils.forms import NumeroForm
-from income.forms import ChequeCobroForm, DetallePagoForm
-from income.models import Cheque, DetallePago, Deposito
+from income.forms import ChequeForm, DetallePagoForm, DepositoForm, \
+    CierrePOSForm
+from income.models import Cheque, DetallePago, Deposito, CierrePOS
 from invoice.models import CuentaPorCobrar, Pago
 from users.mixins import LoginRequiredMixin
 
@@ -34,14 +36,25 @@ class IncomeIndexView(TemplateView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super(IncomeIndexView, self).get_context_data(**kwargs)
 
-        context['cheque_form'] = ChequeCobroForm(
+        context['cheque_form'] = ChequeForm(
                 initial={'usuario': self.request.user}
         )
         context['cheque_form'].helper.form_action = 'cheque-create'
+
         context['numero_form'] = NumeroForm()
         context['numero_form'].set_legend(_('Buscar Cheque por Número'))
         context['numero_form'].helper.form_method = 'get'
         context['numero_form'].set_action('cheque-numero')
+
+        context['deposito_form'] = DepositoForm(
+                initial={'usuario': self.request.user}
+        )
+        context['deposito_form'].helper.form_action = 'deposito-create'
+
+        context['cierre_form'] = CierrePOSForm(
+                initial={'usuario': self.request.user}
+        )
+        context['cierre_form'].helper.form_action = 'cierre-create'
 
         return context
 
@@ -67,7 +80,7 @@ class CobrosListView(ListView, LoginRequiredMixin):
 
         objects = []
         for cuenta in self.object_list.all():
-            form = ChequeCobroForm(
+            form = ChequeForm(
                     initial={'cuenta_por_cobrar': cuenta,
                              'usuario': self.request.user}
             )
@@ -84,17 +97,28 @@ class CobrosListView(ListView, LoginRequiredMixin):
 
 
 class DepositoDetailView(DetailView, LoginRequiredMixin):
+    """
+    Creates the UI to visualize the data gathered by a :class:`Deposito`
+    """
     model = Deposito
 
 
-class ChequeCobroCreateView(CreateView, LoginRequiredMixin):
+class DepositoCreateView(CreateView, LoginRequiredMixin):
+    """
+    Allows the user to create a :class:`Deposito`
+    """
+    model = Deposito
+    form_class = DepositoForm
+
+
+class ChequeCreateView(CreateView, LoginRequiredMixin):
     """
     Creates a :class:`Cheque` based on the data obtained from the form, adds
     payment detail if the indicated amount matches the total amount from due
     payments
     """
     model = Cheque
-    form_class = ChequeCobroForm
+    form_class = ChequeForm
 
 
 class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
@@ -117,7 +141,7 @@ class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
                                         tipo__reembolso=True):
             form = DetallePagoForm(initial={
                 'pago': pago,
-                'deposito': self.object,
+                'cheque': self.object,
                 'monto': pago.monto
             })
             form.helper.form_action = 'detallepago-create'
@@ -129,7 +153,18 @@ class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
+class CierrePOSCreateView(CreateView, LoginRequiredMixin):
+    """
+    Enables creation of :class:`CierrePOS` from the user interface.
+    """
+    model = CierrePOS
+    form_class = CierrePOSForm
+
+
 class ChequeNumeroListView(ListView, LoginRequiredMixin):
+    """
+    Enables searching :class:`Cheque` by using their number field
+    """
     context_object_name = 'cheques'
 
     def get_queryset(self):

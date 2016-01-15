@@ -14,6 +14,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.conf.urls import url
 
 from budget import views
@@ -24,9 +26,17 @@ urlpatterns = [
 
     url(r'^(?P<pk>\d+)$', views.PresupuestoDetailView.as_view(), name='budget'),
 
+    url(r'^anual', views.PresupuestoAnualView.as_view(), name='anual-budget'),
+
     url(r'^(?P<pk>\d+)/control$', views.PresupuestoDetailView.as_view(
             template_name='budget/presupuesto_control.html'),
         name='budget-control'),
+
+    url(r'^mes/(?P<pk>\d+)$', views.PresupuestoMesDetailView.as_view(),
+        name='monthly-budget'),
+
+    url(r'^mes/agregar$', views.PresupuestoMesCreateView.as_view(),
+        name='monthly-budget-add'),
 
     url(r'^(?P<presupuesto>\d+)/cuenta/agregar$',
         views.CuentaCreateView.as_view(),

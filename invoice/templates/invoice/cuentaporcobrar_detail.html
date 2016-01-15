@@ -7,21 +7,12 @@
                 <h1>{{ cuenta.created }}</h1>
             </section>
             <div class="row">
-                <dl class="dl-horizontal col-md-8 col-xs-8">
+                <dl class="dl-horizontal col-md-12 col-xs-12">
                     <dt>{% trans 'Descripci&oacute;n' %}</dt>
                     <dd>{{ cuenta }}</dd>
                     <dt>{% trans 'Monto' %}</dt>
                     <dd>{{ cuenta.monto }}</dd>
                 </dl>
-                <div class="col-md-4 col-md-4 no-print">
-                    <a class="btn btn-block btn-success"
-                       href="{% url 'invoice-cpc-status-next' cuenta.id %}">
-                        {% trans 'Cambiar a' %} {{ cuenta.status.next_status }}</a>
-                    <a class="btn btn-block btn-success"
-                       href="{% url 'invoice-cpc-pago-add' cuenta.id %}">
-                        {% trans 'Agregar un Pago a la Cuenta' %}
-                    </a>
-                </div>
             </div>
         </div>
     </div>
@@ -81,10 +72,6 @@
                         </td>
                         <td class="text-right">{{ pago.monto }}</td>
                         <td class="no-print">
-                            <a class="btn btn-success btn-block"
-                               href="{% url 'invoice-pago-status-next' pago.id %}">
-                                {% trans 'Cambiar a' %} {{ pago.status.next_status }}
-                            </a>
                         </td>
                     </tr>
                 {% endfor %}

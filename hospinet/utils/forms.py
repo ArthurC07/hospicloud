@@ -123,3 +123,13 @@ class NumeroForm(FieldSetFormMixin):
         self.helper.add_input(Submit('submit', _('Buscar')))
         self.helper.layout = Fieldset(_('Búsqueda por Número'),
                                       *self.field_names)
+
+
+class YearForm(FieldSetFormMixin):
+    """
+    Builds a form that contains an integer representing a natural year.
+    """
+    year = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        super(YearForm, self).__init__(*args, **kwargs)

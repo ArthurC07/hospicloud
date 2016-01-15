@@ -15,14 +15,19 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from django.conf.urls import url
 
 from income import views
 
 urlpatterns = [
     url(r'^$', views.IncomeIndexView.as_view(), name='income-index'),
-    url(r'^cheque/crear$', views.ChequeCobroCreateView.as_view(),
+    url(r'^deposito/crear$', views.DepositoCreateView.as_view(),
+        name='deposito-create'),
+    url(r'^cheque/crear$', views.ChequeCreateView.as_view(),
         name='cheque-create'),
+    url(r'^cierre/crear$', views.CierrePOSCreateView.as_view(),
+        name='cierre-create'),
     url(r'^cheque/(?P<pk>\d+)$', views.ChequeCobroDetailView.as_view(),
         name='cheque-detail'),
     url(r'^cheque/numero$', views.ChequeNumeroListView.as_view(),

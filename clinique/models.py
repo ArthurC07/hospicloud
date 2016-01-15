@@ -14,16 +14,17 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from collections import defaultdict
-from django.conf import settings
-from django.contrib.auth import get_user_model
+from __future__ import unicode_literals
 
+from collections import defaultdict
+
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
-from django.core.urlresolvers import reverse
 
 from inventory.models import ItemTemplate, Inventario, ItemType
 from persona.models import Persona, transfer_object_to_persona, \

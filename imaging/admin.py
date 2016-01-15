@@ -14,10 +14,12 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from django.contrib import admin
-from imaging.models import (Examen, Imagen, Adjunto, Dicom, EstudioProgramado,
-                            TipoExamen, Estudio, Radiologo, Tecnico)
+
+from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
+    TipoExamen, Estudio, Radiologo, Tecnico
 
 admin.site.register(Examen)
 admin.site.register(Imagen)

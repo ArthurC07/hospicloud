@@ -14,28 +14,28 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from copy import deepcopy
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-
 from django.utils.encoding import python_2_unicode_compatible
-
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
 from contracts.models import Aseguradora
+from hospinet.utils import get_current_month_range, get_previous_month_range
 from inventory.models import Proveedor
 from invoice.models import Venta, Pago, PagoCuenta
 from persona.models import Persona
 from users.models import Ciudad
-from hospinet.utils import get_current_month_range, get_previous_month_range
 
 
 def ingreso_global_periodo(inicio, fin):
@@ -57,9 +57,12 @@ class Presupuesto(TimeStampedModel):
     inversion = models.BooleanField(default=False)
 
     def __str__(self):
-        return _(u'Presupuesto de {0}').format(self.ciudad.nombre)
+        return _('Presupuesto de {0}').format(self.ciudad.nombre)
 
     def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
         return reverse('budget', args=[self.id])
 
     def total_presupuestado(self):
@@ -138,9 +141,11 @@ class Presupuesto(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Cuenta(TimeStampedModel):
-    """Define una agrupación de :class:`Gasto`s referentes a un rubro
+    """
+    Define una agrupación de :class:`Gasto`s referentes a un rubro
     determinado. Estos :class:`Gasto` representan lo ejecutado y las cuentas
-    por pagar"""
+    por pagar
+    """
 
     class Meta:
         ordering = ('nombre',)
@@ -150,10 +155,13 @@ class Cuenta(TimeStampedModel):
     limite = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def __str__(self):
-        return _(u'{0} en {1}').format(self.nombre,
+        return _('{0} en {1}').format(self.nombre,
                                        self.presupuesto.ciudad.nombre)
 
     def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
         return reverse('budget-control', args=[self.presupuesto.id])
 
     def cuentas_por_pagar(self):
@@ -184,11 +192,20 @@ class Cuenta(TimeStampedModel):
         return self.gastos_por_periodo(inicio, fin)
 
     def total_gastos_mes_actual(self):
+        """
+        Calculates the sum of :class:`Gasto` during the current month
+        :return: The sum of all :class:`Gasto`s monto from the current month
+        """
         return self.gastos_mes_actual().aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def total_cuentas_por_pagar(self):
+        """
+        Calculates the total of unpayed :class:`Gasto` that have been charged
+        to the :class:`Presupuesto`
+        :return: The sum of unpayed :class:`Gasto`'s monto
+        """
         return self.cuentas_por_pagar().aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
@@ -199,6 +216,9 @@ class Cuenta(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Fuente(TimeStampedModel):
+    """
+    Explains where the money for :class:`Gasto`s is comming from.
+    """
     class Meta:
         ordering = ('nombre',)
 
@@ -207,6 +227,9 @@ class Fuente(TimeStampedModel):
     caja = models.BooleanField(default=False)
 
     def __str__(self):
+        """
+        :return: String representation of the current model
+        """
         return self.nombre
 
 
@@ -219,7 +242,7 @@ class Gasto(TimeStampedModel):
     pagar y puede mantenerse en espera hasta us fecha máxima de pago, reflejada
     por el campo correspondiente.
     """
-    cuenta = models.ForeignKey(Cuenta, verbose_name=_(u'Tipo de Cargo'))
+    cuenta = models.ForeignKey(Cuenta, verbose_name=_('Tipo de Cargo'))
     descripcion = models.TextField()
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
@@ -241,9 +264,15 @@ class Gasto(TimeStampedModel):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def __str__(self):
+        """
+        :return: String representation of the current model
+        """
         return self.descripcion
 
     def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
         return reverse('budget-control', args=[self.cuenta.presupuesto.id])
 
     def ejecutar(self):
@@ -305,6 +334,9 @@ class Income(TimeStampedModel):
     activo = models.BooleanField(default=True)
 
     def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
         return reverse('budget-income', args=[self.id])
 
     def facturado_periodo(self, inicio, fin):
@@ -437,46 +469,50 @@ class Income(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class PresupuestoMensual(TimeStampedModel):
+class PresupuestoMes(TimeStampedModel):
+    """
+    Describe el monto mensual de un presupuesto asignado a una :class:`Cuenta`
+    """
+    cuenta = models.ForeignKey(Cuenta)
     mes = models.IntegerField()
-    anio = models.IntegerField(help_text=u'Año')
-    ciudad = models.ForeignKey(Ciudad)
-
-    def __str__(self):
-        return _(u'{0} de {1} en {2}').format(self.mes, self.anio,
-                                              self.ciudad.nombre)
-
-    def total(self):
-        return Concepto.objects.select_related(
-            'rubro', 'rubro__presupuesto'
-        ).filter(rubro__presupuesto=self).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
-        )['total']
-
-
-@python_2_unicode_compatible
-class Rubro(TimeStampedModel):
-    presupuesto = models.ForeignKey(PresupuestoMensual)
-    nombre = models.CharField(max_length=255)
-
-    def __str__(self):
-        return _(u'{0} de {1} de {2} en {3}').format(self.nombre,
-                                                     self.presupuesto.mes,
-                                                     self.presupuesto.anio,
-                                                     self.presupuesto.ciudad)
-
-    def total(self):
-        return Concepto.objects.filter(rubro=self).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
-        )['total']
-
-
-@python_2_unicode_compatible
-class Concepto(TimeStampedModel):
-    rubro = models.ForeignKey(Rubro)
-    descripcion = models.CharField(max_length=255)
+    anio = models.IntegerField(verbose_name=_('Año'))
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
-    proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
+    procesado = models.BooleanField(default=False, verbose_name=_('Completar Año'))
+
+    def get_absolute_url(self):
+        """
+        :return: The absolute url for each instance of this model
+        """
+        return reverse('monthly-budget', args=[self.id])
 
     def __str__(self):
-        return self.descripcion
+        """
+        :return: String representation of the current model
+        """
+        return _('Presupuesto de {0} para {1} de {2} en {3}').format(
+            self.cuenta.nombre,
+            self.mes,
+            self.anio,
+            self.cuenta.presupuesto.ciudad.nombre
+        )
+
+    def save(self, **kwargs):
+        """
+        Saves the :class:`PresupuestoMes` and replicates it if needed
+        :param kwargs:
+        :return:
+        """
+        if not self.procesado:
+            for n in range(1, 13):
+                if n == self.mes:
+                    continue
+                presupuesto = PresupuestoMes()
+                presupuesto.cuenta = self.cuenta
+                presupuesto.monto = self.monto
+                presupuesto.mes = n
+                presupuesto.anio = self.anio
+                presupuesto.procesado = True
+                presupuesto.save()
+            self.procesado = True
+
+        super(PresupuestoMes, self).save(**kwargs)

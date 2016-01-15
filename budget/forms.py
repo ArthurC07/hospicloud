@@ -13,11 +13,14 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from budget.models import Presupuesto, Cuenta, Gasto, Fuente
+
+from budget.models import Presupuesto, Cuenta, Gasto, Fuente, PresupuestoMes
 from inventory.forms import ProveedorFormMixin
 from invoice.forms import PeriodoForm
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
@@ -27,42 +30,64 @@ from users.mixins import HiddenUserForm
 
 
 class FuenteFormMixin(FieldSetModelFormMixin):
+    """
+    Allows adding a fuente_de_pago field to forms based in choices of the
+    :class:`Fuente` model
+    """
     fuente_de_pago = forms.ModelChoiceField(queryset=Fuente.objects.all())
 
 
 class PresupuestoForm(CiudadFormMixin):
+    """
+    Builds a form to add new :class:`Presupuesto`
+    """
     class Meta:
         model = Presupuesto
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(PresupuestoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Formulario de Presupuesto'),
+        self.helper.layout = Fieldset(_('Formulario de Presupuesto'),
                                       *self.field_names)
 
 
 class PresupuestoFormMixin(FieldSetModelFormMixin):
+    """
+    Allows adding a presupuesto field to forms based in choices of the
+    :class:`Presupuesto` model
+    """
     presupuesto = forms.ModelChoiceField(queryset=Presupuesto.objects.all(),
                                          widget=forms.HiddenInput())
 
 
 class CuentaForm(PresupuestoFormMixin):
+    """
+    Builds forms used for :class:`Cuenta`
+    """
     class Meta:
         model = Cuenta
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(CuentaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Formulario de Cuenta'),
+        self.helper.layout = Fieldset(_('Formulario de Cuenta'),
                                       *self.field_names)
 
 
 class CuentaFormMixin(FieldSetModelFormMixin):
+
+    """
+    Allows adding a cuenta field to forms based in choices of the
+    :class:`Cuenta` model
+    """
     cuenta = forms.ModelChoiceField(queryset=Cuenta.objects.all(),
-                                    label=_(u'Tipo de Gasto'))
+                                    label=_('Tipo de Gasto'))
 
 
 class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
+    """
+    Builds forms to create :class:`Gasto`
+    """
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos',
@@ -71,22 +96,25 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
                    'fecha_de_recepcion_de_factura')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
-        attrs={'rows': 2, 'cols': 40}))
+            attrs={'rows': 2, 'cols': 40}))
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
     fuente_de_pago = forms.ModelChoiceField(queryset=Fuente.objects.filter(
-        caja=True)
+            caja=True)
     )
     fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
                                            initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(GastoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Formulario de Gastos'),
+        self.helper.layout = Fieldset(_('Formulario de Gastos'),
                                       *self.field_names)
 
 
 class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
+    """
+    Builds forms to create :class:`Gasto` that have not been completely payed.
+    """
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_de_pago', 'comprobante_de_pago',
@@ -96,7 +124,7 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
                    'recepcion_de_facturas_originales')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
-        attrs={'rows': 2, 'cols': 40}))
+            attrs={'rows': 2, 'cols': 40}))
 
     fecha_maxima_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                                required=False,
@@ -106,7 +134,7 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(GastoPendienteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Formulario de Cuenta por Pagar'),
+        self.helper.layout = Fieldset(_('Formulario de Cuenta por Pagar'),
                                       *self.field_names)
 
 
@@ -118,9 +146,9 @@ class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
                    'recepcion_de_facturas_originales')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
-        attrs={'rows': 2, 'cols': 40}))
+            attrs={'rows': 2, 'cols': 40}))
     fuente_de_pago = forms.ModelChoiceField(queryset=Fuente.objects.filter(
-                                          caja=False)
+            caja=False)
     )
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
@@ -129,7 +157,7 @@ class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(GastoEjecutarFrom, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Ejecutar un Gasto'),
+        self.helper.layout = Fieldset(_('Ejecutar un Gasto'),
                                       *self.field_names)
 
 
@@ -138,8 +166,8 @@ class MontoForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(MontoForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', _(u'Guardar')))
-        self.helper.layout = Fieldset(_(u'Indicar Monto'), *self.field_names)
+        self.helper.add_input(Submit('submit', _('Guardar')))
+        self.helper.layout = Fieldset(_('Indicar Monto'), *self.field_names)
 
 
 class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
@@ -147,7 +175,7 @@ class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(GastoPeriodoCuentaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Gastos Por Periodo y Cuenta'),
+        self.helper.layout = Fieldset(_('Gastos Por Periodo y Cuenta'),
                                       *self.field_names)
 
 
@@ -156,5 +184,25 @@ class GastoPresupuestoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(GastoPresupuestoPeriodoCuentaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Gastos Por Periodo y Presupuesto'),
+        self.helper.layout = Fieldset(_('Gastos Por Periodo y Presupuesto'),
+                                      *self.field_names)
+
+
+class PresupuestoMesForm(FieldSetModelFormMixin):
+    """
+    Builds the form required to create new :class:`PresupuestoMes` instances
+    """
+    class Meta:
+        model = PresupuestoMes
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        """
+        Initializes the form
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        super(PresupuestoMesForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Datos del Presupuesto Mensual'),
                                       *self.field_names)

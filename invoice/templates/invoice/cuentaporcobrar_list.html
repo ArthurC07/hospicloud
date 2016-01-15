@@ -32,10 +32,6 @@
                         <td>{{ cuenta.monto }}</td>
                         <td>{{ cuenta.created|timesince }}</td>
                         <td>
-                            <a class="btn btn-success btn-block"
-                               href="{% url 'invoice-cpc-status-next' cuenta.id %}">
-                                {% trans 'Cambiar a' %} {{ cuenta.status.next_status }}
-                            </a>
                             <a class="btn btn-primary btn-block"
                                href="{{ cuenta.get_absolute_url }}">
                                 {% trans 'Ver Detalle' %}

@@ -14,7 +14,10 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.conf.urls import url
+
 from lab.views import IndexView, ResultadoCreateView
 from persona.views import PersonaSearchView
 

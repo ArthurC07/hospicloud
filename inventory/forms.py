@@ -14,18 +14,19 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
-from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
+from inventory.models import ItemTemplate, Inventario, Item, Compra, ItemType, \
+    Requisicion, ItemRequisicion, Transferencia, Transferido, ItemComprado, \
+    Historial, Proveedor, Cotizacion, ItemCotizado
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
     DateTimeWidget, FutureDateWidget
-from inventory.models import (ItemTemplate, Inventario, Item, Compra, ItemType,
-                              Requisicion, ItemRequisicion, Transferencia,
-                              Transferido, ItemComprado, Historial, Proveedor,
-                              Cotizacion, ItemCotizado)
 from users.mixins import HiddenUserForm
-from django.utils.translation import ugettext_lazy as _
 
 
 class ItemTemplateForm(FieldSetModelFormMixin):
@@ -35,14 +36,14 @@ class ItemTemplateForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemTemplateForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Producto',
+        self.helper.layout = Fieldset('Formulario de Producto',
                                       *self.field_names)
 
 
 class ItemTemplateFormMixin(FieldSetModelFormMixin):
     item = forms.ModelChoiceField(
-        queryset=ItemTemplate.objects.filter(activo=True).order_by(
-            'descripcion')
+            queryset=ItemTemplate.objects.filter(activo=True).order_by(
+                    'descripcion')
     )
 
 
@@ -53,7 +54,7 @@ class InventarioForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(InventarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Bódega de Inventario',
+        self.helper.layout = Fieldset('Formulario de Bódega de Inventario',
                                       *self.field_names)
 
 
@@ -69,14 +70,14 @@ class ItemForm(FieldSetModelFormMixin):
 
     plantilla = forms.ModelChoiceField(label=_("Item"),
                                        queryset=ItemTemplate.objects.filter(
-                                           activo=True).order_by(
-                                           'descripcion').all())
+                                               activo=True).order_by(
+                                               'descripcion').all())
 
     vencimiento = forms.DateTimeField(widget=DateTimeWidget())
 
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Item Inventariado',
+        self.helper.layout = Fieldset('Formulario de Item Inventariado',
                                       *self.field_names)
 
 
@@ -87,7 +88,7 @@ class ItemTypeForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemTypeForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Tipos de Producto',
+        self.helper.layout = Fieldset('Formulario de Tipos de Producto',
                                       *self.field_names)
 
 
@@ -98,7 +99,7 @@ class RequisicionForm(HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(RequisicionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Requisición',
+        self.helper.layout = Fieldset('Formulario de Requisición',
                                       *self.field_names)
 
 
@@ -114,7 +115,7 @@ class RequisicionCompletarForm(forms.ModelForm):
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Aplicar'))
-        self.helper.layout = Fieldset(u'¿Completar la Requisición Ahora?',
+        self.helper.layout = Fieldset('¿Completar la Requisición Ahora?',
                                       *self.field_names)
 
 
@@ -125,7 +126,7 @@ class ItemRequisicionForm(ItemTemplateFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemRequisicionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Requisición de Producto',
+        self.helper.layout = Fieldset('Formulario de Requisición de Producto',
                                       *self.field_names)
 
 
@@ -135,18 +136,18 @@ class TransferenciaForm(HiddenUserForm):
         exclude = ('aplicada',)
 
     origen = forms.ModelChoiceField(
-        queryset=Inventario.objects.filter(activo=True).all()
+            queryset=Inventario.objects.filter(activo=True).all()
     )
 
     destino = forms.ModelChoiceField(
-        queryset=Inventario.objects.filter(activo=True).all()
+            queryset=Inventario.objects.filter(activo=True).all()
     )
 
     def __init__(self, *args, **kwargs):
         super(TransferenciaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(
-            u'Formulario de Transferencia de Inventario',
-            *self.field_names)
+                'Formulario de Transferencia de Inventario',
+                *self.field_names)
 
 
 class TransferirForm(FieldSetModelFormMixin):
@@ -154,13 +155,13 @@ class TransferirForm(FieldSetModelFormMixin):
         model = Transferencia
         fields = ('aplicada',)
         item = forms.ModelChoiceField(
-            queryset=Requisicion.objects.filter(entregada=False).all()
+                queryset=Requisicion.objects.filter(entregada=False).all()
         )
 
     def __init__(self, *args, **kwargs):
         super(TransferirForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Aplicar'))
-        self.helper.layout = Fieldset(u'¿Aplicar la Transferencia Ahora?',
+        self.helper.layout = Fieldset('¿Aplicar la Transferencia Ahora?',
                                       *self.field_names)
 
 
@@ -171,7 +172,7 @@ class TransferidoForm(ItemTemplateFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(TransferidoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Producto a Transferir',
+        self.helper.layout = Fieldset('Agregar Producto a Transferir',
                                       *self.field_names)
 
 
@@ -182,7 +183,7 @@ class HistorialForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(HistorialForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Crear Historial de Inventario',
+        self.helper.layout = Fieldset('Crear Historial de Inventario',
                                       *self.field_names)
 
 
@@ -193,7 +194,7 @@ class ItemCompradoForm(ItemTemplateFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemCompradoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Producto Comprado',
+        self.helper.layout = Fieldset('Agregar Producto Comprado',
                                       *self.field_names)
 
 
@@ -203,7 +204,7 @@ class ItemTemplateSearchForm(FieldSetFormMixin):
     def __init__(self, *args, **kwargs):
         super(ItemTemplateSearchForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Buscar'))
-        self.helper.layout = Fieldset(u'Buscar Producto', *self.field_names)
+        self.helper.layout = Fieldset('Buscar Producto', *self.field_names)
 
 
 class ProveedorForm(FieldSetModelFormMixin):
@@ -213,7 +214,7 @@ class ProveedorForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ProveedorForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Proveedor',
+        self.helper.layout = Fieldset('Formulario de Proveedor',
                                       *self.field_names)
 
 
@@ -228,7 +229,7 @@ class CompraForm(ProveedorFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Compra',
+        self.helper.layout = Fieldset('Formulario de Compra',
                                       *self.field_names)
 
 
@@ -241,7 +242,7 @@ class CotizacionForm(ProveedorFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CotizacionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Cotizacion',
+        self.helper.layout = Fieldset('Formulario de Cotizacion',
                                       *self.field_names)
 
 
@@ -258,5 +259,5 @@ class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemCotizadoform, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Formulario de Item Cotizado',
+        self.helper.layout = Fieldset('Formulario de Item Cotizado',
                                       *self.field_names)

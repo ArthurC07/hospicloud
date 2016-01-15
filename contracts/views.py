@@ -15,51 +15,47 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from datetime import datetime, time
 
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
-from django.core.mail import send_mail
 from django.db.models import Q, Sum
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
-from django.views.generic import (CreateView, ListView, DetailView, DeleteView,
-                                  TemplateView, UpdateView, FormView, View)
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic import CreateView, ListView, DetailView, DeleteView, \
+    TemplateView, UpdateView, FormView, View
 from django.views.generic.base import RedirectView, ContextMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
-from guardian.decorators import permission_required
-from constance import config
 
 from clinique.models import Cita, Consulta, Seguimiento
-from contracts.forms import (PlanForm, ContratoForm, PagoForm, EventoForm,
-                             VendedorForm, VendedorChoiceForm,
-                             ContratoSearchForm, PersonaForm, TipoEventoForm,
-                             BeneficiarioForm, BeneficiarioPersonaForm,
-                             LimiteEventoForm, PlanChoiceForm, MetaForm,
-                             CancelacionForm, ContratoEmpresarialForm,
-                             EmpleadorChoiceForm, VendedorPeriodoForm,
-                             PrecontratoForm, PersonaPrecontratoForm,
-                             BeneficioForm, MasterContractForm, ImportFileForm,
-                             ContratoMasterForm, PCDForm, AseguradoraForm)
-from contracts.models import (Contrato, Plan, Pago, Evento, Vendedor,
-                              TipoEvento, Beneficiario, LimiteEvento, Meta,
-                              Cancelacion, Precontrato, Prebeneficiario,
-                              Beneficio, MasterContract,
-                              ImportFile, PCD, Aseguradora)
+from contracts.forms import PlanForm, ContratoForm, PagoForm, EventoForm, \
+    VendedorForm, VendedorChoiceForm, ContratoSearchForm, PersonaForm, \
+    TipoEventoForm, BeneficiarioForm, BeneficiarioPersonaForm, \
+    LimiteEventoForm, PlanChoiceForm, MetaForm, CancelacionForm, \
+    ContratoEmpresarialForm, EmpleadorChoiceForm, VendedorPeriodoForm, \
+    PrecontratoForm, PersonaPrecontratoForm, BeneficioForm, \
+    MasterContractForm, ImportFileForm, ContratoMasterForm, PCDForm, \
+    AseguradoraForm
+from contracts.models import Contrato, Plan, Pago, Evento, Vendedor, \
+    TipoEvento, Beneficiario, LimiteEvento, Meta, Cancelacion, Precontrato, \
+    Prebeneficiario, Beneficio, MasterContract, ImportFile, PCD, Aseguradora
 from hospinet.utils import get_current_month_range
 from invoice.forms import PeriodoForm
+from persona.forms import PersonaForm as ButtonPersonaForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
 from persona.views import PersonaFormMixin
 from spital.models import Admision
 from users.mixins import LoginRequiredMixin
-from persona.forms import PersonaForm as ButtonPersonaForm
 
 
 class ContratoPermissionMixin(LoginRequiredMixin):
@@ -73,7 +69,7 @@ class IndexView(TemplateView, ContratoPermissionMixin):
 
     def create_forms(self, context):
         context['vendedor-search'] = VendedorChoiceForm(
-            prefix='vendedor-search')
+                prefix='vendedor-search')
         context['vendedor-search'].helper.form_action = 'vendedor-search'
         context['plan-search'] = PlanChoiceForm(prefix='plan-search')
         context['plan-search'].helper.form_action = 'plan-search'
@@ -87,14 +83,14 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['evento-periodo'].helper.form_action = 'evento-periodo'
 
         context['vendedor-periodo'] = VendedorPeriodoForm(
-            prefix='vendedor-periodo')
+                prefix='vendedor-periodo')
         context['vendedor-periodo'].helper.form_action = 'vendedor-periodo'
 
         context['contrato-search'] = ContratoSearchForm(
-            prefix='contrato-search')
+                prefix='contrato-search')
         context['contrato-search'].helper.form_action = 'contrato-search'
         context['contrato-persona-search'] = PersonaSearchForm(
-            prefix='contrato-persona-search')
+                prefix='contrato-persona-search')
         context[
             'contrato-persona-search'].helper.form_action = \
             'contrato-persona-search'
@@ -122,53 +118,53 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         context['consulta'] = Consulta.objects.filter(created__gte=self.inicio,
                                                       created__lte=self.fin).count()
         context['seguimientos'] = Seguimiento.objects.filter(
-            created__gte=self.inicio,
-            created__lte=self.fin).count()
+                created__gte=self.inicio,
+                created__lte=self.fin).count()
 
         # TODO Optimize using a map or a process pool
         personas = Persona.objects.filter(contratos__in=privados)
         context['citas'] = Cita.objects.filter(
-            fecha__gte=self.inicio,
-            fecha__lte=self.fin,
-            persona__in=personas).count()
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin,
+                persona__in=personas).count()
 
         personas = Persona.objects.filter(contratos__in=empresariales)
 
         context['citasp'] = Cita.objects.filter(
-            fecha__gte=self.inicio,
-            fecha__lte=self.fin,
-            persona__in=personas).count()
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin,
+                persona__in=personas).count()
 
         context['consultasp'] = Consulta.objects.filter(
-            created__gte=self.inicio,
-            created__lte=self.fin,
-            persona__in=personas).count()
+                created__gte=self.inicio,
+                created__lte=self.fin,
+                persona__in=personas).count()
 
         morosos = Contrato.objects.filter(vencimiento__gte=self.fin,
                                           cancelado=False).all()
         context['mora'] = morosos.count()
 
         context['ingresos'] = Contrato.objects.filter(
-            cancelado=False).aggregate(Sum('plan__precio'))
+                cancelado=False).aggregate(Sum('plan__precio'))
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
         context['cancelaciones'] = Cancelacion.objects.filter(
-            fecha__gte=self.inicio).count()
+                fecha__gte=self.inicio).count()
         # TODO Hospitalizaciones y cirugias empresariales
         contratos_e = Contrato.objects.filter(inicio__gte=self.inicio,
                                               inicio__lte=self.fin)
         context['contratos_empresariales'] = contratos_e.count()
         context['hospitalizaciones'] = Admision.objects.filter(
-            ingreso__gte=self.inicio).count()
+                ingreso__gte=self.inicio).count()
         context['empresas'] = Empleador.objects.all()
         context['ingresos_empresa'] = Contrato.objects.filter(
-            cancelado=False).aggregate(Sum('plan__precio'))
+                cancelado=False).aggregate(Sum('plan__precio'))
         morosos = Contrato.objects.filter(vencimiento__lte=self.fin).all()
         context['mora_empresa'] = morosos.count()
 
         context['cancelaciones_empresa'] = Cancelacion.objects.filter(
-            fecha__gte=self.inicio).count()
+                fecha__gte=self.inicio).count()
 
         context['planes'] = Plan.objects.all()
 
@@ -215,7 +211,7 @@ class PlanCloneView(RedirectView, LoginRequiredMixin):
             beneficio.pk = None
             beneficio.save()
 
-        messages.info(self.request, _(u'¡Plan Copiado Exitosamente!'))
+        messages.info(self.request, _('¡Plan Copiado Exitosamente!'))
         return plan.get_absolute_url()
 
 
@@ -336,7 +332,7 @@ class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
         self.persona_form.helper.form_tag = False
 
         context = super(ContratoPersonaCreateView, self).get_context_data(
-            **kwargs)
+                **kwargs)
         context['persona_form'] = self.persona_form
         return context
 
@@ -412,8 +408,8 @@ class ContratoListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         return Contrato.objects.filter(
-            cancelado=False,
-            vencimiento__gte=timezone.now()
+                cancelado=False,
+                vencimiento__gte=timezone.now()
         ).all()
 
     def get_context_data(self, **kwargs):
@@ -426,7 +422,7 @@ class ContratoListView(ListView, LoginRequiredMixin):
         context['morosos'] = len([c for c in contratos if c.dias_mora() > 0])
         if contratos.count() > 0:
             context['percentage'] = context['morosos'] / float(
-                contratos.count()) * 100
+                    contratos.count()) * 100
 
         return context
 
@@ -437,8 +433,8 @@ class ContratoEmpresarialListView(ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         return Contrato.objects.filter(
-            cancelado=False,
-            vencimiento__gte=timezone.now()
+                cancelado=False,
+                vencimiento__gte=timezone.now()
         ).all()
 
 
@@ -453,8 +449,8 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.contratos = Contrato.objects.filter(
-                inicio__gte=self.inicio,
-                inicio__lte=self.fin,
+                    inicio__gte=self.inicio,
+                    inicio__lte=self.fin,
             )
         return super(ContratoPeriodoView, self).dispatch(request, *args,
                                                          **kwargs)
@@ -551,8 +547,8 @@ class EventoPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.eventos = Evento.objects.filter(
-                fecha__gte=self.inicio,
-                fecha__lte=self.fin,
+                    fecha__gte=self.inicio,
+                    fecha__lte=self.fin,
             )
         return super(EventoPeriodoView, self).dispatch(request, *args, **kwargs)
 
@@ -605,9 +601,9 @@ class VendedorPeriodoView(TemplateView, LoginRequiredMixin):
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             vendedor = self.form.cleaned_data['vendedor']
             self.contratos = Contrato.objects.filter(
-                inicio__gte=self.inicio,
-                inicio__lte=self.fin,
-                vendedor=vendedor,
+                    inicio__gte=self.inicio,
+                    inicio__lte=self.fin,
+                    vendedor=vendedor,
             )
         return super(VendedorPeriodoView, self).dispatch(request, *args,
                                                          **kwargs)
@@ -664,7 +660,7 @@ class BeneficiarioPersonaCreateView(ContratoFormMixin):
         self.persona_form.helper.form_tag = False
 
         context = super(BeneficiarioPersonaCreateView, self).get_context_data(
-            **kwargs)
+                **kwargs)
         context['persona_form'] = self.persona_form
         return context
 
@@ -715,9 +711,9 @@ class ContratoPersonaSearchView(ListView, LoginRequiredMixin):
         query = form.cleaned_data['query']
 
         queryset = Contrato.objects.filter(
-            Q(persona__nombre__icontains=query) |
-            Q(persona__apellido__icontains=query) |
-            Q(persona__identificacion__icontains=query)
+                Q(persona__nombre__icontains=query) |
+                Q(persona__apellido__icontains=query) |
+                Q(persona__identificacion__icontains=query)
         )
 
         return queryset.all()
@@ -771,9 +767,7 @@ class PrecontratoCreateView(CreateWithInlinesView):
 
         url = self.request.build_absolute_uri(precontrato.get_absolute_url())
 
-        send_mail('PreContrato Registrado',
-                  _(u'Ir al contrato {0}').format(url), config.SYSTEM_EMAIL,
-                  config.NOTIFICATION_EMAIL.split(','), fail_silently=True)
+        # TODO: Send email containing the URL
 
         return precontrato.get_absolute_url()
 
@@ -841,7 +835,7 @@ class MasterContractProcessView(RedirectView, LoginRequiredMixin):
         master = get_object_or_404(MasterContract, pk=kwargs['pk'])
         master.assign_contracts()
 
-        messages.info(self.request, _(u'¡Creados los contratos!'))
+        messages.info(self.request, _('¡Creados los contratos!'))
         return master.get_absolute_url()
 
 
@@ -862,7 +856,7 @@ class ImportFileProcessView(RedirectView, LoginRequiredMixin):
         import_file = get_object_or_404(ImportFile, pk=kwargs['pk'])
         import_file.assign_contracts()
 
-        messages.info(self.request, _(u'¡Archivo Importado Exitosamente!'))
+        messages.info(self.request, _('¡Archivo Importado Exitosamente!'))
         return import_file.get_absolute_url()
 
 

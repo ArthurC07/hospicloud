@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from decimal import Decimal
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -24,11 +25,12 @@ from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-from django_extensions.db.models import TimeStampedModel
 from django.utils.translation import ugettext_lazy as _
+from django_extensions.db.models import TimeStampedModel
 
 from budget.models import Fuente
 from invoice.models import Pago, CuentaPorCobrar
+from persona.models import Persona
 
 
 @python_2_unicode_compatible
@@ -84,6 +86,40 @@ class Deposito(TimeStampedModel):
 
         super(Deposito, self).delete(**kw)
 
+
+@python_2_unicode_compatible
+class Cheque(Deposito):
+    """
+    Represents a cheque that has been sent
+    """
+    banco_de_emision = models.ForeignKey(Banco)
+    emisor = models.ForeignKey(Persona, null=True)
+    fecha_de_entrega = models.DateTimeField(default=timezone.now)
+    fecha_de_emision = models.DateTimeField(default=timezone.now)
+    numero_de_cheque = models.CharField(max_length=255)
+    monto_retenido = models.DecimalField(max_digits=11, decimal_places=2,
+                                         default=0)
+
+    def __str__(self):
+        return _('{0} - {1}').format(
+                self.banco_de_emision.nombre,
+                self.numero_de_cheque
+        )
+
+    def get_absolute_url(self):
+        return reverse('cheque-detail', args=[self.id])
+
+    def pendiente(self):
+        """
+        Calculates how much money is still not liquidated from the
+        :class:`Cheque`
+
+        :return: The amount of leftover money
+        """
+        return self.monto - self.detallepago_set.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total'] + self.monto_retenido
+
     def liquidado(self):
         """
         :return: The amount that has been already consolidated
@@ -93,42 +129,12 @@ class Deposito(TimeStampedModel):
                 liquidado=Coalesce(Sum('monto'), Decimal())
         )['liquidado']
 
-
-@python_2_unicode_compatible
-class Cheque(Deposito):
-    """
-    Represents a cheque that has been sent
-    """
-    banco_de_emision = models.ForeignKey(Banco)
-    fecha_de_entrega = models.DateTimeField(default=timezone.now)
-    fecha_de_emision = models.DateTimeField(default=timezone.now)
-    numero_de_cheque = models.CharField(max_length=255)
-    monto_retenido = models.DecimalField(max_digits=11, decimal_places=2,
-                                         default=0)
-
-    def __str__(self):
-        return _(u'{0} - {1}').format(
-                self.banco_de_emision.nombre,
-                self.numero_de_cheque
-        )
-
-    def get_absolute_url(self):
-        return reverse('cheque-detail', args=[self.id])
-
-    def pendiente(self):
-        return self.monto - self.detallepago_set.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
-        )['total'] + self.monto_retenido
-
-
-
     def monto_total(self):
-
         return self.monto + self.monto_retenido
 
 
 @python_2_unicode_compatible
-class CierrePOS(TimeStampedModel):
+class CierrePOS(Deposito):
     """
     Describes the closing of the the POS.
     """
@@ -141,14 +147,14 @@ class CierrePOS(TimeStampedModel):
 
 class DetallePago(TimeStampedModel):
     """
-    Describes how an account got payed.
+    Describes how a :class:`Pago` got liquidated.
     """
-    deposito = models.ForeignKey(Deposito)
+    cheque = models.ForeignKey(Cheque, null=True)
     pago = models.ForeignKey(Pago)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     def get_absolute_url(self):
-        return self.deposito.get_absolute_url()
+        return self.cheque.get_absolute_url()
 
     def save(self, **kwargs):
         """
@@ -157,9 +163,10 @@ class DetallePago(TimeStampedModel):
         :param kwargs:
         :return:
         """
-        self.pago.completado = True
-        self.pago.status = self.pago.status.next_status
-        self.pago.save()
+        if self.monto >= self.pago.monto:
+            self.pago.completado = True
+            self.pago.status = self.pago.status.next_status
+            self.pago.save()
 
         super(DetallePago, self).save(**kwargs)
 

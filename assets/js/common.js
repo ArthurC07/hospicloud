@@ -33,4 +33,5 @@ $(document).ready(function ($) {
     $('select').select2({
         theme: "bootstrap"
     });
+    $('.select2-container').css('width', '100%');
 });

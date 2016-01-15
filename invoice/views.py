@@ -15,15 +15,19 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 import calendar
 from collections import defaultdict, OrderedDict
 from datetime import datetime, time, date, timedelta
 from decimal import Decimal
+
 from django.contrib import messages
-from django.db import models
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
+from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
@@ -31,27 +35,18 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, UpdateView, TemplateView, \
     DetailView, ListView, RedirectView, DeleteView, View
-from django.forms.models import inlineformset_factory
-from django.contrib.auth.decorators import permission_required
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin, FormView
 from extra_views.dates import daterange
+
 from clinique.models import Consulta
 from contracts.models import Aseguradora, MasterContract
 from contracts.views import AseguradoraMixin
+from emergency.models import Emergencia
 from hospinet.utils.date import make_end_day, make_day_start
 from hospinet.utils.forms import NumeroForm
-from persona.views import PersonaFormMixin
-from spital.forms import DepositoForm
-from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
-from spital.models import Admision, Deposito
-from emergency.models import Emergencia
 from imaging.models import Examen
-from persona.models import Persona
-from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
-    TipoPago, StatusPago, CuentaPorCobrar, Notification, Cotizacion, Cotizado, \
-    ComprobanteDeduccion, ConceptoDeduccion, PagoCuenta, NotaCredito, \
-    DetalleCredito
+from inventory.models import ItemTemplate, TipoVenta
 from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
     AdmisionFacturarForm, CorteForm, ExamenFacturarForm, InventarioForm, \
     PagoForm, PersonaForm, TurnoCajaForm, CierreTurnoForm, \
@@ -59,7 +54,15 @@ from invoice.forms import ReciboForm, VentaForm, PeriodoForm, \
     PeriodoCiudadForm, CuentaPorCobrarForm, PagoCuentaForm, CotizacionForm, \
     CotizadoForm, ComprobanteDeduccionForm, ConceptoDeduccionForm, \
     ReembolsoForm, ReciboTipoForm, NotaCreditoForm, TurnoCajaCierreForm
-from inventory.models import ItemTemplate, TipoVenta
+from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
+    TipoPago, StatusPago, CuentaPorCobrar, Notification, Cotizacion, Cotizado, \
+    ComprobanteDeduccion, ConceptoDeduccion, PagoCuenta, NotaCredito, \
+    DetalleCredito
+from persona.models import Persona
+from persona.views import PersonaFormMixin
+from spital.forms import DepositoForm
+from spital.models import Admision, Deposito
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
 class InvoicePermissionMixin(LoginRequiredMixin):
@@ -79,7 +82,10 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context[object_name].set_action(action)
 
     def get_context_data(self, **kwargs):
-        """Agrega el formulario de :class:`Recibo`"""
+        """
+        Agrega todos los formularios que permiten ver los diversos reportes
+        relacionados con los :class:`Recibo`
+        """
 
         context = super(IndexView, self).get_context_data(**kwargs)
         self.create_periodo_form(context, 'reciboperiodoform', 'recibo',
@@ -360,6 +366,9 @@ class ReciboCreateView(CreateView, LoginRequiredMixin):
 
 
 class ReciboTipoFormUpdateView(UpdateView, LoginRequiredMixin):
+    """
+    Allows changing the :class:`TipoVenta` of a :class:`Recibo`
+    """
     model = Recibo
     form_class = ReciboTipoForm
     template_name = 'invoice/recibo_cambio_form.html'
@@ -506,6 +515,9 @@ class PagoCreateView(ReciboFormMixin, CreateView, LoginRequiredMixin):
 
 
 class PagoUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows updating a :class:`Pago`
+    """
     model = Pago
     form_class = PagoStatusForm
 
@@ -514,6 +526,9 @@ class PagoUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class PagoDeleteView(DeleteView, LoginRequiredMixin):
+    """
+    Deletes a :class:`Pago` instance
+    """
     model = Pago
 
     def get_object(self, queryset=None):
@@ -557,6 +572,10 @@ class ReciboDetailView(DetailView, LoginRequiredMixin):
 
 
 class ReciboNumeroListView(ListView, LoginRequiredMixin):
+    """
+    Shows :class:`Recibo` whose correlativo matches the number from a
+    :class:`NumeroForm`
+    """
     context_object_name = 'recibos'
 
     def get_queryset(self):
@@ -571,6 +590,9 @@ class ReciboNumeroListView(ListView, LoginRequiredMixin):
 
 
 class ReciboPrintView(LoginRequiredMixin, DetailView):
+    """
+    Displays the UI to print a :class:`Recibo`
+    """
     model = Recibo
     object_context_name = 'recibo'
     template_name = 'invoice/recibo_print.html'
@@ -925,6 +947,9 @@ def crear_ventas_consulta(items, precios, recibo):
 
 
 class EmergenciaFacturarView(RedirectView, LoginRequiredMixin):
+    """
+    Creates a :class:`Recibo` object from a :class:`Emergencia` instance
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -952,6 +977,9 @@ class EmergenciaFacturarView(RedirectView, LoginRequiredMixin):
 
 
 class ConsultaFacturarView(RedirectView, LoginRequiredMixin):
+    """
+    Creates a :class:`Recibo` object from a :class:`Consulta` instance
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -1058,6 +1086,10 @@ class AdmisionFacturarView(UpdateView, LoginRequiredMixin):
 
 
 class AseguradoraContractsFacturarView(RedirectView, LoginRequiredMixin):
+    """
+    Creates a :class:`Recibo` from the :class:`MasterContract`s that are
+    associated to a single :class:`Aseguradora` instance
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):

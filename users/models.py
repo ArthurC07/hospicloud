@@ -14,17 +14,19 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from datetime import timedelta
 from decimal import Decimal
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-from django.conf import settings
-from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 from guardian.shortcuts import assign_perm
+from userena.models import UserenaBaseProfile
 
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
@@ -128,7 +130,7 @@ class UserProfile(UserenaBaseProfile):
 
             datos['ponderacion'] = meta.ponderacion(datos['logro'])
             datos['logro_ponderado'] = meta.logro_ponderado(
-                datos['ponderacion'])
+                    datos['ponderacion'])
             total += datos['logro_ponderado']
             goal['metas'].append(datos)
         goal['escalas'] = bsc.get_escala(total)

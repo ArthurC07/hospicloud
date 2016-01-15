@@ -14,21 +14,22 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.views.generic.base import ContextMixin
-from django.views.generic.edit import FormMixin
-from guardian.decorators import permission_required
+from __future__ import unicode_literals
+
+from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
-                                  TemplateView, RedirectView, FormView, View)
+from django.views.generic import DetailView, UpdateView, CreateView, ListView, \
+    TemplateView, RedirectView, FormView, View
+from django.views.generic.base import ContextMixin
+from django.views.generic.edit import FormMixin
 
-from django.contrib import messages
-
-from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
-                           EstudioProgramadoForm, EmailForm, EstudioForm)
-from imaging.models import (Examen, Imagen, Adjunto, Dicom, EstudioProgramado,
-                            Estudio)
+from imaging.forms import ExamenForm, ImagenForm, AdjuntoForm, DicomForm, \
+    EstudioProgramadoForm, EmailForm, EstudioForm
+from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
+    Estudio
 from persona.forms import PersonaForm, PersonaSearchForm
 from persona.models import Persona
 from persona.views import PersonaCreateView, PersonaFormMixin
@@ -209,7 +210,7 @@ class NotificarExamenView(FormView, LoginRequiredMixin):
 
         examen = form.cleaned_data['examen']
         context = {'link_examen': self.request.build_absolute_uri(
-            examen.get_absolute_url())}
+                examen.get_absolute_url())}
 
         return super(NotificarExamenView, self).form_valid(form)
 
@@ -268,7 +269,7 @@ class EstudioProgramadoListView(ListView, LoginRequiredMixin):
         """Agrega los ultimos :class:`Examen`es efectuados a la vista"""
 
         context = super(EstudioProgramadoListView, self).get_context_data(
-            **kwargs)
+                **kwargs)
         context['examenes'] = Examen.objects.all().order_by('-fecha')[:20]
         return context
 
