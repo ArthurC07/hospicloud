@@ -14,15 +14,16 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
-from django import forms
 from crispy_forms.layout import Fieldset
+from django import forms
 from django.utils import timezone
 
-from spital.models import Admision, Habitacion, PreAdmision, Deposito
 from emergency.models import Emergencia
-from persona.models import Persona
 from persona.forms import DateTimeWidget, FieldSetModelFormMixin
+from persona.models import Persona
+from spital.models import Admision, Habitacion, PreAdmision, Deposito
 
 
 class AdmisionForm(FieldSetModelFormMixin):
@@ -44,7 +45,7 @@ class AdmisionForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(AdmisionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Datos de la Admisión', *self.field_names)
+        self.helper.layout = Fieldset('Datos de la Admisión', *self.field_names)
 
 
 class HabitacionForm(FieldSetModelFormMixin):
@@ -58,7 +59,7 @@ class HabitacionForm(FieldSetModelFormMixin):
 class PreAdmisionForm(FieldSetModelFormMixin):
     class Meta:
         model = PreAdmision
-        exclude = ('completada', )
+        exclude = ('completada',)
 
     emergencia = forms.ModelChoiceField(label="",
                                         queryset=Emergencia.objects.all(),
@@ -85,12 +86,11 @@ class IngresarForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(IngresarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Hospitalizar Paciente',
+        self.helper.layout = Fieldset('Hospitalizar Paciente',
                                       *self.field_names)
 
 
 class DepositoForm(FieldSetModelFormMixin):
-
     class Meta:
         model = Deposito
         fields = '__all__'
@@ -101,4 +101,4 @@ class DepositoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(DepositoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Deposito', *self.field_names)
+        self.helper.layout = Fieldset('Agregar Deposito', *self.field_names)

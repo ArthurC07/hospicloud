@@ -14,33 +14,30 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
+from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.http.response import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
                                   DeleteView, View)
-from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.base import TemplateView, TemplateResponseMixin
-from django.shortcuts import get_object_or_404
-from django.http.response import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
+from inventory.forms import InventarioForm, ItemTemplateForm, ItemTypeForm, \
+    HistorialForm, ItemForm, RequisicionForm, ItemRequisicionForm, \
+    TransferenciaForm, TransferidoForm, CompraForm, TransferirForm, \
+    ItemTemplateSearchForm, RequisicionCompletarForm, ItemCompradoForm, \
+    ProveedorForm, CotizacionForm, ItemCotizadoform
+from inventory.models import Inventario, Item, ItemTemplate, Transferencia, \
+    Historial, ItemComprado, Transferido, Compra, ItemType, Requisicion, \
+    ItemRequisicion, ItemHistorial, Proveedor, Cotizacion, ItemCotizado
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
-from inventory.models import (Inventario, Item, ItemTemplate, Transferencia,
-                              Historial, ItemComprado, Transferido, Compra,
-                              ItemType, Requisicion, ItemRequisicion,
-                              ItemHistorial, Proveedor, Cotizacion,
-                              ItemCotizado)
-from inventory.forms import (InventarioForm, ItemTemplateForm, ItemTypeForm,
-                             HistorialForm, ItemForm, RequisicionForm,
-                             ItemRequisicionForm, TransferenciaForm,
-                             TransferidoForm, CompraForm, TransferirForm,
-                             ItemTemplateSearchForm, RequisicionCompletarForm,
-                             ItemCompradoForm, ProveedorForm, CotizacionForm,
-                             ItemCotizadoform)
 
 
 class InventarioPermissionMixin(LoginRequiredMixin):
@@ -422,7 +419,7 @@ class ItemTemplateSearchView(ListView, LoginRequiredMixin):
         query = form.cleaned_data['query']
 
         queryset = ItemTemplate.objects.filter(
-            Q(descripcion__icontains=query)
+                Q(descripcion__icontains=query)
         )
 
         return queryset.all()

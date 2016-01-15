@@ -14,25 +14,24 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from collections import defaultdict
 from decimal import Decimal
-from django.conf import settings
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from django_extensions.db.models import TimeStampedModel
 
+from inventory.models import ItemTemplate, TipoVenta
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
-from inventory.models import ItemTemplate, TipoVenta
 
 
 class Emergencia(TimeStampedModel):
@@ -206,7 +205,7 @@ class Cobro(TimeStampedModel):
         return reverse('emergencia-cobro-agregar', args=[self.emergencia.id])
 
     def __str__(self):
-        return _(u'{1}: {0}').format(self.cargo.descripcion, self.created)
+        return _('{1}: {0}').format(self.cargo.descripcion, self.created)
 
     def total(self):
         return self.cargo.precio_de_venta * self.cantidad

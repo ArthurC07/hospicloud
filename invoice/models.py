@@ -15,26 +15,29 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from collections import defaultdict
-from decimal import Decimal
 from datetime import timedelta
+from decimal import Decimal
+
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import F, Sum, Min
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
-from django.db.models import F, Sum, Min
+
 from clinique.models import Consulta
 from contracts.models import Aseguradora
+from inventory.models import ItemTemplate, TipoVenta, Proveedor
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
-from inventory.models import ItemTemplate, TipoVenta, Proveedor
 from spital.models import Deposito
 from users.models import Ciudad
 

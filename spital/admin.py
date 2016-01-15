@@ -14,8 +14,10 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from django.contrib import admin
+
 from spital.models import Admision, Habitacion, PreAdmision, Deposito
 
 admin.site.register(Admision)

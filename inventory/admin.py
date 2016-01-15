@@ -13,14 +13,14 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from django.contrib import admin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
-from inventory.models import (ItemTemplate, Inventario, Requisicion, ItemType,
-                              TipoVenta, Item, ItemComprado, ItemRequisicion,
-                              Transferencia, Transferido, Proveedor, Compra,
-                              Transaccion, Cotizacion, ItemCotizado)
+from inventory.models import ItemTemplate, Inventario, Requisicion, ItemType, \
+    TipoVenta, Item, ItemComprado, ItemRequisicion, Transferencia, Transferido, \
+    Proveedor, Compra, Transaccion, Cotizacion, ItemCotizado
 
 
 class ItemTemplateAdmin(admin.ModelAdmin):

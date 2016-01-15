@@ -14,37 +14,30 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
+from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView, FormView)
-from django.contrib import messages
-from django.utils import timezone
-
-from django.contrib.auth.decorators import permission_required
 
 from inventory.models import ItemTemplate
 from inventory.views import UserInventarioRequiredMixin
-from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
-                               HonorarioForm, PreCargoForm,
-                               InsulinaForm, GlucosuriaForm, IngestaForm,
-                               ExcretaForm, NotaEnfermeriaForm,
-                               OrdenMedicaForm, SignoVitalForm,
-                               MedicamentoForm, DosisForm, DevolucionForm,
-                               SumarioForm, DosificarForm,
-                               MedicamentoUpdateForm, OxigenoTerapiaForm)
-from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Honorario,
-                                Glucosuria, Ingesta, Excreta, NotaEnfermeria,
-                                OrdenMedica, SignoVital,
-                                Medicamento, Dosis, Devolucion, Sumario,
-                                OxigenoTerapia)
+from nightingale.forms import CargoForm, EvolucionForm, GlicemiaForm, \
+    HonorarioForm, PreCargoForm, InsulinaForm, GlucosuriaForm, IngestaForm, \
+    ExcretaForm, NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm, \
+    MedicamentoForm, DosisForm, DevolucionForm, SumarioForm, DosificarForm, \
+    MedicamentoUpdateForm, OxigenoTerapiaForm
+from nightingale.models import Cargo, Evolucion, Glicemia, Insulina, Honorario, \
+    Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital, \
+    Medicamento, Dosis, Devolucion, Sumario, OxigenoTerapia
 from spital.models import Admision
-
-
-# from spital.views import AdmisionFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -75,12 +68,10 @@ class NightingaleIndexView(ListView, EnfermeriaPermissionMixin):
                                       for a in
                                       admisiones) / self.queryset.count()
 
-        context['puntos'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
-                                                                       admisiones[
-                                                                           n]
-                                                                       .tiempo_hospitalizacion())
-                                                   for n in
-                                                   range(self.queryset.count()))
+        context['puntos'] = '[0 , 0],' + ','.join(
+                '[{0}, {1}]'.format(n + 1,
+                                    admisiones[n].tiempo_hospitalizacion())
+                for n in range(self.queryset.count()))
 
         return context
 
@@ -155,7 +146,7 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
 
         context = super(SignosDetailView, self).get_context_data(**kwargs)
         signos = self.object.signos_vitales.extra(
-            order_by=['fecha_y_hora']).all()
+                order_by=['fecha_y_hora']).all()
 
         context['min'] = self.object.hospitalizacion.strftime('%Y-%m-%d %H:%M')
 
@@ -176,24 +167,25 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
             inicio = signos[0].fecha_y_hora - timezone.timedelta(minutes=5)
             context['min'] = inicio.strftime('%Y-%m-%d %H:%M')
 
-        context['pulso'] = u','.join("['{0}', {1}]".format(
-            s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.pulso)
-                                     for s in signos)
+        context['pulso'] = ','.join("['{0}', {1}]".format(
+                s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.pulso)
+                                    for s in signos)
         context['temperatura'] = "['{0}', 37.00], ".format(context['min']) + \
-                                 u','.join("['{0}', {1}]".format(
-                                     s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
-                                     s.temperatura)
-                                           for s in signos)
+                                 ','.join("['{0}', {1}]".format(
+                                         s.fecha_y_hora.strftime(
+                                                 '%Y-%m-%d %H:%M'),
+                                         s.temperatura)
+                                          for s in signos)
 
-        context['presion_sistolica'] = u','.join("['{0}', {1}]".format(
-            s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
-            s.presion_sistolica)
+        context['presion_sistolica'] = ','.join("['{0}', {1}]".format(
+                s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
+                s.presion_sistolica)
+                                                for s in signos)
+
+        context['presion_diastolica'] = ','.join("['{0}', {1}]".format(
+                s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
+                s.presion_diastolica)
                                                  for s in signos)
-
-        context['presion_diastolica'] = u','.join("['{0}', {1}]".format(
-            s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
-            s.presion_diastolica)
-                                                  for s in signos)
 
         return context
 
@@ -481,7 +473,7 @@ class DosisSuministrarView(RedirectView, LoginRequiredMixin):
         dosis.usuario = self.request.user
         dosis.fecha_y_hora = timezone.now()
         dosis.save()
-        messages.info(self.request, u'¡Dosis registrada como suministrada!')
+        messages.info(self.request, '¡Dosis registrada como suministrada!')
         return reverse('nightingale-view-id',
                        args=[dosis.medicamento.admision.id])
 
@@ -529,7 +521,7 @@ class DosificarMedicamentoView(FormView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super(DosificarMedicamentoView, self).get_context_data(
-            **kwargs)
+                **kwargs)
 
         context['medicamento'] = self.medicamento
 

@@ -14,25 +14,25 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
+from django.db.models.query_utils import Q
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DetailView, UpdateView,
                                   ListView, RedirectView)
-from django.views.generic.base import TemplateResponseMixin, ContextMixin
+from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
-from django.shortcuts import get_object_or_404
-from django.db.models.query_utils import Q
 
-from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
-                           AntecedenteForm, AntecedenteFamiliarForm,
-                           AntecedenteObstetricoForm,
-                           AntecedenteQuirurgicoForm, PersonaSearchForm,
-                           EmpleadorForm, EmpleoForm, PersonaDuplicateForm)
-from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
-                            AntecedenteFamiliar, AntecedenteObstetrico,
-                            AntecedenteQuirurgico, Empleo, Empleador)
+from persona.forms import PersonaForm, FisicoForm, EstiloVidaForm, \
+    AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
+    AntecedenteQuirurgicoForm, PersonaSearchForm, EmpleadorForm, EmpleoForm
+from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
+    AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, Empleo, \
+    Empleador
 from users.mixins import LoginRequiredMixin
 
 
@@ -146,7 +146,8 @@ class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
     form_class = AntecedenteObstetricoForm
 
 
-class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin, PersonaFormMixin):
+class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin,
+                                      PersonaFormMixin):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
 
@@ -175,9 +176,9 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
             query = form.cleaned_data['query']
 
             queryset = Persona.objects.filter(
-                Q(nombre__icontains=query) |
-                Q(apellido__icontains=query) |
-                Q(identificacion__icontains=query)
+                    Q(nombre__icontains=query) |
+                    Q(apellido__icontains=query) |
+                    Q(identificacion__icontains=query)
             )
 
             return queryset.all()

@@ -14,12 +14,14 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
-from django import forms
 from crispy_forms.layout import Submit, Fieldset
+from django import forms
 from django.utils import timezone
+
 from hospinet.utils.forms import FieldSetModelFormMixin, DateWidget, \
-    DateTimeWidget, FutureDateWidget, FieldSetFormMixin, \
+    DateTimeWidget, FieldSetFormMixin, FutureDateWidget, \
     FieldSetModelFormMixinNoButton
 from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, \
@@ -46,7 +48,7 @@ class PersonaForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Persona', *self.field_names)
+        self.helper.layout = Fieldset('Agregar Persona', *self.field_names)
         self.helper.form_id = "persona_form"
 
 
@@ -67,7 +69,7 @@ class FisicoForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(FisicoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Fisico', *self.field_names)
+        self.helper.layout = Fieldset('Editar Fisico', *self.field_names)
 
 
 class EstiloVidaForm(BasePersonaForm):
@@ -79,7 +81,7 @@ class EstiloVidaForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(EstiloVidaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Estilo de Vida',
+        self.helper.layout = Fieldset('Editar Estilo de Vida',
                                       *self.field_names)
 
 
@@ -92,7 +94,7 @@ class AntecedenteForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Antecedentes Personales',
+        self.helper.layout = Fieldset('Editar Antecedentes Personales',
                                       *self.field_names)
 
 
@@ -106,8 +108,8 @@ class AntecedenteFamiliarForm(BasePersonaForm):
     def __init__(self, *args, **kwargs):
         super(AntecedenteFamiliarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(
-            u'Editar Antecedentes Patológicos Familiares',
-            *self.field_names)
+                'Editar Antecedentes Patológicos Familiares',
+                *self.field_names)
 
 
 class AntecedenteObstetricoForm(BasePersonaForm):
@@ -124,7 +126,7 @@ class AntecedenteObstetricoForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteObstetricoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Editar Antecedentes Obstétricos',
+        self.helper.layout = Fieldset('Editar Antecedentes Obstétricos',
                                       *self.field_names)
 
 
@@ -140,7 +142,7 @@ class AntecedenteQuirurgicoForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(AntecedenteQuirurgicoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Antecedente Quirúrgico',
+        self.helper.layout = Fieldset('Antecedente Quirúrgico',
                                       *self.field_names)
 
 
@@ -149,8 +151,8 @@ class PersonaSearchForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PersonaSearchForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', u'Buscar'))
-        self.helper.layout = Fieldset(u'Buscar Persona', *self.field_names)
+        self.helper.add_input(Submit('submit', 'Buscar'))
+        self.helper.layout = Fieldset('Buscar Persona', *self.field_names)
         self.helper.form_method = 'GET'
         self.helper.form_action = 'persona-search'
 
@@ -162,7 +164,7 @@ class EmpleadorForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EmpleadorForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Datos del Empleador', *self.field_names)
+        self.helper.layout = Fieldset('Datos del Empleador', *self.field_names)
 
 
 class EmpleoForm(BasePersonaForm):
@@ -172,7 +174,7 @@ class EmpleoForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(EmpleoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Datos de Empleo', *self.field_names)
+        self.helper.layout = Fieldset('Datos de Empleo', *self.field_names)
 
 
 class PersonaDuplicateForm(FieldSetModelFormMixin):
@@ -182,7 +184,7 @@ class PersonaDuplicateForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PersonaDuplicateForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Reportar Persona Duplicada',
+        self.helper.layout = Fieldset('Reportar Persona Duplicada',
                                       *self.field_names)
 
 
@@ -193,5 +195,5 @@ class PersonaRTNForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(PersonaRTNForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Actualizar RTN de la Persona',
+        self.helper.layout = Fieldset('Actualizar RTN de la Persona',
                                       *self.field_names)

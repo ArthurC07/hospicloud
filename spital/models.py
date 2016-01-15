@@ -14,22 +14,22 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from collections import defaultdict
 from decimal import Decimal
-from django.conf import settings
 
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
-from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from django_extensions.db.models import TimeStampedModel
 
-from persona.models import Persona, persona_consolidation_functions
 from emergency.models import Emergencia
 from inventory.models import ItemTemplate, TipoVenta
+from persona.models import Persona, persona_consolidation_functions
 
 dot01 = Decimal("0.01")
 
@@ -45,7 +45,7 @@ class CargoAdapter(object):
         self.subtotal = Decimal(0)
 
     def __str__(self):
-        return _(u'{0} {1}').format(self.precio_unitario, self.valor)
+        return _('{0} {1}').format(self.precio_unitario, self.valor)
 
 
 @python_2_unicode_compatible
@@ -57,7 +57,7 @@ class Habitacion(models.Model):
     TIPOS = (
         ('N', 'Normal'),
         ('S', 'Suite'),
-        ('U', 'U.C.I.'),
+        ('', 'U.C.I.'),
     )
 
     ESTADOS = (
@@ -73,7 +73,7 @@ class Habitacion(models.Model):
                              blank=True, null=True)
 
     def __str__(self):
-        return _(u'{0} {1}').format(self.get_tipo_display(), self.numero)
+        return _('{0} {1}').format(self.get_tipo_display(), self.numero)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta de la :class:`Habitacion`"""
@@ -107,18 +107,18 @@ class Admision(models.Model):
     )
 
     ARANCELES = (
-        ('E', _(u"Empleado")),
-        ('J', _(u"Ejecutivo")),
-        ('X', _(u"Extranjero")),
+        ('E', _("Empleado")),
+        ('J', _("Ejecutivo")),
+        ('X', _("Extranjero")),
     )
 
     PAGOS = (
-        ('EF', _(u"Efectivo")),
-        ('CK', _(u"Cheque")),
-        ('CO', _(u"Empresa")),
-        ("OC", _(u"Orden de Compra")),
-        ('TC', _(u"Tarjeta Crédito")),
-        ('TB', _(u"Transferencia Bancaria")),
+        ('EF', _("Efectivo")),
+        ('CK', _("Cheque")),
+        ('CO', _("Empresa")),
+        ("OC", _("Orden de Compra")),
+        ('TC', _("Tarjeta Crédito")),
+        ('TB', _("Transferencia Bancaria")),
     )
 
     TIPOS_INGRESOS = (
@@ -397,7 +397,7 @@ class Admision(models.Model):
 
     def __str__(self):
 
-        return _(u"{0} en {1}").format(self.paciente.nombre_completo(),
+        return _("{0} en {1}").format(self.paciente.nombre_completo(),
                                        self.habitacion)
 
     def tiempo_ahora(self):
@@ -472,7 +472,7 @@ class PreAdmision(TimeStampedModel):
         return reverse('admision-index')
 
     def __str__(self):
-        return _(u"Preadmision de {0} {1}").format(
+        return _("Preadmision de {0} {1}").format(
             self.emergencia.persona.nombre_completo(), self.completada)
 
 
