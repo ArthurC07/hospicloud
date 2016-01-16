@@ -88,21 +88,20 @@ class Deposito(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class Cheque(models.Model):
+class Cheque(TimeStampedModel):
     """
     Represents a cheque that has been sent
     """
-    new_id = models.IntegerField(default=0, primary_key=True)
     banco_de_emision = models.ForeignKey(Banco)
     emisor = models.ForeignKey(Persona, null=True)
     fecha_de_entrega = models.DateTimeField(default=timezone.now)
     fecha_de_emision = models.DateTimeField(default=timezone.now)
     numero_de_cheque = models.CharField(max_length=255)
-    monto2 = models.DecimalField(max_digits=11, decimal_places=2, default=0)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     monto_retenido = models.DecimalField(max_digits=11, decimal_places=2,
                                          default=0)
     imagen_de_cheque = models.FileField(upload_to='income/cheque/%Y/%m/%d', null=True)
-    usuario2 = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 
     def __str__(self):
         return _('{0} - {1}').format(
