@@ -59,9 +59,6 @@ class ChequeForm(HiddenUserForm):
     emisor = forms.ModelChoiceField(
             queryset=Persona.objects.filter(mostrar_en_cardex=True)
     )
-    fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
-                                            required=False,
-                                            initial=timezone.now)
 
     fecha_de_entrega = forms.DateTimeField(widget=DateTimeWidget(),
                                            required=False,
