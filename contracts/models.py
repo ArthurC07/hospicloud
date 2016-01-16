@@ -153,6 +153,8 @@ def check_line(line, vencimiento):
     file_certificado = int(line[2])
     poliza_f = line[1]
     apellido_f, nombre_f = line[4].split(",")
+    apellido_f = apellido_f.lstrip().rstrip()
+    nombre_f = nombre_f.lstrip().rstrip()
     nacimiento_f = server_timezone.localize(
             datetime.strptime(line[6], "%m/%d/%Y"))
     sexo_f = line[5]
@@ -169,12 +171,7 @@ def check_line(line, vencimiento):
     try:
         pcd = PCD.objects.get(numero=file_pcd)
 
-        persona = pcd.persona
-        persona.apellido = apellido_f.lstrip().rstrip()
-        persona.nombre = nombre_f.lstrip().rstrip()
-        persona.save()
-
-        contratos = Contrato.objects.filter(persona=persona,
+        contratos = Contrato.objects.filter(persona=pcd.persona,
                                             certificado=file_certificado)
 
         [update_contract(activo, contrato, line, master, vencimiento_r) for
