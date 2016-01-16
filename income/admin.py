@@ -44,10 +44,8 @@ class ChequeAdmin(admin.ModelAdmin):
     Describes the interface to manage :class:`Cheque`s in the Django
     administrative interface
     """
-    list_display = ['cuenta', 'monto', 'fecha_de_deposito', 'banco_de_emision',
-                    'numero_de_cheque', 'monto_retenido']
-    search_fields = ['cuenta__nombre', 'banco_de_emision__nombre',
-                     'numero_de_cheque']
+    list_display = ['banco_de_emision', 'numero_de_cheque', 'monto_retenido']
+    search_fields = ['banco_de_emision__nombre', 'numero_de_cheque']
 
 
 class DetallePagoAdmin(admin.ModelAdmin):
