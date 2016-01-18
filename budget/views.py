@@ -15,6 +15,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+from datetime import date
 from decimal import Decimal
 
 from crispy_forms.layout import Submit
@@ -483,9 +484,11 @@ class PresupuestoMesListView(ListView, LoginRequiredMixin):
         """
         form = MonthYearForm(self.request.GET)
         if form.is_valid():
+            self.year = form.cleaned_data['year']
+            self.mes = form.cleaned_data['mes']
             return PresupuestoMes.objects.filter(
-                    anio=form.cleaned_data['year'],
-                    mes=form.cleaned_data['mes'],
+                    anio=self.year,
+                    mes=self.mes,
             )
         return PresupuestoMes.objects.all()
 
@@ -498,8 +501,12 @@ class PresupuestoMesListView(ListView, LoginRequiredMixin):
         context = super(PresupuestoMesListView, self).get_context_data(**kwargs)
 
         context['forms'] = []
+        context['fecha'] = date(self.year, self.mes, 1)
         for presupuesto in self.object_list.all():
             form = PresupuestoMesForm(instance=presupuesto)
+            form.fields['procesado'].widget = forms.HiddenInput()
+            form.fields['anio'].widget = forms.HiddenInput()
+            form.fields['mes'].widget = forms.HiddenInput()
             context['forms'].append(form)
 
         return context

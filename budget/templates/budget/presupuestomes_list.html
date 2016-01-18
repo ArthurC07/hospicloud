@@ -2,6 +2,18 @@
 {% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
 {% block content %}
     <div class="row">
+        <div class="col-xs-12 col-md-12 main-header">
+            <section class="page-header">
+                <h1>
+                    {% trans 'Presupuesto del Mes de' %}
+                    {{ fecha|date:"F" }}
+                    {% trans 'del' %}
+                    {{ fecha|date:"Y" }}
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12 main-content" id="meses">
             {% for form in forms %}
                 {% crispy form %}
