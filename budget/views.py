@@ -36,7 +36,7 @@ from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoPresupuestoPeriodoCuentaForm, PresupuestoMesForm
 from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes
 from hospinet.utils import get_current_month_range, get_previous_month_range
-from hospinet.utils.forms import YearForm
+from hospinet.utils.forms import YearForm, MonthYearForm
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
@@ -161,6 +161,15 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             form.set_action('anual-budget')
             form.helper.form_method = 'get'
             context['years'].append(form)
+
+        context['budget-month-year'] = MonthYearForm()
+        context['budget-month-year'].set_action('budget-list')
+        context['budget-month-year'].set_legend(
+                _('Revisar Presupuesto del Mes')
+        )
+        context['budget-month-year'].helper.form_method = 'get'
+        context['budget-month-year'].helper.add_input(
+            Submit('submit', _('Mostrar')))
 
         return context
 
@@ -460,6 +469,42 @@ class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
         return context
 
 
+class PresupuestoMesListView(ListView, LoginRequiredMixin):
+    """
+    Shows a list of :class:`PresupuestoMes`
+    """
+    model = PresupuestoMes
+
+    def get_queryset(self):
+        """
+        Filters the :class:`PresupuestoMes` according to the
+        :class:`MonthYearForm`
+        :return: the filtered :class:`QuerySet`
+        """
+        form = MonthYearForm(self.request.GET)
+        if form.is_valid():
+            return PresupuestoMes.objects.filter(
+                    anio=form.cleaned_data['year'],
+                    mes=form.cleaned_data['mes'],
+            )
+        return PresupuestoMes.objects.all()
+
+    def get_context_data(self, **kwargs):
+        """
+        Builds the forms that will correct the :class:`PresupuestoMes` data
+        :param kwargs:
+        :return:
+        """
+        context = super(PresupuestoMesListView, self).get_context_data(**kwargs)
+
+        context['forms'] = []
+        for presupuesto in self.object_list.all():
+            form = PresupuestoMesForm(instance=presupuesto)
+            context['forms'].append(form)
+
+        return context
+
+
 class PresupuestoMesDetailView(DetailView, LoginRequiredMixin):
     """
     Allows displaying the data for :class:`PresupuestoMes` instances
@@ -471,6 +516,14 @@ class PresupuestoMesCreateView(CreateView, LoginRequiredMixin):
     """
     Creates :class:`PresupuestoMes` instances based on data entered into a
     :class:`PresupuestoMesForm`
+    """
+    model = PresupuestoMes
+    form_class = PresupuestoMesForm
+
+
+class PresupuestoMesUpdateView(UpdateView, LoginRequiredMixin):
+    """
+    Updates the :class:`PresupuestoMes` instances
     """
     model = PresupuestoMes
     form_class = PresupuestoMesForm

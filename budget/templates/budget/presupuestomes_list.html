@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-content" id="meses">
+            {% for form in forms %}
+                {% crispy form %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#meses form').submit(function() {
+                $(this).ajaxSubmit();
+                $(this).parent().parent().hide('slow');
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
