@@ -178,7 +178,7 @@ def check_line(line, vencimiento):
          contrato in contratos.all()]
 
         for beneficiario in Beneficiario.objects.filter(
-                persona=persona).all():
+                persona=pcd.persona).all():
             beneficiario.contrato.vencimiento = vencimiento_r
             beneficiario.exclusion = line[10]
             beneficiario.contrato.save()
