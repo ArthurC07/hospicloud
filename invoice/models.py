@@ -546,6 +546,9 @@ class CuentaPorCobrar(TimeStampedModel):
     Represents all the pending :class:`Pago` que deben recolectarse como un
     grupo
     """
+    class Meta:
+        ordering = ('-created',)
+
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     descripcion = models.TextField()
     status = models.ForeignKey(StatusPago)
