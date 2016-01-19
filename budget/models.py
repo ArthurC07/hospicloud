@@ -478,8 +478,9 @@ class PresupuestoMes(TimeStampedModel):
     mes = models.IntegerField()
     anio = models.IntegerField(verbose_name=_('Año'))
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
-    procesado = models.BooleanField(default=False,
-                                    verbose_name=_('Completar Año'))
+    procesado = models.BooleanField(default=False)
+    completar_anio = models.BooleanField(default=False,
+                                         verbose_name=_('Completar Año'))
 
     def get_absolute_url(self):
         """
@@ -504,7 +505,7 @@ class PresupuestoMes(TimeStampedModel):
         :param kwargs:
         :return:
         """
-        if not self.procesado:
+        if not self.procesado and self.completar_anio:
             for n in range(1, 13):
                 if n == self.mes:
                     continue

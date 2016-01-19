@@ -504,7 +504,7 @@ class PresupuestoMesListView(ListView, LoginRequiredMixin):
         context['fecha'] = date(self.year, self.mes, 1)
         for presupuesto in self.object_list.all():
             form = PresupuestoMesForm(instance=presupuesto)
-            form.fields['procesado'].widget = forms.HiddenInput()
+            form.fields['completar_anio'].widget = forms.HiddenInput()
             form.fields['anio'].widget = forms.HiddenInput()
             form.fields['mes'].widget = forms.HiddenInput()
             context['forms'].append(form)

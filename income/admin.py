@@ -17,9 +17,16 @@
 from __future__ import unicode_literals
 from django.contrib import admin
 
-
 # Register your models here.
-from income.models import Deposito, Cheque, Banco, DetallePago
+from income.models import Deposito, Cheque, Banco, DetallePago, TipoDeposito
+
+
+class TipoDepositoAdmin(admin.ModelAdmin):
+    """
+    Describes the interface to manage :class:`TipoDeposito`s in the Django
+    administrative interface
+    """
+    list_display = ['nombre']
 
 
 class BancoAdmin(admin.ModelAdmin):
@@ -35,8 +42,16 @@ class DepositoAdmin(admin.ModelAdmin):
     Describes the interface to manage :class:`Deposito`s in the Django
     administrative interface
     """
-    list_display = ['cuenta', 'monto', 'fecha_de_deposito']
-    ordering = ['monto', 'cuenta__nombre']
+    list_display = ['tipo', 'cuenta', 'monto', 'fecha_de_deposito']
+    ordering = ['monto', 'cuenta__nombre', 'tipo__nombre']
+
+
+class TipoChequeAdmin(admin.ModelAdmin):
+    """
+    Describes the interface to manage :class:`TipoCheque`s in the Django
+    administrative interface
+    """
+    list_display = ['nombre']
 
 
 class ChequeAdmin(admin.ModelAdmin):
@@ -44,7 +59,8 @@ class ChequeAdmin(admin.ModelAdmin):
     Describes the interface to manage :class:`Cheque`s in the Django
     administrative interface
     """
-    list_display = ['banco_de_emision', 'numero_de_cheque', 'monto_retenido']
+    list_display = ['banco_de_emision', 'numero_de_cheque', 'monto_retenido',
+                    'tipo']
     search_fields = ['banco_de_emision__nombre', 'numero_de_cheque']
 
 
@@ -56,6 +72,7 @@ class DetallePagoAdmin(admin.ModelAdmin):
     list_display = ['cheque', 'pago', 'monto']
 
 
+admin.site.register(TipoDeposito, TipoDepositoAdmin)
 admin.site.register(Deposito, DepositoAdmin)
 admin.site.register(Cheque, ChequeAdmin)
 admin.site.register(Banco, BancoAdmin)

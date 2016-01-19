@@ -194,7 +194,7 @@ class PresupuestoMesForm(FieldSetModelFormMixin):
     """
     class Meta:
         model = PresupuestoMes
-        fields = '__all__'
+        exclude = ('procesado', )
 
     def __init__(self, *args, **kwargs):
         """
