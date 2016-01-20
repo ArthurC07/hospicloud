@@ -15,7 +15,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 
 from crispy_forms.layout import Submit
@@ -26,6 +26,7 @@ from django.db.models import Sum, Max
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
     UpdateView, FormView, RedirectView, View, TemplateView
@@ -37,7 +38,9 @@ from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoPresupuestoPeriodoCuentaForm, PresupuestoMesForm
 from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes
 from hospinet.utils import get_current_month_range, get_previous_month_range
+from hospinet.utils.date import get_month_end, make_end_day
 from hospinet.utils.forms import YearForm, MonthYearForm
+from income.models import Deposito, Cheque
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
@@ -170,7 +173,16 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         )
         context['budget-month-year'].helper.form_method = 'get'
         context['budget-month-year'].helper.add_input(
-            Submit('submit', _('Mostrar')))
+                Submit('submit', _('Mostrar')))
+
+        context['balance-month-year'] = MonthYearForm()
+        context['balance-month-year'].set_action('budget-balance-monthly')
+        context['balance-month-year'].set_legend(
+                _('Mostrar Balance del Mes')
+        )
+        context['balance-month-year'].helper.form_method = 'get'
+        context['balance-month-year'].helper.add_input(
+                Submit('submit', _('Mostrar')))
 
         return context
 
@@ -527,6 +539,12 @@ class PresupuestoMesCreateView(CreateView, LoginRequiredMixin):
     model = PresupuestoMes
     form_class = PresupuestoMesForm
 
+    def get_success_url(self):
+        """
+        :return: URL to create new :class:`PresupuestoMes`
+        """
+        return reverse('monthly-budget-add')
+
 
 class PresupuestoMesUpdateView(UpdateView, LoginRequiredMixin):
     """
@@ -534,3 +552,85 @@ class PresupuestoMesUpdateView(UpdateView, LoginRequiredMixin):
     """
     model = PresupuestoMes
     form_class = PresupuestoMesForm
+
+
+class BalanceView(TemplateView, LoginRequiredMixin):
+    """
+    Builds a view that resumes income and expenses for a given month
+    """
+    template_name = 'budget/balance_month.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        form = MonthYearForm(request.GET)
+
+        if form.is_valid():
+            self.year = form.cleaned_data['year']
+            self.mes = form.cleaned_data['mes']
+        else:
+            messages.info(
+                    self.request,
+                    _('Los Datos Ingresados en el formulario no son válidos')
+            )
+            return HttpResponseRedirect(reverse('budget-index'))
+
+        return super(BalanceView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+        Builds the forms that will correct the :class:`PresupuestoMes` data
+        :param kwargs:
+        :return:
+        """
+        context = super(BalanceView, self).get_context_data(**kwargs)
+
+        context['forms'] = []
+        inicio = timezone.make_aware(datetime(self.year, self.mes, 1))
+        fin = make_end_day(get_month_end(inicio))
+
+        context['fecha'] = inicio
+
+        depositos = Deposito.objects.filter(
+                fecha_de_deposito__range=(inicio, fin)
+        )
+
+        total_depositado = depositos.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['total_depositado'] = total_depositado
+
+        context['descripcion_depositos'] = depositos.values(
+                'tipo__nombre'
+        ).annotate(total=Coalesce(Sum('monto'), Decimal()))
+
+        gastos = Gasto.objects.filter(
+                fecha_de_pago__range=(inicio, fin)
+        )
+
+        total_gastos = gastos.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['total_gastos'] = total_gastos
+
+        context['balance'] = total_depositado - total_gastos
+
+        cheques = Cheque.objects.filter(
+                fecha_de_entrega__range=(inicio, fin)
+        )
+
+        context['total_cheques'] = cheques.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        presupuesto = PresupuestoMes.objects.filter(
+                anio=self.year,
+                mes=self.mes,
+        )
+
+        context['presupuestado'] = presupuesto.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        return context

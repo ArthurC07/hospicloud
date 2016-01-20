@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 # Django settings for hospicloud project.
+from __future__ import unicode_literals
 import os
 import environ
 
@@ -103,7 +104,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            root.path('templates'),
+            str(root.path('templates')),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -129,6 +130,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 )
 
 ROOT_URLCONF = 'hospinet.urls'
@@ -173,6 +175,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'bootstrap_pagination',
     'storages',
+    'debug_toolbar',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -226,3 +229,5 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SITE_ID = 1
 USERENA_ACTIVATION_REQUIRED = False
 AUTH_PROFILE_MODULE = 'users.UserProfile'
+
+INTERNAL_IPS = ('127.0.0.1',)

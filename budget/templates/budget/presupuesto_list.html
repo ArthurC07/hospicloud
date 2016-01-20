@@ -293,11 +293,9 @@
                             <div class="col-md-6">
                                 {% crispy budget-month-year %}
                             </div>
-                        </div>
-                        <div class="row">
-                            {% for form in years %}
-                                {% crispy form %}
-                            {% endfor %}
+                            <div class="col-md-6">
+                                {% crispy balance-month-year %}
+                            </div>
                         </div>
                     </div>
                 </div>

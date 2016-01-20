@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12 col-md-12 main-header">
+            <section class="page-header">
+                <h1>
+                    {% trans 'Presupuesto del Mes de' %}
+                    {{ fecha|date:"F" }}
+                    {% trans 'del' %}
+                    {{ fecha|date:"Y" }}
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-xs-6" id="meses">
+            <dl class="dl-horizontal main-content">
+                <dt>{% trans 'Total Depositado' %}</dt>
+                <dd>{{ total_depositado }}</dd>
+                <dt>{% trans 'Total Ejecutado' %}</dt>
+                <dd>{{ total_gastos }}</dd>
+                <dt>
+                    {% if balance > 0 %}
+                        {% trans 'Utilidad del Periodo' %}
+                    {% else %}
+                        {% trans 'Perdidad del Periodo' %}
+                    {% endif %}
+                </dt>
+                <dd>{{ balance }}</dd>
+            </dl>
+        </div>
+        <div class="col-md-6 col-xs-6">
+            <dl class="dl-horizontal main-content">
+                <dt>{% trans 'Total de Cheques' %}</dt>
+                <dd>{{ total_cheques }}</dd>
+                <dt>{% trans 'Total Presupuestado' %}</dt>
+                <dd>{{ presupuestado }}</dd>
+            </dl>
+        </div>
+    </div>
+{% endblock %}

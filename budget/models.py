@@ -506,9 +506,23 @@ class PresupuestoMes(TimeStampedModel):
         :return:
         """
         if not self.procesado and self.completar_anio:
-            for n in range(1, 13):
+            for n in range(self.mes, 13):
+                presupuestos = PresupuestoMes.objects.filter(
+                        anio=self.anio,
+                        mes=self.mes,
+                        cuenta=self.cuenta
+                )
+
+                if presupuestos.count() > 0:
+                    for presupuesto in presupuestos.all():
+                        presupuesto.monto = self.monto
+                        presupuesto.save()
+
+                    return
+
                 if n == self.mes:
                     continue
+
                 presupuesto = PresupuestoMes()
                 presupuesto.cuenta = self.cuenta
                 presupuesto.monto = self.monto

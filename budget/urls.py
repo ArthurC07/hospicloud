@@ -48,6 +48,9 @@ urlpatterns = [
         views.CuentaCreateView.as_view(),
         name='budget-cuenta-agregar'),
 
+    url(r'^balance/monthly$', views.BalanceView.as_view(),
+        name='budget-balance-monthly'),
+
     url(r'^cuenta/(?P<cuenta>\d+)/gasto/agregar$',
         views.GastoCreateView.as_view(),
         name='budget-gasto-agregar'),
