@@ -71,15 +71,16 @@ class InvoicePermissionMixin(LoginRequiredMixin):
         return super(InvoicePermissionMixin, self).dispatch(*args, **kwargs)
 
 
+def create_periodo_form(context, object_name, prefix, legend, action):
+    context[object_name] = PeriodoForm(prefix=prefix)
+    context[object_name].set_legend(legend)
+    context[object_name].set_action(action)
+
+
 class IndexView(TemplateView, InvoicePermissionMixin):
     """Muestra las opciones disponibles para la aplicación"""
 
     template_name = 'invoice/index.html'
-
-    def create_periodo_form(self, context, object_name, prefix, legend, action):
-        context[object_name] = PeriodoForm(prefix=prefix)
-        context[object_name].set_legend(legend)
-        context[object_name].set_action(action)
 
     def get_context_data(self, **kwargs):
         """
@@ -88,32 +89,32 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         """
 
         context = super(IndexView, self).get_context_data(**kwargs)
-        self.create_periodo_form(context, 'reciboperiodoform', 'recibo',
-                                 'Recibos de un Periodo', 'invoice-periodo')
+        create_periodo_form(context, 'reciboperiodoform', 'recibo',
+                            'Recibos de un Periodo', 'invoice-periodo')
 
-        self.create_periodo_form(context, 'recibodetailform', 'recibodetail',
-                                 'Detalle de Recibos de un Periodo',
-                                 'invoice-periodo-detail')
+        create_periodo_form(context, 'recibodetailform', 'recibodetail',
+                            'Detalle de Recibos de un Periodo',
+                            'invoice-periodo-detail')
 
-        self.create_periodo_form(context, 'tipoform', 'tipo',
-                                 'Productos por Área y Periodo',
-                                 'invoice-tipo')
+        create_periodo_form(context, 'tipoform', 'tipo',
+                            'Productos por Área y Periodo',
+                            'invoice-tipo')
 
-        self.create_periodo_form(context, 'productoperiodoform', 'producto',
-                                 'Productos Facturados en un Periodo',
-                                 'invoice-periodo-producto')
+        create_periodo_form(context, 'productoperiodoform', 'producto',
+                            'Productos Facturados en un Periodo',
+                            'invoice-periodo-producto')
 
-        self.create_periodo_form(context, 'emerperiodoform', 'emergencia',
-                                 'Emergencias de un Periodo',
-                                 'invoice-periodo-emergencia')
+        create_periodo_form(context, 'emerperiodoform', 'emergencia',
+                            'Emergencias de un Periodo',
+                            'invoice-periodo-emergencia')
 
-        self.create_periodo_form(context, 'pagoform', 'pago',
-                                 'Pagos por Tipo y Periodo',
-                                 'invoice-periodo-pago')
+        create_periodo_form(context, 'pagoform', 'pago',
+                            'Pagos por Tipo y Periodo',
+                            'invoice-periodo-pago')
 
-        self.create_periodo_form(context, 'estadisticasform', 'estadisticas',
-                                 'Estadísticas por periodo',
-                                 'invoice-estadisticas-periodo')
+        create_periodo_form(context, 'estadisticasform', 'estadisticas',
+                            'Estadísticas por periodo',
+                            'invoice-estadisticas-periodo')
 
         context['corteform'] = CorteForm(prefix='corte')
         context['corteform'].set_action('invoice-corte')
