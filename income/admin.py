@@ -60,8 +60,8 @@ class ChequeAdmin(admin.ModelAdmin):
     Describes the interface to manage :class:`Cheque`s in the Django
     administrative interface
     """
-    list_display = ['banco_de_emision', 'numero_de_cheque', 'monto_retenido',
-                    'tipo']
+    list_display = ['banco_de_emision', 'numero_de_cheque', 'monto',
+                    'monto_retenido', 'tipo']
     search_fields = ['banco_de_emision__nombre', 'numero_de_cheque']
     exclude = ('emisor', )
 
