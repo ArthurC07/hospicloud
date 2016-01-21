@@ -35,6 +35,9 @@ from persona.models import Persona
 
 @python_2_unicode_compatible
 class TipoDeposito(TimeStampedModel):
+    """
+    Indicates the origin of the money that will be used for a :class:`Deposito`
+    """
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
@@ -43,6 +46,9 @@ class TipoDeposito(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Banco(TimeStampedModel):
+    """
+    Represents the banking institution available to :class:`Company`s
+    """
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
