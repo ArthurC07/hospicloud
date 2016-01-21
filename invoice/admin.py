@@ -26,6 +26,7 @@ class ReciboAdmin(admin.ModelAdmin):
     list_display = ('cliente', 'numero', 'cajero', 'created', 'cerrado', 'nulo')
     ordering = ['cliente', 'cajero', 'created', 'cerrado', 'nulo']
     search_fields = ['cliente__nombre', 'correlativo']
+    exclude = ('cliente', )
 
 
 class CierreturnoAdmin(admin.ModelAdmin):
@@ -54,6 +55,7 @@ class PagoAdmin(admin.ModelAdmin):
     search_fields = ['recibo__cajero__first_name',
                      'recibo__cajero__last_name',
                      'tipo__nombre', 'monto', 'recibo__correlativo']
+    exclude = ('recibo', )
 
     def get_recibo_number(self, instance):
         ciudad = instance.recibo.ciudad
@@ -99,6 +101,7 @@ class CotizacionAdmin(admin.ModelAdmin):
     list_display = ('persona', 'usuario', 'created', 'facturada')
     ordering = ['persona', 'usuario', 'created', 'facturada']
     search_fields = ['persona__nombre', 'persona__apellido']
+    exclude = ('persona', )
 
 
 class ComprobanteAdmin(admin.ModelAdmin):
@@ -128,6 +131,7 @@ class ConceptoDeduccionAdmin(admin.ModelAdmin):
         'comprobante__persona__nombre',
         'comprobante__persona__apellido',
     ]
+    exclude = ('comprobante', )
 
     def get_correlativo(self, instance):
 
