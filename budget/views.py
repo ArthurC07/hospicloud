@@ -36,7 +36,8 @@ from django.views.generic.edit import FormMixin
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoEjecutarFrom, MontoForm, GastoPeriodoCuentaForm, \
     GastoPresupuestoPeriodoCuentaForm, PresupuestoMesForm
-from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes
+from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes, \
+    Fuente
 from hospinet.utils import get_current_month_range, get_previous_month_range
 from hospinet.utils.date import get_month_end, make_end_day
 from hospinet.utils.forms import YearForm, MonthYearForm
@@ -590,6 +591,13 @@ class BalanceView(TemplateView, LoginRequiredMixin):
 
         context['fecha'] = inicio
 
+        cuentas = Fuente.objects.filter(caja=False)
+
+        context['cuentas'] = cuentas
+        context['saldo_cuentas'] = cuentas.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
         depositos = Deposito.objects.filter(
                 fecha_de_deposito__range=(inicio, fin)
         )
@@ -602,15 +610,18 @@ class BalanceView(TemplateView, LoginRequiredMixin):
 
         context['descripcion_depositos'] = depositos.values(
                 'tipo__nombre'
-        ).annotate(total=Coalesce(Sum('monto'), Decimal()))
+        ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
 
         gastos = Gasto.objects.filter(
-                fecha_de_pago__range=(inicio, fin)
+                fecha_de_pago__range=(inicio, fin),
+                ejecutado=True
         )
 
         total_gastos = gastos.aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
+
+        context['gastos'] = gastos.order_by('-monto')
 
         context['total_gastos'] = total_gastos
 
@@ -620,8 +631,12 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 fecha_de_entrega__range=(inicio, fin)
         )
 
+        context['descripcion_cheques'] = cheques.values(
+                'tipo__nombre'
+        ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
+
         context['total_cheques'] = cheques.aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         presupuesto = PresupuestoMes.objects.filter(
@@ -629,8 +644,16 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 mes=self.mes,
         )
 
+        context['presupuestos'] = presupuesto
+
         context['presupuestado'] = presupuesto.aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
+
+        context['presupuestado_ciudad'] = presupuesto.values(
+                'cuenta__presupuesto__ciudad__nombre'
+        ).annotate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )
 
         return context
