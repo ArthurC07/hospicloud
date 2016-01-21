@@ -18,7 +18,8 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 # Register your models here.
-from income.models import Deposito, Cheque, Banco, DetallePago, TipoDeposito
+from income.models import Deposito, Cheque, Banco, DetallePago, TipoDeposito, \
+    TipoCheque
 
 
 class TipoDepositoAdmin(admin.ModelAdmin):
@@ -75,6 +76,7 @@ class DetallePagoAdmin(admin.ModelAdmin):
 
 admin.site.register(TipoDeposito, TipoDepositoAdmin)
 admin.site.register(Deposito, DepositoAdmin)
+admin.site.register(TipoCheque, TipoChequeAdmin)
 admin.site.register(Cheque, ChequeAdmin)
 admin.site.register(Banco, BancoAdmin)
 admin.site.register(DetallePago, DetallePagoAdmin)
