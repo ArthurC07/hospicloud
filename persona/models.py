@@ -38,6 +38,8 @@ from persona.fields import OrderedCountryField
 @python_2_unicode_compatible
 class Persona(TimeStampedModel):
     """Representación de una :class:`Persona` en la aplicación"""
+    class Meta:
+        ordering = ('created',)
 
     class Meta:
         permissions = (

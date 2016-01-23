@@ -751,6 +751,10 @@ class Cotizacion(TimeStampedModel):
 class Cotizado(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
     realizar los cobros asociados"""
+
+    class Meta:
+        ordering = ('-created',)
+
     cotizacion = models.ForeignKey(Cotizacion)
     item = models.ForeignKey(ItemTemplate)
     cantidad = models.IntegerField()
