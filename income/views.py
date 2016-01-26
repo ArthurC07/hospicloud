@@ -110,6 +110,13 @@ class DepositoCreateView(CreateView, LoginRequiredMixin):
     model = Deposito
     form_class = DepositoForm
 
+    def get_success_url(self):
+        """
+        Tells the program that the user should be redirected to the income index page
+        :return: income app index url
+        """
+        return 'income-index'
+
 
 class ChequeCreateView(CreateView, LoginRequiredMixin):
     """
