@@ -413,16 +413,19 @@ persona_consolidation_functions = []
 def remove_duplicates():
     count = Persona.objects.filter(duplicado=True).count()
     persona = Persona.objects.filter(duplicado=True).first()
-
+    cantidad = 0
     if count == 1:
         persona.duplicado = False
         persona.save()
 
     while persona and count > 1:
         print(persona)
+        cantidad += 1
         consolidate_into_persona(persona)
         persona = Persona.objects.filter(duplicado=True).first()
         count = Persona.objects.filter(duplicado=True).count()
+
+    return cantidad
 
 
 def consolidate_into_persona(persona):

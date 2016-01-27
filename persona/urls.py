@@ -37,6 +37,10 @@ urlpatterns = [
         views.PersonaCreateView.as_view(),
         name='persona-create'),
 
+    url(r'^persona/duplicados/limpiar$',
+        views.PersonaDuplicateRemoveView.as_view(),
+        name='persona-duplicate-clean'),
+
     url(r'^empresa/(?P<pk>\d+)$',
         views.EmpleadorDetailView.as_view(),
         name='empresa'),

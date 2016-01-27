@@ -22,8 +22,8 @@ from django.db.models.query_utils import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.views.generic import (CreateView, DetailView, UpdateView,
-                                  ListView, RedirectView)
+from django.views.generic import CreateView, DetailView, UpdateView, ListView, \
+    RedirectView
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
 
@@ -32,7 +32,7 @@ from persona.forms import PersonaForm, FisicoForm, EstiloVidaForm, \
     AntecedenteQuirurgicoForm, PersonaSearchForm, EmpleadorForm, EmpleoForm
 from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, Empleo, \
-    Empleador
+    Empleador, remove_duplicates
 from users.mixins import LoginRequiredMixin
 
 
@@ -202,6 +202,9 @@ class EmpleoCreateView(PersonaFormMixin, CreateView):
 
 
 class PersonaDuplicateView(RedirectView, LoginRequiredMixin):
+    """
+    Reports a :class:`Persona` instance as duplicate for consolidation
+    """
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
@@ -220,3 +223,27 @@ class AntecedenteObstetricoCreateView(PersonaFormMixin, CreateView,
                                       LoginRequiredMixin):
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
+
+
+class PersonaDuplicateRemoveView(RedirectView, LoginRequiredMixin):
+    """
+    Allows the user to remove all reported duplicates from the :class:`Persona`
+    data
+    """
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        """
+        Processes the duplicates and return to the persona index.
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        cantidad = remove_duplicates()
+        messages.info(self.request,
+                      u'¡Se han limpiado {0} duplicados!'.format(cantidad))
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return 'persona-index'
