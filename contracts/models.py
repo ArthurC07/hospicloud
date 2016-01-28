@@ -70,9 +70,9 @@ class Vendedor(TimeStampedModel):
 @python_2_unicode_compatible
 class Aseguradora(TimeStampedModel):
     nombre = models.CharField(max_length=255, blank=True)
-    representante = models.CharField(max_length=255, blank=True, default='')
     cardex = models.ForeignKey(Persona, null=True, blank=True,
-                               related_name='cardex')
+                               related_name='cardex',
+                               verbose_name=_('Representante'))
 
     def __str__(self):
         return self.nombre

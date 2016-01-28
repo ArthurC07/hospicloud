@@ -22,9 +22,9 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago,\
-    Vendedor,  Beneficiario, LimiteEvento, Meta, Cancelacion, Precontrato, \
-    Beneficio,  MasterContract, ImportFile, PCD, Aseguradora
+from contracts.models import Plan, Contrato, TipoEvento, Evento, Pago, \
+    Vendedor, Beneficiario, LimiteEvento, Meta, Cancelacion, Precontrato, \
+    Beneficio, MasterContract, ImportFile, PCD, Aseguradora
 from inventory.models import ItemTemplate
 from invoice.forms import PeriodoForm
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
@@ -354,10 +354,8 @@ class AseguradoraForm(FieldSetModelFormMixin):
         model = Aseguradora
         fields = '__all__'
 
-    representante = forms.ModelChoiceField(
-            queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
-    )
     cardex = forms.ModelChoiceField(
+            label=_('Representante'),
             queryset=Persona.objects.filter(mostrar_en_cardex=True).all()
     )
 
