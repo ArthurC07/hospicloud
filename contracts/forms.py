@@ -1,4 +1,3 @@
-# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>

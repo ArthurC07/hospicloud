@@ -29,7 +29,8 @@ from django.views.generic.edit import FormMixin
 
 from persona.forms import PersonaForm, FisicoForm, EstiloVidaForm, \
     AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
-    AntecedenteQuirurgicoForm, PersonaSearchForm, EmpleadorForm, EmpleoForm
+    AntecedenteQuirurgicoForm, PersonaSearchForm, EmpleadorForm, EmpleoForm, \
+    PersonaAdvancedSearchForm
 from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, Empleo, \
     Empleador, remove_duplicates
@@ -71,10 +72,18 @@ class PersonaIndexView(ListView, PersonaPermissionMixin):
     template_name = 'persona/index.html'
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super(PersonaIndexView, self).get_context_data(**kwargs)
+
+        context['advanced_search_form'] = PersonaAdvancedSearchForm()
+
+        return context
+
 
 class PersonaDetailView(DetailView, LoginRequiredMixin):
-    """Permite mostrar los datos de una :class:`Persona`"""
-
+    """
+    Permite mostrar los datos de una :class:`Persona`
+    """
     context_object_name = 'persona'
     model = Persona
 
@@ -115,33 +124,37 @@ class FisicoUpdateView(UpdateView, LoginRequiredMixin):
 
 
 class EstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
-    """Permite actualizar los datos del :class:`EstiloVida` de una
-    :class:`Persona`"""
-
+    """
+    Permite actualizar los datos del :class:`EstiloVida` de una
+    :class:`Persona`
+    """
     model = EstiloVida
     form_class = EstiloVidaForm
 
 
 class AntecedenteUpdateView(UpdateView, LoginRequiredMixin):
-    """Permite actualizar los datos del :class:`Antecedente` de una
-    :class:`Persona`"""
-
+    """
+    Permite actualizar los datos del :class:`Antecedente` de una
+    :class:`Persona`
+    """
     model = Antecedente
     form_class = AntecedenteForm
 
 
 class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
-    """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
-    :class:`Persona`"""
-
+    """
+    Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
+    :class:`Persona`
+    """
     model = AntecedenteFamiliar
     form_class = AntecedenteFamiliarForm
 
 
 class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
-    """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
-    :class:`Persona`"""
-
+    """
+    Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
+    :class:`Persona`
+    """
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
 
@@ -150,7 +163,6 @@ class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin,
                                       PersonaFormMixin):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
-
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
 
@@ -158,18 +170,26 @@ class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin,
 class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
-
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
 
 
 class PersonaSearchView(ListView, LoginRequiredMixin):
+    """
+    Allows searching for :class:`Persona` by using information entered in a form
+    in the UI
+    """
     context_object_name = 'personas'
     model = Persona
     template_name = 'persona/index.html'
     paginate_by = 10
 
     def get_queryset(self):
+        """
+        Builds the queryset that will filter the :class:`Persona` objects based
+        in the :class:`PersonaSearchForm` given information
+        :return: a filtered :class:`QuerySet`
+        """
         form = PersonaSearchForm(self.request.GET)
 
         if form.is_valid():
@@ -184,6 +204,51 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
             return queryset.all()
 
         return Persona.objects.none()
+
+
+class PersonaAdvancedSearchView(ListView, LoginRequiredMixin):
+    """
+    Allows searching for a :class:`Persona` using its nombre and apellidos
+    """
+    context_object_name = 'personas'
+    model = Persona
+    template_name = 'persona/index.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Filters the queryset using the supplied data from a
+        :class:`PersonaAdvancedSearchForm`
+        :return: a queryset filtering the nombre and apellido fields using the
+                 values indicated by the form
+        """
+        form = PersonaAdvancedSearchForm(self.request.GET)
+
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            apellidos = form.cleaned_data['apellidos']
+
+            queryset = Persona.objects.filter(
+                    nombre__icontains=nombre,
+                    apellido__icontains=apellidos,
+            )
+
+            return queryset
+
+        return Persona.objects.none()
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the PersonaAdvancedSearchForm to the view's context
+        :param kwargs:
+        :return: context
+        """
+        context = super(PersonaAdvancedSearchView, self).get_context_data(
+                **kwargs)
+
+        context['advanced_search_form'] = PersonaAdvancedSearchForm()
+
+        return context
 
 
 class EmpleadorCreateView(CreateView, LoginRequiredMixin):

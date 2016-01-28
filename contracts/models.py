@@ -1,4 +1,3 @@
-# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
@@ -123,13 +122,13 @@ class Beneficio(TimeStampedModel):
     tipo_items = models.ForeignKey(ItemType, related_name='beneficios',
                                    null=True, blank=True)
     limite = models.IntegerField(default=0,
-                                 verbose_name=_(u'Límite de Eventos'))
+                                 verbose_name=_('Límite de Eventos'))
     descuento_post_limite = models.DecimalField(max_digits=10, decimal_places=2,
                                                 default=0)
     aplicar_a_suspendidos = models.BooleanField(default=False)
 
     def __str__(self):
-        return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
+        return "{0} de plan {1}".format(self.nombre, self.plan.nombre)
 
     def get_absolute_url(self):
         return self.plan.get_absolute_url()
@@ -142,7 +141,7 @@ class PCD(TimeStampedModel):
     pc = models.IntegerField(default=0)
 
     def __str__(self):
-        return _(u'{0} {1}').format(self.persona.nombre_completo(), self.numero)
+        return _('{0} {1}').format(self.persona.nombre_completo(), self.numero)
 
     def get_absolute_url(self):
         return self.persona.get_absolute_url()
@@ -274,7 +273,7 @@ class MasterContract(TimeStampedModel):
     facturar_al_administrador = models.BooleanField(default=False)
 
     def __str__(self):
-        nombre = _(u'Poliza {0} {1}').format(self.poliza, self.plan.nombre)
+        nombre = _('Poliza {0} {1}').format(self.poliza, self.plan.nombre)
         if self.contratante:
             nombre += ' - ' + self.contratante.nombre
         if self.aseguradora:
@@ -331,7 +330,7 @@ class MasterContract(TimeStampedModel):
             pcd.persona = persona
             if dependiente > 0:
                 dependiente += 1
-            pcd.numero = u'{0}{1:0>6}{2:0>2}'.format(self.poliza,
+            pcd.numero = '{0}{1:0>6}{2:0>2}'.format(self.poliza,
                                                      contract.certificado,
                                                      dependiente)
             pcd.save()
@@ -393,7 +392,7 @@ class Contrato(TimeStampedModel):
         return reverse('contrato', args=[self.id])
 
     def __str__(self):
-        return _(u"Contrato {0} de {1}").format(self.numero,
+        return _("Contrato {0} de {1}").format(self.numero,
                                                 self.persona.nombre_completo())
 
     def total_consultas(self):
@@ -570,7 +569,7 @@ class LimiteEvento(TimeStampedModel):
         return self.plan.get_absolute_url()
 
     def __str__(self):
-        return _(u"Límite {0} de {1} en plan {2}").format(self.tipo_evento,
+        return _("Límite {0} de {1} en plan {2}").format(self.tipo_evento,
                                                           self.cantidad,
                                                           self.plan.nombre)
 
@@ -592,7 +591,7 @@ class Evento(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
     def __str__(self):
-        return _(u"Evento {0} de {1} de {2}").format(
+        return _("Evento {0} de {1} de {2}").format(
                 self.tipo,
                 self.contrato.numero,
                 self.contrato.persona.nombre_completo()
@@ -639,7 +638,7 @@ class Precontrato(TimeStampedModel):
                              blank=True, null=True)
 
     def __str__(self):
-        return _(u'Precontrato de {0}').format(self.persona.nombre_completo())
+        return _('Precontrato de {0}').format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
         return reverse('precontrato', args=[self.id])

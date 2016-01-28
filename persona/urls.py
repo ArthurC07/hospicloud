@@ -53,6 +53,10 @@ urlpatterns = [
         views.PersonaSearchView.as_view(),
         name='persona-search'),
 
+    url(r'^buscar/avanzado$',
+        views.PersonaAdvancedSearchView.as_view(),
+        name='persona-advanced-search'),
+
     url(r'^(?P<pk>\d+)/editar$',
         views.PersonaUpdateView.as_view(),
         name='persona-editar'),
