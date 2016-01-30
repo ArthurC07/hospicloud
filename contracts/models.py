@@ -28,7 +28,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, F, Max
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
@@ -148,19 +148,19 @@ class PCD(TimeStampedModel):
 
 
 def check_line(line, vencimiento):
-    file_pcd = line[0]
-    file_certificado = line[2]
-    poliza_f = line[1]
-    apellido_f, nombre_f = line[4].split(",")
+    file_pcd = smart_text(line[0])
+    file_certificado = smart_text(line[2])
+    poliza_f = smart_text(line[1])
+    apellido_f, nombre_f = smart_text(line[4]).split(",")
     apellido_f = apellido_f.lstrip().rstrip()
     nombre_f = nombre_f.lstrip().rstrip()
     nacimiento_f = server_timezone.localize(
             datetime.strptime(line[6], "%m/%d/%Y"))
-    sexo_f = line[5]
-    identificacion = line[9]
+    sexo_f = smart_text(line[5])
+    identificacion = smart_text(line[9])
     vencimiento_r = vencimiento
 
-    activo = line[7].upper()
+    activo = smart_text(line[7]).upper()
 
     master = MasterContract.objects.get(poliza=poliza_f)
 
@@ -179,7 +179,7 @@ def check_line(line, vencimiento):
         for beneficiario in Beneficiario.objects.filter(
                 persona=pcd.persona).all():
             beneficiario.contrato.vencimiento = vencimiento_r
-            beneficiario.exclusion = line[10]
+            beneficiario.exclusion = smart_text(line[10])
             beneficiario.contrato.save()
 
     except ObjectDoesNotExist:
