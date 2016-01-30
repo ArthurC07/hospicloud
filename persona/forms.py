@@ -56,9 +56,10 @@ class PersonaForm(FieldSetModelFormMixin):
 class BasePersonaForm(FieldSetModelFormMixin):
     """Permite editar la información que depende de una :class:`Persona`"""
 
-    persona = forms.ModelChoiceField(label="",
-                                     queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput())
+    persona = forms.ModelChoiceField(
+            queryset=Persona.objects.all(),
+            widget=forms.HiddenInput()
+    )
 
 
 class FisicoForm(BasePersonaForm):
@@ -169,7 +170,8 @@ class PersonaAdvancedSearchForm(FieldSetFormMixin):
     def __init__(self, *args, **kwargs):
         super(PersonaAdvancedSearchForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Buscar'))
-        self.helper.layout = Fieldset(_('Búsqueda Avanzada de Persona'), *self.field_names)
+        self.helper.layout = Fieldset(_('Búsqueda Avanzada de Persona'),
+                                      *self.field_names)
         self.helper.form_method = 'GET'
         self.helper.form_action = 'persona-advanced-search'
 
@@ -181,7 +183,8 @@ class EmpleadorForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EmpleadorForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Datos del Empleador'), *self.field_names)
+        self.helper.layout = Fieldset(_('Datos del Empleador'),
+                                      *self.field_names)
 
 
 class EmpleoForm(BasePersonaForm):

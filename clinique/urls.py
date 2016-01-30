@@ -26,14 +26,6 @@ urlpatterns = [
         views.ConsultorioIndexView.as_view(),
         name='consultorio-index'),
 
-    url(r'^paciente/(?P<pk>\d+)$',
-        views.PacienteDetailView.as_view(),
-        name='clinique-paciente'),
-
-    url(r'^paciente/(?P<pk>\d+)/delete$',
-        views.PacienteDeleteView.as_view(),
-        name='clinique-paciente-delete'),
-
     url(r'^paciente/(?P<pk>\d+)/resume$',
         views.PacienteDetailView.as_view(
                 template_name='clinique/clinique_detail.html'),
@@ -77,10 +69,6 @@ urlpatterns = [
         views.ConsultorioDetailView.as_view(),
         name='consultorio'),
 
-    url(r'^(?P<consultorio>\d+)/pacientes$',
-        views.ConsultorioPacienteListView.as_view(),
-        name='consultorio-pacientes'),
-
     url(r'^agregar$',
         views.ConsultorioCreateView.as_view(),
         name='consultorio-agregar'),
@@ -89,10 +77,6 @@ urlpatterns = [
         views.ReporteCreateView.as_view(),
         name='consultorio-report-agregar'),
 
-    url(r'^(?P<persona>\d+)/(?P<consultorio>\d+)/paciente/agregar$',
-        views.PacienteCreateView.as_view(),
-        name='consultorio-paciente-agregar'),
-
     url(r'^consulta/(?P<pk>\d+)$',
         views.ConsultaDetailView.as_view(),
         name='consulta'),
@@ -100,10 +84,6 @@ urlpatterns = [
     url(r'^consulta/periodo$',
         views.ConsultaPeriodoView.as_view(),
         name='consulta-periodo'),
-
-    url(r'^(?P<persona>\d+)/consultorio/agregar$',
-        views.PacienteCreateView.as_view(),
-        name='consultorio-paciente-add'),
 
     url(r'^consulta/(?P<persona>\d+)/(?P<consultorio>\d+)/agregar$',
         views.ConsultaCreateView.as_view(),
@@ -197,10 +177,6 @@ urlpatterns = [
         views.CliniqueAntecedenteObstetricoCreateView.as_view(),
         name='clinique-antecedente-obstetrico-agregar'),
 
-    url(r'^(?P<paciente>\d+)/(?P<persona>\d+)/antecedente/quirurgico/agregar$',
-        views.CliniqueAntecedenteQuirurgicoCreateView.as_view(),
-        name='clinique-antecedente-quirurgico-agregar'),
-
     url(r'^(?P<consulta>\d+)/ordenmedica/agregar$',
         views.OrdenMedicaCreateView.as_view(),
         name='consultorio-om-agregar'),
@@ -270,15 +246,6 @@ urlpatterns = [
     url(r'^seguimiento/periodo$',
         views.SeguimientoPeriodoView.as_view(),
         name='seguimiento-periodo'),
-
-    url(r'^paciente/search$',
-        views.PacienteSearchView.as_view(),
-        name='clinique-paciente-search'),
-
-    url(r'^paciente/search/add$',
-        views.PacienteSearchView.as_view(
-                template_name='clinique/paciente_add_list.html'),
-        name='clinique-paciente-search-add'),
 
     url(r'^(?P<persona>\d+)/(?P<consulta>\d+)/prescripcion/agregar$',
         views.PrescripcionCreateView.as_view(),

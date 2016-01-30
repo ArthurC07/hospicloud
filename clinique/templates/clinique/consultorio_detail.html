@@ -1,11 +1,11 @@
 ﻿{% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block content %}
     <div class="row">
         <div class="col-md-12">
             <div class="page-header">
                 <h1>{{ consultorio.nombre }}
-                    <small>Consultorio</small>
+                    <small>{% trans 'Consultorio' %}</small>
                 </h1>
             </div>
             <div class="row">
@@ -15,9 +15,10 @@
                             <div class="col-md-12">
                                 <section class="page-header">
                                     <h2>
-                                        En Consulta
-                                        <small>Promedio de Espera Ultimo
-                                            mes {{ total }} minutos
+                                        {% trans 'En Consulta' %}
+                                        <small>
+                                            {% trans 'Promedio de Espera Ultimo mes' %}
+                                            {{ total }} {% trans 'minutos' %}
                                         </small>
                                     </h2>
                                 </section>
@@ -31,9 +32,10 @@
                             <div class="col-md-12">
                                 <section class="page-header">
                                     <h2>
-                                        Sala de Espera
-                                        <small>Promedio de Espera Ultimo
-                                            mes {{ total }} minutos
+                                        {% trans 'Sala de Espera' %}
+                                        <small>
+                                            {% trans 'Promedio de Espera Ultimo mes' %}
+                                            {{ total }} {% trans 'minutos' %}
                                         </small>
                                     </h2>
                                 </section>
@@ -49,7 +51,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <section class="page-header">
-                                    <h1>Citas de Hoy</h1>
+                                    <h1>{% trans 'Citas de Hoy' %}</h1>
                                 </section>
                                 {% for cita in citas.all %}
                                     <div class="col-md-12">
@@ -61,26 +63,28 @@
                                             <div class="col-md-9">
                                                 <h3>{{ cita.persona }}
                                                     <small>{{ cita.persona.obtener_edad }}
-                                                        a&ntilde;os
+                                                        {% trans 'a&ntilde;os' %}
                                                     </small>
                                                 </h3>
                                                 <p>
                                                     {{ cita.persona.get_sexo_display }}
-                                                    Programado para
-                                                    el {{ cita.fecha }}
+                                                    {% trans 'Programado para el' %}
+                                                    {{ cita.fecha }}
                                                 </p>
 
                                                 <p>
                                                     <a class="btn btn-success"
-                                                       href="{% url 'consultorio-lectura-agregar' cita.persona.id %}">Agregar
-                                                        Lectura de Signos</a>
+                                                       href="{% url 'consultorio-lectura-agregar' cita.persona.id %}">
+                                                        {% trans 'Agregar Lectura de Signos' %}
+                                                    </a>
                                                     <a class="btn btn-success"
-                                                       href="{% url 'clinique-cita-espera' cita.id %}">Enviar
-                                                        a Sala de Espera</a>
+                                                       href="{% url 'clinique-cita-espera' cita.id %}">
+                                                        {% trans 'Enviar a Sala de Espera' %}
+                                                    </a>
                                                     <a class="btn btn-primary"
-                                                       href="{% url 'clinique-cita-ausente' cita.id %}">No
-                                                        se Presentó a la
-                                                        Cita</a>
+                                                       href="{% url 'clinique-cita-ausente' cita.id %}">
+                                                        {% trans 'No se Presentó a la Cita' %}
+                                                    </a>
                                                 </p>
                                             </div>
                                         </div>
@@ -93,15 +97,15 @@
                             <div class="row">
                                 <div class="col-md-12 col-xs-12 table-responsive">
                                     <table class="table table-striped">
-                                        <caption>Consultas Remitidas</caption>
+                                        <caption>{% trans 'Consultas Remitidas' %}</caption>
                                         <thead>
                                         <tr>
-                                            <th>Fecha</th>
-                                            <th>Motivo de Consulta</th>
-                                            <th>HEA</th>
-                                            <th>Tipo de Consulta</th>
-                                            <th>Usuario</th>
-                                            <th>Acciones</th>
+                                            <th>{% trans 'Fecha' %}</th>
+                                            <th>{% trans 'Motivo de Consulta' %}</th>
+                                            <th>{% trans '' %}</th>
+                                            <th>{% trans 'Tipo de Consulta' %}</th>
+                                            <th>{% trans 'Usuario' %}</th>
+                                            <th>{% trans 'Acciones' %}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -112,7 +116,12 @@
                                                 <td>{{ consulta.HEA }}</td>
                                                 <td>{{ consulta.tipo }}</td>
                                                 <td>{{ consulta.consultorio.usuario }}</td>
-                                                <td><a class="btn btn-primary" href="{% url 'consulta' consulta.id %}">Ver</a></td>
+                                                <td>
+                                                    <a class="btn btn-primary"
+                                                       href="{{ consulta.get_absolute_url }}">
+                                                        {% trans 'Ver' %}
+                                                    </a>
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>
@@ -128,12 +137,13 @@
                             <nav class="sidebar-nav">
                                 <ul class="nav nav-stacked nav-tabs">
                                     <li>
-                                        <a href="{% url 'consultorio-cita-agregar' %}">Crear
-                                            una Cita</a>
+                                        <a href="{% url 'consultorio-cita-agregar' %}">
+                                            {% trans 'Crear una Cita' %}
+                                        </a>
                                     </li>
                                     <li>
                                         <a href="{% url 'consultorio-report-agregar' consultorio.id %}">
-                                            Subir Reporte
+                                            {% trans 'Subir Reporte' %}
                                         </a>
                                     </li>
                                 </ul>

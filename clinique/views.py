@@ -24,7 +24,7 @@ from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
-from django.db.models import Q, Count
+from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
@@ -36,15 +36,15 @@ from django.views.generic import (DetailView, CreateView, View,
                                   RedirectView)
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import FormMixin, DeleteView
+from django.views.generic.edit import FormMixin
 
-from clinique.forms import PacienteForm, CitaForm, EvaluacionForm, \
+from clinique.forms import CitaForm, EvaluacionForm, \
     ConsultaForm, SeguimientoForm, LecturaSignosForm, DiagnosticoClinicoForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
     PrescripcionFormSet
-from clinique.models import Paciente, Cita, Consulta, Evaluacion, Seguimiento, \
+from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, Remision
 from emergency.models import Emergencia
@@ -83,10 +83,7 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
     template_name = 'clinique/index.html'
     paginate_by = 20
     context_object_name = 'pacientes'
-
-    def get_queryset(self):
-        return Paciente.objects.filter(
-            consultorio__usuario=self.request.user).order_by('nombre').all()
+    model = Consultorio
 
     def get_context_data(self, **kwargs):
         context = super(ConsultorioIndexView, self).get_context_data(**kwargs)
@@ -95,11 +92,11 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
         context['citaperiodoform'].set_legend(_('Citas por Periodo'))
 
         context['diagnosticoperiodoform'] = PeriodoForm(
-            prefix='diagnostico-periodo')
+                prefix='diagnostico-periodo')
         context[
             'diagnosticoperiodoform'].helper.form_action = 'diagnostico-periodo'
         context['diagnosticoperiodoform'].set_legend(
-            _('Diagnosticos por Periodo'))
+                _('Diagnosticos por Periodo'))
 
         context['cargosperiodoform'] = PeriodoForm(prefix='cargo-periodo')
         context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
@@ -110,19 +107,19 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
         context['consultasperiodoform'].set_legend(_('Consultas por Periodo'))
 
         context['evaluacionperiodoform'] = PeriodoForm(
-            prefix='evaluacion-periodo')
+                prefix='evaluacion-periodo')
         context[
             'evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
         context['evaluacionperiodoform'].set_legend(
-            _('Evaluaciones por Periodo')
+                _('Evaluaciones por Periodo')
         )
 
         context['seguimientoperiodoform'] = PeriodoForm(
-            prefix='seguimiento-periodo')
+                prefix='seguimiento-periodo')
         context[
             'seguimientoperiodoform'].helper.form_action = 'seguimiento-periodo'
         context['seguimientoperiodoform'].set_legend(
-            _('Seguimientos por Periodo')
+                _('Seguimientos por Periodo')
         )
 
         context['pacientesearch'] = PacienteSearchForm()
@@ -149,7 +146,7 @@ class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView,
 
         context['consultorio'] = self.object
         context['buscar'] = PacienteSearchForm(
-            initial={'consultorio': self.object.id})
+                initial={'consultorio': self.object.id})
 
         context['total'] = sum(e.tiempo() for e in self.get_queryset().all())
         context['citas'] = Cita.objects.filter(consultorio=self.object,
@@ -171,29 +168,6 @@ class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView,
         return queryset
 
 
-class PacienteSearchView(ListView, LoginRequiredMixin):
-    context_object_name = 'pacientes'
-    model = Paciente
-    template_name = 'clinique/paciente_list.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        form = PacienteSearchForm(self.request.GET)
-        form.is_valid()
-
-        query = form.cleaned_data['query']
-        consultorio = form.cleaned_data['consultorio']
-
-        queryset = Paciente.objects.filter(
-            Q(persona__nombre__icontains=query) |
-            Q(persona__apellido__icontains=query) |
-            Q(persona__identificacion__icontains=query),
-            consultorio=consultorio,
-        )
-
-        return queryset.all()
-
-
 class ConsultorioCreateView(CurrentUserFormMixin, CreateView):
     model = Consultorio
     form_class = ConsultorioForm
@@ -213,14 +187,6 @@ class ConsultorioFormMixin(ConsultorioMixin):
         return initial
 
 
-class PacienteCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
-    """Permite agregar una :class:`Persona` como un :class:`Paciente` de un
-    doctor que tiene un :class:`User` en el sistema"""
-
-    model = Paciente
-    form_class = PacienteForm
-
-
 class PacienteDetailView(DetailView, LoginRequiredMixin):
     """Permite ver los datos del :class"`Paciente` en la interfaz gráfica"""
 
@@ -235,21 +201,6 @@ class PacienteDetailView(DetailView, LoginRequiredMixin):
                                                             activa=True).all()
 
         return context
-
-
-class PacienteDeleteView(DeleteView, LoginRequiredMixin):
-    model = Paciente
-
-    def get_success_url(self):
-        return reverse('consultorio-index')
-
-
-class PacienteMixin(View):
-    """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
-
-    def dispatch(self, *args, **kwargs):
-        self.paciente = get_object_or_404(Paciente, pk=kwargs['paciente'])
-        return super(PacienteMixin, self).dispatch(*args, **kwargs)
 
 
 class ConsultaMixin(TemplateResponseMixin):
@@ -267,16 +218,6 @@ class ConsultaMixin(TemplateResponseMixin):
         return context
 
 
-class PacienteFormMixin(FormMixin, PacienteMixin):
-    """Permite inicializar el paciente que se utilizará en un formulario"""
-
-    def get_initial(self):
-        initial = super(PacienteFormMixin, self).get_initial()
-        initial = initial.copy()
-        initial['paciente'] = self.paciente
-        return initial
-
-
 class ConsultaFormMixin(ConsultaMixin, FormMixin):
     """Permite inicializar el paciente que se utilizará en un formulario"""
 
@@ -285,16 +226,6 @@ class ConsultaFormMixin(ConsultaMixin, FormMixin):
         initial = initial.copy()
         initial['consulta'] = self.consulta
         return initial
-
-
-class ConsultorioPacienteListView(ConsultorioMixin, ListView,
-                                  LoginRequiredMixin):
-    model = Paciente
-    context_object_name = 'pacientes'
-
-    def get_queryset(self):
-        return Paciente.objects.filter(consultorio=self.consultorio).order_by(
-            'created').all()
 
 
 class CitaCreateView(CreateView, LoginRequiredMixin):
@@ -318,8 +249,8 @@ class CitaPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.citas = Cita.objects.filter(
-                fecha__gte=self.inicio,
-                fecha__lte=self.fin
+                    fecha__gte=self.inicio,
+                    fecha__lte=self.fin
             )
         return super(CitaPeriodoView, self).dispatch(request, *args, **kwargs)
 
@@ -344,8 +275,8 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.diagnosticos = DiagnosticoClinico.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin
+                    created__gte=self.inicio,
+                    created__lte=self.fin
             ).order_by('consulta__consultorio')
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
@@ -359,24 +290,24 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         context['total'] = self.diagnosticos.count()
 
         DiagnosticoClinico.objects.values('consulta__consultorio').annotate(
-            consultorio_count=Count('consulta__consultorio')
+                consultorio_count=Count('consulta__consultorio')
         ).filter(created__gte=self.inicio, created__lte=self.fin)
 
         cons = defaultdict(int)
         consultorios = Consultorio.objects.all()
         for consultorio in consultorios:
             cons[consultorio] = DiagnosticoClinico.objects.filter(
-                created__gte=self.inicio, created__lte=self.fin,
-                consulta__consultorio=consultorio).count()
+                    created__gte=self.inicio, created__lte=self.fin,
+                    consulta__consultorio=consultorio).count()
 
         cons = dict((k, v) for k, v in cons.items() if v > 0)
 
         context['consultorios'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
+                sorted(cons.iteritems(), key=lambda x: x[1]))
         context['consultorio_graph'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
+                sorted(cons.iteritems(), key=lambda x: x[1]))
         context['consultorio_graph2'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
+                sorted(cons.iteritems(), key=lambda x: x[1]))
 
         return context
 
@@ -392,8 +323,8 @@ class CargoPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.cargos = Cargo.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin
+                    created__gte=self.inicio,
+                    created__lte=self.fin
             )
         return super(CargoPeriodoView, self).dispatch(request, *args, **kwargs)
 
@@ -405,9 +336,9 @@ class CargoPeriodoView(TemplateView, LoginRequiredMixin):
         context['fin'] = self.fin
 
         context['cuenta'] = ItemTemplate.objects.values('descripcion').annotate(
-            cargo_count=Count('consultorio_cargos')).filter(
-            consultorio_cargos__created__gte=self.inicio,
-            consultorio_cargos__created__lte=self.fin)
+                cargo_count=Count('consultorio_cargos')).filter(
+                consultorio_cargos__created__gte=self.inicio,
+                consultorio_cargos__created__lte=self.fin)
 
         return context
 
@@ -444,8 +375,8 @@ class CitaAusenteView(LoginRequiredMixin, RedirectView):
         cita.ausente = True
         cita.save()
         messages.info(
-            self.request,
-            _('¡Se marco la espera como ausente!')
+                self.request,
+                _('¡Se marco la espera como ausente!')
         )
         return cita.get_absolute_url()
 
@@ -472,8 +403,8 @@ class EvaluacionPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.evaluaciones = Evaluacion.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin
+                    created__gte=self.inicio,
+                    created__lte=self.fin
             ).order_by('paciente__consultorio')
         return super(EvaluacionPeriodoView, self).dispatch(request, *args,
                                                            **kwargs)
@@ -517,8 +448,8 @@ class SeguimientoPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.seguimiento = Seguimiento.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin
+                    created__gte=self.inicio,
+                    created__lte=self.fin
             )
         return super(SeguimientoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
@@ -531,8 +462,8 @@ class SeguimientoPeriodoView(TemplateView, LoginRequiredMixin):
         context['fin'] = self.fin
 
         context['cuenta'] = Seguimiento.objects.values(
-            'paciente').annotate(
-            seguimiento_count=Count('id'))
+                'paciente').annotate(
+                seguimiento_count=Count('id'))
 
         return context
 
@@ -646,17 +577,6 @@ class CliniqueAntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
                        args=[self.object.persona.id])
 
 
-class CliniqueAntecedenteQuirurgicoCreateView(CreateView, PersonaFormMixin,
-                                              PacienteMixin,
-                                              LoginRequiredMixin):
-    model = AntecedenteQuirurgico
-    form_class = AntecedenteQuirurgicoForm
-    template_name = 'clinique/antecedente_quirurgico_create.html'
-
-    def get_success_url(self):
-        return reverse('clinique-paciente', args=[self.paciente.id])
-
-
 class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     """Permite actualizar los datos del :class:`EstiloVida` de una
     :class:`Persona`"""
@@ -756,7 +676,7 @@ class NotaEnfermeriaCreateView(PersonaFormMixin, CurrentUserFormMixin,
     form_class = NotaEnfermeriaForm
 
 
-class ExamenCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+class ExamenCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
     model = Examen
     form_class = ExamenForm
 
@@ -790,8 +710,8 @@ class EsperaAusenteView(RedirectView, LoginRequiredMixin):
         espera.ausente = True
         espera.save()
         messages.info(
-            self.request,
-            _('¡Se marco la espera como ausente!')
+                self.request,
+                _('¡Se marco la espera como ausente!')
         )
         return espera.get_absolute_url()
 
@@ -846,8 +766,8 @@ class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
         espera = cita.to_espera()
         espera.save()
         messages.info(
-            self.request,
-            _('¡Se envio el paciente a salada de espera!')
+                self.request,
+                _('¡Se envio el paciente a salada de espera!')
         )
         return espera.get_absolute_url()
 
@@ -864,8 +784,8 @@ class EsperaConsultaRedirectView(RedirectView, LoginRequiredMixin):
         espera.inicio = timezone.now()
         espera.save()
         messages.info(
-            self.request,
-            _('¡Se envio el paciente a salada de consulta!')
+                self.request,
+                _('¡Se envio el paciente a salada de consulta!')
         )
         return espera.get_absolute_url()
 
@@ -887,8 +807,8 @@ class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
 
         espera.save()
         messages.info(
-            self.request,
-            _('¡La consulta se marcó como terminada!')
+                self.request,
+                _('¡La consulta se marcó como terminada!')
         )
         return espera.get_absolute_url()
 
@@ -917,8 +837,8 @@ class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
             espera.save()
 
         messages.info(
-            self.request,
-            _('¡La consulta se marcó como terminada!')
+                self.request,
+                _('¡La consulta se marcó como terminada!')
         )
         return consulta.get_absolute_url()
 
@@ -937,7 +857,7 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.consultas = Consulta.objects.filter(
-                created__range=(self.inicio, self.fin)
+                    created__range=(self.inicio, self.fin)
             ).order_by('created')
         else:
             return redirect('invoice-index')
@@ -964,8 +884,8 @@ class ConsultaRemitirView(RedirectView):
         consulta.remitida = True
         consulta.save()
         messages.info(
-            self.request,
-            _('¡Se remitio la consulta a especialista!')
+                self.request,
+                _('¡Se remitio la consulta a especialista!')
         )
         return consulta.get_absolute_url()
 
@@ -1000,7 +920,7 @@ class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
             emergencia.presion = lectura.presion_arterial_media
 
         emergencia.tipo_de_venta = TipoVenta.objects.filter(
-            predeterminada=True
+                predeterminada=True
         ).first()
         emergencia.save()
 

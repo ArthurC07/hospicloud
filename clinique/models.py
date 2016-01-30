@@ -107,33 +107,6 @@ class Consultorio(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class Paciente(TimeStampedModel):
-    """Relaciona a una :class:`Persona` con un :class:`Doctor` para
-    ayudar a proteger la privacidad de dicha :class:`Persona` ya que se
-    restringe el acceso a la información básica y a los datos ingresados por
-    el :class:`User` al que pertenece el :class:`Consultorio`"""
-
-    persona = models.ForeignKey(Persona, related_name='pacientes')
-    consultorio = models.ForeignKey(Consultorio, related_name='pacientes',
-                                    blank=True, null=True)
-
-    def __str__(self):
-        return _(u"Paciente {0} de {1}").format(self.persona.nombre_completo(),
-                                                self.consultorio.usuario.get_full_name())
-
-    def identificacion(self):
-        return self.persona.identificacion
-
-    def nombre(self):
-        return self.persona.nombre_completo()
-
-    def get_absolute_url(self):
-        """Obtiene la url relacionada con un :class:`Paciente`"""
-
-        return reverse('clinique-paciente', args=[self.id])
-
-
-@python_2_unicode_compatible
 class Consulta(TimeStampedModel):
     """Registra la interacción entre una :class:`Persona` y un :class:`Usuario`
     que es un médico.
@@ -154,7 +127,7 @@ class Consulta(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u'Consulta de {0}').format(self.persona.nombre_completo())
+        return _('Consulta de {0}').format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -386,8 +359,8 @@ class NotaEnfermeria(TimeStampedModel):
 
 class Examen(TimeStampedModel):
     """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
-
-    paciente = models.ForeignKey(Paciente, related_name='consultorio_examenes')
+    persona = models.ForeignKey(Persona, related_name='clinique_examenes',
+                                null=True, blank=True)
     descripcion = models.TextField(blank=True)
     adjunto = models.FileField(upload_to="clinique/examen/%Y/%m/%d")
 
@@ -411,7 +384,7 @@ class Espera(TimeStampedModel):
     fin = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return _(u"{0} en {1}").format(self.persona.nombre_completo(),
+        return _("{0} en {1}").format(self.persona.nombre_completo(),
                                        self.consultorio.nombre)
 
     def get_absolute_url(self):
@@ -504,7 +477,7 @@ def consolidate_clinique(persona, clone):
 persona_consolidation_functions.append(consolidate_clinique)
 
 Persona.consultas_activas = property(
-    lambda p: Consulta.objects.filter(persona=p, activa=True))
+        lambda p: Consulta.objects.filter(persona=p, activa=True))
 
 Persona.ultima_consulta = property(
-    lambda p: Consulta.objects.filter(persona=p).last())
+        lambda p: Consulta.objects.filter(persona=p).last())

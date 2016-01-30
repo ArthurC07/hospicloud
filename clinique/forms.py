@@ -22,7 +22,7 @@ from django.forms import inlineformset_factory
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from clinique.models import Paciente, Cita, Evaluacion, Seguimiento, Consulta, \
+from clinique.models import Cita, Evaluacion, Seguimiento, Consulta, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
     TipoConsulta, Remision, Afeccion
@@ -32,25 +32,6 @@ from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, FieldSetFormMixin
 from persona.models import Persona
 from users.mixins import HiddenUserForm
-
-
-class PacienteFormMixin(FieldSetModelFormMixin):
-    paciente = forms.ModelChoiceField(queryset=Paciente.objects.all(),
-                                      widget=forms.HiddenInput(),
-                                      required=False)
-
-
-class PacienteForm(FieldSetModelFormMixin):
-    """Permite editar los datos de un :class:`Paciente`"""
-
-    class Meta:
-        model = Paciente
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(PacienteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Convertir en Paciente'),
-                                      *self.field_names)
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
@@ -138,13 +119,10 @@ class SeguimientoForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm):
                                       *self.field_names)
 
 
-class LecturaSignosForm(PacienteFormMixin):
+class LecturaSignosForm(BasePersonaForm):
     class Meta:
         model = LecturaSignos
         exclude = ('presion_arterial_media',)
-
-    persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(LecturaSignosForm, self).__init__(*args, **kwargs)
@@ -215,7 +193,7 @@ class NotaEnfermeriaForm(BasePersonaForm, HiddenUserForm):
                                       *self.field_names)
 
 
-class ExamenForm(PacienteFormMixin):
+class ExamenForm(BasePersonaForm):
     class Meta:
         model = Examen
         fields = '__all__'
