@@ -164,8 +164,8 @@ def check_line(line, vencimiento):
     activo = smart_text(line[7]).upper()
 
     if six.PY2:
-        file_pcd = file_pcd.decode('unicode-escape')
-        poliza_f = poliza_f.decode('unicode-escape')
+        file_pcd = file_pcd.decode('unicode-escape', 'utf8')
+        poliza_f = poliza_f.decode('unicode-escape', 'utf8')
 
     master = MasterContract.objects.get(poliza=poliza_f)
 
