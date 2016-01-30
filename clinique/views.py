@@ -31,9 +31,8 @@ from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import (DetailView, CreateView, View,
-                                  ListView, UpdateView, TemplateView,
-                                  RedirectView)
+from django.views.generic import DetailView, CreateView, View, ListView, \
+    UpdateView, TemplateView, RedirectView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
