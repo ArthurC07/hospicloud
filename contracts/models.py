@@ -20,6 +20,7 @@ import operator
 from datetime import timedelta, datetime, time
 from decimal import Decimal
 
+import six
 import unicodecsv
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -161,6 +162,10 @@ def check_line(line, vencimiento):
     vencimiento_r = vencimiento
 
     activo = smart_text(line[7]).upper()
+
+    if six.PY2:
+        file_pcd = file_pcd.decode('unicode-escape')
+        poliza_f = poliza_f.decode('unicode-escape')
 
     master = MasterContract.objects.get(poliza=poliza_f)
 
