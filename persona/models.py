@@ -37,14 +37,19 @@ from persona.fields import OrderedCountryField
 
 @python_2_unicode_compatible
 class Persona(TimeStampedModel):
-    """Representación de una :class:`Persona` en la aplicación"""
-    class Meta:
-        ordering = ('created',)
 
+    """
+    Representación de una :class:`Persona` en la aplicación
+
+    Contiene los datos básicos que se utilizan para registar los datos de
+    personas reales que se ingresan a la aplicación y de esta manera poder
+    relacionarlos con el resto de las actividades que se realizan en la misma.
+    """
     class Meta:
         permissions = (
             ('persona', 'Permite al usuario gestionar persona'),
         )
+        ordering = ('created',)
 
     GENEROS = (
         ('M', _('Masculino')),
@@ -90,7 +95,10 @@ class Persona(TimeStampedModel):
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
     duplicado = models.BooleanField(default=False)
     rtn = models.CharField(max_length=200, blank=True, null=True)
-    mostrar_en_cardex = models.BooleanField(default=False)
+    mostrar_en_cardex = models.BooleanField(
+            default=False,
+            verbose_name=_("Es representante legal")
+    )
     ciudad = models.ForeignKey("users.Ciudad", blank=True, null=True)
 
     @staticmethod
@@ -183,7 +191,6 @@ class Fisico(TimeStampedModel):
         return reverse('persona-view-id', args=[self.persona.id])
 
     def save(self, **kwargs):
-
         historia = HistoriaFisica()
         historia.persona = self.persona
         historia.peso = self.peso
@@ -285,9 +292,10 @@ class AntecedenteFamiliar(TimeStampedModel):
 
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='antecedente_familiar')
-    sindrome_coronario_agudo = models.BooleanField(default=False, blank=True,
-                                                   verbose_name=_(
-                                                       'cardiopatia'))
+    sindrome_coronario_agudo = models.BooleanField(
+            default=False, blank=True,
+            verbose_name=_('cardiopatia')
+    )
     hipertension = models.BooleanField(default=False, blank=True,
                                        verbose_name=_('Hipertensión Arterial'))
     tabaquismo = models.BooleanField(default=False, blank=True)
@@ -430,10 +438,10 @@ def remove_duplicates():
 
 def consolidate_into_persona(persona):
     clones = Persona.objects.filter(
-        nombre__iexact=persona.nombre,
-        duplicado=True,
-        apellido__iexact=persona.apellido,
-        identificacion=persona.identificacion
+            nombre__iexact=persona.nombre,
+            duplicado=True,
+            apellido__iexact=persona.apellido,
+            identificacion=persona.identificacion
     ).exclude(pk=persona.pk)
 
     print(clones.count())
