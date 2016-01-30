@@ -163,7 +163,7 @@ def check_line(line, vencimiento):
 
     activo = smart_text(line[7]).upper()
 
-    master = MasterContract.objects.filter(poliza=poliza_f).first()
+    master = MasterContract.objects.get(poliza=poliza_f)
 
     if line[8]:
         vencimiento_r = make_end_day(datetime.strptime(line[8], '%m/%d/%Y'))
