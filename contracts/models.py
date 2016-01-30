@@ -151,7 +151,7 @@ class PCD(TimeStampedModel):
 def check_line(line, vencimiento):
     file_pcd = smart_text(line[0])
     file_certificado = smart_text(line[2])
-    poliza_f = smart_text(line[1])
+    poliza_f = '{0}'.format(smart_text(line[1]))
     apellido_f, nombre_f = smart_text(line[4]).split(",")
     apellido_f = apellido_f.lstrip().rstrip()
     nombre_f = nombre_f.lstrip().rstrip()
