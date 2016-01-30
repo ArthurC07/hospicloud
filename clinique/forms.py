@@ -35,7 +35,7 @@ from users.mixins import HiddenUserForm
 
 
 class PacienteFormMixin(FieldSetModelFormMixin):
-    paciente = forms.ModelChoiceField(label="", queryset=Paciente.objects.all(),
+    paciente = forms.ModelChoiceField(queryset=Paciente.objects.all(),
                                       widget=forms.HiddenInput(),
                                       required=False)
 
@@ -54,6 +54,10 @@ class PacienteForm(FieldSetModelFormMixin):
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
+    """
+    Permite compartir agregar la información de consultorio automáticamente
+    en los formularios que heredan de esta clase
+    """
     consultorio = forms.ModelChoiceField(
             queryset=Consultorio.objects.filter(activo=True).order_by(
                     'nombre').all()
@@ -61,11 +65,11 @@ class ConsultorioFormMixin(FieldSetModelFormMixin):
 
 
 class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
-    consultorio = forms.ModelChoiceField(label="",
-                                         queryset=Consultorio.objects.filter(
-                                                 activo=True).order_by(
-                                                 'nombre').all(),
-                                         widget=forms.HiddenInput())
+    consultorio = forms.ModelChoiceField(
+            queryset=Consultorio.objects.filter(activo=True).order_by(
+                    'nombre'
+            ).all(),
+            widget=forms.HiddenInput())
 
 
 class HiddenConsultaFormMixin(FieldSetModelFormMixin):

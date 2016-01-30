@@ -1529,6 +1529,9 @@ class CierreTurnoDeleteView(DeleteView, LoginRequiredMixin):
 
 
 class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
+    """
+    Permite cerrar un :class:`TurnoCierre`
+    """
     model = TurnoCaja
     form_class = TurnoCajaCierreForm
 
@@ -1537,8 +1540,8 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
 
         recibos = self.object.recibos().filter(cerrado=False).count()
         consultas = Consulta.objects.filter(
-                consultorio__usuario__profile__ciudad=self.object.usuario.profile
-                    .ciudad,
+                tipo__facturable=True,
+                consultorio__usuario__profile__ciudad=self.object.usuario.profile.ciudad,
                 facturada=False,
                 activa=False
         ).count()
@@ -1559,8 +1562,7 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
         if self.object.diferencia_total() != 0:
             messages.info(
                     self.request,
-                    _(
-                            'No se puede cerrar el turno, tiene diferencias en saldos')
+                    _('No se puede cerrar el turno, tiene diferencias en saldos')
             )
             cerrable = False
 
