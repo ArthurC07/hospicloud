@@ -48,6 +48,12 @@ class ContratoAdmin(admin.ModelAdmin):
                      'numero']
 
 
+class MasterContractAdmin(admin.ModelAdmin):
+    list_display = ['poliza', 'plan', 'aseguradora', 'contratante']
+    search_fields = ['poliza', 'plan__nombre', 'aseguradora__nombre',
+                     'contratante__nombre']
+
+
 admin.site.register(Plan)
 admin.site.register(Contrato, ContratoAdmin)
 admin.site.register(TipoEvento)
@@ -62,7 +68,7 @@ admin.site.register(Autorizacion)
 admin.site.register(Precontrato)
 admin.site.register(MetodoPago)
 admin.site.register(Aseguradora, AseguradoraAdmin)
-admin.site.register(MasterContract)
+admin.site.register(MasterContract, MasterContractAdmin)
 admin.site.register(PCD, PCDAdmin)
 admin.site.register(Beneficio, BeneficioAdmin)
 admin.site.register(ImportFile)
