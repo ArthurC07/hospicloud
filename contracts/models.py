@@ -149,7 +149,7 @@ class PCD(TimeStampedModel):
 
 def check_line(line, vencimiento):
     file_pcd = line[0]
-    file_certificado = int(line[2])
+    file_certificado = line[2]
     poliza_f = line[1]
     apellido_f, nombre_f = line[4].split(",")
     apellido_f = apellido_f.lstrip().rstrip()
@@ -379,7 +379,7 @@ class Contrato(TimeStampedModel):
     empresa = models.ForeignKey(Empleador, blank=True, null=True,
                                 related_name='contratos')
     poliza = models.CharField(max_length=255, default='', blank=True)
-    certificado = models.IntegerField(default=0)
+    certificado = models.CharField(blank=True, max_length=255)
     titular = models.IntegerField(default=0)
     master = models.ForeignKey(MasterContract, related_name='contratos',
                                blank=True, null=True, verbose_name="Contrato")
