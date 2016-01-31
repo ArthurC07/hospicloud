@@ -20,7 +20,6 @@ import operator
 from datetime import timedelta, datetime, time
 from decimal import Decimal
 
-import six
 import unicodecsv
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -69,6 +68,10 @@ class Vendedor(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Aseguradora(TimeStampedModel):
+    """
+    Contains the data for each insurance company the organization has
+    :class:`Contrato` with
+    """
     nombre = models.CharField(max_length=255, blank=True)
     cardex = models.ForeignKey(Persona, null=True, blank=True,
                                related_name='cardex',
@@ -378,10 +381,16 @@ class MasterContract(TimeStampedModel):
         return contract
 
     def active_contracts(self):
+        """
+        Creates a :class:`QuerySet` that contains all active :class:`Contrato`s
+        created with this :class:`MasterContract`
+        :return:
+        """
+        vencimiento = timezone.now()
 
         return Contrato.objects.filter(
                 master=self,
-                vencimiento__gte=timezone.now()
+                vencimiento__gte=vencimiento
         ).all()
 
     def active_contracts_count(self):
