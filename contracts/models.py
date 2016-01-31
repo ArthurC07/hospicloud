@@ -149,9 +149,36 @@ class PCD(TimeStampedModel):
 
 
 def check_line(line, vencimiento):
+    """
+    Reads one list and according to its positional contents it will act
+    accordingly:
+
+    If there exists a :class:`PCD` instance matching its contents it will update
+    the :class:`Contrato` associated to the :class:`PCD` instance.
+
+    If there is not a matching :class:`PCD` it will start creating a
+    :class:`Persona`, :class:`Contrato and :class:`PCD` that reflect the
+    contents of the list.
+
+    :param line:        The list that will be read its content can be described
+                        this way:
+                        0. PCD
+                        1. Policy
+                        2. Certificate
+                        3. Dependant
+                        4. Full name
+                        5. Sex
+                        6. Birthday
+                        7. Active Status Flag
+                        8. Contract ending date
+                        9. Identification
+                        10. Exclusion
+    :param vencimiento: The end date of the contract to be updated
+    :return:
+    """
     file_pcd = smart_text(line[0])
     file_certificado = smart_text(line[2])
-    poliza_f = '{0}'.format(smart_text(line[1]))
+    poliza_f = smart_text(line[1])
     apellido_f, nombre_f = smart_text(line[4]).split(",")
     apellido_f = apellido_f.lstrip().rstrip()
     nombre_f = nombre_f.lstrip().rstrip()
@@ -160,6 +187,7 @@ def check_line(line, vencimiento):
     sexo_f = smart_text(line[5])
     identificacion = smart_text(line[9])
     vencimiento_r = vencimiento
+    exclusion = smart_text(line[10])
 
     activo = smart_text(line[7]).upper()
 
@@ -174,7 +202,7 @@ def check_line(line, vencimiento):
         contratos = Contrato.objects.filter(persona=pcd.persona,
                                             certificado=file_certificado)
 
-        [update_contract(activo, contrato, line, master, vencimiento_r) for
+        [update_contract(activo, contrato, exclusion, master, vencimiento_r) for
          contrato in contratos.all()]
 
         for beneficiario in Beneficiario.objects.filter(
@@ -202,7 +230,7 @@ def check_line(line, vencimiento):
                 contract.suspendido = True
             else:
                 contract.suspendido = False
-            contract.exclusion = line[10]
+            contract.exclusion = exclusion
             contract.save()
         else:
             contract = Contrato.objects.filter(
@@ -212,18 +240,27 @@ def check_line(line, vencimiento):
 
             if contract:
                 beneficiario = Beneficiario(persona=persona, contrato=contract)
-                beneficiario.exclusion = line[10]
+                beneficiario.exclusion = exclusion
                 beneficiario.save()
 
     except MultipleObjectsReturned:
         pass
 
 
-def update_contract(activo, contrato, line, master, vencimiento_r):
-    contrato.vencimiento = vencimiento_r
+def update_contract(activo, contrato, exclusion, master, vencimiento):
+    """
+    Updates a contract to reflect the data passed as its arguments
+    :param activo: Active status flag
+    :param contrato: :class:`Contrato` that will be updated
+    :param exclusion: The exclusions to be stored in the contract
+    :param master: The :class:`MasterContract` instance that will be associated
+    :param vencimiento: the ending date of the :class:`Contrato`
+    :return: the newly updated :class:`Contrato` object
+    """
+    contrato.vencimiento = vencimiento
     contrato.plan = master.plan
     contrato.master = master
-    contrato.exclusion = line[10]
+    contrato.exclusion = exclusion
     if activo == 'S':
         contrato.suspendido = True
     else:
@@ -289,8 +326,8 @@ class MasterContract(TimeStampedModel):
     def create_contract(self, persona, vencimiento, certificado, numero,
                         auto=False):
         """
-        Allows the creation of :class:`Contrato by using the data from
-        :class:`MasterContract` as a base to create it.
+        Allows the creation of :class:`Contrato` by using the data from
+        :class:`MasterContract` as building blocks to create it.
 
         :param persona:
         :param vencimiento:
