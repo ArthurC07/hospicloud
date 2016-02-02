@@ -188,6 +188,10 @@ urlpatterns = [
         views.AseguradoraMasterCotizarView.as_view(),
         name='aseguradora-cotizar-master'),
 
+    url(r'^aseguradora/list$',
+        views.AseguradoraListView.as_view(),
+        name='invoice-aseguradora-list'),
+
     url(r'^master/cotizar/(?P<pk>\d+)$',
         views.MasterCotizarView.as_view(),
         name='master-cotizar'),

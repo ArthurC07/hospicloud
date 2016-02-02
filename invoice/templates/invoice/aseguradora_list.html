@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 col-xs-12 main-content">
+            <table class="table table-striped">
+                <caption>{% trans 'Contratos' %}</caption>
+                <thead>
+                <tr>
+                    <th>{% trans 'Poliza' %}</th>
+                    <th>{% trans 'Aseguradora' %}</th>
+                    <th>{% trans 'Contratante' %}</th>
+                    <th>{% trans 'Acciones' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for contrato in contratos.all %}
+                    <tr>
+                        <td>{{ contrato.poliza }}</td>
+                        <td>{{ contrato.aseguradora }}</td>
+                        <td>{{ contrato.contratante }}</td>
+                        <td>
+                            <a class="btn btn-primary"
+                               href="{% url 'master-cotizar' contrato.id %}">
+                                {% trans 'Cotizar' %}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <table class="table table-striped">
+                <caption>{% trans 'Aseguradoras' %}</caption>
+                <thead>
+                <tr>
+                    <th>{% trans 'Aseguradora' %}</th>
+                    <th>{% trans 'Polizas' %}</th>
+                    <th>{% trans 'Acciones' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for aseguradora in aseguradoras.all %}
+                    <tr>
+                        <td>{{ aseguradora }}</td>
+                        <td>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>{% trans 'Poliza' %}</th>
+                                    <th>{% trans 'Activos' %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for master in aseguradora.master_contracts.all %}
+                                    <tr>
+                                        <td>{{ master.poliza }} {{ master.plan }} {{ master.contratante }}</td>
+                                        <td>{{ master.active_contracts_count }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <a class="btn btn-block btn-primary"
+                               href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">
+                                {% trans 'Cotizar Contratos' %}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

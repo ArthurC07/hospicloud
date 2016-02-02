@@ -124,12 +124,6 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['inventarioform'] = InventarioForm(prefix='inventario')
         context['inventarioform'].set_action('invoice-inventario')
-
-        context['contratos'] = MasterContract.objects.filter(
-                facturar_al_administrador=True
-        )
-
-        context['aseguradoras'] = Aseguradora.objects.all()
         context['cotizaciones'] = Cotizacion.objects.filter(
                 facturada=False
         ).all()
@@ -1219,6 +1213,26 @@ class AseguradoraContractsCotizarView(RedirectView, LoginRequiredMixin):
                                                                      **kwargs)
 
 
+class AseguradoraListView(ListView, LoginRequiredMixin):
+    """
+    Shows the interface that allows making :class:`Cotizacion` from the
+    :class:`MasterContract` of an :class:`Aseguradora`
+    """
+    model = Aseguradora
+    context_object_name = 'aseguradoras'
+    template_name = 'invoice/aseguradora_list.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(AseguradoraListView, self).get_context_data(**kwargs)
+
+        context['contratos'] = MasterContract.objects.filter(
+                facturar_al_administrador=True
+        )
+
+        return context
+
+
 class AseguradoraMasterCotizarView(RedirectView, LoginRequiredMixin):
     permanent = False
 
@@ -1562,7 +1576,8 @@ class TurnoCierreUpdateView(UpdateView, LoginRequiredMixin):
         if self.object.diferencia_total() != 0:
             messages.info(
                     self.request,
-                    _('No se puede cerrar el turno, tiene diferencias en saldos')
+                    _(
+                        'No se puede cerrar el turno, tiene diferencias en saldos')
             )
             cerrable = False
 
