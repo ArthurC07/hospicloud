@@ -812,6 +812,12 @@ class ComprobanteDeduccion(TimeStampedModel):
     proveedor = models.ForeignKey(Proveedor, null=True)
     ciudad = models.ForeignKey(Ciudad)
     correlativo = models.IntegerField()
+    cai_proveedor = models.CharField(max_length=255, blank=True)
+    numero_de_documento = models.CharField(max_length=255, blank=True)
+    fecha_de_emision = models.DateTimeField(default=timezone.now)
+    cai = models.CharField(max_length=255, blank=True)
+    inicio_rango = models.DateTimeField(default=timezone.now)
+    fin_rango = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         if self.proveedor is None:
@@ -836,6 +842,11 @@ class ComprobanteDeduccion(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if self.pk is None:
+
+            self.inicio_rango = self.ciudad.inicio_rango_comprobante
+            self.fin_rango = self.ciudad.fin_rango_comprobante
+            self.cai = self.ciudad.cai_comprobante
+
             ciudad = self.ciudad
             ciudad.correlativo_de_comprobante = F(
                     'correlativo_de_comprobante') + 1

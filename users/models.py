@@ -63,27 +63,32 @@ class Company(TimeStampedModel):
 class Ciudad(TimeStampedModel):
     """
     Consolidates all City specific legal information for legal tending of
-    :class:`Recibo`
+    :class:`Recibo`, :class:`ComprobanteDeduccion`, :class:`NotaCredito`
     """
     nombre = models.CharField(max_length=100)
-    cai_recibo = models.CharField(max_length=255, blank=True)
-    cai_comprobante = models.CharField(max_length=255, blank=True)
-    correlativo_de_recibo = models.IntegerField(default=0)
     direccion = models.CharField(max_length=255, blank=True)
     telefono = models.CharField(max_length=100, blank=True)
-    prefijo_recibo = models.CharField(max_length=100, blank=True)
-    limite_de_emision = models.DateTimeField(default=timezone.now)
-    inicio_rango = models.CharField(max_length=100, blank=True)
-    fin_rango = models.CharField(max_length=100, blank=True)
     tiene_presupuesto_global = models.BooleanField(default=False)
     company = models.ForeignKey(Company, blank=True, null=True)
+    # :class:`Recibo` Data
+    cai_recibo = models.CharField(max_length=255, blank=True)
+    correlativo_de_recibo = models.IntegerField(default=0)
+    inicio_rango = models.CharField(max_length=100, blank=True)
+    fin_rango = models.CharField(max_length=100, blank=True)
+    prefijo_recibo = models.CharField(max_length=100, blank=True)
+    limite_de_emision = models.DateTimeField(default=timezone.now)
+    # :class:`ComprobanteDeduccion` data
+    cai_comprobante = models.CharField(max_length=255, blank=True)
     correlativo_de_comprobante = models.IntegerField(default=0)
     prefijo_comprobante = models.CharField(max_length=100, blank=True)
     correlativo_de_nota_de_credito = models.IntegerField(default=0)
+    fin_rango_comprobante = models.CharField(max_length=100, blank=True)
+    inicio_rango_comprobante = models.CharField(max_length=100, blank=True)
+    # :class:`NotaCredito` data
     cai_nota_credito = models.CharField(max_length=255, blank=True)
     prefijo_nota_credito = models.CharField(max_length=255, blank=True)
-    inicio_rango_nota_credito = models.CharField(max_length=100, blank=True)
     fin_rango_nota_credito = models.CharField(max_length=100, blank=True)
+    inicio_rango_nota_credito = models.CharField(max_length=100, blank=True)
     limite_de_emision_nota_credito = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

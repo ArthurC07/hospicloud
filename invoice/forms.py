@@ -322,7 +322,10 @@ class CotizadoForm(FieldSetModelFormMixin):
 class ComprobanteDeduccionForm(FieldSetModelFormMixin):
     class Meta:
         model = ComprobanteDeduccion
-        exclude = ('correlativo',)
+        exclude = ('correlativo', 'inicio_rango', 'fin_rango', 'cai')
+
+    fecha_de_emision = forms.DateTimeField(widget=DateTimeWidget(),
+                                           initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(ComprobanteDeduccionForm, self).__init__(*args, **kwargs)

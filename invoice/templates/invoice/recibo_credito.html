@@ -4,7 +4,10 @@
     <meta charset="utf-8"/>
     {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
     <title>{% trans 'Factura al Cr&eacute;dito' %} {{ recibo.numero }}</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+          crossorigin="anonymous">
     <style type="text/css">
         thead {
             border-bottom: 2px solid;
@@ -49,6 +52,7 @@
         .lf {
             float: left;
         }
+
         .rf {
             float: right;
         }
@@ -143,7 +147,8 @@
                     </tr>
                 {% endfor %}
                 <tr>
-                    <td colspan="4" class="text-center">{% trans '::::Ultima L&iacute;nea::::' %}</td>
+                    <td colspan="4"
+                        class="text-center">{% trans '::::Ultima L&iacute;nea::::' %}</td>
                 </tr>
                 </tbody>
             </table>
@@ -163,30 +168,30 @@
             <table class="table lp-table">
                 <tr>
                     <td width="40%"></td>
-                    <td>Subtotal USD$:</td>
+                    <td>{% trans 'Subtotal USD$' %}:</td>
                     <td class="text-right">{{ recibo.subtotal_other }}</td>
-                    <td>Subtotal L.:</td>
+                    <td>{% trans 'Subtotal L.' %}:</td>
                     <td class="text-right">{{ recibo.subtotal }}</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>Descuento USD$:</td>
+                    <td>{% trans 'Descuento USD$' %}:</td>
                     <td class="text-right">{{ recibo.descuento_other }}</td>
-                    <td>Descuento L.:</td>
+                    <td>{% trans 'Descuento L.' %}:</td>
                     <td class="text-right">{{ recibo.descuento }}</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>Impuestos USD$:</td>
+                    <td>{% trans 'Impuestos USD$' %}:</td>
                     <td class="text-right">{{ recibo.impuesto_other }}</td>
-                    <td>Impuestos L.:</td>
+                    <td>{% trans 'Impuestos L.' %}:</td>
                     <td class="text-right">{{ recibo.impuesto }}</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>Total USD$:</td>
+                    <td>{% trans 'Total USD$' %}:</td>
                     <td class="text-right">{{ recibo.other_currency }}</td>
-                    <td>Total LPS:</td>
+                    <td>{% trans 'Total LPS' %}:</td>
                     <td class="text-right">{{ recibo.total }}</td>
                 </tr>
             </table>
@@ -215,26 +220,28 @@
         <div class="col-md-12">
             <ol>
                 <li>
-                {% blocktrans %}
-                    La factura se pagar&aacute; en USD$ o en su equivalencia en
-                    Lempiras al tipo de cambio vigente al día en que se efectua
-                    el pago utilizando el precio del USD$ conforme al contrato.
-                    Monto detallado en Lempiras solo para efecto de referencia.
-                {% endblocktrans %}
+                    {% blocktrans %}
+                        La factura se pagar&aacute; en USD$ o en su equivalencia
+                        en Lempiras al tipo de cambio vigente al día en que se
+                        efectua el pago utilizando el precio del USD$ conforme
+                        al contrato.
+                        Monto detallado en Lempiras solo para efecto de
+                        referencia.
+                    {% endblocktrans %}
                 </li>
                 <li>
-                {% blocktrans %}
-                    La factura será pagada dentro de los primeros 20 (veinte)
-                    días de cada mes. Además la contratante acepta pagar el 3.5%
-                    mensual de interés moratorio sobre el valor total del pago
-                    atrasado.
-                {% endblocktrans %}
+                    {% blocktrans %}
+                        La factura será pagada dentro de los primeros 20
+                        (veinte) días de cada mes. Además la contratante acepta
+                        pagar el 3.5% mensual de interés moratorio sobre el
+                        valor total del pago atrasado.
+                    {% endblocktrans %}
                 </li>
                 <li>
-                {% blocktrans %}
-                    Recargo de L. 500.00 por cheque devuelto en Lempiras o de
-                    USD$60.00 por cheque devuelto en USD$.
-                {% endblocktrans %}
+                    {% blocktrans %}
+                        Recargo de L. 500.00 por cheque devuelto en Lempiras o
+                        de USD$60.00 por cheque devuelto en USD$.
+                    {% endblocktrans %}
                 </li>
             </ol>
         </div>
