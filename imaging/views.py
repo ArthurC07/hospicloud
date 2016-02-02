@@ -84,7 +84,7 @@ class ExamenPreCreateView(TemplateView):
         return context
 
 
-class ExamenDetailView(DetailView, LoginRequiredMixin):
+class ExamenDetailView(LoginRequiredMixin, DetailView):
     """Permite ver los detalles de un :class:`Examen`"""
 
     context_object_name = 'examen'
@@ -92,7 +92,7 @@ class ExamenDetailView(DetailView, LoginRequiredMixin):
     template_name = 'examen/examen_detail.html'
 
 
-class ExamenPersonaListView(DetailView, LoginRequiredMixin):
+class ExamenPersonaListView(LoginRequiredMixin, DetailView):
     """Muestra los :class:`Examen`es realizados a una :class:`Persona`"""
 
     context_object_name = 'persona'
@@ -100,7 +100,7 @@ class ExamenPersonaListView(DetailView, LoginRequiredMixin):
     template_name = 'examen/examen_paciente_detail.html'
 
 
-class ExamenUpdateView(UpdateView, LoginRequiredMixin):
+class ExamenUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos de un :class:`Examen`"""
 
     model = Examen
@@ -116,7 +116,7 @@ class ExamenCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
     form_class = ExamenForm
 
 
-class ExamenEfectuarView(RedirectView, LoginRequiredMixin):
+class ExamenEfectuarView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
@@ -126,7 +126,7 @@ class ExamenEfectuarView(RedirectView, LoginRequiredMixin):
         return examen.get_absolute_url()
 
 
-class ExamenCancelarView(RedirectView, LoginRequiredMixin):
+class ExamenCancelarView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
@@ -179,7 +179,7 @@ class DicomCreateView(CreateView, ExamenFormMixin, LoginRequiredMixin):
     template_name = "examen/dicom_create.html"
 
 
-class DicomDetailView(DetailView, LoginRequiredMixin):
+class DicomDetailView(LoginRequiredMixin, DetailView):
     """Muestra el visor DICOM básico en el navegador del usuario"""
 
     context_object_name = 'dicom'
@@ -235,7 +235,7 @@ class PersonaEstudioCreateView(PersonaCreateView):
         return reverse('examen-programar', args=[self.object.id])
 
 
-class EstudioProgramadoDetailView(DetailView, LoginRequiredMixin):
+class EstudioProgramadoDetailView(LoginRequiredMixin, DetailView):
     """Muestra las acciones disponibles para un :class:`EstudioProgramado`"""
 
     context_object_name = 'estudio'
@@ -244,7 +244,7 @@ class EstudioProgramadoDetailView(DetailView, LoginRequiredMixin):
 
 
 class EstudioProgramadoCreateView(PersonaFormMixin, CurrentUserFormMixin,
-                                  CreateView, LoginRequiredMixin):
+                                  CreateView):
     """Permite recetar un :class:`Examen` a una :class:`Persona"""
 
     model = EstudioProgramado
@@ -252,7 +252,7 @@ class EstudioProgramadoCreateView(PersonaFormMixin, CurrentUserFormMixin,
     template_name = 'examen/estudio_programado_create.html'
 
 
-class EstudioProgramadoListView(ListView, LoginRequiredMixin):
+class EstudioProgramadoListView(LoginRequiredMixin, ListView):
     """Permite mostrar una lista de :class:`Estudios`es que aún no han sido
     llevados a cabo"""
 
@@ -274,7 +274,7 @@ class EstudioProgramadoListView(ListView, LoginRequiredMixin):
         return context
 
 
-class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredMixin):
+class EstudioProgramadoEfectuarView(LoginRequiredMixin, RedirectView):
     """Permite marcar un :class:`EstudioProgramado` como ya efectuado y
     muestra el formulario para crear un nuevo :class:`Examen` a la
     :class:`Persona`"""

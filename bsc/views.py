@@ -60,7 +60,7 @@ class ScoreCardDetailView(LoginRequiredMixin, DetailView):
     model = ScoreCard
 
 
-class UserDetailView(DetailView, LoginRequiredMixin):
+class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'bsc/user.html'
 
@@ -228,7 +228,7 @@ class PreguntaFormMixin(PreguntaMixin, FormMixin):
         return initial
 
 
-class VotoUpdateView(UpdateView, LoginRequiredMixin):
+class VotoUpdateView(LoginRequiredMixin, UpdateView):
     model = Voto
     form_class = VotoForm
 
@@ -287,11 +287,11 @@ class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
         return self.object.respuesta.get_absolute_url()
 
 
-class QuejaDetailView(DetailView, LoginRequiredMixin):
+class QuejaDetailView(LoginRequiredMixin, DetailView):
     model = Queja
 
 
-class QuejaListView(ListView, LoginRequiredMixin):
+class QuejaListView(LoginRequiredMixin, ListView):
     model = Queja
     queryset = Queja.objects.filter(resuelta=False)
     context_object_name = 'quejas'
@@ -327,17 +327,17 @@ class SolucionCreateView(QuejaFormMixin, CurrentUserFormMixin, CreateView,
     form_class = SolucionForm
 
 
-class ArchivoNotasCreateView(CreateView, LoginRequiredMixin):
+class ArchivoNotasCreateView(LoginRequiredMixin, CreateView):
     model = ArchivoNotas
     form_class = ArchivoNotasForm
 
 
-class ArchivoNotasDetailView(DetailView, LoginRequiredMixin):
+class ArchivoNotasDetailView(LoginRequiredMixin, DetailView):
     model = ArchivoNotas
     context_object_name = 'archivonotas'
 
 
-class ArchivoNotasProcesarView(RedirectView, LoginRequiredMixin):
+class ArchivoNotasProcesarView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):

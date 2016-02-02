@@ -46,7 +46,7 @@ from invoice.models import Venta
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
-class PresupuestoDetailView(DetailView, LoginRequiredMixin):
+class PresupuestoDetailView(LoginRequiredMixin, DetailView):
     """
     Shows a :class:`Presupuesto` detailed data view, describing the accounting
     break up from every expense category.
@@ -55,7 +55,7 @@ class PresupuestoDetailView(DetailView, LoginRequiredMixin):
     context_object_name = 'presupuesto'
 
 
-class PresupuestoListView(ListView, LoginRequiredMixin):
+class PresupuestoListView(LoginRequiredMixin, ListView):
     """
     Allows viewing data related to all :class:`Presupuesto`s in the
     :class:`Company`.
@@ -219,7 +219,7 @@ class PresupuestoFormMixin(PresupuestoMixin, FormMixin):
         return initial
 
 
-class CuentaDetailView(DetailView, LoginRequiredMixin):
+class CuentaDetailView(LoginRequiredMixin, DetailView):
     """
     Allows the user to review the data of a :class:`Cuenta`
     """
@@ -227,7 +227,7 @@ class CuentaDetailView(DetailView, LoginRequiredMixin):
     context_object_name = 'cuenta'
 
 
-class CuentaCreateView(PresupuestoFormMixin, CreateView, LoginRequiredMixin):
+class CuentaCreateView(PresupuestoFormMixin, LoginRequiredMixin, CreateView):
     """
     Allows the user to create :class:`Cuenta` objects
     """
@@ -297,7 +297,7 @@ class GastoDeleteView(DeleteView, LoginRequiredMixin):
         return self.cuenta.get_absolute_url()
 
 
-class GastoEjecutarView(UpdateView, LoginRequiredMixin):
+class GastoEjecutarView(LoginRequiredMixin, UpdateView):
     """
     Allows a :class:`Gasto` to be marked as completed
     """
@@ -311,7 +311,7 @@ class GastoEjecutarView(UpdateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class GastoScheduleView(RedirectView, LoginRequiredMixin):
+class GastoScheduleView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -483,7 +483,7 @@ class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class PresupuestoMesListView(ListView, LoginRequiredMixin):
+class PresupuestoMesListView(LoginRequiredMixin, ListView):
     """
     Shows a list of :class:`PresupuestoMes`
     """
@@ -525,14 +525,14 @@ class PresupuestoMesListView(ListView, LoginRequiredMixin):
         return context
 
 
-class PresupuestoMesDetailView(DetailView, LoginRequiredMixin):
+class PresupuestoMesDetailView(LoginRequiredMixin, DetailView):
     """
     Allows displaying the data for :class:`PresupuestoMes` instances
     """
     model = PresupuestoMes
 
 
-class PresupuestoMesCreateView(CreateView, LoginRequiredMixin):
+class PresupuestoMesCreateView(LoginRequiredMixin, CreateView):
     """
     Creates :class:`PresupuestoMes` instances based on data entered into a
     :class:`PresupuestoMesForm`
@@ -547,7 +547,7 @@ class PresupuestoMesCreateView(CreateView, LoginRequiredMixin):
         return reverse('monthly-budget-add')
 
 
-class PresupuestoMesUpdateView(UpdateView, LoginRequiredMixin):
+class PresupuestoMesUpdateView(LoginRequiredMixin, UpdateView):
     """
     Updates the :class:`PresupuestoMes` instances
     """

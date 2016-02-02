@@ -94,19 +94,19 @@ class EmergenciaCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
         return context
 
 
-class EmergenciaDetailView(DetailView, LoginRequiredMixin):
+class EmergenciaDetailView(LoginRequiredMixin, DetailView):
     """Permite mostrar los datos de la :class:`Emergencia`"""
 
     model = Emergencia
     template_name = 'emergency/emergency_detail.html'
 
 
-class EmergenciaUpdateView(UpdateView, LoginRequiredMixin):
+class EmergenciaUpdateView(LoginRequiredMixin, UpdateView):
     model = Emergencia
     form_class = EmergenciaForm
 
 
-class BaseCreateView(CreateView, LoginRequiredMixin):
+class BaseCreateView(LoginRequiredMixin, CreateView):
     """Permite llenar el formulario de una clase que requiera
     :class:`Emergencia`s de manera previa - DRY"""
 

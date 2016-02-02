@@ -66,7 +66,7 @@ class PersonaFormMixin(FormMixin, PersonaMixin):
         return initial
 
 
-class PersonaIndexView(ListView, PersonaPermissionMixin):
+class PersonaIndexView(LoginRequiredMixin, ListView):
     context_object_name = 'personas'
     model = Persona
     template_name = 'persona/index.html'
@@ -80,7 +80,7 @@ class PersonaIndexView(ListView, PersonaPermissionMixin):
         return context
 
 
-class PersonaDetailView(DetailView, LoginRequiredMixin):
+class PersonaDetailView(LoginRequiredMixin, DetailView):
     """
     Permite mostrar los datos de una :class:`Persona`
     """
@@ -100,21 +100,21 @@ class PersonaDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class PersonaCreateView(CreateView, LoginRequiredMixin):
+class PersonaCreateView(LoginRequiredMixin, CreateView):
     """Permite ingresar :class:`Persona`s a la aplicación"""
 
     model = Persona
     form_class = PersonaForm
 
 
-class PersonaUpdateView(UpdateView, LoginRequiredMixin):
+class PersonaUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos de una :class:`Persona`"""
 
     model = Persona
     form_class = PersonaForm
 
 
-class FisicoUpdateView(UpdateView, LoginRequiredMixin):
+class FisicoUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`Fisico` de una :class:`Persona`
     """
@@ -123,7 +123,7 @@ class FisicoUpdateView(UpdateView, LoginRequiredMixin):
     form_class = FisicoForm
 
 
-class EstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
+class EstiloVidaUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`EstiloVida` de una
     :class:`Persona`
@@ -132,7 +132,7 @@ class EstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     form_class = EstiloVidaForm
 
 
-class AntecedenteUpdateView(UpdateView, LoginRequiredMixin):
+class AntecedenteUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`Antecedente` de una
     :class:`Persona`
@@ -141,7 +141,7 @@ class AntecedenteUpdateView(UpdateView, LoginRequiredMixin):
     form_class = AntecedenteForm
 
 
-class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
+class AntecedenteFamiliarUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
     :class:`Persona`
@@ -150,7 +150,7 @@ class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
     form_class = AntecedenteFamiliarForm
 
 
-class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
+class AntecedenteObstetricoUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
     :class:`Persona`
@@ -159,7 +159,7 @@ class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
     form_class = AntecedenteObstetricoForm
 
 
-class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin,
+class AntecedenteQuirurgicoCreateView(LoginRequiredMixin, CreateView,
                                       PersonaFormMixin):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
@@ -167,14 +167,14 @@ class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin,
     form_class = AntecedenteQuirurgicoForm
 
 
-class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
+class AntecedenteQuirurgicoUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
 
 
-class PersonaSearchView(ListView, LoginRequiredMixin):
+class PersonaSearchView(LoginRequiredMixin, ListView):
     """
     Allows searching for :class:`Persona` by using information entered in a form
     in the UI
@@ -206,7 +206,7 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
         return Persona.objects.none()
 
 
-class PersonaAdvancedSearchView(ListView, LoginRequiredMixin):
+class PersonaAdvancedSearchView(LoginRequiredMixin, ListView):
     """
     Allows searching for a :class:`Persona` using its nombre and apellidos
     """
@@ -251,22 +251,22 @@ class PersonaAdvancedSearchView(ListView, LoginRequiredMixin):
         return context
 
 
-class EmpleadorCreateView(CreateView, LoginRequiredMixin):
+class EmpleadorCreateView(LoginRequiredMixin, CreateView):
     model = Empleador
     form_class = EmpleadorForm
 
 
-class EmpleadorDetailView(DetailView, LoginRequiredMixin):
+class EmpleadorDetailView(LoginRequiredMixin, DetailView):
     model = Empleador
     context_object_name = 'empleador'
 
 
-class EmpleoCreateView(PersonaFormMixin, CreateView):
+class EmpleoCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = Empleo
     form_class = EmpleoForm
 
 
-class PersonaDuplicateView(RedirectView, LoginRequiredMixin):
+class PersonaDuplicateView(LoginRequiredMixin, RedirectView):
     """
     Reports a :class:`Persona` instance as duplicate for consolidation
     """
@@ -284,13 +284,13 @@ class PersonaDuplicateView(RedirectView, LoginRequiredMixin):
             return persona.get_absolute_url()
 
 
-class AntecedenteObstetricoCreateView(PersonaFormMixin, CreateView,
-                                      LoginRequiredMixin):
+class AntecedenteObstetricoCreateView(PersonaFormMixin, LoginRequiredMixin,
+                                      CreateView):
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
 
 
-class PersonaDuplicateRemoveView(RedirectView, LoginRequiredMixin):
+class PersonaDuplicateRemoveView(LoginRequiredMixin, RedirectView):
     """
     Allows the user to remove all reported duplicates from the :class:`Persona`
     data

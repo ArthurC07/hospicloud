@@ -33,7 +33,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, CreateView, View, ListView, \
     UpdateView, TemplateView, RedirectView
-from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
@@ -78,7 +78,7 @@ class DateBoundView(View):
         return super(DateBoundView, self).dispatch(request, *args, **kwargs)
 
 
-class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
+class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
     template_name = 'clinique/index.html'
     paginate_by = 20
     context_object_name = 'pacientes'
@@ -135,8 +135,8 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
         return context
 
 
-class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView,
-                            LoginRequiredMixin):
+class ConsultorioDetailView(LoginRequiredMixin, DateBoundView,
+                            SingleObjectMixin, ListView):
     paginate_by = 20
     template_name = 'clinique/consultorio_detail.html'
 
@@ -186,7 +186,7 @@ class ConsultorioFormMixin(ConsultorioMixin):
         return initial
 
 
-class PacienteDetailView(DetailView, LoginRequiredMixin):
+class PacienteDetailView(LoginRequiredMixin, DetailView):
     """Permite ver los datos del :class"`Paciente` en la interfaz gráfica"""
 
     model = Persona
@@ -202,7 +202,7 @@ class PacienteDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class ConsultaMixin(TemplateResponseMixin):
+class ConsultaMixin(ContextMixin):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -227,17 +227,17 @@ class ConsultaFormMixin(ConsultaMixin, FormMixin):
         return initial
 
 
-class CitaCreateView(CreateView, LoginRequiredMixin):
+class CitaCreateView(LoginRequiredMixin, CreateView):
     model = Cita
     form_class = CitaForm
 
 
-class CitaPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
+class CitaPersonaCreateView(LoginRequiredMixin, CreateView, PersonaFormMixin):
     model = Cita
     form_class = CitaPersonaForm
 
 
-class CitaPeriodoView(TemplateView, LoginRequiredMixin):
+class CitaPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los contratos de un periodo"""
     template_name = 'clinique/cita_periodo.html'
 
@@ -263,7 +263,7 @@ class CitaPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
+class DiagnosticoPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los :class:`DiagnosticoClinico` de un periodo"""
     template_name = 'clinique/diagnostico_periodo.html'
 
@@ -311,7 +311,7 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class CargoPeriodoView(TemplateView, LoginRequiredMixin):
+class CargoPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los :class:`Cargo` de un periodo"""
     template_name = 'clinique/cargo_periodo.html'
 
@@ -342,7 +342,7 @@ class CargoPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
+class CitaListView(LoginRequiredMixin, ConsultorioMixin, ListView):
     model = Cita
     context_object_name = 'citas'
 
@@ -380,18 +380,18 @@ class CitaAusenteView(LoginRequiredMixin, RedirectView):
         return cita.get_absolute_url()
 
 
-class EvaluacionCreateView(ConsultaFormMixin, PersonaFormMixin,
-                           CurrentUserFormMixin, CreateView):
+class EvaluacionCreateView(CurrentUserFormMixin, ConsultaFormMixin,
+                           PersonaFormMixin, CreateView):
     model = Evaluacion
     form_class = EvaluacionForm
 
 
-class EvaluacionUpdateView(UpdateView, LoginRequiredMixin):
+class EvaluacionUpdateView(LoginRequiredMixin, UpdateView):
     model = Evaluacion
     form_class = EvaluacionForm
 
 
-class EvaluacionPeriodoView(TemplateView, LoginRequiredMixin):
+class EvaluacionPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los :class:`Evaluacion` de un periodo"""
     template_name = 'clinique/evaluacion_periodo.html'
 
@@ -418,9 +418,8 @@ class EvaluacionPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class ConsultaCreateView(PersonaFormMixin, CurrentUserFormMixin,
-                         ConsultorioFormMixin, CreateView,
-                         LoginRequiredMixin):
+class ConsultaCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                         ConsultorioFormMixin, CreateView):
     model = Consulta
     form_class = ConsultaForm
 
@@ -430,8 +429,7 @@ class ConsultaDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'consulta'
 
 
-class SeguimientoCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
-                            LoginRequiredMixin):
+class SeguimientoCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
     model = Seguimiento
     form_class = SeguimientoForm
 
@@ -467,7 +465,7 @@ class SeguimientoPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class LecturaSignosCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
+class LecturaSignosCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = LecturaSignos
     form_class = LecturaSignosForm
 
@@ -483,23 +481,23 @@ class LecturaSignosCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class LecturaSignosUpdateView(UpdateView, LoginRequiredMixin):
+class LecturaSignosUpdateView(LoginRequiredMixin, UpdateView):
     model = LecturaSignos
     form_class = LecturaSignosForm
 
 
-class DiagnosticoCreateView(PersonaFormMixin, ConsultaFormMixin,
-                            CurrentUserFormMixin, CreateView):
+class DiagnosticoCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                            ConsultaFormMixin, CreateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
 
-class DiagnosticoUpdateView(UpdateView, LoginRequiredMixin):
+class DiagnosticoUpdateView(LoginRequiredMixin, UpdateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
 
-class CliniquePersonaUpdateView(UpdateView, LoginRequiredMixin):
+class CliniquePersonaUpdateView(LoginRequiredMixin, UpdateView):
     model = Persona
     form_class = PersonaForm
     template_name = 'clinique/persona_update.html'
@@ -508,7 +506,7 @@ class CliniquePersonaUpdateView(UpdateView, LoginRequiredMixin):
         return reverse('clinique-fisico-editar', args=[self.object.id])
 
 
-class CliniqueFisicoUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueFisicoUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`Fisico` de una :class:`Persona`
     """
@@ -522,7 +520,7 @@ class CliniqueFisicoUpdateView(UpdateView, LoginRequiredMixin):
                        args=[self.object.persona.id])
 
 
-class CliniqueAntecedenteUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueAntecedenteUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`Antecedente` de una
     :class:`Persona`"""
 
@@ -541,7 +539,7 @@ class CliniqueAntecedenteObstetricoCreateView(AntecedenteObstetricoCreateView):
                        args=[self.object.persona.id])
 
 
-class CliniqueAntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueAntecedenteFamiliarUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
     :class:`Persona`"""
 
@@ -554,7 +552,7 @@ class CliniqueAntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
                        args=[self.object.persona.id])
 
 
-class CliniqueAntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueAntecedenteObstetricoUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
     :class:`Persona`"""
 
@@ -563,7 +561,7 @@ class CliniqueAntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/antecedente_obstetrico_update.html'
 
 
-class CliniqueAntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueAntecedenteQuirurgicoUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
 
@@ -576,7 +574,7 @@ class CliniqueAntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
                        args=[self.object.persona.id])
 
 
-class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueEstiloVidaUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`EstiloVida` de una
     :class:`Persona`"""
 
@@ -585,7 +583,7 @@ class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/estilo_vida_update.html'
 
 
-class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin,
+class CargoCreateView(CurrentUserFormMixin, ConsultaFormMixin,
                       UserInventarioRequiredMixin, CreateView):
     """Permite crear :class:`Cargo`s durante una :class:`Consulta`"""
     model = Cargo
@@ -610,7 +608,7 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin,
         return HttpResponseRedirect(self.get_success_url())
 
 
-class OrdenMedicaCreateView(ConsultaFormMixin, CurrentUserFormMixin,
+class OrdenMedicaCreateView(CurrentUserFormMixin, ConsultaFormMixin,
                             CreateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
@@ -621,7 +619,7 @@ class OrdenMedicaUpdateView(LoginRequiredMixin, UpdateView):
     form_class = OrdenMedicaForm
 
 
-class OrdenMedicaDetailView(DetailView, LoginRequiredMixin):
+class OrdenMedicaDetailView(LoginRequiredMixin, DetailView):
     model = OrdenMedica
     context_object_name = 'orden'
 
@@ -639,7 +637,7 @@ class OrdenMedicaDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class OrdenMedicaListView(ListView, LoginRequiredMixin):
+class OrdenMedicaListView(LoginRequiredMixin, ListView):
     model = OrdenMedica
     context_object_name = 'ordenes'
 
@@ -647,7 +645,7 @@ class OrdenMedicaListView(ListView, LoginRequiredMixin):
         return OrdenMedica.objects.filter(farmacia=False)
 
 
-class OrdenCompletarRedirect(RedirectView, LoginRequiredMixin):
+class OrdenCompletarRedirect(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -669,39 +667,39 @@ def save_prescriptions(request, orden):
     return redirect(orden)
 
 
-class NotaEnfermeriaCreateView(PersonaFormMixin, CurrentUserFormMixin,
+class NotaEnfermeriaCreateView(CurrentUserFormMixin, PersonaFormMixin,
                                CreateView):
     model = NotaEnfermeria
     form_class = NotaEnfermeriaForm
 
 
-class ExamenCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
+class ExamenCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = Examen
     form_class = ExamenForm
 
 
-class ExamenUpdateView(UpdateView, LoginRequiredMixin):
+class ExamenUpdateView(LoginRequiredMixin, UpdateView):
     model = Examen
     form_class = ExamenForm
 
 
-class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin,
-                       LoginRequiredMixin, CreateView):
+class EsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
+                       ConsultorioFormMixin, CreateView):
     model = Espera
     form_class = EsperaForm
 
 
-class EsperaConsultorioCreateView(PersonaFormMixin, LoginRequiredMixin,
+class EsperaConsultorioCreateView(LoginRequiredMixin, PersonaFormMixin,
                                   CreateView):
     model = Espera
     form_class = EsperaForm
 
 
-class EsperaListView(ConsultorioMixin, LoginRequiredMixin, ListView):
+class EsperaListView(LoginRequiredMixin, ConsultorioMixin, ListView):
     model = Espera
 
 
-class EsperaAusenteView(RedirectView, LoginRequiredMixin):
+class EsperaAusenteView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -715,19 +713,19 @@ class EsperaAusenteView(RedirectView, LoginRequiredMixin):
         return espera.get_absolute_url()
 
 
-class PrescripcionCreateView(PersonaFormMixin, ConsultaFormMixin,
-                             CurrentUserFormMixin, CreateView):
+class PrescripcionCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                             ConsultaFormMixin, CreateView):
     model = Prescripcion
     form_class = PrescripcionForm
 
 
-class PrescripcionUpdateView(UpdateView, LoginRequiredMixin):
+class PrescripcionUpdateView(LoginRequiredMixin, UpdateView):
     model = Prescripcion
     form_class = PrescripcionForm
 
 
-class IncapacidadCreateView(PersonaFormMixin, ConsultaFormMixin,
-                            CurrentUserFormMixin, CreateView):
+class IncapacidadCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                            ConsultaFormMixin, CreateView):
     model = Incapacidad
     form_class = IncapacidadForm
 
@@ -737,7 +735,7 @@ class IncapacidadUpdateView(LoginRequiredMixin, UpdateView):
     form_class = IncapacidadForm
 
 
-class IncapacidadListView(ListView, LoginRequiredMixin):
+class IncapacidadListView(LoginRequiredMixin, ListView):
     model = Incapacidad
     context_object_name = 'incapacidades'
 
@@ -747,14 +745,14 @@ class ReporteCreateView(ConsultorioFormMixin, LoginRequiredMixin, CreateView):
     form_class = ReporteForm
 
 
-class ReporteListView(ListView, LoginRequiredMixin):
+class ReporteListView(LoginRequiredMixin, ListView):
     model = Reporte
     queryset = Reporte.objects.order_by('-created')
     context_object_name = 'reportes'
     paginate_by = 20
 
 
-class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
+class CitaEsperaRedirectView(LoginRequiredMixin, RedirectView):
     """Crea una :class:´Espera´ a partir de una :class:´Cita´ y redirige al
     usuario al :class:´Consultorio´ asociado"""
 
@@ -771,7 +769,7 @@ class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
         return espera.get_absolute_url()
 
 
-class EsperaConsultaRedirectView(RedirectView, LoginRequiredMixin):
+class EsperaConsultaRedirectView(LoginRequiredMixin, RedirectView):
     """Crea una :class:´Espera´ a partir de una :class:´Cita´ y redirige al
     usuario al :class:´Consultorio´ asociado"""
 
@@ -789,7 +787,7 @@ class EsperaConsultaRedirectView(RedirectView, LoginRequiredMixin):
         return espera.get_absolute_url()
 
 
-class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
+class EsperaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
     """Marca una Espera como terminada y coloca como inactivas las consultas"""
 
     permanent = False
@@ -819,7 +817,7 @@ class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     form_class = RemisionForm
 
 
-class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
+class ConsultaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):

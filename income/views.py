@@ -59,7 +59,7 @@ class IncomeIndexView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class CobrosListView(ListView, LoginRequiredMixin):
+class CobrosListView(LoginRequiredMixin, ListView):
     """
     Shows the list of :class:`CuentaPorCobrar` and builds the forms to pay them
     """
@@ -96,14 +96,14 @@ class CobrosListView(ListView, LoginRequiredMixin):
         return context
 
 
-class DepositoDetailView(DetailView, LoginRequiredMixin):
+class DepositoDetailView(LoginRequiredMixin, DetailView):
     """
     Creates the UI to visualize the data gathered by a :class:`Deposito`
     """
     model = Deposito
 
 
-class DepositoCreateView(CreateView, LoginRequiredMixin):
+class DepositoCreateView(LoginRequiredMixin, CreateView):
     """
     Allows the user to create a :class:`Deposito`
     """
@@ -118,7 +118,7 @@ class DepositoCreateView(CreateView, LoginRequiredMixin):
         return 'income-index'
 
 
-class ChequeCreateView(CreateView, LoginRequiredMixin):
+class ChequeCreateView(LoginRequiredMixin, CreateView):
     """
     Creates a :class:`Cheque` based on the data obtained from the form, adds
     payment detail if the indicated amount matches the total amount from due
@@ -128,7 +128,7 @@ class ChequeCreateView(CreateView, LoginRequiredMixin):
     form_class = ChequeForm
 
 
-class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
+class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
     """
     Shows the GUI with the data from the payments that require consolidation,
     adding the forms that collect the information related to each :class:`Pago`
@@ -162,7 +162,7 @@ class ChequeCobroDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class CierrePOSCreateView(CreateView, LoginRequiredMixin):
+class CierrePOSCreateView(LoginRequiredMixin, CreateView):
     """
     Enables creation of :class:`CierrePOS` from the user interface.
     """
@@ -170,7 +170,7 @@ class CierrePOSCreateView(CreateView, LoginRequiredMixin):
     form_class = CierrePOSForm
 
 
-class ChequeNumeroListView(ListView, LoginRequiredMixin):
+class ChequeNumeroListView(LoginRequiredMixin, ListView):
     """
     Enables searching :class:`Cheque` by using their number field
     """
@@ -185,7 +185,7 @@ class ChequeNumeroListView(ListView, LoginRequiredMixin):
         return Cheque.objects.all()
 
 
-class DetallePagoCreateView(CreateView, LoginRequiredMixin):
+class DetallePagoCreateView(LoginRequiredMixin, CreateView):
     """
     Creates the :class:`DetallePago` based in the information handled by a
     :class:`DetallePagoForm`

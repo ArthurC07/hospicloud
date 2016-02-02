@@ -44,12 +44,12 @@ class IndexView(TemplateView):
         return context
 
 
-class ResultadoCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
+class ResultadoCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
     model = Resultado
     form_class = ResultadoForm
 
 
-class ResultadoUpdateView(UpdateView, LoginRequiredMixin):
+class ResultadoUpdateView(LoginRequiredMixin, UpdateView):
     model = Resultado
     form_class = ResultadoForm
 
