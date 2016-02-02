@@ -2038,6 +2038,15 @@ class ComprobanteDeduccionFormMixin(FormMixin, ComprobanteDeduccionMixin):
         return initial
 
 
+class ComprobanteDeduccionListView(ListView, LoginRequiredMixin):
+    """
+    Shows a list of :class:`ComprobanteDeduccion` with links to their detail
+    pages
+    """
+    model = ComprobanteDeduccion
+    paginate_by = 20
+
+
 class ConceptoDeduccionCreateView(ComprobanteDeduccionFormMixin, CreateView,
                                   LoginRequiredMixin):
     model = ConceptoDeduccion

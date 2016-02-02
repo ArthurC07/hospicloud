@@ -305,6 +305,10 @@ urlpatterns = [
         views.ComprobanteDeduccionDetailView.as_view(),
         name='comprobante'),
 
+    url(r'^comprobante/list$',
+        views.ComprobanteDeduccionListView.as_view(),
+        name='invoice-comprobantededuccion-list'),
+
     url(r'^comprobante/(?P<pk>\d+)/imprimir$',
         views.ComprobanteDeduccionDetailView.as_view(
                 template_name='invoice/comprobantededuccion_print.html'
