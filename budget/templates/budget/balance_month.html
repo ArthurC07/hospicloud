@@ -128,41 +128,6 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-12" id="accordion">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <a class="btn-block" role="button"
-                                   data-toggle="collapse"
-                                   data-parent="#accordion" href="#collapseOne"
-                                   aria-expanded="true"
-                                   aria-controls="collapseOne">
-                                    {% trans 'Descripción de Gastos por Ciudad' %}
-                                </a>
-                            </h3>
-                        </div>
-                        <div id="collapseOne" class="panel-collapse collapse"
-                             role="tabpanel" aria-labelledby="headingOne">
-                            <table class="table table-hover table-striped">
-                                <tbody>
-                                {% for gasto in gastos.all %}
-                                    <tr>
-                                        <td>{{ gasto.cuenta }}</td>
-                                        <td>{{ gasto.fecha_de_pago }}</td>
-                                        <td>{{ gasto.proveedor }}</td>
-                                        <td class="text-right">{{ gasto.monto }}</td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                                <tfoot>
-
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 {% endblock %}
