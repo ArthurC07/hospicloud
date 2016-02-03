@@ -550,6 +550,18 @@ class ReciboDetailView(LoginRequiredMixin, DetailView):
     """
 
     model = Recibo
+    queryset = Recibo.objects.select_related(
+            'tipo_de_venta',
+            'cliente',
+            'ciudad',
+            'cajero__profile__ciudad',
+    ).prefetch_related(
+            'ventas',
+            'ventas__item',
+            'pagos',
+            'pagos__aseguradora',
+            'pagos__tipo'
+    )
     object_context_name = 'recibo'
     template_name = 'invoice/recibo_detail.html'
 

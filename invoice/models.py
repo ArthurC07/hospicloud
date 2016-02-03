@@ -251,7 +251,7 @@ class Recibo(TimeStampedModel):
 
     def pagado(self):
 
-        return Pago.objects.filter(recibo=self).aggregate(
+        return self.pagos.filter(recibo=self).aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
@@ -308,7 +308,7 @@ class Venta(TimeStampedModel):
     realizar los cobros asociados"""
 
     cantidad = models.IntegerField()
-    descripcion = models.TextField(blank=True, default='')
+    descripcion = models.TextField(blank=True)
     precio = models.DecimalField(blank=True, null=True, max_digits=11,
                                  decimal_places=2)
     impuesto = models.DecimalField(blank=True, default=0, max_digits=11,
