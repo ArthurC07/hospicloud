@@ -126,7 +126,8 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['inventarioform'].set_action('invoice-inventario')
         context['cotizaciones'] = Cotizacion.objects.filter(
                 facturada=False
-        ).all()
+        ).select_related('usuario', 'persona', 'usuario__profile',
+                         'ciudad').all()
 
         context['examenes'] = Examen.objects.filter(
                 facturado=False, pendiente=False
@@ -136,9 +137,11 @@ class IndexView(TemplateView, InvoicePermissionMixin):
         context['emergencias'] = Emergencia.objects.filter(
                 facturada=False
         ).order_by('id')
-        context['consultas'] = Consulta.objects.filter(facturada=False,
-                                                       activa=False,
-                                                       tipo__facturable=True)
+        context['consultas'] = Consulta.objects.filter(
+                facturada=False,
+                activa=False,
+                tipo__facturable=True
+        ).select_related('persona', 'consultorio__usuario', 'consultorio')
 
         context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
                                                      finalizado=False).all()
@@ -148,7 +151,12 @@ class IndexView(TemplateView, InvoicePermissionMixin):
 
         context['status'] = StatusPago.objects.filter(reportable=True).all()
 
-        context['pendientes'] = Recibo.objects.filter(cerrado=False).all()
+        context['pendientes'] = Recibo.objects.filter(
+                cerrado=False
+        ).select_related(
+                'cliente', 'cajero', 'ciudad', 'cajero__profile',
+                'cajero__profile__ciudad'
+        ).all()
 
         context['ventaperiodoform'] = VentaPeriodoForm(prefix='venta')
         context['ventaperiodoform'].set_action('periodo-venta')
