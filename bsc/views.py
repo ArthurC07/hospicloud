@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib import messages
@@ -32,7 +33,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm
-from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, ArchivoNotas, \
+from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
+    ArchivoNotas, \
     Pregunta, Solucion, Login
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
@@ -49,7 +51,7 @@ class ScoreCardListView(LoginRequiredMixin, ListView):
 
         context['loginperiodo'] = PeriodoForm(prefix='login')
         context['loginperiodo'].set_legend(
-            _(u'Inicios de Sesi&oacute;n por Periodo')
+                _('Inicios de Sesi&oacute;n por Periodo')
         )
         context['loginperiodo'].set_action('login-periodo')
 
@@ -72,12 +74,17 @@ class EncuestaListView(LoginRequiredMixin, ListView):
 class EncuestaDetailView(LoginRequiredMixin, DetailView):
     model = Encuesta
     context_object_name = 'encuesta'
+    queryset = Encuesta.objects.prefetch_related('respuesta_set')
 
     def get_context_data(self, **kwargs):
         context = super(EncuestaDetailView, self).get_context_data(**kwargs)
 
-        context['consultas'] = Consulta.objects.filter(facturada=True,
-                                                       encuestada=False)
+        context['consultas'] = Consulta.objects.select_related(
+                'persona',
+        ).filter(
+                facturada=True,
+                encuestada=False
+        )
 
         return context
 
@@ -283,7 +290,6 @@ class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
     form_class = QuejaForm
 
     def get_success_url(self):
-
         return self.object.respuesta.get_absolute_url()
 
 
@@ -298,7 +304,6 @@ class QuejaListView(LoginRequiredMixin, ListView):
 
 
 class QuejaMixin(ContextMixin, View):
-
     def dispatch(self, *args, **kwargs):
         self.queja = get_object_or_404(Queja, pk=kwargs['queja'])
         return super(QuejaMixin, self).dispatch(*args, **kwargs)
@@ -355,10 +360,9 @@ class LoginPeriodoView(PeriodoView, LoginRequiredMixin):
     template_name = 'bsc/login_list.html'
 
     def get_context_data(self, **kwargs):
-
         context = super(LoginPeriodoView, self).get_context_data(**kwargs)
         context['object_list'] = Login.objects.filter(
-            created__range=(self.inicio, self.fin)
+                created__range=(self.inicio, self.fin)
         ).order_by('user', 'created')
 
         return context
