@@ -1239,6 +1239,14 @@ class AseguradoraListView(LoginRequiredMixin, ListView):
     :class:`MasterContract` of an :class:`Aseguradora`
     """
     model = Aseguradora
+    queryset = Aseguradora.objects.prefetch_related(
+            'mastercontract_set',
+            'mastercontract_set__administrador',
+            'mastercontract_set__plan',
+            'mastercontract_set__contratos',
+            'mastercontract_set__contratante',
+            'mastercontract_set__contratante__empleos'
+    )
     context_object_name = 'aseguradoras'
     template_name = 'invoice/aseguradora_list.html'
 
@@ -1983,6 +1991,13 @@ class CotizacionCreateView(CreateView, PersonaFormMixin, CurrentUserFormMixin,
 
 class CotizacionDetailView(LoginRequiredMixin, DetailView):
     model = Cotizacion
+    queryset = Cotizacion.objects.select_related(
+            'persona',
+            'tipo_de_venta'
+    ).prefetch_related(
+            'cotizado_set',
+            'cotizado_set__item'
+    )
 
 
 class CotizacionMixin(ContextMixin, View):

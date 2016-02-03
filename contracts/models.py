@@ -313,6 +313,9 @@ class MasterContract(TimeStampedModel):
     ultimo_certificado = models.IntegerField(default=0)
     facturar_al_administrador = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['contratante__nombre']
+
     def __str__(self):
         nombre = _('Poliza {0} {1}').format(self.poliza, self.plan.nombre)
         if self.contratante:

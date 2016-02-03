@@ -51,9 +51,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for master in aseguradora.master_contracts.all %}
+                                {% for master in aseguradora.mastercontract_set.all %}
                                     <tr>
-                                        <td>{{ master.poliza }} {{ master.plan }} {{ master.contratante }}</td>
+                                        <td>{{ master.poliza }} {{ master.plan.nombre }} {{ master.contratante.nombre }}</td>
                                         <td>{{ master.active_contracts_count }}</td>
                                     </tr>
                                 {% endfor %}
