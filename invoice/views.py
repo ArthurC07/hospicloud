@@ -1245,7 +1245,6 @@ class AseguradoraListView(LoginRequiredMixin, ListView):
             'mastercontract_set__plan',
             'mastercontract_set__contratos',
             'mastercontract_set__contratante',
-            'mastercontract_set__contratante__empleos'
     )
     context_object_name = 'aseguradoras'
     template_name = 'invoice/aseguradora_list.html'
