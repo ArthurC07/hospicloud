@@ -18,7 +18,7 @@
                         <td>{{ deposito.cuenta }}</td>
                         <td>{{ deposito.monto }}</td>
                         <td>{{ deposito.fecha_de_deposito }}</td>
-                        <td><a class="btn btn-primary" href="{{ cheque.get_absolute_url }}">Ver</a></td>
+                        <td><a class="btn btn-primary" href="{{ deposito.get_absolute_url }}">Ver</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
