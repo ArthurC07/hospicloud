@@ -90,7 +90,7 @@ class PersonaDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(PersonaDetailView, self).get_context_data(**kwargs)
 
-        if self.object.sexo == 'F' and self.object.antecedente_obstetrico is None:
+        if self.object.sexo == 'F' and not self.object.antecedente_obstetrico:
             antecedente_obstetrico = AntecedenteObstetrico(persona=self.object)
             antecedente_obstetrico.created = timezone.now()
             antecedente_obstetrico.save()
