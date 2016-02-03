@@ -1243,7 +1243,6 @@ class AseguradoraListView(LoginRequiredMixin, ListView):
             'mastercontract_set',
             'mastercontract_set__administrador',
             'mastercontract_set__plan',
-            'mastercontract_set__contratos',
             'mastercontract_set__contratante',
     )
     context_object_name = 'aseguradoras'
