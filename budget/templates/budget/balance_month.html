@@ -26,7 +26,12 @@
                         <div class="panel-body">
                             <dl class="dl-horizontal">
                                 <dt>{% trans 'Total Depositado' %}</dt>
-                                <dd>{{ total_depositado }}</dd>
+                                <dd>
+                                    <a href="{% url 'deposito-periodo' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ total_depositado }}
+                                    </a>
+                                </dd>
                                 <dt>{% trans 'Total Ejecutado' %}</dt>
                                 <dd>{{ total_gastos }}</dd>
                                 <dt>
@@ -104,6 +109,13 @@
                                             <dt>{{ cheque.tipo__nombre }}</dt>
                                             <dd>{{ cheque.total }}</dd>
                                         {% endfor %}
+                                        <dt>{% trans 'Total' %}</dt>
+                                        <dd>
+                                            <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
+                                               target="_blank">
+                                                {{ total_cheques }}
+                                            </a>
+                                        </dd>
                                     </dl>
                                 </div>
                             </div>
@@ -116,27 +128,32 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                <a class="btn-block" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <a class="btn-block" role="button"
+                                   data-toggle="collapse"
+                                   data-parent="#accordion" href="#collapseOne"
+                                   aria-expanded="true"
+                                   aria-controls="collapseOne">
                                     {% trans 'Descripción de Gastos por Ciudad' %}
                                 </a>
                             </h3>
                         </div>
-                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                        <table class="table table-hover table-striped">
-                            <tbody>
-                            {% for gasto in gastos.all %}
-                                <tr>
-                                    <td>{{ gasto.cuenta }}</td>
-                                    <td>{{ gasto.fecha_de_pago }}</td>
-                                    <td>{{ gasto.proveedor }}</td>
-                                    <td class="text-right">{{ gasto.monto }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                            <tfoot>
+                        <div id="collapseOne" class="panel-collapse collapse"
+                             role="tabpanel" aria-labelledby="headingOne">
+                            <table class="table table-hover table-striped">
+                                <tbody>
+                                {% for gasto in gastos.all %}
+                                    <tr>
+                                        <td>{{ gasto.cuenta }}</td>
+                                        <td>{{ gasto.fecha_de_pago }}</td>
+                                        <td>{{ gasto.proveedor }}</td>
+                                        <td class="text-right">{{ gasto.monto }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                                <tfoot>
 
-                            </tfoot>
-                        </table>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>

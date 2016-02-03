@@ -27,6 +27,7 @@ from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
     UpdateView, FormView, RedirectView, View, TemplateView
@@ -580,8 +581,8 @@ class BalanceView(TemplateView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         """
         Builds the forms that will correct the :class:`PresupuestoMes` data
-        :param kwargs:
-        :return:
+        :param kwargs: The original dictionary with data
+        :return: the final dict that will be used in the view
         """
         context = super(BalanceView, self).get_context_data(**kwargs)
 
@@ -655,5 +656,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         ).annotate(
                 total=Coalesce(Sum('monto'), Decimal())
         )
+
+        context['periodo_string'] = urlencode({'inicio': inicio, 'fin': fin})
 
         return context

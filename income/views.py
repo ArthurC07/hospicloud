@@ -19,7 +19,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, ListView, DetailView, TemplateView
 
-from hospinet.utils.forms import NumeroForm
+from hospinet.utils.forms import NumeroForm, PeriodoForm
 from income.forms import ChequeForm, DetallePagoForm, DepositoForm, \
     CierrePOSForm
 from income.models import Cheque, DetallePago, Deposito, CierrePOS
@@ -29,7 +29,7 @@ from users.mixins import LoginRequiredMixin
 
 class IncomeIndexView(TemplateView, LoginRequiredMixin):
     """
-    Shows the forms associated with income related querys
+    Shows the forms associated with income related queries
     """
     template_name = 'income/index.html'
 
@@ -112,10 +112,35 @@ class DepositoCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         """
-        Tells the program that the user should be redirected to the income index page
-        :return: income app index url
+        Tells the program that the user should be redirected to the income index
+        page.
+        :return: The :class:`IncomeIndexView` url
         """
         return 'income-index'
+
+
+class DepositoPeriodoListView(LoginRequiredMixin, ListView):
+    """
+    Builds a list of :class:`Deposito`s that have been registered during
+    """
+    model = Deposito
+    context_object_name = 'depositos'
+    paginate_by = 30
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Deposito` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = PeriodoForm(self.request.GET)
+        if form.is_valid():
+            return Deposito.objects.filter(
+                    fecha_de_deposito_range=(
+                        form.cleaned_data['inicio'],
+                        form.cleaned_data['fin']
+                    )
+            )
+        return Deposito.objects.all()
 
 
 class ChequeCreateView(LoginRequiredMixin, CreateView):
@@ -160,6 +185,31 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
             })
 
         return context
+
+
+class ChequePeriodoListView(LoginRequiredMixin, ListView):
+    """
+    Shows a GUI with a list of :class:`Cheque that have been registered during
+    the period of time indicated by a :class:`PeriodoForm`
+    """
+    model = Cheque
+    context_object_name = 'cheques'
+    paginate_by = 30
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Cheque` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = PeriodoForm(self.request.GET)
+        if form.is_valid():
+            return Cheque.objects.filter(
+                    fecha_de_entrega_range=(
+                        form.cleaned_data['inicio'],
+                        form.cleaned_data['fin']
+                    )
+            )
+        return Cheque.objects.all()
 
 
 class CierrePOSCreateView(LoginRequiredMixin, CreateView):

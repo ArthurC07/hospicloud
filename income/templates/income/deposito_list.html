@@ -6,20 +6,18 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>{% trans 'N&uacute;mero' %}</th>
-                    <th>{% trans 'Banco Emisor' %}</th>
+                    <th>{% trans 'Cuenta de Dep&oacute;sito' %}</th>
                     <th>{% trans 'Monto' %}</th>
-                    <th>{% trans 'Fecha de Entrega' %}</th>
+                    <th>{% trans 'Fecha de Dep&oacute;sito' %}</th>
                     <th>{% trans 'Acciones' %}</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for cheque in cheques %}
+                {% for deposito in depositos %}
                     <tr>
-                        <td>{{ cheque.numero_de_cheque }}</td>
-                        <td>{{ cheque.banco_de_emision }}</td>
-                        <td>{{ cheque.monto }}</td>
-                        <td>{{ cheque.fecha_de_entrega }}</td>
+                        <td>{{ deposito.cuenta }}</td>
+                        <td>{{ deposito.monto }}</td>
+                        <td>{{ deposito.fecha_de_deposito }}</td>
                         <td><a class="btn btn-primary" href="{{ cheque.get_absolute_url }}">Ver</a></td>
                     </tr>
                 {% endfor %}
