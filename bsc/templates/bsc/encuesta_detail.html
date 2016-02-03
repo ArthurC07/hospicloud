@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
@@ -13,8 +13,8 @@
         <section class="col-md-6 main-content">
             <div class="row">
                 <div class="col-md-12">
-                    <p class="lead">Encuestas realizadas: {{ object.respuesta_set.count }}</p>
-                    <p class="lead">Encuestas pendientes: {{ consultas.count }}</p>
+                    <p class="lead">{% trans 'Encuestas realizadas' %}: {{ object.respuesta_set.count }}</p>
+                    <p class="lead">{% trans 'Encuestas pendientes' %}: {{ consultas.count }}</p>
                 </div>
             </div>
             <div class="row">
@@ -24,7 +24,7 @@
                             <p>{{ pregunta }}</p>
                         </blockquote>
                     {% empty %}
-                        <blockquote>No hay preguntas agregadas</blockquote>
+                        <blockquote>{% trans 'No hay preguntas agregadas' %}</blockquote>
                     {% endfor %}
                 </div>
             </div>
@@ -38,22 +38,22 @@
                                 <address>
                                     <strong>{{ consulta.persona }}</strong><br>
                                     {{ consulta.persona.domicilio }}<br>
-                                    <strong>Atendido:</strong> {{ consulta.created }}<br>
-                                    <strong>Encuestada:</strong> {{ consulta.persona.cantidad_encuestas }} veces<br>
+                                    <strong>{% trans 'Atendido' %}:</strong> {{ consulta.created }}<br>
+                                    <strong>{% trans 'Encuestada' %}:</strong> {{ consulta.persona.cantidad_encuestas }} veces<br>
                                     {% if consulta.persona.ultima_encuesta %}
-                                    <strong>&Uacute;ltima Encesuta:</strong> {{ consulta.persona.ultima_encuesta.created }}<br>
+                                    <strong>{% trans '&Uacute;ltima Encuesta' %}:</strong> {{ consulta.persona.ultima_encuesta.created }}<br>
                                     {% endif %}
-                                    Tel&eacute;fono: {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
+                                    {% trans 'Tel&eacute;fono:' %} {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
                                 </address>
                             </td>
                             <td>
-                                <a class="btn btn-block btn-warning" href="{% url 'encuesta-responder' encuesta.id consulta.id %}">Responder</a>
-                                <a class="btn btn-block btn-info" href="{% url 'encuesta-respondida' encuesta.id consulta.id %}">Ya Se Encuest&oacute;</a>
+                                <a class="btn btn-block btn-warning" href="{% url 'encuesta-responder' encuesta.id consulta.id %}">{% trans 'Responder' %}</a>
+                                <a class="btn btn-block btn-info" href="{% url 'encuesta-respondida' encuesta.id consulta.id %}">{% trans 'Ya Se Encuest&oacute;' %}</a>
                             </td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td>No hay preguntas agregadas</td>
+                            <td>{% trans 'No hay preguntas agregadas' %}</td>
                         </tr>
                     {% endfor %}
                 </table>
