@@ -613,9 +613,6 @@ class CuentaPorCobrar(TimeStampedModel):
                 self.minimum = timezone.now()
 
             self.inicial = self.monto()
-            self.status = self.status.next_status
-            self.enviadas = payments.count()
-            payments.update(status=self.status)
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
 
