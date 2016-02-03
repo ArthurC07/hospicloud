@@ -87,16 +87,6 @@ class PersonaDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'persona'
     model = Persona
 
-    def get_context_data(self, **kwargs):
-        context = super(PersonaDetailView, self).get_context_data(**kwargs)
-
-        if self.object.sexo == 'F' and not self.object.antecedente_obstetrico:
-            antecedente_obstetrico = AntecedenteObstetrico(persona=self.object)
-            antecedente_obstetrico.created = timezone.now()
-            antecedente_obstetrico.save()
-
-        return context
-
 
 class PersonaCreateView(LoginRequiredMixin, CreateView):
     """Permite ingresar :class:`Persona`s a la aplicación"""
