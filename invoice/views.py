@@ -1842,18 +1842,32 @@ class PagoListView(LoginRequiredMixin, ListView):
     template_name = 'invoice/pago_pendiente_list.html'
 
     def get_queryset(self):
-        return Pago.objects.filter(status__reportable=True).all()
+        return Pago.objects.prefetch_related(
+                'recibo__cliente__contratos',
+        ).select_related(
+                'recibo',
+                'recibo__ciudad',
+                'recibo__cliente',
+                'recibo__cliente__ciudad',
+        ).filter(status__reportable=True).all()
 
     def get_context_data(self, **kwargs):
         context = super(PagoListView, self).get_context_data(**kwargs)
 
         total = []
         for aseguradora in Aseguradora.objects.all():
-            total.append((aseguradora, Pago.objects.filter(
-                    status__reportable=True,
-                    recibo__cliente__in=Persona.objects.filter(
-                            contratos__master__aseguradora=aseguradora)
-            ).aggregate(total=Sum('monto'))['total']))
+            total.append((
+                aseguradora,
+                Pago.objects.prefetch_related(
+                        'recibo__cliente__contratos',
+                        'recibo__cliente',
+                ).select_related(
+                        'status', 'recibo', 'recibo__cliente__ciudad'
+                ).filter(
+                        status__reportable=True,
+                        recibo__cliente__in=Persona.objects.filter(
+                                contratos__master__aseguradora=aseguradora)
+                ).aggregate(total=Sum('monto'))['total']))
 
         context['total'] = self.get_queryset().aggregate(
                 total=Sum('monto')
