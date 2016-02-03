@@ -135,12 +135,12 @@ class DepositoPeriodoListView(LoginRequiredMixin, ListView):
         form = PeriodoForm(self.request.GET)
         if form.is_valid():
             return Deposito.objects.filter(
-                    fecha_de_deposito_range=(
+                    fecha_de_deposito__range=(
                         form.cleaned_data['inicio'],
                         form.cleaned_data['fin']
                     )
-            )
-        return Deposito.objects.all()
+            ).select_related('cuenta')
+        return Deposito.objects.select_related('cuenta').all()
 
 
 class ChequeCreateView(LoginRequiredMixin, CreateView):
@@ -204,11 +204,11 @@ class ChequePeriodoListView(LoginRequiredMixin, ListView):
         form = PeriodoForm(self.request.GET)
         if form.is_valid():
             return Cheque.objects.filter(
-                    fecha_de_entrega_range=(
+                    fecha_de_entrega__range=(
                         form.cleaned_data['inicio'],
                         form.cleaned_data['fin']
                     )
-            )
+            ).select_related('usuario', 'banco_de_emision')
         return Cheque.objects.all()
 
 

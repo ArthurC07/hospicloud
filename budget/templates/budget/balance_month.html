@@ -33,7 +33,12 @@
                                     </a>
                                 </dd>
                                 <dt>{% trans 'Total Ejecutado' %}</dt>
-                                <dd>{{ total_gastos }}</dd>
+                                <dd>
+                                    <a href="{% url 'gasto-periodo-list' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ total_gastos }}
+                                    </a>
+                                </dd>
                                 <dt>
                                     {% if balance > 0 %}
                                         {% trans 'Utilidad del Periodo' %}

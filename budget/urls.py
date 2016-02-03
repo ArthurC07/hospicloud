@@ -75,9 +75,13 @@ urlpatterns = [
         views.GastoParcialFormView.as_view(),
         name='gasto-parcial'),
 
-    url(r'^gasto/periodo$',
+    url(r'^gasto/cuenta/periodo$',
         views.GastoCuentaPeriodoView.as_view(),
         name='gasto-periodo'),
+
+    url(r'^gasto/periodo$',
+        views.GastoPeriodoListView.as_view(),
+        name='gasto-periodo-list'),
 
     url(r'^presupuesto/gasto/periodo$',
         views.GastoPresupuestoPeriodoView.as_view(),

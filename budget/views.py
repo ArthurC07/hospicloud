@@ -41,7 +41,7 @@ from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes, \
     Fuente
 from hospinet.utils import get_current_month_range, get_previous_month_range
 from hospinet.utils.date import get_month_end, make_end_day
-from hospinet.utils.forms import YearForm, MonthYearForm
+from hospinet.utils.forms import YearForm, MonthYearForm, PeriodoForm
 from income.models import Deposito, Cheque
 from invoice.models import Venta
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -283,7 +283,7 @@ class GastoPendienteCreateView(CuentaFormMixin, CreateView,
     form_class = GastoPendienteForm
 
 
-class GastoDeleteView(DeleteView, LoginRequiredMixin):
+class GastoDeleteView(LoginRequiredMixin, DeleteView):
     """
     Permite eliminar un :class:`Gasto`
     """
@@ -339,7 +339,7 @@ class GastoMixin(ContextMixin, View):
         return context
 
 
-class GastoParcialFormView(GastoMixin, FormView, LoginRequiredMixin):
+class GastoParcialFormView(GastoMixin, LoginRequiredMixin, FormView):
     """Permite efectuar un pago parcial a un :class:`Gasto`
     """
     form_class = MontoForm
@@ -351,7 +351,7 @@ class GastoParcialFormView(GastoMixin, FormView, LoginRequiredMixin):
         return HttpResponseRedirect(self.gasto.get_absolute_url())
 
 
-class GastoCuentaPeriodoView(FormMixin, TemplateView):
+class GastoCuentaPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
     """
     Obtiene los :class:`Gastos` de un periodo y cuenta determinados
     """
@@ -375,7 +375,7 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
                     cuenta=self.cuenta,
                     fecha_de_pago__range=(self.inicio, self.fin),
                     ejecutado=True
-            ).all()
+            ).select_related('proveedor', 'usuario').all()
         else:
             messages.info(
                     self.request,
@@ -401,7 +401,39 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
         return context
 
 
-class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
+class GastoPeriodoListView(LoginRequiredMixin, ListView):
+    """
+    Builds a list of :class:`Gasto`s that have been registered during
+    """
+    model = Gasto
+    context_object_name = 'gastos'
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Gasto` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = PeriodoForm(self.request.GET)
+        if form.is_valid():
+            return Gasto.objects.filter(
+                    fecha_de_pago__range=(
+                        form.cleaned_data['inicio'],
+                        form.cleaned_data['fin']
+                    ),
+                    ejecutado=True
+            ).select_related('proveedor', 'usuario')
+        return Gasto.objects.select_related('proveedor', 'usuario').all()
+
+    def get_context_data(self, **kwargs):
+        context = super(GastoPeriodoListView, self).get_context_data(**kwargs)
+        context['total'] = self.get_queryset().aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        return context
+
+
+class GastoPresupuestoPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
     """
     Obtiene los :class:`Gastos` de un periodo y cuenta determinados
     """
@@ -657,6 +689,12 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 total=Coalesce(Sum('monto'), Decimal())
         )
 
-        context['periodo_string'] = urlencode({'inicio': inicio, 'fin': fin})
+        context['periodo_string'] = urlencode(
+                {
+                    'inicio': inicio.strftime('%d/%m/%Y %H:%M'),
+                    'fin': fin.strftime('%d/%m/%Y %H:%M'),
+                    'submit': 'Mostrar'
+                }
+        )
 
         return context
