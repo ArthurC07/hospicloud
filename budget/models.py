@@ -119,8 +119,10 @@ class Presupuesto(TimeStampedModel):
                 recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
                 recibo__cliente__ciudad__isnull=True)
 
-        return Venta.objects.select_related('recibo__ciudad',
-                                            'recibo__cliente__ciudad').filter(
+        return Venta.objects.select_related(
+                'recibo__ciudad',
+                'recibo__cliente__ciudad'
+        ).filter(
                 condition,
                 recibo__created__range=(inicio, fin),
                 recibo__ciudad=self.ciudad,

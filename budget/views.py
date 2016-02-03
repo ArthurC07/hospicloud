@@ -64,12 +64,10 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
     model = Presupuesto
     context_object_name = 'presupuestos'
     queryset = Presupuesto.objects.prefetch_related(
-        'ciudad',
-        'cuenta_set',
-    )
-
-    def get_queryset(self):
-        return Presupuesto.objects.filter(inversion=False).all()
+            'cuenta_set',
+    ).select_related(
+            'ciudad'
+    ).filter(inversion=False)
 
     def get_context_data(self, **kwargs):
         context = super(PresupuestoListView, self).get_context_data(**kwargs)
@@ -77,9 +75,15 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         fin, inicio = get_current_month_range()
         fin_prev, inicio_prev = get_previous_month_range()
 
-        inversiones = Presupuesto.objects.filter(inversion=True)
+        inversiones = Presupuesto.objects.select_related(
+                'ciudad'
+        ).filter(inversion=True)
 
-        gastos = Gasto.objects.filter(
+        gastos = Gasto.objects.select_related(
+                'cuenta',
+                'cuenta__presupuesto',
+                'cuenta__presupuesto__ciudad',
+        ).filter(
                 fecha_de_pago__range=(inicio, fin),
                 ejecutado=True,
                 cuenta__presupuesto__inversion=False
