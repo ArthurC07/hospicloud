@@ -440,8 +440,7 @@ def consolidate_into_persona(persona):
     clones = Persona.objects.filter(
             nombre__iexact=persona.nombre,
             duplicado=True,
-            apellido__iexact=persona.apellido,
-            identificacion=persona.identificacion
+            apellido__iexact=persona.apellido
     ).exclude(pk=persona.pk)
 
     print(clones.count())
