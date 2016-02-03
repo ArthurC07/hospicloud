@@ -83,6 +83,10 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
     paginate_by = 20
     context_object_name = 'pacientes'
     model = Consultorio
+    queryset = Consultorio.objects.select_related(
+            'usuario',
+            'secretaria',
+    )
 
     def get_context_data(self, **kwargs):
         context = super(ConsultorioIndexView, self).get_context_data(**kwargs)
@@ -126,11 +130,18 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             'pacientesearch'].helper.form_action = \
             'clinique-paciente-search-add'
 
-        context['esperas'] = Espera.objects.filter(fecha__gte=self.yesterday,
-                                                   consulta=False,
-                                                   terminada=False,
-                                                   atendido=False,
-                                                   ausente=False).all()
+        context['esperas'] = Espera.objects.filter(
+                fecha__gte=self.yesterday,
+                consulta=False,
+                terminada=False,
+                atendido=False,
+                ausente=False
+        ).select_related(
+                'persona',
+                'consultorio',
+                'consultorio__usuario',
+                'consultorio__secretaria',
+        ).all()
 
         return context
 

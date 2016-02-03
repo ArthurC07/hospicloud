@@ -345,7 +345,11 @@ class Income(TimeStampedModel):
                 recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
                 recibo__cliente__ciudad__isnull=True)
 
-        return Pago.objects.filter(
+        return Pago.objects.select_related(
+                'recibo',
+                'recibo__ciudad',
+                'recibo__cliente__ciudad'
+        ).filter(
                 condition,
                 recibo__created__range=(inicio, fin),
                 recibo__nulo=False,
@@ -358,7 +362,10 @@ class Income(TimeStampedModel):
         return self.facturado_periodo(inicio, fin)
 
     def pagos_periodo(self, inicio, fin):
-        return Pago.objects.filter(
+        return Pago.objects.select_related(
+                'tipo',
+                'recibo'
+        ).filter(
                 tipo__reembolso=False,
                 recibo__ciudad=self.ciudad,
                 recibo__created__range=(inicio, fin),
@@ -396,7 +403,11 @@ class Income(TimeStampedModel):
         return self.total_reembolsos_periodo(inicio, fin)
 
     def pagos_reembolsados_periodo(self, inicio, fin):
-        return Pago.objects.filter(
+        return Pago.objects.select_related(
+                'tipo',
+                'status',
+                'recibo'
+        ).filter(
                 tipo__reembolso=True,
                 recibo__ciudad=self.ciudad,
                 status__reportable=False,
@@ -418,7 +429,11 @@ class Income(TimeStampedModel):
         return self.total_pagos_reembolsados_periodo(inicio, fin)
 
     def pagos_por_reembolsar_periodo(self, inicio, fin):
-        return Pago.objects.filter(
+        return Pago.objects.select_related(
+            'tipo',
+            'status',
+            'recibo'
+        ).filter(
                 tipo__reembolso=True,
                 recibo__ciudad=self.ciudad,
                 status__reportable=True,

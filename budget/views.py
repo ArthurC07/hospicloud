@@ -63,6 +63,10 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
     """
     model = Presupuesto
     context_object_name = 'presupuestos'
+    queryset = Presupuesto.objects.prefetch_related(
+        'ciudad',
+        'cuenta_set',
+    )
 
     def get_queryset(self):
         return Presupuesto.objects.filter(inversion=False).all()
@@ -81,7 +85,7 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
                 cuenta__presupuesto__inversion=False
         ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
 
-        presupuesto = Cuenta.objects.filter(
+        presupuesto = Cuenta.objects.select_related('presupuesto').filter(
                 presupuesto__activo=True,
                 presupuesto__inversion=False
         ).aggregate(total=Coalesce(Sum('limite'), Decimal()))['total']
@@ -116,7 +120,11 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
-        ingresos = ventas.values('recibo__ciudad__nombre').annotate(
+        ingresos = ventas.select_related(
+                'recibo__ciudad'
+        ).values(
+                'recibo__ciudad__nombre'
+        ).annotate(
                 total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
 
@@ -151,22 +159,9 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         context['gasto-presupuesto-periodo'].set_action(
                 'gasto-presupuesto-periodo'
         )
-        years = [d.year for d in Gasto.objects.all().datetimes(
-                'fecha_de_pago', 'year'
-        )]
-
-        context['years'] = []
 
         context['budget-month'] = PresupuestoMesForm()
         context['budget-month'].set_action('monthly-budget-add')
-
-        for year in years:
-            form = YearForm(initial={'year': year})
-            form.fields['year'].widget = forms.HiddenInput()
-            form.helper.add_input(Submit('submit', str(year)))
-            form.set_action('anual-budget')
-            form.helper.form_method = 'get'
-            context['years'].append(form)
 
         context['budget-month-year'] = MonthYearForm()
         context['budget-month-year'].set_action('budget-list')

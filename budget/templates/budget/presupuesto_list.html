@@ -222,58 +222,6 @@
                 <div class="row tab-pane fade in" id="ingresos">
                     <div class="col-md-12 table-responsive">
                         <h2>{% trans 'Ingresos' %}</h2>
-                        <h3>
-                            {% trans 'Ingresos al Credito Mes Anterior' %}
-                            {{ credito_anterior }}
-                        </h3>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>{% trans 'Ciudad' %}</th>
-                                <th>{% trans 'Proyectado' %}</th>
-                                <th>{% trans 'Ingresado' %}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for income in incomes %}
-                                <tr>
-                                    <td>{{ income.ciudad }}</td>
-                                    <td class="text-right">{{ income.monto }}</td>
-                                    <td class="text-right">
-                                        {{ income.ingresado_mes_actual }}
-                                        <table class="table">
-                                            {% for pago in income.facturado_mes_actual %}
-                                                <tr>
-                                                    <td class="text-left">{{ pago.tipo__nombre }}</td>
-                                                    <td class="text-right">{{ pago.total }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </table>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                        <h2>{% trans 'Aseguradoras' %}</h2>
-                        {% for income in incomes %}
-                            <table class="table">
-                                <caption>{{ income.ciudad }}</caption>
-                                <tr>
-                                    <th>{% trans 'Aseguradora' %}</th>
-                                    <th>{% trans 'Monto Reembolsado Mes Actual' %}</th>
-                                    <th>{% trans 'Monto Pendiente' %}</th>
-                                    <th>{% trans 'Facturado' %}</th>
-                                </tr>
-                                {% for aseguradora in income.pendiente_aseguradoras %}
-                                    <tr>
-                                        <td>{{ aseguradora.0 }}</td>
-                                        <td class="text-right">{{ aseguradora.2 }}</td>
-                                        <td class="text-right">{{ aseguradora.3 }}</td>
-                                        <td class="text-right">{{ aseguradora.1 }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
-                        {% endfor %}
                     </div>
                 </div>
                 <div class="row tab-pane fade in" id="reportes">
