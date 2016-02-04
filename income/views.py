@@ -208,8 +208,24 @@ class ChequePeriodoListView(LoginRequiredMixin, ListView):
                         form.cleaned_data['inicio'],
                         form.cleaned_data['fin']
                     )
-            ).select_related('usuario', 'banco_de_emision')
-        return Cheque.objects.all()
+            ).select_related(
+                    'usuario', 'banco_de_emision'
+            ).prefetch_related(
+                    'detallepago_set',
+                    'detallepago_set__pago',
+                    'detallepago_set__pago__aseguradora',
+                    'detallepago_set__pago__recibo',
+                    'detallepago_set__pago__recibo__ciudad',
+            )
+        return Cheque.objects.select_related(
+                'usuario', 'banco_de_emision'
+        ).prefetch_related(
+                'detallepago_set',
+                'detallepago_set__pago',
+                'detallepago_set__pago__aseguradora',
+                'detallepago_set__pago__recibo',
+                'detallepago_set__pago__recibo__ciudad',
+        ).all()
 
 
 class CierrePOSCreateView(LoginRequiredMixin, CreateView):
@@ -229,7 +245,7 @@ class ChequeNumeroListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         form = NumeroForm(self.request.GET)
         if form.is_valid():
-            return Cheque.objects.filter(
+            return Cheque.objects.select_related('banco_de_emision').filter(
                     numero_de_cheque__contains=form.cleaned_data['numero']
             )
         return Cheque.objects.all()

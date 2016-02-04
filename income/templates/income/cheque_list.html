@@ -10,6 +10,7 @@
                     <th>{% trans 'Banco Emisor' %}</th>
                     <th>{% trans 'Monto' %}</th>
                     <th>{% trans 'Fecha de Entrega' %}</th>
+                    <th>{% trans 'Recibos Pagados' %}</th>
                     <th>{% trans 'Acciones' %}</th>
                 </tr>
                 </thead>
@@ -20,7 +21,18 @@
                         <td>{{ cheque.banco_de_emision }}</td>
                         <td>{{ cheque.monto }}</td>
                         <td>{{ cheque.fecha_de_entrega }}</td>
-                        <td><a class="btn btn-primary" href="{{ cheque.get_absolute_url }}">Ver</a></td>
+                        <td>
+                            {% for detalle in cheque.detallepago_set.all %}
+                                <p>
+                                    <a href="{{ detalle.pago.recibo.get_absolute_url }}">
+                                        {{ detalle.pago.recibo.numero }}
+                                    </a> - {{ detalle.pago.aseguradora }}
+                                    - {{ detalle.pago.monto }}
+                                </p>
+                            {% endfor %}
+                        </td>
+                        <td><a class="btn btn-primary"
+                               href="{{ cheque.get_absolute_url }}">Ver</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
