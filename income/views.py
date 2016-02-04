@@ -162,6 +162,13 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
     adding the forms that collect the information related to each :class:`Pago`
     """
     model = Cheque
+    queryset = Cheque.objects.prefetch_related(
+            'detallepago_set',
+            'detallepago_set__pago',
+            'detallepago_set__pago__recibo',
+            'detallepago_set__pago__recibo__ciudad',
+            'detallepago_set__pago__aseguradora',
+    )
 
     def get_context_data(self, **kwargs):
         """
@@ -173,9 +180,9 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
 
         context['pagos'] = []
         pagos = Pago.objects.select_related(
-            'recibo',
-            'recibo__cliente',
-            'recibo__ciudad',
+                'recibo',
+                'recibo__cliente',
+                'recibo__ciudad',
         ).filter(
                 status__reportable=True,
                 completado=False,
