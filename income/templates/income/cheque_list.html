@@ -31,8 +31,27 @@
                                 </p>
                             {% endfor %}
                         </td>
-                        <td><a class="btn btn-primary"
-                               href="{{ cheque.get_absolute_url }}">Ver</a></td>
+                        <td>
+                            <div class="btn-group">
+                                <a class="btn btn-success"
+                                   href="{{ cheque.get_absolute_url }}">{% trans 'Ver' %}</a>
+                                <button type="button"
+                                        class="btn btn-success dropdown-toggle"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">{% trans 'Toggle Dropdown' %}</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{% url 'deposito-create' %}">
+                                            {% trans 'Depositar' %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

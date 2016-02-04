@@ -116,7 +116,10 @@ class DepositoCreateView(LoginRequiredMixin, CreateView):
         page.
         :return: The :class:`IncomeIndexView` url
         """
-        return 'income-index'
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return 'income-index'
 
 
 class DepositoPeriodoListView(LoginRequiredMixin, ListView):
