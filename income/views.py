@@ -172,10 +172,15 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
         context = super(ChequeCobroDetailView, self).get_context_data(**kwargs)
 
         context['pagos'] = []
-        for pago in Pago.objects.filter(
+        pagos = Pago.objects.select_related(
+            'recibo',
+            'recibo__cliente',
+            'recibo__ciudad',
+        ).filter(
                 status__reportable=True,
                 completado=False,
-                tipo__reembolso=True):
+                tipo__reembolso=True)
+        for pago in pagos:
             form = DetallePagoForm(initial={
                 'pago': pago,
                 'cheque': self.object,
