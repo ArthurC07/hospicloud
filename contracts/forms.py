@@ -216,7 +216,7 @@ class BeneficiarioPersonaForm(BasePersonaForm):
         exclude = ('activo', 'dependiente',)
 
     contrato = forms.ModelChoiceField(
-            queryset=Contrato.objects.all()
+            queryset=Contrato.objects.select_related('persona').all()
     )
     inscripcion = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)

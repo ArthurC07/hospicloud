@@ -386,7 +386,7 @@ class ContratoDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         self.object = self.get_object(Contrato.objects.all())
-        return self.object.beneficiarios.all()
+        return self.object.beneficiarios.select_related('persona').all()
 
 
 class ContratoUpdateView(LoginRequiredMixin, UpdateView):
