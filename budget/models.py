@@ -170,13 +170,22 @@ class Cuenta(TimeStampedModel):
         """Obtiene los :class:`Gasto`s que aún no han sido ejectuados y por lo
         tanto son cuentas por pagar"""
 
-        return Gasto.objects.filter(cuenta=self, ejecutado=False)
+        return Gasto.objects.select_related(
+                'proveedor',
+                'usuario',
+        ).filter(cuenta=self, ejecutado=False)
 
     def gastos_por_periodo(self, inicio, fin):
         """obtiene los :class:`Gasto`s que ya fueron ejecutados y que han sido
         descargado del flujo de dinero de la empresa"""
-        return Gasto.objects.filter(cuenta=self, ejecutado=True,
-                                    fecha_de_pago__range=(inicio, fin))
+        return Gasto.objects.select_related(
+                'proveedor',
+                'usuario',
+        ).filter(
+                cuenta=self,
+                ejecutado=True,
+                fecha_de_pago__range=(inicio, fin)
+        )
 
     def total_gastos_por_periodo(self, inicio, fin):
         """Obtiene el tal de :class:`Gasto`s de la :class:`Cuenta` en un periodo
@@ -432,9 +441,9 @@ class Income(TimeStampedModel):
 
     def pagos_por_reembolsar_periodo(self, inicio, fin):
         return Pago.objects.select_related(
-            'tipo',
-            'status',
-            'recibo'
+                'tipo',
+                'status',
+                'recibo'
         ).filter(
                 tipo__reembolso=True,
                 recibo__ciudad=self.ciudad,

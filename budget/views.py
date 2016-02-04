@@ -54,6 +54,11 @@ class PresupuestoDetailView(LoginRequiredMixin, DetailView):
     """
     model = Presupuesto
     context_object_name = 'presupuesto'
+    queryset = Presupuesto.objects.select_related(
+        'ciudad'
+    ).prefetch_related(
+        'cuenta_set',
+    )
 
 
 class PresupuestoListView(LoginRequiredMixin, ListView):
