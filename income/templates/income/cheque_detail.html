@@ -2,7 +2,7 @@
 {% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 main-header">
+        <div class="col-md-9 main-header">
             <section class="page-header">
                 <h1>
                     {% trans 'Cheque' %} {{ cheque }}
@@ -12,9 +12,13 @@
                         {% trans 'Monto Pendiente' %}
                         {{ cheque.pendiente }}
                     </small>
-                    <a href="{% url 'deposito-create' %}">{% trans 'Depositar' %}</a>
                 </h1>
             </section>
+        </div>
+        <div class="col-md-3 col-xs-3 main-header">
+            <a class="btn btn-info" href="{% url 'deposito-create' %}">
+                {% trans 'Depositar' %}
+            </a>
         </div>
     </div>
     <div class="row">
