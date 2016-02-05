@@ -12,6 +12,7 @@
                         {% trans 'Monto Pendiente' %}
                         {{ cheque.pendiente }}
                     </small>
+                    <a href="{% url 'deposito-create' %}">{% trans 'Depositar' %}</a>
                 </h1>
             </section>
         </div>
