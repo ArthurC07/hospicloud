@@ -55,7 +55,7 @@ class PagoAdmin(admin.ModelAdmin):
     search_fields = ['recibo__cajero__first_name',
                      'recibo__cajero__last_name',
                      'recibo__cliente__nombre',
-                    'recibo__cliente__apellidos',
+                    'recibo__cliente__apellido',
                      'tipo__nombre', 'monto', 'recibo__correlativo']
     exclude = ('recibo', )
 
