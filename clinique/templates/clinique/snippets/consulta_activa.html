@@ -1,3 +1,4 @@
+{% load i18n %}{% load l10n %}
 <div class="col-md-12">
     <section class="page-header">
         <h2>Consulta en Consultorio {{ consulta.consultorio }}
@@ -20,6 +21,9 @@
             <li role="presentation"><a role="menuitem" href="{% url 'consultorio-diagnostico-agregar' consulta.persona.id consulta.id %}">Agregar Diagnóstico</a></li>
             <li role="presentation"><a role="menuitem" href="{% url 'consultorio-om-agregar' consulta.id %}"><i class="fa fa-stethoscope"></i> Agregar Orden M&eacute;dica</a></li>
             <li role="presentation"><a role="menuitem" href="{% url 'consulta-remitir' consulta.id %}"><i class="fa fa-stethoscope"></i> Remitir A Especialista</a></li>
+            <li>
+                <a href="{% url 'nota-medica-agregar' consulta.id %}">{% trans 'Agregar Nota' %}</a>
+            </li>
         </ul>
         <a class="btn btn-danger" href="{% url 'clinique-consulta-terminada' consulta.id %}">Terminar Consulta</a>
         <a class="btn btn-warning" href="{% url 'consulta-emergencia' consulta.id %}">Enviar a Emergencia</a>
@@ -162,6 +166,16 @@
                             class="fa fa-edit"></i> Editar</a></td>
                 </tr>
             {% endfor %}
+            </tbody>
+        </table>
+        <table class="table table-striped">
+            <caption>{% trans 'Observaciones del M&eacute;dico' %}</caption>
+            <tbody>
+                {% for nota in consulta.notamedica_set.all %}
+                    <tr>
+                        <td>{{ nota.observacion }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </article>

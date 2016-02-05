@@ -448,6 +448,18 @@ class Remision(TimeStampedModel):
     motivo = models.TextField()
 
 
+class NotaMedica(TimeStampedModel):
+    """
+    Allows a medic to add some notes about :class:`Persona` behavior
+    """
+    consulta = models.ForeignKey(Consulta)
+    observacion = models.TextField()
+
+    def get_absolute_url(self):
+
+        return self.consulta.get_absolute_url()
+
+
 def consolidate_clinique(persona, clone):
     [transfer_object_to_persona(consulta, persona) for consulta in
      clone.consultas.all()]

@@ -211,6 +211,10 @@ urlpatterns = [
         views.ConsultaEmergenciaRedirectView.as_view(),
         name='consulta-emergencia'),
 
+    url(r'^(?P<consulta>\d+)/nota/medica/agregar$',
+        views.NotaMedicaCreateView.as_view(),
+        name='nota-medica-agregar'),
+
     url(r'^(?P<persona>\d+)/(?P<consultorio>\d+)/espera/agregar$',
         views.EsperaCreateView.as_view(),
         name='consultorio-espera-agregar'),

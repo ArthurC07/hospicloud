@@ -42,10 +42,12 @@ from clinique.forms import CitaForm, EvaluacionForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
-    PrescripcionFormSet
+    PrescripcionFormSet, NotaMedicaForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
-    NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, Remision
+    NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
+    Remision, \
+    NotaMedica
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from inventory.models import ItemTemplate, TipoVenta
@@ -863,7 +865,7 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
         self.form = PeriodoForm(request.GET, prefix='consulta')
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
-            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.fin = self.form.cleaned_data['fin']
             self.consultas = Consulta.objects.filter(
                     created__range=(self.inicio, self.fin)
             ).order_by('created')
@@ -934,3 +936,11 @@ class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
 
         messages.info(self.request, _('¡Se Envio el Paciente a Emergencias!'))
         return emergencia.get_absolute_url()
+
+
+class NotaMedicaCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
+    """
+    Creates a new :class:`NotaMedica`
+    """
+    model = NotaMedica
+    form_class = NotaMedicaForm

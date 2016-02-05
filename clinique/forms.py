@@ -25,7 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from clinique.models import Cita, Evaluacion, Seguimiento, Consulta, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
-    TipoConsulta, Remision, Afeccion
+    TipoConsulta, Remision, Afeccion, NotaMedica
 from inventory.forms import ItemTemplateFormMixin
 from inventory.models import ItemTemplate, ItemType
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
@@ -295,4 +295,14 @@ class RemisionForm(ConsultorioFormMixin, BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(RemisionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Remitir Paciente'), *self.field_names)
+
+
+class NotaMedicaForm(HiddenConsultaFormMixin, HiddenUserForm):
+    class Meta:
+        model = NotaMedica
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(NotaMedicaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Remitir Paciente'), *self.field_names)
