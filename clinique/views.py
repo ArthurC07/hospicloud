@@ -866,7 +866,23 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = self.form.cleaned_data['fin']
-            self.consultas = Consulta.objects.filter(
+            self.consultas = Consulta.objects.select_related(
+                    'persona',
+                    'tipo',
+                    'consultorio',
+                    'consultorio__usuario',
+                    'consultorio__localidad',
+            ).prefetch_related(
+                    'cargos',
+                    'cargos__item',
+                    'diagnosticos_clinicos',
+                    'diagnosticos_clinicos__afeccion',
+                    'persona__contratos',
+                    'persona__contratos__master__aseguradora',
+                    'persona__contratos__beneficiarios',
+                    'persona__beneficiarios',
+                    'persona__beneficiarios__contrato',
+            ).filter(
                     created__range=(self.inicio, self.fin)
             ).order_by('created')
         else:
