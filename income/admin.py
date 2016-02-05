@@ -71,7 +71,12 @@ class DetallePagoAdmin(admin.ModelAdmin):
     Describes the interface to manage :class:`DetallePago`s in the Django
     administrative interface
     """
-    list_display = ['cheque', 'pago', 'monto']
+    list_display = ['cheque', 'pago', 'get_recibo_numero', 'monto']
+    search_fields = ['cheque__numero_de_cheque', 'pago__recibo__correlativo']
+    exclude = ('pago', )
+
+    def get_recibo_numero(self, obj):
+        return obj.pago.recibo.correlativo
 
 
 admin.site.register(TipoDeposito, TipoDepositoAdmin)
