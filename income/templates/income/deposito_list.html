@@ -9,6 +9,7 @@
                     <th>{% trans 'Cuenta de Dep&oacute;sito' %}</th>
                     <th>{% trans 'Monto' %}</th>
                     <th>{% trans 'Fecha de Dep&oacute;sito' %}</th>
+                    <th>{% trans 'Tipo de Dep&oacute;sito' %}</th>
                     <th>{% trans 'Acciones' %}</th>
                 </tr>
                 </thead>
@@ -18,6 +19,7 @@
                         <td>{{ deposito.cuenta }}</td>
                         <td>{{ deposito.monto }}</td>
                         <td>{{ deposito.fecha_de_deposito }}</td>
+                        <td>{{ deposito.tipo }}</td>
                         <td><a class="btn btn-primary" href="{{ deposito.get_absolute_url }}">Ver</a></td>
                     </tr>
                 {% endfor %}

@@ -691,7 +691,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 'cuenta__presupuesto__ciudad__nombre'
         ).annotate(
                 total=Coalesce(Sum('monto'), Decimal())
-        )
+        ).order_by()
 
         context['periodo_string'] = urlencode(
                 {
