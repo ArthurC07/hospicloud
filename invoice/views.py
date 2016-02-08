@@ -1343,7 +1343,7 @@ class MasterCotizarView(LoginRequiredMixin, RedirectView):
                 master.poliza,
                 master.contratante.nombre
         )
-        cotizado.cantidad = 1
+        cotizado.cantidad = master.active_contracts_count()
         cotizado.precio = master.plan.item.precio_de_venta
         cotizado.impuesto = master.plan.item.impuestos
         cotizado.save()
