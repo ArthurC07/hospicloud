@@ -32,14 +32,16 @@
                         <td>{{ cheque.monto }}</td>
                         <td>{{ cheque.fecha_de_entrega }}</td>
                         <td>
-                            {% for detalle in cheque.detallepago_set.all %}
-                                <p>
-                                    <a href="{{ detalle.pago.recibo.get_absolute_url }}">
-                                        {{ detalle.pago.recibo.numero }}
-                                    </a> - {{ detalle.pago.aseguradora }}
-                                    - {{ detalle.pago.monto }}
-                                </p>
-                            {% endfor %}
+                            <table class="table table-striped">
+                                {% for detalle in cheque.detallepago_set.all %}
+                                    <td>
+                                        <a href="{{ detalle.pago.recibo.get_absolute_url }}">
+                                            {{ detalle.pago.recibo.numero }}
+                                        </a> - {{ detalle.pago.aseguradora }}
+                                        - {{ detalle.pago.monto }}
+                                    </td>
+                                {% endfor %}
+                            </table>
                         </td>
                         <td>
                             <div class="btn-group">
