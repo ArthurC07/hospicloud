@@ -16,6 +16,9 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+from decimal import Decimal
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, ListView, DetailView, TemplateView
 
@@ -145,6 +148,16 @@ class DepositoPeriodoListView(LoginRequiredMixin, ListView):
             ).select_related('cuenta')
         return Deposito.objects.select_related('cuenta').all()
 
+    def get_context_data(self, **kwargs):
+        context = super(DepositoPeriodoListView, self).get_context_data(
+                **kwargs)
+
+        context['total'] = self.get_queryset().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        return context
+
 
 class ChequeCreateView(LoginRequiredMixin, CreateView):
     """
@@ -241,6 +254,15 @@ class ChequePeriodoListView(LoginRequiredMixin, ListView):
                 'detallepago_set__pago__recibo',
                 'detallepago_set__pago__recibo__ciudad',
         ).all()
+
+    def get_context_data(self, **kwargs):
+        context = super(ChequePeriodoListView, self).get_context_data(**kwargs)
+
+        context['total'] = self.get_queryset().aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        return context
 
 
 class CierrePOSCreateView(LoginRequiredMixin, CreateView):

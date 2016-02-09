@@ -701,4 +701,15 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 }
         )
 
+        ventas = Venta.objects.select_related(
+            'recibo',
+            'item'
+        ).filter(
+            recibo__created__range=(inicio, fin)
+        )
+
+        context['total_ventas'] = ventas.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
         return context

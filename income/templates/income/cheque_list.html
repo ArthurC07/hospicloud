@@ -2,6 +2,16 @@
 {% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
 {% block content %}
     <div class="row">
+        <div class="col-md-12 col-xs-12 main-header page-header">
+            <h1>
+                {% trans 'Cheques' %}
+                <small>
+                    {{ total }}
+                </small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12 main-content">
             <table class="table table-striped">
                 <thead>
