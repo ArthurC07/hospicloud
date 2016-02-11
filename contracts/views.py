@@ -629,7 +629,7 @@ class BeneficiarioCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     form_class = BeneficiarioPersonaForm
 
 
-class BeneficiarioPersonaCreateView(ContratoFormMixin):
+class BeneficiarioPersonaCreateView(ContratoFormMixin, TemplateView):
     model = Beneficiario
     template_name = 'contracts/beneficiario_create.html'
 
