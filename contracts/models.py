@@ -151,7 +151,7 @@ class PCD(TimeStampedModel):
         return self.persona.get_absolute_url()
 
 
-def check_line(line, vencimiento):
+def check_line(line, vencimiento, master_dict):
     """
     Reads one list and according to its positional contents it will act
     accordingly:
@@ -191,28 +191,39 @@ def check_line(line, vencimiento):
     identificacion = smart_text(line[9])
     vencimiento_r = vencimiento
     exclusion = smart_text(line[10])
-
+    dependiente = int(line[3])
     activo = smart_text(line[7]).upper()
 
-    master = MasterContract.objects.get(poliza=poliza_f)
+    master = master_dict[poliza_f]
+    suspendido = True if activo == 'S' else False
 
     if line[8]:
         vencimiento_r = make_end_day(datetime.strptime(line[8], '%m/%d/%Y'))
 
     try:
-        pcd = PCD.objects.get(numero=file_pcd)
+        pcd = PCD.objects.prefetch_related(
+                'persona',
+                'persona__beneficiarios',
+                'persona__contratos',
+        ).get(numero=file_pcd)
 
-        contratos = Contrato.objects.filter(persona=pcd.persona,
-                                            certificado=file_certificado)
+        persona = pcd.persona
 
-        [update_contract(activo, contrato, exclusion, master, vencimiento_r) for
-         contrato in contratos.all()]
+        contratos = persona.contratos.filter(certificado=file_certificado)
 
-        for beneficiario in Beneficiario.objects.filter(
-                persona=pcd.persona).all():
-            beneficiario.contrato.vencimiento = vencimiento_r
-            beneficiario.exclusion = smart_text(line[10])
-            beneficiario.contrato.save()
+        contratos.update(
+                suspendido=suspendido,
+                exclusion=exclusion,
+                master=master,
+                plan=master.plan,
+                vencimiento=vencimiento_r
+        )
+
+        persona.beneficiarios.filter(
+                persona__contratos__certificado=file_certificado
+        ).update(
+            exclusion=exclusion,
+        )
 
     except ObjectDoesNotExist:
 
@@ -223,16 +234,15 @@ def check_line(line, vencimiento):
         pcd = PCD(persona=persona, numero=file_pcd)
         pcd.save()
 
-        dependiente = int(line[3])
-
         if dependiente == 0:
 
-            contract = master.create_contract(persona, vencimiento_r,
-                                              file_certificado, file_pcd)
-            if activo == 'S':
-                contract.suspendido = True
-            else:
-                contract.suspendido = False
+            contract = master.create_contract(
+                    persona,
+                    vencimiento_r,
+                    file_certificado,
+                    file_pcd
+            )
+            contract.suspendido = suspendido
             contract.exclusion = exclusion
             contract.save()
         else:
@@ -284,10 +294,16 @@ class ImportFile(TimeStampedModel):
         archivo = storage.open(self.archivo.name, 'rU')
         data = unicodecsv.reader(archivo)
         vencimiento = make_end_day(self.created) + timedelta(days=8)
+        masters = MasterContract.objects.select_related(
+                'plan',
+                'contratante',
+                'aseguradora'
+        ).all()
+        master_dict = {master.poliza: master for master in masters}
 
         # Create a :class:`Contract` for each identificacion on the file
         for line in data:
-            check_line(line, vencimiento)
+            check_line(line, vencimiento, master_dict)
 
         self.processed = True
         self.save()
@@ -375,8 +391,8 @@ class MasterContract(TimeStampedModel):
             if dependiente > 0:
                 dependiente += 1
             pcd.numero = '{0}{1:0>6}{2:0>2}'.format(self.poliza,
-                                                     contract.certificado,
-                                                     dependiente)
+                                                    contract.certificado,
+                                                    dependiente)
             pcd.save()
             contract.numero = pcd.numero
             contract.save()
@@ -443,7 +459,7 @@ class Contrato(TimeStampedModel):
 
     def __str__(self):
         return _("Contrato {0} de {1}").format(self.numero,
-                                                self.persona.nombre_completo())
+                                               self.persona.nombre_completo())
 
     def total_consultas(self):
         """"Obtiene el total de :class:`Consulta` que los usuarios del contrato
@@ -620,8 +636,8 @@ class LimiteEvento(TimeStampedModel):
 
     def __str__(self):
         return _("Límite {0} de {1} en plan {2}").format(self.tipo_evento,
-                                                          self.cantidad,
-                                                          self.plan.nombre)
+                                                         self.cantidad,
+                                                         self.plan.nombre)
 
 
 @python_2_unicode_compatible
