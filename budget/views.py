@@ -43,7 +43,7 @@ from hospinet.utils import get_current_month_range, get_previous_month_range
 from hospinet.utils.date import get_month_end, make_end_day
 from hospinet.utils.forms import YearForm, MonthYearForm, PeriodoForm
 from income.models import Deposito, Cheque
-from invoice.models import Venta
+from invoice.models import Venta, Pago
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -711,5 +711,17 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         context['total_ventas'] = ventas.aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
+
+        pagos = Pago.objects.select_related(
+            'tipo',
+        ).filter(
+            recibo__created__range=(inicio, fin)
+        )
+
+        context['pagos'] = pagos.values(
+                'tipo__nombre'
+        ).annotate(
+            total=Coalesce(Sum('monto'), Decimal())
+        ).order_by()
 
         return context
