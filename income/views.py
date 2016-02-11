@@ -144,8 +144,10 @@ class DepositoPeriodoListView(LoginRequiredMixin, ListView):
                         form.cleaned_data['inicio'],
                         form.cleaned_data['fin']
                     )
-            ).select_related('cuenta')
-        return Deposito.objects.select_related('cuenta').all()
+            ).select_related('cuenta').order_by('fecha_de_deposito')
+        return Deposito.objects.select_related(
+                'cuenta'
+        ).all().order_by('fecha_de_deposito')
 
     def get_context_data(self, **kwargs):
         context = super(DepositoPeriodoListView, self).get_context_data(
@@ -242,7 +244,7 @@ class ChequePeriodoListView(LoginRequiredMixin, ListView):
                     'detallepago_set__pago__aseguradora',
                     'detallepago_set__pago__recibo',
                     'detallepago_set__pago__recibo__ciudad',
-            )
+            ).order_by('fecha_de_entrega')
         return Cheque.objects.select_related(
                 'usuario', 'banco_de_emision'
         ).prefetch_related(
@@ -251,7 +253,7 @@ class ChequePeriodoListView(LoginRequiredMixin, ListView):
                 'detallepago_set__pago__aseguradora',
                 'detallepago_set__pago__recibo',
                 'detallepago_set__pago__recibo__ciudad',
-        ).all()
+        ).all().order_by('fecha_de_entrega')
 
     def get_context_data(self, **kwargs):
         context = super(ChequePeriodoListView, self).get_context_data(**kwargs)
