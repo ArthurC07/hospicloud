@@ -131,7 +131,6 @@ class DepositoPeriodoListView(LoginRequiredMixin, ListView):
     """
     model = Deposito
     context_object_name = 'depositos'
-    paginate_by = 30
 
     def get_queryset(self):
         """
@@ -222,7 +221,6 @@ class ChequePeriodoListView(LoginRequiredMixin, ListView):
     """
     model = Cheque
     context_object_name = 'cheques'
-    paginate_by = 30
 
     def get_queryset(self):
         """
