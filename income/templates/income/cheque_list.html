@@ -21,6 +21,7 @@
                     <th>{% trans 'Monto' %}</th>
                     <th>{% trans 'Fecha de Entrega' %}</th>
                     <th>{% trans 'Recibos Pagados' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
                     <th class="no-print">{% trans 'Acciones' %}</th>
                 </tr>
                 </thead>
@@ -46,6 +47,7 @@
                                 {% endfor %}
                             </table>
                         </td>
+                        <td>{{ cheque.usuario }}</td>
                         <td class="no-print">
                             <div class="btn-group">
                                 <a class="btn btn-success"
