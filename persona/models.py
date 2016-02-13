@@ -60,7 +60,8 @@ class Persona(TimeStampedModel):
         ('S', _('Soltero/a')),
         ('D', _('Divorciado/a')),
         ('C', _('Casado/a')),
-        ('', _('Union Libre'))
+        ('U', _('Union Libre')),
+        ('', _('---------'))
     )
     TIPOS_IDENTIDAD = (
         ("R", _("Carnet de Residencia")),
