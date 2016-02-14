@@ -718,6 +718,7 @@ class EsperaAusenteView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.ausente = True
+        espera.fin = timezone.now()
         espera.save()
         messages.info(
                 self.request,
@@ -777,7 +778,7 @@ class CitaEsperaRedirectView(LoginRequiredMixin, RedirectView):
         espera.save()
         messages.info(
                 self.request,
-                _('¡Se envio el paciente a salada de espera!')
+                _('¡Se envio el paciente a sala de espera!')
         )
         return espera.get_absolute_url()
 
@@ -791,11 +792,11 @@ class EsperaConsultaRedirectView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.consulta = True
-        espera.inicio = timezone.now()
+        espera.fin = timezone.now()
         espera.save()
         messages.info(
                 self.request,
-                _('¡Se envio el paciente a salada de consulta!')
+                _('¡Se envio el paciente a consulta!')
         )
         return espera.get_absolute_url()
 

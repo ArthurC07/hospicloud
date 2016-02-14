@@ -376,12 +376,12 @@ class Espera(TimeStampedModel):
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='espera')
     fecha = models.DateTimeField(auto_now_add=True)
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    terminada = models.BooleanField(default=False)
     atendido = models.BooleanField(default=False)
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
-    inicio = models.DateTimeField(auto_now_add=True)
-    terminada = models.BooleanField(default=False)
-    fin = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return _("{0} en {1}").format(self.persona.nombre_completo(),
