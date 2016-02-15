@@ -32,7 +32,6 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
-from clinique.models import Consulta, Seguimiento, Cita
 from hospinet.utils import make_end_day
 from hospinet.utils.date import get_current_month_range
 from inventory.models import ItemTemplate, ItemType
@@ -328,6 +327,7 @@ class MasterContract(TimeStampedModel):
                                      null=True, blank=True)
     ultimo_certificado = models.IntegerField(default=0)
     facturar_al_administrador = models.BooleanField(default=False)
+    privado = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['contratante__nombre']
@@ -460,47 +460,6 @@ class Contrato(TimeStampedModel):
     def __str__(self):
         return _("Contrato {0} de {1}").format(self.numero,
                                                self.persona.nombre_completo())
-
-    def total_consultas(self):
-        """"Obtiene el total de :class:`Consulta` que los usuarios del contrato
-        han efectuado"""
-        if self.renovacion is None:
-            self.renovacion = self.inicio
-            self.save()
-
-        consultas = Consulta.objects.filter(
-                persona=self.persona,
-                created__gte=self.renovacion
-        ).count()
-        seguimientos = Seguimiento.objects.filter(
-                persona=self.persona,
-                created__gte=self.renovacion
-        ).count()
-        total = seguimientos + consultas
-
-        predicates = [Q(persona=beneficiario.persona) for beneficiario
-                      in self.beneficiarios.all()]
-
-        query = reduce(operator.or_, predicates, Q())
-
-        seguimientos = Seguimiento.objects.filter(
-                created__gte=self.renovacion).filter(query).count()
-        consultas = Consulta.objects.filter(
-                created__gte=self.renovacion).filter(query).count()
-
-        return total + seguimientos + consultas
-
-    def total_citas(self):
-        """Obtiene el total de :class:`Cita`s de un periodo"""
-        total = self.persona.citas.count()
-
-        predicates = [Q(persona=beneficiario.persona) for beneficiario
-                      in self.beneficiarios.all()]
-
-        total += Cita.objects.filter(created__gte=self.renovacion).filter(
-                reduce(operator.or_, predicates, Q())).count()
-
-        return total
 
     def total_hospitalizaciones(self):
         total = self.persona.admisiones.filter(ingresado__isnull=False).count()

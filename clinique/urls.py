@@ -133,6 +133,10 @@ urlpatterns = [
         views.EsperaTerminadaRedirectView.as_view(),
         name='clinique-espera-terminada'),
 
+    url(r'^espera/(?P<espera>\d+)/consulta/iniciar$',
+        views.ConsultaEsperaCreateView.as_view(),
+        name='espera-consulta-iniciar'),
+
     url(r'^consulta/(?P<pk>\d+)/terminada$',
         views.ConsultaTerminadaRedirectView.as_view(),
         name='clinique-consulta-terminada'),

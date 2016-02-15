@@ -42,12 +42,13 @@ from clinique.forms import CitaForm, EvaluacionForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
-    PrescripcionFormSet, NotaMedicaForm
+    PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
     Remision, \
     NotaMedica
+from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from inventory.models import ItemTemplate, TipoVenta
@@ -431,10 +432,75 @@ class EvaluacionPeriodoView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class EsperaMixin(object):
+    """
+    Populates a :class:`Espera` with data comming from the url
+    """
+
+    def dispatch(self, *args, **kwargs):
+        self.espera = get_object_or_404(Espera, pk=kwargs['espera'])
+        return super(EsperaMixin, self).dispatch(*args, **kwargs)
+
+
+class EsperaFormMixin(EsperaMixin, FormMixin):
+    """
+    Adds a :class:`Espera` data to a form initial arguments
+    """
+
+    def get_initial(self):
+        initial = super(EsperaFormMixin, self).get_initial()
+        initial['espera'] = self.espera
+        return initial
+
+
+class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
+                               CreateView):
+    """
+    Creates a :class:`Consulta` based in a :class:`Espera` data
+    """
+    model = Consulta
+    form_class = ConsultaEsperaForm
+
+    def get_initial(self):
+        initial = super(ConsultaEsperaCreateView, self).get_initial()
+        initial['persona'] = self.espera.persona
+        initial['poliza'] = self.espera.poliza
+        initial['consultorio'] = self.espera.consultorio
+        return initial
+
+
 class ConsultaCreateView(CurrentUserFormMixin, PersonaFormMixin,
                          ConsultorioFormMixin, CreateView):
     model = Consulta
     form_class = ConsultaForm
+
+    def get_form(self, form_class=None):
+        """
+        Builds a form that contains all :class:`MasterContract` from the
+        :class:`Persona` that is getting a :class:`Consulta`
+        :param form_class:
+        :return: :class:`ConsultaForm` instance
+        """
+        form = super(ConsultaCreateView, self).get_form(form_class)
+        if self.persona.contratos.count() >= 1:
+            masters = self.persona.contratos.values('master')
+            masters = [master['master'] for master in masters]
+            form.fields[
+                'poliza'].queryset = MasterContract.objects.select_related(
+                    'aseguradora',
+                    'plan',
+                    'contratante'
+            ).filter(pk__in=masters)
+        elif self.persona.beneficiarios.count() >= 1:
+            masters = self.persona.beneficiarios.values('contrato__master')
+            masters = [master['contrato__master'] for master in masters]
+            form.fields[
+                'poliza'].queryset = MasterContract.objects.select_related(
+                    'aseguradora',
+                    'plan',
+                    'contratante'
+            ).filter(pk__in=masters)
+        return form
 
 
 class ConsultaDetailView(LoginRequiredMixin, DetailView):
@@ -701,11 +767,67 @@ class EsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
     model = Espera
     form_class = EsperaForm
 
+    def get_form(self, form_class=None):
+        """
+        Builds a form that contains all :class:`MasterContract` from the
+        :class:`Persona` that is getting a :class:`Consulta`
+        :param form_class:
+        :return: :class:`ConsultaForm` instance
+        """
+        form = super(EsperaCreateView, self).get_form(form_class)
+        if self.persona.contratos.count() >= 1:
+            masters = self.persona.contratos.values('master')
+            masters = [master['master'] for master in masters]
+            form.fields[
+                'poliza'].queryset = MasterContract.objects.select_related(
+                    'aseguradora',
+                    'plan',
+                    'contratante'
+            ).filter(pk__in=masters)
+        elif self.persona.beneficiarios.count() >= 1:
+            masters = self.persona.beneficiarios.values('contrato__master')
+            masters = [master['contrato__master'] for master in masters]
+            form.fields[
+                'poliza'].queryset = MasterContract.objects.select_related(
+                    'aseguradora',
+                    'plan',
+                    'contratante'
+            ).filter(pk__in=masters)
+        return form
+
 
 class EsperaConsultorioCreateView(LoginRequiredMixin, PersonaFormMixin,
                                   CreateView):
     model = Espera
     form_class = EsperaForm
+
+    def get_form(self, form_class=None):
+        """
+        Builds a form that contains all :class:`MasterContract` from the
+        :class:`Persona` that is getting a :class:`Consulta`
+        :param form_class:
+        :return: :class:`ConsultaForm` instance
+        """
+        form = super(EsperaConsultorioCreateView, self).get_form(form_class)
+        if self.persona.contratos.count() >= 1:
+            masters = self.persona.contratos.values('master')
+            masters = [master['master'] for master in masters]
+            form.fields[
+                'poliza'].queryset = MasterContract.objects.select_related(
+                    'aseguradora',
+                    'plan',
+                    'contratante'
+            ).filter(pk__in=masters)
+        elif self.persona.beneficiarios.count() >= 1:
+            masters = self.persona.beneficiarios.values('contrato__master')
+            masters = [master['contrato__master'] for master in masters]
+            form.fields[
+                'poliza'].queryset = MasterContract.objects.select_related(
+                    'aseguradora',
+                    'plan',
+                    'contratante'
+            ).filter(pk__in=masters)
+        return form
 
 
 class EsperaListView(LoginRequiredMixin, ConsultorioMixin, ListView):
@@ -809,7 +931,6 @@ class EsperaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.terminada = True
-        espera.fin = timezone.now()
         consultas = Consulta.objects.filter(activa=True, persona=espera.persona)
 
         for consulta in consultas.all():

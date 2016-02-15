@@ -1,4 +1,4 @@
-{% load staticfiles %}{% load thumbnail %}
+{% load staticfiles %}{% load thumbnail %}{% load i18n %}{% load l10n %}
 <div class="col-md-12">
     <div class="row">
         <div class="col-md-2">
@@ -8,29 +8,41 @@
         <div class="col-md-9">
             <h3>{{ espera.persona }}
                 <small>{{ espera.persona.obtener_edad }}
-                    a&ntilde;os
+                    {% trans 'a&ntilde;os' %}
                 </small>
             </h3>
             <p>
                 {{ espera.persona.get_sexo_display }}
-                Programado para
-                el {{ espera.fecha }}
-                Tiempo en
-                espera: {{ espera.tiempo }}
-                minutos
+                {% trans 'Programado para el' %} {{ espera.fecha }}
+                {% trans 'Tiempo en espera:' %} {{ espera.tiempo }}
+                {% trans 'minutos' %}
                 {{ espera.consultorio }}
             </p>
             {% if espera.consulta %}
-                <a class="btn btn-info" href="{% url 'persona-view-id' espera.persona.id %}">Ver</a>
-                <a class="btn btn-danger" href="{% url 'clinique-espera-terminada' espera.id %}">Terminar Consulta</a>
+                <a class="btn btn-success" href="{% url 'espera-consulta-iniciar' espera.id %}">
+                    {% trans 'Iniciar Consulta' %}
+                </a>
+                <a class="btn btn-info"
+                   href="{{ espera.persona.get_absolute_url }}">
+                    {% trans 'Ver Paciente' %}
+                </a>
+                <a class="btn btn-danger"
+                   href="{% url 'clinique-espera-terminada' espera.id %}">
+                    {% trans 'Terminar Consulta' %}
+                </a>
             {% else %}
-            <a class="btn btn-success"
-               href="{% url 'consultorio-lectura-agregar' espera.persona.id %}">Agregar
-                Lectura de Signos</a>
-            <a class="btn btn-success" href="{% url 'clinique-espera-ausente' espera.id %}">No
-                se Present&oacute;</a>
-            <a class="btn btn-danger" href="{% url 'clinique-espera-consulta' espera.id %}">A
-                Consulta</a>
+                <a class="btn btn-success"
+                   href="{% url 'consultorio-lectura-agregar' espera.persona.id %}">
+                    {% trans 'Agregar Lectura de Signos' %}
+                </a>
+                <a class="btn btn-success"
+                   href="{% url 'clinique-espera-ausente' espera.id %}">
+                    {% trans 'No se Present&oacute;' %}
+                </a>
+                <a class="btn btn-danger"
+                   href="{% url 'clinique-espera-consulta' espera.id %}">
+                    {% trans 'A Consulta' %}
+                </a>
             {% endif %}
         </div>
     </div>

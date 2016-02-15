@@ -26,6 +26,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
+from contracts.models import Contrato, MasterContract
 from inventory.models import ItemTemplate, Inventario, ItemType
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
@@ -107,6 +108,33 @@ class Consultorio(TimeStampedModel):
 
 
 @python_2_unicode_compatible
+class Espera(TimeStampedModel):
+    consultorio = models.ForeignKey(Consultorio, related_name='espera',
+                                    blank=True, null=True)
+    persona = models.ForeignKey(Persona, related_name='espera')
+    poliza = models.ForeignKey(MasterContract, blank=True, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    terminada = models.BooleanField(default=False)
+    atendido = models.BooleanField(default=False)
+    ausente = models.BooleanField(default=False)
+    consulta = models.BooleanField(default=False)
+
+    def __str__(self):
+        return _("{0} en {1}").format(self.persona.nombre_completo(),
+                                      self.consultorio.nombre)
+
+    def get_absolute_url(self):
+        return self.consultorio.get_absolute_url()
+
+    def tiempo(self):
+        delta = timezone.now() - self.created
+
+        return delta.seconds / 60
+
+
+@python_2_unicode_compatible
 class Consulta(TimeStampedModel):
     """Registra la interacción entre una :class:`Persona` y un :class:`Usuario`
     que es un médico.
@@ -124,6 +152,9 @@ class Consulta(TimeStampedModel):
     remitida = models.BooleanField(default=False)
     encuestada = models.BooleanField(default=False)
     revisada = models.BooleanField(default=False)
+    espera = models.ForeignKey(Espera, blank=True, null=True,
+                               related_name='consulta_set')
+    poliza = models.ForeignKey(MasterContract, blank=True, null=True)
 
     def __str__(self):
 
@@ -371,32 +402,6 @@ class Examen(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class Espera(TimeStampedModel):
-    consultorio = models.ForeignKey(Consultorio, related_name='espera',
-                                    blank=True, null=True)
-    persona = models.ForeignKey(Persona, related_name='espera')
-    fecha = models.DateTimeField(auto_now_add=True)
-    inicio = models.DateTimeField(default=timezone.now)
-    fin = models.DateTimeField(default=timezone.now)
-    terminada = models.BooleanField(default=False)
-    atendido = models.BooleanField(default=False)
-    ausente = models.BooleanField(default=False)
-    consulta = models.BooleanField(default=False)
-
-    def __str__(self):
-        return _("{0} en {1}").format(self.persona.nombre_completo(),
-                                       self.consultorio.nombre)
-
-    def get_absolute_url(self):
-        return self.consultorio.get_absolute_url()
-
-    def tiempo(self):
-        delta = timezone.now() - self.created
-
-        return delta.seconds / 60
-
-
-@python_2_unicode_compatible
 class Prescripcion(TimeStampedModel):
     orden = models.ForeignKey(OrdenMedica, blank=True, null=True)
     medicamento = models.ForeignKey(ItemTemplate, related_name='prescripciones',
@@ -456,7 +461,6 @@ class NotaMedica(TimeStampedModel):
     observacion = models.TextField()
 
     def get_absolute_url(self):
-
         return self.consulta.get_absolute_url()
 
 
