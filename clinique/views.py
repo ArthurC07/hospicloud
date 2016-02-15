@@ -469,6 +469,42 @@ class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
         return initial
 
 
+def get_active_master_contracts(persona):
+    """
+    Builds a :class:`QuerySet` that searches the :class:`MasterContract`s
+    associated to all active :class:`Contract` of a :class:`Persona`
+    :param persona: The :class:`Persona` that will be used to obtain
+                    :class:`MasterContract`:s
+    :return: :class:`QuerySet`
+    """
+    queryset = None
+    if persona.contratos.filter(
+            vencimiento__gte=timezone.now()
+    ).count() >= 1:
+        masters = persona.contratos.filter(
+                vencimiento__gte=timezone.now()
+        ).values('master')
+        masters = [master['master'] for master in masters]
+        queryset = MasterContract.objects.select_related(
+                'aseguradora',
+                'plan',
+                'contratante'
+        ).filter(pk__in=masters)
+    elif persona.beneficiarios.filter(
+            contrato__vencimiento__gte=timezone.now()
+    ).count() >= 1:
+        masters = persona.beneficiarios.filter(
+                contrato__vencimiento__gte=timezone.now()
+        ).values('contrato__master')
+        masters = [master['contrato__master'] for master in masters]
+        queryset = MasterContract.objects.select_related(
+                'aseguradora',
+                'plan',
+                'contratante'
+        ).filter(pk__in=masters)
+    return queryset
+
+
 class ConsultaCreateView(CurrentUserFormMixin, PersonaFormMixin,
                          ConsultorioFormMixin, CreateView):
     model = Consulta
@@ -482,24 +518,9 @@ class ConsultaCreateView(CurrentUserFormMixin, PersonaFormMixin,
         :return: :class:`ConsultaForm` instance
         """
         form = super(ConsultaCreateView, self).get_form(form_class)
-        if self.persona.contratos.count() >= 1:
-            masters = self.persona.contratos.values('master')
-            masters = [master['master'] for master in masters]
-            form.fields[
-                'poliza'].queryset = MasterContract.objects.select_related(
-                    'aseguradora',
-                    'plan',
-                    'contratante'
-            ).filter(pk__in=masters)
-        elif self.persona.beneficiarios.count() >= 1:
-            masters = self.persona.beneficiarios.values('contrato__master')
-            masters = [master['contrato__master'] for master in masters]
-            form.fields[
-                'poliza'].queryset = MasterContract.objects.select_related(
-                    'aseguradora',
-                    'plan',
-                    'contratante'
-            ).filter(pk__in=masters)
+        queryset = get_active_master_contracts(self.persona)
+        if queryset:
+            form.fields['poliza'].queryset = queryset
         return form
 
 
@@ -775,24 +796,10 @@ class EsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
         :return: :class:`ConsultaForm` instance
         """
         form = super(EsperaCreateView, self).get_form(form_class)
-        if self.persona.contratos.count() >= 1:
-            masters = self.persona.contratos.values('master')
-            masters = [master['master'] for master in masters]
-            form.fields[
-                'poliza'].queryset = MasterContract.objects.select_related(
-                    'aseguradora',
-                    'plan',
-                    'contratante'
-            ).filter(pk__in=masters)
-        elif self.persona.beneficiarios.count() >= 1:
-            masters = self.persona.beneficiarios.values('contrato__master')
-            masters = [master['contrato__master'] for master in masters]
-            form.fields[
-                'poliza'].queryset = MasterContract.objects.select_related(
-                    'aseguradora',
-                    'plan',
-                    'contratante'
-            ).filter(pk__in=masters)
+
+        queryset = get_active_master_contracts(self.persona)
+        if queryset:
+            form.fields['poliza'].queryset = queryset
         return form
 
 
@@ -809,24 +816,9 @@ class EsperaConsultorioCreateView(LoginRequiredMixin, PersonaFormMixin,
         :return: :class:`ConsultaForm` instance
         """
         form = super(EsperaConsultorioCreateView, self).get_form(form_class)
-        if self.persona.contratos.count() >= 1:
-            masters = self.persona.contratos.values('master')
-            masters = [master['master'] for master in masters]
-            form.fields[
-                'poliza'].queryset = MasterContract.objects.select_related(
-                    'aseguradora',
-                    'plan',
-                    'contratante'
-            ).filter(pk__in=masters)
-        elif self.persona.beneficiarios.count() >= 1:
-            masters = self.persona.beneficiarios.values('contrato__master')
-            masters = [master['contrato__master'] for master in masters]
-            form.fields[
-                'poliza'].queryset = MasterContract.objects.select_related(
-                    'aseguradora',
-                    'plan',
-                    'contratante'
-            ).filter(pk__in=masters)
+        queryset = get_active_master_contracts(self.persona)
+        if queryset:
+            form.fields['poliza'].queryset = queryset
         return form
 
 
