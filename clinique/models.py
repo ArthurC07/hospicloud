@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -269,7 +269,7 @@ class Cita(TimeStampedModel):
         return self.consultorio.get_absolute_url()
 
     def __str__(self):
-        return u'{0}'.format(self.persona.nombre_completo())
+        return '{0}'.format(self.persona.nombre_completo())
 
     def to_espera(self):
         espera = Espera()
