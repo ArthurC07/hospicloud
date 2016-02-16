@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
-    {% load crispy_forms_tags %}
-
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
         <section class="col-md-9 main-content">
-                {% crispy form %}
+            {% crispy form %}
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">

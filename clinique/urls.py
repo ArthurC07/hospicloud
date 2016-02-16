@@ -129,6 +129,10 @@ urlpatterns = [
         views.EsperaConsultaRedirectView.as_view(),
         name='clinique-espera-consulta'),
 
+    url(r'^espera/(?P<pk>\d+)/editar$',
+        views.EsperaUpdateView.as_view(),
+        name='clinique-espera-editar'),
+
     url(r'^espera/(?P<pk>\d+)/terminada$',
         views.EsperaTerminadaRedirectView.as_view(),
         name='clinique-espera-terminada'),

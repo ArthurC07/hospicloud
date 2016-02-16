@@ -19,7 +19,8 @@
                 {{ espera.consultorio }}
             </p>
             {% if espera.consulta %}
-                <a class="btn btn-success" href="{% url 'espera-consulta-iniciar' espera.id %}">
+                <a class="btn btn-success"
+                   href="{% url 'espera-consulta-iniciar' espera.id %}">
                     {% trans 'Iniciar Consulta' %}
                 </a>
                 <a class="btn btn-info"
@@ -34,6 +35,10 @@
                 <a class="btn btn-success"
                    href="{% url 'consultorio-lectura-agregar' espera.persona.id %}">
                     {% trans 'Agregar Lectura de Signos' %}
+                </a>
+                <a class="btn btn-primary"
+                   href="{% url 'clinique-espera-editar' espera.id %}">
+                    {% trans 'Cambiar Consultorio' %}
                 </a>
                 <a class="btn btn-success"
                    href="{% url 'clinique-espera-ausente' espera.id %}">

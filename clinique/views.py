@@ -42,7 +42,8 @@ from clinique.forms import CitaForm, EvaluacionForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
-    PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm
+    PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm, \
+    EsperaConsultorioForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
@@ -801,6 +802,14 @@ class EsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
         if queryset:
             form.fields['poliza'].queryset = queryset
         return form
+
+
+class EsperaUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows the user to change the :class:`Consultorio` for a :class:`Espera`
+    """
+    model = Espera
+    form_class = EsperaConsultorioForm
 
 
 class EsperaConsultorioCreateView(LoginRequiredMixin, PersonaFormMixin,

@@ -265,6 +265,17 @@ class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
                                       *self.field_names)
 
 
+class EsperaConsultorioForm(ConsultorioFormMixin, FieldSetModelFormMixin):
+    class Meta:
+        model = Espera
+        fields = ('consultorio',)
+
+    def __init__(self, *args, **kwargs):
+        super(EsperaConsultorioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Cambiar Consultorio'),
+                                      *self.field_names)
+
+
 class EsperaAusenteForm(FieldSetModelFormMixin):
     class Meta:
         model = Espera
