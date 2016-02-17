@@ -982,7 +982,8 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
 
         espera = Espera.objects.filter(
                 consultorio__localidad=consulta.consultorio.localidad,
-                terminada=False
+                terminada=False,
+                ausente=False,
         ).first()
 
         if espera is not None:
