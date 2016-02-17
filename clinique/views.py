@@ -984,6 +984,7 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
                 consultorio__localidad=consulta.consultorio.localidad,
                 terminada=False,
                 ausente=False,
+                consulta=False,
         ).first()
 
         if espera is not None:
