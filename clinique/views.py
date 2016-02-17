@@ -942,9 +942,8 @@ class EsperaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.terminada = True
-        consultas = Consulta.objects.filter(activa=True, persona=espera.persona)
 
-        for consulta in consultas.all():
+        for consulta in espera.consulta_set.all():
             consulta.activa = False
             consulta.save()
 
@@ -971,6 +970,10 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
         consulta.activa = False
         consulta.final = timezone.now()
         consulta.save()
+        Espera.objects.filter(
+            consultorio=consulta.consultorio,
+            terminada=False
+        )
 
         messages.info(
                 self.request,
