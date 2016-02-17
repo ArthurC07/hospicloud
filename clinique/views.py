@@ -970,15 +970,24 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
         consulta.activa = False
         consulta.final = timezone.now()
         consulta.save()
-        consulta.espera.terminada = True
-        consulta.espera.save()
+        if consulta.espera is not None:
+            consulta.espera.terminada = True
+            consulta.espera.save()
+        else:
+            Espera.objects.filter(
+                    terminada=False, persona=consulta.persona
+            ).update(
+                    terminada=True
+            )
+
         espera = Espera.objects.filter(
-            consultorio__localidad=consulta.consultorio.localidad,
-            terminada=False
+                consultorio__localidad=consulta.consultorio.localidad,
+                terminada=False
         ).first()
 
         if espera is not None:
             espera.consulta = True
+            espera.consultorio = consulta.consultorio
             espera.fin = timezone.now()
             espera.save()
 
