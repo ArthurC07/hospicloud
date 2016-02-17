@@ -121,6 +121,9 @@ class Espera(TimeStampedModel):
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['created', ]
+
     def __str__(self):
         return _("{0} en {1}").format(self.persona.nombre_completo(),
                                       self.consultorio.nombre)
