@@ -222,7 +222,7 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
 
 class ChequePeriodoListView(LoginRequiredMixin, ListView):
     """
-    Shows a GUI with a list of :class:`Cheque that have been registered during
+    Shows a GUI with a list of :class:`Cheque` that have been registered during
     the period of time indicated by a :class:`PeriodoForm`
     """
     model = Cheque

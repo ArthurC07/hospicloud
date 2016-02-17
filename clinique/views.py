@@ -147,6 +147,16 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                 'consultorio__secretaria',
         ).all()
 
+        context['consulta_estadistica'] = PeriodoForm(
+                prefix='consulta-estadistica'
+        )
+
+        context[
+            'consulta_estadistica'].helper.form_action = 'consulta-estadisticas'
+        context['consulta_estadistica'].set_legend(
+                _('Estad&iacute;sticas de Consulta')
+        )
+
         return context
 
 
@@ -1022,6 +1032,61 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
         context['consultas'] = self.consultas
         context['inicio'] = self.inicio
         context['fin'] = self.fin
+        return context
+
+
+class ConsultaEstadisticaPeriodoListView(LoginRequiredMixin, ListView):
+    """
+    Shows a GUI with a list of :class:`Cheque that have been registered during
+    the period of time indicated by a :class:`PeriodoForm`
+    """
+    model = Consulta
+    context_object_name = 'consultas'
+    template_name = 'clinique/consulta_estadistica.html'
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Consulta` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = PeriodoForm(self.request.GET, prefix='consulta-estadistica')
+        if form.is_valid():
+            self.inicio = form.cleaned_data['inicio']
+            self.fin = form.cleaned_data['fin']
+            return Consulta.objects.filter(
+                    created__range=(
+                        self.inicio,
+                        self.fin
+                    )
+            ).select_related(
+                    'consultorio',
+                    'consultorio__usuario',
+            ).order_by()
+        return Consulta.objects.select_related(
+                'consultorio',
+                'consultorio__usuario',
+        ).order_by()
+
+    def get_context_data(self, **kwargs):
+        context = super(ConsultaEstadisticaPeriodoListView,
+                        self).get_context_data(**kwargs)
+
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        context['medicos'] = self.get_queryset().values(
+                'consultorio__usuario__first_name',
+                'consultorio__usuario__last_name'
+        ).annotate(
+                consultas=Count('consultorio__usuario')
+        )
+
+        context['ciudades'] = self.get_queryset().values(
+                'consultorio__localidad__nombre'
+        ).annotate(
+                consultas=Count('consultorio__localidad')
+        )
+
         return context
 
 

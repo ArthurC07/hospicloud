@@ -85,6 +85,10 @@ urlpatterns = [
         views.ConsultaPeriodoView.as_view(),
         name='consulta-periodo'),
 
+    url(r'^consulta/estadisticas$',
+        views.ConsultaEstadisticaPeriodoListView.as_view(),
+        name='consulta-estadisticas'),
+
     url(r'^consulta/(?P<persona>\d+)/(?P<consultorio>\d+)/agregar$',
         views.ConsultaCreateView.as_view(),
         name='consultorio-consulta-agregar'),
