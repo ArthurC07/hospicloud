@@ -53,6 +53,15 @@ class MasterContractAdmin(admin.ModelAdmin):
     search_fields = ['poliza', 'plan__nombre', 'aseguradora__nombre',
                      'contratante__nombre']
 
+    def get_queryset(self, request):
+        return super(MasterContractAdmin, self).get_queryset(
+            request
+        ).select_related(
+                'plan',
+                'aseguradora',
+                'contratante',
+        )
+
 
 admin.site.register(Plan)
 admin.site.register(Contrato, ContratoAdmin)

@@ -76,6 +76,17 @@ class PagoAdmin(admin.ModelAdmin):
 
         return instance.recibo.cajero
 
+    def get_queryset(self, request):
+
+        return super(PagoAdmin, self).get_queryset(request).select_related(
+            'recibo',
+            'recibo__cliente',
+            'recibo__cajero',
+            'tipo',
+            'status',
+            'recibo__ciudad',
+        )
+
 
 class CuentaPorCobrarAdmin(admin.ModelAdmin):
     list_display = ('descripcion', 'created', 'modified', 'minimum', 'status')
