@@ -246,7 +246,7 @@ class ExamenForm(BasePersonaForm):
         self.helper.layout = Fieldset(_('Agregar Examen'), *self.field_names)
 
 
-class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
+class EsperaForm(BasePersonaForm, FieldSetModelFormMixin):
     class Meta:
         model = Espera
         fields = ('persona', 'poliza')
