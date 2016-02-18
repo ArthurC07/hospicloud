@@ -249,7 +249,7 @@ class ExamenForm(BasePersonaForm):
 class EsperaForm(BasePersonaForm, FieldSetModelFormMixin):
     class Meta:
         model = Espera
-        fields = ('persona', 'poliza')
+        fields = ('persona', 'consultorio', 'poliza')
 
     poliza = forms.ModelChoiceField(
             queryset=MasterContract.objects.select_related(
