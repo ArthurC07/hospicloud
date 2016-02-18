@@ -159,6 +159,9 @@ class Consulta(TimeStampedModel):
                                related_name='consulta_set')
     poliza = models.ForeignKey(MasterContract, blank=True, null=True)
 
+    class Meta:
+        ordering = ['created', ]
+
     def __str__(self):
 
         return _('Consulta de {0}').format(self.persona.nombre_completo())
