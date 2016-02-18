@@ -22,6 +22,10 @@
                href="{% url 'clinique-espera-editar' espera.id %}">
                 {% trans 'Cambiar Consultorio' %}
             </a>
+            <a class="btn btn-success"
+               href="{% url 'consultorio-lectura-agregar' espera.persona.id %}">
+                {% trans 'Agregar Lectura de Signos' %}
+            </a>
             {% if espera.consulta %}
                 <a class="btn btn-success"
                    href="{% url 'espera-consulta-iniciar' espera.id %}">
@@ -36,10 +40,6 @@
                     {% trans 'Terminar Consulta' %}
                 </a>
             {% else %}
-                <a class="btn btn-success"
-                   href="{% url 'consultorio-lectura-agregar' espera.persona.id %}">
-                    {% trans 'Agregar Lectura de Signos' %}
-                </a>
                 <a class="btn btn-success"
                    href="{% url 'clinique-espera-ausente' espera.id %}">
                     {% trans 'No se Present&oacute;' %}
