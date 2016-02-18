@@ -962,7 +962,8 @@ class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     form_class = RemisionForm
 
 
-class ConsultaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
+class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
+                                    RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -982,9 +983,11 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
 
         espera = Espera.objects.filter(
                 consultorio__localidad=consulta.consultorio.localidad,
-                terminada=False,
-                ausente=False,
+                fecha__gte=self.yesterday,
                 consulta=False,
+                terminada=False,
+                atendido=False,
+                ausente=False
         ).first()
 
         if espera is not None:
