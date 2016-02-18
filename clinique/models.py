@@ -129,7 +129,7 @@ class Espera(TimeStampedModel):
                                       self.consultorio.nombre)
 
     def get_absolute_url(self):
-        return self.consultorio.get_absolute_url()
+        return reverse('consultorio-index')
 
     def tiempo(self):
         delta = timezone.now() - self.created
