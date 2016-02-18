@@ -108,6 +108,7 @@ class Recibo(TimeStampedModel):
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
     emision = models.DateTimeField(default=timezone.now)
+    month_offset = models.IntegerField(default=0)
 
     def get_absolute_url(self):
 
@@ -121,7 +122,7 @@ class Recibo(TimeStampedModel):
 
     def facturacion(self):
 
-        return self.created - relativedelta(months=1)
+        return self.created - relativedelta(months=1 + self.month_offset)
 
     def total(self):
 
