@@ -147,6 +147,16 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                 'consultorio__secretaria',
         ).all()
 
+        context['consultas'] = Espera.objects.filter(
+                consulta=True,
+                terminada=False,
+        ).select_related(
+                'persona',
+                'consultorio',
+                'consultorio__usuario',
+                'consultorio__secretaria',
+        ).all()
+
         context['consulta_estadistica'] = PeriodoForm(
                 prefix='consulta-estadistica'
         )
