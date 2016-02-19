@@ -150,6 +150,8 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['consultas'] = Espera.objects.filter(
                 consulta=True,
                 terminada=False,
+                ausente=False,
+                atendido=False,
         ).select_related(
                 'persona',
                 'consultorio',
