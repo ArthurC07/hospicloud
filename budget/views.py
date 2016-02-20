@@ -212,6 +212,10 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
                     _('{0}'.format(calendar.month_name[n])),
                     css_class='btn-block'
             ))
+
+            form.helper.form_class = ''
+            form.helper.label_class = ''
+            form.helper.field_class = ''
             context['budget_forms'].append(form)
 
         return context
