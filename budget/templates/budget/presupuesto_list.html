@@ -221,10 +221,10 @@
                 </div>
                 <div class="row tab-pane fade in" id="ingresos">
                     <div class="col-md-12 table-responsive">
-                        <h2>{% trans 'Presupuesto Anual' %}</h2>
+                        <h2>{% trans 'Presupuesto Anual' %} {{ year }}</h2>
                         <div class="row">
                             {% for form in budget_forms %}
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     {% crispy form %}
                                 </div>
                             {% endfor %}

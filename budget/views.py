@@ -15,6 +15,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+import calendar
 from datetime import date, datetime
 from decimal import Decimal
 
@@ -194,6 +195,7 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         year = timezone.now().year
 
         context['budget_forms'] = []
+        context['year'] = year
 
         for n in range(1, 13):
             form = MonthYearForm(initial={
@@ -207,7 +209,8 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
             form.helper.form_method = 'get'
             form.helper.add_input(Submit(
                     'submit',
-                    _('{0} de {1}'.format(n, year))
+                    _('{0}'.format(calendar.month_name[n])),
+                    css_class='btn-block'
             ))
             context['budget_forms'].append(form)
 
