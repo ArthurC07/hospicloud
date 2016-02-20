@@ -24,6 +24,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Sum, Max
 from django.db.models.functions import Coalesce
+from django.forms.widgets import HiddenInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -55,9 +56,9 @@ class PresupuestoDetailView(LoginRequiredMixin, DetailView):
     model = Presupuesto
     context_object_name = 'presupuesto'
     queryset = Presupuesto.objects.select_related(
-        'ciudad'
+            'ciudad'
     ).prefetch_related(
-        'cuenta_set',
+            'cuenta_set',
     )
 
 
@@ -189,6 +190,26 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         context['balance-month-year'].helper.form_method = 'get'
         context['balance-month-year'].helper.add_input(
                 Submit('submit', _('Mostrar')))
+
+        year = timezone.now().year
+
+        context['budget_forms'] = []
+
+        for n in range(1, 13):
+            form = MonthYearForm(initial={
+                'year': year,
+                'mes': n,
+            })
+            form.helper.attrs = {'target': '_blank'}
+            form.set_action('budget-balance-monthly')
+            form.fields['year'].widget = HiddenInput()
+            form.fields['mes'].widget = HiddenInput()
+            form.helper.form_method = 'get'
+            form.helper.add_input(Submit(
+                    'submit',
+                    _('{0} de {1}'.format(n, year))
+            ))
+            context['budget_forms'].append(form)
 
         return context
 
@@ -702,10 +723,10 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         )
 
         ventas = Venta.objects.select_related(
-            'recibo',
-            'item'
+                'recibo',
+                'item'
         ).filter(
-            recibo__created__range=(inicio, fin)
+                recibo__created__range=(inicio, fin)
         )
 
         context['total_ventas'] = ventas.aggregate(
@@ -713,15 +734,15 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         )['total']
 
         pagos = Pago.objects.select_related(
-            'tipo',
+                'tipo',
         ).filter(
-            recibo__created__range=(inicio, fin)
+                recibo__created__range=(inicio, fin)
         )
 
         context['pagos'] = pagos.values(
                 'tipo__nombre'
         ).annotate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
 
         return context
