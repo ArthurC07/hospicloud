@@ -51,6 +51,10 @@ urlpatterns = [
     url(r'^balance/monthly$', views.BalanceView.as_view(),
         name='budget-balance-monthly'),
 
+    url(r'^(?P<presupuesto>\d+)/(?P<year>\d+)/(?P<month>\d+)$',
+        views.PresupuestoMesPresupuestoListView.as_view(),
+        name='budget-month-show'),
+
     url(r'^cuenta/(?P<cuenta>\d+)/gasto/agregar$',
         views.GastoCreateView.as_view(),
         name='budget-gasto-agregar'),

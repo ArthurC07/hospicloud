@@ -70,7 +70,11 @@
                             <tbody>
                             {% for presupuesto in presupuestado_ciudad.all %}
                                 <tr>
-                                    <td>{{ presupuesto.cuenta__presupuesto__ciudad__nombre }}</td>
+                                    <td>
+                                        <a href="{% url 'budget-month-show' presupuesto.cuenta__presupuesto_id fecha.year fecha.month %}" target="_blank">
+                                            {{ presupuesto.cuenta__presupuesto__ciudad__nombre }}
+                                        </a>
+                                    </td>
                                     <td class="text-right">{{ presupuesto.total }}</td>
                                 </tr>
                             {% endfor %}

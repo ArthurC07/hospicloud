@@ -14,12 +14,40 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-12 col-xs-12 main-content">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans 'Cuenta' %}</th>
+                        <th>{% trans 'Monto' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for presupuesto in object_list.all %}
+                    <tr>
+                        <td>{{ presupuesto.cuenta }}</td>
+                        <td class="text-right">{{ presupuesto.monto }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>{% trans 'Total' %}</th>
+                        <th>{{ total }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {% if forms %}
+    <div class="row">
         <div class="col-md-12 main-content" id="meses">
             {% for form in forms %}
                 {% crispy form %}
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 {% endblock %}
 {% block scripts %}
     <script src="http://malsup.github.com/jquery.form.js"></script>

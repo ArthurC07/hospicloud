@@ -590,6 +590,43 @@ class PresupuestoMesListView(LoginRequiredMixin, ListView):
         return context
 
 
+class PresupuestoMesPresupuestoListView(LoginRequiredMixin, PresupuestoMixin,
+                                        ListView):
+    """
+    Filters :class:`PresupuestoMes` using a :class:`Presupuesto`, a month and a
+    year
+    """
+    model = PresupuestoMes
+
+    def dispatch(self, *args, **kwargs):
+        self.mes = int(kwargs['month'])
+        self.year = int(kwargs['year'])
+        return super(PresupuestoMesPresupuestoListView, self).dispatch(*args,
+                                                                       **kwargs)
+
+    def get_queryset(self):
+        return PresupuestoMes.objects.filter(
+                cuenta__presupuesto=self.presupuesto,
+                mes=self.mes,
+                anio=self.year
+        ).select_related(
+                'cuenta',
+                'cuenta__presupuesto',
+                'cuenta__presupuesto__ciudad',
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super(PresupuestoMesPresupuestoListView,
+                        self).get_context_data(**kwargs)
+        fecha = timezone.now()
+        context['fecha'] = fecha.replace(self.year, self.mes)
+        context['total'] = self.get_queryset().aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        return context
+
+
 class PresupuestoMesDetailView(LoginRequiredMixin, DetailView):
     """
     Allows displaying the data for :class:`PresupuestoMes` instances
@@ -716,10 +753,11 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         )['total']
 
         context['presupuestado_ciudad'] = presupuesto.values(
-                'cuenta__presupuesto__ciudad__nombre'
+                'cuenta__presupuesto__ciudad__nombre',
+                'cuenta__presupuesto_id',
         ).annotate(
                 total=Coalesce(Sum('monto'), Decimal())
-        ).order_by()
+        ).order_by('-total')
 
         context['periodo_string'] = urlencode(
                 {
