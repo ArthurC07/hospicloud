@@ -39,10 +39,13 @@
                             <strong>{{ consulta.persona }}</strong><br>
                             {{ consulta.persona.domicilio }}<br>
                             <strong>{% trans 'Atendido' %}:</strong> {{ consulta.created }}<br>
-                            <strong>{% trans 'Encuestada' %}:</strong> {{ consulta.persona.cantidad_encuestas }}
+                            <strong>{% trans 'Encuestada' %}:</strong> {{ consulta.persona.respuesta_set.count }}
                             {% trans 'veces' %}<br>
                             <strong>{% trans '&Uacute;ltima Encuesta' %}:</strong>
-                            {{ consulta.persona.ultima_encuesta.created }}<br>
+                            {% for encuesta in consulta.persona.respuesta_set.all|slice:":1" %}
+                                {{ encuesta.created }}
+                            {% endfor %}
+                            <br>
                             {% trans 'Tel&eacute;fono:' %} {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
                         </address>
                     </td>

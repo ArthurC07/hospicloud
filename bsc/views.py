@@ -81,6 +81,8 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
 
         context['consultas'] = Consulta.objects.select_related(
                 'persona',
+        ).prefetch_related(
+            'persona__respuesta_set',
         ).filter(
                 facturada=True,
                 encuestada=False
@@ -121,6 +123,7 @@ class RespuestaCreateView(EncuestaFormMixin, ConsultaFormMixin,
 
     def form_valid(self, form):
         self.object = form.save()
+        self.object.persona = self.consulta.persona
 
         self.consulta.encuestada = True
         self.consulta.save()
@@ -260,6 +263,7 @@ class RespuestaRedirectView(RedirectView):
         respuesta = Respuesta()
         respuesta.consulta = consulta
         respuesta.encuesta = encuesta
+        respuesta.persona = consulta.persona
         consulta.encuestada = True
         consulta.save()
         respuesta.save()

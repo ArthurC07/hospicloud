@@ -17,7 +17,7 @@
                         <a href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a>
                     </li>
                     {% empty %}
-                    <li>No hay Encuestas Disponibles</li>
+                    <li>{% trans 'No hay Encuestas Disponibles' %}</li>
                 {% endfor %}
             </ul>
         </section>
