@@ -299,7 +299,15 @@ class QuejaDetailView(LoginRequiredMixin, DetailView):
 
 class QuejaListView(LoginRequiredMixin, ListView):
     model = Queja
-    queryset = Queja.objects.filter(resuelta=False)
+    queryset = Queja.objects.filter(resuelta=False).select_related(
+            'respuesta',
+            'respuesta__consulta',
+            'respuesta__consulta__consultorio__usuario',
+    ).prefetch_related(
+            'solucion_set',
+            'respuesta__consulta__consultorio__usuario__profile',
+            'respuesta__consulta__consultorio__usuario__profile__ciudad',
+    )
     context_object_name = 'quejas'
 
 
