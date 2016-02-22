@@ -154,6 +154,7 @@ class Consulta(TimeStampedModel):
     final = models.DateTimeField(blank=True, null=True)
     remitida = models.BooleanField(default=False)
     encuestada = models.BooleanField(default=False)
+    no_desea_encuesta = models.BooleanField(default=False)
     revisada = models.BooleanField(default=False)
     espera = models.ForeignKey(Espera, blank=True, null=True,
                                related_name='consulta_set')

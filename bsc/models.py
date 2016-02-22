@@ -500,6 +500,9 @@ class Respuesta(TimeStampedModel):
         return Decimal(total) / max(votos.count(), 1)
 
 
+
+
+
 class Voto(TimeStampedModel):
     respuesta = models.ForeignKey(Respuesta)
     pregunta = models.ForeignKey(Pregunta)

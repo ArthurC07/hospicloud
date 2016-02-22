@@ -41,6 +41,10 @@ urlpatterns = [
         views.ConsultaEncuestadaRedirectView.as_view(),
         name='encuesta-respondida'),
 
+    url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/negada$',
+        views.ConsultaNoEncuestadaRedirectView.as_view(),
+        name='encuesta-no-respondida'),
+
     url(r'^respuesta/(?P<pk>\d+)$', views.RespuestaDetailView.as_view(),
         name='respuesta'),
 

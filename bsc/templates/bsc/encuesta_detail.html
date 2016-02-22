@@ -51,6 +51,8 @@
                            href="{% url 'encuesta-responder' encuesta.id consulta.id %}">{% trans 'Responder' %}</a>
                         <a class="btn btn-block btn-info"
                            href="{% url 'encuesta-respondida' encuesta.id consulta.id %}">{% trans 'Ya Se Encuest&oacute;' %}</a>
+                        <a class="btn btn-block btn-danger"
+                           href="{% url 'encuesta-no-respondida' encuesta.id consulta.id %}">{% trans 'No Desea Responder' %}</a>
                     </td>
                 </tr>
                 {% empty %}
