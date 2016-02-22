@@ -624,6 +624,8 @@ class PresupuestoMesPresupuestoListView(LoginRequiredMixin, PresupuestoMixin,
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
+        context['forms'] = []
+
         for presupuesto in self.object_list.all():
             form = PresupuestoMesForm(instance=presupuesto)
             form.fields['completar_anio'].widget = forms.HiddenInput()
