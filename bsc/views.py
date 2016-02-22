@@ -154,9 +154,10 @@ class RespuestaDetailView(DetailView):
         context['helper'] = FormHelper()
         context['helper'].form_action = reverse('votos-guardar',
                                                 args=[self.object.id])
-        context['helper'].add_input(Submit('submit', _(u'Guardar')))
+        context['helper'].add_input(Submit('submit', _('Guardar')))
 
         context['queja'] = QuejaForm(initial={'respuesta': self.object})
+        context['queja'].helper.form_id = 'queja'
         context['queja'].helper.form_action = reverse('queja-agregar',
                                                       args=[self.object.id])
 
@@ -172,13 +173,13 @@ def save_votes(request, respuesta):
             respuesta.terminada = True
             respuesta.save()
         else:
-            messages.info(request, _(u'La respuesta está incompleta'))
+            messages.info(request, _('La respuesta está incompleta'))
             return redirect(respuesta)
     else:
-        messages.info(request, _(u'La respuesta está incompleta'))
+        messages.info(request, _('La respuesta está incompleta'))
         return redirect(respuesta)
 
-    messages.info(request, _(u'Encuesta guardada!'))
+    messages.info(request, _('Encuesta guardada!'))
     respuesta.consulta.encuestada = True
     respuesta.consulta.save()
 
@@ -280,6 +281,20 @@ class ConsultaEncuestadaRedirectView(RedirectView):
         consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
 
         consulta.encuestada = True
+        consulta.no_desea_encuesta = True
+        consulta.save()
+
+        return encuesta.get_absolute_url()
+
+
+class ConsultaNoEncuestadaRedirectView(RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        encuesta = get_object_or_404(Encuesta, pk=kwargs['encuesta'])
+        consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
+
+        consulta.encuestada = True
         consulta.save()
 
         return encuesta.get_absolute_url()
@@ -295,6 +310,9 @@ class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
 
 class QuejaDetailView(LoginRequiredMixin, DetailView):
     model = Queja
+    queryset = Queja.objects.prefetch_related(
+        'solucion_set',
+    )
 
 
 class QuejaListView(LoginRequiredMixin, ListView):
@@ -357,7 +375,7 @@ class ArchivoNotasProcesarView(LoginRequiredMixin, RedirectView):
         archivonotas = get_object_or_404(ArchivoNotas, pk=kwargs['pk'])
         archivonotas.procesar()
 
-        messages.info(self.request, _(u'¡Archivo Importado Exitosamente!'))
+        messages.info(self.request, _('¡Archivo Importado Exitosamente!'))
         return archivonotas.get_absolute_url()
 
 

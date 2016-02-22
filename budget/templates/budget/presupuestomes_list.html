@@ -25,7 +25,11 @@
                 <tbody>
                     {% for presupuesto in object_list.all %}
                     <tr>
-                        <td>{{ presupuesto.cuenta }}</td>
+                        <td>
+                            <a href="{% url 'monthly-budget-update' presupuesto.id %}">
+                                {{ presupuesto.cuenta }}
+                            </a>
+                        </td>
                         <td class="text-right">{{ presupuesto.monto }}</td>
                     </tr>
                     {% endfor %}
@@ -48,16 +52,4 @@
         </div>
     </div>
     {% endif %}
-{% endblock %}
-{% block scripts %}
-    <script src="http://malsup.github.com/jquery.form.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#meses form').submit(function() {
-                $(this).ajaxSubmit();
-                $(this).parent().parent().hide('slow');
-                return false;
-            });
-        });
-    </script>
 {% endblock %}
