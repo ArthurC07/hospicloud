@@ -219,8 +219,10 @@ LOGGING = {
 
 # Django Storage Configuration
 
-DEFAULT_FILE_STORAGE = env.str('DEFAULT_FILE_STORAGE',
-                               default='django.core.files.storage.FileSystemStorage')
+DEFAULT_FILE_STORAGE = env.str(
+        'DEFAULT_FILE_STORAGE',
+        default='django.core.files.storage.FileSystemStorage'
+)
 AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME ', default='')
