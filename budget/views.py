@@ -20,6 +20,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from crispy_forms.layout import Submit
+from dateutil.relativedelta import relativedelta
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -690,6 +691,8 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         context['forms'] = []
         inicio = timezone.make_aware(datetime(self.year, self.mes, 1))
         fin = make_end_day(get_month_end(inicio))
+        previous_start = inicio - relativedelta(months=1)
+        previous_end = make_end_day(get_month_end(previous_start))
 
         context['fecha'] = inicio
 
@@ -708,6 +711,14 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
+        previous_deposits = Deposito.objects.filter(
+                fecha_de_deposito__range=(previous_start, previous_end),
+        )
+
+        old_deposits_total = previous_deposits.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
         context['total_depositado'] = total_depositado
 
         context['descripcion_depositos'] = depositos.values(
@@ -718,6 +729,17 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 fecha_de_pago__range=(inicio, fin),
                 ejecutado=True
         )
+
+        previous_expenses = Gasto.objects.filter(
+                fecha_de_pago__range=(previous_start, previous_end),
+                ejecutado=True,
+        )
+
+        old_expenses_total = previous_expenses.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['previous_balance'] = old_deposits_total - old_expenses_total
 
         total_gastos = gastos.aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
@@ -789,5 +811,16 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         ).annotate(
                 total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
+
+        pagos = Pago.objects.filter(
+                status__reportable=True,
+                completado=False,
+                tipo__reembolso=True,
+                recibo__created__lte=fin,
+        )
+
+        context['cuentas_por_cobrar'] = pagos.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
 
         return context

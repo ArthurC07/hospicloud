@@ -25,6 +25,8 @@
                         </div>
                         <div class="panel-body">
                             <dl class="dl-horizontal">
+                                <dt>{% trans 'Excendete Mes Anterior' %}</dt>
+                                <dd>{{ previous_balance }}</dd>
                                 <dt>{% trans 'Total Depositado' %}</dt>
                                 <dd>
                                     <a href="{% url 'deposito-periodo' %}?{{ periodo_string }}"
@@ -49,6 +51,8 @@
                                 <dd>{{ balance }}</dd>
                                 <dt>{% trans 'Saldo en Cuentas' %}</dt>
                                 <dd>{{ saldo_cuentas }}</dd>
+                                <dt>{% trans 'Cuentas por Cobrar' %}</dt>
+                                <dd>{{ cuentas_por_cobrar }}</dd>
                             </dl>
                             <dl class="dl-horizontal">
                                 {% for cuenta in cuentas %}
@@ -95,21 +99,6 @@
                         <div class="col-md-6 col-xs-6">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h3 class="panel-title">{% trans 'Depositos' %}</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <dl class="dl-horizontal">
-                                        {% for deposito in descripcion_depositos.all %}
-                                            <dt>{{ deposito.tipo__nombre }}</dt>
-                                            <dd>{{ deposito.total }}</dd>
-                                        {% endfor %}
-                                    </dl>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-xs-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
                                     <h3 class="panel-title">{% trans 'Cheques' %}</h3>
                                 </div>
                                 <div class="panel-body">
@@ -129,6 +118,25 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6 col-xs-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">{% trans 'Facturaci&oacute;n' %}</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <dl class="dl-horizontal">
+                                        {% for facturado in pagos.all %}
+                                            <dt>{{ facturado.tipo__nombre }}</dt>
+                                            <dd>{{ facturado.total }}</dd>
+                                        {% endfor %}
+                                        <dt>{% trans 'Total' %}</dt>
+                                        <dd>
+                                            {{ total_ventas }}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -136,22 +144,19 @@
                 <div class="col-md-6 col-xs-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{% trans 'Facturaci&oacute;n' %}</h3>
+                            <h3 class="panel-title">{% trans 'Depositos' %}</h3>
                         </div>
                         <div class="panel-body">
                             <dl class="dl-horizontal">
-                                {% for facturado in pagos.all %}
-                                    <dt>{{ facturado.tipo__nombre }}</dt>
-                                    <dd>{{ facturado.total }}</dd>
+                                {% for deposito in descripcion_depositos.all %}
+                                    <dt>{{ deposito.tipo__nombre }}</dt>
+                                    <dd>{{ deposito.total }}</dd>
                                 {% endfor %}
-                                <dt>{% trans 'Total' %}</dt>
-                                <dd>
-                                    {{ total_ventas }}
-                                </dd>
                             </dl>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

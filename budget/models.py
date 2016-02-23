@@ -66,9 +66,7 @@ class Presupuesto(TimeStampedModel):
         return reverse('budget', args=[self.id])
 
     def total_presupuestado(self):
-        return Cuenta.objects.filter(
-                presupuesto=self
-        ).aggregate(
+        return self.cuenta_set.aggregate(
                 total=Coalesce(Sum('limite'), Decimal())
         )['total']
 
