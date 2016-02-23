@@ -75,6 +75,39 @@
                             {% endfor %}
                         </table>
                     </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Cheques' %}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <dl class="dl-horizontal">
+                                {% for cheque in descripcion_cheques.all %}
+                                    <dt>{{ cheque.tipo__nombre }}</dt>
+                                    <dd>{{ cheque.total }}</dd>
+                                {% endfor %}
+                                <dt>{% trans 'Total' %}</dt>
+                                <dd>
+                                    <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ total_cheques }}
+                                    </a>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Depositos' %}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <dl class="dl-horizontal">
+                                {% for deposito in descripcion_depositos.all %}
+                                    <dt>{{ deposito.tipo__nombre }}</dt>
+                                    <dd>{{ deposito.total }}</dd>
+                                {% endfor %}
+                            </dl>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6 col-xs-6">
                     <div class="panel panel-default">
@@ -128,26 +161,7 @@
                 <div class="col-md-12 col-xs-12">
                     <div class="row">
                         <div class="col-md-6 col-xs-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">{% trans 'Cheques' %}</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <dl class="dl-horizontal">
-                                        {% for cheque in descripcion_cheques.all %}
-                                            <dt>{{ cheque.tipo__nombre }}</dt>
-                                            <dd>{{ cheque.total }}</dd>
-                                        {% endfor %}
-                                        <dt>{% trans 'Total' %}</dt>
-                                        <dd>
-                                            <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
-                                               target="_blank">
-                                                {{ total_cheques }}
-                                            </a>
-                                        </dd>
-                                    </dl>
-                                </div>
-                            </div>
+
                         </div>
                         <div class="col-md-6 col-xs-6">
 
@@ -157,19 +171,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6 col-xs-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">{% trans 'Depositos' %}</h3>
-                        </div>
-                        <div class="panel-body">
-                            <dl class="dl-horizontal">
-                                {% for deposito in descripcion_depositos.all %}
-                                    <dt>{{ deposito.tipo__nombre }}</dt>
-                                    <dd>{{ deposito.total }}</dd>
-                                {% endfor %}
-                            </dl>
-                        </div>
-                    </div>
+
                 </div>
 
             </div>
