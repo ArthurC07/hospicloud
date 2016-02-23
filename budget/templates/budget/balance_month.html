@@ -105,6 +105,23 @@
                             </tfoot>
                         </table>
                     </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Facturaci&oacute;n' %}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <dl class="dl-horizontal">
+                                {% for facturado in pagos.all %}
+                                    <dt>{{ facturado.tipo__nombre }}</dt>
+                                    <dd>{{ facturado.total }}</dd>
+                                {% endfor %}
+                                <dt>{% trans 'Total' %}</dt>
+                                <dd>
+                                    {{ total_ventas }}
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -133,23 +150,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-xs-6">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">{% trans 'Facturaci&oacute;n' %}</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <dl class="dl-horizontal">
-                                        {% for facturado in pagos.all %}
-                                            <dt>{{ facturado.tipo__nombre }}</dt>
-                                            <dd>{{ facturado.total }}</dd>
-                                        {% endfor %}
-                                        <dt>{% trans 'Total' %}</dt>
-                                        <dd>
-                                            {{ total_ventas }}
-                                        </dd>
-                                    </dl>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
