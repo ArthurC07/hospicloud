@@ -23,44 +23,57 @@
                                 {% trans 'Resumen de Ingresos y Egresos' %}
                             </h3>
                         </div>
-                        <div class="panel-body">
-                            <dl class="dl-horizontal">
-                                <dt>{% trans 'Excendete Mes Anterior' %}</dt>
-                                <dd>{{ previous_balance }}</dd>
-                                <dt>{% trans 'Total Depositado' %}</dt>
-                                <dd>
+                        <table class="table table-striped">
+                            <tr>
+                                <td>{% trans 'Excedente Mes Anterior' %}</td>
+                                <td class="text-right">{{ previous_balance }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Total Depositado' %}</td>
+                                <td class="text-right">
                                     <a href="{% url 'deposito-periodo' %}?{{ periodo_string }}"
                                        target="_blank">
                                         {{ total_depositado }}
                                     </a>
-                                </dd>
-                                <dt>{% trans 'Total Ejecutado' %}</dt>
-                                <dd>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Total Ejecutado' %}</td>
+                                <td class="text-right">
                                     <a href="{% url 'gasto-periodo-list' %}?{{ periodo_string }}"
                                        target="_blank">
                                         {{ total_gastos }}
                                     </a>
-                                </dd>
-                                <dt>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
                                     {% if balance > 0 %}
                                         {% trans 'Utilidad del Periodo' %}
                                     {% else %}
                                         {% trans 'Perdida del Periodo' %}
                                     {% endif %}
-                                </dt>
-                                <dd>{{ balance }}</dd>
-                                <dt>{% trans 'Saldo en Cuentas' %}</dt>
-                                <dd>{{ saldo_cuentas }}</dd>
-                                <dt>{% trans 'Cuentas por Cobrar' %}</dt>
-                                <dd>{{ cuentas_por_cobrar }}</dd>
-                            </dl>
-                            <dl class="dl-horizontal">
-                                {% for cuenta in cuentas %}
-                                    <dt>{{ cuenta.nombre }}</dt>
-                                    <dd>{{ cuenta.monto }}</dd>
-                                {% endfor %}
-                            </dl>
-                        </div>
+                                </td>
+                                <td class="text-right">{{ balance }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Cuentas por Cobrar' %}</td>
+                                <td class="text-right">{{ cuentas_por_cobrar }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Saldo en Cuentas' %}</td>
+                                <td class="text-right">{{ saldo_cuentas }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"></td>
+                            </tr>
+                            {% for cuenta in cuentas %}
+                                <tr>
+                                    <td>{{ cuenta.nombre }}</td>
+                                    <td class="text-right">{{ cuenta.monto }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
                     </div>
                 </div>
                 <div class="col-md-6 col-xs-6">
@@ -75,7 +88,8 @@
                             {% for presupuesto in presupuestado_ciudad.all %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'budget-month-show' presupuesto.cuenta__presupuesto_id fecha.year fecha.month %}" target="_blank">
+                                        <a href="{% url 'budget-month-show' presupuesto.cuenta__presupuesto_id fecha.year fecha.month %}"
+                                           target="_blank">
                                             {{ presupuesto.cuenta__presupuesto__ciudad__nombre }}
                                         </a>
                                     </td>
