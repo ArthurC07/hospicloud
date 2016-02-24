@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from decimal import Decimal
+
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
@@ -55,7 +56,8 @@ class IncomeIndexView(TemplateView, LoginRequiredMixin):
         context['deposito_form'].helper.form_action = 'deposito-create'
 
         context['cierre_form'] = CierrePOSForm(
-                initial={'usuario': self.request.user}
+                initial={'usuario': self.request.user},
+                prefix='cierrepos',
         )
         context['cierre_form'].helper.form_action = 'cierre-create'
 
@@ -279,6 +281,7 @@ class CierrePOSCreateView(LoginRequiredMixin, CreateView):
     """
     model = CierrePOS
     form_class = CierrePOSForm
+    prefix = 'cierrepos'
 
 
 class ChequeNumeroListView(LoginRequiredMixin, ListView):

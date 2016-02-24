@@ -38,7 +38,7 @@ urlpatterns = [
         name='cheque-numero'),
     url(r'^cheque/detalle/crear$', views.DetallePagoCreateView.as_view(),
         name='detallepago-create'),
-    url(r'^deposito/(?P<pk>\d+)$', views.ChequeCobroDetailView.as_view(),
+    url(r'^deposito/(?P<pk>\d+)$', views.DepositoDetailView.as_view(),
         name='income-deposito'),
 
 ]
