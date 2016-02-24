@@ -109,14 +109,22 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">{% trans 'Depositos' %}</h3>
                         </div>
-                        <div class="panel-body">
-                            <dl class="dl-horizontal">
-                                {% for deposito in descripcion_depositos.all %}
-                                    <dt>{{ deposito.tipo__nombre }}</dt>
-                                    <dd>{{ deposito.total }}</dd>
-                                {% endfor %}
-                            </dl>
-                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for deposito in descripcion_depositos.all %}
+                                <tr>
+                                    <td>{{ deposito.tipo__nombre }}</td>
+                                    <td class="text-right">{{ deposito.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total Depositado' %}</th>
+                                <th>{{ total_depositado }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
                 <div class="col-md-6 col-xs-6">
@@ -173,14 +181,14 @@
                         </div>
                         <table class="table table-hover table-striped">
                             <tbody>
-                                <tr>
-                                    <td>{% trans 'Al Cr&eacute;dito' %}</td>
-                                    <td class="text-right">{{ credito }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{% trans 'Reembolso' %}</td>
-                                    <td class="text-right">{{ reembolso }}</td>
-                                </tr>
+                            <tr>
+                                <td>{% trans 'Al Cr&eacute;dito' %}</td>
+                                <td class="text-right">{{ credito }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Reembolso' %}</td>
+                                <td class="text-right">{{ reembolso }}</td>
+                            </tr>
                             </tbody>
                             <tfoot>
                             <tr>
