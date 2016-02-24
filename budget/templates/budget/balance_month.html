@@ -24,6 +24,7 @@
                             </h3>
                         </div>
                         <table class="table table-striped">
+                            <tbody>
                             <tr>
                                 <td>{% trans 'Excedente Mes Anterior' %}</td>
                                 <td class="text-right">{{ previous_balance }}</td>
@@ -47,32 +48,45 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>
+                                <td>{% trans 'Cuentas por Cobrar' %}</td>
+                                <td class="text-right">{{ cuentas_por_cobrar }}</td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>
                                     {% if balance > 0 %}
                                         {% trans 'Utilidad del Periodo' %}
                                     {% else %}
                                         {% trans 'Perdida del Periodo' %}
                                     {% endif %}
-                                </td>
-                                <td class="text-right">{{ balance }}</td>
+                                </th>
+                                <th class="text-right">{{ balance }}</th>
                             </tr>
-                            <tr>
-                                <td>{% trans 'Cuentas por Cobrar' %}</td>
-                                <td class="text-right">{{ cuentas_por_cobrar }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Saldo en Cuentas' %}</td>
-                                <td class="text-right">{{ saldo_cuentas }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2"></td>
-                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Saldo en Cuentas' %}
+                            </h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
                             {% for cuenta in cuentas %}
                                 <tr>
                                     <td>{{ cuenta.nombre }}</td>
                                     <td class="text-right">{{ cuenta.monto }}</td>
                                 </tr>
                             {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Saldo Total en Cuentas' %}</th>
+                                <th class="text-right">{{ saldo_cuentas }}</th>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div class="panel panel-default">
@@ -156,24 +170,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 col-xs-12">
-                    <div class="row">
-                        <div class="col-md-6 col-xs-6">
-
-                        </div>
-                        <div class="col-md-6 col-xs-6">
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 col-xs-6">
-
-                </div>
-
             </div>
         </div>
     </div>
