@@ -89,21 +89,27 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">{% trans 'Cheques' %}</h3>
                         </div>
-                        <div class="panel-body">
-                            <dl class="dl-horizontal">
-                                {% for cheque in descripcion_cheques.all %}
-                                    <dt>{{ cheque.tipo__nombre }}</dt>
-                                    <dd>{{ cheque.total }}</dd>
-                                {% endfor %}
-                                <dt>{% trans 'Total' %}</dt>
-                                <dd>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for cheque in descripcion_cheques.all %}
+                                <tr>
+                                    <td>{{ cheque.tipo__nombre }}</td>
+                                    <td>{{ cheque.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total' %}</th>
+                                <th>
                                     <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
                                        target="_blank">
                                         {{ total_cheques }}
                                     </a>
-                                </dd>
-                            </dl>
-                        </div>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -160,18 +166,24 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">{% trans 'Facturaci&oacute;n' %}</h3>
                         </div>
-                        <div class="panel-body">
-                            <dl class="dl-horizontal">
-                                {% for facturado in pagos.all %}
-                                    <dt>{{ facturado.tipo__nombre }}</dt>
-                                    <dd>{{ facturado.total }}</dd>
-                                {% endfor %}
-                                <dt>{% trans 'Total' %}</dt>
-                                <dd>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for facturado in pagos.all %}
+                                <tr>
+                                    <td>{{ facturado.tipo__nombre }}</td>
+                                    <td class="text-right">{{ facturado.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total' %}</th>
+                                <th>
                                     {{ total_ventas }}
-                                </dd>
-                            </dl>
-                        </div>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
