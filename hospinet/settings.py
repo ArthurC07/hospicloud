@@ -226,6 +226,11 @@ DEFAULT_FILE_STORAGE = env.str(
 AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME ', default='')
+
+if AWS_STORAGE_BUCKET_NAME:
+    S3_URL = 'https://{0}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
+    MEDIA_URL = S3_URL + '/media/'
+
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SITE_ID = 1
 USERENA_ACTIVATION_REQUIRED = False
