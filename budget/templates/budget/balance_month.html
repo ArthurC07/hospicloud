@@ -47,10 +47,6 @@
                                     </a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>{% trans 'Cuentas por Cobrar' %}</td>
-                                <td class="text-right">{{ cuentas_por_cobrar }}</td>
-                            </tr>
                             </tbody>
                             <tfoot>
                             <tr>
@@ -168,6 +164,31 @@
                                 </dd>
                             </dl>
                         </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Cuentas por Cobrar' %}
+                            </h3>
+                        </div>
+                        <table class="table table-hover table-striped">
+                            <tbody>
+                                <tr>
+                                    <td>{% trans 'Al Cr&eacute;dito' %}</td>
+                                    <td class="text-right">{{ credito }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Reembolso' %}</td>
+                                    <td class="text-right">{{ reembolso }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total Cuentas por Cobrar' %}</th>
+                                <th class="text-right">{{ cuentas_por_cobrar }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>

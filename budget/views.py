@@ -823,4 +823,12 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
+        context['credito'] = pagos.filter(recibo__credito=True).aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['reembolso'] = pagos.filter(recibo__credito=False).aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
         return context
