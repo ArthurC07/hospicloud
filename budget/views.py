@@ -789,6 +789,14 @@ class BalanceView(TemplateView, LoginRequiredMixin):
                 }
         )
 
+        context['previous_string'] = urlencode(
+                {
+                    'year': previous_start.year,
+                    'mes': previous_start.month,
+                    'submit': calendar.month_name[previous_start.month]
+                }
+        )
+
         ventas = Venta.objects.select_related(
                 'recibo',
                 'item'

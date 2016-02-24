@@ -27,7 +27,11 @@
                             <tbody>
                             <tr>
                                 <td>{% trans 'Excedente Mes Anterior' %}</td>
-                                <td class="text-right">{{ previous_balance }}</td>
+                                <td class="text-right">
+                                    <a href="{% url 'budget-balance-monthly' %}?{{ previous_string }}">
+                                        {{ previous_balance }}
+                                    </a>
+                                </td>
                             </tr>
                             <tr>
                                 <td>{% trans 'Total Depositado' %}</td>
@@ -127,7 +131,12 @@
                             <tfoot>
                             <tr>
                                 <th>{% trans 'Total Depositado' %}</th>
-                                <th>{{ total_depositado }}</th>
+                                <th>
+                                    <a href="{% url 'deposito-periodo' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ total_depositado }}
+                                    </a>
+                                </th>
                             </tr>
                             </tfoot>
                         </table>
