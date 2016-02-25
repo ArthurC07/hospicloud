@@ -15,11 +15,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from crispy_forms.layout import Fieldset
 from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
+from budget.models import Fuente
 from hospinet.utils.forms import DateTimeWidget, FieldSetModelFormMixin
 from income.models import Cheque, DetallePago, Deposito, CierrePOS
 from invoice.models import Pago
@@ -36,6 +38,7 @@ class DepositoForm(HiddenUserForm):
         model = Deposito
         exclude = ('aplicado',)
 
+    cuenta = forms.ModelChoiceField(queryset=Fuente.objects.filter(caja=False))
     fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
                                             required=False,
                                             initial=timezone.now)
@@ -58,9 +61,6 @@ class ChequeForm(HiddenUserForm):
     emisor = forms.ModelChoiceField(
             queryset=Persona.objects.filter(mostrar_en_cardex=True)
     )
-    fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
-                                            required=False,
-                                            initial=timezone.now)
 
     fecha_de_entrega = forms.DateTimeField(widget=DateTimeWidget(),
                                            required=False,
@@ -79,13 +79,17 @@ class CierrePOSForm(HiddenUserForm):
     """
     Defines a form that will be used to create and edit :class:`CierrePOS`
     """
+
     class Meta:
         model = CierrePOS
-        exclude = ('aplicado', )
+        exclude = ('aplicado',)
 
-    fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),
-                                            required=False,
-                                            initial=timezone.now)
+    cuenta = forms.ModelChoiceField(queryset=Fuente.objects.filter(caja=False))
+    fecha_de_deposito = forms.DateTimeField(
+            label=_('Fecha y Hora de Cierre'),
+            widget=DateTimeWidget(),
+            initial=timezone.now
+    )
 
     def __init__(self, *args, **kwargs):
         super(CierrePOSForm, self).__init__(*args, **kwargs)
@@ -102,12 +106,10 @@ class DetallePagoForm(FieldSetModelFormMixin):
         model = DetallePago
         fields = '__all__'
 
-    cheque = forms.ModelChoiceField(label='',
-                                    queryset=Cheque.objects.all(),
+    cheque = forms.ModelChoiceField(queryset=Cheque.objects.all(),
                                     widget=forms.HiddenInput(),
                                     required=False)
-    pago = forms.ModelChoiceField(label='',
-                                  queryset=Pago.objects.all(),
+    pago = forms.ModelChoiceField(queryset=Pago.objects.all(),
                                   widget=forms.HiddenInput(),
                                   required=False)
 

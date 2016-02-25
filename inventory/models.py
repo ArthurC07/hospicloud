@@ -14,18 +14,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 import calendar
 from datetime import date, time, datetime
 from decimal import Decimal
 
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.db.models import Sum
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from django.utils import timezone
-from django.db import models
 from django_extensions.db.models import TimeStampedModel
-from django.contrib.auth.models import User
 
 
 @python_2_unicode_compatible
@@ -142,7 +144,7 @@ class Proveedor(models.Model):
                                                     upload_to='inventory/provider/%Y/%m/%d')
 
     def __str__(self):
-        return _(u'{0} - {1}').format(self.name, self.rtn)
+        return _('{0} - {1}').format(self.name, self.rtn)
 
     def get_absolute_url(self):
         return reverse('proveedor', args=[self.id])
@@ -212,7 +214,7 @@ class Item(TimeStampedModel):
         return reverse('inventario', args=[self.inventario.id])
 
     def __str__(self):
-        return u'{0} en {1}'.format(self.plantilla.descripcion,
+        return '{0} en {1}'.format(self.plantilla.descripcion,
                                     self.inventario.lugar)
 
 
@@ -231,7 +233,7 @@ class Requisicion(TimeStampedModel):
         return reverse('requisicion', args=[self.id])
 
     def __str__(self):
-        return _(u'Requisición Número {1} de {0}').format(self.inventario.lugar,
+        return _('Requisición Número {1} de {0}').format(self.inventario.lugar,
                                                        self.id)
 
     def buscar_item(self, item_template):
@@ -285,7 +287,7 @@ class Transferencia(TimeStampedModel):
             origen = self.origen.lugar
         if self.destino:
             destino = self.destino.lugar
-        return _(u'Transferencia desde {0} hacia {1}').format(origen, destino)
+        return _('Transferencia desde {0} hacia {1}').format(origen, destino)
 
     def transferir(self):
 
@@ -321,7 +323,7 @@ class Transferido(TimeStampedModel):
     aplicada = models.BooleanField(default=False)
 
     def __str__(self):
-        return _(u'Transferir {1} {0}').format(self.item.descripcion,
+        return _('Transferir {1} {0}').format(self.item.descripcion,
                                             self.cantidad)
 
     def get_absolute_url(self):
@@ -390,7 +392,7 @@ class Historial(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='historiales')
 
     def __str__(self):
-        return _(u'{0} el {1}').format(self.inventario.lugar,
+        return _('{0} el {1}').format(self.inventario.lugar,
                                     self.fecha.strftime('%d/%m/Y'))
 
     def get_absolute_url(self):
@@ -406,7 +408,7 @@ class ItemHistorial(TimeStampedModel):
     cantidad = models.IntegerField(default=0)
 
     def __str__(self):
-        return _(u'{0} {1} el {2}').format(self.item.descripcion,
+        return _('{0} {1} el {2}').format(self.item.descripcion,
                                         self.historial.inventario.lugar,
                                         self.historial.created.strftime(
                                             '%d/%m/Y'))
@@ -424,7 +426,7 @@ class Cotizacion(TimeStampedModel):
     vencimiento = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return _(u'Cotización de {0}').format(self.proveedor)
+        return _('Cotización de {0}').format(self.proveedor)
 
     def get_absolute_url(self):
         return reverse('cotizacion-view', args=[self.id])

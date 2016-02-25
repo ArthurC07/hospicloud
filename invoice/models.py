@@ -15,26 +15,29 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from collections import defaultdict
-from decimal import Decimal
 from datetime import timedelta
+from decimal import Decimal
+
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import F, Sum, Min
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
-from django.db.models import F, Sum, Min
+
 from clinique.models import Consulta
 from contracts.models import Aseguradora
+from inventory.models import ItemTemplate, TipoVenta, Proveedor
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
-from inventory.models import ItemTemplate, TipoVenta, Proveedor
 from spital.models import Deposito
 from users.models import Ciudad
 
@@ -105,6 +108,7 @@ class Recibo(TimeStampedModel):
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
     emision = models.DateTimeField(default=timezone.now)
+    month_offset = models.IntegerField(default=0)
 
     def get_absolute_url(self):
 
@@ -118,7 +122,7 @@ class Recibo(TimeStampedModel):
 
     def facturacion(self):
 
-        return self.created - relativedelta(months=1)
+        return self.created - relativedelta(months=1 + self.month_offset)
 
     def total(self):
 
@@ -248,7 +252,7 @@ class Recibo(TimeStampedModel):
 
     def pagado(self):
 
-        return Pago.objects.filter(recibo=self).aggregate(
+        return self.pagos.filter(recibo=self).aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
@@ -305,7 +309,7 @@ class Venta(TimeStampedModel):
     realizar los cobros asociados"""
 
     cantidad = models.IntegerField()
-    descripcion = models.TextField(blank=True, default='')
+    descripcion = models.TextField(blank=True)
     precio = models.DecimalField(blank=True, null=True, max_digits=11,
                                  decimal_places=2)
     impuesto = models.DecimalField(blank=True, default=0, max_digits=11,
@@ -543,6 +547,9 @@ class CuentaPorCobrar(TimeStampedModel):
     Represents all the pending :class:`Pago` que deben recolectarse como un
     grupo
     """
+    class Meta:
+        ordering = ('-created',)
+
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     descripcion = models.TextField()
     status = models.ForeignKey(StatusPago)
@@ -607,9 +614,6 @@ class CuentaPorCobrar(TimeStampedModel):
                 self.minimum = timezone.now()
 
             self.inicial = self.monto()
-            self.status = self.status.next_status
-            self.enviadas = payments.count()
-            payments.update(status=self.status)
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
 
@@ -745,6 +749,10 @@ class Cotizacion(TimeStampedModel):
 class Cotizado(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
     realizar los cobros asociados"""
+
+    class Meta:
+        ordering = ('-created',)
+
     cotizacion = models.ForeignKey(Cotizacion)
     item = models.ForeignKey(ItemTemplate)
     cantidad = models.IntegerField()
@@ -802,6 +810,12 @@ class ComprobanteDeduccion(TimeStampedModel):
     proveedor = models.ForeignKey(Proveedor, null=True)
     ciudad = models.ForeignKey(Ciudad)
     correlativo = models.IntegerField()
+    cai_proveedor = models.CharField(max_length=255, blank=True)
+    numero_de_documento = models.CharField(max_length=255, blank=True)
+    fecha_de_emision = models.DateTimeField(default=timezone.now)
+    cai = models.CharField(max_length=255, blank=True)
+    inicio_rango = models.DateTimeField(default=timezone.now)
+    fin_rango = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         if self.proveedor is None:
@@ -826,6 +840,11 @@ class ComprobanteDeduccion(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if self.pk is None:
+
+            self.inicio_rango = self.ciudad.inicio_rango_comprobante
+            self.fin_rango = self.ciudad.fin_rango_comprobante
+            self.cai = self.ciudad.cai_comprobante
+
             ciudad = self.ciudad
             ciudad.correlativo_de_comprobante = F(
                     'correlativo_de_comprobante') + 1

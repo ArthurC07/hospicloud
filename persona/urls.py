@@ -13,8 +13,10 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from django.conf.urls import url
+
 from persona import views
 
 urlpatterns = [
@@ -35,6 +37,10 @@ urlpatterns = [
         views.PersonaCreateView.as_view(),
         name='persona-create'),
 
+    url(r'^persona/duplicados/limpiar$',
+        views.PersonaDuplicateRemoveView.as_view(),
+        name='persona-duplicate-clean'),
+
     url(r'^empresa/(?P<pk>\d+)$',
         views.EmpleadorDetailView.as_view(),
         name='empresa'),
@@ -46,6 +52,10 @@ urlpatterns = [
     url(r'^buscar$',
         views.PersonaSearchView.as_view(),
         name='persona-search'),
+
+    url(r'^buscar/avanzado$',
+        views.PersonaAdvancedSearchView.as_view(),
+        name='persona-advanced-search'),
 
     url(r'^(?P<pk>\d+)/editar$',
         views.PersonaUpdateView.as_view(),

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,13 +14,12 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
+from userena.views import profile_edit
 
 from hospinet.views import IndexView
-
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 from users.forms import CustomEditProfileForm
@@ -54,7 +53,7 @@ urlpatterns = [
     url(r'^rrhh/', include('bsc.urls')),
     url(r'^budget/', include('budget.urls')),
     url(r'^accounts/(?P<username>[\.\w-]+)/edit/$',
-        'userena.views.profile_edit',
+        profile_edit,
         {'edit_profile_form': CustomEditProfileForm},
         name='userena_profile_edit'),
     url(r'^accounts/', include('userena.urls')),

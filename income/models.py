@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from decimal import Decimal
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -24,8 +25,8 @@ from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-from django_extensions.db.models import TimeStampedModel
 from django.utils.translation import ugettext_lazy as _
+from django_extensions.db.models import TimeStampedModel
 
 from budget.models import Fuente
 from invoice.models import Pago, CuentaPorCobrar
@@ -33,7 +34,21 @@ from persona.models import Persona
 
 
 @python_2_unicode_compatible
+class TipoDeposito(TimeStampedModel):
+    """
+    Indicates the origin of the money that will be used for a :class:`Deposito`
+    """
+    nombre = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.nombre
+
+
+@python_2_unicode_compatible
 class Banco(TimeStampedModel):
+    """
+    Represents the banking institution available to :class:`Company`s
+    """
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
@@ -45,6 +60,7 @@ class Deposito(TimeStampedModel):
     """
     Represents money that has been sent to the bank.
     """
+    tipo = models.ForeignKey(TipoDeposito, null=True)
     cuenta = models.ForeignKey(Fuente)
     fecha_de_deposito = models.DateTimeField(default=timezone.now)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
@@ -87,17 +103,31 @@ class Deposito(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class Cheque(Deposito):
+class TipoCheque(TimeStampedModel):
+    nombre = models.CharField(max_length=255)
+
+    def __str__(self):
+
+        return self.nombre
+
+
+@python_2_unicode_compatible
+class Cheque(TimeStampedModel):
     """
     Represents a cheque that has been sent
     """
+    tipo = models.ForeignKey(TipoCheque, null=True)
     banco_de_emision = models.ForeignKey(Banco)
     emisor = models.ForeignKey(Persona, null=True)
     fecha_de_entrega = models.DateTimeField(default=timezone.now)
     fecha_de_emision = models.DateTimeField(default=timezone.now)
     numero_de_cheque = models.CharField(max_length=255)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     monto_retenido = models.DecimalField(max_digits=11, decimal_places=2,
                                          default=0)
+    imagen_de_cheque = models.FileField(upload_to='income/cheque/%Y/%m/%d',
+                                        null=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 
     def __str__(self):
         return _('{0} - {1}').format(

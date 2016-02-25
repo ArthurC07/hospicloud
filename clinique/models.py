@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,17 +14,19 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from collections import defaultdict
-from django.conf import settings
-from django.contrib.auth import get_user_model
+from __future__ import unicode_literals
 
+from collections import defaultdict
+
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
-from django.core.urlresolvers import reverse
 
+from contracts.models import Contrato, MasterContract
 from inventory.models import ItemTemplate, Inventario, ItemType
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
@@ -106,30 +108,33 @@ class Consultorio(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class Paciente(TimeStampedModel):
-    """Relaciona a una :class:`Persona` con un :class:`Doctor` para
-    ayudar a proteger la privacidad de dicha :class:`Persona` ya que se
-    restringe el acceso a la información básica y a los datos ingresados por
-    el :class:`User` al que pertenece el :class:`Consultorio`"""
-
-    persona = models.ForeignKey(Persona, related_name='pacientes')
-    consultorio = models.ForeignKey(Consultorio, related_name='pacientes',
+class Espera(TimeStampedModel):
+    consultorio = models.ForeignKey(Consultorio, related_name='espera',
                                     blank=True, null=True)
+    persona = models.ForeignKey(Persona, related_name='espera')
+    poliza = models.ForeignKey(MasterContract, blank=True, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    terminada = models.BooleanField(default=False)
+    atendido = models.BooleanField(default=False)
+    ausente = models.BooleanField(default=False)
+    consulta = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['created', ]
 
     def __str__(self):
-        return _(u"Paciente {0} de {1}").format(self.persona.nombre_completo(),
-                                                self.consultorio.usuario.get_full_name())
-
-    def identificacion(self):
-        return self.persona.identificacion
-
-    def nombre(self):
-        return self.persona.nombre_completo()
+        return _("{0} en {1}").format(self.persona.nombre_completo(),
+                                      self.consultorio.nombre)
 
     def get_absolute_url(self):
-        """Obtiene la url relacionada con un :class:`Paciente`"""
+        return reverse('consultorio-index')
 
-        return reverse('clinique-paciente', args=[self.id])
+    def tiempo(self):
+        delta = timezone.now() - self.created
+
+        return delta.seconds / 60
 
 
 @python_2_unicode_compatible
@@ -149,11 +154,18 @@ class Consulta(TimeStampedModel):
     final = models.DateTimeField(blank=True, null=True)
     remitida = models.BooleanField(default=False)
     encuestada = models.BooleanField(default=False)
+    no_desea_encuesta = models.BooleanField(default=False)
     revisada = models.BooleanField(default=False)
+    espera = models.ForeignKey(Espera, blank=True, null=True,
+                               related_name='consulta_set')
+    poliza = models.ForeignKey(MasterContract, blank=True, null=True)
+
+    class Meta:
+        ordering = ['created', ]
 
     def __str__(self):
 
-        return _(u'Consulta de {0}').format(self.persona.nombre_completo())
+        return _('Consulta de {0}').format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -264,7 +276,7 @@ class Cita(TimeStampedModel):
         return self.consultorio.get_absolute_url()
 
     def __str__(self):
-        return u'{0}'.format(self.persona.nombre_completo())
+        return '{0}'.format(self.persona.nombre_completo())
 
     def to_espera(self):
         espera = Espera()
@@ -385,8 +397,8 @@ class NotaEnfermeria(TimeStampedModel):
 
 class Examen(TimeStampedModel):
     """Nota agregada a una :class:`Admision` por el personal de Enfermeria"""
-
-    paciente = models.ForeignKey(Paciente, related_name='consultorio_examenes')
+    persona = models.ForeignKey(Persona, related_name='clinique_examenes',
+                                null=True, blank=True)
     descripcion = models.TextField(blank=True)
     adjunto = models.FileField(upload_to="clinique/examen/%Y/%m/%d")
 
@@ -394,32 +406,6 @@ class Examen(TimeStampedModel):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
         return self.paciente.get_absolute_url()
-
-
-@python_2_unicode_compatible
-class Espera(TimeStampedModel):
-    consultorio = models.ForeignKey(Consultorio, related_name='espera',
-                                    blank=True, null=True)
-    persona = models.ForeignKey(Persona, related_name='espera')
-    fecha = models.DateTimeField(auto_now_add=True)
-    atendido = models.BooleanField(default=False)
-    ausente = models.BooleanField(default=False)
-    consulta = models.BooleanField(default=False)
-    inicio = models.DateTimeField(auto_now_add=True)
-    terminada = models.BooleanField(default=False)
-    fin = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return _(u"{0} en {1}").format(self.persona.nombre_completo(),
-                                       self.consultorio.nombre)
-
-    def get_absolute_url(self):
-        return self.consultorio.get_absolute_url()
-
-    def tiempo(self):
-        delta = timezone.now() - self.created
-
-        return delta.seconds / 60
 
 
 @python_2_unicode_compatible
@@ -474,6 +460,17 @@ class Remision(TimeStampedModel):
     motivo = models.TextField()
 
 
+class NotaMedica(TimeStampedModel):
+    """
+    Allows a medic to add some notes about :class:`Persona` behavior
+    """
+    consulta = models.ForeignKey(Consulta)
+    observacion = models.TextField()
+
+    def get_absolute_url(self):
+        return self.consulta.get_absolute_url()
+
+
 def consolidate_clinique(persona, clone):
     [transfer_object_to_persona(consulta, persona) for consulta in
      clone.consultas.all()]
@@ -503,7 +500,7 @@ def consolidate_clinique(persona, clone):
 persona_consolidation_functions.append(consolidate_clinique)
 
 Persona.consultas_activas = property(
-    lambda p: Consulta.objects.filter(persona=p, activa=True))
+        lambda p: Consulta.objects.filter(persona=p, activa=True))
 
 Persona.ultima_consulta = property(
-    lambda p: Consulta.objects.filter(persona=p).last())
+        lambda p: Consulta.objects.filter(persona=p).last())

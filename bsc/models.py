@@ -99,8 +99,8 @@ class Extra(TimeStampedModel):
     def __str__(self):
 
         return _(u'{0} de {1}').format(
-            self.get_tipo_extra_display(),
-            self.score_card.nombre
+                self.get_tipo_extra_display(),
+                self.score_card.nombre
         )
 
     def cumplido(self, usuario, inicio, fin):
@@ -132,9 +132,8 @@ class Puntuacion(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Meta(TimeStampedModel):
-
     class Meta:
-        ordering = ('tipo_meta', )
+        ordering = ('tipo_meta',)
 
     CONSULTA_TIME = 'CT'
     PRE_CONSULTA_TIME = 'PCT'
@@ -182,8 +181,8 @@ class Meta(TimeStampedModel):
     def __str__(self):
 
         return _(u'{0} de {1}').format(
-            self.get_tipo_meta_display(),
-            self.score_card.nombre
+                self.get_tipo_meta_display(),
+                self.score_card.nombre
         )
 
     def logro(self, usuario, inicio, fin):
@@ -196,8 +195,8 @@ class Meta(TimeStampedModel):
                                       created__range=(inicio, fin)).count()
 
         turnos = usuario.turno_set.filter(
-            inicio__range=(inicio, timezone.now()),
-            contabilizable=True
+                inicio__range=(inicio, timezone.now()),
+                contabilizable=True
         )
 
         if logins < 5 and turnos.count() < 5:
@@ -240,7 +239,7 @@ class Meta(TimeStampedModel):
                                                  fecha__range=(inicio, fin))
 
         return evaluaciones.aggregate(
-            total=Coalesce(Sum('puntaje'), Decimal())
+                total=Coalesce(Sum('puntaje'), Decimal())
         )['total']
 
     def ponderacion(self, logro):
@@ -264,7 +263,7 @@ class Meta(TimeStampedModel):
 
     def recibos(self, usuario, inicio, fin):
         return Recibo.objects.annotate(sold=Sum('ventas__total')).filter(
-            created__range=(inicio, fin), cajero=usuario
+                created__range=(inicio, fin), cajero=usuario
         )
 
     def orden_medicas(self, usuario, inicio, fin):
@@ -316,7 +315,7 @@ class Meta(TimeStampedModel):
     def consulta_remitida(self, usuario, inicio, fin):
 
         remitidas = self.consultas(usuario, inicio, fin).filter(
-            remitida=True
+                remitida=True
         ).count()
 
         consultas = self.consultas(usuario, inicio, fin).count()
@@ -325,14 +324,14 @@ class Meta(TimeStampedModel):
     def poll_average(self, usuario, inicio, fin):
 
         votos = Voto.objects.filter(
-            opcion__isnull=False,
-            created__range=(inicio, fin),
-            respuesta__consulta__consultorio__usuario=usuario,
-            pregunta__calificable=True
+                opcion__isnull=False,
+                created__range=(inicio, fin),
+                respuesta__consulta__consultorio__usuario=usuario,
+                pregunta__calificable=True
         )
 
         total = votos.aggregate(
-            total=Coalesce(Sum('opcion__valor'), Decimal())
+                total=Coalesce(Sum('opcion__valor'), Decimal())
         )['total']
 
         return Decimal(total) / max(votos.count(), 1)
@@ -340,8 +339,8 @@ class Meta(TimeStampedModel):
     def ventas(self, usuario, inicio, fin):
 
         ventas = MasterContract.objects.filter(
-            vendedor__usuario=usuario,
-            created__range=(inicio, fin),
+                vendedor__usuario=usuario,
+                created__range=(inicio, fin),
         ).count()
 
         return ventas
@@ -357,10 +356,10 @@ class Meta(TimeStampedModel):
     def quejas(self, usuario, inicio, fin):
 
         quejas = Queja.objects.select_related(
-            'respuesta__consulta__consultorio__usuario__profile__ciudad'
+                'respuesta__consulta__consultorio__usuario__profile__ciudad'
         ).filter(
-            created__range=(inicio, fin),
-            respuesta__consulta__consultorio__usuario__profile__ciudad=usuario.profile.ciudad,
+                created__range=(inicio, fin),
+                respuesta__consulta__consultorio__usuario__profile__ciudad=usuario.profile.ciudad,
         )
 
         incompletas = quejas.filter(resuelta=False)
@@ -370,8 +369,8 @@ class Meta(TimeStampedModel):
     def presupuesto(self, usuario):
 
         presupuesto = Presupuesto.objects.filter(
-            ciudad=usuario.profile.ciudad,
-            activo=True
+                ciudad=usuario.profile.ciudad,
+                activo=True
         ).first()
 
         if presupuesto is None:
@@ -382,8 +381,8 @@ class Meta(TimeStampedModel):
     def turnos(self, usuario, inicio, fin):
 
         turnos = Turno.objects.filter(
-            created__range=(inicio, fin),
-            ciudad=usuario.profile.ciudad,
+                created__range=(inicio, fin),
+                ciudad=usuario.profile.ciudad,
         )
 
         return turnos.count() / max(turnos.count(), 1)
@@ -417,11 +416,11 @@ class ArchivoNotas(TimeStampedModel):
         archivo = storage.open(self.archivo.name, 'rU')
         data = unicodecsv.reader(archivo)
         [procesar_notas(
-            linea,
-            self.fecha,
-            self.meta,
-            self.columna_de_usuarios - 1,
-            self.columna_de_puntaje - 1
+                linea,
+                self.fecha,
+                self.meta,
+                self.columna_de_usuarios - 1,
+                self.columna_de_puntaje - 1
         ) for linea in data]
 
 
@@ -480,7 +479,11 @@ class Opcion(TimeStampedModel):
 class Respuesta(TimeStampedModel):
     encuesta = models.ForeignKey(Encuesta)
     consulta = models.ForeignKey(Consulta)
+    persona = models.ForeignKey(Persona, blank=True, null=True)
     terminada = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['created', ]
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -519,7 +522,6 @@ class Queja(TimeStampedModel):
     resuelta = models.BooleanField(default=False)
 
     def __str__(self):
-
         return self.queja
 
     def get_absolute_url(self):
@@ -534,7 +536,6 @@ class Solucion(TimeStampedModel):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     def get_absolute_url(self):
-
         return reverse('queja', args=[self.queja.id])
 
 
@@ -560,11 +561,9 @@ def register_login(sender, user, request, **kwargs):
 
 user_logged_in.connect(register_login)
 
-Persona.cantidad_encuestas = property(lambda p: Respuesta.objects.filter(
-    consulta__persona=p).count())
+Persona.cantidad_encuestas = property(lambda p: p.respuesta_set.count())
 
-Persona.ultima_encuesta = property(lambda p: Respuesta.objects.filter(
-    consulta__persona=p).order_by('created').last())
+Persona.ultima_encuesta = property(lambda p: p.respuesta_set[-1])
 
 
 def get_login(turno, usuario):
@@ -592,7 +591,7 @@ def get_current_month_logins(user):
 
 
 UserProfile.get_current_month_logins = property(
-    lambda p: get_current_month_logins(p.user))
+        lambda p: get_current_month_logins(p.user))
 
 UserProfile.get_current_month_logins_list = property(
-    lambda p: get_current_month_logins_list(p.user))
+        lambda p: get_current_month_logins_list(p.user))

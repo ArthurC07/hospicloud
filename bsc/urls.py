@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from django.conf.urls import url
 
 from bsc import views
@@ -39,6 +40,10 @@ urlpatterns = [
     url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/encuestada$',
         views.ConsultaEncuestadaRedirectView.as_view(),
         name='encuesta-respondida'),
+
+    url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/negada$',
+        views.ConsultaNoEncuestadaRedirectView.as_view(),
+        name='encuesta-no-respondida'),
 
     url(r'^respuesta/(?P<pk>\d+)$', views.RespuestaDetailView.as_view(),
         name='respuesta'),

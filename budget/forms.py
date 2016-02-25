@@ -41,6 +41,7 @@ class PresupuestoForm(CiudadFormMixin):
     """
     Builds a form to add new :class:`Presupuesto`
     """
+
     class Meta:
         model = Presupuesto
         fields = '__all__'
@@ -56,14 +57,16 @@ class PresupuestoFormMixin(FieldSetModelFormMixin):
     Allows adding a presupuesto field to forms based in choices of the
     :class:`Presupuesto` model
     """
-    presupuesto = forms.ModelChoiceField(queryset=Presupuesto.objects.all(),
-                                         widget=forms.HiddenInput())
+    presupuesto = forms.ModelChoiceField(
+        queryset=Presupuesto.objects.select_related('ciudad').all(),
+        widget=forms.HiddenInput())
 
 
 class CuentaForm(PresupuestoFormMixin):
     """
     Builds forms used for :class:`Cuenta`
     """
+
     class Meta:
         model = Cuenta
         fields = '__all__'
@@ -75,7 +78,6 @@ class CuentaForm(PresupuestoFormMixin):
 
 
 class CuentaFormMixin(FieldSetModelFormMixin):
-
     """
     Allows adding a cuenta field to forms based in choices of the
     :class:`Cuenta` model
@@ -88,6 +90,7 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
     """
     Builds forms to create :class:`Gasto`
     """
+
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_maxima_de_pago', 'numero_pagos',
@@ -115,6 +118,7 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
     """
     Builds forms to create :class:`Gasto` that have not been completely payed.
     """
+
     class Meta:
         model = Gasto
         exclude = ('ejecutado', 'fecha_de_pago', 'comprobante_de_pago',
@@ -171,7 +175,11 @@ class MontoForm(FieldSetFormMixin):
 
 
 class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
-    cuenta = forms.ModelChoiceField(queryset=Cuenta.objects.all())
+    cuenta = forms.ModelChoiceField(queryset=Cuenta.objects.select_related(
+            'presupuesto',
+            'presupuesto__ciudad',
+            'presupuesto__ciudad__nombre'
+    ).all())
 
     def __init__(self, *args, **kwargs):
         super(GastoPeriodoCuentaForm, self).__init__(*args, **kwargs)
@@ -180,7 +188,9 @@ class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
 
 
 class GastoPresupuestoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
-    presupuesto = forms.ModelChoiceField(queryset=Presupuesto.objects.all())
+    presupuesto = forms.ModelChoiceField(
+            queryset=Presupuesto.objects.select_related('ciudad').all()
+    )
 
     def __init__(self, *args, **kwargs):
         super(GastoPresupuestoPeriodoCuentaForm, self).__init__(*args, **kwargs)
@@ -192,9 +202,15 @@ class PresupuestoMesForm(FieldSetModelFormMixin):
     """
     Builds the form required to create new :class:`PresupuestoMes` instances
     """
+    cuenta = forms.ModelChoiceField(queryset=Cuenta.objects.select_related(
+            'presupuesto',
+            'presupuesto__ciudad',
+            'presupuesto__ciudad__nombre'
+    ).all())
+
     class Meta:
         model = PresupuestoMes
-        exclude = ('procesado', )
+        exclude = ('procesado',)
 
     def __init__(self, *args, **kwargs):
         """

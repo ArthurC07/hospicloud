@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib import messages
@@ -32,7 +33,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm
-from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, ArchivoNotas, \
+from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
+    ArchivoNotas, \
     Pregunta, Solucion, Login
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
@@ -49,7 +51,7 @@ class ScoreCardListView(LoginRequiredMixin, ListView):
 
         context['loginperiodo'] = PeriodoForm(prefix='login')
         context['loginperiodo'].set_legend(
-            _(u'Inicios de Sesi&oacute;n por Periodo')
+                _('Inicios de Sesi&oacute;n por Periodo')
         )
         context['loginperiodo'].set_action('login-periodo')
 
@@ -60,7 +62,7 @@ class ScoreCardDetailView(LoginRequiredMixin, DetailView):
     model = ScoreCard
 
 
-class UserDetailView(DetailView, LoginRequiredMixin):
+class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'bsc/user.html'
 
@@ -72,12 +74,19 @@ class EncuestaListView(LoginRequiredMixin, ListView):
 class EncuestaDetailView(LoginRequiredMixin, DetailView):
     model = Encuesta
     context_object_name = 'encuesta'
+    queryset = Encuesta.objects.prefetch_related('respuesta_set')
 
     def get_context_data(self, **kwargs):
         context = super(EncuestaDetailView, self).get_context_data(**kwargs)
 
-        context['consultas'] = Consulta.objects.filter(facturada=True,
-                                                       encuestada=False)
+        context['consultas'] = Consulta.objects.select_related(
+                'persona',
+        ).prefetch_related(
+            'persona__respuesta_set',
+        ).filter(
+                facturada=True,
+                encuestada=False
+        )
 
         return context
 
@@ -114,6 +123,7 @@ class RespuestaCreateView(EncuestaFormMixin, ConsultaFormMixin,
 
     def form_valid(self, form):
         self.object = form.save()
+        self.object.persona = self.consulta.persona
 
         self.consulta.encuestada = True
         self.consulta.save()
@@ -147,9 +157,10 @@ class RespuestaDetailView(DetailView):
         context['helper'] = FormHelper()
         context['helper'].form_action = reverse('votos-guardar',
                                                 args=[self.object.id])
-        context['helper'].add_input(Submit('submit', _(u'Guardar')))
+        context['helper'].add_input(Submit('submit', _('Guardar')))
 
         context['queja'] = QuejaForm(initial={'respuesta': self.object})
+        context['queja'].helper.form_id = 'queja'
         context['queja'].helper.form_action = reverse('queja-agregar',
                                                       args=[self.object.id])
 
@@ -165,13 +176,13 @@ def save_votes(request, respuesta):
             respuesta.terminada = True
             respuesta.save()
         else:
-            messages.info(request, _(u'La respuesta está incompleta'))
+            messages.info(request, _('La respuesta está incompleta'))
             return redirect(respuesta)
     else:
-        messages.info(request, _(u'La respuesta está incompleta'))
+        messages.info(request, _('La respuesta está incompleta'))
         return redirect(respuesta)
 
-    messages.info(request, _(u'Encuesta guardada!'))
+    messages.info(request, _('Encuesta guardada!'))
     respuesta.consulta.encuestada = True
     respuesta.consulta.save()
 
@@ -228,7 +239,7 @@ class PreguntaFormMixin(PreguntaMixin, FormMixin):
         return initial
 
 
-class VotoUpdateView(UpdateView, LoginRequiredMixin):
+class VotoUpdateView(LoginRequiredMixin, UpdateView):
     model = Voto
     form_class = VotoForm
 
@@ -252,6 +263,7 @@ class RespuestaRedirectView(RedirectView):
         respuesta = Respuesta()
         respuesta.consulta = consulta
         respuesta.encuesta = encuesta
+        respuesta.persona = consulta.persona
         consulta.encuestada = True
         consulta.save()
         respuesta.save()
@@ -273,6 +285,20 @@ class ConsultaEncuestadaRedirectView(RedirectView):
         consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
 
         consulta.encuestada = True
+        consulta.no_desea_encuesta = True
+        consulta.save()
+
+        return encuesta.get_absolute_url()
+
+
+class ConsultaNoEncuestadaRedirectView(RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        encuesta = get_object_or_404(Encuesta, pk=kwargs['encuesta'])
+        consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
+
+        consulta.encuestada = True
         consulta.save()
 
         return encuesta.get_absolute_url()
@@ -283,22 +309,31 @@ class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
     form_class = QuejaForm
 
     def get_success_url(self):
-
         return self.object.respuesta.get_absolute_url()
 
 
-class QuejaDetailView(DetailView, LoginRequiredMixin):
+class QuejaDetailView(LoginRequiredMixin, DetailView):
     model = Queja
+    queryset = Queja.objects.prefetch_related(
+        'solucion_set',
+    )
 
 
-class QuejaListView(ListView, LoginRequiredMixin):
+class QuejaListView(LoginRequiredMixin, ListView):
     model = Queja
-    queryset = Queja.objects.filter(resuelta=False)
+    queryset = Queja.objects.filter(resuelta=False).select_related(
+            'respuesta',
+            'respuesta__consulta',
+            'respuesta__consulta__consultorio__usuario',
+    ).prefetch_related(
+            'solucion_set',
+            'respuesta__consulta__consultorio__usuario__profile',
+            'respuesta__consulta__consultorio__usuario__profile__ciudad',
+    )
     context_object_name = 'quejas'
 
 
 class QuejaMixin(ContextMixin, View):
-
     def dispatch(self, *args, **kwargs):
         self.queja = get_object_or_404(Queja, pk=kwargs['queja'])
         return super(QuejaMixin, self).dispatch(*args, **kwargs)
@@ -327,24 +362,24 @@ class SolucionCreateView(QuejaFormMixin, CurrentUserFormMixin, CreateView,
     form_class = SolucionForm
 
 
-class ArchivoNotasCreateView(CreateView, LoginRequiredMixin):
+class ArchivoNotasCreateView(LoginRequiredMixin, CreateView):
     model = ArchivoNotas
     form_class = ArchivoNotasForm
 
 
-class ArchivoNotasDetailView(DetailView, LoginRequiredMixin):
+class ArchivoNotasDetailView(LoginRequiredMixin, DetailView):
     model = ArchivoNotas
     context_object_name = 'archivonotas'
 
 
-class ArchivoNotasProcesarView(RedirectView, LoginRequiredMixin):
+class ArchivoNotasProcesarView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
         archivonotas = get_object_or_404(ArchivoNotas, pk=kwargs['pk'])
         archivonotas.procesar()
 
-        messages.info(self.request, _(u'¡Archivo Importado Exitosamente!'))
+        messages.info(self.request, _('¡Archivo Importado Exitosamente!'))
         return archivonotas.get_absolute_url()
 
 
@@ -355,10 +390,9 @@ class LoginPeriodoView(PeriodoView, LoginRequiredMixin):
     template_name = 'bsc/login_list.html'
 
     def get_context_data(self, **kwargs):
-
         context = super(LoginPeriodoView, self).get_context_data(**kwargs)
         context['object_list'] = Login.objects.filter(
-            created__range=(self.inicio, self.fin)
+                created__range=(self.inicio, self.fin)
         ).order_by('user', 'created')
 
         return context

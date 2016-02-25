@@ -22,7 +22,7 @@
                 </li>
                 <li role="presentation">
                     <a data-toggle="tab" href="#ingresos">
-                        {% trans 'Ingresos' %}
+                        {% trans 'Anual' %}
                     </a>
                 </li>
                 <li role="presentation">
@@ -119,7 +119,7 @@
                                     </div>
                                 </article>
                                 {% empty %}
-                                <h3>No hay Presupuestos Disponibles</h3>
+                                <h3>{% trans 'No hay Presupuestos Disponibles' %}</h3>
                             {% endfor %}
                         </div>
                     </section>
@@ -221,70 +221,37 @@
                 </div>
                 <div class="row tab-pane fade in" id="ingresos">
                     <div class="col-md-12 table-responsive">
-                        <h2>{% trans 'Ingresos' %}</h2>
-                        <h3>
-                            {% trans 'Ingresos al Credito Mes Anterior' %}
-                            {{ credito_anterior }}
-                        </h3>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>{% trans 'Ciudad' %}</th>
-                                <th>{% trans 'Proyectado' %}</th>
-                                <th>{% trans 'Ingresado' %}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for income in incomes %}
-                                <tr>
-                                    <td>{{ income.ciudad }}</td>
-                                    <td class="text-right">{{ income.monto }}</td>
-                                    <td class="text-right">
-                                        {{ income.ingresado_mes_actual }}
-                                        <table class="table">
-                                            {% for pago in income.facturado_mes_actual %}
-                                                <tr>
-                                                    <td class="text-left">{{ pago.tipo__nombre }}</td>
-                                                    <td class="text-right">{{ pago.total }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </table>
-                                    </td>
-                                </tr>
+                        <h2>{% trans 'Presupuesto Anual' %} {{ year }}</h2>
+                        <div class="row">
+                            {% for form in budget_forms %}
+                                <div class="col-md-2">
+                                    {% crispy form %}
+                                </div>
                             {% endfor %}
-                            </tbody>
-                        </table>
-                        <h2>{% trans 'Aseguradoras' %}</h2>
-                        {% for income in incomes %}
-                            <table class="table">
-                                <caption>{{ income.ciudad }}</caption>
-                                <tr>
-                                    <th>{% trans 'Aseguradora' %}</th>
-                                    <th>{% trans 'Monto Reembolsado Mes Actual' %}</th>
-                                    <th>{% trans 'Monto Pendiente' %}</th>
-                                    <th>{% trans 'Facturado' %}</th>
-                                </tr>
-                                {% for aseguradora in income.pendiente_aseguradoras %}
-                                    <tr>
-                                        <td>{{ aseguradora.0 }}</td>
-                                        <td class="text-right">{{ aseguradora.2 }}</td>
-                                        <td class="text-right">{{ aseguradora.3 }}</td>
-                                        <td class="text-right">{{ aseguradora.1 }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
-                        {% endfor %}
+                        </div>
                     </div>
                 </div>
                 <div class="row tab-pane fade in" id="reportes">
-                    <div class="col-md-3">
-                        {% crispy gasto-periodo %}
-                    </div>
-                    <div class="col-md-3">
-                        {% crispy gasto-presupuesto-periodo %}
-                    </div>
-                    <div class="col-md-6 col-xs-6">
-                        {% crispy budget-month %}
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                {% crispy gasto-periodo %}
+                            </div>
+                            <div class="col-md-3">
+                                {% crispy gasto-presupuesto-periodo %}
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                {% crispy budget-month %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% crispy budget-month-year %}
+                            </div>
+                            <div class="col-md-6">
+                                {% crispy balance-month-year %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

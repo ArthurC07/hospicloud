@@ -14,32 +14,32 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from datetime import datetime, time
-from django.contrib.auth.decorators import permission_required
 
-from django.db.models import Q
+from crispy_forms.layout import Fieldset
+from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
-from django.views.generic import (CreateView, ListView, TemplateView,
-                                  DeleteView,
-                                  DetailView, RedirectView, UpdateView)
-from django.contrib import messages
-from crispy_forms.layout import Fieldset
+from django.views.generic import CreateView, ListView, TemplateView, DeleteView, \
+    DetailView, RedirectView, UpdateView
 
+from emergency.models import Emergencia
+from invoice.forms import PeriodoForm
+from nightingale.models import Cargo
+from persona.forms import PersonaForm, PersonaSearchForm
 from persona.models import Persona
 from persona.views import PersonaCreateView
-from spital.forms import (AdmisionForm, HabitacionForm, PreAdmisionForm,
-                          IngresarForm, DepositoForm)
+from spital.forms import AdmisionForm, HabitacionForm, PreAdmisionForm, \
+    IngresarForm, DepositoForm
 from spital.models import Admision, Habitacion, PreAdmision, Deposito
-from nightingale.models import Cargo
-from emergency.models import Emergencia
-from persona.forms import PersonaForm, PersonaSearchForm
 from users.mixins import LoginRequiredMixin
-from invoice.forms import PeriodoForm
 
 
 class AdmisionPermissionMixin(LoginRequiredMixin):
@@ -57,7 +57,6 @@ class AdmisionIndexView(ListView, AdmisionPermissionMixin):
     template_name = 'admision/index.html'
 
     def get_context_data(self, **kwargs):
-
         """Realiza los calculos para mostrar el gráfico de tiempo de espera
         de las :class:`Admision`es"""
 
@@ -66,10 +65,11 @@ class AdmisionIndexView(ListView, AdmisionPermissionMixin):
         context['preadmisiones'] = PreAdmision.objects.filter(completada=False)
         context['admision_periodo'] = PeriodoForm(prefix='admisiones')
         context[
-            'admision_periodo'].helper.form_action = 'estadisticas-hospitalizacion'
+            'admision_periodo'
+        ].helper.form_action = 'estadisticas-hospitalizacion'
         context['admision_periodo'].helper.layout = Fieldset(
-            u'Admisiones por Periodo',
-            *context['admision_periodo'].field_names)
+                'Admisiones por Periodo',
+                *context['admision_periodo'].field_names)
         return context
 
 
@@ -146,7 +146,7 @@ class PersonaFiadorCreateView(PersonaCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(PersonaFiadorCreateView, self).get_context_data(
-            **kwargs)
+                **kwargs)
         context['admision'] = self.admision
         return context
 
@@ -177,12 +177,12 @@ class PersonaReferenciaCreateView(PersonaCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(PersonaReferenciaCreateView, self).get_context_data(
-            **kwargs)
+                **kwargs)
         context['admision'] = self.admision
         return context
 
 
-class ReferenciaAgregarView(RedirectView, LoginRequiredMixin):
+class ReferenciaAgregarView(LoginRequiredMixin, RedirectView):
     """Permite agregar una :class:`Persona` como referencia de una
     :class:`Admision`"""
     permanent = False
@@ -197,7 +197,7 @@ class ReferenciaAgregarView(RedirectView, LoginRequiredMixin):
         return reverse('admision-view-id', args=[admision.id])
 
 
-class FiadorAgregarView(RedirectView, LoginRequiredMixin):
+class FiadorAgregarView(LoginRequiredMixin, RedirectView):
     """Permite agregar una :class:`Persona` como fiador de una
     :class:`Admision`"""
     permanent = False
@@ -211,7 +211,7 @@ class FiadorAgregarView(RedirectView, LoginRequiredMixin):
         return reverse('admision-view-id', args=[admision.id])
 
 
-class AdmisionCreateView(CreateView, LoginRequiredMixin):
+class AdmisionCreateView(LoginRequiredMixin, CreateView):
     """Crea una :class:`Admision` para una :class:`Persona` ya existente en el
     sistema"""
 
@@ -244,7 +244,7 @@ class AdmisionCreateView(CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class AdmisionDetailView(DetailView, LoginRequiredMixin):
+class AdmisionDetailView(LoginRequiredMixin, DetailView):
     """Permite mostrar los datos de una :class:`Admision`"""
 
     context_object_name = 'admision'
@@ -252,7 +252,7 @@ class AdmisionDetailView(DetailView, LoginRequiredMixin):
     template_name = 'admision/admision_detail.html'
 
 
-class AutorizarView(RedirectView, LoginRequiredMixin):
+class AutorizarView(LoginRequiredMixin, RedirectView):
     """Permite marcar como autorizada una :class:`Admision`"""
 
     url = '/admision/autorizar'
@@ -261,11 +261,11 @@ class AutorizarView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         admision = get_object_or_404(Admision, pk=kwargs['pk'])
         admision.autorizar()
-        messages.info(self.request, u'¡Admision Autorizada!')
+        messages.info(self.request, '¡Admision Autorizada!')
         return reverse('admision-view-id', args=[admision.id])
 
 
-class PagarView(RedirectView, LoginRequiredMixin):
+class PagarView(LoginRequiredMixin, RedirectView):
     """Permite marcar como pagada una :class:`Admision`"""
 
     url = '/admision/hospitalizar'
@@ -274,7 +274,7 @@ class PagarView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         admision = get_object_or_404(Admision, pk=kwargs['pk'])
         admision.pagar()
-        messages.info(self.request, u'¡Registrado el pago de la Admision!')
+        messages.info(self.request, '¡Registrado el pago de la Admision!')
         return reverse('admision-view-id', args=[admision.id])
 
 
@@ -292,7 +292,7 @@ class AdmisionPeriodoView(TemplateView, LoginRequiredMixin):
             self.inicio = datetime.combine(inicio, time.min)
             self.fin = datetime.combine(fin, time.max)
             self.admisiones = Admision.objects.filter(
-                admision__range=(inicio, fin))
+                    admision__range=(inicio, fin))
 
         else:
 
@@ -311,7 +311,7 @@ class AdmisionPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class HabitacionListView(ListView, LoginRequiredMixin):
+class HabitacionListView(LoginRequiredMixin, ListView):
     """Muestra la lista de las :class:`Habitacion`es para tener una vista
     rápida de las que se encuentran disponibles en un determinado momento"""
 
@@ -320,7 +320,7 @@ class HabitacionListView(ListView, LoginRequiredMixin):
     template_name = 'admision/habitaciones.html'
 
 
-class HabitacionCreateView(CreateView, LoginRequiredMixin):
+class HabitacionCreateView(LoginRequiredMixin, CreateView):
     """Permite agregar una :class:`Habitacion` al :class:`Hospital`"""
 
     model = Habitacion
@@ -328,7 +328,7 @@ class HabitacionCreateView(CreateView, LoginRequiredMixin):
     template_name = 'admision/habitacion_create.html'
 
 
-class HabitacionDetailView(DetailView, LoginRequiredMixin):
+class HabitacionDetailView(LoginRequiredMixin, DetailView):
     """Permite mostrar el estado de una :class:`Habitacion`"""
 
     context_object_name = 'habitacion'
@@ -356,7 +356,7 @@ class HabitacionDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class HabitacionUpdateView(UpdateView, LoginRequiredMixin):
+class HabitacionUpdateView(LoginRequiredMixin, UpdateView):
     """Permite editar los datos de una :class:`Habitacion`"""
 
     model = Habitacion
@@ -364,7 +364,7 @@ class HabitacionUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'admision/habitacion_create.html'
 
 
-class PreAdmisionCreateView(CreateView, LoginRequiredMixin):
+class PreAdmisionCreateView(LoginRequiredMixin, CreateView):
     model = PreAdmision
     form_class = PreAdmisionForm
 
@@ -399,7 +399,7 @@ class PreAdmisionCreateView(CreateView, LoginRequiredMixin):
         return context
 
 
-class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
+class AdmisionPreCreateView(LoginRequiredMixin, CreateView):
     """Crea una :class:`Admision` para una :class:`Persona` ya existente en el
     sistema"""
 
@@ -413,7 +413,8 @@ class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
 
         kwargs = super(AdmisionPreCreateView, self).get_form_kwargs()
         kwargs.update(
-            {'initial': {'paciente': self.preadmision.emergencia.persona.id}})
+                {'initial': {
+                    'paciente': self.preadmision.emergencia.persona.id}})
         return kwargs
 
     def dispatch(self, *args, **kwargs):
@@ -463,11 +464,10 @@ class PreAdmisionDeleteView(DeleteView, LoginRequiredMixin):
     model = PreAdmision
 
     def get_success_url(self):
-
         return reverse('admision-index')
 
 
-class HospitalizarView(UpdateView, LoginRequiredMixin):
+class HospitalizarView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos de ingreso en la central de enfermeria"""
 
     model = Admision
@@ -477,7 +477,7 @@ class HospitalizarView(UpdateView, LoginRequiredMixin):
     def get_success_url(self):
         self.object.hospitalizar()
         self.object.ingresar()
-        messages.info(self.request, u'¡Admision Enviada a Enfermeria!')
+        messages.info(self.request, '¡Admision Enviada a Enfermeria!')
         return reverse('nightingale-view-id', args=[self.object.id])
 
 
@@ -493,6 +493,6 @@ class DepositoCreateView(AdmisionFormMixin):
     form_class = DepositoForm
 
 
-class DepositoUpdateView(UpdateView, LoginRequiredMixin):
+class DepositoUpdateView(LoginRequiredMixin, UpdateView):
     model = Deposito
     form_class = DepositoForm

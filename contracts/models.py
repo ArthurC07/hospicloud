@@ -1,7 +1,6 @@
-# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,7 +16,6 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-import operator
 from datetime import timedelta, datetime, time
 from decimal import Decimal
 
@@ -27,13 +25,12 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.files.storage import default_storage as storage
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Q, F, Max
+from django.db.models import F, Max
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
-from clinique.models import Consulta, Seguimiento, Cita
 from hospinet.utils import make_end_day
 from hospinet.utils.date import get_current_month_range
 from inventory.models import ItemTemplate, ItemType
@@ -69,10 +66,14 @@ class Vendedor(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Aseguradora(TimeStampedModel):
+    """
+    Contains the data for each insurance company the organization has
+    :class:`Contrato` with
+    """
     nombre = models.CharField(max_length=255, blank=True)
-    representante = models.CharField(max_length=255, blank=True, default='')
     cardex = models.ForeignKey(Persona, null=True, blank=True,
-                               related_name='cardex')
+                               related_name='cardex',
+                               verbose_name=_('Representante'))
 
     def __str__(self):
         return self.nombre
@@ -123,13 +124,13 @@ class Beneficio(TimeStampedModel):
     tipo_items = models.ForeignKey(ItemType, related_name='beneficios',
                                    null=True, blank=True)
     limite = models.IntegerField(default=0,
-                                 verbose_name=_(u'Límite de Eventos'))
+                                 verbose_name=_('Límite de Eventos'))
     descuento_post_limite = models.DecimalField(max_digits=10, decimal_places=2,
                                                 default=0)
     aplicar_a_suspendidos = models.BooleanField(default=False)
 
     def __str__(self):
-        return u"{0} de plan {1}".format(self.nombre, self.plan.nombre)
+        return "{0} de plan {1}".format(self.nombre, self.plan.nombre)
 
     def get_absolute_url(self):
         return self.plan.get_absolute_url()
@@ -142,49 +143,85 @@ class PCD(TimeStampedModel):
     pc = models.IntegerField(default=0)
 
     def __str__(self):
-        return _(u'{0} {1}').format(self.persona.nombre_completo(), self.numero)
+        return _('{0} {1}').format(self.persona.nombre_completo(), self.numero)
 
     def get_absolute_url(self):
         return self.persona.get_absolute_url()
 
 
-def check_line(line, vencimiento):
-    file_pcd = line[0]
-    file_certificado = int(line[2])
-    poliza_f = line[1]
-    apellido_f, nombre_f = line[4].split(",")
+def check_line(line, vencimiento, master_dict):
+    """
+    Reads one list and according to its positional contents it will act
+    accordingly:
+
+    If there exists a :class:`PCD` instance matching its contents it will update
+    the :class:`Contrato` associated to the :class:`PCD` instance.
+
+    If there is not a matching :class:`PCD` it will start creating a
+    :class:`Persona`, :class:`Contrato and :class:`PCD` that reflect the
+    contents of the list.
+
+    :param line:        The list that will be read its content can be described
+                        this way:
+                        0. PCD
+                        1. Policy
+                        2. Certificate
+                        3. Dependant
+                        4. Full name
+                        5. Sex
+                        6. Birthday
+                        7. Active Status Flag
+                        8. Contract ending date
+                        9. Identification
+                        10. Exclusion
+    :param vencimiento: The end date of the contract to be updated
+    :return:
+    """
+    file_pcd = smart_text(line[0])
+    file_certificado = smart_text(line[2])
+    poliza_f = smart_text(line[1])
+    apellido_f, nombre_f = smart_text(line[4]).split(",")
+    apellido_f = apellido_f.lstrip().rstrip()
+    nombre_f = nombre_f.lstrip().rstrip()
     nacimiento_f = server_timezone.localize(
             datetime.strptime(line[6], "%m/%d/%Y"))
-    sexo_f = line[5]
-    identificacion = line[9]
+    sexo_f = smart_text(line[5])
+    identificacion = smart_text(line[9])
     vencimiento_r = vencimiento
+    exclusion = smart_text(line[10])
+    dependiente = int(line[3])
+    activo = smart_text(line[7]).upper()
 
-    activo = line[7].upper()
-
-    master = MasterContract.objects.get(poliza=poliza_f)
+    master = master_dict[poliza_f]
+    suspendido = True if activo == 'S' else False
 
     if line[8]:
         vencimiento_r = make_end_day(datetime.strptime(line[8], '%m/%d/%Y'))
 
     try:
-        pcd = PCD.objects.get(numero=file_pcd)
+        pcd = PCD.objects.prefetch_related(
+                'persona',
+                'persona__beneficiarios',
+                'persona__contratos',
+        ).get(numero=file_pcd)
 
         persona = pcd.persona
-        persona.apellido = apellido_f.lstrip().rstrip()
-        persona.nombre = nombre_f.lstrip().rstrip()
-        persona.save()
 
-        contratos = Contrato.objects.filter(persona=persona,
-                                            certificado=file_certificado)
+        contratos = persona.contratos.filter(certificado=file_certificado)
 
-        [update_contract(activo, contrato, line, master, vencimiento_r) for
-         contrato in contratos.all()]
+        contratos.update(
+                suspendido=suspendido,
+                exclusion=exclusion,
+                master=master,
+                plan=master.plan,
+                vencimiento=vencimiento_r
+        )
 
-        for beneficiario in Beneficiario.objects.filter(
-                persona=persona).all():
-            beneficiario.contrato.vencimiento = vencimiento_r
-            beneficiario.exclusion = line[10]
-            beneficiario.contrato.save()
+        persona.beneficiarios.filter(
+                persona__contratos__certificado=file_certificado
+        ).update(
+            exclusion=exclusion,
+        )
 
     except ObjectDoesNotExist:
 
@@ -195,17 +232,16 @@ def check_line(line, vencimiento):
         pcd = PCD(persona=persona, numero=file_pcd)
         pcd.save()
 
-        dependiente = int(line[3])
-
         if dependiente == 0:
 
-            contract = master.create_contract(persona, vencimiento_r,
-                                              file_certificado, file_pcd)
-            if activo == 'S':
-                contract.suspendido = True
-            else:
-                contract.suspendido = False
-            contract.exclusion = line[10]
+            contract = master.create_contract(
+                    persona,
+                    vencimiento_r,
+                    file_certificado,
+                    file_pcd
+            )
+            contract.suspendido = suspendido
+            contract.exclusion = exclusion
             contract.save()
         else:
             contract = Contrato.objects.filter(
@@ -215,18 +251,27 @@ def check_line(line, vencimiento):
 
             if contract:
                 beneficiario = Beneficiario(persona=persona, contrato=contract)
-                beneficiario.exclusion = line[10]
+                beneficiario.exclusion = exclusion
                 beneficiario.save()
 
     except MultipleObjectsReturned:
         pass
 
 
-def update_contract(activo, contrato, line, master, vencimiento_r):
-    contrato.vencimiento = vencimiento_r
+def update_contract(activo, contrato, exclusion, master, vencimiento):
+    """
+    Updates a contract to reflect the data passed as its arguments
+    :param activo: Active status flag
+    :param contrato: :class:`Contrato` that will be updated
+    :param exclusion: The exclusions to be stored in the contract
+    :param master: The :class:`MasterContract` instance that will be associated
+    :param vencimiento: the ending date of the :class:`Contrato`
+    :return: the newly updated :class:`Contrato` object
+    """
+    contrato.vencimiento = vencimiento
     contrato.plan = master.plan
     contrato.master = master
-    contrato.exclusion = line[10]
+    contrato.exclusion = exclusion
     if activo == 'S':
         contrato.suspendido = True
     else:
@@ -247,10 +292,16 @@ class ImportFile(TimeStampedModel):
         archivo = storage.open(self.archivo.name, 'rU')
         data = unicodecsv.reader(archivo)
         vencimiento = make_end_day(self.created) + timedelta(days=8)
+        masters = MasterContract.objects.select_related(
+                'plan',
+                'contratante',
+                'aseguradora'
+        ).all()
+        master_dict = {master.poliza: master for master in masters}
 
         # Create a :class:`Contract` for each identificacion on the file
         for line in data:
-            check_line(line, vencimiento)
+            check_line(line, vencimiento, master_dict)
 
         self.processed = True
         self.save()
@@ -275,9 +326,13 @@ class MasterContract(TimeStampedModel):
                                      null=True, blank=True)
     ultimo_certificado = models.IntegerField(default=0)
     facturar_al_administrador = models.BooleanField(default=False)
+    privado = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['contratante__nombre']
 
     def __str__(self):
-        nombre = _(u'Poliza {0} {1}').format(self.poliza, self.plan.nombre)
+        nombre = _('Poliza {0} {1}').format(self.poliza, self.plan.nombre)
         if self.contratante:
             nombre += ' - ' + self.contratante.nombre
         if self.aseguradora:
@@ -292,8 +347,8 @@ class MasterContract(TimeStampedModel):
     def create_contract(self, persona, vencimiento, certificado, numero,
                         auto=False):
         """
-        Allows the creation of :class:`Contrato by using the data from
-        :class:`MasterContract` as a base to create it.
+        Allows the creation of :class:`Contrato` by using the data from
+        :class:`MasterContract` as building blocks to create it.
 
         :param persona:
         :param vencimiento:
@@ -334,9 +389,9 @@ class MasterContract(TimeStampedModel):
             pcd.persona = persona
             if dependiente > 0:
                 dependiente += 1
-            pcd.numero = u'{0}{1:0>6}{2:0>2}'.format(self.poliza,
-                                                     contract.certificado,
-                                                     dependiente)
+            pcd.numero = '{0}{1:0>6}{2:0>2}'.format(self.poliza,
+                                                    contract.certificado,
+                                                    dependiente)
             pcd.save()
             contract.numero = pcd.numero
             contract.save()
@@ -344,10 +399,16 @@ class MasterContract(TimeStampedModel):
         return contract
 
     def active_contracts(self):
+        """
+        Creates a :class:`QuerySet` that contains all active :class:`Contrato`s
+        created with this :class:`MasterContract`
+        :return:
+        """
+        vencimiento = timezone.now()
 
         return Contrato.objects.filter(
                 master=self,
-                vencimiento__gte=timezone.now()
+                vencimiento__gte=vencimiento
         ).all()
 
     def active_contracts_count(self):
@@ -383,7 +444,7 @@ class Contrato(TimeStampedModel):
     empresa = models.ForeignKey(Empleador, blank=True, null=True,
                                 related_name='contratos')
     poliza = models.CharField(max_length=255, default='', blank=True)
-    certificado = models.IntegerField(default=0)
+    certificado = models.CharField(blank=True, max_length=255)
     titular = models.IntegerField(default=0)
     master = models.ForeignKey(MasterContract, related_name='contratos',
                                blank=True, null=True, verbose_name="Contrato")
@@ -396,49 +457,8 @@ class Contrato(TimeStampedModel):
         return reverse('contrato', args=[self.id])
 
     def __str__(self):
-        return _(u"Contrato {0} de {1}").format(self.numero,
-                                                self.persona.nombre_completo())
-
-    def total_consultas(self):
-        """"Obtiene el total de :class:`Consulta` que los usuarios del contrato
-        han efectuado"""
-        if self.renovacion is None:
-            self.renovacion = self.inicio
-            self.save()
-
-        consultas = Consulta.objects.filter(
-                persona=self.persona,
-                created__gte=self.renovacion
-        ).count()
-        seguimientos = Seguimiento.objects.filter(
-                persona=self.persona,
-                created__gte=self.renovacion
-        ).count()
-        total = seguimientos + consultas
-
-        predicates = [Q(persona=beneficiario.persona) for beneficiario
-                      in self.beneficiarios.all()]
-
-        query = reduce(operator.or_, predicates, Q())
-
-        seguimientos = Seguimiento.objects.filter(
-                created__gte=self.renovacion).filter(query).count()
-        consultas = Consulta.objects.filter(
-                created__gte=self.renovacion).filter(query).count()
-
-        return total + seguimientos + consultas
-
-    def total_citas(self):
-        """Obtiene el total de :class:`Cita`s de un periodo"""
-        total = self.persona.citas.count()
-
-        predicates = [Q(persona=beneficiario.persona) for beneficiario
-                      in self.beneficiarios.all()]
-
-        total += Cita.objects.filter(created__gte=self.renovacion).filter(
-                reduce(operator.or_, predicates, Q())).count()
-
-        return total
+        return _("Contrato {0} de {1}").format(self.numero,
+                                               self.persona.nombre_completo())
 
     def total_hospitalizaciones(self):
         total = self.persona.admisiones.filter(ingresado__isnull=False).count()
@@ -573,9 +593,9 @@ class LimiteEvento(TimeStampedModel):
         return self.plan.get_absolute_url()
 
     def __str__(self):
-        return _(u"Límite {0} de {1} en plan {2}").format(self.tipo_evento,
-                                                          self.cantidad,
-                                                          self.plan.nombre)
+        return _("Límite {0} de {1} en plan {2}").format(self.tipo_evento,
+                                                         self.cantidad,
+                                                         self.plan.nombre)
 
 
 @python_2_unicode_compatible
@@ -595,7 +615,7 @@ class Evento(TimeStampedModel):
         return reverse('contrato', args=[self.contrato.id])
 
     def __str__(self):
-        return _(u"Evento {0} de {1} de {2}").format(
+        return _("Evento {0} de {1} de {2}").format(
                 self.tipo,
                 self.contrato.numero,
                 self.contrato.persona.nombre_completo()
@@ -642,7 +662,7 @@ class Precontrato(TimeStampedModel):
                              blank=True, null=True)
 
     def __str__(self):
-        return _(u'Precontrato de {0}').format(self.persona.nombre_completo())
+        return _('Precontrato de {0}').format(self.persona.nombre_completo())
 
     def get_absolute_url(self):
         return reverse('precontrato', args=[self.id])

@@ -58,12 +58,8 @@
                         {% endif %}
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans 'Reportes' %} <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'estadisticas' %}">{% trans 'Estad&iacute;sticas' %}</a></li>
-                        <li><a href="{% url 'persona-index' %}">{% trans 'Personas' %}</a></li>
-                    </ul>
+                <li>
+                    <a href="{% url 'persona-index' %}">{% trans 'Personas' %}</a>
                 </li>
                 <li><a href="{% url 'admin:index' %}">{% trans 'Administraci&oacute;n' %}</a></li>
             </ul>

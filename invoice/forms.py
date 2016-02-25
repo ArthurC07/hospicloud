@@ -15,24 +15,25 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
-from django.contrib.auth.models import User
-from django import forms
-from django.utils.translation import ugettext_lazy as _
+
 from crispy_forms.layout import Submit, Fieldset
+from django import forms
+from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 from contracts.models import Aseguradora
+from emergency.models import Emergencia
 from hospinet.utils.forms import PeriodoForm, FieldSetFormMixin
+from imaging.models import Examen
+from inventory.forms import FieldSetModelFormMixin
+from inventory.models import ItemTemplate, ItemType, TipoVenta
 from invoice.models import Recibo, Venta, Pago, TurnoCaja, CierreTurno, \
     TipoPago, CuentaPorCobrar, PagoCuenta, Cotizacion, Cotizado, \
     ComprobanteDeduccion, ConceptoDeduccion, NotaCredito, DetalleCredito
 from persona.forms import DateTimeWidget, FieldSetModelFormMixinNoButton
 from persona.models import Persona
-from inventory.forms import FieldSetModelFormMixin
-from emergency.models import Emergencia
 from spital.models import Admision
-from imaging.models import Examen
-from inventory.models import ItemTemplate, ItemType, TipoVenta
 from users.mixins import HiddenUserForm
 from users.models import Ciudad
 
@@ -321,7 +322,10 @@ class CotizadoForm(FieldSetModelFormMixin):
 class ComprobanteDeduccionForm(FieldSetModelFormMixin):
     class Meta:
         model = ComprobanteDeduccion
-        exclude = ('correlativo',)
+        exclude = ('correlativo', 'inicio_rango', 'fin_rango', 'cai')
+
+    fecha_de_emision = forms.DateTimeField(widget=DateTimeWidget(),
+                                           initial=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super(ComprobanteDeduccionForm, self).__init__(*args, **kwargs)

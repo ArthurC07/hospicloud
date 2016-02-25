@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from django.conf.urls import url
 
@@ -24,14 +25,6 @@ urlpatterns = [
     url(r'^$',
         views.ConsultorioIndexView.as_view(),
         name='consultorio-index'),
-
-    url(r'^paciente/(?P<pk>\d+)$',
-        views.PacienteDetailView.as_view(),
-        name='clinique-paciente'),
-
-    url(r'^paciente/(?P<pk>\d+)/delete$',
-        views.PacienteDeleteView.as_view(),
-        name='clinique-paciente-delete'),
 
     url(r'^paciente/(?P<pk>\d+)/resume$',
         views.PacienteDetailView.as_view(
@@ -76,10 +69,6 @@ urlpatterns = [
         views.ConsultorioDetailView.as_view(),
         name='consultorio'),
 
-    url(r'^(?P<consultorio>\d+)/pacientes$',
-        views.ConsultorioPacienteListView.as_view(),
-        name='consultorio-pacientes'),
-
     url(r'^agregar$',
         views.ConsultorioCreateView.as_view(),
         name='consultorio-agregar'),
@@ -87,10 +76,6 @@ urlpatterns = [
     url(r'^consultorio/(?P<consultorio>\d+)/reporte/agregar$',
         views.ReporteCreateView.as_view(),
         name='consultorio-report-agregar'),
-
-    url(r'^(?P<persona>\d+)/(?P<consultorio>\d+)/paciente/agregar$',
-        views.PacienteCreateView.as_view(),
-        name='consultorio-paciente-agregar'),
 
     url(r'^consulta/(?P<pk>\d+)$',
         views.ConsultaDetailView.as_view(),
@@ -100,9 +85,9 @@ urlpatterns = [
         views.ConsultaPeriodoView.as_view(),
         name='consulta-periodo'),
 
-    url(r'^(?P<persona>\d+)/consultorio/agregar$',
-        views.PacienteCreateView.as_view(),
-        name='consultorio-paciente-add'),
+    url(r'^consulta/estadisticas$',
+        views.ConsultaEstadisticaPeriodoListView.as_view(),
+        name='consulta-estadisticas'),
 
     url(r'^consulta/(?P<persona>\d+)/(?P<consultorio>\d+)/agregar$',
         views.ConsultaCreateView.as_view(),
@@ -148,9 +133,17 @@ urlpatterns = [
         views.EsperaConsultaRedirectView.as_view(),
         name='clinique-espera-consulta'),
 
+    url(r'^espera/(?P<pk>\d+)/editar$',
+        views.EsperaUpdateView.as_view(),
+        name='clinique-espera-editar'),
+
     url(r'^espera/(?P<pk>\d+)/terminada$',
         views.EsperaTerminadaRedirectView.as_view(),
         name='clinique-espera-terminada'),
+
+    url(r'^espera/(?P<espera>\d+)/consulta/iniciar$',
+        views.ConsultaEsperaCreateView.as_view(),
+        name='espera-consulta-iniciar'),
 
     url(r'^consulta/(?P<pk>\d+)/terminada$',
         views.ConsultaTerminadaRedirectView.as_view(),
@@ -196,10 +189,6 @@ urlpatterns = [
         views.CliniqueAntecedenteObstetricoCreateView.as_view(),
         name='clinique-antecedente-obstetrico-agregar'),
 
-    url(r'^(?P<paciente>\d+)/(?P<persona>\d+)/antecedente/quirurgico/agregar$',
-        views.CliniqueAntecedenteQuirurgicoCreateView.as_view(),
-        name='clinique-antecedente-quirurgico-agregar'),
-
     url(r'^(?P<consulta>\d+)/ordenmedica/agregar$',
         views.OrdenMedicaCreateView.as_view(),
         name='consultorio-om-agregar'),
@@ -233,6 +222,10 @@ urlpatterns = [
     url(r'^consulta/(?P<pk>\d+)/emergencia$',
         views.ConsultaEmergenciaRedirectView.as_view(),
         name='consulta-emergencia'),
+
+    url(r'^(?P<consulta>\d+)/nota/medica/agregar$',
+        views.NotaMedicaCreateView.as_view(),
+        name='nota-medica-agregar'),
 
     url(r'^(?P<persona>\d+)/(?P<consultorio>\d+)/espera/agregar$',
         views.EsperaCreateView.as_view(),
@@ -269,15 +262,6 @@ urlpatterns = [
     url(r'^seguimiento/periodo$',
         views.SeguimientoPeriodoView.as_view(),
         name='seguimiento-periodo'),
-
-    url(r'^paciente/search$',
-        views.PacienteSearchView.as_view(),
-        name='clinique-paciente-search'),
-
-    url(r'^paciente/search/add$',
-        views.PacienteSearchView.as_view(
-                template_name='clinique/paciente_add_list.html'),
-        name='clinique-paciente-search-add'),
 
     url(r'^(?P<persona>\d+)/(?P<consulta>\d+)/prescripcion/agregar$',
         views.PrescripcionCreateView.as_view(),

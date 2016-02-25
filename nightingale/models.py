@@ -14,19 +14,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from datetime import timedelta
 from decimal import Decimal
-from django.conf import settings
 
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
 from django_extensions.db.models import TimeStampedModel
 
-from spital.models import Admision
 from inventory.models import ItemTemplate
+from spital.models import Admision
 
 dot01 = Decimal('0.01')
 

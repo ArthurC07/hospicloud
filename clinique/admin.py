@@ -14,14 +14,12 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import unicode_literals
 from django.contrib import admin
 
-from clinique.models import (Paciente, Cita, Consulta, TipoConsulta,
-                             Consultorio, Evaluacion, Seguimiento,
-                             LecturaSignos,
-                             TipoCargo, Cargo, OrdenMedica, Localidad,
-                             Especialidad, Espera, Afeccion, Incapacidad)
+from clinique.models import Cita, Consulta, TipoConsulta, Consultorio, \
+    Evaluacion, Seguimiento, LecturaSignos, TipoCargo, Cargo, OrdenMedica, \
+    Localidad, Especialidad, Espera, Afeccion, Incapacidad
 
 
 class IncapacidadAdmin(admin.ModelAdmin):
@@ -29,15 +27,20 @@ class IncapacidadAdmin(admin.ModelAdmin):
     ordering = ['persona', 'usuario', 'descripcion', 'created', 'dias']
     search_fields = ['persona__nombre', 'persona__apellido']
 
+
 class EsperaAdmin(admin.ModelAdmin):
-    list_display = ('persona', 'consultorio', 'created', 'fecha', 'inicio', 'fin')
-    ordering = ['created', 'fecha', 'inicio', 'fin', 'persona', 'consultorio__usuario']
+    list_display = (
+    'persona', 'consultorio', 'created', 'fecha', 'inicio', 'fin')
+    ordering = ['created', 'fecha', 'inicio', 'fin', 'persona',
+                'consultorio__usuario']
     search_fields = ['persona__nombre', 'persona__apellido']
 
 
 class ConsultaAdmin(admin.ModelAdmin):
-    list_display = ('persona', 'consultorio', 'created', 'facturada', 'activa', 'remitida')
-    ordering = ['persona', 'consultorio', 'created', 'facturada', 'activa', 'remitida', ]
+    list_display = (
+    'persona', 'consultorio', 'created', 'facturada', 'activa', 'remitida')
+    ordering = ['persona', 'consultorio', 'created', 'facturada', 'activa',
+                'remitida', ]
     search_fields = ['persona__nombre', 'persona__apellido',
                      'consultorio__nombre', ]
 
@@ -47,7 +50,6 @@ class ConsultorioAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'activo')
 
 
-admin.site.register(Paciente)
 admin.site.register(Cita)
 admin.site.register(Consulta, ConsultaAdmin)
 admin.site.register(Incapacidad, IncapacidadAdmin)

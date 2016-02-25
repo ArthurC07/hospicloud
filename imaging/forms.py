@@ -14,16 +14,17 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
-from django import forms
 from crispy_forms.layout import Fieldset
+from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
     Estudio, TipoExamen
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
     DateTimeWidget
 from persona.models import Persona
-from django.utils.translation import ugettext_lazy as _
 
 
 class ExamenForm(FieldSetModelFormMixin):
@@ -41,7 +42,7 @@ class ExamenForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ExamenForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Editar Examen'), *self.field_names)
+        self.helper.layout = Fieldset(_('Editar Examen'), *self.field_names)
 
 
 class ImagenForm(FieldSetModelFormMixin):
@@ -58,7 +59,7 @@ class ImagenForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ImagenForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Adjuntar Imagen'),
+        self.helper.layout = Fieldset(_('Adjuntar Imagen'),
                                       *self.field_names)
 
 
@@ -76,7 +77,7 @@ class AdjuntoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(AdjuntoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Adjuntar Archivo'),
+        self.helper.layout = Fieldset(_('Adjuntar Archivo'),
                                       *self.field_names)
 
 
@@ -94,7 +95,7 @@ class DicomForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(DicomForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Agregar Imagen Dicom'),
+        self.helper.layout = Fieldset(_('Agregar Imagen Dicom'),
                                       *self.field_names)
 
 
@@ -111,7 +112,7 @@ class EstudioProgramadoForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EstudioProgramadoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Formulario de Estudio Programado'),
+        self.helper.layout = Fieldset(_('Formulario de Estudio Programado'),
                                       *self.field_names)
 
 
@@ -126,7 +127,7 @@ class EmailForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EmailForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Enviar Correo'), *self.field_names)
+        self.helper.layout = Fieldset(_('Enviar Correo'), *self.field_names)
 
     def send_email(self):
         """Realiza el envio del correo electrónico"""
@@ -148,4 +149,4 @@ class EstudioForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(EstudioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Agregar Examen'), *self.field_names)
+        self.helper.layout = Fieldset(_('Agregar Examen'), *self.field_names)

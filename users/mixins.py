@@ -14,19 +14,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
+from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.views.generic.edit import FormMixin
-from django import forms
-from select2.fields import ModelChoiceField
 
 from persona.forms import FieldSetModelFormMixin
 
 try:
     from django.contrib.auth.mixins import LoginRequiredMixin
+
 except ImportError:
     class LoginRequiredMixin(View):
         """Clase base para crear vistas que requieren inicio de sesión"""
@@ -53,9 +54,9 @@ class CurrentUserFormMixin(FormMixin, LoginRequiredMixin):
 
 
 class HiddenUserForm(FieldSetModelFormMixin):
-    usuario = forms.ModelChoiceField(label="", queryset=User.objects.all(),
+    usuario = forms.ModelChoiceField(queryset=User.objects.all(),
                                      widget=forms.HiddenInput(), required=False)
 
 
 class UserForm(FieldSetModelFormMixin):
-    usuario = ModelChoiceField(name="", model="", queryset=User.objects.all())
+    usuario = forms.ModelChoiceField(queryset=User.objects.all())

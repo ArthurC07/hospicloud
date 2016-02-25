@@ -14,7 +14,8 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>{% trans 'Fecha' %}</th>
+                        <th>{% trans 'Fecha de Consulta' %}</th>
+                        <th>{% trans 'Fecha de Queja' %}</th>
                         <th>{% trans 'Ciudad' %}</th>
                         <th>{% trans 'Medico' %}</th>
                         <th>{% trans 'Queja' %}</th>
@@ -25,6 +26,7 @@
                 <tbody>
                 {% for queja in quejas.all %}
                     <tr>
+                        <td>{{ queja.respuesta.consulta.created }}</td>
                         <td>{{ queja.created }}</td>
                         <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
                         <td>{{ queja.respuesta.consulta.consultorio.usuario.get_full_name }}</td>

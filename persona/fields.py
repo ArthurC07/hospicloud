@@ -13,15 +13,16 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 import re
 
-from django_countries.fields import CountryField
-from django_countries.data import COUNTRIES
-from django.db import models
 from django.core.validators import RegexValidator
+from django.db import models
 from django.forms import TextInput
 from django.utils.translation import ugettext_lazy as _
+from django_countries.data import COUNTRIES
+from django_countries.fields import CountryField
 
 
 class OrderedCountryField(CountryField):
@@ -59,7 +60,7 @@ class OrderedCountryField(CountryField):
 
 
 color_re = re.compile('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')
-validate_color = RegexValidator(color_re, _(u'Enter a valid hex color.'),
+validate_color = RegexValidator(color_re, _('Enter a valid hex color.'),
                                 'invalid')
 
 

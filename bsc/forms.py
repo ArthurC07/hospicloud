@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from crispy_forms.layout import Fieldset
 from django import forms
 from django.forms import modelformset_factory
@@ -26,7 +27,7 @@ from users.mixins import HiddenUserForm
 
 
 class EncuestaFormMixin(FieldSetModelFormMixin):
-    encuesta = forms.ModelChoiceField(label="", queryset=Encuesta.objects.all(),
+    encuesta = forms.ModelChoiceField(queryset=Encuesta.objects.all(),
                                       widget=forms.HiddenInput(),
                                       required=False)
 
@@ -40,7 +41,7 @@ class RespuestaForm(FieldSetModelFormMixin):
         super(RespuestaForm, self).__init__(*args, **kwargs)
         self.fields['encuesta'].widget.attrs['readonly'] = True
         self.fields['consulta'].widget.attrs['readonly'] = True
-        self.helper.layout = Fieldset(_(u'Formulario de Respuesta'),
+        self.helper.layout = Fieldset(_('Formulario de Respuesta'),
                                       *self.field_names)
 
 
@@ -49,19 +50,17 @@ class VotoForm(FieldSetModelFormMixinNoButton):
         model = Voto
         fields = '__all__'
 
-    respuesta = forms.ModelChoiceField(label='',
-                                       queryset=Respuesta.objects.all(),
+    respuesta = forms.ModelChoiceField(queryset=Respuesta.objects.all(),
                                        widget=forms.HiddenInput(),
                                        required=False)
-    opcion = forms.ModelChoiceField(label='',
-                                    queryset=Opcion.objects.all(),
+    opcion = forms.ModelChoiceField(queryset=Opcion.objects.all(),
                                     widget=forms.RadioSelect(),
                                     required=False)
 
     def __init__(self, *args, **kwargs):
         super(VotoForm, self).__init__(*args, **kwargs)
         self.fields['pregunta'].widget.attrs['readonly'] = True
-        self.helper.layout = Fieldset(_(u'Formulario de Voto'),
+        self.helper.layout = Fieldset(_('Formulario de Voto'),
                                       *self.field_names)
 
 
@@ -73,19 +72,17 @@ class QuejaForm(FieldSetModelFormMixin):
         model = Queja
         exclude = ('resuelta',)
 
-    respuesta = forms.ModelChoiceField(label='',
-                                       queryset=Respuesta.objects.all(),
+    respuesta = forms.ModelChoiceField(queryset=Respuesta.objects.all(),
                                        widget=forms.HiddenInput(),
                                        required=False)
 
     def __init__(self, *args, **kwargs):
         super(QuejaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Registrar Queja'), *self.field_names)
+        self.helper.layout = Fieldset(_('Registrar Queja'), *self.field_names)
 
 
 class QuejaFormMixin(FieldSetModelFormMixin):
-    queja = forms.ModelChoiceField(label='',
-                                   queryset=Queja.objects.all(),
+    queja = forms.ModelChoiceField(queryset=Queja.objects.all(),
                                    widget=forms.HiddenInput(),
                                    required=False)
 
@@ -97,7 +94,7 @@ class SolucionForm(QuejaFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(SolucionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Registrar Solución'),
+        self.helper.layout = Fieldset(_('Registrar Solución'),
                                       *self.field_names)
 
 
@@ -108,5 +105,5 @@ class ArchivoNotasForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ArchivoNotasForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_(u'Subir Archivo de Notas'),
+        self.helper.layout = Fieldset(_('Subir Archivo de Notas'),
                                       *self.field_names)

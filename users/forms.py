@@ -14,10 +14,13 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
+from django import forms
 from userena.forms import EditProfileForm
+
 from persona.forms import FieldSetModelFormMixin
 from users.models import Ciudad
-from django import forms
 
 
 class CustomEditProfileForm(EditProfileForm):

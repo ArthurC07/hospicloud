@@ -13,13 +13,13 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from persona.models import (Persona, EstiloVida, Fisico, Antecedente,
-                            AntecedenteQuirurgico, AntecedenteObstetrico,
-                            AntecedenteFamiliar, Empleador, Empleo, Sede,
-                            HistoriaFisica)
+from persona.models import Persona, EstiloVida, Fisico, Antecedente, \
+    AntecedenteQuirurgico, AntecedenteObstetrico, AntecedenteFamiliar, \
+    Empleador, Empleo, Sede, HistoriaFisica
 
 
 class PersonaAdmin(admin.ModelAdmin):
@@ -32,6 +32,12 @@ class HistoriaFisicaAdmin(admin.ModelAdmin):
     list_display = ['persona', 'fecha', 'altura', 'peso']
 
 
+class EmpleadorAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'direccion']
+    search_fields = ['nombre']
+    ordering = ['nombre']
+
+
 admin.site.register(Persona, PersonaAdmin)
 admin.site.register(Fisico)
 admin.site.register(EstiloVida)
@@ -39,7 +45,7 @@ admin.site.register(Antecedente)
 admin.site.register(AntecedenteQuirurgico)
 admin.site.register(AntecedenteObstetrico)
 admin.site.register(AntecedenteFamiliar)
-admin.site.register(Empleador)
+admin.site.register(Empleador, EmpleadorAdmin)
 admin.site.register(Empleo)
 admin.site.register(Sede)
 admin.site.register(HistoriaFisica, HistoriaFisicaAdmin)

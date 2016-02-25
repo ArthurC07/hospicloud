@@ -21,6 +21,7 @@ from datetime import datetime, time
 
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Sum
 from django.forms.models import inlineformset_factory
@@ -58,13 +59,11 @@ from spital.models import Admision
 from users.mixins import LoginRequiredMixin
 
 
-class ContratoPermissionMixin(LoginRequiredMixin):
-    @method_decorator(permission_required('contracts.contrato'))
-    def dispatch(self, *args, **kwargs):
-        return super(ContratoPermissionMixin, self).dispatch(*args, **kwargs)
+class ContratoPermissionMixin(PermissionRequiredMixin):
+    permission_required = 'contracts.contrato'
 
 
-class IndexView(TemplateView, ContratoPermissionMixin):
+class IndexView(LoginRequiredMixin, TemplateView, ContratoPermissionMixin):
     template_name = 'contracts/index.html'
 
     def create_forms(self, context):
@@ -173,27 +172,27 @@ class IndexView(TemplateView, ContratoPermissionMixin):
         return context
 
 
-class PlanCreateView(CreateView, LoginRequiredMixin):
+class PlanCreateView(LoginRequiredMixin, CreateView):
     model = Plan
     form_class = PlanForm
 
 
-class PlanUpdateView(UpdateView, LoginRequiredMixin):
+class PlanUpdateView(LoginRequiredMixin, UpdateView):
     model = Plan
     form_class = PlanForm
 
 
-class PlanDetailView(DetailView, LoginRequiredMixin):
+class PlanDetailView(LoginRequiredMixin, DetailView):
     model = Plan
     context_object_name = 'plan'
 
 
-class PlanListView(ListView, LoginRequiredMixin):
+class PlanListView(LoginRequiredMixin, ListView):
     model = Plan
     context_object_name = 'planes'
 
 
-class PlanCloneView(RedirectView, LoginRequiredMixin):
+class PlanCloneView(LoginRequiredMixin, RedirectView):
     """Allows cloning :class:`Plan` and its related member"""
 
     permanent = False
@@ -226,7 +225,7 @@ class PlanMixin(ContextMixin, View):
         return context
 
 
-class PlanFormMixin(PlanMixin, FormMixin, LoginRequiredMixin):
+class PlanFormMixin(PlanMixin, FormMixin):
     def get_initial(self):
         initial = super(PlanFormMixin, self).get_initial()
         initial = initial.copy()
@@ -234,7 +233,7 @@ class PlanFormMixin(PlanMixin, FormMixin, LoginRequiredMixin):
         return initial
 
 
-class PlanSearchView(FormView, LoginRequiredMixin):
+class PlanSearchView(LoginRequiredMixin, FormView):
     form_class = PlanChoiceForm
     prefix = 'plan-search'
 
@@ -246,17 +245,17 @@ class PlanSearchView(FormView, LoginRequiredMixin):
         return self.plan.get_absolute_url()
 
 
-class BeneficioCreateView(CreateView, PlanFormMixin):
+class BeneficioCreateView(PlanFormMixin, LoginRequiredMixin, CreateView):
     model = Beneficio
     form_class = BeneficioForm
 
 
-class BeneficioUpdateView(UpdateView, LoginRequiredMixin):
+class BeneficioUpdateView(LoginRequiredMixin, UpdateView):
     model = Beneficio
     form_class = BeneficioForm
 
 
-class EmpresaSearchView(FormView, LoginRequiredMixin):
+class EmpresaSearchView(LoginRequiredMixin, FormView):
     form_class = EmpleadorChoiceForm
     prefix = 'empleador-search'
     template_name = 'contracts/empresa_form.html'
@@ -269,12 +268,12 @@ class EmpresaSearchView(FormView, LoginRequiredMixin):
         return self.empresa.get_absolute_url()
 
 
-class LimiteEventoCreateView(PlanFormMixin, CreateView):
+class LimiteEventoCreateView(PlanFormMixin, LoginRequiredMixin, CreateView):
     model = LimiteEvento
     form_class = LimiteEventoForm
 
 
-class ContratoFormMixin(CreateView, LoginRequiredMixin):
+class ContratoFormMixin(FormMixin, View):
     """Permite llenar el formulario de una clase que requiera
     :class:`Contrato`s de manera previa - DRY"""
 
@@ -308,7 +307,7 @@ class ContratoEmpresarialCreateView(ContratoCreateView):
     form_class = ContratoEmpresarialForm
 
 
-class ContratoPersonaCreateView(CreateView, LoginRequiredMixin):
+class ContratoPersonaCreateView(LoginRequiredMixin, CreateView):
     model = Contrato
     template_name = 'contracts/contrato_create.html'
 
@@ -377,7 +376,7 @@ class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ContratoDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+class ContratoDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
     paginate_by = 10
     template_name = 'contracts/contrato_detail.html'
 
@@ -387,22 +386,22 @@ class ContratoDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
 
     def get_queryset(self):
         self.object = self.get_object(Contrato.objects.all())
-        return self.object.beneficiarios.all()
+        return self.object.beneficiarios.select_related('persona').all()
 
 
-class ContratoUpdateView(UpdateView, LoginRequiredMixin):
+class ContratoUpdateView(LoginRequiredMixin, UpdateView):
     model = Contrato
     form_class = ContratoForm
     context_object_name = 'contrato'
 
 
-class ContratoBeneficiarioListView(ListView, LoginRequiredMixin):
+class ContratoBeneficiarioListView(LoginRequiredMixin, ListView):
     model = Contrato
     context_object_name = 'contratos'
     template_name = 'contracts/contrato_beneficiarios_list.html'
 
 
-class ContratoListView(ListView, LoginRequiredMixin):
+class ContratoListView(LoginRequiredMixin, ListView):
     model = Contrato
     context_object_name = 'contratos'
 
@@ -427,7 +426,7 @@ class ContratoListView(ListView, LoginRequiredMixin):
         return context
 
 
-class ContratoEmpresarialListView(ListView, LoginRequiredMixin):
+class ContratoEmpresarialListView(LoginRequiredMixin, ListView):
     model = Contrato
     context_object_name = 'contratos'
 
@@ -438,7 +437,7 @@ class ContratoEmpresarialListView(ListView, LoginRequiredMixin):
         ).all()
 
 
-class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
+class ContratoPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los contratos de un periodo"""
     template_name = 'contracts/periodo.html'
 
@@ -465,7 +464,7 @@ class ContratoPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class ContratoSearchView(FormView, LoginRequiredMixin):
+class ContratoSearchView(LoginRequiredMixin, FormView):
     """Obtiene el primer :class:`Contrato` con el número especificado en el
     formulario"""
     form_class = ContratoSearchForm
@@ -485,7 +484,7 @@ class PagoCreateView(ContratoFormMixin):
     form_class = PagoForm
 
 
-class PagoDeleteView(DeleteView, LoginRequiredMixin):
+class PagoDeleteView(LoginRequiredMixin, DeleteView):
     model = Pago
 
     def get_object(self, queryset=None):
@@ -509,7 +508,7 @@ class PagoDeleteView(DeleteView, LoginRequiredMixin):
         return self.contrato.get_absolute_url()
 
 
-class PagoUpdateView(UpdateView, LoginRequiredMixin):
+class PagoUpdateView(LoginRequiredMixin, UpdateView):
     model = Pago
     form_class = PagoForm
 
@@ -519,12 +518,12 @@ class EventoCreateView(ContratoFormMixin):
     form_class = EventoForm
 
 
-class EventoUpdateView(UpdateView, LoginRequiredMixin):
+class EventoUpdateView(LoginRequiredMixin, UpdateView):
     model = Evento
     form_class = EventoForm
 
 
-class EventoDeleteView(DeleteView, LoginRequiredMixin):
+class EventoDeleteView(LoginRequiredMixin, DeleteView):
     model = Evento
 
     def get_object(self, queryset=None):
@@ -536,7 +535,7 @@ class EventoDeleteView(DeleteView, LoginRequiredMixin):
         return self.contrato.get_absolute_url()
 
 
-class EventoPeriodoView(TemplateView, LoginRequiredMixin):
+class EventoPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los :class:`Evento`s de un periodo"""
     template_name = 'contracts/periodo.html'
 
@@ -562,22 +561,22 @@ class EventoPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class VendedorCreateView(CreateView, LoginRequiredMixin):
+class VendedorCreateView(LoginRequiredMixin, CreateView):
     model = Vendedor
     form_class = VendedorForm
 
 
-class VendedorDetailView(DetailView, LoginRequiredMixin):
+class VendedorDetailView(LoginRequiredMixin, DetailView):
     model = Vendedor
     context_object_name = 'vendedor'
 
 
-class VendedorUpdateView(UpdateView, LoginRequiredMixin):
+class VendedorUpdateView(LoginRequiredMixin, UpdateView):
     model = Vendedor
     form_class = VendedorForm
 
 
-class VendedorSearchView(FormView, LoginRequiredMixin):
+class VendedorSearchView(LoginRequiredMixin, FormView):
     form_class = VendedorChoiceForm
     prefix = 'vendedor-search'
 
@@ -589,7 +588,7 @@ class VendedorSearchView(FormView, LoginRequiredMixin):
         return self.vendedor.get_absolute_url()
 
 
-class VendedorPeriodoView(TemplateView, LoginRequiredMixin):
+class VendedorPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los contratos de un periodo"""
     template_name = 'contracts/periodo.html'
 
@@ -620,17 +619,17 @@ class VendedorPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class TipoEventoCreateView(CreateView, LoginRequiredMixin):
+class TipoEventoCreateView(LoginRequiredMixin, CreateView):
     model = TipoEvento
     form_class = TipoEventoForm
 
 
-class BeneficiarioCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
+class BeneficiarioCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = Beneficiario
     form_class = BeneficiarioPersonaForm
 
 
-class BeneficiarioPersonaCreateView(ContratoFormMixin):
+class BeneficiarioPersonaCreateView(ContratoFormMixin, TemplateView):
     model = Beneficiario
     template_name = 'contracts/beneficiario_create.html'
 
@@ -686,7 +685,7 @@ class BeneficiarioPersonaCreateView(ContratoFormMixin):
         return reverse('contrato', args=[self.contrato.id])
 
 
-class BeneficiarioDeleteView(DeleteView, LoginRequiredMixin):
+class BeneficiarioDeleteView(LoginRequiredMixin, DeleteView):
     model = Beneficiario
 
     def get_object(self, queryset=None):
@@ -698,7 +697,7 @@ class BeneficiarioDeleteView(DeleteView, LoginRequiredMixin):
         return self.contrato.get_absolute_url()
 
 
-class ContratoPersonaSearchView(ListView, LoginRequiredMixin):
+class ContratoPersonaSearchView(LoginRequiredMixin, ListView):
     context_object_name = 'contratos'
     model = Contrato
     template_name = 'contracts/contrato_list.html'
@@ -719,22 +718,22 @@ class ContratoPersonaSearchView(ListView, LoginRequiredMixin):
         return queryset.all()
 
 
-class MetaCreateView(CreateView, LoginRequiredMixin):
+class MetaCreateView(LoginRequiredMixin, CreateView):
     model = Meta
     form_class = MetaForm
 
 
-class MetaUpdateView(UpdateView, LoginRequiredMixin):
+class MetaUpdateView(LoginRequiredMixin, UpdateView):
     model = Meta
     form_class = MetaForm
 
 
-class MetaDetailView(DetailView, LoginRequiredMixin):
+class MetaDetailView(LoginRequiredMixin, DetailView):
     model = Meta
     context_object_name = 'meta'
 
 
-class CancelacionCreateView(ContratoFormMixin, CreateView, LoginRequiredMixin):
+class CancelacionCreateView(LoginRequiredMixin, ContratoFormMixin, CreateView):
     model = Cancelacion
     form_class = CancelacionForm
 
@@ -797,17 +796,17 @@ class PrebeneficiarioCreateView(PrecontratoMixin, CreateView):
         return HttpResponseRedirect(prebeneficiaro.get_absolute_url())
 
 
-class MasterContractDetailView(DetailView, LoginRequiredMixin):
+class MasterContractDetailView(LoginRequiredMixin, DetailView):
     model = MasterContract
     context_object_name = 'master_contract'
 
 
-class MasterContractCreateView(CreateView, LoginRequiredMixin):
+class MasterContractCreateView(LoginRequiredMixin, CreateView):
     model = MasterContract
     form_class = MasterContractForm
 
 
-class MasterContractUpdateView(UpdateView, LoginRequiredMixin):
+class MasterContractUpdateView(LoginRequiredMixin, UpdateView):
     model = MasterContract
     form_class = MasterContractForm
 
@@ -823,12 +822,12 @@ class MasterContractUpdateView(UpdateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class MasterContractListView(ListView, LoginRequiredMixin):
+class MasterContractListView(LoginRequiredMixin, ListView):
     model = MasterContract
     context_object_name = 'contratos'
 
 
-class MasterContractProcessView(RedirectView, LoginRequiredMixin):
+class MasterContractProcessView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -839,17 +838,17 @@ class MasterContractProcessView(RedirectView, LoginRequiredMixin):
         return master.get_absolute_url()
 
 
-class ImportFileCreateView(CreateView, LoginRequiredMixin):
+class ImportFileCreateView(LoginRequiredMixin, CreateView):
     model = ImportFile
     form_class = ImportFileForm
 
 
-class ImportFileDetailView(DetailView, LoginRequiredMixin):
+class ImportFileDetailView(LoginRequiredMixin, DetailView):
     model = ImportFile
     context_object_name = 'import_file'
 
 
-class ImportFileProcessView(RedirectView, LoginRequiredMixin):
+class ImportFileProcessView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -860,7 +859,7 @@ class ImportFileProcessView(RedirectView, LoginRequiredMixin):
         return import_file.get_absolute_url()
 
 
-class ImportFileListView(ListView, LoginRequiredMixin):
+class ImportFileListView(LoginRequiredMixin, ListView):
     model = ImportFile
     context_object_name = 'files'
 

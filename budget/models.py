@@ -40,9 +40,9 @@ from users.models import Ciudad
 
 def ingreso_global_periodo(inicio, fin):
     return Venta.objects.select_related('recibo', 'recibo__ciudad').filter(
-        recibo__cliente__ciudad__tiene_presupuesto_global=True,
-        recibo__created__range=(inicio, fin),
-        recibo__nulo=False
+            recibo__cliente__ciudad__tiene_presupuesto_global=True,
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False
     ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
 
 
@@ -66,10 +66,8 @@ class Presupuesto(TimeStampedModel):
         return reverse('budget', args=[self.id])
 
     def total_presupuestado(self):
-        return Cuenta.objects.filter(
-            presupuesto=self
-        ).aggregate(
-            total=Coalesce(Sum('limite'), Decimal())
+        return self.cuenta_set.aggregate(
+                total=Coalesce(Sum('limite'), Decimal())
         )['total']
 
     def gastos_por_periodo(self, inicio, fin):
@@ -79,7 +77,7 @@ class Presupuesto(TimeStampedModel):
 
     def total_gastos_por_periodo(self, inicio, fin):
         return self.gastos_por_periodo(inicio, fin).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def gastos_mes_actual(self):
@@ -89,7 +87,7 @@ class Presupuesto(TimeStampedModel):
 
     def total_gastos_mes_actual(self):
         return self.gastos_mes_actual().aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def porcentaje_ejecutado_mes_actual(self):
@@ -116,17 +114,19 @@ class Presupuesto(TimeStampedModel):
 
     def ingresos_periodo(self, fin, inicio):
         condition = Q(
-            recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
-            recibo__cliente__ciudad__isnull=True)
+                recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
+                recibo__cliente__ciudad__isnull=True)
 
-        return Venta.objects.select_related('recibo__ciudad',
-                                            'recibo__cliente__ciudad').filter(
-            condition,
-            recibo__created__range=(inicio, fin),
-            recibo__ciudad=self.ciudad,
-            recibo__nulo=False
+        return Venta.objects.select_related(
+                'recibo__ciudad',
+                'recibo__cliente__ciudad'
+        ).filter(
+                condition,
+                recibo__created__range=(inicio, fin),
+                recibo__ciudad=self.ciudad,
+                recibo__nulo=False
         ).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def get_equilibiio(self):
@@ -156,7 +156,7 @@ class Cuenta(TimeStampedModel):
 
     def __str__(self):
         return _('{0} en {1}').format(self.nombre,
-                                       self.presupuesto.ciudad.nombre)
+                                      self.presupuesto.ciudad.nombre)
 
     def get_absolute_url(self):
         """
@@ -168,20 +168,29 @@ class Cuenta(TimeStampedModel):
         """Obtiene los :class:`Gasto`s que aún no han sido ejectuados y por lo
         tanto son cuentas por pagar"""
 
-        return Gasto.objects.filter(cuenta=self, ejecutado=False)
+        return Gasto.objects.select_related(
+                'proveedor',
+                'usuario',
+        ).filter(cuenta=self, ejecutado=False)
 
     def gastos_por_periodo(self, inicio, fin):
         """obtiene los :class:`Gasto`s que ya fueron ejecutados y que han sido
         descargado del flujo de dinero de la empresa"""
-        return Gasto.objects.filter(cuenta=self, ejecutado=True,
-                                    fecha_de_pago__range=(inicio, fin))
+        return Gasto.objects.select_related(
+                'proveedor',
+                'usuario',
+        ).filter(
+                cuenta=self,
+                ejecutado=True,
+                fecha_de_pago__range=(inicio, fin)
+        )
 
     def total_gastos_por_periodo(self, inicio, fin):
         """Obtiene el tal de :class:`Gasto`s de la :class:`Cuenta` en un periodo
         determinado de tiempo"""
 
         return self.gastos_por_periodo(inicio, fin).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def gastos_mes_actual(self):
@@ -197,7 +206,7 @@ class Cuenta(TimeStampedModel):
         :return: The sum of all :class:`Gasto`s monto from the current month
         """
         return self.gastos_mes_actual().aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def total_cuentas_por_pagar(self):
@@ -207,7 +216,7 @@ class Cuenta(TimeStampedModel):
         :return: The sum of unpayed :class:`Gasto`'s monto
         """
         return self.cuentas_por_pagar().aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def porcentaje_ejecutado_mes_actual(self):
@@ -219,6 +228,7 @@ class Fuente(TimeStampedModel):
     """
     Explains where the money for :class:`Gasto`s is comming from.
     """
+
     class Meta:
         ordering = ('nombre',)
 
@@ -341,29 +351,36 @@ class Income(TimeStampedModel):
 
     def facturado_periodo(self, inicio, fin):
         condition = Q(
-            recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
-            recibo__cliente__ciudad__isnull=True)
+                recibo__cliente__ciudad__tiene_presupuesto_global=False) | Q(
+                recibo__cliente__ciudad__isnull=True)
 
-        return Pago.objects.filter(
-            condition,
-            recibo__created__range=(inicio, fin),
-            recibo__nulo=False,
-            recibo__ciudad=self.ciudad
+        return Pago.objects.select_related(
+                'recibo',
+                'recibo__ciudad',
+                'recibo__cliente__ciudad'
+        ).filter(
+                condition,
+                recibo__created__range=(inicio, fin),
+                recibo__nulo=False,
+                recibo__ciudad=self.ciudad
         ).values('tipo__nombre').annotate(
-            total=Coalesce(Sum('monto'), Decimal())).order_by()
+                total=Coalesce(Sum('monto'), Decimal())).order_by()
 
     def facturado_mes_actual(self):
         fin, inicio = get_current_month_range()
         return self.facturado_periodo(inicio, fin)
 
     def pagos_periodo(self, inicio, fin):
-        return Pago.objects.filter(
-            tipo__reembolso=False,
-            recibo__ciudad=self.ciudad,
-            recibo__created__range=(inicio, fin),
-            recibo__nulo=False
+        return Pago.objects.select_related(
+                'tipo',
+                'recibo'
+        ).filter(
+                tipo__reembolso=False,
+                recibo__ciudad=self.ciudad,
+                recibo__created__range=(inicio, fin),
+                recibo__nulo=False
         ).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def pagos_mes_actual(self):
@@ -378,12 +395,12 @@ class Income(TimeStampedModel):
 
     def reembolsos_periodo(self, inicio, fin):
         return PagoCuenta.objects.filter(
-            fecha__range=(inicio, fin)
+                fecha__range=(inicio, fin)
         )
 
     def total_reembolsos_periodo(self, inicio, fin):
         return self.reembolsos_periodo(inicio, fin).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def reembolsos_mes_actual(self):
@@ -395,17 +412,21 @@ class Income(TimeStampedModel):
         return self.total_reembolsos_periodo(inicio, fin)
 
     def pagos_reembolsados_periodo(self, inicio, fin):
-        return Pago.objects.filter(
-            tipo__reembolso=True,
-            recibo__ciudad=self.ciudad,
-            status__reportable=False,
-            modified__range=(inicio, fin),
-            recibo__nulo=False
+        return Pago.objects.select_related(
+                'tipo',
+                'status',
+                'recibo'
+        ).filter(
+                tipo__reembolso=True,
+                recibo__ciudad=self.ciudad,
+                status__reportable=False,
+                modified__range=(inicio, fin),
+                recibo__nulo=False
         )
 
     def total_pagos_reembolsados_periodo(self, inicio, fin):
         return self.pagos_reembolsados_periodo(inicio, fin).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def pagos_reembolsados_mes_actual(self):
@@ -417,17 +438,21 @@ class Income(TimeStampedModel):
         return self.total_pagos_reembolsados_periodo(inicio, fin)
 
     def pagos_por_reembolsar_periodo(self, inicio, fin):
-        return Pago.objects.filter(
-            tipo__reembolso=True,
-            recibo__ciudad=self.ciudad,
-            status__reportable=True,
-            modified__range=(inicio, fin),
-            recibo__nulo=False
+        return Pago.objects.select_related(
+                'tipo',
+                'status',
+                'recibo'
+        ).filter(
+                tipo__reembolso=True,
+                recibo__ciudad=self.ciudad,
+                status__reportable=True,
+                modified__range=(inicio, fin),
+                recibo__nulo=False
         )
 
     def total_pago_por_reembolsar_periodo(self, inicio, fin):
         return self.pagos_por_reembolsar_periodo(inicio, fin).aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def total_pago_por_reembolsar_mes_actual(self):
@@ -440,29 +465,29 @@ class Income(TimeStampedModel):
         return [
             (aseguradora,
              Pago.objects.filter(
-                 tipo__reembolso=True,
-                 recibo__ciudad=self.ciudad,
-                 recibo__created__range=(inicio, fin),
-                 recibo__nulo=False,
-                 recibo__cliente__in=Persona.objects.filter(
-                     contratos__master__aseguradora=aseguradora)
+                     tipo__reembolso=True,
+                     recibo__ciudad=self.ciudad,
+                     recibo__created__range=(inicio, fin),
+                     recibo__nulo=False,
+                     recibo__cliente__in=Persona.objects.filter(
+                             contratos__master__aseguradora=aseguradora)
              ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'],
              Pago.objects.filter(
-                 tipo__reembolso=True,
-                 recibo__ciudad=self.ciudad,
-                 status__reportable=False,
-                 modified__range=(inicio, fin),
-                 recibo__nulo=False,
-                 recibo__cliente__in=Persona.objects.filter(
-                     contratos__master__aseguradora=aseguradora)
+                     tipo__reembolso=True,
+                     recibo__ciudad=self.ciudad,
+                     status__reportable=False,
+                     modified__range=(inicio, fin),
+                     recibo__nulo=False,
+                     recibo__cliente__in=Persona.objects.filter(
+                             contratos__master__aseguradora=aseguradora)
              ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'],
              Pago.objects.filter(
-                 tipo__reembolso=True,
-                 status__reportable=True,
-                 recibo__ciudad=self.ciudad,
-                 recibo__nulo=False,
-                 recibo__cliente__in=Persona.objects.filter(
-                     contratos__master__aseguradora=aseguradora)
+                     tipo__reembolso=True,
+                     status__reportable=True,
+                     recibo__ciudad=self.ciudad,
+                     recibo__nulo=False,
+                     recibo__cliente__in=Persona.objects.filter(
+                             contratos__master__aseguradora=aseguradora)
              ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total'])
             for aseguradora in Aseguradora.objects.all()
             ]
@@ -478,6 +503,8 @@ class PresupuestoMes(TimeStampedModel):
     anio = models.IntegerField(verbose_name=_('Año'))
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     procesado = models.BooleanField(default=False)
+    completar_anio = models.BooleanField(default=False,
+                                         verbose_name=_('Completar Año'))
 
     def get_absolute_url(self):
         """
@@ -490,10 +517,10 @@ class PresupuestoMes(TimeStampedModel):
         :return: String representation of the current model
         """
         return _('Presupuesto de {0} para {1} de {2} en {3}').format(
-            self.cuenta.nombre,
-            self.mes,
-            self.anio,
-            self.cuenta.presupuesto.ciudad.nombre
+                self.cuenta.nombre,
+                self.mes,
+                self.anio,
+                self.cuenta.presupuesto.ciudad.nombre
         )
 
     def save(self, **kwargs):
@@ -502,10 +529,24 @@ class PresupuestoMes(TimeStampedModel):
         :param kwargs:
         :return:
         """
-        if not self.procesado:
-            for n in range(1, 13):
+        if not self.procesado and self.completar_anio:
+            for n in range(self.mes, 13):
+                presupuestos = PresupuestoMes.objects.filter(
+                        anio=self.anio,
+                        mes=self.mes,
+                        cuenta=self.cuenta
+                )
+
+                if presupuestos.count() > 0:
+                    for presupuesto in presupuestos.all():
+                        presupuesto.monto = self.monto
+                        presupuesto.save()
+
+                    return
+
                 if n == self.mes:
                     continue
+
                 presupuesto = PresupuestoMes()
                 presupuesto.cuenta = self.cuenta
                 presupuesto.monto = self.monto
