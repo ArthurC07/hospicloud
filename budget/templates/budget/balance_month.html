@@ -228,6 +228,35 @@
                             </tfoot>
                         </table>
                     </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Facturaci&oacute;n por Pago' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td>{% trans 'Al Cre&eacute;dito' %}</td>
+                                    <td class="text-right">{{ venta_credito }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Al Contado' %}</td>
+                                    <td class="text-right">{{ venta_contado }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>
+                                    {% trans 'Total' %}</th>
+                                <th>
+                                    <a href="{% url 'invoice-mensual' fecha.year fecha.month %}"
+                                       target="_blank">
+                                        {{ total_ventas }}
+                                    </a>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
