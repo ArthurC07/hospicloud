@@ -186,9 +186,13 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th>{% trans 'Total' %}</th>
                                 <th>
-                                    {{ total_ventas }}
+                                    {% trans 'Total' %}</th>
+                                <th>
+                                    <a href="{% url 'invoice-mensual' fecha.year fecha.month %}"
+                                       target="_blank">
+                                        {{ total_ventas }}
+                                    </a>
                                 </th>
                             </tr>
                             </tfoot>
@@ -214,7 +218,12 @@
                             <tfoot>
                             <tr>
                                 <th>{% trans 'Total Cuentas por Cobrar' %}</th>
-                                <th class="text-right">{{ cuentas_por_cobrar }}</th>
+                                <th class="text-right">
+                                    <a href="{% url 'invoice-pago-pendiente' %}"
+                                       target="_blank">
+                                        {{ cuentas_por_cobrar }}
+                                    </a>
+                                </th>
                             </tr>
                             </tfoot>
                         </table>

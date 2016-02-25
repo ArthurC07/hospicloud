@@ -60,6 +60,10 @@ urlpatterns = [
         views.VentaCreateView.as_view(),
         name='venta-add'),
 
+    url(r'^recibo/(?P<year>[0-9]{4})/(?P<month>[0-9]+)/$',
+        views.ReciboMonthArchiveView.as_view(month_format='%m'),
+        name="invoice-mensual"),
+
     url(r'^venta/(?P<pk>\d+)/delete$',
         views.VentaDeleteView.as_view(),
         name='venta-delete'),
@@ -104,9 +108,17 @@ urlpatterns = [
         views.PagoListView.as_view(),
         name='invoice-pago-list'),
 
+    url(r'^pago/pendiente/list$',
+        views.PagoPendienteListView.as_view(),
+        name='invoice-pago-pendiente'),
+
     url(r'^pago/aseguradora/(?P<aseguradora>\d+)/list$',
-        views.PagoAseguradoraList.as_view(),
+        views.PagoAseguradoraLisView.as_view(),
         name='invoice-pago-aseguradora-list'),
+
+    url(r'^pago/(?P<year>[0-9]{4})/(?P<month>[0-9]+)/$',
+        views.PagoMonthArchiveView.as_view(month_format='%m'),
+        name="pago-mensual"),
 
     url(r'^periodo/emergencia$',
         views.EmergenciaPeriodoView.as_view(),

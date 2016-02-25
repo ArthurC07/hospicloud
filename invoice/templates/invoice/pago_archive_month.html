@@ -11,14 +11,6 @@
     <div class="row">
         <div class="col-md-12 col-xs-12 main-content table-responsive">
             <table class="table table-striped">
-                {% for aseguradora in aseguradoras %}
-                    <tr>
-                        <td>{{ aseguradora.aseguradora__nombre }}</td>
-                        <td>{{ aseguradora.total }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>{% trans 'Recibo' %}</th>
@@ -29,7 +21,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for pago in pagos %}
+                {% for pago in object_list %}
                     <tr>
                         <td>
                             <a href="{{ pago.recibo.get_absolute_url }}">
@@ -38,6 +30,7 @@
                         </td>
                         <td>{{ pago.recibo.created }}</td>
                         <td>{{ pago.recibo.cliente }}</td>
+                        <td>{{ pago.aseguradora }}</td>
                         <td class="text-right">{{ pago.monto }}</td>
                     </tr>
                 {% endfor %}
@@ -53,6 +46,14 @@
                 {% load bootstrap_pagination %}
                 {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
             {% endif %}
+            <p>
+                {% if previous_month %}
+                    {% trans 'Previous Month' %}: {{ previous_month|date:"F Y" }}
+                {% endif %}
+                {% if next_month %}
+                    {% trans 'Next Month' %}: {{ next_month|date:"F Y" }}
+                {% endif %}
+            </p>
         </div>
     </div>
 {% endblock %}

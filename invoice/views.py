@@ -36,6 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, UpdateView, TemplateView, \
     DetailView, ListView, RedirectView, DeleteView, View
 from django.views.generic.base import ContextMixin
+from django.views.generic.dates import MonthArchiveView
 from django.views.generic.edit import FormMixin, FormView
 from extra_views.dates import daterange
 
@@ -386,163 +387,6 @@ class ReciboTipoFormUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
-class ReciboExamenCreateView(LoginRequiredMixin, CreateView):
-    """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
-    existente en la aplicación"""
-
-    model = Recibo
-    form_class = ReciboForm
-    template_name = 'invoice/recibo_persona_create.html'
-
-    def get_form_kwargs(self):
-        """Registra el :class:`User` que esta creando el :class:`Recibo`"""
-
-        kwargs = super(ReciboExamenCreateView, self).get_form_kwargs()
-        kwargs.update({'initial': {'cajero': self.request.user.id,
-                                   'cliente': self.examen.persona.id,
-                                   'remite': self.examen.remitio}})
-        return kwargs
-
-    def dispatch(self, *args, **kwargs):
-        """Obtiene el :class:`Recibo` que se entrego como argumento en la
-        url"""
-
-        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
-        return super(ReciboExamenCreateView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(ReciboExamenCreateView, self).get_context_data(**kwargs)
-        context['persona'] = self.examen.persona
-        return context
-
-    def form_valid(self, form):
-        self.object = form.save()
-
-        venta = Venta()
-        venta.item = self.examen.tipo_de_examen.item
-        venta.recibo = self.object
-        venta.cantidad = 1
-        venta.precio = venta.item.precio_de_venta
-        venta.impuesto = venta.item.impuestos
-
-        venta.save()
-        self.object.ventas.add(venta)
-        self.examen.facturado = True
-        self.examen.save()
-
-        self.object.save()
-
-        return HttpResponseRedirect(self.object.get_absolute_url())
-
-
-class VentaDeleteView(DeleteView, LoginRequiredMixin):
-    """Permite eliminar una :class:`Venta` que sea incorrecta en el
-    :class:`Recibo`"""
-    model = Venta
-
-    def get_object(self, queryset=None):
-        obj = super(VentaDeleteView, self).get_object(queryset)
-        self.recibo = obj.recibo
-        return obj
-
-    def get_success_url(self):
-        return self.recibo.get_absolute_url()
-
-
-class ReciboMixin(ContextMixin, View):
-    def dispatch(self, *args, **kwargs):
-        self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
-        return super(ReciboMixin, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(ReciboMixin, self).get_context_data(**kwargs)
-        context['recibo'] = self.recibo
-        return context
-
-
-class ReciboFormMixin(ReciboMixin, FormMixin):
-    """Especifica una interfaz común para la creación de Entidades que requieran
-    un :class:`Recibo` como parte de los campos requeridos por su formulario"""
-
-    def get_initial(self):
-        initial = super(ReciboFormMixin, self).get_initial()
-        initial = initial.copy()
-        initial['recibo'] = self.recibo.id
-        return initial
-
-
-class VentaCreateView(ReciboFormMixin, LoginRequiredMixin, CreateView):
-    """Permite agregar :class:`Venta`s a un :class:`Recibo`"""
-
-    model = Venta
-    form_class = VentaForm
-
-
-class PagoCreateView(ReciboFormMixin, LoginRequiredMixin, CreateView):
-    """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`
-
-    En caso que la :class:`Persona` tenga un :class:`Contrato` vigente, el
-    :class:`Pago` puede agregarse con uno de los :class:`TipoPago` que solo
-    son permitidos a los asegurados.
-    """
-    model = Pago
-    form_class = PagoForm
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        persona = self.object.recibo.cliente
-
-        if self.object.tipo.solo_asegurados and persona.contratos.filter(
-                vencimiento__lte=timezone.now()
-        ).count() <= 0:
-
-            messages.info(
-                    self.request,
-                    _('No se puede agregar un este tipo de pago sin contrato!')
-            )
-            if self.request.META['HTTP_REFERER']:
-                return HttpResponseRedirect(
-                        self.request.META['HTTP_REFERER'])
-            else:
-                return HttpResponseRedirect(reverse('invoice-index'))
-
-        self.object.save()
-
-        if self.object.tipo.reembolso:
-            notification = Notification()
-            notification.recibo = self.object.recibo
-            notification.save()
-            return HttpResponseRedirect(notification.get_absolute_url())
-
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class PagoUpdateView(LoginRequiredMixin, UpdateView):
-    """
-    Allows updating a :class:`Pago`
-    """
-    model = Pago
-    form_class = PagoStatusForm
-
-    def get_success_url(self):
-        return reverse('invoice-pago-status-index')
-
-
-class PagoDeleteView(DeleteView, LoginRequiredMixin):
-    """
-    Deletes a :class:`Pago` instance
-    """
-    model = Pago
-
-    def get_object(self, queryset=None):
-        obj = super(PagoDeleteView, self).get_object(queryset)
-        self.recibo = obj.recibo
-        return obj
-
-    def get_success_url(self):
-        return self.recibo.get_absolute_url()
-
-
 class ReciboDetailView(LoginRequiredMixin, DetailView):
     """Muestra los detalles del :class:`Recibo` para agregar :class:`Producto`s
     ir a la vista de impresión y realizar otras tareas relacionadas con
@@ -702,6 +546,286 @@ class ReciboPeriodoView(FormMixin, TemplateView):
         return context
 
 
+class ReciboMonthArchiveView(LoginRequiredMixin, MonthArchiveView):
+    """
+    Shows the :class:`Recibo` created during a month
+    """
+    queryset = Recibo.objects.select_related(
+            'cajero',
+            'ciudad',
+            'cliente',
+            'tipo_de_venta',
+            'cajero__profile__ciudad',
+    ).prefetch_related(
+        'ventas',
+        'ventas__item',
+    ).annotate(
+        total_ventas=Coalesce(Sum('ventas__total'), Decimal())
+    )
+    date_field = 'created'
+    allow_future = True
+
+
+
+class ReciboExamenCreateView(LoginRequiredMixin, CreateView):
+    """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
+    existente en la aplicación"""
+
+    model = Recibo
+    form_class = ReciboForm
+    template_name = 'invoice/recibo_persona_create.html'
+
+    def get_form_kwargs(self):
+        """Registra el :class:`User` que esta creando el :class:`Recibo`"""
+
+        kwargs = super(ReciboExamenCreateView, self).get_form_kwargs()
+        kwargs.update({'initial': {'cajero': self.request.user.id,
+                                   'cliente': self.examen.persona.id,
+                                   'remite': self.examen.remitio}})
+        return kwargs
+
+    def dispatch(self, *args, **kwargs):
+        """Obtiene el :class:`Recibo` que se entrego como argumento en la
+        url"""
+
+        self.examen = get_object_or_404(Examen, pk=kwargs['examen'])
+        return super(ReciboExamenCreateView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ReciboExamenCreateView, self).get_context_data(**kwargs)
+        context['persona'] = self.examen.persona
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        venta = Venta()
+        venta.item = self.examen.tipo_de_examen.item
+        venta.recibo = self.object
+        venta.cantidad = 1
+        venta.precio = venta.item.precio_de_venta
+        venta.impuesto = venta.item.impuestos
+
+        venta.save()
+        self.object.ventas.add(venta)
+        self.examen.facturado = True
+        self.examen.save()
+
+        self.object.save()
+
+        return HttpResponseRedirect(self.object.get_absolute_url())
+
+
+class ReciboMixin(ContextMixin, View):
+    def dispatch(self, *args, **kwargs):
+        self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
+        return super(ReciboMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ReciboMixin, self).get_context_data(**kwargs)
+        context['recibo'] = self.recibo
+        return context
+
+
+class ReciboFormMixin(ReciboMixin, FormMixin):
+    """Especifica una interfaz común para la creación de Entidades que requieran
+    un :class:`Recibo` como parte de los campos requeridos por su formulario"""
+
+    def get_initial(self):
+        initial = super(ReciboFormMixin, self).get_initial()
+        initial = initial.copy()
+        initial['recibo'] = self.recibo.id
+        return initial
+
+
+class VentaCreateView(ReciboFormMixin, LoginRequiredMixin, CreateView):
+    """Permite agregar :class:`Venta`s a un :class:`Recibo`"""
+
+    model = Venta
+    form_class = VentaForm
+
+
+class VentaListView(ListView):
+    context_object_name = 'ventas'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = VentaPeriodoForm(request.GET, prefix='venta')
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.item = self.form.cleaned_data['item']
+
+        return super(VentaListView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Venta.objects.filter(
+                recibo__created__gte=self.inicio,
+                recibo__created__lte=self.fin,
+                recibo__nulo=False,
+                item=self.item,
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super(VentaListView, self).get_context_data(**kwargs)
+        context['item'] = self.item
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        total = self.get_queryset().aggregate(total=Sum('total'))['total']
+        if total is None:
+            total = Decimal()
+        context['total'] = total
+        return context
+
+
+class VentaDeleteView(DeleteView, LoginRequiredMixin):
+    """Permite eliminar una :class:`Venta` que sea incorrecta en el
+    :class:`Recibo`"""
+    model = Venta
+
+    def get_object(self, queryset=None):
+        obj = super(VentaDeleteView, self).get_object(queryset)
+        self.recibo = obj.recibo
+        return obj
+
+    def get_success_url(self):
+        return self.recibo.get_absolute_url()
+
+
+class PagoCreateView(ReciboFormMixin, LoginRequiredMixin, CreateView):
+    """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`
+
+    En caso que la :class:`Persona` tenga un :class:`Contrato` vigente, el
+    :class:`Pago` puede agregarse con uno de los :class:`TipoPago` que solo
+    son permitidos a los asegurados.
+    """
+    model = Pago
+    form_class = PagoForm
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        persona = self.object.recibo.cliente
+
+        if self.object.tipo.solo_asegurados and persona.contratos.filter(
+                vencimiento__lte=timezone.now()
+        ).count() <= 0:
+
+            messages.info(
+                    self.request,
+                    _('No se puede agregar un este tipo de pago sin contrato!')
+            )
+            if self.request.META['HTTP_REFERER']:
+                return HttpResponseRedirect(
+                        self.request.META['HTTP_REFERER'])
+            else:
+                return HttpResponseRedirect(reverse('invoice-index'))
+
+        self.object.save()
+
+        if self.object.tipo.reembolso:
+            notification = Notification()
+            notification.recibo = self.object.recibo
+            notification.save()
+            return HttpResponseRedirect(notification.get_absolute_url())
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class PagoUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows updating a :class:`Pago`
+    """
+    model = Pago
+    form_class = PagoStatusForm
+
+    def get_success_url(self):
+        return reverse('invoice-pago-status-index')
+
+
+class PagoDeleteView(DeleteView, LoginRequiredMixin):
+    """
+    Deletes a :class:`Pago` instance
+    """
+    model = Pago
+
+    def get_object(self, queryset=None):
+        obj = super(PagoDeleteView, self).get_object(queryset)
+        self.recibo = obj.recibo
+        return obj
+
+    def get_success_url(self):
+        return self.recibo.get_absolute_url()
+
+
+class PagoMonthArchiveView(LoginRequiredMixin, MonthArchiveView):
+    """
+    Shows the :class:`Pago` corresponding to a certain month
+    """
+    queryset = Pago.objects.select_related(
+            'recibo',
+            'recibo__cliente',
+            'recibo__ciudad',
+            'aseguradora',
+    )
+    date_field = 'created'
+    allow_future = True
+
+
+class PagoListView(LoginRequiredMixin, ListView):
+    """
+    Shows a list of :class:`Pago`
+    """
+    model = Pago
+    context_object_name = 'pagos'
+    paginate_by = '100'
+
+    def get_queryset(self):
+        return Pago.objects.prefetch_related(
+                'recibo__cliente__contratos',
+        ).select_related(
+                'recibo',
+                'recibo__ciudad',
+                'recibo__cliente',
+                'recibo__cajero__profile__ciudad',
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super(PagoListView, self).get_context_data(**kwargs)
+
+        context['aseguradoras'] = self.get_queryset().values(
+                'aseguradora__nombre'
+        ).annotate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )
+
+        context['total'] = self.get_queryset().aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        return context
+
+
+class PagoPendienteListView(PagoListView):
+    """
+    Shows all :class:`Pago` that have not been completed
+    """
+
+    def get_queryset(self):
+        return super(PagoPendienteListView, self).get_queryset().filter(
+                completado=False
+        )
+
+
+class PagoAseguradoraLisView(PagoListView, AseguradoraMixin):
+    """
+    Shows a list of :class:`Pago` that are related to a :class:`Aseguradora`
+    """
+
+    def get_queryset(self):
+        return super(PagoAseguradoraLisView, self).get_queryset().filter(
+                aseguradora=self.aseguradora
+        )
+
+
 class PagoPeriodoView(TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
@@ -824,38 +948,6 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
 
         context['inicio'] = self.inicio
         context['fin'] = self.fin
-        return context
-
-
-class VentaListView(ListView):
-    context_object_name = 'ventas'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.form = VentaPeriodoForm(request.GET, prefix='venta')
-        if self.form.is_valid():
-            self.inicio = self.form.cleaned_data['inicio']
-            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
-            self.item = self.form.cleaned_data['item']
-
-        return super(VentaListView, self).dispatch(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return Venta.objects.filter(
-                recibo__created__gte=self.inicio,
-                recibo__created__lte=self.fin,
-                recibo__nulo=False,
-                item=self.item,
-        )
-
-    def get_context_data(self, **kwargs):
-        context = super(VentaListView, self).get_context_data(**kwargs)
-        context['item'] = self.item
-        context['inicio'] = self.inicio
-        context['fin'] = self.fin
-        total = self.get_queryset().aggregate(total=Sum('total'))['total']
-        if total is None:
-            total = Decimal()
-        context['total'] = total
         return context
 
 
@@ -1834,66 +1926,6 @@ class StatusPagoListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return StatusPago.objects.filter(reportable=True).all()
-
-
-class PagoListView(LoginRequiredMixin, ListView):
-    model = Pago
-    context_object_name = 'pagos'
-    template_name = 'invoice/pago_pendiente_list.html'
-
-    def get_queryset(self):
-        return Pago.objects.prefetch_related(
-                'recibo__cliente__contratos',
-        ).select_related(
-                'recibo',
-                'recibo__ciudad',
-                'recibo__cliente',
-                'recibo__cliente__ciudad',
-        ).filter(status__reportable=True).all()
-
-    def get_context_data(self, **kwargs):
-        context = super(PagoListView, self).get_context_data(**kwargs)
-
-        total = []
-        for aseguradora in Aseguradora.objects.all():
-            total.append((
-                aseguradora,
-                Pago.objects.prefetch_related(
-                        'recibo__cliente__contratos',
-                        'recibo__cliente',
-                ).select_related(
-                        'status', 'recibo', 'recibo__cliente__ciudad'
-                ).filter(
-                        status__reportable=True,
-                        recibo__cliente__in=Persona.objects.filter(
-                                contratos__master__aseguradora=aseguradora)
-                ).aggregate(total=Sum('monto'))['total']))
-
-        context['total'] = self.get_queryset().aggregate(
-                total=Sum('monto')
-        )['total']
-
-        context['aseguradoras'] = total
-
-        return context
-
-
-class PagoAseguradoraList(ListView, AseguradoraMixin, LoginRequiredMixin):
-    model = Pago
-    context_object_name = 'pagos'
-    template_name = 'invoice/pago_pendiente_list.html'
-
-    def get_queryset(self):
-        return Pago.objects.filter(status__reportable=True,
-                                   recibo__cliente__in=Persona.objects.filter(
-                                           contratos__master__aseguradora=self.aseguradora))
-
-    def get_context_data(self, **kwargs):
-        context = super(PagoAseguradoraList, self).get_context_data(**kwargs)
-        context['total'] = self.get_queryset().aggregate(
-                total=Sum('monto')
-        )['total']
-        return context
 
 
 class CuentaPorCobrarCreateView(CreateView, CurrentUserFormMixin,
