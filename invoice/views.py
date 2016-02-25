@@ -795,7 +795,7 @@ class PagoListView(LoginRequiredMixin, ListView):
                 'aseguradora__nombre'
         ).annotate(
                 total=Coalesce(Sum('monto'), Decimal())
-        )
+        ).order_by()
 
         context['total'] = self.get_queryset().aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
@@ -811,7 +811,9 @@ class PagoPendienteListView(PagoListView):
 
     def get_queryset(self):
         return super(PagoPendienteListView, self).get_queryset().filter(
-                completado=False
+                completado=False,
+                tipo__reembolso=True,
+                status__reportable=True,
         )
 
 
