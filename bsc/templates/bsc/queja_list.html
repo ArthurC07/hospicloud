@@ -17,9 +17,9 @@
                         <th>{% trans 'Fecha de Consulta' %}</th>
                         <th>{% trans 'Fecha de Queja' %}</th>
                         <th>{% trans 'Ciudad' %}</th>
-                        <th>{% trans 'Medico' %}</th>
+                        <th>{% trans 'Nombre' %}</th>
+                        <th>{% trans 'Responsables' %}</th>
                         <th>{% trans 'Queja' %}</th>
-                        <th>{% trans 'Soluciones' %}</th>
                         <th>{% trans 'Acciones' %}</th>
                     </tr>
                 </thead>
@@ -29,12 +29,33 @@
                         <td>{{ queja.respuesta.consulta.created }}</td>
                         <td>{{ queja.created }}</td>
                         <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
-                        <td>{{ queja.respuesta.consulta.consultorio.usuario.get_full_name }}</td>
+                        <td>{{ queja.respuesta.persona }}</td>
+                        <td>
+                            <table class="table">
+                                <tr>
+                                    <td>{% trans 'Departamento' %}</td>
+                                    <td>{{ queja.departamento }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Aseguradora' %}</td>
+                                    <td>{{ queja.respuesta.consulta.poliza.aseguradora }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Médico' %}</td>
+                                    <td>{{ queja.respuesta.consulta.consultorio.usuario.get_full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Enfermera' %}</td>
+                                    <td>{{ queja.respuesta.consulta.consultorio.secretaria.get_full_name }}</td>
+                                </tr>
+                            </table>
+                        </td>
                         <td>{{ queja.queja }}</td>
-                        <td>{{ queja.solucion_set.count }}</td>
-                        <td><a class="btn btn-primary" href="{{ queja.get_absolute_url }}">Ver</a></td>
+                        <td><a class="btn btn-primary" href="{{ queja.get_absolute_url }}">{% trans 'Ver' %}</a></td>
                     {% empty %}
-                    <li>No hay Encuestas Disponibles</li>
+                    <tr>
+                        <td>{% trans 'No hay Quejas Disponibles' %}</td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
