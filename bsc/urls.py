@@ -45,6 +45,10 @@ urlpatterns = [
         views.ConsultaNoEncuestadaRedirectView.as_view(),
         name='encuesta-no-respondida'),
 
+    url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/rellamar$',
+        views.RellamarCreateView.as_view(),
+        name='encuesta-rellamar'),
+
     url(r'^respuesta/(?P<pk>\d+)$', views.RespuestaDetailView.as_view(),
         name='respuesta'),
 

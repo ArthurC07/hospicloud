@@ -15,13 +15,15 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from crispy_forms.layout import Fieldset
 from django import forms
 from django.forms import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from bsc.models import Encuesta, Respuesta, Voto, Opcion, Queja, ArchivoNotas, \
-    Solucion
+    Solucion, Rellamar
+from clinique.models import Consulta
 from persona.forms import FieldSetModelFormMixin, FieldSetModelFormMixinNoButton
 from users.mixins import HiddenUserForm
 
@@ -107,3 +109,14 @@ class ArchivoNotasForm(FieldSetModelFormMixin):
         super(ArchivoNotasForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Subir Archivo de Notas'),
                                       *self.field_names)
+
+
+class RellamarForm(FieldSetModelFormMixin):
+    class Meta:
+        model = Rellamar
+        fields = '__all__'
+
+    consulta = forms.ModelChoiceField(widget=forms.HiddenInput(),
+                                      queryset=Consulta.objects.all())
+    encuesta = forms.ModelChoiceField(widget=forms.HiddenInput(),
+                                      queryset=Encuesta.objects.all())

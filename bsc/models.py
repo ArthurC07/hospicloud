@@ -567,6 +567,19 @@ class Solucion(TimeStampedModel):
         return reverse('queja', args=[self.queja.id])
 
 
+class Rellamar(TimeStampedModel):
+    """
+    Indicates that the :class:`Persona` wants to be called at another time
+    """
+    consulta = models.ForeignKey(Consulta)
+    encuesta = models.ForeignKey(Encuesta)
+    hora = models.DateTimeField(default=timezone.now)
+
+    def get_absolute_url(self):
+
+        return self.encuesta.get_absolute_url()
+
+
 class Holiday(TimeStampedModel):
     day = models.DateField()
 

@@ -15,27 +15,26 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django import forms
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView, View
-
 from django.views.generic.base import ContextMixin
-
 from django.views.generic.edit import FormMixin
-from django.utils.translation import ugettext_lazy as _
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
-    ArchivoNotasForm, SolucionForm
+    ArchivoNotasForm, SolucionForm, RellamarForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, \
-    Pregunta, Solucion, Login
+    Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
 from hospinet.utils.forms import PeriodoForm
@@ -51,7 +50,7 @@ class ScoreCardListView(LoginRequiredMixin, ListView):
 
         context['loginperiodo'] = PeriodoForm(prefix='login')
         context['loginperiodo'].set_legend(
-                _('Inicios de Sesi&oacute;n por Periodo')
+            _('Inicios de Sesi&oacute;n por Periodo')
         )
         context['loginperiodo'].set_action('login-periodo')
 
@@ -315,13 +314,13 @@ class QuejaDetailView(LoginRequiredMixin, DetailView):
 class QuejaListView(LoginRequiredMixin, ListView):
     model = Queja
     queryset = Queja.objects.filter(resuelta=False).select_related(
-            'respuesta',
-            'respuesta__consulta',
-            'respuesta__consulta__consultorio__usuario',
+        'respuesta',
+        'respuesta__consulta',
+        'respuesta__consulta__consultorio__usuario',
     ).prefetch_related(
-            'solucion_set',
-            'respuesta__consulta__consultorio__usuario__profile',
-            'respuesta__consulta__consultorio__usuario__profile__ciudad',
+        'solucion_set',
+        'respuesta__consulta__consultorio__usuario__profile',
+        'respuesta__consulta__consultorio__usuario__profile__ciudad',
     )
     context_object_name = 'quejas'
 
@@ -385,7 +384,13 @@ class LoginPeriodoView(PeriodoView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super(LoginPeriodoView, self).get_context_data(**kwargs)
         context['object_list'] = Login.objects.filter(
-                created__range=(self.inicio, self.fin)
+            created__range=(self.inicio, self.fin)
         ).order_by('user', 'created')
 
         return context
+
+
+class RellamarCreateView(LoginRequiredMixin, EncuestaFormMixin,
+                         ConsultaFormMixin, CreateView):
+    model = Rellamar
+    form_class = RellamarForm
