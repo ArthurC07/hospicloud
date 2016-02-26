@@ -120,3 +120,8 @@ class RellamarForm(FieldSetModelFormMixin):
                                       queryset=Consulta.objects.all())
     encuesta = forms.ModelChoiceField(widget=forms.HiddenInput(),
                                       queryset=Encuesta.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(RellamarForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Programar Lllamada'),
+                                      *self.field_names)
