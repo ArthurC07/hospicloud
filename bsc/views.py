@@ -134,6 +134,10 @@ class RespuestaCreateView(EncuestaFormMixin, ConsultaFormMixin,
 class RespuestaDetailView(DetailView):
     model = Respuesta
     context_object_name = 'respuesta'
+    queryset = Respuesta.objects.all().prefetch_related(
+        'voto_set',
+        'voto_set__opcion',
+    )
 
     def get_context_data(self, **kwargs):
         context = super(RespuestaDetailView, self).get_context_data(**kwargs)

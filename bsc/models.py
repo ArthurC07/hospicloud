@@ -544,8 +544,21 @@ class Voto(TimeStampedModel):
 
 
 @python_2_unicode_compatible
+class Departamento(TimeStampedModel):
+    """
+    Allows a :class:`Queja` to be classified
+    """
+    nombre = models.CharField(max_length=255)
+
+    def __str__(self):
+
+        return self.nombre
+
+
+@python_2_unicode_compatible
 class Queja(TimeStampedModel):
     respuesta = models.ForeignKey(Respuesta)
+    departamento = models.ForeignKey(Departamento, null=True, blank=True)
     queja = models.TextField()
     resuelta = models.BooleanField(default=False)
 
