@@ -57,7 +57,7 @@ class VotoForm(FieldSetModelFormMixinNoButton):
                                        required=False)
     opcion = forms.ModelChoiceField(queryset=Opcion.objects.all(),
                                     widget=forms.RadioSelect(),
-                                    required=True, empty_label=None)
+                                    required=False, empty_label=None)
 
     def __init__(self, *args, **kwargs):
         super(VotoForm, self).__init__(*args, **kwargs)
