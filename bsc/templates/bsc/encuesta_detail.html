@@ -23,7 +23,7 @@
                             <address>
                                 <strong>{{ consulta.persona }}</strong>,
                                 {{ consulta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}<br>
-                                <strong>{% trans 'Direcci&oacute;n' %}:</strong> {{ consulta.persona.domicilio }}<br>
+                                <strong>{% trans 'Ciudad' %}:</strong> {{ consulta.persona.ciudad }}<br>
                                 <strong>{% trans 'Atendido' %}:</strong> {{ consulta.created }}<br>
                                 <strong>{% trans 'Encuestada' %}:</strong> {{ consulta.persona.respuesta_set.count }}
                                 {% trans 'veces' %}<br>
@@ -32,7 +32,18 @@
                                     {{ encuesta.created }}
                                 {% endfor %}
                                 <br>
-                                <strong>{% trans 'Aseguradora' %}:</strong> {{ consulta.poliza.aseguradora }}<br>
+                                <strong>{% trans 'Aseguradora' %}:</strong> {{ consulta.poliza.aseguradora }},
+                                {% for contrato in consulta.persona.contratos.all %}
+                                    {% if contrato in consulta.poliza.contratos.all %}
+                                        {% trans 'Titular del Contrato' %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% for beneficiario in consulta.persona.beneficiarios.all %}
+                                    {% if beneficiario.contrato in consulta.poliza.contratos.all %}
+                                        {% trans 'Beneficiario del Contrato' %}
+                                    {% endif %}
+                                {% endfor %}
+                                <br>
                                 {% trans 'Tel&eacute;fono:' %} {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
                             </address>
                         </td>

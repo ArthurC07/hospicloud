@@ -456,8 +456,13 @@ class Encuesta(TimeStampedModel):
             'persona',
             'poliza',
             'poliza__aseguradora',
+            'persona__ciudad',
         ).prefetch_related(
             'persona__respuesta_set',
+            'persona__contratos',
+            'poliza__contratos',
+            'persona__beneficiarios',
+            'persona__beneficiarios__contrato'
         ).filter(
             facturada=True,
             encuestada=False,
