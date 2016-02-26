@@ -79,14 +79,7 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(EncuestaDetailView, self).get_context_data(**kwargs)
 
-        context['consultas'] = Consulta.objects.select_related(
-                'persona',
-        ).prefetch_related(
-            'persona__respuesta_set',
-        ).filter(
-                facturada=True,
-                encuestada=False
-        )
+        context['consultas'] = self.object.consultas()
 
         return context
 

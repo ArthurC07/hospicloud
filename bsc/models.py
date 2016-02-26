@@ -14,23 +14,25 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
+from datetime import timedelta
 from decimal import Decimal
 
+import unicodecsv
+from django.conf import settings
 from django.contrib.auth.models import User, user_logged_in
-from django.core.urlresolvers import reverse
 from django.core.files.storage import default_storage as storage
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django.conf import settings
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from django_extensions.db.models import TimeStampedModel
-import unicodecsv
-from budget.models import Presupuesto
 
+from budget.models import Presupuesto
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
 from contracts.models import MasterContract
 from emergency.models import Emergencia
@@ -82,8 +84,8 @@ class Extra(TimeStampedModel):
     EMERGENCIA = 'ER'
     EVALUACION = 'EV'
     EXTRAS = (
-        (EMERGENCIA, _(u'Emergencias Atendidas')),
-        (EVALUACION, _(u'Evaluación del Estudiante'))
+        (EMERGENCIA, _('Emergencias Atendidas')),
+        (EVALUACION, _('Evaluación del Estudiante'))
     )
     tipo_extra = models.CharField(max_length=3, choices=EXTRAS,
                                   default=Emergencia)
@@ -98,9 +100,9 @@ class Extra(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u'{0} de {1}').format(
-                self.get_tipo_extra_display(),
-                self.score_card.nombre
+        return _('{0} de {1}').format(
+            self.get_tipo_extra_display(),
+            self.score_card.nombre
         )
 
     def cumplido(self, usuario, inicio, fin):
@@ -142,32 +144,32 @@ class Meta(TimeStampedModel):
     CLIENT_FEEDBACK_PERCENTAGE = 'CFP'
     CONSULTA_REMITIDA = 'CR'
     COACHING = 'CO'
-    PUNTUALIDAD = 'PU'
+    PUNTUALIDAD = 'P'
     QUEJAS = 'QJ'
     VENTAS = 'VE'
     PRESUPUESTO = 'PR'
-    TURNOS = 'TU'
+    TURNOS = 'T'
     TEACHING = 'TE'
     EVALUACION = 'EV'
     CAPACITACIONES = 'CA'
     METAS = (
-        (CONSULTA_TIME, _(u'Tiempo de Consulta')),
-        (PRE_CONSULTA_TIME, _(u'Tiempo en Preconsulta')),
-        (PRESCRIPTION_PERCENTAGE, _(u'Porcentaje de Recetas')),
-        (INCAPACIDAD_PERCENTAGE, _(u'Porcentaje de Incapacidades')),
+        (CONSULTA_TIME, _('Tiempo de Consulta')),
+        (PRE_CONSULTA_TIME, _('Tiempo en Preconsulta')),
+        (PRESCRIPTION_PERCENTAGE, _('Porcentaje de Recetas')),
+        (INCAPACIDAD_PERCENTAGE, _('Porcentaje de Incapacidades')),
         (
             CLIENT_FEEDBACK_PERCENTAGE,
-            _(u'Porcentaje de Aprobación del Cliente')),
-        (CONSULTA_REMITIDA, _(u'Consulta Remitida a Especialista')),
-        (COACHING, _(u'Coaching')),
-        (PUNTUALIDAD, _(u'Puntualidad')),
-        (QUEJAS, _(u'Manejo de Quejas')),
-        (VENTAS, _(u'Ventas del Mes')),
-        (PRESUPUESTO, _(u'Manejo de Presupuesto')),
-        (TURNOS, _(u'Manejo de Turnos')),
-        (TEACHING, _(u'Horas Enseñadas')),
-        (EVALUACION, _(u'Evaluación de Alumnos')),
-        (CAPACITACIONES, _(u'Capacitaciones')),
+            _('Porcentaje de Aprobación del Cliente')),
+        (CONSULTA_REMITIDA, _('Consulta Remitida a Especialista')),
+        (COACHING, _('Coaching')),
+        (PUNTUALIDAD, _('Puntualidad')),
+        (QUEJAS, _('Manejo de Quejas')),
+        (VENTAS, _('Ventas del Mes')),
+        (PRESUPUESTO, _('Manejo de Presupuesto')),
+        (TURNOS, _('Manejo de Turnos')),
+        (TEACHING, _('Horas Enseñadas')),
+        (EVALUACION, _('Evaluación de Alumnos')),
+        (CAPACITACIONES, _('Capacitaciones')),
     )
     score_card = models.ForeignKey(ScoreCard)
     tipo_meta = models.CharField(max_length=3, choices=METAS,
@@ -180,9 +182,9 @@ class Meta(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u'{0} de {1}').format(
-                self.get_tipo_meta_display(),
-                self.score_card.nombre
+        return _('{0} de {1}').format(
+            self.get_tipo_meta_display(),
+            self.score_card.nombre
         )
 
     def logro(self, usuario, inicio, fin):
@@ -195,8 +197,8 @@ class Meta(TimeStampedModel):
                                       created__range=(inicio, fin)).count()
 
         turnos = usuario.turno_set.filter(
-                inicio__range=(inicio, timezone.now()),
-                contabilizable=True
+            inicio__range=(inicio, timezone.now()),
+            contabilizable=True
         )
 
         if logins < 5 and turnos.count() < 5:
@@ -239,7 +241,7 @@ class Meta(TimeStampedModel):
                                                  fecha__range=(inicio, fin))
 
         return evaluaciones.aggregate(
-                total=Coalesce(Sum('puntaje'), Decimal())
+            total=Coalesce(Sum('puntaje'), Decimal())
         )['total']
 
     def ponderacion(self, logro):
@@ -263,7 +265,7 @@ class Meta(TimeStampedModel):
 
     def recibos(self, usuario, inicio, fin):
         return Recibo.objects.annotate(sold=Sum('ventas__total')).filter(
-                created__range=(inicio, fin), cajero=usuario
+            created__range=(inicio, fin), cajero=usuario
         )
 
     def orden_medicas(self, usuario, inicio, fin):
@@ -315,7 +317,7 @@ class Meta(TimeStampedModel):
     def consulta_remitida(self, usuario, inicio, fin):
 
         remitidas = self.consultas(usuario, inicio, fin).filter(
-                remitida=True
+            remitida=True
         ).count()
 
         consultas = self.consultas(usuario, inicio, fin).count()
@@ -324,14 +326,14 @@ class Meta(TimeStampedModel):
     def poll_average(self, usuario, inicio, fin):
 
         votos = Voto.objects.filter(
-                opcion__isnull=False,
-                created__range=(inicio, fin),
-                respuesta__consulta__consultorio__usuario=usuario,
-                pregunta__calificable=True
+            opcion__isnull=False,
+            created__range=(inicio, fin),
+            respuesta__consulta__consultorio__usuario=usuario,
+            pregunta__calificable=True
         )
 
         total = votos.aggregate(
-                total=Coalesce(Sum('opcion__valor'), Decimal())
+            total=Coalesce(Sum('opcion__valor'), Decimal())
         )['total']
 
         return Decimal(total) / max(votos.count(), 1)
@@ -339,8 +341,8 @@ class Meta(TimeStampedModel):
     def ventas(self, usuario, inicio, fin):
 
         ventas = MasterContract.objects.filter(
-                vendedor__usuario=usuario,
-                created__range=(inicio, fin),
+            vendedor__usuario=usuario,
+            created__range=(inicio, fin),
         ).count()
 
         return ventas
@@ -356,10 +358,10 @@ class Meta(TimeStampedModel):
     def quejas(self, usuario, inicio, fin):
 
         quejas = Queja.objects.select_related(
-                'respuesta__consulta__consultorio__usuario__profile__ciudad'
+            'respuesta__consulta__consultorio__usuario__profile__ciudad'
         ).filter(
-                created__range=(inicio, fin),
-                respuesta__consulta__consultorio__usuario__profile__ciudad=usuario.profile.ciudad,
+            created__range=(inicio, fin),
+            respuesta__consulta__consultorio__usuario__profile__ciudad=usuario.profile.ciudad,
         )
 
         incompletas = quejas.filter(resuelta=False)
@@ -369,8 +371,8 @@ class Meta(TimeStampedModel):
     def presupuesto(self, usuario):
 
         presupuesto = Presupuesto.objects.filter(
-                ciudad=usuario.profile.ciudad,
-                activo=True
+            ciudad=usuario.profile.ciudad,
+            activo=True
         ).first()
 
         if presupuesto is None:
@@ -381,8 +383,8 @@ class Meta(TimeStampedModel):
     def turnos(self, usuario, inicio, fin):
 
         turnos = Turno.objects.filter(
-                created__range=(inicio, fin),
-                ciudad=usuario.profile.ciudad,
+            created__range=(inicio, fin),
+            ciudad=usuario.profile.ciudad,
         )
 
         return turnos.count() / max(turnos.count(), 1)
@@ -413,14 +415,14 @@ class ArchivoNotas(TimeStampedModel):
         return reverse('archivoNotas', args=[self.id])
 
     def procesar(self):
-        archivo = storage.open(self.archivo.name, 'rU')
+        archivo = storage.open(self.archivo.name, 'r')
         data = unicodecsv.reader(archivo)
         [procesar_notas(
-                linea,
-                self.fecha,
-                self.meta,
-                self.columna_de_usuarios - 1,
-                self.columna_de_puntaje - 1
+            linea,
+            self.fecha,
+            self.meta,
+            self.columna_de_usuarios - 1,
+            self.columna_de_puntaje - 1
         ) for linea in data]
 
 
@@ -444,6 +446,26 @@ class Encuesta(TimeStampedModel):
 
     def __str__(self):
         return self.nombre
+
+    def consultas(self):
+        """
+        Obtains the :class:`Consulta`s that will be interviewed
+        """
+        a_month_ago = timezone.now() - timedelta(days=30)
+        consultas = Consulta.objects.select_related(
+            'persona',
+            'poliza',
+            'poliza__aseguradora',
+        ).prefetch_related(
+            'persona__respuesta_set',
+        ).filter(
+            facturada=True,
+            encuestada=False,
+        ).exclude(
+            persona__respuesta__created__gte=a_month_ago,
+        )
+
+        return consultas
 
 
 @python_2_unicode_compatible
@@ -484,6 +506,7 @@ class Respuesta(TimeStampedModel):
 
     class Meta:
         ordering = ['created', ]
+        get_latest_by = 'created'
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -491,7 +514,7 @@ class Respuesta(TimeStampedModel):
         return reverse('respuesta', args=[self.id])
 
     def __str__(self):
-        return u'Respuesta a {0}'.format(self.encuesta.nombre)
+        return 'Respuesta a {0}'.format(self.encuesta.nombre)
 
     def puntuacion(self):
         votos = Voto.objects.filter(opcion__isnull=False, respuesta=self)
@@ -591,7 +614,7 @@ def get_current_month_logins(user):
 
 
 UserProfile.get_current_month_logins = property(
-        lambda p: get_current_month_logins(p.user))
+    lambda p: get_current_month_logins(p.user))
 
 UserProfile.get_current_month_logins_list = property(
-        lambda p: get_current_month_logins_list(p.user))
+    lambda p: get_current_month_logins_list(p.user))
