@@ -18,6 +18,7 @@
                         <th>{% trans 'Fecha de Queja' %}</th>
                         <th>{% trans 'Ciudad' %}</th>
                         <th>{% trans 'Nombre' %}</th>
+                        <th>{% trans 'Categoría' %}</th>
                         <th>{% trans 'Responsables' %}</th>
                         <th>{% trans 'Queja' %}</th>
                         <th>{% trans 'Acciones' %}</th>
@@ -30,6 +31,18 @@
                         <td>{{ queja.created }}</td>
                         <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
                         <td>{{ queja.respuesta.persona }}</td>
+                        <td>
+                            {% for contrato in queja.respuesta.consulta.persona.contratos.all %}
+                                {% if contrato in queja.respuesta.consulta.poliza.contratos.all %}
+                                    {% trans 'Titular del Contrato' %}
+                                {% endif %}
+                            {% endfor %}
+                            {% for beneficiario in queja.respuesta.consulta.persona.beneficiarios.all %}
+                                {% if beneficiario.contrato in queja.respuesta.consulta.poliza.contratos.all %}
+                                    {% trans 'Beneficiario del Contrato' %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
                         <td>
                             <table class="table">
                                 <tr>
