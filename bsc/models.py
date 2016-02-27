@@ -562,6 +562,9 @@ class Queja(TimeStampedModel):
     queja = models.TextField()
     resuelta = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['created', ]
+
     def __str__(self):
         return self.queja
 
