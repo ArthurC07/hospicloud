@@ -33,13 +33,11 @@
                                 {% endfor %}
                                 <br>
                                 <strong>{% trans 'Aseguradora' %}:</strong> {{ consulta.poliza.aseguradora }},
-                                {% for contrato in consulta.persona.contratos.all %}
-                                    {% if contrato in consulta.poliza.contratos.all %}
-                                        {% trans 'Titular del Contrato' %}
-                                    {% endif %}
-                                {% endfor %}
+                                {% if consulta.contrato in consulta.poliza.contratos.all %}
+                                    {% trans 'Titular del Contrato' %}
+                                {% endif %}
                                 {% for beneficiario in consulta.persona.beneficiarios.all %}
-                                    {% if beneficiario.contrato in consulta.poliza.contratos.all %}
+                                    {% if beneficiario.contrato == consulta.contrato %}
                                         {% trans 'Beneficiario del Contrato' %}
                                     {% endif %}
                                 {% endfor %}

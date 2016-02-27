@@ -32,15 +32,12 @@
                         <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
                         <td>{{ queja.respuesta.persona }}, {{ queja.respuesta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}</td>
                         <td>
-                            {% for contrato in queja.respuesta.consulta.persona.contratos.all %}
-                                {% if contrato in queja.respuesta.consulta.poliza.contratos.all %}
-                                    {% trans 'Titular del Contrato' %}
-                                {% endif %}
-                            {% endfor %}
+                            {% if queja.respuesta.consulta.contrato in consulta.poliza.contratos.all %}
+                                {% trans 'Titular del Contrato' %}
+                            {% endif %}
                             {% for beneficiario in queja.respuesta.consulta.persona.beneficiarios.all %}
-                                {% if beneficiario.contrato in queja.respuesta.consulta.poliza.contratos.all %}
+                                {% if beneficiario.contrato == consulta.contrato %}
                                     {% trans 'Beneficiario del Contrato' %}
-                                    {% trans 'Titular' %}: {{ beneficiario.contrato.persona }}
                                 {% endif %}
                             {% endfor %}
                         </td>

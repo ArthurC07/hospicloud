@@ -92,12 +92,11 @@ class QuejaFormMixin(FieldSetModelFormMixin):
 class SolucionForm(QuejaFormMixin, HiddenUserForm):
     class Meta:
         model = Solucion
-        fields = '__all__'
+        exclude = ('aceptada',)
 
     def __init__(self, *args, **kwargs):
         super(SolucionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Enviar Solución'),
-                                      *self.field_names)
+        self.helper.layout = Fieldset(_('Enviar Solución'), *self.field_names)
 
 
 class ArchivoNotasForm(FieldSetModelFormMixin):
