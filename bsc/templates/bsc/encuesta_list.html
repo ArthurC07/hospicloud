@@ -25,7 +25,16 @@
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
-                        <li><a href="{% url 'quejas' %}">{% trans 'Quejas' %}</a></li>
+                        <li>
+                            <a href="{% url 'quejas' %}">
+                                {% trans 'Quejas' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'soluciones' %}">
+                                {% trans 'Soluciones Pendientes de Aprobaci&oacute;n' %}
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>

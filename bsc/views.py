@@ -31,7 +31,8 @@ from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
-    ArchivoNotasForm, SolucionForm, RellamarForm
+    ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, \
+    SolucionAceptadaForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, \
     Pregunta, Solucion, Login, Rellamar
@@ -322,13 +323,12 @@ class QuejaListView(LoginRequiredMixin, ListView):
         'respuesta__persona',
         'respuesta__consulta',
         'respuesta__consulta__poliza',
+        'respuesta__consulta__contrato',
         'respuesta__consulta__persona',
         'respuesta__consulta__poliza__aseguradora',
         'respuesta__consulta__consultorio__usuario',
     ).prefetch_related(
         'solucion_set',
-        'respuesta__consulta__persona__contratos',
-        'respuesta__consulta__poliza__contratos',
         'respuesta__consulta__persona__beneficiarios',
         'respuesta__consulta__persona__beneficiarios',
         'respuesta__consulta__persona__beneficiarios__contrato',
@@ -336,6 +336,8 @@ class QuejaListView(LoginRequiredMixin, ListView):
         'respuesta__consulta__consultorio__secretaria',
         'respuesta__consulta__consultorio__usuario__profile',
         'respuesta__consulta__consultorio__usuario__profile__ciudad',
+    ).exclude(
+        solucion__aceptada=True
     )
     context_object_name = 'quejas'
 
@@ -378,6 +380,65 @@ class SolucionListCreateView(SolucionCreateView):
         Returns the url of the :class:`Queja` list
         """
         return reverse('quejas')
+
+
+class SolucionListView(LoginRequiredMixin, ListView):
+    model = Solucion
+    queryset = Solucion.objects.select_related(
+        'queja',
+        'queja__departamento',
+        'queja__respuesta__consulta__persona',
+        'queja__respuesta__consulta__contrato',
+        'queja__respuesta__consulta__contrato__master',
+        'queja__respuesta',
+        'queja__respuesta__persona',
+        'queja__respuesta__consulta',
+        'queja__respuesta__consulta__poliza',
+        'queja__respuesta__consulta__contrato',
+        'queja__respuesta__consulta__persona',
+        'queja__respuesta__consulta__poliza__aseguradora',
+        'queja__respuesta__consulta__consultorio__usuario',
+    ).prefetch_related(
+        'queja__respuesta__consulta__poliza__contratos',
+        'queja__respuesta__consulta__persona__beneficiarios',
+        'queja__respuesta__consulta__consultorio__secretaria',
+        'queja__respuesta__consulta__consultorio__usuario__profile',
+        'queja__respuesta__consulta__consultorio__usuario__profile__ciudad',
+    ).filter(
+        aceptada=False,
+        rechazada=False,
+    )
+
+    def get_context_data(self, **kwargs):
+
+        context = super(SolucionListView, self).get_context_data(**kwargs)
+        context['form'] = SolucionAceptadaForm()
+        context['rechazada'] = SolucionRechazadaForm()
+        return context
+
+
+class SolucionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Solucion
+
+
+class SolucionAceptarUpdateView(SolucionUpdateView):
+    form_class = SolucionRechazadaForm
+
+    def get_success_url(self):
+        """
+        Returns the address of the :class:`Solucion` list.
+        """
+        return reverse('solucion-list')
+
+
+class SolucionRechazarUpdateView(SolucionUpdateView):
+    form_class = SolucionRechazadaForm
+
+    def get_success_url(self):
+        """
+        Returns the address of the :class:`Solucion` list.
+        """
+        return reverse('solucion-list')
 
 
 class ArchivoNotasCreateView(LoginRequiredMixin, CreateView):

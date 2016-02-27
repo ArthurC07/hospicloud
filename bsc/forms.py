@@ -16,7 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-from crispy_forms.layout import Fieldset
+from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.forms import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
@@ -124,3 +124,42 @@ class RellamarForm(FieldSetModelFormMixin):
         super(RellamarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Programar Lllamada'),
                                       *self.field_names)
+
+
+class SolucionAceptadaForm(FieldSetModelFormMixinNoButton):
+    class Meta:
+        model = Solucion
+        fields = ('aceptada',)
+
+    aceptada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'aceptada': True}
+        else:
+            kwargs['initial']['aceptada'] = True
+        super(SolucionAceptadaForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', _('Aceptar Solución')))
+        self.helper.form_tag = False
+
+
+class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
+    class Meta:
+        model = Solucion
+        fields = ('aceptada',)
+
+    aceptada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'aceptada': False}
+        else:
+            kwargs['initial']['aceptada'] = True
+        super(SolucionRechazadaForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Rechazar Solución'),
+                css_class='btn-danger'
+            ))
+        self.helper.form_tag = False

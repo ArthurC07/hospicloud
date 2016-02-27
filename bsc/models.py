@@ -578,6 +578,11 @@ class Solucion(TimeStampedModel):
     queja = models.ForeignKey(Queja)
     solucion = models.TextField()
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
+    aceptada = models.BooleanField(default=False)
+    rechazada = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['queja__created', ]
 
     def get_absolute_url(self):
         return reverse('queja', args=[self.queja.id])
