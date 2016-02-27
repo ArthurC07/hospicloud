@@ -30,7 +30,7 @@
                         <td>{{ queja.respuesta.consulta.created }}</td>
                         <td>{{ queja.created }}</td>
                         <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
-                        <td>{{ queja.respuesta.persona }}</td>
+                        <td>{{ queja.respuesta.persona }}, {{ queja.respuesta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}</td>
                         <td>
                             {% for contrato in queja.respuesta.consulta.persona.contratos.all %}
                                 {% if contrato in queja.respuesta.consulta.poliza.contratos.all %}
@@ -40,6 +40,7 @@
                             {% for beneficiario in queja.respuesta.consulta.persona.beneficiarios.all %}
                                 {% if beneficiario.contrato in queja.respuesta.consulta.poliza.contratos.all %}
                                     {% trans 'Beneficiario del Contrato' %}
+                                    {% trans 'Titular' %}: {{ beneficiario.contrato.persona }}
                                 {% endif %}
                             {% endfor %}
                         </td>

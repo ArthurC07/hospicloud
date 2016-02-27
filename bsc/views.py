@@ -332,6 +332,7 @@ class QuejaListView(LoginRequiredMixin, ListView):
         'respuesta__consulta__persona__beneficiarios',
         'respuesta__consulta__persona__beneficiarios',
         'respuesta__consulta__persona__beneficiarios__contrato',
+        'respuesta__consulta__persona__beneficiarios__contrato__persona',
         'respuesta__consulta__consultorio__secretaria',
         'respuesta__consulta__consultorio__usuario__profile',
         'respuesta__consulta__consultorio__usuario__profile__ciudad',
