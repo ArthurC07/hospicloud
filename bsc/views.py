@@ -319,10 +319,20 @@ class QuejaListView(LoginRequiredMixin, ListView):
     model = Queja
     queryset = Queja.objects.filter(resuelta=False).select_related(
         'respuesta',
+        'respuesta__persona',
         'respuesta__consulta',
+        'respuesta__consulta__poliza',
+        'respuesta__consulta__persona',
+        'respuesta__consulta__poliza__aseguradora',
         'respuesta__consulta__consultorio__usuario',
     ).prefetch_related(
         'solucion_set',
+        'respuesta__consulta__persona__contratos',
+        'respuesta__consulta__poliza__contratos',
+        'respuesta__consulta__persona__beneficiarios',
+        'respuesta__consulta__persona__beneficiarios',
+        'respuesta__consulta__persona__beneficiarios__contrato',
+        'respuesta__consulta__consultorio__secretaria',
         'respuesta__consulta__consultorio__usuario__profile',
         'respuesta__consulta__consultorio__usuario__profile__ciudad',
     )
