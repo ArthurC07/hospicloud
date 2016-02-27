@@ -96,7 +96,7 @@ class SolucionForm(QuejaFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(SolucionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Registrar Solución'),
+        self.helper.layout = Fieldset(_('Enviar Solución'),
                                       *self.field_names)
 
 
