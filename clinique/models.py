@@ -213,6 +213,17 @@ class Consulta(TimeStampedModel):
 
         return items, precios
 
+    def save(self, **kwargs):
+
+        if self.contrato is None and self.poliza:
+            contrato = self.persona.contratos.filter(
+                master=self.poliza
+            ).first()
+
+            self.contrato = contrato
+
+        super(Consulta, self).save(**kwargs)
+
 
 class LecturaSignos(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='lecturas_signos',
