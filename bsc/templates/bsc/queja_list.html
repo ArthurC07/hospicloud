@@ -65,7 +65,9 @@
                             </table>
                         </td>
                         <td>{{ queja.queja }}</td>
-                        <td><a class="btn btn-primary" href="{{ queja.get_absolute_url }}">{% trans 'Ver' %}</a></td>
+                        <td>
+                            <a class="btn btn-primary" href="{% url 'solucion-lista-agregar' queja.id %}">{% trans 'Solucionar' %}</a>
+                        </td>
                     {% empty %}
                     <tr>
                         <td>{% trans 'No hay Quejas Disponibles' %}</td>

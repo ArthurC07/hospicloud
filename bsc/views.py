@@ -369,6 +369,17 @@ class SolucionCreateView(QuejaFormMixin, CurrentUserFormMixin, CreateView,
     form_class = SolucionForm
 
 
+class SolucionListCreateView(SolucionCreateView):
+    """
+    Redirects users to :class:`Queja`'s list page
+    """
+    def get_success_url(self):
+        """
+        Returns the url of the :class:`Queja` list
+        """
+        return reverse('quejas')
+
+
 class ArchivoNotasCreateView(LoginRequiredMixin, CreateView):
     model = ArchivoNotas
     form_class = ArchivoNotasForm

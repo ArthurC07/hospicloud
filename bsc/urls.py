@@ -68,6 +68,9 @@ urlpatterns = [
     url(r'^queja/(?P<queja>\d+)/solucion/agregar$',
         views.SolucionCreateView.as_view(), name='solucion-agregar'),
 
+    url(r'^queja/(?P<queja>\d+)/solucion/l/agregar$',
+        views.SolucionCreateView.as_view(), name='solucion-lista-agregar'),
+
     url(r'^notas/(?P<pk>\d+)$', views.ArchivoNotasDetailView.as_view(),
         name='archivonotas'),
 
