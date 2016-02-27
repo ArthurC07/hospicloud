@@ -103,7 +103,7 @@ class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
     class Meta:
         model = Consulta
         exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
-                   'espera', 'revisada')
+                   'espera', 'revisada', 'contrato')
 
     tipo = forms.ModelChoiceField(
             queryset=TipoConsulta.objects.filter(habilitado=True).all())

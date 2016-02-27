@@ -15,11 +15,14 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
+from django import forms
 from django.contrib import admin
 
 from clinique.models import Cita, Consulta, TipoConsulta, Consultorio, \
     Evaluacion, Seguimiento, LecturaSignos, TipoCargo, Cargo, OrdenMedica, \
     Localidad, Especialidad, Espera, Afeccion, Incapacidad
+from contracts.models import MasterContract, Contrato
 
 
 class IncapacidadAdmin(admin.ModelAdmin):
@@ -30,19 +33,41 @@ class IncapacidadAdmin(admin.ModelAdmin):
 
 class EsperaAdmin(admin.ModelAdmin):
     list_display = (
-    'persona', 'consultorio', 'created', 'fecha', 'inicio', 'fin')
+        'persona', 'consultorio', 'created', 'fecha', 'inicio', 'fin')
     ordering = ['created', 'fecha', 'inicio', 'fin', 'persona',
                 'consultorio__usuario']
     search_fields = ['persona__nombre', 'persona__apellido']
 
 
+class ConsultaAdminForm(forms.ModelForm):
+    class Meta:
+        model = Consulta
+        fields = '__all__'
+
+    espera = forms.ModelChoiceField(queryset=Espera.objects.select_related(
+        'persona',
+        'consultorio',
+    ))
+    poliza = forms.ModelChoiceField(queryset=MasterContract.objects.select_related(
+        'aseguradora',
+        'plan',
+        'contratante',
+    ))
+    contrato = forms.ModelChoiceField(queryset=Contrato.objects.select_related(
+        'persona',
+    ))
+
+
 class ConsultaAdmin(admin.ModelAdmin):
     list_display = (
-    'persona', 'consultorio', 'created', 'facturada', 'activa', 'remitida')
+        'persona', 'consultorio', 'created', 'contrato',
+        'facturada', 'activa', 'remitida',
+    )
     ordering = ['persona', 'consultorio', 'created', 'facturada', 'activa',
                 'remitida', ]
     search_fields = ['persona__nombre', 'persona__apellido',
                      'consultorio__nombre', ]
+    form = ConsultaAdminForm
 
 
 class ConsultorioAdmin(admin.ModelAdmin):

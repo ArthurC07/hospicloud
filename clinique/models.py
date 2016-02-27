@@ -125,8 +125,12 @@ class Espera(TimeStampedModel):
         ordering = ['created', ]
 
     def __str__(self):
-        return _("{0} en {1}").format(self.persona.nombre_completo(),
-                                      self.consultorio.nombre)
+        if self.consultorio:
+            string = _("{0} en {1}").format(self.persona.nombre_completo(),
+                                            self.consultorio.nombre)
+        else:
+            string = self.persona.nombre_completo()
+        return string
 
     def get_absolute_url(self):
         return reverse('consultorio-index')
@@ -159,6 +163,7 @@ class Consulta(TimeStampedModel):
     espera = models.ForeignKey(Espera, blank=True, null=True,
                                related_name='consulta_set')
     poliza = models.ForeignKey(MasterContract, blank=True, null=True)
+    contrato = models.ForeignKey(Contrato, blank=True, null=True)
 
     class Meta:
         ordering = ['created', ]
@@ -207,6 +212,23 @@ class Consulta(TimeStampedModel):
             cargo.save()
 
         return items, precios
+
+    def save(self, **kwargs):
+
+        if self.contrato is None and self.poliza:
+            contrato = self.persona.contratos.filter(
+                master=self.poliza
+            ).first()
+            if contrato is None:
+                beneficiario = self.persona.beneficiarios.filter(
+                    contrato__master=self.poliza
+                ).first()
+                if beneficiario is not None:
+                    contrato = beneficiario.contrato
+
+            self.contrato = contrato
+
+        super(Consulta, self).save(**kwargs)
 
 
 class LecturaSignos(TimeStampedModel):
@@ -500,7 +522,7 @@ def consolidate_clinique(persona, clone):
 persona_consolidation_functions.append(consolidate_clinique)
 
 Persona.consultas_activas = property(
-        lambda p: Consulta.objects.filter(persona=p, activa=True))
+    lambda p: Consulta.objects.filter(persona=p, activa=True))
 
 Persona.ultima_consulta = property(
-        lambda p: Consulta.objects.filter(persona=p).last())
+    lambda p: Consulta.objects.filter(persona=p).last())
