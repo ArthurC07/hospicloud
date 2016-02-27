@@ -219,12 +219,6 @@ class Consulta(TimeStampedModel):
             contrato = self.persona.contratos.filter(
                 master=self.poliza
             ).first()
-            if contrato is None:
-                beneficiario = self.persona.beneficiarios.filter(
-                    contrato__master=self.poliza
-                ).first()
-                if beneficiario is not None:
-                    contrato = beneficiario.contrato
 
             self.contrato = contrato
 
