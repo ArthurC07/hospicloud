@@ -456,6 +456,7 @@ class Encuesta(TimeStampedModel):
         consultas = Consulta.objects.select_related(
             'persona',
             'poliza',
+            'contrato',
             'poliza__aseguradora',
             'persona__ciudad',
         ).prefetch_related(
