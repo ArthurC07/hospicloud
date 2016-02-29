@@ -68,10 +68,19 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
 
 class EncuestaListView(LoginRequiredMixin, ListView):
+    """
+    Shows the main interface for the :class:`Encuesta` procedures
+    """
     model = Encuesta
+    queryset = Encuesta.objects.filter(
+        activa=True,
+    )
 
 
 class EncuestaDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows the pending :class:`Consulta` to be polled
+    """
     model = Encuesta
     context_object_name = 'encuesta'
     queryset = Encuesta.objects.prefetch_related('respuesta_set')
@@ -383,6 +392,9 @@ class SolucionListCreateView(SolucionCreateView):
 
 
 class SolucionListView(LoginRequiredMixin, ListView):
+    """
+    Shows a :class:`Solucion` list that filters out all rejected and accepted.
+    """
     model = Solucion
     queryset = Solucion.objects.select_related(
         'queja',
@@ -410,7 +422,9 @@ class SolucionListView(LoginRequiredMixin, ListView):
     )
 
     def get_context_data(self, **kwargs):
-
+        """
+        Adds rejection and aceptance forms to the template
+        """
         context = super(SolucionListView, self).get_context_data(**kwargs)
         context['form'] = SolucionAceptadaForm()
         context['rechazada'] = SolucionRechazadaForm()
@@ -418,10 +432,16 @@ class SolucionListView(LoginRequiredMixin, ListView):
 
 
 class SolucionUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows updating :class:`Solucion` from the UI
+    """
     model = Solucion
 
 
 class SolucionAceptarUpdateView(SolucionUpdateView):
+    """
+    Updates a :class:`Solucion` to be acepted.
+    """
     form_class = SolucionRechazadaForm
 
     def get_success_url(self):
@@ -432,6 +452,9 @@ class SolucionAceptarUpdateView(SolucionUpdateView):
 
 
 class SolucionRechazarUpdateView(SolucionUpdateView):
+    """
+    Updates a class:`Solucion` to be rejected
+    """
     form_class = SolucionRechazadaForm
 
     def get_success_url(self):
@@ -479,5 +502,8 @@ class LoginPeriodoView(PeriodoView, LoginRequiredMixin):
 
 class RellamarCreateView(LoginRequiredMixin, EncuestaFormMixin,
                          ConsultaFormMixin, CreateView):
+    """
+    Creates a :class:`Rellamar` from the UI
+    """
     model = Rellamar
     form_class = RellamarForm

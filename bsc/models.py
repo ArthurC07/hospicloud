@@ -438,6 +438,7 @@ def procesar_notas(linea, fecha, meta, usuario, puntaje):
 @python_2_unicode_compatible
 class Encuesta(TimeStampedModel):
     nombre = models.CharField(max_length=255)
+    activa = models.BooleanField(default=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

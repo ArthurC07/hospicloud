@@ -11,33 +11,30 @@
     </div>
     <div class="row">
         <section class="col-md-9 main-content">
-            <ul>
-                {% for encuesta in object_list.all %}
-                    <li>
-                        <a href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a>
-                    </li>
-                    {% empty %}
-                    <li>{% trans 'No hay Encuestas Disponibles' %}</li>
-                {% endfor %}
-            </ul>
+
         </section>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-stacked nav-tabs">
+        <aside class="col-md-3 col-xs-3 toolbox">
+            <nav class="sidebar-nav">
+                <ul class="nav nav-stacked nav-tabs">
+                    {% for encuesta in object_list.all %}
                         <li>
-                            <a href="{% url 'quejas' %}">
-                                {% trans 'Quejas' %}
-                            </a>
+                            <a href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a>
                         </li>
-                        <li>
-                            <a href="{% url 'solucion-list' %}">
-                                {% trans 'Soluciones Pendientes de Aprobaci&oacute;n' %}
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+                        {% empty %}
+                        <li>{% trans 'No hay Encuestas Disponibles' %}</li>
+                    {% endfor %}
+                    <li>
+                        <a href="{% url 'quejas' %}">
+                            {% trans 'Quejas' %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'solucion-list' %}">
+                            {% trans 'Soluciones Pendientes de Aprobaci&oacute;n' %}
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </aside>
     </div>
 {% endblock %}
