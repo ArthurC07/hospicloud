@@ -11,7 +11,28 @@
     </div>
     <div class="row">
         <section class="col-md-9 main-content">
-
+            <table class="table">
+                <tr>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.nombre }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.consultas }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.encuestada }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.contactabilidad }}%</td>
+                    {% endfor %}
+                </tr>
+            </table>
         </section>
         <aside class="col-md-3 col-xs-3 toolbox">
             <nav class="sidebar-nav">

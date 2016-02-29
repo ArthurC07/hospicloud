@@ -16,6 +16,8 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+import calendar
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
@@ -24,6 +26,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView, View
@@ -38,6 +41,7 @@ from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
+from hospinet.utils.date import make_day_start, make_end_day
 from hospinet.utils.forms import PeriodoForm
 from hospinet.utils.views import PeriodoView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -75,6 +79,42 @@ class EncuestaListView(LoginRequiredMixin, ListView):
     queryset = Encuesta.objects.filter(
         activa=True,
     )
+
+    def get_context_data(self, **kwargs):
+        context = super(EncuestaListView, self).get_context_data(**kwargs)
+
+        meses = []
+        now = timezone.now()
+
+        for n in range(1, 13):
+            start = now.replace(month=n)
+
+            inicio = make_day_start(start)
+            fin = make_end_day(start)
+            consultas = Consulta.objects.filter(
+                created__range=(inicio, fin)
+            )
+
+            atenciones = consultas.count()
+            encuestadas = consultas.filter(encuestada=True).count()
+
+            if atenciones != 0:
+                contactabilidad = encuestadas / atenciones * 100
+            else:
+                contactabilidad = 0
+
+            meses.append(
+                {
+                    'nombre': calendar.month_name[n],
+                    'consultas': atenciones,
+                    'encuestada': encuestadas,
+                    'contactabilidad': contactabilidad
+                }
+            )
+
+        context['meses'] = meses
+
+        return context
 
 
 class EncuestaDetailView(LoginRequiredMixin, DetailView):
