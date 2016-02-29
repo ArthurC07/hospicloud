@@ -24,6 +24,8 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.models import Avg
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
@@ -103,12 +105,19 @@ class EncuestaListView(LoginRequiredMixin, ListView):
             else:
                 contactabilidad = 0
 
+            satisfaccion = Voto.objects.filter(
+                opcion__isnull=False,
+                created__range=(inicio, fin),
+                pregunta__calificable=True
+            ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
+
             meses.append(
                 {
                     'nombre': calendar.month_name[n],
                     'consultas': atenciones,
                     'encuestada': encuestadas,
-                    'contactabilidad': contactabilidad
+                    'contactabilidad': contactabilidad,
+                    'satisfaccion': satisfaccion,
                 }
             )
 

@@ -26,6 +26,7 @@ from django.core.files.storage import default_storage as storage
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
+from django.db.models.aggregates import Avg
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -325,18 +326,12 @@ class Meta(TimeStampedModel):
 
     def poll_average(self, usuario, inicio, fin):
 
-        votos = Voto.objects.filter(
+        return Voto.objects.filter(
             opcion__isnull=False,
             created__range=(inicio, fin),
             respuesta__consulta__consultorio__usuario=usuario,
             pregunta__calificable=True
-        )
-
-        total = votos.aggregate(
-            total=Coalesce(Sum('opcion__valor'), Decimal())
-        )['total']
-
-        return Decimal(total) / max(votos.count(), 1)
+        ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
 
     def ventas(self, usuario, inicio, fin):
 
