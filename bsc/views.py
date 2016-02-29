@@ -43,7 +43,7 @@ from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
-from hospinet.utils.date import make_day_start, make_end_day
+from hospinet.utils.date import make_day_start, make_end_day, get_month_end
 from hospinet.utils.forms import PeriodoForm
 from hospinet.utils.views import PeriodoView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -89,10 +89,10 @@ class EncuestaListView(LoginRequiredMixin, ListView):
         now = timezone.now()
 
         for n in range(1, 13):
-            start = now.replace(month=n)
+            start = now.replace(month=n, day=1)
 
             inicio = make_day_start(start)
-            fin = make_end_day(start)
+            fin = get_month_end(make_end_day(start))
             consultas = Consulta.objects.filter(
                 created__range=(inicio, fin)
             )
@@ -113,6 +113,8 @@ class EncuestaListView(LoginRequiredMixin, ListView):
 
             meses.append(
                 {
+                    'inicio': inicio,
+                    'fin': fin,
                     'nombre': calendar.month_name[n],
                     'consultas': atenciones,
                     'encuestada': encuestadas,
