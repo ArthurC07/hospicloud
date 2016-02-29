@@ -92,7 +92,8 @@ class EncuestaListView(LoginRequiredMixin, ListView):
             start = now.replace(month=n, day=1)
 
             inicio = make_day_start(start)
-            fin = get_month_end(make_end_day(start))
+            fin = make_end_day(get_month_end(start))
+
             consultas = Consulta.objects.filter(
                 created__range=(inicio, fin)
             )
@@ -100,10 +101,10 @@ class EncuestaListView(LoginRequiredMixin, ListView):
             atenciones = consultas.count()
             encuestadas = consultas.filter(encuestada=True).count()
 
-            if atenciones != 0:
-                contactabilidad = encuestadas / atenciones * 100
-            else:
+            if atenciones == 0:
                 contactabilidad = 0
+            else:
+                contactabilidad = encuestadas * 100 / atenciones
 
             satisfaccion = Voto.objects.filter(
                 opcion__isnull=False,
@@ -435,6 +436,7 @@ class SolucionListCreateView(SolucionCreateView):
     """
     Redirects users to :class:`Queja`'s list page
     """
+
     def get_success_url(self):
         """
         Returns the url of the :class:`Queja` list
