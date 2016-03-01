@@ -141,6 +141,7 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
         context = super(EncuestaDetailView, self).get_context_data(**kwargs)
 
         context['consultas'] = self.object.consultas()
+        context['encuestas'] = Encuesta.objects.filter(activa=True)
 
         return context
 
@@ -401,6 +402,14 @@ class QuejaListView(LoginRequiredMixin, ListView):
         solucion__aceptada=True
     )
     context_object_name = 'quejas'
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds rejection and aceptance forms to the template
+        """
+        context = super(QuejaListView, self).get_context_data(**kwargs)
+        context['encuestas'] = Encuesta.objects.filter(activa=True)
+        return context
 
 
 class QuejaMixin(ContextMixin, View):

@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 col-xs-12 main-content table-responsive">
+        <div class="col-md-9 col-xs-9 main-content table-responsive">
             <table class="table">
                 {% for consulta in consultas %}
                     <tr>
@@ -71,5 +71,6 @@
                 {% endfor %}
             </table>
         </div>
+    {% include 'bsc/snippets/encuesta_menu.html' with object_list=encuestas %}
     </div>
 {% endblock %}

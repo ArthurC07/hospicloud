@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="row">
-        <section class="col-md-12 main-content">
+        <section class="col-md-9 col-xs-9 main-content">
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -73,5 +73,6 @@
                 </tbody>
             </table>
         </section>
+        {% include 'bsc/snippets/encuesta_menu.html' with object_list=encuestas %}
     </div>
 {% endblock %}
