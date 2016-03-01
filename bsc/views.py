@@ -451,16 +451,14 @@ class SolucionListView(LoginRequiredMixin, ListView):
     model = Solucion
     queryset = Solucion.objects.select_related(
         'queja',
-        'queja__departamento',
-        'queja__respuesta__consulta__persona',
-        'queja__respuesta__consulta__contrato',
-        'queja__respuesta__consulta__contrato__master',
         'queja__respuesta',
+        'queja__departamento',
         'queja__respuesta__persona',
         'queja__respuesta__consulta',
         'queja__respuesta__consulta__poliza',
-        'queja__respuesta__consulta__contrato',
         'queja__respuesta__consulta__persona',
+        'queja__respuesta__consulta__contrato',
+        'queja__respuesta__consulta__contrato__master',
         'queja__respuesta__consulta__poliza__aseguradora',
         'queja__respuesta__consulta__consultorio__usuario',
     ).prefetch_related(
