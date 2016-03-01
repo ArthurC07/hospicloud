@@ -139,6 +139,9 @@ class SolucionAceptadaForm(FieldSetModelFormMixinNoButton):
         else:
             kwargs['initial']['aceptada'] = True
         super(SolucionAceptadaForm, self).__init__(*args, **kwargs)
+        self.helper.label_class = ''
+        self.helper.field_class = ''
+        self.helper.form_class = ''
         self.helper.add_input(Submit('submit', _('Aceptar Solución')))
         self.helper.form_tag = False
 
@@ -163,3 +166,7 @@ class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
                 css_class='btn-danger'
             ))
         self.helper.form_tag = False
+        self.helper.label_class = ''
+        self.helper.field_class = ''
+        self.helper.form_class = ''
+
