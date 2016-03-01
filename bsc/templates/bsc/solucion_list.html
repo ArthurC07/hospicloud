@@ -10,7 +10,14 @@
         </div>
     </div>
     <div class="row">
-        <section class="col-md-12 main-content">
+        <div class="col-md-12 col-xs-12 main-content">
+            <a class="btn btn-success" href="{% url 'encuesta-list' %}">
+                {% trans 'Regresar a Encuestas' %}
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12 col-xs-12 main-content">
             <table class="table table-striped">
                 <tbody>
                 {% for solucion in object_list %}
@@ -32,7 +39,8 @@
                                     {% crispy rechazada %}
                                 </form>
                                 <div class="col-md-3 col-xs-3">
-                                    <a class="btn btn-info" href="{% url 'solucion-email' solucion.id %}">
+                                    <a class="btn btn-info"
+                                       href="{% url 'solucion-email' solucion.id %}">
                                         {% trans 'Enviar Correo' %}
                                     </a>
                                 </div>
