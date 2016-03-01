@@ -10,14 +10,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 col-xs-12 main-content">
-            <a class="btn btn-success" href="{% url 'encuesta-list' %}">
-                {% trans 'Regresar a Encuestas' %}
-            </a>
-        </div>
-    </div>
-    <div class="row">
-        <section class="col-md-12 col-xs-12 main-content">
+        <section class="col-md-9 col-xs-9 main-content">
             <table class="table table-striped">
                 <tbody>
                 {% for solucion in object_list %}
@@ -61,6 +54,7 @@
                             {% endfor %}
                             <br>
                         </td>
+                        <td>{{ solucion.usuario }}</td>
                         <td>
                             <table class="table">
                                 <tr>
@@ -90,5 +84,6 @@
                 </tbody>
             </table>
         </section>
+        {% include 'bsc/snippets/encuesta_menu.html' with object_list=encuestas %}
     </div>
 {% endblock %}

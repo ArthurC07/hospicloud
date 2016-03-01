@@ -451,6 +451,7 @@ class SolucionListView(LoginRequiredMixin, ListView):
     model = Solucion
     queryset = Solucion.objects.select_related(
         'queja',
+        'usuario',
         'queja__respuesta',
         'queja__departamento',
         'queja__respuesta__persona',
@@ -479,6 +480,7 @@ class SolucionListView(LoginRequiredMixin, ListView):
         context = super(SolucionListView, self).get_context_data(**kwargs)
         context['form'] = SolucionAceptadaForm()
         context['rechazada'] = SolucionRechazadaForm()
+        context['encuestas'] = Encuesta.objects.filter(activa=True)
         return context
 
 
