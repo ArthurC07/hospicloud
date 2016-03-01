@@ -584,6 +584,12 @@ class Solucion(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('queja', args=[self.queja.id])
 
+    def send_email(self):
+        """
+        Sends email to the involved parties
+        """
+        pass
+
 
 class Rellamar(TimeStampedModel):
     """

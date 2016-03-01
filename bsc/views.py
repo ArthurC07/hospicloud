@@ -515,6 +515,16 @@ class SolucionRechazarUpdateView(SolucionUpdateView):
         return reverse('solucion-list')
 
 
+class SolucionEmailView(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        solucion = get_object_or_404(Solucion, kwargs['solucion'])
+        solucion.send_email()
+
+        return reverse('solucion-list')
+
+
 class ArchivoNotasCreateView(LoginRequiredMixin, CreateView):
     model = ArchivoNotas
     form_class = ArchivoNotasForm
