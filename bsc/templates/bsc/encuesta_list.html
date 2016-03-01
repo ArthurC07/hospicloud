@@ -42,6 +42,10 @@
                     {% endfor %}
                 </tr>
             </table>
+            <div class="row">
+                <canvas id="chart" class="col-md-12 col-xs-12"
+                        height="100"></canvas>
+            </div>
         </section>
         <aside class="col-md-3 col-xs-3 toolbox">
             <nav class="sidebar-nav">
@@ -68,3 +72,27 @@
         </aside>
     </div>
 {% endblock %}
+{% block scripts %}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var ctx = document.getElementById("chart").getContext("2d");
+            var chart = new Chart(ctx);
+            data = {
+                labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
+                datasets: [
+                    {
+                        label: "{% trans 'Contactabilidad' %}",
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        data: [0, {% for mes in meses %} {{ mes.contactabilidad }}, {% endfor %} 0]
+                    }
+                ]
+            }
+            var myLineChart = new Chart(ctx).Bar(data);
+        });
+    </script>
+{% endblock %}
+
