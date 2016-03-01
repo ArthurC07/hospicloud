@@ -21,24 +21,28 @@
                             <strong>{% trans 'Queja Original' %}: </strong> {{ solucion.queja.queja }}<br>
                             <br>
                             <div class="row">
-                                <form class="col-md-12 col-xs-12"
+                                <form class="col-md-6 col-xs-6"
                                       action="{% url 'solucion-aceptar' solucion.id %}"
                                       method="post">
                                     {% crispy form %}
                                 </form>
-                            </div>
-                            <div class="row">
-                                <form class="col-md-12 col-xs-12"
+                                <form class="col-md-6 col-xs-6"
                                       action="{% url 'solucion-rechazar' solucion.id %}"
                                       method="post">
                                     {% crispy rechazada %}
                                 </form>
                             </div>
                             <div class="row">
-                                <div class="col-md-12 col-xs-12">
-                                    <a class="btn btn-info"
+                                <div class="col-md-6 col-xs-6">
+                                    <a class="btn btn-block btn-info"
                                        href="{% url 'solucion-email' solucion.id %}">
-                                        {% trans 'Enviar Correo al Cliente' %}
+                                        {% trans 'Notificar Aseguradora' %}
+                                    </a>
+                                </div>
+                                <div class="col-md-6 col-xs-6">
+                                    <a class="btn btn-block btn-info"
+                                       href="{% url 'solucion-email' solucion.id %}">
+                                        {% trans 'Notificar Cliente' %}
                                     </a>
                                 </div>
                             </div>

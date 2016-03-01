@@ -142,7 +142,12 @@ class SolucionAceptadaForm(FieldSetModelFormMixinNoButton):
         self.helper.label_class = ''
         self.helper.field_class = ''
         self.helper.form_class = ''
-        self.helper.add_input(Submit('submit', _('Aceptar Solución')))
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Aceptar Solución'),
+                css_class='btn-block',
+            ))
         self.helper.form_tag = False
 
 
@@ -163,10 +168,9 @@ class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
             Submit(
                 'submit',
                 _('Rechazar Solución'),
-                css_class='btn-danger'
+                css_class='btn-danger btn-block'
             ))
         self.helper.form_tag = False
         self.helper.label_class = ''
         self.helper.field_class = ''
         self.helper.form_class = ''
-
