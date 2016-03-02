@@ -34,19 +34,20 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView, View
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
+from mail_templated.message import EmailMessage
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, \
     SolucionAceptadaForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
-    ArchivoNotas, \
-    Pregunta, Solucion, Login, Rellamar
+    ArchivoNotas, Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
 from hospinet.utils.date import make_day_start, make_end_day, get_month_end
 from hospinet.utils.forms import PeriodoForm
 from hospinet.utils.views import PeriodoView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
+from django.conf import settings
 
 
 class ScoreCardListView(LoginRequiredMixin, ListView):
@@ -547,12 +548,38 @@ class SolucionRechazarUpdateView(SolucionUpdateView):
         return reverse('solucion-list')
 
 
+class SolucionEmailPreView(LoginRequiredMixin, DetailView):
+    """
+    Previews the email before the user can send it.
+    """
+    model = Solucion
+    template_name = 'bsc/solucion_email.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SolucionEmailPreView, self).get_context_data(**kwargs)
+        context['preview'] = True
+        context['persona'] = self.object.queja.respuesta.consulta.persona
+
+        return context
+
+
 class SolucionEmailView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
-        solucion = get_object_or_404(Solucion, kwargs['solucion'])
-        solucion.send_email()
+        solucion = get_object_or_404(Solucion, pk=kwargs['solucion'])
+
+        if solucion.queja.respuesta.persona.email:
+            message = EmailMessage(
+                str('bsc/solucion_email.tpl'),
+                {
+                    'persona': solucion.queja.respuesta.persona,
+                    'fecha': timezone.now().date(),
+                },
+                to=[solucion.queja.respuesta.consulta.persona.email, 'sac@epsmedical.com'],
+                from_email=settings.EMAIL_HOST_USER
+            )
+            message.send()
 
         return reverse('solucion-list')
 

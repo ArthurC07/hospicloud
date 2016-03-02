@@ -175,6 +175,7 @@ INSTALLED_APPS = (
     'bootstrap_pagination',
     'storages',
     'debug_toolbar',
+    'mail_templated',
 )
 
 AUTHENTICATION_BACKENDS = (

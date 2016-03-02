@@ -53,6 +53,10 @@ urlpatterns = [
         views.SolucionEmailView.as_view(),
         name='solucion-email'),
 
+    url(r'^solucion/(?P<pk>\d+)/correo/preview$',
+        views.SolucionEmailPreView.as_view(),
+        name='solucion-email-preview'),
+
     url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/rellamar$',
         views.RellamarCreateView.as_view(),
         name='encuesta-rellamar'),
