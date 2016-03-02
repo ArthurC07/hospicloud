@@ -13,36 +13,40 @@
         <section class="col-md-9 col-xs-9 main-content">
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th>{% trans 'Fecha de Consulta' %}</th>
-                        <th>{% trans 'Fecha de Queja' %}</th>
-                        <th>{% trans 'Ciudad' %}</th>
-                        <th>{% trans 'Nombre' %}</th>
-                        <th>{% trans 'Categoría' %}</th>
-                        <th>{% trans 'Responsables' %}</th>
-                        <th>{% trans 'Queja' %}</th>
-                        <th>{% trans 'Acciones' %}</th>
-                    </tr>
+                <tr>
+                    <th>{% trans 'Fecha de Consulta' %}</th>
+                    <th>{% trans 'Fecha de Queja' %}</th>
+                    <th>{% trans 'Nombre' %}</th>
+                    <th>{% trans 'Responsables' %}</th>
+                    <th>{% trans 'Queja' %}</th>
+                    <th>{% trans 'Acciones' %}</th>
+                </tr>
                 </thead>
                 <tbody>
                 {% for queja in quejas.all %}
                     <tr>
                         <td>{{ queja.respuesta.consulta.created }}</td>
                         <td>{{ queja.created }}</td>
-                        <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
                         <td>{{ queja.respuesta.persona }}, {{ queja.respuesta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}</td>
                         <td>
-                            {% if queja.respuesta.consulta.contrato in consulta.poliza.contratos.all %}
-                                {% trans 'Titular del Contrato' %}
-                            {% endif %}
-                            {% for beneficiario in queja.respuesta.consulta.persona.beneficiarios.all %}
-                                {% if beneficiario.contrato == consulta.contrato %}
-                                    {% trans 'Beneficiario del Contrato' %}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
-                        <td>
                             <table class="table">
+                                <tr>
+                                    <td>{% trans 'Categor&iacute;a' %}</td>
+                                    <td>
+                                        {% if queja.respuesta.consulta.contrato in consulta.poliza.contratos.all %}
+                                            {% trans 'Titular del Contrato' %}
+                                        {% endif %}
+                                        {% for beneficiario in queja.respuesta.consulta.persona.beneficiarios.all %}
+                                            {% if beneficiario.contrato == consulta.contrato %}
+                                                {% trans 'Beneficiario del Contrato' %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Ciudad' %}</td>
+                                    <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
+                                </tr>
                                 <tr>
                                     <td>{% trans 'Departamento' %}</td>
                                     <td>{{ queja.departamento }}</td>
@@ -63,9 +67,10 @@
                         </td>
                         <td>{{ queja.queja }}</td>
                         <td>
-                            <a class="btn btn-primary" href="{% url 'solucion-lista-agregar' queja.id %}">{% trans 'Solucionar' %}</a>
+                            <a class="btn btn-primary"
+                               href="{% url 'solucion-lista-agregar' queja.id %}">{% trans 'Solucionar' %}</a>
                         </td>
-                    {% empty %}
+                        {% empty %}
                     <tr>
                         <td>{% trans 'No hay Quejas Disponibles' %}</td>
                     </tr>

@@ -48,23 +48,30 @@
                             </div>
                         </td>
                         <td>
-                            <strong>{% trans 'Paciente' %}: </strong> {{ solucion.queja.respuesta.consulta.persona }},
-                            {{ solucion.queja.respuesta.consulta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}
-                            <strong>{% trans 'Categor&iacute;a' %}:</strong>
-                            {% if solucion.queja.respuesta.consulta.contrato in solucion.queja.respuesta.consulta.poliza.contratos.all %}
-                                {% trans 'Titular del Contrato' %}
-                            {% endif %}
-                            {% for beneficiario in solucion.queja.respuesta.consulta.persona.beneficiarios.all %}
-                                {% if beneficiario.contrato == consulta.contrato %}
-                                    {% trans 'Beneficiario del Contrato' %}
-                                    {{ consulta.contrato.persona }}
-                                {% endif %}
-                            {% endfor %}
-                            <br>
-                        </td>
-                        <td>{{ solucion.usuario }}</td>
-                        <td>
                             <table class="table">
+                                <tr>
+                                    <td>
+                                        <strong>{% trans 'Paciente' %}: </strong>
+                                    </td>
+                                    <td>{{ solucion.queja.respuesta.consulta.persona }},
+                                        {{ solucion.queja.respuesta.consulta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>{% trans 'Categor&iacute;a' %}:</strong>
+                                    </td>
+                                    <td>
+                                        {% if solucion.queja.respuesta.consulta.contrato in solucion.queja.respuesta.consulta.poliza.contratos.all %}
+                                            {% trans 'Titular del Contrato' %}
+                                        {% endif %}
+                                        {% for beneficiario in solucion.queja.respuesta.consulta.persona.beneficiarios.all %}
+                                            {% if beneficiario.contrato == consulta.contrato %}
+                                                {% trans 'Beneficiario del Contrato' %}
+                                                {{ consulta.contrato.persona }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>{% trans 'Departamento' %}</td>
                                     <td>{{ solucion.queja.departamento }}</td>
@@ -80,6 +87,10 @@
                                 <tr>
                                     <td>{% trans 'Enfermera' %}</td>
                                     <td>{{ solucion.queja.respuesta.consulta.consultorio.secretaria.get_full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Usuario que Propone' %}</td>
+                                    <td>{{ solucion.usuario }}</td>
                                 </tr>
                             </table>
                         </td>
