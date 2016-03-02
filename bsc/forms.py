@@ -127,6 +127,9 @@ class RellamarForm(FieldSetModelFormMixin):
 
 
 class SolucionAceptadaForm(FieldSetModelFormMixinNoButton):
+    """
+    Creates a form that allows marking a :class:`Solucion` as acepted
+    """
     class Meta:
         model = Solucion
         fields = ('aceptada',)
@@ -152,6 +155,9 @@ class SolucionAceptadaForm(FieldSetModelFormMixinNoButton):
 
 
 class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
+    """
+    Creates a form that allows marking a :class:`Solucion` as rejected
+    """
     class Meta:
         model = Solucion
         fields = ('aceptada',)

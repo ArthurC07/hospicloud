@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2015 - 2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,9 @@ from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
 class ScoreCardListView(LoginRequiredMixin, ListView):
+    """
+    Shows a list with all the distinct :class:`ScoreCard` added to the database
+    """
     model = ScoreCard
 
     def get_context_data(self, **kwargs):
@@ -65,6 +68,10 @@ class ScoreCardListView(LoginRequiredMixin, ListView):
 
 
 class ScoreCardDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays detailed data about a :class:`ScoreCard and all its related
+    information
+    """
     model = ScoreCard
 
 
@@ -83,6 +90,10 @@ class EncuestaListView(LoginRequiredMixin, ListView):
     )
 
     def get_context_data(self, **kwargs):
+        """
+        Adds the needed data to create the statistics table and the chart about
+        those statistics
+        """
         context = super(EncuestaListView, self).get_context_data(**kwargs)
 
         meses = []
@@ -138,6 +149,10 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
     queryset = Encuesta.objects.prefetch_related('respuesta_set')
 
     def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Consulta`s that are not yet marked as polled and
+        the :class:`Encuesta` that are still active.
+        """
         context = super(EncuestaDetailView, self).get_context_data(**kwargs)
 
         context['consultas'] = self.object.consultas()
@@ -195,6 +210,10 @@ class RespuestaCreateView(EncuestaFormMixin, ConsultaFormMixin,
 
 
 class RespuestaDetailView(DetailView):
+    """
+    Shows an interface that allows displaying all a :class:`Respuesta`
+    information
+    """
     model = Respuesta
     context_object_name = 'respuesta'
     queryset = Respuesta.objects.all().prefetch_related(
@@ -426,7 +445,9 @@ class QuejaMixin(ContextMixin, View):
 
 
 class QuejaFormMixin(QuejaMixin, FormMixin):
-    """Permite inicializar el paciente que se utilizará en un formulario"""
+    """
+    Permite inicializar el paciente que se utilizará en un formulario
+    """
 
     def get_initial(self):
         initial = super(QuejaFormMixin, self).get_initial()
