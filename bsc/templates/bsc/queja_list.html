@@ -27,22 +27,20 @@
                     <tr>
                         <td>{{ queja.respuesta.consulta.created }}</td>
                         <td>{{ queja.created }}</td>
-                        <td>{{ queja.respuesta.persona }}, {{ queja.respuesta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}</td>
+                        <td>
+                            {{ queja.respuesta.persona }}, {{ queja.respuesta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}
+                            {% trans 'Categor&iacute;a' %}
+                            {% if queja.respuesta.consulta.contrato in consulta.poliza.contratos.all %}
+                                {% trans 'Titular del Contrato' %}
+                            {% endif %}
+                            {% for beneficiario in queja.respuesta.consulta.persona.beneficiarios.all %}
+                                {% if beneficiario.contrato == consulta.contrato %}
+                                    {% trans 'Beneficiario del Contrato' %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
                         <td>
                             <table class="table">
-                                <tr>
-                                    <td>{% trans 'Categor&iacute;a' %}</td>
-                                    <td>
-                                        {% if queja.respuesta.consulta.contrato in consulta.poliza.contratos.all %}
-                                            {% trans 'Titular del Contrato' %}
-                                        {% endif %}
-                                        {% for beneficiario in queja.respuesta.consulta.persona.beneficiarios.all %}
-                                            {% if beneficiario.contrato == consulta.contrato %}
-                                                {% trans 'Beneficiario del Contrato' %}
-                                            {% endif %}
-                                        {% endfor %}
-                                    </td>
-                                </tr>
                                 <tr>
                                     <td>{% trans 'Ciudad' %}</td>
                                     <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
