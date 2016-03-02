@@ -21,6 +21,8 @@ from collections import defaultdict
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models.aggregates import Sum
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -179,10 +181,7 @@ class Consulta(TimeStampedModel):
 
     def item(self):
 
-        item = None
-        for contrato in self.persona.contratos.filter(
-                vencimiento__gte=timezone.now()).all():
-            item = contrato.plan.consulta
+        item = self.contrato.plan.consulta
 
         if item is None:
             item = self.consultorio.usuario.profile.honorario
@@ -204,12 +203,9 @@ class Consulta(TimeStampedModel):
             items[cargo.item] += cargo.cantidad
             precios[cargo.item] = cargo.item.precio_de_venta
 
-            for contrato in self.persona.contratos.filter(
-                    vencimiento__gte=timezone.now()).all():
-                precios[cargo.item] = contrato.obtener_cobro(cargo.item)
+            precios[cargo.item] = self.contrato.obtener_cobro(cargo.item)
 
-            cargo.facturado = True
-            cargo.save()
+        self.cargos.update(facturado=True)
 
         return items, precios
 
