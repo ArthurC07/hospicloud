@@ -180,7 +180,8 @@ class Consulta(TimeStampedModel):
         return self.persona.get_absolute_url()
 
     def item(self):
-        if self.contrato is not None:
+        item = None
+        if self.contrato:
             item = self.contrato.plan.consulta
 
         if item is None:
