@@ -554,6 +554,16 @@ class SolucionEmailPreView(LoginRequiredMixin, DetailView):
     """
     model = Solucion
     template_name = 'bsc/solucion_email.html'
+    queryset = Solucion.objects.select_related(
+        'queja__respuesta__consulta',
+        'queja__respuesta__consulta__persona',
+        'queja__respuesta__consulta__poliza',
+        'queja__respuesta__consulta__poliza__aseguradora',
+        'queja__respuesta__consulta__contrato',
+        'queja__respuesta__consulta__espera',
+    ).prefetch_related(
+        'queja__respuesta__consulta__ordenes_medicas',
+    )
 
     def get_context_data(self, **kwargs):
         context = super(SolucionEmailPreView, self).get_context_data(**kwargs)
@@ -564,6 +574,9 @@ class SolucionEmailPreView(LoginRequiredMixin, DetailView):
 
 
 class SolucionEmailView(LoginRequiredMixin, RedirectView):
+    """
+    Sends a notification email to the :class:`Persona` that made the complaint
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -576,7 +589,53 @@ class SolucionEmailView(LoginRequiredMixin, RedirectView):
                     'persona': solucion.queja.respuesta.persona,
                     'fecha': timezone.now().date(),
                 },
-                to=[solucion.queja.respuesta.consulta.persona.email, 'sac@epsmedical.com'],
+                to=[solucion.queja.respuesta.consulta.persona.email,
+                    'sac@epsmedical.com'],
+                from_email=settings.EMAIL_HOST_USER
+            )
+            message.send()
+
+        return reverse('solucion-list')
+
+
+class SolucionAseguradoraEmailPreView(SolucionEmailPreView):
+    """
+    Shows a preview of the email that will be sent to
+    """
+    template_name = 'bsc/solucion_aseguradora_email.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SolucionAseguradoraEmailPreView, self).get_context_data(
+            **kwargs)
+        consulta = self.object.queja.respuesta.consulta
+        context['consulta'] = consulta
+        if consulta.poliza:
+            context['aseguradora'] = consulta.poliza.aseguradora
+
+        return context
+
+
+class SolucionAseguradoraEmailView(LoginRequiredMixin, RedirectView):
+    """
+    Sends a notification email to the :class:`Persona` that made the complaint
+    """
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        solucion = get_object_or_404(Solucion, pk=kwargs['solucion'])
+
+        consulta = solucion.queja.respuesta.consulta
+        email = consulta.poliza.aseguradora.cardex.email
+
+        if email:
+            message = EmailMessage(
+                str('bsc/solucion_aseguradora_email.tpl'),
+                {
+                    'consulta': consulta,
+                    'aseguradora': consulta.poliza.aseguradora,
+                    'fecha': timezone.now().date(),
+                },
+                to=[email, 'sac@epsmedical.com'],
                 from_email=settings.EMAIL_HOST_USER
             )
             message.send()

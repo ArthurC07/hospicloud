@@ -209,6 +209,23 @@ class Consulta(TimeStampedModel):
 
         return items, precios
 
+    def total_incapacidad(self):
+
+        return self.incapacidades.aggregate(total=Coalesce(Sum('dias'), 0))[
+            'total']
+
+    def total_time(self):
+        """
+        Calculates the total time a :class:`Persona` has spent between
+        :class`Espera` start and :class:`Consulta` ending.
+        """
+
+        if self.espera:
+            return (self.espera.created - self.final).seconds / 60
+
+        else:
+            return (self.created - self.final).seconds / 60
+
     def save(self, **kwargs):
 
         if self.contrato is None and self.poliza:
