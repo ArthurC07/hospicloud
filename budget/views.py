@@ -43,7 +43,8 @@ from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
 from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes, \
     Fuente
 from hospinet.utils import get_current_month_range, get_previous_month_range
-from hospinet.utils.date import get_month_end, make_end_day, make_month_range
+from hospinet.utils.date import get_month_end, make_end_day, make_month_range, \
+    previous_month_range
 from hospinet.utils.forms import YearForm, MonthYearForm, PeriodoForm
 from income.models import Deposito, Cheque
 from invoice.models import Venta, Pago
@@ -198,6 +199,10 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         context['budget_forms'] = []
         context['year'] = year
 
+        now = timezone.now()
+
+        meses = []
+
         for n in range(1, 13):
             form = MonthYearForm(initial={
                 'year': year,
@@ -218,6 +223,35 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
             form.helper.label_class = ''
             form.helper.field_class = ''
             context['budget_forms'].append(form)
+
+            start = now.replace(month=n)
+            inicio, fin = make_month_range(start)
+            previous_start, previous_end = previous_month_range(inicio)
+
+            gastos = Gasto.objects.total_ejecutado_periodo(inicio, fin)
+            ingresos = Deposito.objects.total_periodo(inicio, fin)
+
+            old_gastos = Gasto.objects.total_ejecutado_periodo(previous_start,
+                                                               previous_end)
+
+            old_ingresos = Deposito.objects.total_periodo(previous_start,
+                                                          previous_end)
+
+            excedente = old_ingresos - old_gastos
+
+            meses.append(
+                {
+                    'inicio': inicio,
+                    'fin': fin,
+                    'nombre': calendar.month_name[n],
+                    'gastos': gastos,
+                    'ingresos': ingresos,
+                    'excedente': excedente
+                }
+
+            )
+
+        context['meses'] = meses
 
         return context
 
@@ -691,8 +725,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         context['forms'] = []
         inicio = timezone.make_aware(datetime(self.year, self.mes, 1))
         fin = make_end_day(get_month_end(inicio))
-        previous_start = inicio - relativedelta(months=1)
-        previous_end = make_end_day(get_month_end(previous_start))
+        previous_end, previous_start = previous_month_range(inicio)
 
         context['fecha'] = inicio
 

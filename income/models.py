@@ -66,6 +66,14 @@ class DepositoQuerySet(models.QuerySet):
         """
         return self.filter(fecha_de_deposito__range=(inicio, fin))
 
+    def total_periodo(self, inicio, fin):
+        """
+        Returns the sum of all :class:`Deposito` made between two dates
+        """
+        return self.periodo(inicio, fin).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
 
 @python_2_unicode_compatible
 class Deposito(TimeStampedModel):

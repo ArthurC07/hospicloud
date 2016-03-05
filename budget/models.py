@@ -265,6 +265,14 @@ class GastoQuerySet(models.QuerySet):
         """
         return self.filter(ejecutado=False)
 
+    def total_ejecutado_periodo(self, inicio, fin):
+        """
+        Obtains the sum of all :class:`Gasto` executed between two dates
+        """
+        return self.ejecutado_periodo(inicio, fin).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
 
 @python_2_unicode_compatible
 class Gasto(TimeStampedModel):
