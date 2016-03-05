@@ -71,9 +71,9 @@ class Presupuesto(TimeStampedModel):
         )['total']
 
     def gastos_por_periodo(self, inicio, fin):
-        return Gasto.objects.filter(fecha_de_pago__range=(inicio, fin),
-                                    cuenta__in=self.cuenta_set.all(),
-                                    ejecutado=True)
+        return Gasto.objects.ejecutado_periodo(inicio, fin).filter(
+            cuenta__in=self.cuenta_set.all()
+        )
 
     def total_gastos_por_periodo(self, inicio, fin):
         return self.gastos_por_periodo(inicio, fin).aggregate(
@@ -168,21 +168,19 @@ class Cuenta(TimeStampedModel):
         """Obtiene los :class:`Gasto`s que aún no han sido ejectuados y por lo
         tanto son cuentas por pagar"""
 
-        return Gasto.objects.select_related(
+        return Gasto.objects.pendiente().select_related(
                 'proveedor',
                 'usuario',
-        ).filter(cuenta=self, ejecutado=False)
+        ).filter(cuenta=self)
 
     def gastos_por_periodo(self, inicio, fin):
         """obtiene los :class:`Gasto`s que ya fueron ejecutados y que han sido
         descargado del flujo de dinero de la empresa"""
-        return Gasto.objects.select_related(
+        return Gasto.objects.ejecutado_periodo(inicio, fin).select_related(
                 'proveedor',
                 'usuario',
         ).filter(
                 cuenta=self,
-                ejecutado=True,
-                fecha_de_pago__range=(inicio, fin)
         )
 
     def total_gastos_por_periodo(self, inicio, fin):
@@ -243,6 +241,31 @@ class Fuente(TimeStampedModel):
         return self.nombre
 
 
+class GastoQuerySet(models.QuerySet):
+    """
+    Makes easier to create common :class:`QuerySet` about :class:`Gasto` making
+    the program more consistant
+    """
+
+    def ejecutado(self):
+        """
+        Returns all executed :class:`Gasto`
+        """
+        return self.filter(ejecutado=True)
+
+    def ejecutado_periodo(self, inicio, fin):
+        """
+        Returns all :class:`Gasto` executed between two dates
+        """
+        return self.ejecutado().filter(fecha_de_pago__range=(inicio, fin))
+
+    def pendiente(self):
+        """
+        Returns all :class:`Gasto` that have not yet been payed
+        """
+        return self.filter(ejecutado=False)
+
+
 @python_2_unicode_compatible
 class Gasto(TimeStampedModel):
     """Representa las transacciones monetarias realizadas por el personal de la
@@ -272,6 +295,8 @@ class Gasto(TimeStampedModel):
     recepcion_de_facturas_originales = models.BooleanField(default=False)
     fecha_de_recepcion_de_factura = models.DateTimeField(default=timezone.now)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+
+    objects = GastoQuerySet.as_manager()
 
     def __str__(self):
         """

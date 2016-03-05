@@ -21,10 +21,17 @@ def make_end_day(day):
 
 def get_month_end(day):
     return date(
-            day.year,
-            day.month,
-            calendar.monthrange(day.year, day.month)[1]
+        day.year,
+        day.month,
+        calendar.monthrange(day.year, day.month)[1]
     )
+
+
+def make_month_range(start):
+    day = start.replace(day=1)
+    fin = make_end_day(get_month_end(day))
+    inicio = make_day_start(day)
+    return inicio, fin
 
 
 def get_current_month_range():
