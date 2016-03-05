@@ -38,38 +38,66 @@
             </ul>
             <div class="tab-content">
                 <div class="row tab-pane fade in active" id="resume">
-                    <div class="col-xs-12 col-md-12 table-responsive">
-                        <h1>{% trans 'Resumen Financiero' %}</h1>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>&nbsp;</th>
-                                {% for mes in meses %}
-                                    <th>{{ mes.inicio|date:"SHORT_DATE_FORMAT" }}</th>
-                                {% endfor %}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>{% trans 'Resultado Mes Anterior' %}</td>
-                                {% for mes in meses %}
-                                    <td>{{ mes.excedente }}</td>
-                                {% endfor %}
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Ingresos' %}</td>
-                                {% for mes in meses %}
-                                    <td>{{ mes.ingresos }}</td>
-                                {% endfor %}
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Egresos' %}</td>
-                                {% for mes in meses %}
-                                    <td>{{ mes.gastos }}</td>
-                                {% endfor %}
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="col-md-12 col-xs-12">
+                        <h2>{% trans 'Presupuesto Anual' %} {{ year }}</h2>
+                        <div class="row">
+                            {% for form in budget_forms %}
+                                <div class="col-md-2">
+                                    {% crispy form %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 table-responsive">
+                                <h1>{% trans 'Resumen Financiero' %}</h1>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        {% for mes in meses %}
+                                            <th>
+                                                {{ mes.inicio|date:"N" }}
+                                            </th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>{% trans 'Resultado Mes Anterior' %}</td>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.excedente }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td>{% trans 'Ingresos' %}</td>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.ingresos }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td>{% trans 'Egresos' %}</td>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.gastos }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>{% trans 'Total Mes' %}</th>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.total }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <th>{% trans 'Total Mes + Mes Anterior' %}</th>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.total_anterior }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row tab-pane fade in" id="presupuesto">
@@ -262,14 +290,8 @@
                 </div>
                 <div class="row tab-pane fade in" id="ingresos">
                     <div class="col-md-12 table-responsive">
-                        <h2>{% trans 'Presupuesto Anual' %} {{ year }}</h2>
-                        <div class="row">
-                            {% for form in budget_forms %}
-                                <div class="col-md-2">
-                                    {% crispy form %}
-                                </div>
-                            {% endfor %}
-                        </div>
+
+
                     </div>
                 </div>
                 <div class="row tab-pane fade in" id="reportes">

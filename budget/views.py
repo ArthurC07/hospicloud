@@ -246,9 +246,10 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
                     'nombre': calendar.month_name[n],
                     'gastos': gastos,
                     'ingresos': ingresos,
-                    'excedente': excedente
+                    'excedente': excedente,
+                    'total': ingresos - gastos,
+                    'total_anterior': ingresos - gastos + excedente,
                 }
-
             )
 
         context['meses'] = meses
