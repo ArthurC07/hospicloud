@@ -203,8 +203,8 @@ class Consulta(TimeStampedModel):
         for cargo in self.cargos.all():
             items[cargo.item] += cargo.cantidad
             precios[cargo.item] = cargo.item.precio_de_venta
-
-            precios[cargo.item] = self.contrato.obtener_cobro(cargo.item)
+            if self.contrato:
+                precios[cargo.item] = self.contrato.obtener_cobro(cargo.item)
 
         self.cargos.update(facturado=True)
 
