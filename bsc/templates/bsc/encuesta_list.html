@@ -1,5 +1,21 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load i18n %}{% load crispy_forms_tags %}
+{% block header %}
+    <style type="text/css">
+        .bar-legend li {
+            list-style: none;
+        }
+        .bar-legend li span {
+            display: block;
+            width: 14px;
+            height: 14px;
+            border-radius: 7px;
+            float: left;
+            margin-top: 4px;
+            margin-right: 8px;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="main-content col-md-12">
@@ -45,6 +61,7 @@
             <div class="row">
                 <canvas id="chart" class="col-md-12 col-xs-12 graph"
                         height="100"></canvas>
+                <div id="legend" class="graph col-md-12 col-xs-12"></div>
             </div>
         </section>
         {% include 'bsc/snippets/encuesta_menu.html' %}
@@ -55,7 +72,8 @@
             src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            var ctx = document.getElementById("chart").getContext("2d");
+            var canvas = document.getElementById("chart");
+            var ctx = canvas.getContext("2d");
             var chart = new Chart(ctx);
             data = {
                 labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
@@ -79,6 +97,7 @@
                 ]
             };
             var myLineChart = new Chart(ctx).Bar(data);
+            document.getElementById('legend').innerHTML = myLineChart.generateLegend();
         });
     </script>
 {% endblock %}
