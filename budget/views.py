@@ -759,7 +759,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         context['total_depositado'] = total_depositado
 
         context['descripcion_depositos'] = depositos.values(
-            'tipo__nombre'
+            'tipo__nombre', 'tipo__id'
         ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
 
         gastos = Gasto.objects.ejecutado_periodo(inicio, fin)

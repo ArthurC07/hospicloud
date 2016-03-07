@@ -26,7 +26,7 @@ from django.views.generic import CreateView, ListView, DetailView, TemplateView
 from hospinet.utils.forms import NumeroForm, PeriodoForm
 from income.forms import ChequeForm, DetallePagoForm, DepositoForm, \
     CierrePOSForm
-from income.models import Cheque, DetallePago, Deposito, CierrePOS
+from income.models import Cheque, DetallePago, Deposito, CierrePOS, TipoDeposito
 from invoice.models import CuentaPorCobrar, Pago
 from users.mixins import LoginRequiredMixin
 
@@ -41,7 +41,7 @@ class IncomeIndexView(TemplateView, LoginRequiredMixin):
         context = super(IncomeIndexView, self).get_context_data(**kwargs)
 
         context['cheque_form'] = ChequeForm(
-                initial={'usuario': self.request.user}
+            initial={'usuario': self.request.user}
         )
         context['cheque_form'].helper.form_action = 'cheque-create'
 
@@ -51,13 +51,13 @@ class IncomeIndexView(TemplateView, LoginRequiredMixin):
         context['numero_form'].set_action('cheque-numero')
 
         context['deposito_form'] = DepositoForm(
-                initial={'usuario': self.request.user}
+            initial={'usuario': self.request.user}
         )
         context['deposito_form'].helper.form_action = 'deposito-create'
 
         context['cierre_form'] = CierrePOSForm(
-                initial={'usuario': self.request.user},
-                prefix='cierrepos',
+            initial={'usuario': self.request.user},
+            prefix='cierrepos',
         )
         context['cierre_form'].helper.form_action = 'cierre-create'
 
@@ -86,8 +86,8 @@ class CobrosListView(LoginRequiredMixin, ListView):
         objects = []
         for cuenta in self.object_list.all():
             form = ChequeForm(
-                    initial={'cuenta_por_cobrar': cuenta,
-                             'usuario': self.request.user}
+                initial={'cuenta_por_cobrar': cuenta,
+                         'usuario': self.request.user}
             )
             form.helper.form_action = 'cheque-create'
             objects.append({
@@ -142,25 +142,25 @@ class DepositoPeriodoListView(LoginRequiredMixin, ListView):
         form = PeriodoForm(self.request.GET)
         if form.is_valid():
             return Deposito.objects.filter(
-                    fecha_de_deposito__range=(
-                        form.cleaned_data['inicio'],
-                        form.cleaned_data['fin']
-                    )
+                fecha_de_deposito__range=(
+                    form.cleaned_data['inicio'],
+                    form.cleaned_data['fin']
+                )
             ).select_related(
-                    'cuenta',
-                    'usuario'
-            ).order_by('fecha_de_deposito')
-        return Deposito.objects.select_related(
                 'cuenta',
                 'usuario'
+            ).order_by('fecha_de_deposito')
+        return Deposito.objects.select_related(
+            'cuenta',
+            'usuario'
         ).all().order_by('fecha_de_deposito')
 
     def get_context_data(self, **kwargs):
         context = super(DepositoPeriodoListView, self).get_context_data(
-                **kwargs)
+            **kwargs)
 
         context['total'] = self.get_queryset().aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         return context
@@ -183,11 +183,11 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
     """
     model = Cheque
     queryset = Cheque.objects.prefetch_related(
-            'detallepago_set',
-            'detallepago_set__pago',
-            'detallepago_set__pago__recibo',
-            'detallepago_set__pago__recibo__ciudad',
-            'detallepago_set__pago__aseguradora',
+        'detallepago_set',
+        'detallepago_set__pago',
+        'detallepago_set__pago__recibo',
+        'detallepago_set__pago__recibo__ciudad',
+        'detallepago_set__pago__aseguradora',
     )
 
     def get_context_data(self, **kwargs):
@@ -200,13 +200,13 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
 
         context['pagos'] = []
         pagos = Pago.objects.select_related(
-                'recibo',
-                'recibo__cliente',
-                'recibo__ciudad',
+            'recibo',
+            'recibo__cliente',
+            'recibo__ciudad',
         ).filter(
-                status__reportable=True,
-                completado=False,
-                tipo__reembolso=True)
+            status__reportable=True,
+            completado=False,
+            tipo__reembolso=True)
         for pago in pagos:
             form = DetallePagoForm(initial={
                 'pago': pago,
@@ -238,38 +238,38 @@ class ChequePeriodoListView(LoginRequiredMixin, ListView):
         form = PeriodoForm(self.request.GET)
         if form.is_valid():
             return Cheque.objects.filter(
-                    fecha_de_entrega__range=(
-                        form.cleaned_data['inicio'],
-                        form.cleaned_data['fin']
-                    )
+                fecha_de_entrega__range=(
+                    form.cleaned_data['inicio'],
+                    form.cleaned_data['fin']
+                )
             ).select_related(
-                    'usuario',
-                    'banco_de_emision',
-                    'usuario'
-            ).prefetch_related(
-                    'detallepago_set',
-                    'detallepago_set__pago',
-                    'detallepago_set__pago__aseguradora',
-                    'detallepago_set__pago__recibo',
-                    'detallepago_set__pago__recibo__ciudad',
-            ).order_by('fecha_de_entrega')
-        return Cheque.objects.select_related(
                 'usuario',
                 'banco_de_emision',
                 'usuario'
-        ).prefetch_related(
+            ).prefetch_related(
                 'detallepago_set',
                 'detallepago_set__pago',
                 'detallepago_set__pago__aseguradora',
                 'detallepago_set__pago__recibo',
                 'detallepago_set__pago__recibo__ciudad',
+            ).order_by('fecha_de_entrega')
+        return Cheque.objects.select_related(
+            'usuario',
+            'banco_de_emision',
+            'usuario'
+        ).prefetch_related(
+            'detallepago_set',
+            'detallepago_set__pago',
+            'detallepago_set__pago__aseguradora',
+            'detallepago_set__pago__recibo',
+            'detallepago_set__pago__recibo__ciudad',
         ).all().order_by('fecha_de_entrega')
 
     def get_context_data(self, **kwargs):
         context = super(ChequePeriodoListView, self).get_context_data(**kwargs)
 
         context['total'] = self.get_queryset().aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         return context
@@ -294,7 +294,7 @@ class ChequeNumeroListView(LoginRequiredMixin, ListView):
         form = NumeroForm(self.request.GET)
         if form.is_valid():
             return Cheque.objects.select_related('banco_de_emision').filter(
-                    numero_de_cheque__contains=form.cleaned_data['numero']
+                numero_de_cheque__contains=form.cleaned_data['numero']
             )
         return Cheque.objects.all()
 
@@ -306,3 +306,39 @@ class DetallePagoCreateView(LoginRequiredMixin, CreateView):
     """
     model = DetallePago
     form_class = DetallePagoForm
+
+
+class TipoDepositoDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows a GUI with a list of :class:`Deposito` corresponding to a
+    :class:`TipoDeposito` that have been registered during the period of time
+    indicated by a :class:`PeriodoForm`
+    """
+    model = TipoDeposito
+    queryset = TipoDeposito.objects.prefetch_related(
+        'deposito_set',
+    )
+
+    def get_context_data(self, **kwargs):
+        context = super(TipoDepositoDetailView, self).get_context_data(
+            **kwargs)
+
+        form = PeriodoForm(self.request.GET)
+        if form.is_valid():
+            depositos = self.object.deposito_set.filter(
+                fecha_de_deposito__range=(
+                    form.cleaned_data['inicio'],
+                    form.cleaned_data['fin']
+                )
+            ).select_related(
+                'usuario',
+                'cuenta'
+            )
+
+            context['depositos'] = depositos
+
+            context['total'] = depositos.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+            )['total']
+
+        return context

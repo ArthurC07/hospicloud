@@ -123,7 +123,12 @@
                             <tbody>
                             {% for deposito in descripcion_depositos.all %}
                                 <tr>
-                                    <td>{{ deposito.tipo__nombre }}</td>
+                                    <td>
+                                        <a href="{% url 'income-tipo-deposito' deposito.tipo__id %}?{{ periodo_string }}"
+                                           target="_blank">
+                                            {{ deposito.tipo__nombre }}
+                                        </a>
+                                    </td>
                                     <td class="text-right">{{ deposito.total }}</td>
                                 </tr>
                             {% endfor %}
@@ -177,18 +182,18 @@
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                                <tr>
-                                    <td>{% trans 'Diaria' %}</td>
-                                    <td class="text-right">{{ facturacion__diaria }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{% trans 'Mensual' %}</td>
-                                    <td class="text-right">{{ facturacion__mensual }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{% trans 'Reembolso' %}</td>
-                                    <td class="text-right">{{ facturacion__reembolso }}</td>
-                                </tr>
+                            <tr>
+                                <td>{% trans 'Diaria' %}</td>
+                                <td class="text-right">{{ facturacion__diaria }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Mensual' %}</td>
+                                <td class="text-right">{{ facturacion__mensual }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Reembolso' %}</td>
+                                <td class="text-right">{{ facturacion__reembolso }}</td>
+                            </tr>
                             </tbody>
                             <tfoot>
                             <tr>

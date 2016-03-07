@@ -40,5 +40,7 @@ urlpatterns = [
         name='detallepago-create'),
     url(r'^deposito/(?P<pk>\d+)$', views.DepositoDetailView.as_view(),
         name='income-deposito'),
+    url(r'^deposito/tipo/(?P<pk>\d+)$', views.TipoDepositoDetailView.as_view(),
+        name='income-tipo-deposito'),
 
 ]
