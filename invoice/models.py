@@ -62,6 +62,7 @@ class TipoPago(TimeStampedModel):
     color = ColorField(default='')
     solo_asegurados = models.BooleanField(default=False)
     reembolso = models.BooleanField(default=False)
+    mensual = models.BooleanField(default=False)
     reportable = models.BooleanField(default=True)
     orden = models.IntegerField(default=0)
 
@@ -400,6 +401,24 @@ class PagoQuerySet(models.QuerySet):
             completado=False,
             tipo__reembolso=True,
         )
+
+    def mensual(self):
+        """
+        Obtains all :class:`Pago` clasified as monthly
+        """
+        return self.filter(tipo__mensual=True)
+
+    def reembolso(self):
+        """
+        Obtains all :class:`Pago` classified as reimbursement
+        """
+        return self.filter(tipo__reembolso=True)
+
+    def diarias(self):
+        """
+        Obtains all :class:`Pago` that are payed inmediatly
+        """
+        return self.exclude(tipo__mensual=True).exclude(tipo__reembolso=True)
 
 
 @python_2_unicode_compatible

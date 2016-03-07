@@ -870,4 +870,22 @@ class BalanceView(TemplateView, LoginRequiredMixin):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
+        context['facturacion__diaria'] = Pago.objects.diarias().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['facturacion__mensual'] = Pago.objects.mensual().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['facturacion__reembolso'] = Pago.objects.reembolso().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
         return context
