@@ -199,6 +199,12 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         context['budget_forms'] = []
         context['year'] = year
 
+        context['cuentas_por_cobrar'] = Pago.objects.cuentas_por_cobrar().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['cuentas_por_pagar'] = Gasto.objects.total_pendiente()
+
         now = timezone.now()
 
         meses = []
@@ -848,10 +854,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
             total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
 
-        pagos = Pago.objects.filter(
-            status__reportable=True,
-            completado=False,
-            tipo__reembolso=True,
+        pagos = Pago.objects.cuentas_por_cobrar().filter(
             recibo__created__lte=fin,
         )
 

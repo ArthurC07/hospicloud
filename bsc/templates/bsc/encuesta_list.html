@@ -43,7 +43,7 @@
                 </tr>
             </table>
             <div class="row">
-                <canvas id="chart" class="col-md-12 col-xs-12"
+                <canvas id="chart" class="col-md-12 col-xs-12 graph"
                         height="100"></canvas>
             </div>
         </section>
@@ -77,9 +77,8 @@
                         data: [0, {% for mes in meses %} {{ mes.satisfaccion|floatformat }}, {% endfor %} 0]
                     }
                 ]
-            }
+            };
             var myLineChart = new Chart(ctx).Bar(data);
         });
     </script>
 {% endblock %}
-

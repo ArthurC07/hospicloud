@@ -273,6 +273,14 @@ class GastoQuerySet(models.QuerySet):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
+    def total_pendiente(self):
+        """
+        Obtains the total pending amount of :class:`Gasto`
+        """
+        return self.pendiente().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
 
 @python_2_unicode_compatible
 class Gasto(TimeStampedModel):
