@@ -494,6 +494,7 @@ class SolucionListView(LoginRequiredMixin, ListView):
         'queja__respuesta__consulta__poliza__aseguradora',
         'queja__respuesta__consulta__consultorio__usuario',
     ).prefetch_related(
+        'queja__solucion_set',
         'queja__respuesta__consulta__poliza__contratos',
         'queja__respuesta__consulta__persona__beneficiarios',
         'queja__respuesta__consulta__consultorio__secretaria',
@@ -510,7 +511,13 @@ class SolucionListView(LoginRequiredMixin, ListView):
         """
         context = super(SolucionListView, self).get_context_data(**kwargs)
         context['form'] = SolucionAceptadaForm()
-        context['rechazada'] = SolucionRechazadaForm()
+        rechazada_form = SolucionRechazadaForm()
+        context['rechazada'] = rechazada_form
+        rechazada_form.helper.form_tag = False
+        rechazada_form.helper.label_class = ''
+        rechazada_form.helper.field_class = ''
+        rechazada_form.helper.form_class = ''
+
         context['encuestas'] = Encuesta.objects.filter(activa=True)
         return context
 
@@ -526,7 +533,7 @@ class SolucionAceptarUpdateView(SolucionUpdateView):
     """
     Updates a :class:`Solucion` to be acepted.
     """
-    form_class = SolucionRechazadaForm
+    form_class = SolucionAceptadaForm
 
     def get_success_url(self):
         """

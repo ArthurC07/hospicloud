@@ -69,7 +69,7 @@ class VotoForm(FieldSetModelFormMixinNoButton):
 VotoFormSet = modelformset_factory(Voto, form=VotoForm, extra=0)
 
 
-class QuejaForm(FieldSetModelFormMixin):
+class QuejaForm(FieldSetModelFormMixinNoButton):
     class Meta:
         model = Queja
         exclude = ('resuelta',)
@@ -81,6 +81,7 @@ class QuejaForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(QuejaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Registrar Queja'), *self.field_names)
+        self.helper.add_input(Submit('submit', _('Guardar Solo la Queja')))
 
 
 class QuejaFormMixin(FieldSetModelFormMixin):
@@ -122,7 +123,7 @@ class RellamarForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(RellamarForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Programar Lllamada'),
+        self.helper.layout = Fieldset(_('Programar Llamada'),
                                       *self.field_names)
 
 
@@ -160,15 +161,15 @@ class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
     """
     class Meta:
         model = Solucion
-        fields = ('aceptada',)
+        fields = ('rechazada', )
 
-    aceptada = forms.BooleanField(widget=forms.HiddenInput())
+    rechazada = forms.BooleanField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         if 'initial' not in kwargs:
-            kwargs['initial'] = {'aceptada': False}
+            kwargs['initial'] = {'rechazada': True}
         else:
-            kwargs['initial']['aceptada'] = True
+            kwargs['initial']['rechazada'] = True
         super(SolucionRechazadaForm, self).__init__(*args, **kwargs)
         self.helper.add_input(
             Submit(
@@ -176,7 +177,3 @@ class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
                 _('Rechazar Solución'),
                 css_class='btn-danger btn-block'
             ))
-        self.helper.form_tag = False
-        self.helper.label_class = ''
-        self.helper.field_class = ''
-        self.helper.form_class = ''

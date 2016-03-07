@@ -37,6 +37,7 @@ from persona.models import Persona
 @python_2_unicode_compatible
 class Company(TimeStampedModel):
     nombre = models.CharField(max_length=255)
+    nombre_comercial = models.CharField(max_length=255, blank=True)
     rtn = models.CharField(max_length=14)
     cai = models.CharField(max_length=255)
     direccion = models.TextField()

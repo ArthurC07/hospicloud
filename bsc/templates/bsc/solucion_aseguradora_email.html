@@ -12,8 +12,7 @@
             {% trans 'Notificar Aseguradora' %}
         </a>
     {% endif %}
-    <h1>{% trans 'Formato de Oportunidades de Mejora EPS Medical' %}</h1>
-    <h2>{{ aseguradora }}</h2>
+    <h1>{% trans 'Formato de Oportunidades de Mejora' %} {{ consulta.poliza.aseguradora }} {{ consulta.consultorio.usuario.profile.ciudad.nombre_comercial }}</h1>
     <table>
         <tr>
             <td>{% trans 'N&uacute;mero de P&oacute;liza' %}</td>

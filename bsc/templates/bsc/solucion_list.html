@@ -92,6 +92,19 @@
                                     <td>{% trans 'Usuario que Propone' %}</td>
                                     <td>{{ solucion.usuario }}</td>
                                 </tr>
+                                <tr>
+                                    <th colspan="2">{% trans 'Otras Soluciones' %}</th>
+                                </tr>
+                                {% for sol in solucion.queja.solucion_set.all %}
+                                    {% if solucion.id != sol.id %}
+                                    <tr>
+                                        <td colspan="2">
+                                            {{ sol.solucion }} <br>
+                                            {{ sol.rechazada|yesno:"Rechazada,Propuesta" }}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
                             </table>
                         </td>
                     </tr>
