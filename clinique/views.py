@@ -37,6 +37,7 @@ from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
+from bsc.models import Queja
 from clinique.forms import CitaForm, EvaluacionForm, \
     ConsultaForm, SeguimientoForm, LecturaSignosForm, DiagnosticoClinicoForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
@@ -48,10 +49,11 @@ from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
     Remision, \
-    NotaMedica
+    NotaMedica, TipoConsulta
 from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
+from hospinet.utils.date import make_month_range
 from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
 from invoice.forms import PeriodoForm
@@ -168,6 +170,35 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['consulta_estadistica'].set_legend(
                 _('Estad&iacute;sticas de Consulta')
         )
+
+        meses = []
+        now = timezone.now()
+        tipos = {}
+
+        for tipo in TipoConsulta.objects.filter(habilitado=True):
+            tipos[tipo] = []
+
+        for n in range(1, 13):
+            start = now.replace(month=n, day=1)
+            inicio, fin = make_month_range(start)
+
+            consultas = Consulta.objects.atendidas(inicio, fin)
+            atenciones = consultas.count()
+            quejas = Queja.objects.filter(created__range=(inicio, fin)).count()
+
+            for tipo in TipoConsulta.objects.filter(habilitado=True):
+                tipos[tipo].append(consultas.filter(tipo=tipo).count())
+
+            meses.append(
+                {
+                    'inicio': inicio,
+                    'atenciones': atenciones,
+                    'quejas': quejas,
+                }
+            )
+
+        context['tipos'] = tipos
+        context['meses'] = meses
 
         return context
 

@@ -106,9 +106,7 @@ class EncuestaListView(LoginRequiredMixin, ListView):
 
             inicio, fin = make_month_range(start)
 
-            consultas = Consulta.objects.filter(
-                created__range=(inicio, fin)
-            )
+            consultas = Consulta.objects.atendidas(inicio, fin)
 
             atenciones = consultas.count()
             encuestadas = consultas.filter(encuestada=True).count()

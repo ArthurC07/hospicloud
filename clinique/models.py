@@ -143,9 +143,32 @@ class Espera(TimeStampedModel):
         return delta.seconds / 60
 
 
+class ConsultaQuerySet(models.QuerySet):
+    """
+    Creates shortcuts for many common :class:`Consulta` operations
+    """
+    def pendientes_encuesta(self):
+        """
+        Obtains all :class:`Consulta`s that have not been polled yet.
+        """
+        return self.filter(
+            encuestada=False,
+            no_desea_encuesta=False,
+        )
+
+    def atendidas(self, inicio, fin):
+        """
+        Obtains the :class:`Consulta`s that have been created between two dates
+        """
+        return self.filter(
+            created__range=(inicio, fin)
+        )
+
+
 @python_2_unicode_compatible
 class Consulta(TimeStampedModel):
-    """Registra la interacción entre una :class:`Persona` y un :class:`Usuario`
+    """
+    Registra la interacción entre una :class:`Persona` y un :class:`Usuario`
     que es un médico.
     """
     persona = models.ForeignKey(Persona, related_name='consultas',
@@ -166,6 +189,8 @@ class Consulta(TimeStampedModel):
                                related_name='consulta_set')
     poliza = models.ForeignKey(MasterContract, blank=True, null=True)
     contrato = models.ForeignKey(Contrato, blank=True, null=True)
+
+    objects = ConsultaQuerySet.as_manager()
 
     class Meta:
         ordering = ['created', ]

@@ -448,7 +448,7 @@ class Encuesta(TimeStampedModel):
         Obtains the :class:`Consulta`s that will be interviewed
         """
         a_month_ago = timezone.now() - timedelta(days=30)
-        consultas = Consulta.objects.select_related(
+        consultas = Consulta.objects.pendientes_encuesta().select_related(
             'persona',
             'poliza',
             'contrato',
@@ -460,9 +460,6 @@ class Encuesta(TimeStampedModel):
             'poliza__contratos',
             'persona__beneficiarios',
             'persona__beneficiarios__contrato'
-        ).filter(
-            facturada=True,
-            encuestada=False,
         ).exclude(
             persona__respuesta__created__gte=a_month_ago,
         )
