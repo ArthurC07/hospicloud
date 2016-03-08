@@ -72,7 +72,7 @@ VotoFormSet = modelformset_factory(Voto, form=VotoForm, extra=0)
 class QuejaForm(FieldSetModelFormMixinNoButton):
     class Meta:
         model = Queja
-        exclude = ('resuelta',)
+        exclude = ('resuelta', 'aseguradora')
 
     respuesta = forms.ModelChoiceField(queryset=Respuesta.objects.all(),
                                        widget=forms.HiddenInput(),
@@ -88,6 +88,20 @@ class QuejaFormMixin(FieldSetModelFormMixin):
     queja = forms.ModelChoiceField(queryset=Queja.objects.all(),
                                    widget=forms.HiddenInput(),
                                    required=False)
+
+
+class QuejaAseguradoraForm(FieldSetModelFormMixin):
+    """
+    Defines a form used to create :class:`Queja` that have been sent by a
+    :class:`Aseguradora
+    """
+    class Meta:
+        model = Queja
+        exclude = ('resuelta', )
+
+    def __init__(self, *args, **kwargs):
+        super(QuejaAseguradoraForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Registrar Queja'), *self.field_names)
 
 
 class SolucionForm(QuejaFormMixin, HiddenUserForm):
@@ -112,6 +126,9 @@ class ArchivoNotasForm(FieldSetModelFormMixin):
 
 
 class RellamarForm(FieldSetModelFormMixin):
+    """
+    Defines a form used to create :class:`Rellamada`
+    """
     class Meta:
         model = Rellamar
         fields = '__all__'

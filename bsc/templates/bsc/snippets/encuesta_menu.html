@@ -15,6 +15,11 @@
                 <li>{% trans 'No hay Encuestas Disponibles' %}</li>
             {% endfor %}
             <li>
+                <a href="{% url 'queja-aseguradora-agregar' %}">
+                    {% trans 'Agregar Queja de Aseguradora' %}
+                </a>
+            </li>
+            <li>
                 <a href="{% url 'quejas' %}">
                     {% trans 'Quejas' %}
                 </a>

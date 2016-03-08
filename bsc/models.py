@@ -35,7 +35,7 @@ from django_extensions.db.models import TimeStampedModel
 
 from budget.models import Presupuesto
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
-from contracts.models import MasterContract
+from contracts.models import MasterContract, Aseguradora
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from invoice.models import Recibo
@@ -554,7 +554,8 @@ class Departamento(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Queja(TimeStampedModel):
-    respuesta = models.ForeignKey(Respuesta)
+    respuesta = models.ForeignKey(Respuesta, blank=True, null=True)
+    aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
     departamento = models.ForeignKey(Departamento, null=True, blank=True)
     queja = models.TextField()
     resuelta = models.BooleanField(default=False)

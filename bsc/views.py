@@ -38,7 +38,7 @@ from mail_templated.message import EmailMessage
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, \
-    SolucionAceptadaForm
+    SolucionAceptadaForm, QuejaAseguradoraForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
@@ -210,7 +210,7 @@ class RespuestaCreateView(EncuestaFormMixin, ConsultaFormMixin,
         return HttpResponseRedirect(self.get_success_url())
 
 
-class RespuestaDetailView(DetailView):
+class RespuestaDetailView(LoginRequiredMixin, DetailView):
     """
     Shows an interface that allows displaying all a :class:`Respuesta`
     information
@@ -332,7 +332,7 @@ class VotoUpdateView(LoginRequiredMixin, UpdateView):
         return form
 
 
-class RespuestaRedirectView(RedirectView):
+class RespuestaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -356,7 +356,7 @@ class RespuestaRedirectView(RedirectView):
         return respuesta.get_absolute_url()
 
 
-class ConsultaEncuestadaRedirectView(RedirectView):
+class ConsultaEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -370,7 +370,7 @@ class ConsultaEncuestadaRedirectView(RedirectView):
         return encuesta.get_absolute_url()
 
 
-class ConsultaNoEncuestadaRedirectView(RedirectView):
+class ConsultaNoEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -383,12 +383,24 @@ class ConsultaNoEncuestadaRedirectView(RedirectView):
         return encuesta.get_absolute_url()
 
 
-class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
+class QuejaCreateView(LoginRequiredMixin, CreateView, RespuestaFormMixin):
+    """
+    Enables the user to create :class:`Queja` instances
+    """
     model = Queja
     form_class = QuejaForm
 
     def get_success_url(self):
         return self.object.respuesta.get_absolute_url()
+
+
+class QuejaAseguradoraCreateView(LoginRequiredMixin, CreateView):
+    """
+    Allows the user to create :class:`Queja` associated to a
+    :class:`Aseguradora`
+    """
+    model = Queja
+    form_class = QuejaAseguradoraForm
 
 
 class QuejaDetailView(LoginRequiredMixin, DetailView):
