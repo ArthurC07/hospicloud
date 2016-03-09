@@ -327,6 +327,7 @@ class Cita(TimeStampedModel):
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='citas', blank=True,
                                 null=True)
+    tipo = models.ForeignKey(TipoConsulta, blank=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True, default=timezone.now)
     ausente = models.BooleanField(default=False)
     atendida = models.BooleanField(default=False)
