@@ -26,6 +26,9 @@ urlpatterns = [
         views.ConsultorioIndexView.as_view(),
         name='consultorio-index'),
 
+    url(r'^mensual$', views.ClinicalData.as_view(),
+        name='clinique-monthly'),
+
     url(r'^paciente/(?P<pk>\d+)/resume$',
         views.PacienteDetailView.as_view(
                 template_name='clinique/clinique_detail.html'),
