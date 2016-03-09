@@ -1296,15 +1296,15 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
 
         consultorios = consultas.values('consultorio__nombre').annotate(
             count=Count('id')
-        ).order_by()
+        ).order_by('-count')
 
         ciudades = consultas.values('consultorio__localidad__nombre').annotate(
             count=Count('id')
-        ).order_by()
+        ).order_by('-count')
 
         quejas_tipo = quejas.values('departamento__nombre').annotate(
             count=Count('id')
-        ).order_by()
+        ).order_by('-count')
 
         context['consultorios'] = consultorios
         context['ciudades'] = ciudades
