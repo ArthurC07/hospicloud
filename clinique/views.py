@@ -55,7 +55,8 @@ from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
 from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
-from hospinet.utils.date import make_month_range, previous_month_range
+from hospinet.utils.date import make_month_range, previous_month_range, \
+    make_end_day
 from hospinet.utils.forms import MonthYearForm
 from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
@@ -346,6 +347,9 @@ class CitaPeriodoView(LoginRequiredMixin, TemplateView):
         return super(CitaPeriodoView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        """
+        Adds the date range information to the template
+        """
         context = super(CitaPeriodoView, self).get_context_data(**kwargs)
 
         context['citas'] = self.citas
@@ -364,41 +368,32 @@ class DiagnosticoPeriodoView(LoginRequiredMixin, TemplateView):
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
-            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.fin = make_end_day(self.form.cleaned_data['fin'])
             self.diagnosticos = DiagnosticoClinico.objects.filter(
                 created__gte=self.inicio,
                 created__lte=self.fin
-            ).order_by('consulta__consultorio')
+            )
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
 
     def get_context_data(self, **kwargs):
+        """
+        Builds several data structures to be displayed in the template
+        """
         context = super(DiagnosticoPeriodoView, self).get_context_data(**kwargs)
 
-        context['diagnosticos'] = self.diagnosticos
+        context['diagnosticos'] = self.diagnosticos.order_by(
+            'consulta__consultorio__nombre'
+        )
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = self.diagnosticos.count()
 
-        DiagnosticoClinico.objects.values('consulta__consultorio').annotate(
-            consultorio_count=Count('consulta__consultorio')
-        ).filter(created__gte=self.inicio, created__lte=self.fin)
-
-        cons = defaultdict(int)
-        consultorios = Consultorio.objects.all()
-        for consultorio in consultorios:
-            cons[consultorio] = DiagnosticoClinico.objects.filter(
-                created__gte=self.inicio, created__lte=self.fin,
-                consulta__consultorio=consultorio).count()
-
-        cons = dict((k, v) for k, v in cons.items() if v > 0)
-
-        context['consultorios'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
-        context['consultorio_graph'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
-        context['consultorio_graph2'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
+        context['consultorios'] = self.diagnosticos.values(
+            'consulta__consultorio__nombre'
+        ).annotate(
+            consultorio_count=Count('id')
+        ).order_by()
 
         return context
 
@@ -1236,7 +1231,8 @@ class NotaMedicaCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
 
 class ClinicalData(TemplateView, LoginRequiredMixin):
     """
-    Builds a view that resumes income and expenses for a given month
+    Creates a view that a allows a user to view the statistical data for any
+    given month.
     """
     template_name = 'clinique/resume.html'
 
@@ -1258,13 +1254,12 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs):
         """
-        Builds the forms that will correct the :class:`PresupuestoMes` data
+        Collects the data that will be shown in the statistical data view
         :param kwargs: The original dictionary with data
         :return: the final dict that will be used in the view
         """
         context = super(ClinicalData, self).get_context_data(**kwargs)
 
-        context['forms'] = []
         start = datetime(self.year, self.mes, 1)
         inicio, fin = make_month_range(start)
 
