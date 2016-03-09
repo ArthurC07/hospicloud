@@ -27,8 +27,8 @@
                             <tbody>
                             {% for tipo in tipos %}
                                 <tr>
-                                <td>{{ tipo.tipo__tipo }}</td>
-                                <td class="text-right">{{ tipo.count }}</td>
+                                    <td>{{ tipo.tipo__tipo }}</td>
+                                    <td class="text-right">{{ tipo.count }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -142,31 +142,26 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{% trans 'Facturaci&oacute;n' %}</h3>
+                            <h3 class="panel-title">
+                                {% trans 'Quejas por Área' %}
+                            </h3>
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                            <tr>
-                                <td>{% trans 'Diaria' %}</td>
-                                <td class="text-right">{{ facturacion__diaria }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Mensual' %}</td>
-                                <td class="text-right">{{ facturacion__mensual }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Reembolso' %}</td>
-                                <td class="text-right">{{ facturacion__reembolso }}</td>
-                            </tr>
+                            {% for tipo in tipo_quejas %}
+                                <tr>
+                                    <td>{{ tipo.departamento__nombre }}</td>
+                                    <td class="text-right">{{ tipo.count }}</td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
+                                <th>{% trans 'Total' %}</th>
                                 <th>
-                                    {% trans 'Total' %}</th>
-                                <th>
-                                    <a href="{% url 'invoice-mensual' fecha.year fecha.month %}"
+                                    <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
                                        target="_blank">
-                                        {{ total_ventas }}
+                                        {{ quejas }}
                                     </a>
                                 </th>
                             </tr>
