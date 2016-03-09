@@ -95,30 +95,21 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{% trans 'Depositos' %}</h3>
+                            <h3 class="panel-title">{% trans 'Diagnósticos Clínicos' %}</h3>
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                            {% for deposito in descripcion_depositos.all %}
+                            {% for diagnostico in diagnosticos %}
                                 <tr>
-                                    <td>
-                                        <a href="{% url 'income-tipo-deposito' deposito.tipo__id %}?{{ periodo_string }}"
-                                           target="_blank">
-                                            {{ deposito.tipo__nombre }}
-                                        </a>
-                                    </td>
-                                    <td class="text-right">{{ deposito.total }}</td>
+                                    <td>{{ diagnostico.diagnostico }}</td>
+                                    <td class="text-right">{{ diagnostico.count }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th>{% trans 'Total Depositado' %}</th>
+                                <th></th>
                                 <th>
-                                    <a href="{% url 'deposito-periodo' %}?{{ periodo_string }}"
-                                       target="_blank">
-                                        {{ total_depositado }}
-                                    </a>
                                 </th>
                             </tr>
                             </tfoot>
