@@ -147,6 +147,14 @@
                         </tbody>
                     </table>
                     <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            {% trans 'Total Consultas del Año' %}{{ consulta_anual }}
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                            {% trans 'Total Quejas del Año' %}{{ queja_anual }}
+                        </div>
+                    </div>
+                    <div class="row">
                         <canvas id="chart" class="col-md-12 col-xs-12 graph"
                                 height="100"></canvas>
                         <div id="legend"

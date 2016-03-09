@@ -56,7 +56,7 @@ from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from hospinet.utils.date import make_month_range, previous_month_range, \
-    make_end_day
+    make_end_day, make_day_start
 from hospinet.utils.forms import MonthYearForm
 from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
@@ -179,6 +179,17 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         now = timezone.now()
         tipos = {}
         context['monthly_forms'] = []
+
+        year_start = make_day_start(now.replace(month=1, day=1))
+        year_end = make_end_day(now.replace(month=12, day=31))
+
+        context['consulta_anual'] = Consulta.objects.atendidas(
+            year_start, year_end
+        ).count()
+
+        context['queja_anual'] = Queja.objects.filter(
+            created__range=(year_start, year_end)
+        ).count()
 
         for tipo in TipoConsulta.objects.filter(habilitado=True):
             tipos[tipo] = []
