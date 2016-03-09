@@ -1288,11 +1288,15 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         context['consultas'] = atenciones
         context['quejas'] = quejas
 
-        consultorios = defaultdict(int)
+        consultorios = consultas.values('consultorio__nombre').annotate(
+            count=Count('id')
+        ).order_by()
 
-        for consultorio in Consultorio.objects.all().select_related('usuario'):
-            consultorios[consultorio.usuario] += consultas.filter(
-                consultorio=consultorio
-            ).count()
+        ciudades = consultas.values('consultorio__localidad__nombre').annotate(
+            count=Count('id')
+        ).order_by()
+
+        context['consultorios'] = consultorios
+        context['ciudades'] = ciudades
 
         return context

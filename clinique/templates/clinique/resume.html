@@ -28,20 +28,16 @@
                             {% for tipo in tipos %}
                                 <tr>
                                 <td>{{ tipo.tipo__tipo }}</td>
-                                <td>{{ tipo.count }}</td>
+                                <td class="text-right">{{ tipo.count }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
                                 <th>
-                                    {% if balance > 0 %}
-                                        {% trans 'Utilidad del Periodo' %}
-                                    {% else %}
-                                        {% trans 'Perdida del Periodo' %}
-                                    {% endif %}
+                                    {% trans 'Total de Consultas' %}
                                 </th>
-                                <th class="text-right">{{ balance }}</th>
+                                <th class="text-right">{{ consultas }}</th>
                             </tr>
                             </tfoot>
                         </table>
@@ -49,22 +45,22 @@
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                {% trans 'Saldo en Cuentas' %}
+                                {% trans 'Consultas por Médico' %}
                             </h3>
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                            {% for cuenta in cuentas %}
+                            {% for consultorio in consultorios %}
                                 <tr>
-                                    <td>{{ cuenta.nombre }}</td>
-                                    <td class="text-right">{{ cuenta.monto }}</td>
+                                    <td>{{ consultorio.consultorio__nombre }}</td>
+                                    <td class="text-right">{{ consultorio.count }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th>{% trans 'Saldo Total en Cuentas' %}</th>
-                                <th class="text-right">{{ saldo_cuentas }}</th>
+                                <th>{% trans 'Total de Consultas' %}</th>
+                                <th class="text-right">{{ consultas }}</th>
                             </tr>
                             </tfoot>
                         </table>
@@ -131,27 +127,22 @@
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                {% trans 'Descripción del Presupuesto por Ciudad' %}
+                                {% trans 'Consultas por Ciudad' %}
                             </h3>
                         </div>
                         <table class="table table-hover table-striped">
                             <tbody>
-                            {% for presupuesto in presupuestado_ciudad.all %}
+                            {% for ciudad in ciudades %}
                                 <tr>
-                                    <td>
-                                        <a href="{% url 'budget-month-show' presupuesto.cuenta__presupuesto_id fecha.year fecha.month %}"
-                                           target="_blank">
-                                            {{ presupuesto.cuenta__presupuesto__ciudad__nombre }}
-                                        </a>
-                                    </td>
-                                    <td class="text-right">{{ presupuesto.total }}</td>
+                                    <td>{{ ciudad.consultorio__localidad__nombre }}</td>
+                                    <td class="text-right">{{ ciudad.count }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th>{% trans 'Total Presupuestado' %}</th>
-                                <th class="text-right">{{ presupuestado }}</th>
+                                <th>{% trans 'Total de Consultas' %}</th>
+                                <th class="text-right">{{ consultas }}</th>
                             </tr>
                             </tfoot>
                         </table>
