@@ -67,14 +67,16 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{% trans 'Cheques' %}</h3>
+                            <h3 class="panel-title">
+                                {% trans 'Quejas por Área' %}
+                            </h3>
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                            {% for cheque in descripcion_cheques.all %}
+                            {% for tipo in tipo_quejas %}
                                 <tr>
-                                    <td>{{ cheque.tipo__nombre }}</td>
-                                    <td>{{ cheque.total }}</td>
+                                    <td>{{ tipo.departamento__nombre }}</td>
+                                    <td class="text-right">{{ tipo.count }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -84,7 +86,7 @@
                                 <th>
                                     <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
                                        target="_blank">
-                                        {{ total_cheques }}
+                                        {{ quejas }}
                                     </a>
                                 </th>
                             </tr>

@@ -1281,12 +1281,12 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             count=Count('id')
         ).order_by()
 
-        quejas = Queja.objects.filter(created__range=(inicio, fin)).count()
+        quejas = Queja.objects.filter(created__range=(inicio, fin))
         atenciones = consultas.count()
 
         context['tipos'] = tipos
         context['consultas'] = atenciones
-        context['quejas'] = quejas
+        context['quejas'] = quejas.count()
 
         consultorios = consultas.values('consultorio__nombre').annotate(
             count=Count('id')
@@ -1296,7 +1296,12 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             count=Count('id')
         ).order_by()
 
+        quejas_tipo = quejas.values('departamento__nombre').annotate(
+            count=Count('id')
+        ).order_by()
+
         context['consultorios'] = consultorios
         context['ciudades'] = ciudades
+        context['tipo_quejas'] = quejas_tipo
 
         return context
