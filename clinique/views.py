@@ -1301,7 +1301,9 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         context['quejas'] = quejas.count()
 
         consultorios = consultas.values('consultorio__nombre').annotate(
-            count=Count('id')
+            count=Count('id'),
+            tiempo=Avg('duracion', output_field=DurationField()),
+            quejas=Count('respuesta__queja__id')
         ).order_by('-count')
 
         ciudades = consultas.values('consultorio__localidad__nombre').annotate(
@@ -1318,15 +1320,10 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             count=Count('id')
         ).order_by('-count')
 
-        tiempo = consultas.values('consultorio__nombre').annotate(
-            tiempo=Avg('duracion', output_field=DurationField())
-        ).order_by('tiempo')
-
         context['consultorios'] = consultorios
         context['ciudades'] = ciudades
         context['tipo_quejas'] = quejas_tipo
         context['diagnosticos'] = diagnosticos
         context['aseguradoras'] = aseguradoras
-        context['duraciones'] = tiempo
 
         return context

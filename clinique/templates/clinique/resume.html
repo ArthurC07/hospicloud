@@ -49,46 +49,28 @@
                             </h3>
                         </div>
                         <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Consultorio' %}</th>
+                                    <th>{% trans 'Consultas' %}</th>
+                                    <th>{% trans 'Tiempo Promedio' %}</th>
+                                    <th>{% trans 'Quejas' %}</th>
+                                </tr>
+                            </thead>
                             <tbody>
                             {% for consultorio in consultorios %}
                                 <tr>
                                     <td>{{ consultorio.consultorio__nombre }}</td>
                                     <td class="text-right">{{ consultorio.count }}</td>
+                                    <td class="text-right">{{ consultorio.tiempo }}</td>
+                                    <td class="text-right">{{ consultorio.quejas }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th>{% trans 'Total de Consultas' %}</th>
+                                <th colspan="3">{% trans 'Total de Consultas' %}</th>
                                 <th class="text-right">{{ consultas }}</th>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                {% trans 'Quejas por Área' %}
-                            </h3>
-                        </div>
-                        <table class="table table-striped">
-                            <tbody>
-                            {% for tipo in tipo_quejas %}
-                                <tr>
-                                    <td>{{ tipo.departamento__nombre }}</td>
-                                    <td class="text-right">{{ tipo.count }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <th>{% trans 'Total' %}</th>
-                                <th>
-                                    <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
-                                       target="_blank">
-                                        {{ quejas }}
-                                    </a>
-                                </th>
                             </tr>
                             </tfoot>
                         </table>
@@ -189,34 +171,6 @@
                                     {% trans 'Total' %}</th>
                                 <th>
                                     {{ consultas }}
-                                </th>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                {% trans 'Tiempo Por Consultorio' %}
-                            </h3>
-                        </div>
-                        <table class="table table-hover table-striped">
-                            <tbody>
-                            {% for consultorio in duraciones %}
-                                <tr>
-                                    <td>{{ consultorio.consultorio__nombre }}</td>
-                                    <td class="text-right">{{ consultorio.tiempo }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <th>{% trans 'Total Cuentas por Cobrar' %}</th>
-                                <th class="text-right">
-                                    <a href="{% url 'invoice-pago-pendiente' %}"
-                                       target="_blank">
-                                        {{ cuentas_por_cobrar }}
-                                    </a>
                                 </th>
                             </tr>
                             </tfoot>
