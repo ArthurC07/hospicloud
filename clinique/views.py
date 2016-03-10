@@ -1300,7 +1300,10 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         context['consultas'] = atenciones
         context['quejas'] = quejas.count()
 
-        consultorios = consultas.values('consultorio__nombre').annotate(
+        consultorios = consultas.values(
+            'consultorio__nombre',
+            'consultorio__localidad__nombre',
+        ).annotate(
             count=Count('id'),
             tiempo=Avg('duracion', output_field=DurationField()),
             quejas=Count('respuesta__queja__id')
