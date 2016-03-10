@@ -2,10 +2,10 @@
 {% load staticfiles %}{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block header %}
     <style type="text/css">
-        .bar-legend li {
+        .line-legend li {
             list-style: none;
         }
-        .bar-legend li span {
+        .line-legend li span {
             display: block;
             width: 14px;
             height: 14px;
@@ -148,10 +148,13 @@
                     </table>
                     <div class="row">
                         <div class="col-md-4 col-xs-4">
-                            {% trans 'Total Consultas del Año' %}{{ consulta_anual }}
+                            {% trans 'Total Consultas del Año' %} {{ consulta_anual }}
                         </div>
                         <div class="col-md-4 col-xs-4">
-                            {% trans 'Total Quejas del Año' %}{{ queja_anual }}
+                            {% trans 'Total Quejas del Año' %} {{ queja_anual }}
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                            {% trans 'Procentaje Quejas del Año' %} {% widthratio queja_anual consulta_anual 100 %}%
                         </div>
                     </div>
                     <div class="row">
@@ -230,25 +233,29 @@
             data = {
                 labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
                 datasets: [
+                    {% for tipo, lista in tipos.items %}
+                        {
+                        label: "{{ tipo }}",
+                        strokeColor: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
+                        fillColor: "rgba(220,220,220,0)",
+                        data: [0, {% for item in lista %} {{ item|escapejs }}, {% endfor %} 0]
+                    },
+                    {% endfor %}
                     {
                         label: "{% trans 'Consultas' %}",
-                        fillColor: "rgba(220,220,220,0.5)",
-                        strokeColor: "rgba(220,220,220,0.8)",
-                        highlightFill: "rgba(220,220,220,0.75)",
-                        highlightStroke: "rgba(220,220,220,1)",
+                        strokeColor: "blue",
+                        fillColor: "rgba(220,220,220,0)",
                         data: [0, {% for mes in meses %} {{ mes.atenciones|escapejs }}, {% endfor %} 0]
                     },
                     {
                         label: "{% trans 'Quejas' %}",
-                        fillColor: "rgba(151,187,205,0.5)",
-                        strokeColor: "rgba(151,187,205,0.8)",
-                        highlightFill: "rgba(151,187,205,0.75)",
-                        highlightStroke: "rgba(151,187,205,1)",
+                        strokeColor: "red",
+                        fillColor: "rgba(220,220,220,0)",
                         data: [0, {% for mes in meses %} {{ mes.quejas|escapejs }}, {% endfor %} 0]
                     }
                 ]
             };
-            var myLineChart = new Chart(ctx).Bar(data);
+            var myLineChart = new Chart(ctx).Line(data);
             document.getElementById('legend').innerHTML = myLineChart.generateLegend();
         });
     </script>
