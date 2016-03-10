@@ -89,7 +89,7 @@ class ConsultaEsperaForm(HiddenConsultorioFormMixin, HiddenEsperaForm,
     class Meta:
         model = Consulta
         exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
-                   'revisada', 'contrato')
+                   'revisada', 'contrato', 'duracion')
 
     poliza = forms.ModelChoiceField(queryset=MasterContract.objects.all(),
                                     widget=forms.HiddenInput())
@@ -100,10 +100,13 @@ class ConsultaEsperaForm(HiddenConsultorioFormMixin, HiddenEsperaForm,
 
 
 class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
+    """
+    Builds a form that is used to create or edit :class:`Consulta`
+    """
     class Meta:
         model = Consulta
         exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
-                   'espera', 'revisada', 'contrato')
+                   'espera', 'revisada', 'contrato', 'duracion')
 
     tipo = forms.ModelChoiceField(
             queryset=TipoConsulta.objects.filter(habilitado=True).all())

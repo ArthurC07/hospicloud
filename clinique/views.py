@@ -25,7 +25,8 @@ from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
-from django.db.models import Count
+from django.db.models import Count, DurationField
+from django.db.models.aggregates import Avg
 from django.forms import HiddenInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -1037,12 +1038,17 @@ class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
 
 class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
                                     RedirectView):
+    """
+    Marks a :class:`Consulta` as finished and updates some data that will be
+    later used to build statistics, for example duration.
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
         consulta.activa = False
         consulta.final = timezone.now()
+        consulta.duracion = consulta.final - consulta.created
         consulta.save()
         if consulta.espera is not None:
             consulta.espera.terminada = True
@@ -1312,10 +1318,15 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             count=Count('id')
         ).order_by('-count')
 
+        tiempo = consultas.values('consultorio__nombre').annotate(
+            tiempo=Avg('duracion', output_field=DurationField())
+        ).order_by('tiempo')
+
         context['consultorios'] = consultorios
         context['ciudades'] = ciudades
         context['tipo_quejas'] = quejas_tipo
         context['diagnosticos'] = diagnosticos
         context['aseguradoras'] = aseguradoras
+        context['duraciones'] = tiempo
 
         return context

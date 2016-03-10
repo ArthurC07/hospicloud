@@ -197,19 +197,17 @@
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                {% trans 'Cuentas por Cobrar' %}
+                                {% trans 'Tiempo Por Consultorio' %}
                             </h3>
                         </div>
                         <table class="table table-hover table-striped">
                             <tbody>
-                            <tr>
-                                <td>{% trans 'Al Cr&eacute;dito' %}</td>
-                                <td class="text-right">{{ credito }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Reembolso' %}</td>
-                                <td class="text-right">{{ reembolso }}</td>
-                            </tr>
+                            {% for consultorio in duraciones %}
+                                <tr>
+                                    <td>{{ consultorio.consultorio__nombre }}</td>
+                                    <td class="text-right">{{ consultorio.tiempo }}</td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>

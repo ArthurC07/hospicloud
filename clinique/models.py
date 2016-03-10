@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from collections import defaultdict
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -189,6 +190,7 @@ class Consulta(TimeStampedModel):
                                related_name='consulta_set')
     poliza = models.ForeignKey(MasterContract, blank=True, null=True)
     contrato = models.ForeignKey(Contrato, blank=True, null=True)
+    duracion = models.DurationField(default=timedelta)
 
     objects = ConsultaQuerySet.as_manager()
 
