@@ -170,14 +170,16 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{% trans 'Tipo de Pago' %}</h3>
+                            <h3 class="panel-title">
+                                {% trans 'Consultas por Aseguradora' %}
+                            </h3>
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                            {% for facturado in pagos.all %}
+                            {% for aseguradora in aseguradoras %}
                                 <tr>
-                                    <td>{{ facturado.tipo__nombre }}</td>
-                                    <td class="text-right">{{ facturado.total }}</td>
+                                    <td>{{ aseguradora.contrato__master__aseguradora__nombre }}</td>
+                                    <td class="text-right">{{ aseguradora.count }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -186,10 +188,7 @@
                                 <th>
                                     {% trans 'Total' %}</th>
                                 <th>
-                                    <a href="{% url 'invoice-mensual' fecha.year fecha.month %}"
-                                       target="_blank">
-                                        {{ total_ventas }}
-                                    </a>
+                                    {{ consultas }}
                                 </th>
                             </tr>
                             </tfoot>

@@ -1306,9 +1306,16 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             count=Count('id')
         ).order_by('-count')
 
+        aseguradoras = consultas.values(
+            'contrato__master__aseguradora__nombre'
+        ).annotate(
+            count=Count('id')
+        ).order_by('-count')
+
         context['consultorios'] = consultorios
         context['ciudades'] = ciudades
         context['tipo_quejas'] = quejas_tipo
         context['diagnosticos'] = diagnosticos
+        context['aseguradoras'] = aseguradoras
 
         return context
