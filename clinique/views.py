@@ -1292,10 +1292,15 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
 
         quejas = Queja.objects.filter(created__range=(inicio, fin))
         atenciones = consultas.count()
-
-        diagnosticos = DiagnosticoClinico.objects.filter(
+        diags = DiagnosticoClinico.objects.filter(
             consulta__created__range=(inicio, fin)
-        ).values('diagnostico').annotate(
+        )
+
+        diagnosticos = diags.values('diagnostico').annotate(
+            count=Count('id')
+        ).order_by('-count')[:10]
+
+        afecciones = diags.values('afeccion__nombre').annotate(
             count=Count('id')
         ).order_by('-count')[:10]
 
@@ -1354,5 +1359,10 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         context['aseguradoras'] = aseguradoras
         context['esperas'] = esperas.count()
         context['esperas_data'] = esperas_data
+
+        context['aseguradoras'] = aseguradoras
+        context['esperas'] = esperas.count()
+        context['esperas_data'] = esperas_data
+        context['afecciones'] = afecciones
 
         return context

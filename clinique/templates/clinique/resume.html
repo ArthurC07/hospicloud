@@ -142,6 +142,28 @@
                             </tfoot>
                         </table>
                     </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Diagnósticos Clínicos por Afección' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for diagnostico in afecciones %}
+                                <tr>
+                                    <td>{{ diagnostico.afeccion__nombre }}</td>
+                                    <td class="text-right">{{ diagnostico.count }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
                 <div class="col-md-4 col-xs-4">
                     <div class="panel panel-info">
