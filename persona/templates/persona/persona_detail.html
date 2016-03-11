@@ -74,7 +74,7 @@
                             {% if modules.caja %}
                                 <li>
                                     <a href="#recibos" data-toggle="tab">
-                                    {% trans 'Recibos' %}
+                                        {% trans 'Recibos' %}
                                     </a>
                                 </li>
                             {% endif %}
@@ -94,7 +94,8 @@
                                         {% include 'snippets/persona.html' with persona=persona %}
                                         <a href="{% url 'persona-editar' persona.id %}"
                                            class="btn btn-primary">
-                                            {% trans 'Editar Datos' %}</a>
+                                            {% trans 'Editar Datos' %}
+                                        </a>
                                     </div>
                                 </div>
                                 {% if persona.contratos %}
@@ -104,12 +105,20 @@
                                     {% for beneficiario in persona.beneficiarios.all %}
                                         {% include 'contracts/snippets/beneficiario.html' with contrato=beneficiario.contrato %}
                                         <p>
-                                            {% trans 'Exclusiones:' %} {{ beneficiario.exclusion }}</p>
+                                            {% trans 'Exclusiones:' %} {{ beneficiario.exclusion }}
+                                        </p>
                                     {% endfor %}
                                 {% endif %}
                             </article>
                             <article id="clinico" class="tab-pane">
                                 {% include 'persona/antecedentes.html' %}
+                                <div class="row">
+                                    <canvas id="chart"
+                                            class="col-md-12 col-xs-12 graph"
+                                            height="100"></canvas>
+                                    <div id="legend"
+                                         class="graph col-md-12 col-xs-12"></div>
+                                </div>
                             </article>
                             <article id="vida" class="tab-pane">
                                 {% include 'snippets/estilo_vida.html' with estilo_vida=persona.estilo_vida %}
