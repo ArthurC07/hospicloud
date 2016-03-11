@@ -61,7 +61,6 @@ class PersonaFormMixin(FormMixin, PersonaMixin):
 
     def get_initial(self):
         initial = super(PersonaFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['persona'] = self.persona
         return initial
 

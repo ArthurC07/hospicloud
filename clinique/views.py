@@ -868,8 +868,8 @@ class ExamenUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ExamenForm
 
 
-class EsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
-                       ConsultorioFormMixin, CreateView):
+class ConsultorioEsperaCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                                  ConsultorioFormMixin, CreateView):
     model = Espera
     form_class = EsperaForm
 
@@ -880,7 +880,7 @@ class EsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
         :param form_class:
         :return: :class:`ConsultaForm` instance
         """
-        form = super(EsperaCreateView, self).get_form(form_class)
+        form = super(ConsultorioEsperaCreateView, self).get_form(form_class)
 
         queryset = get_active_master_contracts(self.persona)
         if queryset:
@@ -896,8 +896,11 @@ class EsperaUpdateView(LoginRequiredMixin, UpdateView):
     form_class = EsperaConsultorioForm
 
 
-class EsperaConsultorioCreateView(LoginRequiredMixin, PersonaFormMixin,
-                                  CreateView):
+class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
+    """
+    Creates a :class:`Espera` according to the data entered in the
+    :class:`EsperaForm`
+    """
     model = Espera
     form_class = EsperaForm
 
@@ -908,7 +911,7 @@ class EsperaConsultorioCreateView(LoginRequiredMixin, PersonaFormMixin,
         :param form_class:
         :return: :class:`ConsultaForm` instance
         """
-        form = super(EsperaConsultorioCreateView, self).get_form(form_class)
+        form = super(EsperaCreateView, self).get_form(form_class)
         queryset = get_active_master_contracts(self.persona)
         if queryset:
             form.fields['poliza'].queryset = queryset
@@ -1331,10 +1334,25 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             count=Count('id')
         ).order_by('-count')
 
+        esperas = Espera.objects.filter(
+            created__range=(inicio, fin)
+        )
+
+        esperas_data = esperas.values(
+            'usuario__first_name',
+            'usuario__last_name',
+            'consultorio__localidad__nombre',
+        ).annotate(
+            count=Count('id'),
+            quejas=Count('consulta_set__respuesta__queja__id')
+        ).order_by('count')
+
         context['consultorios'] = consultorios
         context['ciudades'] = ciudades
         context['tipo_quejas'] = quejas_tipo
         context['diagnosticos'] = diagnosticos
         context['aseguradoras'] = aseguradoras
+        context['esperas'] = esperas.count()
+        context['esperas_data'] = esperas_data
 
         return context

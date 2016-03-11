@@ -231,11 +231,11 @@ urlpatterns = [
         name='nota-medica-agregar'),
 
     url(r'^(?P<persona>\d+)/(?P<consultorio>\d+)/espera/agregar$',
-        views.EsperaCreateView.as_view(),
+        views.ConsultorioEsperaCreateView.as_view(),
         name='consultorio-espera-agregar'),
 
     url(r'^(?P<persona>\d+)/espera/agregar$',
-        views.EsperaConsultorioCreateView.as_view(),
+        views.EsperaCreateView.as_view(),
         name='consultorio-espera-u-agregar'),
 
     url(r'^(?P<pk>\d+)/espera/ausente$',

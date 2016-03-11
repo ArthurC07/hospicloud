@@ -249,10 +249,11 @@ class ExamenForm(BasePersonaForm):
         self.helper.layout = Fieldset(_('Agregar Examen'), *self.field_names)
 
 
-class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
+class EsperaForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm,
+                 FieldSetModelFormMixin):
     class Meta:
         model = Espera
-        fields = ('persona', 'consultorio', 'poliza')
+        fields = ('persona', 'consultorio', 'poliza', 'usuario')
 
     poliza = forms.ModelChoiceField(
             queryset=MasterContract.objects.select_related(
