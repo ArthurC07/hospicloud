@@ -1313,6 +1313,14 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             count=Count('id')
         ).order_by('-count')
 
+        context['diurnas'] = consultas.filter(
+            created__hour__range=(7, 19)
+        ).count()
+
+        context['nocturnas'] = consultas.exclude(
+            created__hour__range=(7, 19)
+        ).count()
+
         quejas_tipo = quejas.values('departamento__nombre').annotate(
             count=Count('id')
         ).order_by('-count')
