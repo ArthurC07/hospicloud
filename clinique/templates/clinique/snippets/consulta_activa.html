@@ -16,26 +16,8 @@
             aria-labelledby="dropdownMenu1">
             <li role="presentation">
                 <a role="menuitem"
-                   href="{% url 'consultorio-cargo-agregar' consulta.id %}">
-                    {% trans 'Agregar Cargos, Medicamentos y Honorarios' %}
-                </a>
-            </li>
-            <li role="presentation">
-                <a role="menuitem"
                    href="{% url 'consultorio-evaluacion-agregar' consulta.persona.id consulta.id %}">
                     {% trans 'Agregar Examen Físico' %}
-                </a>
-            </li>
-            <li role="presentation">
-                <a role="menuitem"
-                   href="{% url 'consultorio-prescripcion-agregar' consulta.persona.id consulta.id %}">
-                    {% trans 'Agregar Prescripci&oacute;n' %}
-                </a>
-            </li>
-            <li role="presentation">
-                <a role="menuitem"
-                   href="{% url 'consultorio-incapacidad-agregar' consulta.persona.id consulta.id %}">
-                    {% trans 'Agregar Incapacidad' %}
                 </a>
             </li>
             <li role="presentation">
@@ -52,12 +34,24 @@
             </li>
             <li role="presentation">
                 <a role="menuitem"
+                   href="{% url 'consultorio-incapacidad-agregar' consulta.persona.id consulta.id %}">
+                    {% trans 'Agregar Incapacidad' %}
+                </a>
+            </li>
+            <li role="presentation">
+                <a role="menuitem"
                    href="{% url 'consulta-remitir' consulta.id %}">
                     <i class="fa fa-stethoscope"></i> {% trans 'Remitir A Especialista' %}
                 </a>
             </li>
             <li>
                 <a href="{% url 'nota-medica-agregar' consulta.id %}">{% trans 'Agregar Nota' %}</a>
+            </li>
+            <li role="presentation">
+                <a role="menuitem"
+                   href="{% url 'consultorio-cargo-agregar' consulta.id %}">
+                    {% trans 'Agregar Cargos, Medicamentos y Honorarios' %}
+                </a>
             </li>
         </ul>
         <a class="btn btn-danger"
