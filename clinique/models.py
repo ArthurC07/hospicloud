@@ -411,7 +411,7 @@ class OrdenMedica(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('consultorio-orden-medica', args=[self.id])
+        return self.consulta.get_absolute_url()
 
 
 @python_2_unicode_compatible
