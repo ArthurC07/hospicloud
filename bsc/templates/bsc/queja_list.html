@@ -67,6 +67,13 @@
                         <td>
                             <a class="btn btn-primary"
                                href="{% url 'solucion-lista-agregar' queja.id %}">{% trans 'Solucionar' %}</a>
+                            <div class="row">
+                                <form class="col-md-11 col-xs-11"
+                                      action="{% url 'queja-invalida' queja.id %}"
+                                      method="post">
+                                    {% crispy queja_invalida_form %}
+                                </form>
+                            </div>
                         </td>
                         {% empty %}
                     <tr>

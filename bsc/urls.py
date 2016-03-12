@@ -81,6 +81,9 @@ urlpatterns = [
     url(r'^queja/(?P<respuesta>\d+)/agregar$', views.QuejaCreateView.as_view(),
         name='queja-agregar'),
 
+    url(r'^queja/(?P<pk>\d+)/invalida$',
+        views.QuejaInvalidaUpdateView.as_view(), name='queja-invalida'),
+
     url(r'^queja/aseguradora/agregar$', views.QuejaAseguradoraCreateView.as_view(),
         name='queja-aseguradora-agregar'),
 

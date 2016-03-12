@@ -540,22 +540,27 @@ class Voto(TimeStampedModel):
 @python_2_unicode_compatible
 class Departamento(TimeStampedModel):
     """
-    Allows a :class:`Queja` to be classified
+    Allows a :class:`Queja` to be classified according to the responsible for
+    the complaint
     """
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
-
         return self.nombre
 
 
 @python_2_unicode_compatible
 class Queja(TimeStampedModel):
+    """
+    Represents a complaint initated by a :class:`Aseguradora` or as a result
+    from the :class:`Encuesta` application
+    """
     respuesta = models.ForeignKey(Respuesta, blank=True, null=True)
     aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
     departamento = models.ForeignKey(Departamento, null=True, blank=True)
     queja = models.TextField()
     resuelta = models.BooleanField(default=False)
+    invalida = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['created', ]
@@ -570,6 +575,9 @@ class Queja(TimeStampedModel):
 
 
 class Solucion(TimeStampedModel):
+    """
+    Describes the way a  :class:`Queja` will be or has been solved.
+    """
     queja = models.ForeignKey(Queja)
     solucion = models.TextField()
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -588,6 +596,17 @@ class Solucion(TimeStampedModel):
         """
         pass
 
+    def save(self, **kw):
+        """
+        Ensures that the :class:`Queja` is in an adequate state according to its
+        :class:`Solucion`
+        """
+        if self.aceptada:
+            self.queja.respuesta = True
+            self.queja.save()
+
+        super(Solucion, self).save(**kw)
+
 
 class Rellamar(TimeStampedModel):
     """
@@ -598,7 +617,6 @@ class Rellamar(TimeStampedModel):
     hora = models.DateTimeField(default=timezone.now)
 
     def get_absolute_url(self):
-
         return self.encuesta.get_absolute_url()
 
 

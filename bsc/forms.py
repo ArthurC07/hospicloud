@@ -70,9 +70,12 @@ VotoFormSet = modelformset_factory(Voto, form=VotoForm, extra=0)
 
 
 class QuejaForm(FieldSetModelFormMixinNoButton):
+    """
+    Creates a form that allows
+    """
     class Meta:
         model = Queja
-        exclude = ('resuelta', 'aseguradora')
+        exclude = ('resuelta', 'aseguradora', 'invalida')
 
     respuesta = forms.ModelChoiceField(queryset=Respuesta.objects.all(),
                                        widget=forms.HiddenInput(),
@@ -81,7 +84,7 @@ class QuejaForm(FieldSetModelFormMixinNoButton):
     def __init__(self, *args, **kwargs):
         super(QuejaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Registrar Queja'), *self.field_names)
-        self.helper.add_input(Submit('submit', _('Guardar Solo la Queja')))
+        self.helper.add_input(Submit('submit', _('Guardar Queja')))
 
 
 class QuejaFormMixin(FieldSetModelFormMixin):
@@ -97,11 +100,40 @@ class QuejaAseguradoraForm(FieldSetModelFormMixin):
     """
     class Meta:
         model = Queja
-        exclude = ('resuelta', )
+        exclude = ('resuelta', 'invalida')
 
     def __init__(self, *args, **kwargs):
         super(QuejaAseguradoraForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Registrar Queja'), *self.field_names)
+
+
+class QuejaInvalidaForm(FieldSetModelFormMixinNoButton):
+    """
+    Creates a form that allows marking a :class:`Queja` as invalid
+    """
+
+    class Meta:
+        model = Solucion
+        fields = ('invalida',)
+
+    invalida = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'invalida': True}
+        else:
+            kwargs['initial']['invalida'] = True
+        super(QuejaInvalidaForm, self).__init__(*args, **kwargs)
+        self.helper.label_class = ''
+        self.helper.field_class = ''
+        self.helper.form_class = ''
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Marcar como Inválida'),
+                css_class='btn-block btn-danger',
+            ))
+        self.helper.form_tag = False
 
 
 class SolucionForm(QuejaFormMixin, HiddenUserForm):

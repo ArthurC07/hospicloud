@@ -38,7 +38,7 @@ from mail_templated.message import EmailMessage
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, \
-    SolucionAceptadaForm, QuejaAseguradoraForm
+    SolucionAceptadaForm, QuejaAseguradoraForm, QuejaInvalidaForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
@@ -409,6 +409,10 @@ class QuejaDetailView(LoginRequiredMixin, DetailView):
 
 
 class QuejaListView(LoginRequiredMixin, ListView):
+    """
+    Displays a list of :class:`Queja` with all the necesary options to deal
+    with them, from proposing :class:`Solucion` to mark them as invalid.
+    """
     model = Queja
     queryset = Queja.objects.filter(resuelta=False).select_related(
         'respuesta',
@@ -429,7 +433,9 @@ class QuejaListView(LoginRequiredMixin, ListView):
         'respuesta__consulta__consultorio__usuario__profile',
         'respuesta__consulta__consultorio__usuario__profile__ciudad',
     ).exclude(
-        solucion__aceptada=True
+        solucion__aceptada=True,
+    ).exclude(
+        invalida=True
     )
     context_object_name = 'quejas'
 
@@ -439,7 +445,29 @@ class QuejaListView(LoginRequiredMixin, ListView):
         """
         context = super(QuejaListView, self).get_context_data(**kwargs)
         context['encuestas'] = Encuesta.objects.filter(activa=True)
+        context['queja_invalida_form'] = QuejaInvalidaForm()
         return context
+
+
+class QuejaUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows updating a :class:`Queja` from the UI
+    """
+    model = Queja
+    form_class = QuejaForm
+
+
+class QuejaInvalidaUpdateView(QuejaUpdateView):
+    """
+    Allows marking a :class:`Queja` as invalid
+    """
+    form_class = QuejaInvalidaForm
+
+    def get_success_url(self):
+        """
+        Returns the address of the :class:`Queja` list.
+        """
+        return reverse('quejas')
 
 
 class QuejaMixin(ContextMixin, View):
