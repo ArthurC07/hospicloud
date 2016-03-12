@@ -182,18 +182,14 @@
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                            <tr>
-                                <td>{% trans 'Diaria' %}</td>
-                                <td class="text-right">{{ facturacion__diaria }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Mensual' %}</td>
-                                <td class="text-right">{{ facturacion__mensual }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Reembolso' %}</td>
-                                <td class="text-right">{{ facturacion__reembolso }}</td>
-                            </tr>
+                                <tr>
+                                    <td>{% trans 'Al Cr&eacute;dito' %}</td>
+                                    <td class="text-right">{{ venta_credito }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Al Contado' %}</td>
+                                    <td class="text-right">{{ venta_contado }}</td>
+                                </tr>
                             </tbody>
                             <tfoot>
                             <tr>
@@ -229,7 +225,7 @@
                                 <th>
                                     <a href="{% url 'invoice-mensual' fecha.year fecha.month %}"
                                        target="_blank">
-                                        {{ total_ventas }}
+                                        {{ pago_total }}
                                     </a>
                                 </th>
                             </tr>
