@@ -17,10 +17,13 @@
 from __future__ import unicode_literals
 
 from collections import defaultdict
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models.aggregates import Sum
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -44,7 +47,7 @@ class Localidad(TimeStampedModel):
 @python_2_unicode_compatible
 class Afeccion(TimeStampedModel):
     codigo = models.CharField(max_length=50)
-    nombre = models.CharField(max_length=50, blank=True, null=True)
+    nombre = models.CharField(max_length=255, blank=True, null=True)
     habilitado = models.BooleanField(default=True)
 
     def __str__(self):
@@ -120,13 +123,18 @@ class Espera(TimeStampedModel):
     atendido = models.BooleanField(default=False)
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     class Meta:
         ordering = ['created', ]
 
     def __str__(self):
-        return _("{0} en {1}").format(self.persona.nombre_completo(),
-                                      self.consultorio.nombre)
+        if self.consultorio:
+            string = _("{0} en {1}").format(self.persona.nombre_completo(),
+                                            self.consultorio.nombre)
+        else:
+            string = self.persona.nombre_completo()
+        return string
 
     def get_absolute_url(self):
         return reverse('consultorio-index')
@@ -137,9 +145,32 @@ class Espera(TimeStampedModel):
         return delta.seconds / 60
 
 
+class ConsultaQuerySet(models.QuerySet):
+    """
+    Creates shortcuts for many common :class:`Consulta` operations
+    """
+    def pendientes_encuesta(self):
+        """
+        Obtains all :class:`Consulta`s that have not been polled yet.
+        """
+        return self.filter(
+            encuestada=False,
+            no_desea_encuesta=False,
+        )
+
+    def atendidas(self, inicio, fin):
+        """
+        Obtains the :class:`Consulta`s that have been created between two dates
+        """
+        return self.filter(
+            created__range=(inicio, fin)
+        )
+
+
 @python_2_unicode_compatible
 class Consulta(TimeStampedModel):
-    """Registra la interacción entre una :class:`Persona` y un :class:`Usuario`
+    """
+    Registra la interacción entre una :class:`Persona` y un :class:`Usuario`
     que es un médico.
     """
     persona = models.ForeignKey(Persona, related_name='consultas',
@@ -159,6 +190,10 @@ class Consulta(TimeStampedModel):
     espera = models.ForeignKey(Espera, blank=True, null=True,
                                related_name='consulta_set')
     poliza = models.ForeignKey(MasterContract, blank=True, null=True)
+    contrato = models.ForeignKey(Contrato, blank=True, null=True)
+    duracion = models.DurationField(default=timedelta)
+
+    objects = ConsultaQuerySet.as_manager()
 
     class Meta:
         ordering = ['created', ]
@@ -173,11 +208,9 @@ class Consulta(TimeStampedModel):
         return self.persona.get_absolute_url()
 
     def item(self):
-
         item = None
-        for contrato in self.persona.contratos.filter(
-                vencimiento__gte=timezone.now()).all():
-            item = contrato.plan.consulta
+        if self.contrato:
+            item = self.contrato.plan.consulta
 
         if item is None:
             item = self.consultorio.usuario.profile.honorario
@@ -198,15 +231,46 @@ class Consulta(TimeStampedModel):
         for cargo in self.cargos.all():
             items[cargo.item] += cargo.cantidad
             precios[cargo.item] = cargo.item.precio_de_venta
+            if self.contrato:
+                precios[cargo.item] = self.contrato.obtener_cobro(cargo.item)
 
-            for contrato in self.persona.contratos.filter(
-                    vencimiento__gte=timezone.now()).all():
-                precios[cargo.item] = contrato.obtener_cobro(cargo.item)
-
-            cargo.facturado = True
-            cargo.save()
+        self.cargos.update(facturado=True)
 
         return items, precios
+
+    def total_incapacidad(self):
+
+        return self.incapacidades.aggregate(total=Coalesce(Sum('dias'), 0))[
+            'total']
+
+    def total_time(self):
+        """
+        Calculates the total time a :class:`Persona` has spent between
+        :class`Espera` start and :class:`Consulta` ending.
+        """
+
+        if self.espera:
+            return (self.espera.created - self.final).seconds / 60
+
+        else:
+            return (self.created - self.final).seconds / 60
+
+    def save(self, **kwargs):
+
+        if self.contrato is None and self.poliza:
+            contrato = self.persona.contratos.filter(
+                master=self.poliza
+            ).first()
+            if contrato is None:
+                beneficiario = self.persona.beneficiarios.filter(
+                    contrato__master=self.poliza
+                ).first()
+                if beneficiario is not None:
+                    contrato = beneficiario.contrato
+
+            self.contrato = contrato
+
+        super(Consulta, self).save(**kwargs)
 
 
 class LecturaSignos(TimeStampedModel):
@@ -266,6 +330,7 @@ class Cita(TimeStampedModel):
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='citas', blank=True,
                                 null=True)
+    tipo = models.ForeignKey(TipoConsulta, blank=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True, default=timezone.now)
     ausente = models.BooleanField(default=False)
     atendida = models.BooleanField(default=False)
@@ -346,7 +411,7 @@ class OrdenMedica(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('consultorio-orden-medica', args=[self.id])
+        return self.consulta.get_absolute_url()
 
 
 @python_2_unicode_compatible
@@ -500,7 +565,7 @@ def consolidate_clinique(persona, clone):
 persona_consolidation_functions.append(consolidate_clinique)
 
 Persona.consultas_activas = property(
-        lambda p: Consulta.objects.filter(persona=p, activa=True))
+    lambda p: Consulta.objects.filter(persona=p, activa=True))
 
 Persona.ultima_consulta = property(
-        lambda p: Consulta.objects.filter(persona=p).last())
+    lambda p: Consulta.objects.filter(persona=p).last())

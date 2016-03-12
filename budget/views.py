@@ -43,7 +43,8 @@ from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
 from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes, \
     Fuente
 from hospinet.utils import get_current_month_range, get_previous_month_range
-from hospinet.utils.date import get_month_end, make_end_day
+from hospinet.utils.date import get_month_end, make_end_day, make_month_range, \
+    previous_month_range
 from hospinet.utils.forms import YearForm, MonthYearForm, PeriodoForm
 from income.models import Deposito, Cheque
 from invoice.models import Venta, Pago
@@ -58,9 +59,9 @@ class PresupuestoDetailView(LoginRequiredMixin, DetailView):
     model = Presupuesto
     context_object_name = 'presupuesto'
     queryset = Presupuesto.objects.select_related(
-            'ciudad'
+        'ciudad'
     ).prefetch_related(
-            'cuenta_set',
+        'cuenta_set',
     )
 
 
@@ -72,9 +73,9 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
     model = Presupuesto
     context_object_name = 'presupuestos'
     queryset = Presupuesto.objects.prefetch_related(
-            'cuenta_set',
+        'cuenta_set',
     ).select_related(
-            'ciudad'
+        'ciudad'
     ).filter(inversion=False)
 
     def get_context_data(self, **kwargs):
@@ -84,22 +85,22 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         fin_prev, inicio_prev = get_previous_month_range()
 
         inversiones = Presupuesto.objects.select_related(
-                'ciudad'
+            'ciudad'
         ).filter(inversion=True)
 
         gastos = Gasto.objects.select_related(
-                'cuenta',
-                'cuenta__presupuesto',
-                'cuenta__presupuesto__ciudad',
+            'cuenta',
+            'cuenta__presupuesto',
+            'cuenta__presupuesto__ciudad',
         ).filter(
-                fecha_de_pago__range=(inicio, fin),
-                ejecutado=True,
-                cuenta__presupuesto__inversion=False
+            fecha_de_pago__range=(inicio, fin),
+            ejecutado=True,
+            cuenta__presupuesto__inversion=False
         ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
 
         presupuesto = Cuenta.objects.select_related('presupuesto').filter(
-                presupuesto__activo=True,
-                presupuesto__inversion=False
+            presupuesto__activo=True,
+            presupuesto__inversion=False
         ).aggregate(total=Coalesce(Sum('limite'), Decimal()))['total']
 
         context['presupuesto'] = presupuesto
@@ -107,45 +108,45 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
 
         context['porcentaje'] = gastos / max(presupuesto, 1) * 100
         ventas = Venta.objects.select_related('recibo').filter(
-                recibo__created__range=(inicio, fin),
-                recibo__nulo=False
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False
         )
 
         credito = ventas.filter(recibo__credito=True).aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         ventas_anteriores = Venta.objects.select_related('recibo').filter(
-                recibo__created__range=(inicio_prev, fin_prev),
-                recibo__nulo=False
+            recibo__created__range=(inicio_prev, fin_prev),
+            recibo__nulo=False
         )
 
         context['credito_anterior'] = ventas_anteriores.filter(
-                recibo__credito=True
+            recibo__credito=True
         ).aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['contado_anterior'] = ventas_anteriores.filter(
-                recibo__credito=False
+            recibo__credito=False
         ).aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         ingresos = ventas.select_related(
-                'recibo__ciudad'
+            'recibo__ciudad'
         ).values(
-                'recibo__ciudad__nombre'
+            'recibo__ciudad__nombre'
         ).annotate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
 
         disponible = ventas_anteriores.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         total_ingresos = ventas.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['total_ingresos'] = total_ingresos
@@ -161,15 +162,15 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         context['incomes'] = Income.objects.all()
 
         context['gasto-periodo'] = GastoPeriodoCuentaForm(
-                prefix='gasto-cuenta-periodo')
+            prefix='gasto-cuenta-periodo')
         context['gasto-periodo'].set_action('gasto-periodo')
 
         context[
             'gasto-presupuesto-periodo'] = GastoPresupuestoPeriodoCuentaForm(
-                prefix='gasto-presupuesto-periodo'
+            prefix='gasto-presupuesto-periodo'
         )
         context['gasto-presupuesto-periodo'].set_action(
-                'gasto-presupuesto-periodo'
+            'gasto-presupuesto-periodo'
         )
 
         context['budget-month'] = PresupuestoMesForm()
@@ -178,25 +179,35 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         context['budget-month-year'] = MonthYearForm()
         context['budget-month-year'].set_action('budget-list')
         context['budget-month-year'].set_legend(
-                _('Revisar Presupuesto del Mes')
+            _('Revisar Presupuesto del Mes')
         )
         context['budget-month-year'].helper.form_method = 'get'
         context['budget-month-year'].helper.add_input(
-                Submit('submit', _('Mostrar')))
+            Submit('submit', _('Mostrar')))
 
         context['balance-month-year'] = MonthYearForm()
         context['balance-month-year'].set_action('budget-balance-monthly')
         context['balance-month-year'].set_legend(
-                _('Mostrar Balance del Mes')
+            _('Mostrar Balance del Mes')
         )
         context['balance-month-year'].helper.form_method = 'get'
         context['balance-month-year'].helper.add_input(
-                Submit('submit', _('Mostrar')))
+            Submit('submit', _('Mostrar')))
 
         year = timezone.now().year
 
         context['budget_forms'] = []
         context['year'] = year
+
+        context['cuentas_por_cobrar'] = Pago.objects.cuentas_por_cobrar().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['cuentas_por_pagar'] = Gasto.objects.total_pendiente()
+
+        now = timezone.now()
+
+        meses = []
 
         for n in range(1, 13):
             form = MonthYearForm(initial={
@@ -209,15 +220,45 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
             form.fields['mes'].widget = HiddenInput()
             form.helper.form_method = 'get'
             form.helper.add_input(Submit(
-                    'submit',
-                    _('{0}'.format(calendar.month_name[n])),
-                    css_class='btn-block'
+                'submit',
+                _('{0}'.format(calendar.month_name[n])),
+                css_class='btn-block'
             ))
 
             form.helper.form_class = ''
             form.helper.label_class = ''
             form.helper.field_class = ''
             context['budget_forms'].append(form)
+
+            start = now.replace(month=n)
+            inicio, fin = make_month_range(start)
+            previous_start, previous_end = previous_month_range(inicio)
+
+            gastos = Gasto.objects.total_ejecutado_periodo(inicio, fin)
+            ingresos = Deposito.objects.total_periodo(inicio, fin)
+
+            old_gastos = Gasto.objects.total_ejecutado_periodo(previous_start,
+                                                               previous_end)
+
+            old_ingresos = Deposito.objects.total_periodo(previous_start,
+                                                          previous_end)
+
+            excedente = old_ingresos - old_gastos
+
+            meses.append(
+                {
+                    'inicio': inicio,
+                    'fin': fin,
+                    'nombre': calendar.month_name[n],
+                    'gastos': gastos,
+                    'ingresos': ingresos,
+                    'excedente': excedente,
+                    'total': ingresos - gastos,
+                    'total_anterior': ingresos - gastos + excedente,
+                }
+            )
+
+        context['meses'] = meses
 
         return context
 
@@ -405,14 +446,14 @@ class GastoCuentaPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
             self.fin = self.form.cleaned_data['fin']
             self.cuenta = self.form.cleaned_data['cuenta']
             self.gastos = Gasto.objects.filter(
-                    cuenta=self.cuenta,
-                    fecha_de_pago__range=(self.inicio, self.fin),
-                    ejecutado=True
+                cuenta=self.cuenta,
+                fecha_de_pago__range=(self.inicio, self.fin),
+                ejecutado=True
             ).select_related('proveedor', 'usuario').all()
         else:
             messages.info(
-                    self.request,
-                    _('Los Datos Ingresados en el formulario no son validos')
+                self.request,
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -427,7 +468,7 @@ class GastoCuentaPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = self.gastos.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
         context['motivo'] = self.cuenta
 
@@ -449,18 +490,18 @@ class GastoPeriodoListView(LoginRequiredMixin, ListView):
         form = PeriodoForm(self.request.GET)
         if form.is_valid():
             return Gasto.objects.filter(
-                    fecha_de_pago__range=(
-                        form.cleaned_data['inicio'],
-                        form.cleaned_data['fin']
-                    ),
-                    ejecutado=True
+                fecha_de_pago__range=(
+                    form.cleaned_data['inicio'],
+                    form.cleaned_data['fin']
+                ),
+                ejecutado=True
             ).select_related('proveedor', 'usuario')
         return Gasto.objects.select_related('proveedor', 'usuario').all()
 
     def get_context_data(self, **kwargs):
         context = super(GastoPeriodoListView, self).get_context_data(**kwargs)
         context['total'] = self.get_queryset().aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         return context
@@ -485,14 +526,14 @@ class GastoPresupuestoPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
             self.fin = self.form.cleaned_data['fin']
             self.presupuesto = self.form.cleaned_data['presupuesto']
             self.gastos = Gasto.objects.filter(
-                    cuenta__presupuesto=self.presupuesto,
-                    fecha_de_pago__range=(self.inicio, self.fin),
-                    ejecutado=True
+                cuenta__presupuesto=self.presupuesto,
+                fecha_de_pago__range=(self.inicio, self.fin),
+                ejecutado=True
             ).all()
         else:
             messages.info(
-                    self.request,
-                    _('Los Datos Ingresados en el formulario no son validos')
+                self.request,
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -506,13 +547,13 @@ class GastoPresupuestoPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
         :return: The context that will be rendered in the template
         """
         context = super(GastoPresupuestoPeriodoView, self).get_context_data(
-                **kwargs)
+            **kwargs)
 
         context['gastos'] = self.gastos
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = self.gastos.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
         context['motivo'] = self.presupuesto
 
@@ -533,17 +574,17 @@ class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
             year = form.cleaned_data['year']
             context['year'] = year
             context['presupuesto'] = PresupuestoMes.objects.filter(
-                    anio=year
+                anio=year
             ).values(
-                    'mes', 'anio',
+                'mes', 'anio',
             ).annotate(
-                    total=Coalesce(Sum('monto'), Decimal())
+                total=Coalesce(Sum('monto'), Decimal())
             ).order_by()
             context['total'] = PresupuestoMes.objects.filter(
-                    anio=year
+                anio=year
             ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
             context['mayor'] = PresupuestoMes.objects.filter(
-                    anio=year
+                anio=year
             ).aggregate(Max('monto'))
 
         return context
@@ -566,8 +607,8 @@ class PresupuestoMesListView(LoginRequiredMixin, ListView):
             self.year = form.cleaned_data['year']
             self.mes = form.cleaned_data['mes']
             return PresupuestoMes.objects.filter(
-                    anio=self.year,
-                    mes=self.mes,
+                anio=self.year,
+                mes=self.mes,
             )
         return PresupuestoMes.objects.all()
 
@@ -607,13 +648,13 @@ class PresupuestoMesPresupuestoListView(LoginRequiredMixin, PresupuestoMixin,
 
     def get_queryset(self):
         return PresupuestoMes.objects.filter(
-                cuenta__presupuesto=self.presupuesto,
-                mes=self.mes,
-                anio=self.year
+            cuenta__presupuesto=self.presupuesto,
+            mes=self.mes,
+            anio=self.year
         ).select_related(
-                'cuenta',
-                'cuenta__presupuesto',
-                'cuenta__presupuesto__ciudad',
+            'cuenta',
+            'cuenta__presupuesto',
+            'cuenta__presupuesto__ciudad',
         )
 
     def get_context_data(self, **kwargs):
@@ -622,7 +663,7 @@ class PresupuestoMesPresupuestoListView(LoginRequiredMixin, PresupuestoMixin,
         fecha = timezone.now()
         context['fecha'] = fecha.replace(self.year, self.mes)
         context['total'] = self.get_queryset().aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         return context
@@ -673,8 +714,8 @@ class BalanceView(TemplateView, LoginRequiredMixin):
             self.mes = form.cleaned_data['mes']
         else:
             messages.info(
-                    self.request,
-                    _('Los Datos Ingresados en el formulario no son válidos')
+                self.request,
+                _('Los Datos Ingresados en el formulario no son válidos')
             )
             return HttpResponseRedirect(reverse('budget-index'))
 
@@ -691,8 +732,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         context['forms'] = []
         inicio = timezone.make_aware(datetime(self.year, self.mes, 1))
         fin = make_end_day(get_month_end(inicio))
-        previous_start = inicio - relativedelta(months=1)
-        previous_end = make_end_day(get_month_end(previous_start))
+        previous_end, previous_start = previous_month_range(inicio)
 
         context['fecha'] = inicio
 
@@ -700,49 +740,43 @@ class BalanceView(TemplateView, LoginRequiredMixin):
 
         context['cuentas'] = cuentas
         context['saldo_cuentas'] = cuentas.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
-        depositos = Deposito.objects.filter(
-                fecha_de_deposito__range=(inicio, fin)
-        )
+        depositos = Deposito.objects.periodo(inicio, fin)
 
         total_depositado = depositos.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
-        previous_deposits = Deposito.objects.filter(
-                fecha_de_deposito__range=(previous_start, previous_end),
-        )
+        previous_deposits = Deposito.objects.periodo(previous_start,
+                                                     previous_end)
 
         old_deposits_total = previous_deposits.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['total_depositado'] = total_depositado
 
         context['descripcion_depositos'] = depositos.values(
-                'tipo__nombre'
+            'tipo__nombre', 'tipo__id'
         ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
 
-        gastos = Gasto.objects.filter(
-                fecha_de_pago__range=(inicio, fin),
-                ejecutado=True
-        )
+        gastos = Gasto.objects.ejecutado_periodo(inicio, fin)
 
-        previous_expenses = Gasto.objects.filter(
-                fecha_de_pago__range=(previous_start, previous_end),
-                ejecutado=True,
+        previous_expenses = Gasto.objects.ejecutado_periodo(
+            previous_start,
+            previous_end
         )
 
         old_expenses_total = previous_expenses.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['previous_balance'] = old_deposits_total - old_expenses_total
 
         total_gastos = gastos.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['gastos'] = gastos.order_by('-monto')
@@ -752,60 +786,60 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         context['balance'] = total_depositado - total_gastos
 
         cheques = Cheque.objects.filter(
-                fecha_de_entrega__range=(inicio, fin)
+            fecha_de_entrega__range=(inicio, fin)
         )
 
         context['descripcion_cheques'] = cheques.values(
-                'tipo__nombre'
+            'tipo__nombre'
         ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
 
         context['total_cheques'] = cheques.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         presupuesto = PresupuestoMes.objects.filter(
-                anio=self.year,
-                mes=self.mes,
+            anio=self.year,
+            mes=self.mes,
         )
 
         context['presupuestos'] = presupuesto
 
         context['presupuestado'] = presupuesto.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['presupuestado_ciudad'] = presupuesto.values(
-                'cuenta__presupuesto__ciudad__nombre',
-                'cuenta__presupuesto_id',
+            'cuenta__presupuesto__ciudad__nombre',
+            'cuenta__presupuesto_id',
         ).annotate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         ).order_by('-total')
 
         context['periodo_string'] = urlencode(
-                {
-                    'inicio': inicio.strftime('%d/%m/%Y %H:%M'),
-                    'fin': fin.strftime('%d/%m/%Y %H:%M'),
-                    'submit': 'Mostrar'
-                }
+            {
+                'inicio': inicio.strftime('%d/%m/%Y %H:%M'),
+                'fin': fin.strftime('%d/%m/%Y %H:%M'),
+                'submit': 'Mostrar'
+            }
         )
 
         context['previous_string'] = urlencode(
-                {
-                    'year': previous_start.year,
-                    'mes': previous_start.month,
-                    'submit': calendar.month_name[previous_start.month]
-                }
+            {
+                'year': previous_start.year,
+                'mes': previous_start.month,
+                'submit': calendar.month_name[previous_start.month]
+            }
         )
 
         ventas = Venta.objects.select_related(
-                'recibo',
-                'item'
+            'recibo',
+            'item'
         ).filter(
-                recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin)
         )
 
         context['total_ventas'] = ventas.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['venta_credito'] = ventas.filter(
@@ -821,34 +855,49 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         )['total']
 
         pagos = Pago.objects.select_related(
-                'tipo',
+            'tipo',
         ).filter(
-                recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin)
         )
 
         context['pagos'] = pagos.values(
-                'tipo__nombre'
+            'tipo__nombre'
         ).annotate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
 
-        pagos = Pago.objects.filter(
-                status__reportable=True,
-                completado=False,
-                tipo__reembolso=True,
-                recibo__created__lte=fin,
+        pagos = Pago.objects.cuentas_por_cobrar().filter(
+            recibo__created__lte=fin,
         )
 
         context['cuentas_por_cobrar'] = pagos.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['credito'] = pagos.filter(recibo__credito=True).aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         context['reembolso'] = pagos.filter(recibo__credito=False).aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['facturacion__diaria'] = Pago.objects.diarias().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['facturacion__mensual'] = Pago.objects.mensual().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['facturacion__reembolso'] = Pago.objects.reembolso().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
         return context

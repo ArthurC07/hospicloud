@@ -1069,7 +1069,10 @@ class EmergenciaFacturarView(LoginRequiredMixin, RedirectView):
         recibo = Recibo()
         recibo.cajero = self.request.user
         recibo.cliente = emergencia.persona
-        recibo.tipo_de_venta = emergencia.tipo_de_venta
+
+        recibo.tipo_de_venta = TipoVenta.objects.filter(
+            predeterminada=True
+        ).first()
 
         recibo.save()
 

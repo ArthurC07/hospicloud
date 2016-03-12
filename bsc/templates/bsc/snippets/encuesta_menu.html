@@ -1,0 +1,34 @@
+{% load l10n %}{% load i18n %}
+<aside class="col-md-3 col-xs-3 toolbox">
+    <nav class="sidebar-nav">
+        <ul class="nav nav-stacked nav-tabs">
+            <li>
+                <a href="{% url 'encuesta-list' %}">
+                    {% trans 'Regresar a Encuestas' %}
+                </a>
+            </li>
+            {% for encuesta in object_list.all %}
+                <li>
+                    <a href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a>
+                </li>
+                {% empty %}
+                <li>{% trans 'No hay Encuestas Disponibles' %}</li>
+            {% endfor %}
+            <li>
+                <a href="{% url 'queja-aseguradora-agregar' %}">
+                    {% trans 'Agregar Queja de Aseguradora' %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'quejas' %}">
+                    {% trans 'Quejas' %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'solucion-list' %}">
+                    {% trans 'Soluciones Pendientes de Aprobaci&oacute;n' %}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>

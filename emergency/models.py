@@ -35,8 +35,10 @@ from persona.models import Persona, transfer_object_to_persona, \
 
 
 class Emergencia(TimeStampedModel):
-    """Representa una visita de una :class:`Persona` a la consulta de
-    emergencia"""
+    """
+    Representa una visita de una :class:`Persona` a la consulta de
+    emergencia
+    """
 
     class Meta:
         permissions = (
@@ -46,18 +48,18 @@ class Emergencia(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='emergencias')
     historia_enfermedad_actual = models.TextField(blank=True, null=True)
     frecuencia_respiratoria = models.IntegerField(blank=True, null=True)
+    presion_arterial = models.IntegerField(blank=True, null=True)
     temperatura = models.DecimalField(decimal_places=2, max_digits=8,
                                       null=True, blank=True)
     presion = models.CharField(max_length=100, null=True, blank=True)
     frecuencia_cardiaca = models.DecimalField(decimal_places=2, max_digits=8,
                                               null=True, blank=True)
-    observacion = models.TextField(blank=True, null=True)
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True, blank=True)
+    observacion = models.TextField(blank=True, null=True)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='emergencias')
     facturada = models.BooleanField(default=False)
-    tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

@@ -34,22 +34,22 @@ class EmergenciaForm(FieldSetModelFormMixin):
         model = Emergencia
         exclude = ('facturada',)
 
-    persona = forms.ModelChoiceField(label="",
-                                     queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                     queryset=User.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    persona = forms.ModelChoiceField(
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
 
 class EmergenciaBaseForm(FieldSetModelFormMixin):
-    emergencia = forms.ModelChoiceField(label="",
-                                        queryset=Emergencia.objects.all(),
-                                        widget=forms.HiddenInput(),
-                                        required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                     queryset=User.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    emergencia = forms.ModelChoiceField(
+        queryset=Emergencia.objects.all(),
+        widget=forms.HiddenInput(),
+        required=False)
+    usuario = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(EmergenciaBaseForm, self).__init__(*args, **kwargs)
@@ -138,8 +138,8 @@ class CobroForm(EmergenciaBaseForm):
         exclude = ('facturado',)
 
     cargo = forms.ModelChoiceField(
-            queryset=ItemTemplate.objects.filter(activo=True).order_by(
-                    'descripcion').all())
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(CobroForm, self).__init__(*args, **kwargs)

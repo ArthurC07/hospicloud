@@ -26,10 +26,12 @@ from datetime import date
 
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import lookups
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+from django_extensions.db.fields import CreationDateTimeField
 from django_extensions.db.models import TimeStampedModel
 
 from persona.fields import OrderedCountryField
@@ -37,7 +39,6 @@ from persona.fields import OrderedCountryField
 
 @python_2_unicode_compatible
 class Persona(TimeStampedModel):
-
     """
     Representación de una :class:`Persona` en la aplicación
 
@@ -45,6 +46,7 @@ class Persona(TimeStampedModel):
     personas reales que se ingresan a la aplicación y de esta manera poder
     relacionarlos con el resto de las actividades que se realizan en la misma.
     """
+
     class Meta:
         permissions = (
             ('persona', 'Permite al usuario gestionar persona'),
@@ -97,14 +99,13 @@ class Persona(TimeStampedModel):
     duplicado = models.BooleanField(default=False)
     rtn = models.CharField(max_length=200, blank=True, null=True)
     mostrar_en_cardex = models.BooleanField(
-            default=False,
-            verbose_name=_("Es representante legal")
+        default=False,
+        verbose_name=_("Es representante legal")
     )
     ciudad = models.ForeignKey("users.Ciudad", blank=True, null=True)
 
     @staticmethod
     def validar_identidad(identidad):
-
         """Permite validar la identidad ingresada antes de asignarla a una
         :class:`Persona`
         
@@ -114,45 +115,30 @@ class Persona(TimeStampedModel):
         return Persona.__expresion__.match(identidad)
 
     def __str__(self):
-
         """Muestra el nombre completo de la persona"""
 
         return self.nombre_completo()
 
     def get_absolute_url(self):
-
         """Obtiene la URL absoluta"""
 
         return reverse('persona-view-id', args=[self.id])
 
     def nombre_completo(self):
-
         """Obtiene el nombre completo de la :class:`Persona`"""
 
         return _('{0} {1}').format(self.nombre, self.apellido).upper()
 
     def obtener_edad(self):
-
         """Obtiene la edad de la :class:`Persona`"""
 
         if self.nacimiento is None:
             return None
 
         today = date.today()
-        born = date(self.nacimiento.year,
-                    self.nacimiento.month,
-                    self.nacimiento.day)
-        try:
-            # raised when birth date is February 29 and the current year is
-            # not a leap year
-            birthday = born.replace(year=today.year)
-        except ValueError:
-            birthday = born.replace(year=today.year, day=born.day - 1)
-
-        if birthday > today:
-            return today.year - born.year - 1
-        else:
-            return today.year - born.year
+        born = self.nacimiento
+        return today.year - born.year - (
+        (today.month, today.day) < (born.month, born.day))
 
 
 class Fisico(TimeStampedModel):
@@ -294,8 +280,8 @@ class AntecedenteFamiliar(TimeStampedModel):
     persona = models.OneToOneField(Persona, primary_key=True,
                                    related_name='antecedente_familiar')
     sindrome_coronario_agudo = models.BooleanField(
-            default=False, blank=True,
-            verbose_name=_('cardiopatia')
+        default=False, blank=True,
+        verbose_name=_('cardiopatia')
     )
     hipertension = models.BooleanField(default=False, blank=True,
                                        verbose_name=_('Hipertensión Arterial'))
@@ -439,9 +425,9 @@ def remove_duplicates():
 
 def consolidate_into_persona(persona):
     clones = Persona.objects.filter(
-            nombre__iexact=persona.nombre,
-            duplicado=True,
-            apellido__iexact=persona.apellido
+        nombre__iexact=persona.nombre,
+        duplicado=True,
+        apellido__iexact=persona.apellido
     ).exclude(pk=persona.pk)
 
     print(clones.count())

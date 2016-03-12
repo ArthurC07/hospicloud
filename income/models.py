@@ -55,6 +55,26 @@ class Banco(TimeStampedModel):
         return self.nombre
 
 
+class DepositoQuerySet(models.QuerySet):
+    """
+    Creates filters for usual :class:`Deposito` :class:`QuerySet`s
+    """
+    def periodo(self, inicio, fin):
+        """
+        Returns all :class:`Deposito` with a fecha_de_deposito that falls
+        within the specified range.
+        """
+        return self.filter(fecha_de_deposito__range=(inicio, fin))
+
+    def total_periodo(self, inicio, fin):
+        """
+        Returns the sum of all :class:`Deposito` made between two dates
+        """
+        return self.periodo(inicio, fin).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+
 @python_2_unicode_compatible
 class Deposito(TimeStampedModel):
     """
@@ -67,6 +87,8 @@ class Deposito(TimeStampedModel):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     aplicado = models.BooleanField(default=False)
     comprobante = models.FileField(upload_to='income/deposito/%Y/%m/%d')
+
+    objects = DepositoQuerySet.as_manager()
 
     def __str__(self):
 

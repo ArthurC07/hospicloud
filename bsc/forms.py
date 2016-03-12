@@ -15,13 +15,15 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
-from crispy_forms.layout import Fieldset
+
+from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.forms import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from bsc.models import Encuesta, Respuesta, Voto, Opcion, Queja, ArchivoNotas, \
-    Solucion
+    Solucion, Rellamar
+from clinique.models import Consulta
 from persona.forms import FieldSetModelFormMixin, FieldSetModelFormMixinNoButton
 from users.mixins import HiddenUserForm
 
@@ -55,7 +57,7 @@ class VotoForm(FieldSetModelFormMixinNoButton):
                                        required=False)
     opcion = forms.ModelChoiceField(queryset=Opcion.objects.all(),
                                     widget=forms.RadioSelect(),
-                                    required=False)
+                                    required=False, empty_label=None)
 
     def __init__(self, *args, **kwargs):
         super(VotoForm, self).__init__(*args, **kwargs)
@@ -67,10 +69,10 @@ class VotoForm(FieldSetModelFormMixinNoButton):
 VotoFormSet = modelformset_factory(Voto, form=VotoForm, extra=0)
 
 
-class QuejaForm(FieldSetModelFormMixin):
+class QuejaForm(FieldSetModelFormMixinNoButton):
     class Meta:
         model = Queja
-        exclude = ('resuelta',)
+        exclude = ('resuelta', 'aseguradora')
 
     respuesta = forms.ModelChoiceField(queryset=Respuesta.objects.all(),
                                        widget=forms.HiddenInput(),
@@ -79,6 +81,7 @@ class QuejaForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(QuejaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Registrar Queja'), *self.field_names)
+        self.helper.add_input(Submit('submit', _('Guardar Solo la Queja')))
 
 
 class QuejaFormMixin(FieldSetModelFormMixin):
@@ -87,15 +90,28 @@ class QuejaFormMixin(FieldSetModelFormMixin):
                                    required=False)
 
 
+class QuejaAseguradoraForm(FieldSetModelFormMixin):
+    """
+    Defines a form used to create :class:`Queja` that have been sent by a
+    :class:`Aseguradora
+    """
+    class Meta:
+        model = Queja
+        exclude = ('resuelta', )
+
+    def __init__(self, *args, **kwargs):
+        super(QuejaAseguradoraForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Registrar Queja'), *self.field_names)
+
+
 class SolucionForm(QuejaFormMixin, HiddenUserForm):
     class Meta:
         model = Solucion
-        fields = '__all__'
+        exclude = ('aceptada',)
 
     def __init__(self, *args, **kwargs):
         super(SolucionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Registrar Solución'),
-                                      *self.field_names)
+        self.helper.layout = Fieldset(_('Enviar Solución'), *self.field_names)
 
 
 class ArchivoNotasForm(FieldSetModelFormMixin):
@@ -107,3 +123,74 @@ class ArchivoNotasForm(FieldSetModelFormMixin):
         super(ArchivoNotasForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Subir Archivo de Notas'),
                                       *self.field_names)
+
+
+class RellamarForm(FieldSetModelFormMixin):
+    """
+    Defines a form used to create :class:`Rellamada`
+    """
+    class Meta:
+        model = Rellamar
+        fields = '__all__'
+
+    consulta = forms.ModelChoiceField(widget=forms.HiddenInput(),
+                                      queryset=Consulta.objects.all())
+    encuesta = forms.ModelChoiceField(widget=forms.HiddenInput(),
+                                      queryset=Encuesta.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        super(RellamarForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Programar Llamada'),
+                                      *self.field_names)
+
+
+class SolucionAceptadaForm(FieldSetModelFormMixinNoButton):
+    """
+    Creates a form that allows marking a :class:`Solucion` as acepted
+    """
+    class Meta:
+        model = Solucion
+        fields = ('aceptada',)
+
+    aceptada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'aceptada': True}
+        else:
+            kwargs['initial']['aceptada'] = True
+        super(SolucionAceptadaForm, self).__init__(*args, **kwargs)
+        self.helper.label_class = ''
+        self.helper.field_class = ''
+        self.helper.form_class = ''
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Aceptar Solución'),
+                css_class='btn-block',
+            ))
+        self.helper.form_tag = False
+
+
+class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
+    """
+    Creates a form that allows marking a :class:`Solucion` as rejected
+    """
+    class Meta:
+        model = Solucion
+        fields = ('rechazada', )
+
+    rechazada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'rechazada': True}
+        else:
+            kwargs['initial']['rechazada'] = True
+        super(SolucionRechazadaForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Rechazar Solución'),
+                css_class='btn-danger btn-block'
+            ))

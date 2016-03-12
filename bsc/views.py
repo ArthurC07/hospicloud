@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2015 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2015 - 2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,35 +15,46 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
+import calendar
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django import forms
+from django.db.models import Avg
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView, View
-
 from django.views.generic.base import ContextMixin
-
 from django.views.generic.edit import FormMixin
-from django.utils.translation import ugettext_lazy as _
+from mail_templated.message import EmailMessage
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
-    ArchivoNotasForm, SolucionForm
+    ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, \
+    SolucionAceptadaForm, QuejaAseguradoraForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
-    ArchivoNotas, \
-    Pregunta, Solucion, Login
+    ArchivoNotas, Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
+from hospinet.utils.date import make_day_start, make_end_day, get_month_end, \
+    make_month_range
 from hospinet.utils.forms import PeriodoForm
 from hospinet.utils.views import PeriodoView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
+from django.conf import settings
 
 
 class ScoreCardListView(LoginRequiredMixin, ListView):
+    """
+    Shows a list with all the distinct :class:`ScoreCard` added to the database
+    """
     model = ScoreCard
 
     def get_context_data(self, **kwargs):
@@ -51,7 +62,7 @@ class ScoreCardListView(LoginRequiredMixin, ListView):
 
         context['loginperiodo'] = PeriodoForm(prefix='login')
         context['loginperiodo'].set_legend(
-                _('Inicios de Sesi&oacute;n por Periodo')
+            _('Inicios de Sesi&oacute;n por Periodo')
         )
         context['loginperiodo'].set_action('login-periodo')
 
@@ -59,6 +70,10 @@ class ScoreCardListView(LoginRequiredMixin, ListView):
 
 
 class ScoreCardDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays detailed data about a :class:`ScoreCard and all its related
+    information
+    """
     model = ScoreCard
 
 
@@ -68,25 +83,79 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
 
 class EncuestaListView(LoginRequiredMixin, ListView):
+    """
+    Shows the main interface for the :class:`Encuesta` procedures
+    """
     model = Encuesta
+    queryset = Encuesta.objects.filter(
+        activa=True,
+    )
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the needed data to create the statistics table and the chart about
+        those statistics
+        """
+        context = super(EncuestaListView, self).get_context_data(**kwargs)
+
+        meses = []
+        now = timezone.now()
+
+        for n in range(1, 13):
+            start = now.replace(month=n, day=1)
+
+            inicio, fin = make_month_range(start)
+
+            consultas = Consulta.objects.atendidas(inicio, fin)
+
+            atenciones = consultas.count()
+            encuestadas = consultas.filter(encuestada=True).count()
+
+            if atenciones == 0:
+                contactabilidad = 0
+            else:
+                contactabilidad = encuestadas * 100 / atenciones
+
+            satisfaccion = Voto.objects.filter(
+                opcion__isnull=False,
+                created__range=(inicio, fin),
+                pregunta__calificable=True
+            ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
+
+            meses.append(
+                {
+                    'inicio': inicio,
+                    'fin': fin,
+                    'nombre': calendar.month_name[n],
+                    'consultas': atenciones,
+                    'encuestada': encuestadas,
+                    'contactabilidad': contactabilidad,
+                    'satisfaccion': satisfaccion,
+                }
+            )
+
+        context['meses'] = meses
+
+        return context
 
 
 class EncuestaDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows the pending :class:`Consulta` to be polled
+    """
     model = Encuesta
     context_object_name = 'encuesta'
     queryset = Encuesta.objects.prefetch_related('respuesta_set')
 
     def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Consulta`s that are not yet marked as polled and
+        the :class:`Encuesta` that are still active.
+        """
         context = super(EncuestaDetailView, self).get_context_data(**kwargs)
 
-        context['consultas'] = Consulta.objects.select_related(
-                'persona',
-        ).prefetch_related(
-            'persona__respuesta_set',
-        ).filter(
-                facturada=True,
-                encuestada=False
-        )
+        context['consultas'] = self.object.consultas()
+        context['encuestas'] = Encuesta.objects.filter(activa=True)
 
         return context
 
@@ -139,9 +208,17 @@ class RespuestaCreateView(EncuestaFormMixin, ConsultaFormMixin,
         return HttpResponseRedirect(self.get_success_url())
 
 
-class RespuestaDetailView(DetailView):
+class RespuestaDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows an interface that allows displaying all a :class:`Respuesta`
+    information
+    """
     model = Respuesta
     context_object_name = 'respuesta'
+    queryset = Respuesta.objects.all().prefetch_related(
+        'voto_set',
+        'voto_set__opcion',
+    )
 
     def get_context_data(self, **kwargs):
         context = super(RespuestaDetailView, self).get_context_data(**kwargs)
@@ -253,7 +330,7 @@ class VotoUpdateView(LoginRequiredMixin, UpdateView):
         return form
 
 
-class RespuestaRedirectView(RedirectView):
+class RespuestaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -277,7 +354,7 @@ class RespuestaRedirectView(RedirectView):
         return respuesta.get_absolute_url()
 
 
-class ConsultaEncuestadaRedirectView(RedirectView):
+class ConsultaEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -291,7 +368,7 @@ class ConsultaEncuestadaRedirectView(RedirectView):
         return encuesta.get_absolute_url()
 
 
-class ConsultaNoEncuestadaRedirectView(RedirectView):
+class ConsultaNoEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -304,12 +381,24 @@ class ConsultaNoEncuestadaRedirectView(RedirectView):
         return encuesta.get_absolute_url()
 
 
-class QuejaCreateView(CreateView, RespuestaFormMixin, LoginRequiredMixin):
+class QuejaCreateView(LoginRequiredMixin, CreateView, RespuestaFormMixin):
+    """
+    Enables the user to create :class:`Queja` instances
+    """
     model = Queja
     form_class = QuejaForm
 
     def get_success_url(self):
         return self.object.respuesta.get_absolute_url()
+
+
+class QuejaAseguradoraCreateView(LoginRequiredMixin, CreateView):
+    """
+    Allows the user to create :class:`Queja` associated to a
+    :class:`Aseguradora`
+    """
+    model = Queja
+    form_class = QuejaAseguradoraForm
 
 
 class QuejaDetailView(LoginRequiredMixin, DetailView):
@@ -322,15 +411,35 @@ class QuejaDetailView(LoginRequiredMixin, DetailView):
 class QuejaListView(LoginRequiredMixin, ListView):
     model = Queja
     queryset = Queja.objects.filter(resuelta=False).select_related(
-            'respuesta',
-            'respuesta__consulta',
-            'respuesta__consulta__consultorio__usuario',
+        'respuesta',
+        'respuesta__persona',
+        'respuesta__consulta',
+        'respuesta__consulta__poliza',
+        'respuesta__consulta__contrato',
+        'respuesta__consulta__persona',
+        'respuesta__consulta__poliza__aseguradora',
+        'respuesta__consulta__consultorio__usuario',
     ).prefetch_related(
-            'solucion_set',
-            'respuesta__consulta__consultorio__usuario__profile',
-            'respuesta__consulta__consultorio__usuario__profile__ciudad',
+        'solucion_set',
+        'respuesta__consulta__persona__beneficiarios',
+        'respuesta__consulta__persona__beneficiarios',
+        'respuesta__consulta__persona__beneficiarios__contrato',
+        'respuesta__consulta__persona__beneficiarios__contrato__persona',
+        'respuesta__consulta__consultorio__secretaria',
+        'respuesta__consulta__consultorio__usuario__profile',
+        'respuesta__consulta__consultorio__usuario__profile__ciudad',
+    ).exclude(
+        solucion__aceptada=True
     )
     context_object_name = 'quejas'
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds rejection and aceptance forms to the template
+        """
+        context = super(QuejaListView, self).get_context_data(**kwargs)
+        context['encuestas'] = Encuesta.objects.filter(activa=True)
+        return context
 
 
 class QuejaMixin(ContextMixin, View):
@@ -347,7 +456,9 @@ class QuejaMixin(ContextMixin, View):
 
 
 class QuejaFormMixin(QuejaMixin, FormMixin):
-    """Permite inicializar el paciente que se utilizará en un formulario"""
+    """
+    Permite inicializar el paciente que se utilizará en un formulario
+    """
 
     def get_initial(self):
         initial = super(QuejaFormMixin, self).get_initial()
@@ -360,6 +471,193 @@ class SolucionCreateView(QuejaFormMixin, CurrentUserFormMixin, CreateView,
                          LoginRequiredMixin):
     model = Solucion
     form_class = SolucionForm
+
+
+class SolucionListCreateView(SolucionCreateView):
+    """
+    Redirects users to :class:`Queja`'s list page
+    """
+
+    def get_success_url(self):
+        """
+        Returns the url of the :class:`Queja` list
+        """
+        return reverse('quejas')
+
+
+class SolucionListView(LoginRequiredMixin, ListView):
+    """
+    Shows a :class:`Solucion` list that filters out all rejected and accepted.
+    """
+    model = Solucion
+    queryset = Solucion.objects.select_related(
+        'queja',
+        'usuario',
+        'queja__respuesta',
+        'queja__departamento',
+        'queja__respuesta__persona',
+        'queja__respuesta__consulta',
+        'queja__respuesta__consulta__poliza',
+        'queja__respuesta__consulta__persona',
+        'queja__respuesta__consulta__contrato',
+        'queja__respuesta__consulta__contrato__master',
+        'queja__respuesta__consulta__poliza__aseguradora',
+        'queja__respuesta__consulta__consultorio__usuario',
+    ).prefetch_related(
+        'queja__solucion_set',
+        'queja__respuesta__consulta__poliza__contratos',
+        'queja__respuesta__consulta__persona__beneficiarios',
+        'queja__respuesta__consulta__consultorio__secretaria',
+        'queja__respuesta__consulta__consultorio__usuario__profile',
+        'queja__respuesta__consulta__consultorio__usuario__profile__ciudad',
+    ).filter(
+        aceptada=False,
+        rechazada=False,
+    )
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds rejection and aceptance forms to the template
+        """
+        context = super(SolucionListView, self).get_context_data(**kwargs)
+        context['form'] = SolucionAceptadaForm()
+        rechazada_form = SolucionRechazadaForm()
+        context['rechazada'] = rechazada_form
+        rechazada_form.helper.form_tag = False
+        rechazada_form.helper.label_class = ''
+        rechazada_form.helper.field_class = ''
+        rechazada_form.helper.form_class = ''
+
+        context['encuestas'] = Encuesta.objects.filter(activa=True)
+        return context
+
+
+class SolucionUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows updating :class:`Solucion` from the UI
+    """
+    model = Solucion
+
+
+class SolucionAceptarUpdateView(SolucionUpdateView):
+    """
+    Updates a :class:`Solucion` to be acepted.
+    """
+    form_class = SolucionAceptadaForm
+
+    def get_success_url(self):
+        """
+        Returns the address of the :class:`Solucion` list.
+        """
+        return reverse('solucion-list')
+
+
+class SolucionRechazarUpdateView(SolucionUpdateView):
+    """
+    Updates a class:`Solucion` to be rejected
+    """
+    form_class = SolucionRechazadaForm
+
+    def get_success_url(self):
+        """
+        Returns the address of the :class:`Solucion` list.
+        """
+        return reverse('solucion-list')
+
+
+class SolucionEmailPreView(LoginRequiredMixin, DetailView):
+    """
+    Previews the email before the user can send it.
+    """
+    model = Solucion
+    template_name = 'bsc/solucion_email.html'
+    queryset = Solucion.objects.select_related(
+        'queja__respuesta__consulta',
+        'queja__respuesta__consulta__persona',
+        'queja__respuesta__consulta__poliza',
+        'queja__respuesta__consulta__poliza__aseguradora',
+        'queja__respuesta__consulta__contrato',
+        'queja__respuesta__consulta__espera',
+    ).prefetch_related(
+        'queja__respuesta__consulta__ordenes_medicas',
+    )
+
+    def get_context_data(self, **kwargs):
+        context = super(SolucionEmailPreView, self).get_context_data(**kwargs)
+        context['preview'] = True
+        context['persona'] = self.object.queja.respuesta.consulta.persona
+
+        return context
+
+
+class SolucionEmailView(LoginRequiredMixin, RedirectView):
+    """
+    Sends a notification email to the :class:`Persona` that made the complaint
+    """
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        solucion = get_object_or_404(Solucion, pk=kwargs['solucion'])
+
+        if solucion.queja.respuesta.persona.email:
+            message = EmailMessage(
+                str('bsc/solucion_email.tpl'),
+                {
+                    'persona': solucion.queja.respuesta.persona,
+                    'fecha': timezone.now().date(),
+                },
+                to=[solucion.queja.respuesta.consulta.persona.email,
+                    'sac@epsmedical.com'],
+                from_email=settings.EMAIL_HOST_USER
+            )
+            message.send()
+
+        return reverse('solucion-list')
+
+
+class SolucionAseguradoraEmailPreView(SolucionEmailPreView):
+    """
+    Shows a preview of the email that will be sent to
+    """
+    template_name = 'bsc/solucion_aseguradora_email.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SolucionAseguradoraEmailPreView, self).get_context_data(
+            **kwargs)
+        consulta = self.object.queja.respuesta.consulta
+        context['consulta'] = consulta
+        if consulta.poliza:
+            context['aseguradora'] = consulta.poliza.aseguradora
+
+        return context
+
+
+class SolucionAseguradoraEmailView(LoginRequiredMixin, RedirectView):
+    """
+    Sends a notification email to the :class:`Persona` that made the complaint
+    """
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        solucion = get_object_or_404(Solucion, pk=kwargs['solucion'])
+
+        consulta = solucion.queja.respuesta.consulta
+        email = consulta.poliza.aseguradora.cardex.email
+
+        if email:
+            message = EmailMessage(
+                str('bsc/solucion_aseguradora_email.tpl'),
+                {
+                    'consulta': consulta,
+                    'aseguradora': consulta.poliza.aseguradora,
+                    'fecha': timezone.now().date(),
+                },
+                to=[email, 'sac@epsmedical.com'],
+                from_email=settings.EMAIL_HOST_USER
+            )
+            message.send()
+
+        return reverse('solucion-list')
 
 
 class ArchivoNotasCreateView(LoginRequiredMixin, CreateView):
@@ -392,7 +690,16 @@ class LoginPeriodoView(PeriodoView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super(LoginPeriodoView, self).get_context_data(**kwargs)
         context['object_list'] = Login.objects.filter(
-                created__range=(self.inicio, self.fin)
+            created__range=(self.inicio, self.fin)
         ).order_by('user', 'created')
 
         return context
+
+
+class RellamarCreateView(LoginRequiredMixin, EncuestaFormMixin,
+                         ConsultaFormMixin, CreateView):
+    """
+    Creates a :class:`Rellamar` from the UI
+    """
+    model = Rellamar
+    form_class = RellamarForm

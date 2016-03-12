@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
+
 from django.conf.urls import url
 
 from bsc import views
@@ -31,6 +32,9 @@ urlpatterns = [
 
     url(r'^encuestas$', views.EncuestaListView.as_view(), name='encuesta-list'),
 
+    url(r'^soluciones$', views.SolucionListView.as_view(),
+        name='solucion-list'),
+
     url(r'^encuesta/(?P<pk>\d+)$', views.EncuestaDetailView.as_view(),
         name='encuesta'),
 
@@ -45,6 +49,26 @@ urlpatterns = [
         views.ConsultaNoEncuestadaRedirectView.as_view(),
         name='encuesta-no-respondida'),
 
+    url(r'^solucion/(?P<solucion>\d+)/correo$',
+        views.SolucionEmailView.as_view(),
+        name='solucion-email'),
+
+    url(r'^solucion/(?P<pk>\d+)/correo/preview$',
+        views.SolucionEmailPreView.as_view(),
+        name='solucion-email-preview'),
+
+    url(r'^solucion/(?P<solucion>\d+)/correo/aseguradora$',
+        views.SolucionAseguradoraEmailView.as_view(),
+        name='solucion-aseguradora-email'),
+
+    url(r'^solucion/(?P<pk>\d+)/correo/aseguradora/preview$',
+        views.SolucionAseguradoraEmailPreView.as_view(),
+        name='solucion-email-aseguradora-preview'),
+
+    url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/rellamar$',
+        views.RellamarCreateView.as_view(),
+        name='encuesta-rellamar'),
+
     url(r'^respuesta/(?P<pk>\d+)$', views.RespuestaDetailView.as_view(),
         name='respuesta'),
 
@@ -57,12 +81,24 @@ urlpatterns = [
     url(r'^queja/(?P<respuesta>\d+)/agregar$', views.QuejaCreateView.as_view(),
         name='queja-agregar'),
 
+    url(r'^queja/aseguradora/agregar$', views.QuejaAseguradoraCreateView.as_view(),
+        name='queja-aseguradora-agregar'),
+
     url(r'^quejas/$', views.QuejaListView.as_view(), name='quejas'),
 
     url(r'^queja/(?P<pk>\d+)$', views.QuejaDetailView.as_view(), name='queja'),
 
     url(r'^queja/(?P<queja>\d+)/solucion/agregar$',
         views.SolucionCreateView.as_view(), name='solucion-agregar'),
+
+    url(r'^queja/solucion/(?P<pk>\d+)/aceptar$',
+        views.SolucionAceptarUpdateView.as_view(), name='solucion-aceptar'),
+
+    url(r'^queja/solucion/(?P<pk>\d+)/rechazar$',
+        views.SolucionRechazarUpdateView.as_view(), name='solucion-rechazar'),
+
+    url(r'^queja/(?P<queja>\d+)/solucion/l/agregar$',
+        views.SolucionCreateView.as_view(), name='solucion-lista-agregar'),
 
     url(r'^notas/(?P<pk>\d+)$', views.ArchivoNotasDetailView.as_view(),
         name='archivonotas'),

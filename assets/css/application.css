@@ -343,3 +343,6 @@ nav.navbar-inverse .navbar-inner {
 .btn-group {
     display: flex;
 }
+.graph {
+    background-color: white;
+}

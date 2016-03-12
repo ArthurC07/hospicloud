@@ -1,117 +1,198 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
+{% block header %}
+    <style type="text/css">
+        .line-legend li {
+            list-style: none;
+        }
+        .line-legend li span {
+            display: block;
+            width: 14px;
+            height: 14px;
+            border-radius: 7px;
+            float: left;
+            margin-top: 4px;
+            margin-right: 8px;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <section class="page-header">
-                    <h1>{% trans 'Consultorios Médicos' %}
-                        <small>{{ user.get_full_name }}</small>
-                    </h1>
-                </section>
-            </div>
+        <div class="main-header col-md-12">‏
+            <section class="page-header">
+                <h1>{% trans 'Consultorios Médicos' %}
+                    <small>{{ user.get_full_name }}</small>
+                </h1>
+            </section>
         </div>
     </div>
     <div class="row">
         <div class="col-md-9">
-            <div class="main-content col-md-12">‏
-                <section class="page-header">
-                    <h2>{% trans 'En Consulta' %}</h2>
-                </section>
-                {% for espera in consultas %}
-                    {% include 'clinique/snippets/espera.html' with espera=espera %}
-                {% endfor %}
-                <div class="row">
-                    <div class="col-md-12">
-                        <section class="page-header">
-                            <h2>
-                                {% trans 'Sala de Espera' %}
-                                <small>
-                                    {% trans 'Promedio de Espera Ultimo mes' %}
-                                    {{ total }} {% trans 'minutos' %}
-                                </small>
-                            </h2>
-                        </section>
-                        {% for espera in esperas %}
-                            {% include 'clinique/snippets/espera.html' with espera=espera %}
+            <div class="row">
+                <div class="main-content col-md-12">‏
+                    <section class="page-header">
+                        <h2>{% trans 'En Consulta' %}</h2>
+                    </section>
+                    {% for espera in consultas %}
+                        {% include 'clinique/snippets/espera.html' with espera=espera %}
+                    {% endfor %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section class="page-header">
+                                <h2>
+                                    {% trans 'Sala de Espera' %}
+                                    <small>
+                                        {% trans 'Promedio de Espera Ultimo mes' %}
+                                        {{ total }} {% trans 'minutos' %}
+                                    </small>
+                                </h2>
+                            </section>
+                            {% for espera in esperas %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% for consultorio in user.consultorios_activos.all %}
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="page-header">
+                                    <h2>
+                                        {{ consultorio }}
+                                        <small>{% trans 'M&eacute;dico' %}</small>
+                                        <a class="pull-right btn btn-primary"
+                                           href="{{ consultorio.get_absolute_url }}">
+                                            {% trans 'Ver' %}
+                                        </a>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% for consultorio in user.consultorios_administrados.all %}
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="page-header">
+                                    <h2>
+                                        {{ consultorio }}
+                                        <small>{% trans 'Administrador' %}</small>
+                                        <a class="pull-right btn btn-primary"
+                                           href="{{ consultorio.get_absolute_url }}">
+                                            {% trans 'Ver' %}
+                                        </a>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% for consultorio in user.secretarias.all %}
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="page-header">
+                                    <h2>
+                                        {{ consultorio }}
+                                        <small>{% trans 'Secretaria' %}</small>
+                                        <a class="pull-right btn btn-primary"
+                                           href="{{ consultorio.get_absolute_url }}">
+                                            {% trans 'Ver' %}
+                                        </a>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-xs-12 main-content">
+                    <div class="row">
+                        {% for form in monthly_forms %}
+                            <div class="col-md-2">
+                                {% crispy form %}
+                            </div>
                         {% endfor %}
                     </div>
+                    <h2>{% trans 'Estadísticas de Consulta' %}</h2>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            {% for mes in meses %}
+                                <th>
+                                    {{ mes.inicio|date:"N" }}
+                                </th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for tipo, lista in tipos.items %}
+                            <tr>
+                                <td>{{ tipo }}</td>
+                                {% for item in lista %}
+                                    <td>{{ item }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td>{% trans 'Total de Consultas' %}</td>
+                            {% for mes in meses %}
+                                <td>{{ mes.atenciones }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>{% trans 'Quejas' %}</td>
+                            {% for mes in meses %}
+                                <td>{{ mes.quejas }}</td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            {% trans 'Total Consultas del Año' %} {{ consulta_anual }}
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                            {% trans 'Total Quejas del Año' %} {{ queja_anual }}
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                            {% trans 'Procentaje Quejas del Año' %} {% widthratio queja_anual consulta_anual 100 %}%
+                        </div>
+                    </div>
+                    <div class="row">
+                        <canvas id="chart" class="col-md-12 col-xs-12 graph"
+                                height="100"></canvas>
+                        <div id="legend"
+                             class="graph col-md-12 col-xs-12"></div>
+                    </div>
                 </div>
-                {% for consultorio in user.consultorios_activos.all %}
-                    <div class="row">
-                        <div class="col-md-9">
-                            <div class="page-header">
-                                <h2>
-                                    {{ consultorio }}
-                                    <small>{% trans 'M&eacute;dico' %}</small>
-                                    <a class="pull-right btn btn-primary"
-                                       href="{{ consultorio.get_absolute_url }}">
-                                        {% trans 'Ver' %}
-                                    </a>
-                                </h2>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-                {% for consultorio in user.consultorios_administrados.all %}
-                    <div class="row">
-                        <div class="col-md-9">
-                            <div class="page-header">
-                                <h2>
-                                    {{ consultorio }}
-                                    <small>{% trans 'Administrador' %}</small>
-                                    <a class="pull-right btn btn-primary"
-                                       href="{{ consultorio.get_absolute_url }}">
-                                        {% trans 'Ver' %}
-                                    </a>
-                                </h2>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-                {% for consultorio in user.secretarias.all %}
-                    <div class="row">
-                        <div class="col-md-9">
-                            <div class="page-header">
-                                <h2>
-                                    {{ consultorio }}
-                                    <small>{% trans 'Secretaria' %}</small>
-                                    <a class="pull-right btn btn-primary"
-                                       href="{{ consultorio.get_absolute_url }}">
-                                        {% trans 'Ver' %}
-                                    </a>
-                                </h2>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
             </div>
-            <div class="main-content col-md-12">
-                <div class="row">
-                    <div class="col-md-4">
-                        {% crispy citaperiodoform %}
+            <div class="row">
+                <div class="main-content col-md-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% crispy citaperiodoform %}
+                        </div>
+                        <div class="col-md-4">
+                            {% crispy diagnosticoperiodoform %}
+                        </div>
+                        <div class="col-md-4">
+                            {% crispy cargosperiodoform %}
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        {% crispy diagnosticoperiodoform %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% crispy evaluacionperiodoform %}
+                        </div>
+                        <div class="col-md-4">
+                            {% crispy seguimientoperiodoform %}
+                        </div>
+                        <div class="col-md-4">
+                            {% crispy consultasperiodoform %}
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        {% crispy cargosperiodoform %}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        {% crispy evaluacionperiodoform %}
-                    </div>
-                    <div class="col-md-4">
-                        {% crispy seguimientoperiodoform %}
-                    </div>
-                    <div class="col-md-4">
-                        {% crispy consultasperiodoform %}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 col-xs-4">
-                        {% crispy consulta_estadistica %}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            {% crispy consulta_estadistica %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -140,4 +221,42 @@
             </div>
         </aside>
     </div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var canvas = document.getElementById("chart");
+            var ctx = canvas.getContext("2d");
+            var chart = new Chart(ctx);
+            data = {
+                labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
+                datasets: [
+                    {% for tipo, lista in tipos.items %}
+                        {
+                        label: "{{ tipo }}",
+                        strokeColor: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
+                        fillColor: "rgba(220,220,220,0)",
+                        data: [0, {% for item in lista %} {{ item|escapejs }}, {% endfor %} 0]
+                    },
+                    {% endfor %}
+                    {
+                        label: "{% trans 'Consultas' %}",
+                        strokeColor: "blue",
+                        fillColor: "rgba(220,220,220,0)",
+                        data: [0, {% for mes in meses %} {{ mes.atenciones|escapejs }}, {% endfor %} 0]
+                    },
+                    {
+                        label: "{% trans 'Quejas' %}",
+                        strokeColor: "red",
+                        fillColor: "rgba(220,220,220,0)",
+                        data: [0, {% for mes in meses %} {{ mes.quejas|escapejs }}, {% endfor %} 0]
+                    }
+                ]
+            };
+            var myLineChart = new Chart(ctx).Line(data);
+            document.getElementById('legend').innerHTML = myLineChart.generateLegend();
+        });
+    </script>
 {% endblock %}
