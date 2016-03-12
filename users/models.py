@@ -14,17 +14,19 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from datetime import timedelta
 from decimal import Decimal
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-from django.conf import settings
-from userena.models import UserenaBaseProfile, UserenaSignup
 from django_extensions.db.models import TimeStampedModel
 from guardian.shortcuts import assign_perm
+from userena.models import UserenaBaseProfile
 
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
@@ -35,10 +37,13 @@ from persona.models import Persona
 @python_2_unicode_compatible
 class Company(TimeStampedModel):
     nombre = models.CharField(max_length=255)
+    nombre_comercial = models.CharField(max_length=255, blank=True)
     rtn = models.CharField(max_length=14)
     cai = models.CharField(max_length=255)
     direccion = models.TextField()
     telefono = models.CharField(max_length=20)
+    email = models.EmailField(blank=True)
+    moneda = models.CharField(max_length=20, blank=True)
     chat = models.URLField(blank=True)
     help = models.URLField(blank=True)
     emergencia = models.ForeignKey(ItemTemplate, null=True, blank=True,
@@ -57,20 +62,35 @@ class Company(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Ciudad(TimeStampedModel):
+    """
+    Consolidates all City specific legal information for legal tending of
+    :class:`Recibo`, :class:`ComprobanteDeduccion`, :class:`NotaCredito`
+    """
     nombre = models.CharField(max_length=100)
-    cai_recibo = models.CharField(max_length=255, blank=True)
-    cai_comprobante = models.CharField(max_length=255, blank=True)
-    correlativo_de_recibo = models.IntegerField(default=0)
     direccion = models.CharField(max_length=255, blank=True)
     telefono = models.CharField(max_length=100, blank=True)
-    prefijo_recibo = models.CharField(max_length=100, blank=True)
-    limite_de_emision = models.DateTimeField(default=timezone.now)
-    inicio_rango = models.CharField(max_length=100, blank=True)
-    fin_rango = models.CharField(max_length=100, blank=True)
     tiene_presupuesto_global = models.BooleanField(default=False)
     company = models.ForeignKey(Company, blank=True, null=True)
+    # :class:`Recibo` Data
+    cai_recibo = models.CharField(max_length=255, blank=True)
+    correlativo_de_recibo = models.IntegerField(default=0)
+    inicio_rango = models.CharField(max_length=100, blank=True)
+    fin_rango = models.CharField(max_length=100, blank=True)
+    prefijo_recibo = models.CharField(max_length=100, blank=True)
+    limite_de_emision = models.DateTimeField(default=timezone.now)
+    # :class:`ComprobanteDeduccion` data
+    cai_comprobante = models.CharField(max_length=255, blank=True)
     correlativo_de_comprobante = models.IntegerField(default=0)
     prefijo_comprobante = models.CharField(max_length=100, blank=True)
+    correlativo_de_nota_de_credito = models.IntegerField(default=0)
+    fin_rango_comprobante = models.CharField(max_length=100, blank=True)
+    inicio_rango_comprobante = models.CharField(max_length=100, blank=True)
+    # :class:`NotaCredito` data
+    cai_nota_credito = models.CharField(max_length=255, blank=True)
+    prefijo_nota_credito = models.CharField(max_length=255, blank=True)
+    fin_rango_nota_credito = models.CharField(max_length=100, blank=True)
+    inicio_rango_nota_credito = models.CharField(max_length=100, blank=True)
+    limite_de_emision_nota_credito = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.nombre
@@ -116,7 +136,7 @@ class UserProfile(UserenaBaseProfile):
 
             datos['ponderacion'] = meta.ponderacion(datos['logro'])
             datos['logro_ponderado'] = meta.logro_ponderado(
-                datos['ponderacion'])
+                    datos['ponderacion'])
             total += datos['logro_ponderado']
             goal['metas'].append(datos)
         goal['escalas'] = bsc.get_escala(total)

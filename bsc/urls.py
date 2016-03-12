@@ -14,85 +14,100 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.conf.urls import patterns, url
+from __future__ import unicode_literals
 
-from bsc.views import ScoreCardDetailView, ScoreCardListView, UserDetailView, \
-    EncuestaListView, EncuestaDetailView, RespuestaDetailView, VotoUpdateView, \
-    RespuestaRedirectView, save_votes, ConsultaEncuestadaRedirectView, \
-    QuejaCreateView, ArchivoNotasDetailView, ArchivoNotasProcesarView, \
-    QuejaDetailView, QuejaListView, SolucionCreateView, LoginPeriodoView
+from django.conf.urls import url
 
-urlpatterns = patterns('',
+from bsc import views
 
-                       url(r'^$',
-                           ScoreCardListView.as_view(),
-                           name='scorecard-index'),
+urlpatterns = [
 
-                       url(r'^(?P<pk>\d+)$',
-                           ScoreCardDetailView.as_view(),
-                           name='scorecard'),
+    url(r'^$', views.ScoreCardListView.as_view(), name='scorecard-index'),
 
-                       url(r'^user/(?P<pk>\d+)$',
-                           UserDetailView.as_view(),
-                           name='scorecard-user'),
+    url(r'^(?P<pk>\d+)$', views.ScoreCardDetailView.as_view(),
+        name='scorecard'),
 
-                       url(r'^encuestas$',
-                           EncuestaListView.as_view(),
-                           name='encuesta-list'),
+    url(r'^user/(?P<pk>\d+)$', views.UserDetailView.as_view(),
+        name='scorecard-user'),
 
-                       url(r'^encuesta/(?P<pk>\d+)$',
-                           EncuestaDetailView.as_view(),
-                           name='encuesta'),
+    url(r'^encuestas$', views.EncuestaListView.as_view(), name='encuesta-list'),
 
-                       url(
-                           r'^encuesta/(?P<encuesta>\d+)/('
-                           r'?P<consulta>\d+)/responder$',
-                           RespuestaRedirectView.as_view(),
-                           name='encuesta-responder'),
+    url(r'^soluciones$', views.SolucionListView.as_view(),
+        name='solucion-list'),
 
-                       url(
-                           r'^encuesta/(?P<encuesta>\d+)/('
-                           r'?P<consulta>\d+)/encuestada$',
-                           ConsultaEncuestadaRedirectView.as_view(),
-                           name='encuesta-respondida'),
+    url(r'^encuesta/(?P<pk>\d+)$', views.EncuestaDetailView.as_view(),
+        name='encuesta'),
 
-                       url(r'^respuesta/(?P<pk>\d+)$',
-                           RespuestaDetailView.as_view(),
-                           name='respuesta'),
+    url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/responder$',
+        views.RespuestaRedirectView.as_view(), name='encuesta-responder'),
 
-                       url(r'^respuesta/(?P<respuesta>\d+)/votos/guardar$',
-                           save_votes, name='votos-guardar'),
+    url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/encuestada$',
+        views.ConsultaEncuestadaRedirectView.as_view(),
+        name='encuesta-respondida'),
 
-                       url(r'^voto/(?P<pk>\d+)/editar$',
-                           VotoUpdateView.as_view(),
-                           name='voto-editar'),
+    url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/negada$',
+        views.ConsultaNoEncuestadaRedirectView.as_view(),
+        name='encuesta-no-respondida'),
 
-                       url(r'^queja/(?P<respuesta>\d+)/agregar$',
-                           QuejaCreateView.as_view(),
-                           name='queja-agregar'),
+    url(r'^solucion/(?P<solucion>\d+)/correo$',
+        views.SolucionEmailView.as_view(),
+        name='solucion-email'),
 
-                       url(r'^quejas/$',
-                           QuejaListView.as_view(),
-                           name='quejas'),
+    url(r'^solucion/(?P<pk>\d+)/correo/preview$',
+        views.SolucionEmailPreView.as_view(),
+        name='solucion-email-preview'),
 
-                       url(r'^queja/(?P<pk>\d+)$',
-                           QuejaDetailView.as_view(),
-                           name='queja'),
+    url(r'^solucion/(?P<solucion>\d+)/correo/aseguradora$',
+        views.SolucionAseguradoraEmailView.as_view(),
+        name='solucion-aseguradora-email'),
 
-                       url(r'^queja/(?P<queja>\d+)/solucion/agregar$',
-                           SolucionCreateView.as_view(),
-                           name='solucion-agregar'),
+    url(r'^solucion/(?P<pk>\d+)/correo/aseguradora/preview$',
+        views.SolucionAseguradoraEmailPreView.as_view(),
+        name='solucion-email-aseguradora-preview'),
 
-                       url(r'^notas/(?P<pk>\d+)$',
-                           ArchivoNotasDetailView.as_view(),
-                           name='archivonotas'),
+    url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/rellamar$',
+        views.RellamarCreateView.as_view(),
+        name='encuesta-rellamar'),
 
-                       url(r'^notas/(?P<pk>\d+)/procesar$',
-                           ArchivoNotasProcesarView.as_view(),
-                           name='archivonotas-process'),
+    url(r'^respuesta/(?P<pk>\d+)$', views.RespuestaDetailView.as_view(),
+        name='respuesta'),
 
-                       url(r'^login/periodo',
-                           LoginPeriodoView.as_view(),
-                           name='login-periodo')
+    url(r'^respuesta/(?P<respuesta>\d+)/votos/guardar$',
+        views.save_votes, name='votos-guardar'),
 
-                       )
+    url(r'^voto/(?P<pk>\d+)/editar$', views.VotoUpdateView.as_view(),
+        name='voto-editar'),
+
+    url(r'^queja/(?P<respuesta>\d+)/agregar$', views.QuejaCreateView.as_view(),
+        name='queja-agregar'),
+
+    url(r'^queja/aseguradora/agregar$', views.QuejaAseguradoraCreateView.as_view(),
+        name='queja-aseguradora-agregar'),
+
+    url(r'^quejas/$', views.QuejaListView.as_view(), name='quejas'),
+
+    url(r'^queja/(?P<pk>\d+)$', views.QuejaDetailView.as_view(), name='queja'),
+
+    url(r'^queja/(?P<queja>\d+)/solucion/agregar$',
+        views.SolucionCreateView.as_view(), name='solucion-agregar'),
+
+    url(r'^queja/solucion/(?P<pk>\d+)/aceptar$',
+        views.SolucionAceptarUpdateView.as_view(), name='solucion-aceptar'),
+
+    url(r'^queja/solucion/(?P<pk>\d+)/rechazar$',
+        views.SolucionRechazarUpdateView.as_view(), name='solucion-rechazar'),
+
+    url(r'^queja/(?P<queja>\d+)/solucion/l/agregar$',
+        views.SolucionCreateView.as_view(), name='solucion-lista-agregar'),
+
+    url(r'^notas/(?P<pk>\d+)$', views.ArchivoNotasDetailView.as_view(),
+        name='archivonotas'),
+
+    url(r'^notas/(?P<pk>\d+)/procesar$',
+        views.ArchivoNotasProcesarView.as_view(),
+        name='archivonotas-process'),
+
+    url(r'^login/periodo', views.LoginPeriodoView.as_view(),
+        name='login-periodo')
+
+]

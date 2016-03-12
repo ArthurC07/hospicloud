@@ -14,21 +14,20 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
-from django import forms
-from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Fieldset
-from select2.fields import ModelChoiceField
+from django import forms
+from django.contrib.auth.models import User
 from django.utils import timezone
 
-from spital.models import Admision
-from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Dosis,
-                                Glucosuria, Ingesta, Excreta, NotaEnfermeria,
-                                OrdenMedica, SignoVital, Medicamento,
-                                Devolucion, Sumario, OxigenoTerapia, Honorario)
-from persona.forms import DateTimeWidget, FieldSetModelFormMixin
 from inventory.models import ItemTemplate
+from nightingale.models import Cargo, Evolucion, Glicemia, Insulina, Dosis, \
+    Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital, \
+    Medicamento, Devolucion, Sumario, OxigenoTerapia, Honorario
+from persona.forms import DateTimeWidget, FieldSetModelFormMixin
+from spital.models import Admision
 from users.mixins import HiddenUserForm
 
 
@@ -61,11 +60,11 @@ class CargoForm(AdmisionBaseForm):
 
     class Meta:
         model = Cargo
-        exclude = ('facturada', )
+        exclude = ('facturada',)
 
-    cargo = ModelChoiceField(
-        queryset=ItemTemplate.objects.filter(activo=True).order_by(
-            'descripcion').all(), name="nombre", model="")
+    cargo = forms.ModelChoiceField(
+            queryset=ItemTemplate.objects.filter(activo=True).order_by(
+                    'descripcion').all())
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                  initial=timezone.now)
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
@@ -73,7 +72,7 @@ class CargoForm(AdmisionBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(CargoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
+        self.helper.layout = Fieldset('Agregar Cargo', *self.field_names)
 
 
 class PreCargoForm(AdmisionBaseForm):
@@ -82,12 +81,12 @@ class PreCargoForm(AdmisionBaseForm):
 
     class Meta:
         model = Cargo
-        exclude = ('facturada', )
+        exclude = ('facturada',)
 
     cargo = forms.ModelChoiceField(label="",
                                    queryset=ItemTemplate.objects.filter(
-                                       activo=True).order_by(
-                                       'descripcion').all(),
+                                           activo=True).order_by(
+                                           'descripcion').all(),
                                    widget=forms.HiddenInput(), required=False)
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                  initial=timezone.now)
@@ -96,7 +95,7 @@ class PreCargoForm(AdmisionBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(PreCargoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Cargo', *self.field_names)
+        self.helper.layout = Fieldset('Agregar Cargo', *self.field_names)
 
 
 class SumarioForm(AdmisionBaseForm):
@@ -112,7 +111,7 @@ class SumarioForm(AdmisionBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(SumarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Ingresar Sumario Médico',
+        self.helper.layout = Fieldset('Ingresar Sumario Médico',
                                       *self.field_names)
 
 
@@ -126,7 +125,7 @@ class EvolucionForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super(EvolucionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Evolución', *self.field_names)
+        self.helper.layout = Fieldset('Registrar Evolución', *self.field_names)
 
 
 class GlicemiaForm(BaseForm):
@@ -141,7 +140,7 @@ class GlicemiaForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super(GlicemiaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Glicemia', *self.field_names)
+        self.helper.layout = Fieldset('Registrar Glicemia', *self.field_names)
 
 
 class InsulinaForm(BaseForm):
@@ -156,7 +155,7 @@ class InsulinaForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super(InsulinaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Administración de Insulina',
+        self.helper.layout = Fieldset('Registrar Administración de Insulina',
                                       *self.field_names)
 
 
@@ -172,7 +171,7 @@ class GlucosuriaForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super(GlucosuriaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Administración de Insulina',
+        self.helper.layout = Fieldset('Registrar Administración de Insulina',
                                       *self.field_names)
 
 
@@ -186,7 +185,7 @@ class IngestaForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super(IngestaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Ingesta', *self.field_names)
+        self.helper.layout = Fieldset('Registrar Ingesta', *self.field_names)
 
 
 class ExcretaForm(BaseForm):
@@ -199,7 +198,7 @@ class ExcretaForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super(ExcretaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Excreta', *self.field_names)
+        self.helper.layout = Fieldset('Registrar Excreta', *self.field_names)
 
 
 class NotaEnfermeriaForm(BaseForm):
@@ -216,10 +215,9 @@ class NotaEnfermeriaForm(BaseForm):
                                       widget=forms.HiddenInput(),
                                       required=False)
 
-
     def __init__(self, *args, **kwargs):
         super(NotaEnfermeriaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Nota Enfermeria',
+        self.helper.layout = Fieldset('Agregar Nota Enfermeria',
                                       *self.field_names)
 
 
@@ -233,7 +231,7 @@ class OrdenMedicaForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super(OrdenMedicaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Orden Médica',
+        self.helper.layout = Fieldset('Agregar Orden Médica',
                                       *self.field_names)
 
 
@@ -244,11 +242,11 @@ class SignoVitalForm(BaseForm):
 
     class Meta:
         model = SignoVital
-        exclude = ("presion_arterial_media", )
+        exclude = ("presion_arterial_media",)
 
     def __init__(self, *args, **kwargs):
         super(SignoVitalForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Signos Vitales',
+        self.helper.layout = Fieldset('Registrar Signos Vitales',
                                       *self.field_names)
 
 
@@ -260,9 +258,8 @@ class MedicamentoForm(AdmisionBaseForm):
         exclude = ('proxima_dosis', 'suministrado')
 
     inicio = forms.DateTimeField(widget=DateTimeWidget(), required=False)
-    cargo = ModelChoiceField(name='cargo', model='',
-                             queryset=ItemTemplate.objects.filter(
-                                 activo=True).order_by('descripcion').all())
+    cargo = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
+            activo=True).order_by('descripcion').all())
 
     admision = forms.ModelChoiceField(label="",
                                       queryset=Admision.objects.all(),
@@ -275,7 +272,7 @@ class MedicamentoForm(AdmisionBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(MedicamentoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Recetar Medicamento', *self.field_names)
+        self.helper.layout = Fieldset('Recetar Medicamento', *self.field_names)
 
 
 class DosificarForm(forms.Form):
@@ -289,7 +286,7 @@ class DosificarForm(forms.Form):
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
-        self.helper.layout = Fieldset(u'Dosificar Medicamento',
+        self.helper.layout = Fieldset('Dosificar Medicamento',
                                       *self.field_names)
         self.helper.add_input(Submit('submit', 'Guardar'))
 
@@ -317,7 +314,7 @@ class DosisForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(DosisForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Registrar Dosis de Medicamento',
+        self.helper.layout = Fieldset('Registrar Dosis de Medicamento',
                                       *self.field_names)
 
 
@@ -330,7 +327,7 @@ class DevolucionForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(DevolucionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Efectuar Devolución', *self.field_names)
+        self.helper.layout = Fieldset('Efectuar Devolución', *self.field_names)
 
 
 class MedicamentoUpdateForm(FieldSetModelFormMixin):
@@ -342,7 +339,7 @@ class MedicamentoUpdateForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(MedicamentoUpdateForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Actualizar Posología de Medicamento',
+        self.helper.layout = Fieldset('Actualizar Posología de Medicamento',
                                       *self.field_names)
 
 
@@ -367,13 +364,12 @@ class OxigenoTerapiaForm(FieldSetModelFormMixin):
     fin = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                               initial=timezone.now)
 
-    cargo = ModelChoiceField(name="", model="",
-                             queryset=ItemTemplate.objects.filter(
-                                 activo=True).order_by('descripcion').all())
+    cargo = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
+            activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(OxigenoTerapiaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Oxigeno Terapia', *self.field_names)
+        self.helper.layout = Fieldset('Oxigeno Terapia', *self.field_names)
 
 
 class HonorarioForm(AdmisionBaseForm):
@@ -381,10 +377,9 @@ class HonorarioForm(AdmisionBaseForm):
         model = Honorario
         fields = '__all__'
 
-    item = ModelChoiceField(name="", model="",
-                            queryset=ItemTemplate.objects.filter(
-                                activo=True).order_by('descripcion').all())
+    item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
+            activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(HonorarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Honorarios', *self.field_names)
+        self.helper.layout = Fieldset('Agregar Honorarios', *self.field_names)

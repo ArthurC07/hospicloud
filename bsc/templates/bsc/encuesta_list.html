@@ -1,7 +1,22 @@
 {% extends 'base.html' %}
-{% load staticfiles %}{% load l10n %}{% load i18n %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}{% load crispy_forms_tags %}
+{% block header %}
+    <style type="text/css">
+        .bar-legend li {
+            list-style: none;
+        }
+        .bar-legend li span {
+            display: block;
+            width: 14px;
+            height: 14px;
+            border-radius: 7px;
+            float: left;
+            margin-top: 4px;
+            margin-right: 8px;
+        }
+    </style>
+{% endblock %}
 {% block content %}
-    {% load crispy_forms_tags %}
     <div class="row">
         <div class="main-content col-md-12">
             <section class="page-header">
@@ -11,24 +26,78 @@
     </div>
     <div class="row">
         <section class="col-md-9 main-content">
-            <ul>
-                {% for encuesta in object_list.all %}
-                    <li>
-                        <a href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a>
-                    </li>
-                    {% empty %}
-                    <li>No hay Encuestas Disponibles</li>
-                {% endfor %}
-            </ul>
-        </section>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-stacked nav-tabs">
-                        <li><a href="{% url 'quejas' %}">{% trans 'Quejas' %}</a></li>
-                    </ul>
-                </nav>
+            <table class="table">
+                <tr>
+                    <td>&nbsp;</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.nombre }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Atenciones' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.consultas }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Encuestas Realizadas' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.encuestada }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Contactabilidad' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.contactabilidad }}%</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Porcentaje de Satisfacci&oacute;n' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.satisfaccion|floatformat }}%</td>
+                    {% endfor %}
+                </tr>
+            </table>
+            <div class="row">
+                <canvas id="chart" class="col-md-12 col-xs-12 graph"
+                        height="100"></canvas>
+                <div id="legend" class="graph col-md-12 col-xs-12"></div>
             </div>
-        </aside>
+        </section>
+        {% include 'bsc/snippets/encuesta_menu.html' %}
     </div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var canvas = document.getElementById("chart");
+            var ctx = canvas.getContext("2d");
+            var chart = new Chart(ctx);
+            data = {
+                labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
+                datasets: [
+                    {
+                        label: "{% trans 'Contactabilidad' %}",
+                        fillColor: "rgba(220,220,220,0.5)",
+                        strokeColor: "rgba(220,220,220,0.8)",
+                        highlightFill: "rgba(220,220,220,0.75)",
+                        highlightStroke: "rgba(220,220,220,1)",
+                        data: [0, {% for mes in meses %} {{ mes.contactabilidad }}, {% endfor %} 0]
+                    },
+                    {
+                        label: "{% trans 'Satisfaccion' %}",
+                        fillColor: "rgba(151,187,205,0.5)",
+                        strokeColor: "rgba(151,187,205,0.8)",
+                        highlightFill: "rgba(151,187,205,0.75)",
+                        highlightStroke: "rgba(151,187,205,1)",
+                        data: [0, {% for mes in meses %} {{ mes.satisfaccion|floatformat }}, {% endfor %} 0]
+                    }
+                ]
+            };
+            var myLineChart = new Chart(ctx).Bar(data);
+            document.getElementById('legend').innerHTML = myLineChart.generateLegend();
+        });
+    </script>
 {% endblock %}

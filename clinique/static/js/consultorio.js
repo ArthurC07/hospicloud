@@ -7,7 +7,7 @@ function Consultorio(url, consultorio)
 Consultorio.prototype.search_person = function(query, target)
 {
   url = this.url;
-  consultorio = this.consultorio
+  consultorio = this.consultorio;
   $.get(this.url + 'api/mobile/persona/search/?&format=json&q='+query, function(data)
   {
     $.each(data.objects, function(i, persona)
@@ -23,4 +23,4 @@ Consultorio.prototype.search_person = function(query, target)
       target.append(article);
     })
   });
-}
+};

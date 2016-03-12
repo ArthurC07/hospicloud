@@ -14,13 +14,12 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from django.contrib import admin
-from nightingale.models import (SignoVital, Evolucion, Cargo, OrdenMedica,
-                                Ingesta, Excreta, Glucosuria, Glicemia,
-                                Insulina, Sumario, Medicamento,
-                                FrecuenciaLectura, NotaEnfermeria, Honorario,
-                                OxigenoTerapia)
+from nightingale.models import SignoVital, Evolucion, Cargo, OrdenMedica, \
+    Ingesta, Excreta, Glucosuria, Glicemia, Insulina, Sumario, Medicamento, \
+    FrecuenciaLectura, NotaEnfermeria, Honorario, OxigenoTerapia
 
 admin.site.register(SignoVital)
 admin.site.register(Evolucion)

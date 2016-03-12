@@ -13,38 +13,70 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
+import calendar
+from datetime import date, datetime
 from decimal import Decimal
+
+from crispy_forms.layout import Submit
+from dateutil.relativedelta import relativedelta
+from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db.models import Sum
-from django.utils.translation import ugettext_lazy as _
+from django.db.models import Sum, Max
 from django.db.models.functions import Coalesce
+from django.forms.widgets import HiddenInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.utils.http import urlencode
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, CreateView, ListView, DeleteView, \
     UpdateView, FormView, RedirectView, View, TemplateView
-from django.views.generic.base import TemplateResponseMixin, ContextMixin
+from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
+
 from budget.forms import CuentaForm, GastoForm, GastoPendienteForm, \
     GastoEjecutarFrom, MontoForm, GastoPeriodoCuentaForm, \
-    GastoPresupuestoPeriodoCuentaForm
-from budget.models import Presupuesto, Cuenta, Gasto, Income
-from invoice.models import Venta
-from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
+    GastoPresupuestoPeriodoCuentaForm, PresupuestoMesForm
+from budget.models import Presupuesto, Cuenta, Gasto, Income, PresupuestoMes, \
+    Fuente
 from hospinet.utils import get_current_month_range, get_previous_month_range
+from hospinet.utils.date import get_month_end, make_end_day, make_month_range, \
+    previous_month_range
+from hospinet.utils.forms import YearForm, MonthYearForm, PeriodoForm
+from income.models import Deposito, Cheque
+from invoice.models import Venta, Pago
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
-class PresupuestoDetailView(DetailView, LoginRequiredMixin):
+class PresupuestoDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows a :class:`Presupuesto` detailed data view, describing the accounting
+    break up from every expense category.
+    """
     model = Presupuesto
     context_object_name = 'presupuesto'
+    queryset = Presupuesto.objects.select_related(
+        'ciudad'
+    ).prefetch_related(
+        'cuenta_set',
+    )
 
 
-class PresupuestoListView(ListView, LoginRequiredMixin):
+class PresupuestoListView(LoginRequiredMixin, ListView):
+    """
+    Allows viewing data related to all :class:`Presupuesto`s in the
+    :class:`Company`.
+    """
     model = Presupuesto
     context_object_name = 'presupuestos'
-
-    def get_queryset(self):
-        return Presupuesto.objects.filter(inversion=False).all()
+    queryset = Presupuesto.objects.prefetch_related(
+        'cuenta_set',
+    ).select_related(
+        'ciudad'
+    ).filter(inversion=False)
 
     def get_context_data(self, **kwargs):
         context = super(PresupuestoListView, self).get_context_data(**kwargs)
@@ -52,15 +84,21 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
         fin, inicio = get_current_month_range()
         fin_prev, inicio_prev = get_previous_month_range()
 
-        inversiones = Presupuesto.objects.filter(inversion=True)
+        inversiones = Presupuesto.objects.select_related(
+            'ciudad'
+        ).filter(inversion=True)
 
-        gastos = Gasto.objects.filter(
+        gastos = Gasto.objects.select_related(
+            'cuenta',
+            'cuenta__presupuesto',
+            'cuenta__presupuesto__ciudad',
+        ).filter(
             fecha_de_pago__range=(inicio, fin),
             ejecutado=True,
             cuenta__presupuesto__inversion=False
         ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
 
-        presupuesto = Cuenta.objects.filter(
+        presupuesto = Cuenta.objects.select_related('presupuesto').filter(
             presupuesto__activo=True,
             presupuesto__inversion=False
         ).aggregate(total=Coalesce(Sum('limite'), Decimal()))['total']
@@ -95,7 +133,11 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
-        ingresos = ventas.values('recibo__ciudad__nombre').annotate(
+        ingresos = ventas.select_related(
+            'recibo__ciudad'
+        ).values(
+            'recibo__ciudad__nombre'
+        ).annotate(
             total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
 
@@ -131,11 +173,100 @@ class PresupuestoListView(ListView, LoginRequiredMixin):
             'gasto-presupuesto-periodo'
         )
 
+        context['budget-month'] = PresupuestoMesForm()
+        context['budget-month'].set_action('monthly-budget-add')
+
+        context['budget-month-year'] = MonthYearForm()
+        context['budget-month-year'].set_action('budget-list')
+        context['budget-month-year'].set_legend(
+            _('Revisar Presupuesto del Mes')
+        )
+        context['budget-month-year'].helper.form_method = 'get'
+        context['budget-month-year'].helper.add_input(
+            Submit('submit', _('Mostrar')))
+
+        context['balance-month-year'] = MonthYearForm()
+        context['balance-month-year'].set_action('budget-balance-monthly')
+        context['balance-month-year'].set_legend(
+            _('Mostrar Balance del Mes')
+        )
+        context['balance-month-year'].helper.form_method = 'get'
+        context['balance-month-year'].helper.add_input(
+            Submit('submit', _('Mostrar')))
+
+        year = timezone.now().year
+
+        context['budget_forms'] = []
+        context['year'] = year
+
+        context['cuentas_por_cobrar'] = Pago.objects.cuentas_por_cobrar().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['cuentas_por_pagar'] = Gasto.objects.total_pendiente()
+
+        now = timezone.now()
+
+        meses = []
+
+        for n in range(1, 13):
+            form = MonthYearForm(initial={
+                'year': year,
+                'mes': n,
+            })
+            form.helper.attrs = {'target': '_blank'}
+            form.set_action('budget-balance-monthly')
+            form.fields['year'].widget = HiddenInput()
+            form.fields['mes'].widget = HiddenInput()
+            form.helper.form_method = 'get'
+            form.helper.add_input(Submit(
+                'submit',
+                _('{0}'.format(calendar.month_name[n])),
+                css_class='btn-block'
+            ))
+
+            form.helper.form_class = ''
+            form.helper.label_class = ''
+            form.helper.field_class = ''
+            context['budget_forms'].append(form)
+
+            start = now.replace(month=n)
+            inicio, fin = make_month_range(start)
+            previous_start, previous_end = previous_month_range(inicio)
+
+            gastos = Gasto.objects.total_ejecutado_periodo(inicio, fin)
+            ingresos = Deposito.objects.total_periodo(inicio, fin)
+
+            old_gastos = Gasto.objects.total_ejecutado_periodo(previous_start,
+                                                               previous_end)
+
+            old_ingresos = Deposito.objects.total_periodo(previous_start,
+                                                          previous_end)
+
+            excedente = old_ingresos - old_gastos
+
+            meses.append(
+                {
+                    'inicio': inicio,
+                    'fin': fin,
+                    'nombre': calendar.month_name[n],
+                    'gastos': gastos,
+                    'ingresos': ingresos,
+                    'excedente': excedente,
+                    'total': ingresos - gastos,
+                    'total_anterior': ingresos - gastos + excedente,
+                }
+            )
+
+        context['meses'] = meses
+
         return context
 
 
 class PresupuestoMixin(ContextMixin, View):
-    """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
+    """
+    Permite obtener un :class:`Cotizacion` desde los argumentos en una url
+    """
 
     def dispatch(self, *args, **kwargs):
         self.presupuesto = get_object_or_404(Presupuesto,
@@ -151,8 +282,10 @@ class PresupuestoMixin(ContextMixin, View):
 
 
 class PresupuestoFormMixin(PresupuestoMixin, FormMixin):
-    """Permite inicializar el :class:`Presupuesto` que se utilizará en un
-    formulario"""
+    """
+    Permite inicializar el :class:`Presupuesto` que se utilizará en un
+    formulario
+    """
 
     def get_initial(self):
         initial = super(PresupuestoFormMixin, self).get_initial()
@@ -161,17 +294,23 @@ class PresupuestoFormMixin(PresupuestoMixin, FormMixin):
         return initial
 
 
-class CuentaDetailView(DetailView, LoginRequiredMixin):
+class CuentaDetailView(LoginRequiredMixin, DetailView):
+    """
+    Allows the user to review the data of a :class:`Cuenta`
+    """
     model = Cuenta
     context_object_name = 'cuenta'
 
 
-class CuentaCreateView(PresupuestoFormMixin, CreateView, LoginRequiredMixin):
+class CuentaCreateView(PresupuestoFormMixin, LoginRequiredMixin, CreateView):
+    """
+    Allows the user to create :class:`Cuenta` objects
+    """
     model = Cuenta
     form_class = CuentaForm
 
 
-class CuentaMixin(TemplateResponseMixin):
+class CuentaMixin(ContextMixin, View):
     """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -180,15 +319,15 @@ class CuentaMixin(TemplateResponseMixin):
 
     def get_context_data(self, **kwargs):
         context = super(CuentaMixin, self).get_context_data(**kwargs)
-
         context['cuenta'] = self.cuenta
-
         return context
 
 
 class CuentaFormMixin(CuentaMixin, FormMixin):
-    """Permite inicializar el :class:`Presupuesto` que se utilizará en un
-    formulario"""
+    """
+    Permite inicializar el :class:`Presupuesto` que se utilizará en un
+    formulario
+    """
 
     def get_initial(self):
         initial = super(CuentaFormMixin, self).get_initial()
@@ -199,6 +338,9 @@ class CuentaFormMixin(CuentaMixin, FormMixin):
 
 class GastoCreateView(CuentaFormMixin, CreateView, CurrentUserFormMixin,
                       LoginRequiredMixin):
+    """
+    Allows the user to create a :class:`Gasto`
+    """
     model = Gasto
     form_class = GastoForm
 
@@ -215,8 +357,10 @@ class GastoPendienteCreateView(CuentaFormMixin, CreateView,
     form_class = GastoPendienteForm
 
 
-class GastoDeleteView(DeleteView, LoginRequiredMixin):
-    """Permite eliminar un :class:`Gasto`"""
+class GastoDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Permite eliminar un :class:`Gasto`
+    """
     model = Gasto
 
     def get_object(self, queryset=None):
@@ -228,7 +372,10 @@ class GastoDeleteView(DeleteView, LoginRequiredMixin):
         return self.cuenta.get_absolute_url()
 
 
-class GastoEjecutarView(UpdateView, LoginRequiredMixin):
+class GastoEjecutarView(LoginRequiredMixin, UpdateView):
+    """
+    Allows a :class:`Gasto` to be marked as completed
+    """
     model = Gasto
     form_class = GastoEjecutarFrom
 
@@ -239,7 +386,7 @@ class GastoEjecutarView(UpdateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class GastoScheduleView(RedirectView, LoginRequiredMixin):
+class GastoScheduleView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -266,7 +413,7 @@ class GastoMixin(ContextMixin, View):
         return context
 
 
-class GastoParcialFormView(GastoMixin, FormView, LoginRequiredMixin):
+class GastoParcialFormView(GastoMixin, LoginRequiredMixin, FormView):
     """Permite efectuar un pago parcial a un :class:`Gasto`
     """
     form_class = MontoForm
@@ -278,7 +425,7 @@ class GastoParcialFormView(GastoMixin, FormView, LoginRequiredMixin):
         return HttpResponseRedirect(self.gasto.get_absolute_url())
 
 
-class GastoCuentaPeriodoView(FormMixin, TemplateView):
+class GastoCuentaPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
     """
     Obtiene los :class:`Gastos` de un periodo y cuenta determinados
     """
@@ -287,8 +434,10 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
     template_name = 'budget/gasto_list.html'
 
     def dispatch(self, request, *args, **kwargs):
-        """Efectua la consulta de los :class:`Gastos` de acuerdo a los
-        datos ingresados en el formulario"""
+        """
+        Efectua la consulta de los :class:`Gastos` de acuerdo a los
+        datos ingresados en el formulario
+        """
 
         self.form = self.get_form_class()(request.GET, prefix=self.prefix)
 
@@ -300,11 +449,11 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
                 cuenta=self.cuenta,
                 fecha_de_pago__range=(self.inicio, self.fin),
                 ejecutado=True
-            ).all()
+            ).select_related('proveedor', 'usuario').all()
         else:
             messages.info(
                 self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -326,7 +475,39 @@ class GastoCuentaPeriodoView(FormMixin, TemplateView):
         return context
 
 
-class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
+class GastoPeriodoListView(LoginRequiredMixin, ListView):
+    """
+    Builds a list of :class:`Gasto`s that have been registered during
+    """
+    model = Gasto
+    context_object_name = 'gastos'
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Gasto` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = PeriodoForm(self.request.GET)
+        if form.is_valid():
+            return Gasto.objects.filter(
+                fecha_de_pago__range=(
+                    form.cleaned_data['inicio'],
+                    form.cleaned_data['fin']
+                ),
+                ejecutado=True
+            ).select_related('proveedor', 'usuario')
+        return Gasto.objects.select_related('proveedor', 'usuario').all()
+
+    def get_context_data(self, **kwargs):
+        context = super(GastoPeriodoListView, self).get_context_data(**kwargs)
+        context['total'] = self.get_queryset().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        return context
+
+
+class GastoPresupuestoPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
     """
     Obtiene los :class:`Gastos` de un periodo y cuenta determinados
     """
@@ -352,7 +533,7 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
         else:
             messages.info(
                 self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse('invoice-index'))
 
@@ -360,7 +541,11 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
                                                                  **kwargs)
 
     def get_context_data(self, **kwargs):
-
+        """
+        Allows adding the calculated data into the template
+        :param kwargs: 
+        :return: The context that will be rendered in the template
+        """
         context = super(GastoPresupuestoPeriodoView, self).get_context_data(
             **kwargs)
 
@@ -371,5 +556,336 @@ class GastoPresupuestoPeriodoView(FormMixin, TemplateView):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
         context['motivo'] = self.presupuesto
+
+        return context
+
+
+class PresupuestoAnualView(TemplateView, LoginRequiredMixin):
+    """
+    Shows the data related to the :class:`PresupuestoMes`
+    """
+    template_name = 'budget/anual.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PresupuestoAnualView, self).get_context_data(**kwargs)
+        form = YearForm(self.request.GET)
+
+        if form.is_valid():
+            year = form.cleaned_data['year']
+            context['year'] = year
+            context['presupuesto'] = PresupuestoMes.objects.filter(
+                anio=year
+            ).values(
+                'mes', 'anio',
+            ).annotate(
+                total=Coalesce(Sum('monto'), Decimal())
+            ).order_by()
+            context['total'] = PresupuestoMes.objects.filter(
+                anio=year
+            ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
+            context['mayor'] = PresupuestoMes.objects.filter(
+                anio=year
+            ).aggregate(Max('monto'))
+
+        return context
+
+
+class PresupuestoMesListView(LoginRequiredMixin, ListView):
+    """
+    Shows a list of :class:`PresupuestoMes`
+    """
+    model = PresupuestoMes
+
+    def get_queryset(self):
+        """
+        Filters the :class:`PresupuestoMes` according to the
+        :class:`MonthYearForm`
+        :return: the filtered :class:`QuerySet`
+        """
+        form = MonthYearForm(self.request.GET)
+        if form.is_valid():
+            self.year = form.cleaned_data['year']
+            self.mes = form.cleaned_data['mes']
+            return PresupuestoMes.objects.filter(
+                anio=self.year,
+                mes=self.mes,
+            )
+        return PresupuestoMes.objects.all()
+
+    def get_context_data(self, **kwargs):
+        """
+        Builds the forms that will correct the :class:`PresupuestoMes` data
+        :param kwargs:
+        :return:
+        """
+        context = super(PresupuestoMesListView, self).get_context_data(**kwargs)
+
+        context['forms'] = []
+        context['fecha'] = date(self.year, self.mes, 1)
+        for presupuesto in self.object_list.all():
+            form = PresupuestoMesForm(instance=presupuesto)
+            form.fields['completar_anio'].widget = forms.HiddenInput()
+            form.fields['anio'].widget = forms.HiddenInput()
+            form.fields['mes'].widget = forms.HiddenInput()
+            context['forms'].append(form)
+
+        return context
+
+
+class PresupuestoMesPresupuestoListView(LoginRequiredMixin, PresupuestoMixin,
+                                        ListView):
+    """
+    Filters :class:`PresupuestoMes` using a :class:`Presupuesto`, a month and a
+    year
+    """
+    model = PresupuestoMes
+
+    def dispatch(self, *args, **kwargs):
+        self.mes = int(kwargs['month'])
+        self.year = int(kwargs['year'])
+        return super(PresupuestoMesPresupuestoListView, self).dispatch(*args,
+                                                                       **kwargs)
+
+    def get_queryset(self):
+        return PresupuestoMes.objects.filter(
+            cuenta__presupuesto=self.presupuesto,
+            mes=self.mes,
+            anio=self.year
+        ).select_related(
+            'cuenta',
+            'cuenta__presupuesto',
+            'cuenta__presupuesto__ciudad',
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super(PresupuestoMesPresupuestoListView,
+                        self).get_context_data(**kwargs)
+        fecha = timezone.now()
+        context['fecha'] = fecha.replace(self.year, self.mes)
+        context['total'] = self.get_queryset().aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        return context
+
+
+class PresupuestoMesDetailView(LoginRequiredMixin, DetailView):
+    """
+    Allows displaying the data for :class:`PresupuestoMes` instances
+    """
+    model = PresupuestoMes
+
+
+class PresupuestoMesCreateView(LoginRequiredMixin, CreateView):
+    """
+    Creates :class:`PresupuestoMes` instances based on data entered into a
+    :class:`PresupuestoMesForm`
+    """
+    model = PresupuestoMes
+    form_class = PresupuestoMesForm
+
+    def get_success_url(self):
+        """
+        :return: URL to create new :class:`PresupuestoMes`
+        """
+        return reverse('monthly-budget-add')
+
+
+class PresupuestoMesUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Updates the :class:`PresupuestoMes` instances
+    """
+    model = PresupuestoMes
+    form_class = PresupuestoMesForm
+
+
+class BalanceView(TemplateView, LoginRequiredMixin):
+    """
+    Builds a view that resumes income and expenses for a given month
+    """
+    template_name = 'budget/balance_month.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        form = MonthYearForm(request.GET)
+
+        if form.is_valid():
+            self.year = form.cleaned_data['year']
+            self.mes = form.cleaned_data['mes']
+        else:
+            messages.info(
+                self.request,
+                _('Los Datos Ingresados en el formulario no son válidos')
+            )
+            return HttpResponseRedirect(reverse('budget-index'))
+
+        return super(BalanceView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+        Builds the forms that will correct the :class:`PresupuestoMes` data
+        :param kwargs: The original dictionary with data
+        :return: the final dict that will be used in the view
+        """
+        context = super(BalanceView, self).get_context_data(**kwargs)
+
+        context['forms'] = []
+        inicio = timezone.make_aware(datetime(self.year, self.mes, 1))
+        fin = make_end_day(get_month_end(inicio))
+        previous_end, previous_start = previous_month_range(inicio)
+
+        context['fecha'] = inicio
+
+        cuentas = Fuente.objects.filter(caja=False)
+
+        context['cuentas'] = cuentas
+        context['saldo_cuentas'] = cuentas.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        depositos = Deposito.objects.periodo(inicio, fin)
+
+        total_depositado = depositos.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        previous_deposits = Deposito.objects.periodo(previous_start,
+                                                     previous_end)
+
+        old_deposits_total = previous_deposits.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['total_depositado'] = total_depositado
+
+        context['descripcion_depositos'] = depositos.values(
+            'tipo__nombre', 'tipo__id'
+        ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
+
+        gastos = Gasto.objects.ejecutado_periodo(inicio, fin)
+
+        previous_expenses = Gasto.objects.ejecutado_periodo(
+            previous_start,
+            previous_end
+        )
+
+        old_expenses_total = previous_expenses.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['previous_balance'] = old_deposits_total - old_expenses_total
+
+        total_gastos = gastos.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['gastos'] = gastos.order_by('-monto')
+
+        context['total_gastos'] = total_gastos
+
+        context['balance'] = total_depositado - total_gastos
+
+        cheques = Cheque.objects.filter(
+            fecha_de_entrega__range=(inicio, fin)
+        )
+
+        context['descripcion_cheques'] = cheques.values(
+            'tipo__nombre'
+        ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
+
+        context['total_cheques'] = cheques.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        presupuesto = PresupuestoMes.objects.filter(
+            anio=self.year,
+            mes=self.mes,
+        )
+
+        context['presupuestos'] = presupuesto
+
+        context['presupuestado'] = presupuesto.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['presupuestado_ciudad'] = presupuesto.values(
+            'cuenta__presupuesto__ciudad__nombre',
+            'cuenta__presupuesto_id',
+        ).annotate(
+            total=Coalesce(Sum('monto'), Decimal())
+        ).order_by('-total')
+
+        context['periodo_string'] = urlencode(
+            {
+                'inicio': inicio.strftime('%d/%m/%Y %H:%M'),
+                'fin': fin.strftime('%d/%m/%Y %H:%M'),
+                'submit': 'Mostrar'
+            }
+        )
+
+        context['previous_string'] = urlencode(
+            {
+                'year': previous_start.year,
+                'mes': previous_start.month,
+                'submit': calendar.month_name[previous_start.month]
+            }
+        )
+
+        ventas = Venta.objects.select_related(
+            'recibo',
+            'item'
+        ).filter(
+            recibo__created__range=(inicio, fin)
+        )
+
+        context['total_ventas'] = ventas.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        pagos = Pago.objects.select_related(
+            'tipo',
+        ).filter(
+            recibo__created__range=(inicio, fin)
+        )
+
+        context['pagos'] = pagos.values(
+            'tipo__nombre'
+        ).annotate(
+            total=Coalesce(Sum('monto'), Decimal())
+        ).order_by()
+
+        pagos = Pago.objects.cuentas_por_cobrar().filter(
+            recibo__created__lte=fin,
+        )
+
+        context['cuentas_por_cobrar'] = pagos.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['credito'] = pagos.filter(recibo__credito=True).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['reembolso'] = pagos.filter(recibo__credito=False).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['facturacion__diaria'] = Pago.objects.diarias().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['facturacion__mensual'] = Pago.objects.mensual().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['facturacion__reembolso'] = Pago.objects.reembolso().filter(
+            recibo__created__range=(inicio, fin)
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
 
         return context

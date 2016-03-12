@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
@@ -14,14 +14,17 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="page-header">
-                        <h2>Total
-                            Presupuestado: {{ presupuesto.total_presupuestado }}</h2>
+                        <h2>{% trans 'Total Presupuestado:' %}
+                            {{ presupuesto.total_presupuestado }}
+                        </h2>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="page-header">
-                        <h2>Total
-                            Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h2>
+                        <h2>
+                            {% trans 'Total Ejecutado:' %}
+                            {{ presupuesto.total_gastos_mes_actual }}
+                        </h2>
                     </div>
                 </div>
             </div>
@@ -49,10 +52,10 @@
                                 <strong>{{ cuenta }}</strong>
                             </div>
                             <div class="col-md-4">
-                                Presupuestado: {{ cuenta.limite }}
+                                {% trans 'Presupuestado:' %} {{ cuenta.limite }}
                             </div>
                             <div class="col-md-4">
-                                Ejecutado: {{ cuenta.total_gastos_mes_actual }}
+                                {% trans 'Ejecutado:' %} {{ cuenta.total_gastos_mes_actual }}
                             </div>
                         </div>
                         <div class="row">

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 col-xs-12 main-header page-header">
+            <h1>
+                {% trans 'Cheques' %}
+                <small>
+                    {{ total }}
+                </small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'N&uacute;mero' %}</th>
+                    <th>{% trans 'Banco Emisor' %}</th>
+                    <th>{% trans 'Monto' %}</th>
+                    <th>{% trans 'Fecha de Entrega' %}</th>
+                    <th>{% trans 'Recibos Pagados' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                    <th class="no-print">{% trans 'Acciones' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cheque in cheques %}
+                    <tr>
+                        <td>{{ cheque.numero_de_cheque }}</td>
+                        <td>{{ cheque.banco_de_emision }}</td>
+                        <td>{{ cheque.monto }}</td>
+                        <td>{{ cheque.fecha_de_entrega }}</td>
+                        <td>
+                            <table class="table table-striped">
+                                {% for detalle in cheque.detallepago_set.all %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ detalle.pago.recibo.get_absolute_url }}">
+                                                {{ detalle.pago.recibo.numero }}
+                                            </a>
+                                            - {{ detalle.pago.aseguradora }}
+                                            - {{ detalle.pago.monto }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                        <td>{{ cheque.usuario }}</td>
+                        <td class="no-print">
+                            <div class="btn-group">
+                                <a class="btn btn-success"
+                                   href="{{ cheque.get_absolute_url }}">{% trans 'Ver' %}</a>
+                                <button type="button"
+                                        class="btn btn-success dropdown-toggle"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">{% trans 'Toggle Dropdown' %}</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{% url 'deposito-create' %}">
+                                            {% trans 'Depositar' %}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

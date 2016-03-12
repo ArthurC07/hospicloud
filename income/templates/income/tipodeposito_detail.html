@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 col-xs-12 main-header page-header">
+            <h1>
+                {% trans 'Depositos de' %} {{ object }}
+                <small>
+                    {{ total }}
+                </small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Cuenta de Dep&oacute;sito' %}</th>
+                    <th>{% trans 'Monto' %}</th>
+                    <th>{% trans 'Fecha de Dep&oacute;sito' %}</th>
+                    <th>{% trans 'Tipo de Dep&oacute;sito' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                    <th>{% trans 'Acciones' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for deposito in depositos %}
+                    <tr>
+                        <td>{{ deposito.cuenta }}</td>
+                        <td>{{ deposito.monto }}</td>
+                        <td>{{ deposito.fecha_de_deposito }}</td>
+                        <td>{{ deposito.tipo }}</td>
+                        <td>{{ deposito.usuario }}</td>
+                        <td><a class="btn btn-primary" href="{{ deposito.get_absolute_url }}">Ver</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

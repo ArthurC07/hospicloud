@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from django.apps import AppConfig
 from django.contrib.auth import get_user_model
@@ -21,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class CliniqueConfig(AppConfig):
     name = 'clinique'
-    verbose_name = _(u'Clínica y Consultorios')
+    verbose_name = _('Clínica y Consultorios')
 
     def ready(self):
 

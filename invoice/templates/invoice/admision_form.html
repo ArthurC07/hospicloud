@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block content %}
-    {% load crispy_forms_tags %}
     <div class="row">
         <section class="col-md-9">
             <div class="main-content col-md-12">‏
@@ -11,10 +11,14 @@
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
                         <li>
-                            <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                            <a href="{% url 'invoice-index' %}">
+                                {% trans 'Regresar a Caja' %}
+                            </a>
                         </li>
                         <li>
-                            <a href="{% url 'nightingale-view-id' admision.id %}">Regresar a Admision</a>
+                            <a href="{% url 'nightingale-view-id' admision.id %}">
+                                {% trans 'Regresar a Admision' %}
+                            </a>
                         </li>
                     </ul>
                 </nav>

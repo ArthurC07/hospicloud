@@ -14,26 +14,30 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from collections import defaultdict
-from decimal import Decimal
 from datetime import timedelta
+from decimal import Decimal
+
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import F, Sum, Min
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
-from django.db.models import F, Sum, Min
+
 from clinique.models import Consulta
 from contracts.models import Aseguradora
+from inventory.models import ItemTemplate, TipoVenta, Proveedor
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
-from inventory.models import ItemTemplate, TipoVenta, Proveedor
 from spital.models import Deposito
 from users.models import Ciudad
 
@@ -58,6 +62,7 @@ class TipoPago(TimeStampedModel):
     color = ColorField(default='')
     solo_asegurados = models.BooleanField(default=False)
     reembolso = models.BooleanField(default=False)
+    mensual = models.BooleanField(default=False)
     reportable = models.BooleanField(default=True)
     orden = models.IntegerField(default=0)
 
@@ -104,6 +109,7 @@ class Recibo(TimeStampedModel):
     cerrado = models.BooleanField(default=False)
     nulo = models.BooleanField(default=False)
     emision = models.DateTimeField(default=timezone.now)
+    month_offset = models.IntegerField(default=0)
 
     def get_absolute_url(self):
 
@@ -117,7 +123,7 @@ class Recibo(TimeStampedModel):
 
     def facturacion(self):
 
-        return self.created - relativedelta(months=1)
+        return self.created - relativedelta(months=1 + self.month_offset)
 
     def total(self):
 
@@ -130,6 +136,12 @@ class Recibo(TimeStampedModel):
 
     @property
     def numero(self):
+        """
+        Crea el número segun los requerimientos de la DEI, permitiendo de este
+        modo tener múltiples lugares que emitan recibos y que tengan diferentes
+        prefijos para sus recibos.
+        :return:
+        """
         ciudad = self.ciudad
         if ciudad is None:
             if self.cajero is None or self.cajero.profile is None or \
@@ -138,7 +150,7 @@ class Recibo(TimeStampedModel):
 
             ciudad = self.cajero.profile.ciudad
 
-        return u'{0}-{1:08d}'.format(ciudad.prefijo_recibo, self.correlativo)
+        return '{0}-{1:08d}'.format(ciudad.prefijo_recibo, self.correlativo)
 
     def other_currency(self):
 
@@ -171,9 +183,6 @@ class Recibo(TimeStampedModel):
 
         self.nulo = True
 
-        [venta.delete() for venta in self.ventas.all()]
-        [pago.delete() for pago in self.pagos.all()]
-
         self.save()
 
     def cerrar(self):
@@ -189,7 +198,7 @@ class Recibo(TimeStampedModel):
         """Crea una representación en texto del :class:`Recibo`"""
 
         if self.nulo:
-            return _(u'{0} **NULO**').format(self.cliente.nombre_completo())
+            return _('{0} **NULO**').format(self.cliente.nombre_completo())
 
         return self.cliente.nombre_completo()
 
@@ -229,7 +238,8 @@ class Recibo(TimeStampedModel):
     def conceptos(self):
 
         return ', '.join(
-            v.item.descripcion for v in Venta.objects.filter(recibo=self).all())
+            v.item.descripcion for v in
+            Venta.objects.filter(recibo=self).all())
 
     def fractional(self):
         """Obtiene la parte decimal del total del :class:`Recibo`"""
@@ -243,7 +253,7 @@ class Recibo(TimeStampedModel):
 
     def pagado(self):
 
-        return Pago.objects.filter(recibo=self).aggregate(
+        return self.pagos.filter(recibo=self).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
@@ -280,6 +290,12 @@ class Recibo(TimeStampedModel):
             self.ciudad = self.cajero.profile.ciudad
 
     def asignar_correlativo(self):
+        """
+        Crea el correlativo del recibo correspondiente a la :class:`Ciudad` que
+        emite el recibo, esto sirve para crear el número según los
+        requerimientos de la DEI
+        :return:
+        """
 
         ciudad = self.cajero.profile.ciudad
         ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
@@ -294,7 +310,7 @@ class Venta(TimeStampedModel):
     realizar los cobros asociados"""
 
     cantidad = models.IntegerField()
-    descripcion = models.TextField(blank=True, default='')
+    descripcion = models.TextField(blank=True)
     precio = models.DecimalField(blank=True, null=True, max_digits=11,
                                  decimal_places=2)
     impuesto = models.DecimalField(blank=True, default=0, max_digits=11,
@@ -315,7 +331,7 @@ class Venta(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u"{0} a {1}").format(self.item.descripcion, self.recibo.id)
+        return _("{0} a {1}").format(self.item.descripcion, self.recibo.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -346,29 +362,63 @@ class Venta(TimeStampedModel):
 
     def save(self, *args, **kwargs):
 
-        if self.precio is None:
-            self.precio = self.item.precio_de_venta
-
-        if not self.recibo.tipo_de_venta or not self.descontable:
-            self.discount = Decimal(0)
-
-        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
-        self.discount = (self.precio * disminucion).quantize(dot01)
-
-        self.impuesto = self.item.impuestos
-        self.monto = self.precio * self.cantidad
-
-        self.tax = Decimal(
-            (
-                self.precio * self.cantidad - self.discount) *
-            self.impuesto).quantize(
-            dot01)
-
-        self.total = (
-            self.tax + self.precio * self.cantidad - self.discount).quantize(
-            dot01)
+        self.recalculate()
 
         super(Venta, self).save(*args, **kwargs)
+
+    def recalculate(self):
+        """
+        Calculates values for the different monetary values implicit in each
+        sale.
+        :return:
+        """
+        if self.precio is None:
+            self.precio = self.item.precio_de_venta
+        if not self.recibo.tipo_de_venta or not self.descontable:
+            self.discount = Decimal(0)
+        disminucion = self.recibo.tipo_de_venta.disminucion * self.cantidad
+        self.discount = (self.precio * disminucion).quantize(dot01)
+        self.impuesto = self.item.impuestos
+        self.monto = self.precio * self.cantidad
+        self.tax = Decimal((self.precio * self.cantidad - self.discount) *
+                           self.impuesto).quantize(dot01)
+        self.total = (
+            self.tax + self.precio * self.cantidad - self.discount
+        ).quantize(dot01)
+
+
+class PagoQuerySet(models.QuerySet):
+    """
+    Provides shortcuts to obtain common used data
+    """
+    def cuentas_por_cobrar(self):
+        """
+        Obtains all the :class:`Pago` that are yet to be completed or that
+        represent a partial payment of the :class:`Invoice`
+        """
+        return self.filter(
+            status__reportable=True,
+            completado=False,
+            tipo__reembolso=True,
+        )
+
+    def mensual(self):
+        """
+        Obtains all :class:`Pago` clasified as monthly
+        """
+        return self.filter(tipo__mensual=True)
+
+    def reembolso(self):
+        """
+        Obtains all :class:`Pago` classified as reimbursement
+        """
+        return self.filter(tipo__reembolso=True)
+
+    def diarias(self):
+        """
+        Obtains all :class:`Pago` that are payed inmediatly
+        """
+        return self.exclude(tipo__mensual=True).exclude(tipo__reembolso=True)
 
 
 @python_2_unicode_compatible
@@ -384,12 +434,17 @@ class Pago(TimeStampedModel):
                                 decimal_places=2)
     comprobante = models.CharField(max_length=255, blank=True, null=True)
     aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
+    completado = models.BooleanField(default=False)
+
+    objects = PagoQuerySet.as_manager()
 
     def __str__(self):
-        return "Pago en {2} de {0} al recibo {1} {3}".format(self.monto,
-                                                             self.recibo.id,
-                                                             self.tipo.nombre,
-                                                             self.created)
+        return _("Pago en {2} de {0} al recibo {1} {3}").format(
+            self.monto,
+            self.recibo.id,
+            self.tipo.nombre,
+            self.created
+        )
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -416,7 +471,7 @@ class TurnoCaja(TimeStampedModel):
     finalizado = models.BooleanField(default=False)
 
     def __str__(self):
-        return _(u"Turno de {0}").format(self.usuario.get_full_name())
+        return _("Turno de {0}").format(self.usuario.get_full_name())
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -525,8 +580,14 @@ class CierreTurno(TimeStampedModel):
 
 @python_2_unicode_compatible
 class CuentaPorCobrar(TimeStampedModel):
-    """Represents all the pending :class:`Pago` que deben recolectarse como un
-    grupo"""
+    """
+    Represents all the pending :class:`Pago` que deben recolectarse como un
+    grupo
+    """
+
+    class Meta:
+        ordering = ('-created',)
+
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     descripcion = models.TextField()
     status = models.ForeignKey(StatusPago)
@@ -553,10 +614,13 @@ class CuentaPorCobrar(TimeStampedModel):
         return reverse('invoice-cpc', args=[self.id])
 
     def payments(self):
-
+        """
+        :return: A query to all the payments registered to a
+        :class:`CuentaPorCobrar`
+        """
         payments = Pago.objects.filter(
-            created__range=(self.minimum, self.created),
-            status=self.status)
+            recibo__created__range=(self.minimum, self.created),
+            status=self.status).order_by('recibo__created')
         return payments
 
     def next_status(self):
@@ -588,9 +652,6 @@ class CuentaPorCobrar(TimeStampedModel):
                 self.minimum = timezone.now()
 
             self.inicial = self.monto()
-            self.status = self.status.next_status
-            self.enviadas = payments.count()
-            payments.update(status=self.status)
 
         super(CuentaPorCobrar, self).save(*args, **kwargs)
 
@@ -726,6 +787,10 @@ class Cotizacion(TimeStampedModel):
 class Cotizado(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
     realizar los cobros asociados"""
+
+    class Meta:
+        ordering = ('-created',)
+
     cotizacion = models.ForeignKey(Cotizacion)
     item = models.ForeignKey(ItemTemplate)
     cantidad = models.IntegerField()
@@ -742,7 +807,7 @@ class Cotizado(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u"{0} a {1}").format(self.item.descripcion, self.cotizacion.id)
+        return _("{0} a {1}").format(self.item.descripcion, self.cotizacion.id)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -776,9 +841,19 @@ class Cotizado(TimeStampedModel):
 
 @python_2_unicode_compatible
 class ComprobanteDeduccion(TimeStampedModel):
+    """
+    Registra las deducciones que se hacen a los :class:`Proveedor`es de acuerdo
+    a las leyes del país.
+    """
     proveedor = models.ForeignKey(Proveedor, null=True)
     ciudad = models.ForeignKey(Ciudad)
     correlativo = models.IntegerField()
+    cai_proveedor = models.CharField(max_length=255, blank=True)
+    numero_de_documento = models.CharField(max_length=255, blank=True)
+    fecha_de_emision = models.DateTimeField(default=timezone.now)
+    cai = models.CharField(max_length=255, blank=True)
+    inicio_rango = models.DateTimeField(default=timezone.now)
+    fin_rango = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         if self.proveedor is None:
@@ -789,16 +864,24 @@ class ComprobanteDeduccion(TimeStampedModel):
         return reverse('comprobante', args=[self.id])
 
     def numero(self):
-        return _(u'{0}-{1}').format(self.ciudad.prefijo_comprobante,
-                                    self.correlativo)
+        return _('{0}-{1}').format(self.ciudad.prefijo_comprobante,
+                                   self.correlativo)
 
     def total(self):
+        """
+        :return: El total de los :class:`ConceptoDeduccion` que han sido
+        ingresados en este comprobante
+        """
         return ConceptoDeduccion.objects.filter(comprobante=self).aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
     def save(self, *args, **kwargs):
         if self.pk is None:
+            self.inicio_rango = self.ciudad.inicio_rango_comprobante
+            self.fin_rango = self.ciudad.fin_rango_comprobante
+            self.cai = self.ciudad.cai_comprobante
+
             ciudad = self.ciudad
             ciudad.correlativo_de_comprobante = F(
                 'correlativo_de_comprobante') + 1
@@ -810,6 +893,10 @@ class ComprobanteDeduccion(TimeStampedModel):
 
 
 class ConceptoDeduccion(TimeStampedModel):
+    """
+    Describe el concepto de una deducción que ha sido sustraida de un pago a
+    proveedor
+    """
     comprobante = models.ForeignKey(ComprobanteDeduccion)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     concepto = models.ForeignKey(ItemTemplate)
@@ -817,6 +904,76 @@ class ConceptoDeduccion(TimeStampedModel):
 
     def get_absolute_url(self):
         return self.comprobante.get_absolute_url()
+
+
+@python_2_unicode_compatible
+class NotaCredito(TimeStampedModel):
+    """
+    Reflects an legal document used to nullify emited :class:`Recibo`s when
+    they have been handled to the :class:`Persona`.
+
+    recibo: :class:`Recibo` that has :class:`Item`s to be nullified
+    correlativo: numerical identifier based in the :class:`Ciudad` it is
+                 extended
+    motivo_de_emision: Specifies the reason the :class:`Recibo` is being
+                       modified
+    """
+
+    MOTIVOS = (
+        ('AN', _('Anulación')),
+        ('DV', _('Devolución')),
+        ('DE', _('Descuento')),
+    )
+
+    recibo = models.ForeignKey(Recibo)
+    correlativo = models.IntegerField(default=0)
+    motivo_de_emision = models.CharField(max_length=1, choices=MOTIVOS,
+                                         blank=True)
+    cerrada = models.BooleanField(default=False)
+
+    def numero(self):
+        return '{0}-{1:08d}'.format(self.recibo.ciudad.prefijo_recibo,
+                                    self.correlativo)
+
+    def __str__(self):
+        return str(self.correlativo)
+
+    def save(self, *args, **kwargs):
+        """
+        Guarda la :class:`NotaCredito` asignando :class:`Ciudad` y luego
+        generando el correlativo correspondiente a la ciudad.
+        """
+        if self.pk is None:
+            ciudad = self.recibo.cajero.profile.ciudad
+            ciudad.correlativo_de_nota_de_credito = F(
+                'correlativo_de_nota_de_credito') + 1
+            ciudad.save()
+            ciudad.refresh_from_db()
+            self.correlativo = ciudad.correlativo_de_nota_de_credito
+
+        super(NotaCredito, self).save(*args, **kwargs)
+
+
+class DetalleCredito(TimeStampedModel):
+    """
+    Holds the description of an :class:`ItemTemplate` that has been discounted
+    or diminished.
+    """
+    nota = models.ForeignKey(NotaCredito)
+    item = models.ForeignKey(ItemTemplate)
+    cantidad = models.IntegerField()
+    precio = models.DecimalField(max_digits=11, decimal_places=2)
+    impuesto = models.DecimalField(max_digits=11, decimal_places=2)
+    monto_impuesto = models.DecimalField(max_digits=11, decimal_places=2)
+    monto = models.DecimalField(max_digits=11, decimal_places=2)
+
+    def save(self, **kwargs):
+        self.precio = self.item.precio_de_venta
+        self.monto = self.precio * self.cantidad
+        self.impuesto = self.item.impuestos
+        self.monto_impuesto = self.impuesto * self.monto
+
+        super(DetalleCredito, self).save(**kwargs)
 
 
 def consolidate_invoice(persona, clone):

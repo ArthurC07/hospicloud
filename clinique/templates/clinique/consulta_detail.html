@@ -1,5 +1,5 @@
 ﻿{% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block content %}
     <div class="row">
         <div class="col-md-12">
@@ -139,6 +139,16 @@
                             {% endfor %}
                             </tbody>
                         </table>
+                        <table class="table table-striped">
+                            <caption>{% trans 'Observaciones del M&eacute;dico' %}</caption>
+                            <tbody>
+                            {% for nota in consulta.notamedica_set.all %}
+                                <tr>
+                                    <td>{{ nota.observacion }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </article>
                 </div>
                 <div class="col-md-3">
@@ -168,14 +178,18 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="{% url 'nota-medica-agregar' consulta.id %}">{% trans 'Agregar Nota' %}</a>
+                                </li>
+                                <li>
                                     <a href="{% url 'clinique-consulta-revisar' consulta.id %}">
                                         <i class="fa fa-stethoscope"></i>
                                         Completar Revisi&oacute;n de Consulta
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'persona-view-id' consulta.persona.id %}">Volver
-                                        al Paciente</a>
+                                    <a href="{% url 'persona-view-id' consulta.persona.id %}">
+                                        Volver al Paciente
+                                    </a>
                                 </li>
                             </ul>
                         </nav>

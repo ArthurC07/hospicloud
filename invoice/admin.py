@@ -14,18 +14,19 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import unicode_literals
 from django.contrib import admin
 
 from invoice.models import Recibo, Venta, Pago, TipoPago, TurnoCaja, \
-    CierreTurno, StatusPago, CuentaPorCobrar, Cotizacion, ComprobanteDeduccion, \
-    ConceptoDeduccion
+    CierreTurno, StatusPago, CuentaPorCobrar, Cotizacion, DetalleCredito, \
+    ComprobanteDeduccion, ConceptoDeduccion, NotaCredito
 
 
 class ReciboAdmin(admin.ModelAdmin):
     list_display = ('cliente', 'numero', 'cajero', 'created', 'cerrado', 'nulo')
     ordering = ['cliente', 'cajero', 'created', 'cerrado', 'nulo']
     search_fields = ['cliente__nombre', 'correlativo']
+    exclude = ('cliente', )
 
 
 class CierreturnoAdmin(admin.ModelAdmin):
@@ -42,8 +43,8 @@ class TurnoCajaAdmin(admin.ModelAdmin):
 
 
 class TipoPagoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'color',)
-    ordering = ['nombre', 'color', ]
+    list_display = ('nombre', 'color', 'reembolso')
+    ordering = ['nombre', 'color', 'reembolso']
 
 
 class PagoAdmin(admin.ModelAdmin):
@@ -51,9 +52,12 @@ class PagoAdmin(admin.ModelAdmin):
         'tipo', 'get_recibo_number', 'recibo', 'get_recibo_cajero', 'monto',
         'created', 'status')
     ordering = ['tipo', 'recibo', 'monto', 'created', 'status']
-    search_fields = ['recibo__usuario__first_name',
-                     'recibo__usuario__last_name',
-                     'tipo__nombre', 'monto']
+    search_fields = ['recibo__cajero__first_name',
+                     'recibo__cajero__last_name',
+                     'recibo__cliente__nombre',
+                    'recibo__cliente__apellido',
+                     'tipo__nombre', 'monto', 'recibo__correlativo']
+    exclude = ('recibo', )
 
     def get_recibo_number(self, instance):
         ciudad = instance.recibo.ciudad
@@ -65,12 +69,23 @@ class PagoAdmin(admin.ModelAdmin):
 
             ciudad = instance.recibo.cajero.profile.ciudad
 
-        return u'{0}-{1:08d}'.format(ciudad.prefijo_recibo,
+        return '{0}-{1:08d}'.format(ciudad.prefijo_recibo,
                                      instance.recibo.correlativo)
 
     def get_recibo_cajero(self, instance):
 
         return instance.recibo.cajero
+
+    def get_queryset(self, request):
+
+        return super(PagoAdmin, self).get_queryset(request).select_related(
+            'recibo',
+            'recibo__cliente',
+            'recibo__cajero',
+            'tipo',
+            'status',
+            'recibo__ciudad',
+        )
 
 
 class CuentaPorCobrarAdmin(admin.ModelAdmin):
@@ -91,13 +106,15 @@ class VentaAdmin(admin.ModelAdmin):
 
 
 class StatusPagoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'reportable', 'next_status', 'previous_status',)
+    list_display = ('nombre', 'reportable', 'pending', 'next_status',
+                    'previous_status',)
 
 
 class CotizacionAdmin(admin.ModelAdmin):
-    list_display = ('persona', 'usuario', 'created')
-    ordering = ['persona', 'usuario', 'created']
+    list_display = ('persona', 'usuario', 'created', 'facturada')
+    ordering = ['persona', 'usuario', 'created', 'facturada']
     search_fields = ['persona__nombre', 'persona__apellido']
+    exclude = ('persona', )
 
 
 class ComprobanteAdmin(admin.ModelAdmin):
@@ -106,8 +123,42 @@ class ComprobanteAdmin(admin.ModelAdmin):
 
 
 class ConceptoDeduccionAdmin(admin.ModelAdmin):
-    list_display = ('comprobante', 'concepto', 'monto', 'created')
-    ordering = ['comprobante', 'concepto', 'monto', 'created']
+    """
+    Enables management of :class:`ConceptoDeduccion` instances
+    """
+    list_display = (
+        'comprobante',
+        'concepto',
+        'get_correlativo',
+        'monto',
+        'created'
+    )
+    ordering = [
+        'comprobante',
+        'concepto',
+        'monto',
+        'created',
+    ]
+    search_fields = [
+        'comprobante__correlativo',
+        'comprobante__persona__nombre',
+        'comprobante__persona__apellido',
+    ]
+    exclude = ('comprobante', )
+
+    def get_correlativo(self, instance):
+
+        return instance.comprobante.correlativo
+
+
+class NotaCreditoAdmin(admin.ModelAdmin):
+    list_display = ['recibo', 'correlativo', 'created']
+    search_fields = ['recibo__persona__nombre', 'recibo__persona__apellido',
+                     'recibo__correlativo', 'correlativo']
+
+
+class DetalleCreditoAdmin(admin.ModelAdmin):
+    list_display = ['nota', 'item', 'cantidad']
 
 
 admin.site.register(Recibo, ReciboAdmin)
@@ -121,3 +172,5 @@ admin.site.register(CuentaPorCobrar, CuentaPorCobrarAdmin)
 admin.site.register(Cotizacion, CotizacionAdmin)
 admin.site.register(ComprobanteDeduccion, ComprobanteAdmin)
 admin.site.register(ConceptoDeduccion, ConceptoDeduccionAdmin)
+admin.site.register(NotaCredito, NotaCreditoAdmin)
+admin.site.register(DetalleCredito, DetalleCreditoAdmin)

@@ -1,10 +1,15 @@
+{% load i18n %}{% load l10n %}
 {% for contrato in persona.contratos.all %}
     <div class="row">
         <div class="col-md-12">
             <div class="row">
                 <div class="col-md-12">
                     <section class="page-header">
-                        <h3>Contrato {{ contrato.numero }}
+                        <h3>
+                            Contrato {{ contrato.numero }}
+                            Poliza: {{ contrato.master.poliza }}
+                            Certificado: {{ contrato.certificado }}
+                            {{ contrato.master.aseguradora }}
                             <small>
                                 {{ contrato.plan }} - {{ contrato.empresa }}
                                 {% if contrato.activo %}

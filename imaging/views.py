@@ -14,21 +14,22 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from django.views.generic.base import ContextMixin
-from django.views.generic.edit import FormMixin
-from guardian.decorators import permission_required
+from __future__ import unicode_literals
+
+from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import (DetailView, UpdateView, CreateView, ListView,
-                                  TemplateView, RedirectView, FormView, View)
+from django.views.generic import DetailView, UpdateView, CreateView, ListView, \
+    TemplateView, RedirectView, FormView, View
+from django.views.generic.base import ContextMixin
+from django.views.generic.edit import FormMixin
 
-from django.contrib import messages
-
-from imaging.forms import (ExamenForm, ImagenForm, AdjuntoForm, DicomForm,
-                           EstudioProgramadoForm, EmailForm, EstudioForm)
-from imaging.models import (Examen, Imagen, Adjunto, Dicom, EstudioProgramado,
-                            Estudio)
+from imaging.forms import ExamenForm, ImagenForm, AdjuntoForm, DicomForm, \
+    EstudioProgramadoForm, EmailForm, EstudioForm
+from imaging.models import Examen, Imagen, Adjunto, Dicom, EstudioProgramado, \
+    Estudio
 from persona.forms import PersonaForm, PersonaSearchForm
 from persona.models import Persona
 from persona.views import PersonaCreateView, PersonaFormMixin
@@ -83,7 +84,7 @@ class ExamenPreCreateView(TemplateView):
         return context
 
 
-class ExamenDetailView(DetailView, LoginRequiredMixin):
+class ExamenDetailView(LoginRequiredMixin, DetailView):
     """Permite ver los detalles de un :class:`Examen`"""
 
     context_object_name = 'examen'
@@ -91,7 +92,7 @@ class ExamenDetailView(DetailView, LoginRequiredMixin):
     template_name = 'examen/examen_detail.html'
 
 
-class ExamenPersonaListView(DetailView, LoginRequiredMixin):
+class ExamenPersonaListView(LoginRequiredMixin, DetailView):
     """Muestra los :class:`Examen`es realizados a una :class:`Persona`"""
 
     context_object_name = 'persona'
@@ -99,7 +100,7 @@ class ExamenPersonaListView(DetailView, LoginRequiredMixin):
     template_name = 'examen/examen_paciente_detail.html'
 
 
-class ExamenUpdateView(UpdateView, LoginRequiredMixin):
+class ExamenUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos de un :class:`Examen`"""
 
     model = Examen
@@ -115,7 +116,7 @@ class ExamenCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
     form_class = ExamenForm
 
 
-class ExamenEfectuarView(RedirectView, LoginRequiredMixin):
+class ExamenEfectuarView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
@@ -125,7 +126,7 @@ class ExamenEfectuarView(RedirectView, LoginRequiredMixin):
         return examen.get_absolute_url()
 
 
-class ExamenCancelarView(RedirectView, LoginRequiredMixin):
+class ExamenCancelarView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
@@ -178,7 +179,7 @@ class DicomCreateView(CreateView, ExamenFormMixin, LoginRequiredMixin):
     template_name = "examen/dicom_create.html"
 
 
-class DicomDetailView(DetailView, LoginRequiredMixin):
+class DicomDetailView(LoginRequiredMixin, DetailView):
     """Muestra el visor DICOM básico en el navegador del usuario"""
 
     context_object_name = 'dicom'
@@ -209,7 +210,7 @@ class NotificarExamenView(FormView, LoginRequiredMixin):
 
         examen = form.cleaned_data['examen']
         context = {'link_examen': self.request.build_absolute_uri(
-            examen.get_absolute_url())}
+                examen.get_absolute_url())}
 
         return super(NotificarExamenView, self).form_valid(form)
 
@@ -234,7 +235,7 @@ class PersonaEstudioCreateView(PersonaCreateView):
         return reverse('examen-programar', args=[self.object.id])
 
 
-class EstudioProgramadoDetailView(DetailView, LoginRequiredMixin):
+class EstudioProgramadoDetailView(LoginRequiredMixin, DetailView):
     """Muestra las acciones disponibles para un :class:`EstudioProgramado`"""
 
     context_object_name = 'estudio'
@@ -243,7 +244,7 @@ class EstudioProgramadoDetailView(DetailView, LoginRequiredMixin):
 
 
 class EstudioProgramadoCreateView(PersonaFormMixin, CurrentUserFormMixin,
-                                  CreateView, LoginRequiredMixin):
+                                  CreateView):
     """Permite recetar un :class:`Examen` a una :class:`Persona"""
 
     model = EstudioProgramado
@@ -251,7 +252,7 @@ class EstudioProgramadoCreateView(PersonaFormMixin, CurrentUserFormMixin,
     template_name = 'examen/estudio_programado_create.html'
 
 
-class EstudioProgramadoListView(ListView, LoginRequiredMixin):
+class EstudioProgramadoListView(LoginRequiredMixin, ListView):
     """Permite mostrar una lista de :class:`Estudios`es que aún no han sido
     llevados a cabo"""
 
@@ -268,12 +269,12 @@ class EstudioProgramadoListView(ListView, LoginRequiredMixin):
         """Agrega los ultimos :class:`Examen`es efectuados a la vista"""
 
         context = super(EstudioProgramadoListView, self).get_context_data(
-            **kwargs)
+                **kwargs)
         context['examenes'] = Examen.objects.all().order_by('-fecha')[:20]
         return context
 
 
-class EstudioProgramadoEfectuarView(RedirectView, LoginRequiredMixin):
+class EstudioProgramadoEfectuarView(LoginRequiredMixin, RedirectView):
     """Permite marcar un :class:`EstudioProgramado` como ya efectuado y
     muestra el formulario para crear un nuevo :class:`Examen` a la
     :class:`Persona`"""

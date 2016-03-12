@@ -1,30 +1,31 @@
+{% load i18n %}{% load l10n %}
 <div class="table-responsive">
 <table class="table table-striped">
-    <caption>Antecedentes Gineco-Obstétricos</caption>
+    <caption>{% trans 'Antecedentes Gineco-Obstétricos' %}</caption>
   <tr>
-    <td class="data-label">Menarca</td>
+    <td class="data-label">{% trans 'Menarca' %}</td>
     <td class="patient-data">{{ antecedente.menarca }}</td>
-    <td class="data-label">Último Periodo</td>
+    <td class="data-label">{% trans '&Uacute;ltimo Periodo' %}</td>
     <td class="patient-data">{{ antecedente.ultimo_periodo }}</td>
   </tr>
   <tr>
-    <td class="data-label">Displasia</td>
+    <td class="data-label">{% trans 'Displasia' %}</td>
     <td class="patient-data">{{ antecedente.displasia|yesno:"Sí,No" }}</td>
-    <td class="data-label">Otros</td>
+    <td class="data-label">{% trans 'Otros' %}</td>
     <td class="patient-data">{{ antecedente.otros }}</td>
   </tr>
 </table>
 <table class="table table-striped">
   <tr>
-    <td class="data-label">Gestas</td>
+    <td class="data-label">{% trans 'Gestas' %}</td>
     <td class="patient-data">{{ antecedente.gestas }}</td>
-    <td class="data-label">Partos</td>
+    <td class="data-label">{% trans 'Partos' %}</td>
     <td class="patient-data">{{ antecedente.partos }}</td>
   </tr>
   <tr>
-    <td class="data-label">Anticoncepcion</td>
+    <td class="data-label">{% trans 'Anticoncepcion' %}</td>
     <td class="patient-data">{{ antecedente.anticoncepcion }}</td>
-    <td class="data-label">Cesareas</td>
+    <td class="data-label">{% trans 'Cesareas' %}</td>
     <td class="patient-data">{{ antecedente.cesareas }}</td>
   </tr>
 </table>

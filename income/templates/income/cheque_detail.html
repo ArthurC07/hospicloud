@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-header">
+            <section class="page-header">
+                <h1>
+                    {% trans 'Cheque' %} {{ cheque }}
+                    <small>
+                        {% trans 'Monto Total' %}
+                        {{ cheque.monto_total }}
+                        {% trans 'Monto Pendiente' %}
+                        {{ cheque.pendiente }}
+                    </small>
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12 main-header">
+            <a class="btn btn-info" href="{% url 'deposito-create' %}">
+                {% trans 'Depositar' %}
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <section class="tabbable">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#pagos" data-toggle="tab">
+                            {% trans 'Reembolsos Pendientes' %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#detalles" data-toggle="tab">
+                            {% trans 'Reembolsos Procesados' %}
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="pagos" class="tab-pane active">
+                    {% ifnotequal cheque.pendiente 0 %}
+                        <table id="pago-table" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Recibo' %}</th>
+                                <th>{% trans 'Detalle de Pago' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for pago in pagos %}
+                                <tr>
+                                    <td>
+                                        <dl>
+                                            <dt>{% trans 'Monto:' %}</dt>
+                                            <dd>{{ pago.pago.monto }}</dd>
+                                            <dt>{% trans 'Recibo' %}</dt>
+                                            <dd>{{ pago.pago.recibo.numero }}</dd>
+                                            <dt>{% trans 'Cliente' %}</dt>
+                                            <dd>{{ pago.pago.recibo.cliente }}</dd>
+                                            <dt>{% trans 'Fecha' %}</dt>
+                                            <dd>{{ pago.pago.recibo.created }}</dd>
+                                            <dt>{% trans 'Aseguradora' %}</dt>
+                                            <dd>{{ pago.pago.aseguradora }}</dd>
+                                        </dl>
+                                    </td>
+                                    <td>{% crispy pago.form %}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endifnotequal %}
+                    </div>
+                    <div id="detalles" class="tab-pane">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Pago' %}</th>
+                                <th>{% trans 'Fecha de Registro' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for detalle in cheque.detallepago_set.all %}
+                                <tr>
+                                    <td>
+                                        <dl>
+                                            <dt>{% trans 'Monto:' %}</dt>
+                                            <dd>{{ detalle.pago.monto }}</dd>
+                                            <dt>{% trans 'Recibo' %}</dt>
+                                            <dd>{{ detalle.pago.recibo.numero }}</dd>
+                                            <dt>{% trans 'Fecha' %}</dt>
+                                            <dd>{{ detalle.pago.recibo.created }}</dd>
+                                            <dt>{% trans 'Aseguradora' %}</dt>
+                                            <dd>{{ detalle.pago.aseguradora }}</dd>
+                                        </dl>
+                                    </td>
+                                    <td>{{ detalle.created }}</td>
+                                    <td><a class="btn btn-primary" href="{{ detalle.pago.recibo.get_absolute_url }}">{% trans 'Ver Recibo' %}</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#pagos form').submit(function() {
+                $(this).ajaxSubmit();
+                $(this).parent().parent().hide('slow');
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
