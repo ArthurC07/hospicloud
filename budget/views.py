@@ -866,6 +866,10 @@ class BalanceView(TemplateView, LoginRequiredMixin):
             total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
 
+        context['pago_total'] = pagos.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
         pagos = Pago.objects.cuentas_por_cobrar().filter(
             recibo__created__lte=fin,
         )
