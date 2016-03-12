@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 
 from decimal import Decimal
 
+from django.contrib import messages
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
@@ -28,7 +29,7 @@ from income.forms import ChequeForm, DetallePagoForm, DepositoForm, \
     CierrePOSForm
 from income.models import Cheque, DetallePago, Deposito, CierrePOS, TipoDeposito
 from invoice.models import CuentaPorCobrar, Pago
-from users.mixins import LoginRequiredMixin
+from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
 class IncomeIndexView(TemplateView, LoginRequiredMixin):
@@ -108,7 +109,7 @@ class DepositoDetailView(LoginRequiredMixin, DetailView):
     model = Deposito
 
 
-class DepositoCreateView(LoginRequiredMixin, CreateView):
+class DepositoCreateView(CurrentUserFormMixin, CreateView):
     """
     Allows the user to create a :class:`Deposito`
     """
@@ -122,6 +123,10 @@ class DepositoCreateView(LoginRequiredMixin, CreateView):
         :return: The :class:`IncomeIndexView` url
         """
         if self.request.META['HTTP_REFERER']:
+            messages.info(
+                self.request,
+                "Deposito de {0} Agregado".format(self.object.monto)
+            )
             return self.request.META['HTTP_REFERER']
         else:
             return 'income-index'
