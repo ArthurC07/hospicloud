@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% load crispy_forms_tags %}
-
+    {% load crispy_forms_tags %}{% load staticfiles %}{% load l10n %}{% load i18n %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
@@ -15,8 +14,15 @@
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
-                        <li><a href="{{ cuenta.get_absolute_url }}">Volver al Presupuesto</a></li>
-                        <li><a href="{% url 'proveedor-create' %}" onclick="window.open('{% url 'proveedor-create' %}', 'newwindow', 'width=500, height=500'); return false;">Agregar Proveedor</a></li>
+                        <li>
+                            <a href="{{ cuenta.get_absolute_url }}">{% trans 'Volver al Presupuesto' %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'proveedor-create' %}"
+                               onclick="window.open('{% url 'proveedor-create' %}', 'newwindow', 'width=500, height=500'); return false;">
+                                {% trans 'Agregar Proveedor' %}
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>

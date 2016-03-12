@@ -14,8 +14,11 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
+
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
 

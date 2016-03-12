@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-header">
+            <section class="page-header">
+                <h1>
+                    {% trans 'Deposito en' %} {{ deposito }}
+                    <small>
+                        {% trans 'Monto:' %}
+                        {{ deposito.monto }}
+                    </small>
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <dl>
+                <dt>{% trans 'Cuenta:' %}</dt>
+                <dd>{{ deposito.cuenta }}</dd>
+                <dt>{% trans 'Fecha de Dep&oacute;sito' %}</dt>
+                <dd>{{ deposito.fecha_de_deposito }}</dd>
+                <dt>{% trans 'Usuario:' %}</dt>
+                <dd>{{ deposito.usuario }}</dd>
+            </dl>
+            <a class="btn btn-info" href="{{ deposito.comprobante.url }}">
+                {% trans 'Comprobante' %}
+            </a>
+        </div>
+    </div>
+{% endblock %}

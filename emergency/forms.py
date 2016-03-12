@@ -14,18 +14,17 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
-from django import forms
-from emergency.models import (Emergencia, RemisionInterna, RemisionExterna,
-                              Tratamiento, Hallazgo, Cobro, Diagnostico,
-                              ExamenFisico)
-
-from select2.fields import ModelChoiceField
 from crispy_forms.layout import Fieldset
+from django import forms
+from django.contrib.auth.models import User
+
+from emergency.models import Emergencia, RemisionInterna, RemisionExterna, \
+    Tratamiento, Hallazgo, Cobro, Diagnostico, ExamenFisico
+from inventory.models import ItemTemplate
 from persona.forms import FieldSetModelFormMixin
 from persona.models import Persona
-from django.contrib.auth.models import User
-from inventory.models import ItemTemplate
 
 
 class EmergenciaForm(FieldSetModelFormMixin):
@@ -33,24 +32,24 @@ class EmergenciaForm(FieldSetModelFormMixin):
 
     class Meta:
         model = Emergencia
-        exclude = ('facturada', )
+        exclude = ('facturada',)
 
-    persona = forms.ModelChoiceField(label="",
-                                     queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                     queryset=User.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    persona = forms.ModelChoiceField(
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
 
 class EmergenciaBaseForm(FieldSetModelFormMixin):
-    emergencia = forms.ModelChoiceField(label="",
-                                        queryset=Emergencia.objects.all(),
-                                        widget=forms.HiddenInput(),
-                                        required=False)
-    usuario = forms.ModelChoiceField(label="",
-                                     queryset=User.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    emergencia = forms.ModelChoiceField(
+        queryset=Emergencia.objects.all(),
+        widget=forms.HiddenInput(),
+        required=False)
+    usuario = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(EmergenciaBaseForm, self).__init__(*args, **kwargs)
@@ -65,7 +64,7 @@ class RemisionInternaForm(EmergenciaBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(RemisionInternaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Remitir a un Especialista',
+        self.helper.layout = Fieldset('Remitir a un Especialista',
                                       *self.field_names)
 
 
@@ -78,7 +77,7 @@ class RemisionExternaForm(EmergenciaBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(RemisionExternaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Remitir a otro Centro',
+        self.helper.layout = Fieldset('Remitir a otro Centro',
                                       *self.field_names)
 
 
@@ -91,7 +90,7 @@ class ExamenFisicoForm(EmergenciaBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(ExamenFisicoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Examen Físico',
+        self.helper.layout = Fieldset('Agregar Examen Físico',
                                       *self.field_names)
 
 
@@ -104,7 +103,7 @@ class HallazgoForm(EmergenciaBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(HallazgoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Hallazgo', *self.field_names)
+        self.helper.layout = Fieldset('Agregar Hallazgo', *self.field_names)
 
 
 class TratamientoForm(EmergenciaBaseForm):
@@ -116,7 +115,7 @@ class TratamientoForm(EmergenciaBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(TratamientoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Tratamiento', *self.field_names)
+        self.helper.layout = Fieldset('Agregar Tratamiento', *self.field_names)
 
 
 class DiagnosticoForm(EmergenciaBaseForm):
@@ -128,7 +127,7 @@ class DiagnosticoForm(EmergenciaBaseForm):
 
     def __init__(self, *args, **kwargs):
         super(DiagnosticoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Diagnostico', *self.field_names)
+        self.helper.layout = Fieldset('Agregar Diagnostico', *self.field_names)
 
 
 class CobroForm(EmergenciaBaseForm):
@@ -136,13 +135,13 @@ class CobroForm(EmergenciaBaseForm):
 
     class Meta:
         model = Cobro
-        exclude = ('facturado', )
+        exclude = ('facturado',)
 
-    cargo = ModelChoiceField(name="", model="",
-                             queryset=ItemTemplate.objects.filter(
-                                 activo=True).order_by('descripcion').all())
+    cargo = forms.ModelChoiceField(
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(CobroForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Materiales y Medicamentos',
+        self.helper.layout = Fieldset('Agregar Materiales y Medicamentos',
                                       *self.field_names)

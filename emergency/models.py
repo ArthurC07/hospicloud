@@ -14,30 +14,31 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from collections import defaultdict
 from decimal import Decimal
-from django.conf import settings
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from django_extensions.db.models import TimeStampedModel
 
+from inventory.models import ItemTemplate, TipoVenta
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
-from inventory.models import ItemTemplate, TipoVenta
 
 
 class Emergencia(TimeStampedModel):
-    """Representa una visita de una :class:`Persona` a la consulta de
-    emergencia"""
+    """
+    Representa una visita de una :class:`Persona` a la consulta de
+    emergencia
+    """
 
     class Meta:
         permissions = (
@@ -47,18 +48,18 @@ class Emergencia(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='emergencias')
     historia_enfermedad_actual = models.TextField(blank=True, null=True)
     frecuencia_respiratoria = models.IntegerField(blank=True, null=True)
+    presion_arterial = models.IntegerField(blank=True, null=True)
     temperatura = models.DecimalField(decimal_places=2, max_digits=8,
                                       null=True, blank=True)
     presion = models.CharField(max_length=100, null=True, blank=True)
     frecuencia_cardiaca = models.DecimalField(decimal_places=2, max_digits=8,
                                               null=True, blank=True)
-    observacion = models.TextField(blank=True, null=True)
     saturacion_de_oxigeno = models.DecimalField(decimal_places=2, max_digits=8,
                                                 null=True, blank=True)
+    observacion = models.TextField(blank=True, null=True)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='emergencias')
     facturada = models.BooleanField(default=False)
-    tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -81,14 +82,14 @@ class Emergencia(TimeStampedModel):
 
         horas = self.tiempo()
 
-        emergencia = self.usuario.profile.ciudad.emergencia
+        emergencia = self.usuario.profile.ciudad.company.emergencia
 
         items[emergencia] = 1
         items[self.usuario.profile.honorario] = 1
 
         if horas >= 1:
             restante = horas - 1
-            extra = self.usuario.profile.ciudad.emergencia_extra
+            extra = self.usuario.profile.ciudad.company.emergencia_extra
             items[extra] = restante
 
         return items
@@ -206,7 +207,7 @@ class Cobro(TimeStampedModel):
         return reverse('emergencia-cobro-agregar', args=[self.emergencia.id])
 
     def __str__(self):
-        return _(u'{1}: {0}').format(self.cargo.descripcion, self.created)
+        return _('{1}: {0}').format(self.cargo.descripcion, self.created)
 
     def total(self):
         return self.cargo.precio_de_venta * self.cantidad

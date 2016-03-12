@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12 col-md-12 main-header">
+            <section class="page-header">
+                <h1>
+                    {% trans 'Operación Clínica del Mes de' %}
+                    {{ fecha|date:"F" }}
+                    {% trans 'del' %}
+                    {{ fecha|date:"Y" }}
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12 main-content">
+            <div class="row">
+                <div class="col-md-8 col-xs-8" id="meses">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Forma de Consulta' %}
+                            </h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for tipo in tipos %}
+                                <tr>
+                                    <td>{{ tipo.tipo__tipo }}</td>
+                                    <td class="text-right">{{ tipo.count }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>
+                                    {% trans 'Total de Consultas' %}
+                                </th>
+                                <th class="text-right">{{ consultas }}</th>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Diurnas' %}</td>
+                                <td class="text-right">{{ diurnas }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Nocturnas' %}</td>
+                                <td class="text-right">{{ nocturnas }}</td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Consultas por Médico' %}
+                            </h3>
+                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Consultorio' %}</th>
+                                    <th>{% trans 'Consultas' %}</th>
+                                    <th>{% trans 'Tiempo Promedio' %}</th>
+                                    <th>{% trans 'Quejas' %}</th>
+                                    <th>{% trans 'Ciudad' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for consultorio in consultorios %}
+                                <tr>
+                                    <td>{{ consultorio.consultorio__nombre }}</td>
+                                    <td class="text-right">{{ consultorio.count }}</td>
+                                    <td class="text-right">{{ consultorio.tiempo }}</td>
+                                    <td class="text-right">{{ consultorio.quejas }}</td>
+                                    <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="4">{% trans 'Total de Consultas' %}</th>
+                                <th class="text-right">{{ consultas }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Consultas por Enfermera' %}
+                            </h3>
+                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Usuario' %}</th>
+                                    <th>{% trans 'Consultas' %}</th>
+                                    <th>{% trans 'Tiempo Promedio' %}</th>
+                                    <th>{% trans 'Quejas' %}</th>
+                                    <th>{% trans 'Ciudad' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for espera in esperas_data %}
+                                <tr>
+                                    <td>{{ espera.usuario__first_name }} {{ usuario__last_name }}</td>
+                                    <td class="text-right">{{ espera.count }}</td>
+                                    <td class="text-right">{{ espera.tiempo }}</td>
+                                    <td class="text-right">{{ espera.quejas }}</td>
+                                    <td class="text-right">{{ espera.consultorio__localidad__nombre }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="4">{% trans 'Total de Consultas' %}</th>
+                                <th class="text-right">{{ esperas }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Diagnósticos Clínicos' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for diagnostico in diagnosticos %}
+                                <tr>
+                                    <td>{{ diagnostico.diagnostico }}</td>
+                                    <td class="text-right">{{ diagnostico.count }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Diagnósticos Clínicos por Afección' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for diagnostico in afecciones %}
+                                <tr>
+                                    <td>{{ diagnostico.afeccion__nombre }}</td>
+                                    <td class="text-right">{{ diagnostico.count }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Consultas por Ciudad' %}
+                            </h3>
+                        </div>
+                        <table class="table table-hover table-striped">
+                            <tbody>
+                            {% for ciudad in ciudades %}
+                                <tr>
+                                    <td>{{ ciudad.consultorio__localidad__nombre }}</td>
+                                    <td class="text-right">{{ ciudad.count }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total de Consultas' %}</th>
+                                <th class="text-right">{{ consultas }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Quejas por Área' %}
+                            </h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for tipo in tipo_quejas %}
+                                <tr>
+                                    <td>{{ tipo.departamento__nombre }}</td>
+                                    <td class="text-right">{{ tipo.count }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total' %}</th>
+                                <th>
+                                    <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ quejas }}
+                                    </a>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Consultas por Aseguradora' %}
+                            </h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for aseguradora in aseguradoras %}
+                                <tr>
+                                    <td>{{ aseguradora.contrato__master__aseguradora__nombre }}</td>
+                                    <td class="text-right">{{ aseguradora.count }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>
+                                    {% trans 'Total' %}</th>
+                                <th>
+                                    {{ consultas }}
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

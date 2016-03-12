@@ -14,37 +14,30 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
+from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.db.models.query_utils import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import (ListView, UpdateView, DetailView, CreateView,
                                   RedirectView, DeleteView, FormView)
-from django.contrib import messages
-from django.utils import timezone
-
-from guardian.decorators import permission_required
 
 from inventory.models import ItemTemplate
 from inventory.views import UserInventarioRequiredMixin
-from nightingale.forms import (CargoForm, EvolucionForm, GlicemiaForm,
-                               HonorarioForm, PreCargoForm,
-                               InsulinaForm, GlucosuriaForm, IngestaForm,
-                               ExcretaForm, NotaEnfermeriaForm,
-                               OrdenMedicaForm, SignoVitalForm,
-                               MedicamentoForm, DosisForm, DevolucionForm,
-                               SumarioForm, DosificarForm,
-                               MedicamentoUpdateForm, OxigenoTerapiaForm)
-from nightingale.models import (Cargo, Evolucion, Glicemia, Insulina, Honorario,
-                                Glucosuria, Ingesta, Excreta, NotaEnfermeria,
-                                OrdenMedica, SignoVital,
-                                Medicamento, Dosis, Devolucion, Sumario,
-                                OxigenoTerapia)
+from nightingale.forms import CargoForm, EvolucionForm, GlicemiaForm, \
+    HonorarioForm, PreCargoForm, InsulinaForm, GlucosuriaForm, IngestaForm, \
+    ExcretaForm, NotaEnfermeriaForm, OrdenMedicaForm, SignoVitalForm, \
+    MedicamentoForm, DosisForm, DevolucionForm, SumarioForm, DosificarForm, \
+    MedicamentoUpdateForm, OxigenoTerapiaForm
+from nightingale.models import Cargo, Evolucion, Glicemia, Insulina, Honorario, \
+    Glucosuria, Ingesta, Excreta, NotaEnfermeria, OrdenMedica, SignoVital, \
+    Medicamento, Dosis, Devolucion, Sumario, OxigenoTerapia
 from spital.models import Admision
-
-
-# from spital.views import AdmisionFormMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -75,24 +68,22 @@ class NightingaleIndexView(ListView, EnfermeriaPermissionMixin):
                                       for a in
                                       admisiones) / self.queryset.count()
 
-        context['puntos'] = '[0 , 0],' + u','.join('[{0}, {1}]'.format(n + 1,
-                                                                       admisiones[
-                                                                           n]
-                                                                       .tiempo_hospitalizacion())
-                                                   for n in
-                                                   range(self.queryset.count()))
+        context['puntos'] = '[0 , 0],' + ','.join(
+                '[{0}, {1}]'.format(n + 1,
+                                    admisiones[n].tiempo_hospitalizacion())
+                for n in range(self.queryset.count()))
 
         return context
 
 
-class AdmisionListView(ListView, LoginRequiredMixin):
+class AdmisionListView(LoginRequiredMixin, ListView):
     queryset = Admision.objects.all().order_by('-momento')
     context_object_name = 'admisiones'
     template_name = 'enfermeria/admisiones.html'
     paginate_by = 20
 
 
-class NotaUpdateView(UpdateView, LoginRequiredMixin):
+class NotaUpdateView(LoginRequiredMixin, UpdateView):
     """Permite editar una :class:`NotaEnfermeria` en caso de ser necesario"""
 
     model = NotaEnfermeria
@@ -100,7 +91,7 @@ class NotaUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'enfermeria/nota_create.html'
 
 
-class NotaCerrarView(RedirectView, LoginRequiredMixin):
+class NotaCerrarView(LoginRequiredMixin, RedirectView):
     """Permite cambiar el estado de un :class:`NotaEnfermeria`"""
 
     permanent = False
@@ -115,7 +106,7 @@ class NotaCerrarView(RedirectView, LoginRequiredMixin):
         return reverse('enfermeria-notas', args=[nota.admision.id])
 
 
-class NightingaleDetailView(DetailView, LoginRequiredMixin):
+class NightingaleDetailView(LoginRequiredMixin, DetailView):
     """Permite ver los datos de una :class:`Admision` desde la interfaz de
     enfermeria
     
@@ -137,7 +128,7 @@ class NightingaleDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class SignosDetailView(DetailView, LoginRequiredMixin):
+class SignosDetailView(LoginRequiredMixin, DetailView):
     """Muestra los datos sobre los signos vitales de una :class:`Persona` en
     en una :class:`Admision`"""
 
@@ -155,7 +146,7 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
 
         context = super(SignosDetailView, self).get_context_data(**kwargs)
         signos = self.object.signos_vitales.extra(
-            order_by=['fecha_y_hora']).all()
+                order_by=['fecha_y_hora']).all()
 
         context['min'] = self.object.hospitalizacion.strftime('%Y-%m-%d %H:%M')
 
@@ -176,24 +167,25 @@ class SignosDetailView(DetailView, LoginRequiredMixin):
             inicio = signos[0].fecha_y_hora - timezone.timedelta(minutes=5)
             context['min'] = inicio.strftime('%Y-%m-%d %H:%M')
 
-        context['pulso'] = u','.join("['{0}', {1}]".format(
-            s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.pulso)
-                                     for s in signos)
+        context['pulso'] = ','.join("['{0}', {1}]".format(
+                s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'), s.pulso)
+                                    for s in signos)
         context['temperatura'] = "['{0}', 37.00], ".format(context['min']) + \
-                                 u','.join("['{0}', {1}]".format(
-                                     s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
-                                     s.temperatura)
-                                           for s in signos)
+                                 ','.join("['{0}', {1}]".format(
+                                         s.fecha_y_hora.strftime(
+                                                 '%Y-%m-%d %H:%M'),
+                                         s.temperatura)
+                                          for s in signos)
 
-        context['presion_sistolica'] = u','.join("['{0}', {1}]".format(
-            s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
-            s.presion_sistolica)
+        context['presion_sistolica'] = ','.join("['{0}', {1}]".format(
+                s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
+                s.presion_sistolica)
+                                                for s in signos)
+
+        context['presion_diastolica'] = ','.join("['{0}', {1}]".format(
+                s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
+                s.presion_diastolica)
                                                  for s in signos)
-
-        context['presion_diastolica'] = u','.join("['{0}', {1}]".format(
-            s.fecha_y_hora.strftime('%Y-%m-%d %H:%M'),
-            s.presion_diastolica)
-                                                  for s in signos)
 
         return context
 
@@ -314,7 +306,7 @@ class CargoDeleteView(DeleteView, LoginRequiredMixin):
         return self.admision.get_absolute_url()
 
 
-class CargoUpdateView(UpdateView, LoginRequiredMixin):
+class CargoUpdateView(LoginRequiredMixin, UpdateView):
     model = Cargo
     form_class = CargoForm
     template_name = 'enfermeria/cargo_create.html'
@@ -413,7 +405,7 @@ class MedicamentoCreateView(AdmisionFormMixin):
         return kwargs
 
 
-class DosisCreateView(CreateView, LoginRequiredMixin):
+class DosisCreateView(LoginRequiredMixin, CreateView):
     """Permite crear las :class:`Dosis` de un determinado :class:`Medicamento`
     que sera suministrado durante una :class:`Admision`
     
@@ -467,7 +459,7 @@ class DosisCreateView(CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class DosisSuministrarView(RedirectView, LoginRequiredMixin):
+class DosisSuministrarView(LoginRequiredMixin, RedirectView):
     """Permite marcar una :class:`Dosis` como ya suministrada"""
 
     permanent = False
@@ -481,12 +473,12 @@ class DosisSuministrarView(RedirectView, LoginRequiredMixin):
         dosis.usuario = self.request.user
         dosis.fecha_y_hora = timezone.now()
         dosis.save()
-        messages.info(self.request, u'¡Dosis registrada como suministrada!')
+        messages.info(self.request, '¡Dosis registrada como suministrada!')
         return reverse('nightingale-view-id',
                        args=[dosis.medicamento.admision.id])
 
 
-class MedicamentoSuspenderView(RedirectView, LoginRequiredMixin):
+class MedicamentoSuspenderView(LoginRequiredMixin, RedirectView):
     """Permite cambiar el estado de un :class:`Medicamento`"""
 
     permanent = False
@@ -529,7 +521,7 @@ class DosificarMedicamentoView(FormView, LoginRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super(DosificarMedicamentoView, self).get_context_data(
-            **kwargs)
+                **kwargs)
 
         context['medicamento'] = self.medicamento
 
@@ -546,7 +538,7 @@ class DosificarMedicamentoView(FormView, LoginRequiredMixin):
         return reverse('enfermeria-cargos', args=[self.medicamento.admision.id])
 
 
-class MedicamentoUpdateView(UpdateView, LoginRequiredMixin):
+class MedicamentoUpdateView(LoginRequiredMixin, UpdateView):
     model = Medicamento
     form_class = MedicamentoUpdateForm
     context_object_name = 'medicamento'
@@ -557,7 +549,7 @@ class OxigenoTerapiaCreateView(AdmisionFormMixin, CurrentUserFormMixin):
     form_class = OxigenoTerapiaForm
 
 
-class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin):
+class OxigenoTerapiaUpdateView(LoginRequiredMixin, UpdateView):
     model = OxigenoTerapia
     form_class = OxigenoTerapiaForm
     context_object_name = 'oxigeno_terapia'
@@ -568,7 +560,7 @@ class HonorarioCreateView(AdmisionFormMixin, CurrentUserFormMixin):
     form_class = HonorarioForm
 
 
-class HonorarioUpdateView(UpdateView, LoginRequiredMixin):
+class HonorarioUpdateView(LoginRequiredMixin, UpdateView):
     model = Honorario
     form_class = HonorarioForm
     context_object_name = 'honorario'

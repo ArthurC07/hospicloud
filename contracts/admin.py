@@ -15,13 +15,17 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.contrib import admin
 
-from contracts.models import (TipoEvento, Plan, Contrato, Evento, Pago, PCD,
-                              Beneficiario, Vendedor, LimiteEvento, TipoPago,
-                              Meta, Autorizacion, Precontrato, MetodoPago,
-                              Beneficio, Aseguradora, MasterContract,
-                              ImportFile)
+from contracts.models import TipoEvento, Plan, Contrato, Evento, Pago, PCD, \
+    Beneficiario, Vendedor, LimiteEvento, TipoPago, Meta, Autorizacion, \
+    Precontrato, MetodoPago, Beneficio, Aseguradora, MasterContract, ImportFile
+
+
+class AseguradoraAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'cardex']
 
 
 class BeneficioAdmin(admin.ModelAdmin):
@@ -37,10 +41,26 @@ class PCDAdmin(admin.ModelAdmin):
 
 
 class ContratoAdmin(admin.ModelAdmin):
-    list_display = ('numero', 'persona', 'plan', 'master', 'vencimiento', 'activo')
+    list_display = (
+        'numero', 'persona', 'plan', 'master', 'vencimiento', 'activo')
     ordering = ['numero', 'persona', 'plan', 'master', 'vencimiento']
     search_fields = ['persona__nombre', 'persona__apellido',
                      'numero']
+
+
+class MasterContractAdmin(admin.ModelAdmin):
+    list_display = ['poliza', 'plan', 'aseguradora', 'contratante']
+    search_fields = ['poliza', 'plan__nombre', 'aseguradora__nombre',
+                     'contratante__nombre']
+
+    def get_queryset(self, request):
+        return super(MasterContractAdmin, self).get_queryset(
+            request
+        ).select_related(
+                'plan',
+                'aseguradora',
+                'contratante',
+        )
 
 
 admin.site.register(Plan)
@@ -56,8 +76,8 @@ admin.site.register(Meta)
 admin.site.register(Autorizacion)
 admin.site.register(Precontrato)
 admin.site.register(MetodoPago)
-admin.site.register(Aseguradora)
-admin.site.register(MasterContract)
+admin.site.register(Aseguradora, AseguradoraAdmin)
+admin.site.register(MasterContract, MasterContractAdmin)
 admin.site.register(PCD, PCDAdmin)
 admin.site.register(Beneficio, BeneficioAdmin)
 admin.site.register(ImportFile)

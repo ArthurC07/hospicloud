@@ -14,8 +14,10 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 
 from crispy_forms.layout import Fieldset
+
 from lab.models import Resultado
 from persona.forms import BasePersonaForm
 
@@ -27,5 +29,5 @@ class ResultadoForm(BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(ResultadoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(u'Agregar Resultado de Laboratorio',
+        self.helper.layout = Fieldset('Agregar Resultado de Laboratorio',
                                       *self.field_names)

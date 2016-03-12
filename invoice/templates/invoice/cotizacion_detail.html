@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %} Cotizacion {{ cotizacion.id }} {% endblock %}
 {% block content %}
-    {% load humanize %}
+    {% load humanize %}{% load i18n %}{% load l10n %}
     <div class="row">
         <div class="col-md-12">
             <div class="main-content col-md-12">‏
@@ -54,8 +54,14 @@
                     {% for cotizado in cotizacion.cotizado_set.all %}
                         <tr>
                             <td>{{ cotizado.cantidad }}</td>
-                            <td><a href="{% url 'cotizado-delete' cotizado.id %}"><i
-                                    class="glyphicon glyphicon-trash"></i></a>{{ cotizado.descripcion }} {{ cotizado.item }}</td>
+                            <td>
+                                <a href="{% url 'cotizado-delete' cotizado.id %}">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                                <a href="{% url 'cotizado-edit' cotizado.id %}">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </a>{{ cotizado.descripcion }} {{ cotizado.item }}
+                            </td>
                             <td>{{ cotizado.precio }}</td>
                             <td>{{ cotizado.total_vendido }}</td>
                             <td>{{ cotizado.descuento }}</td>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,39 +14,51 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
+import calendar
 from collections import defaultdict
 from datetime import time, timedelta
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
-from django.db.models import Q, Count
+from django.db.models import Count, DurationField
+from django.db.models.aggregates import Avg
+from django.forms import HiddenInput
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
-from django.views.generic import (DetailView, CreateView, View,
-                                  ListView, UpdateView, TemplateView,
-                                  RedirectView)
-from django.views.generic.base import TemplateResponseMixin
-from django.views.generic.detail import SingleObjectMixin
-from django.shortcuts import get_object_or_404, redirect
-from django.views.generic.edit import FormMixin, DeleteView
-from guardian.decorators import permission_required
 from django.utils.translation import ugettext_lazy as _
+from django.views.generic import DetailView, CreateView, View, ListView, \
+    UpdateView, TemplateView, RedirectView
+from django.views.generic.base import ContextMixin
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import FormMixin
 
-from clinique.forms import PacienteForm, CitaForm, EvaluacionForm, \
+from bsc.models import Queja
+from clinique.forms import CitaForm, EvaluacionForm, \
     ConsultaForm, SeguimientoForm, LecturaSignosForm, DiagnosticoClinicoForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
-    PrescripcionFormSet
-from clinique.models import Paciente, Cita, Consulta, Evaluacion, Seguimiento, \
+    PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm, \
+    EsperaConsultorioForm
+from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
-    NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, Remision
+    NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
+    Remision, \
+    NotaMedica, TipoConsulta
+from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
+from hospinet.utils.date import make_month_range, previous_month_range, \
+    make_end_day, make_day_start
+from hospinet.utils.forms import MonthYearForm
 from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
 from invoice.forms import PeriodoForm
@@ -77,42 +89,43 @@ class DateBoundView(View):
         return super(DateBoundView, self).dispatch(request, *args, **kwargs)
 
 
-class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
+class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
     template_name = 'clinique/index.html'
     paginate_by = 20
     context_object_name = 'pacientes'
-
-    def get_queryset(self):
-        return Paciente.objects.filter(
-            consultorio__usuario=self.request.user).order_by('nombre').all()
+    model = Consultorio
+    queryset = Consultorio.objects.select_related(
+        'usuario',
+        'secretaria',
+    )
 
     def get_context_data(self, **kwargs):
         context = super(ConsultorioIndexView, self).get_context_data(**kwargs)
         context['citaperiodoform'] = PeriodoForm(prefix='cita-periodo')
         context['citaperiodoform'].helper.form_action = 'cita-periodo'
-        context['citaperiodoform'].set_legend(_(u'Citas por Periodo'))
+        context['citaperiodoform'].set_legend(_('Citas por Periodo'))
 
         context['diagnosticoperiodoform'] = PeriodoForm(
             prefix='diagnostico-periodo')
         context[
             'diagnosticoperiodoform'].helper.form_action = 'diagnostico-periodo'
         context['diagnosticoperiodoform'].set_legend(
-            _(u'Diagnosticos por Periodo'))
+            _('Diagnosticos por Periodo'))
 
         context['cargosperiodoform'] = PeriodoForm(prefix='cargo-periodo')
         context['cargosperiodoform'].helper.form_action = 'cargo-periodo'
-        context['cargosperiodoform'].set_legend(_(u'Cargos por Periodo'))
+        context['cargosperiodoform'].set_legend(_('Cargos por Periodo'))
 
         context['consultasperiodoform'] = PeriodoForm(prefix='consulta')
         context['consultasperiodoform'].helper.form_action = 'consulta-periodo'
-        context['consultasperiodoform'].set_legend(_(u'Consultas por Periodo'))
+        context['consultasperiodoform'].set_legend(_('Consultas por Periodo'))
 
         context['evaluacionperiodoform'] = PeriodoForm(
             prefix='evaluacion-periodo')
         context[
             'evaluacionperiodoform'].helper.form_action = 'evaluacion-periodo'
         context['evaluacionperiodoform'].set_legend(
-            _(u'Evaluaciones por Periodo')
+            _('Evaluaciones por Periodo')
         )
 
         context['seguimientoperiodoform'] = PeriodoForm(
@@ -120,7 +133,7 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
         context[
             'seguimientoperiodoform'].helper.form_action = 'seguimiento-periodo'
         context['seguimientoperiodoform'].set_legend(
-            _(u'Seguimientos por Periodo')
+            _('Seguimientos por Periodo')
         )
 
         context['pacientesearch'] = PacienteSearchForm()
@@ -128,17 +141,107 @@ class ConsultorioIndexView(DateBoundView, ListView, ConsultorioPermissionMixin):
             'pacientesearch'].helper.form_action = \
             'clinique-paciente-search-add'
 
-        context['esperas'] = Espera.objects.filter(fecha__gte=self.yesterday,
-                                                   consulta=False,
-                                                   terminada=False,
-                                                   atendido=False,
-                                                   ausente=False).all()
+        context['esperas'] = Espera.objects.filter(
+            fecha__gte=self.yesterday,
+            consulta=False,
+            terminada=False,
+            atendido=False,
+            ausente=False
+        ).select_related(
+            'persona',
+            'consultorio',
+            'consultorio__usuario',
+            'consultorio__secretaria',
+        ).all()
+
+        context['consultas'] = Espera.objects.filter(
+            consulta=True,
+            terminada=False,
+            ausente=False,
+            atendido=False,
+        ).select_related(
+            'persona',
+            'consultorio',
+            'consultorio__usuario',
+            'consultorio__secretaria',
+        ).all()
+
+        context['consulta_estadistica'] = PeriodoForm(
+            prefix='consulta-estadistica'
+        )
+
+        context[
+            'consulta_estadistica'].helper.form_action = 'consulta-estadisticas'
+        context['consulta_estadistica'].set_legend(
+            _('Estad&iacute;sticas de Consulta')
+        )
+
+        meses = []
+        now = timezone.now()
+        tipos = {}
+        context['monthly_forms'] = []
+
+        year_start = make_day_start(now.replace(month=1, day=1))
+        year_end = make_end_day(now.replace(month=12, day=31))
+
+        context['consulta_anual'] = Consulta.objects.atendidas(
+            year_start, year_end
+        ).count()
+
+        context['queja_anual'] = Queja.objects.filter(
+            created__range=(year_start, year_end)
+        ).count()
+
+        for tipo in TipoConsulta.objects.filter(habilitado=True):
+            tipos[tipo] = []
+
+        for n in range(1, 13):
+            start = now.replace(month=n, day=1)
+            inicio, fin = make_month_range(start)
+
+            consultas = Consulta.objects.atendidas(inicio, fin)
+            atenciones = consultas.count()
+            quejas = Queja.objects.filter(created__range=(inicio, fin)).count()
+
+            for tipo in TipoConsulta.objects.filter(habilitado=True):
+                tipos[tipo].append(consultas.filter(tipo=tipo).count())
+
+            meses.append(
+                {
+                    'inicio': inicio,
+                    'atenciones': atenciones,
+                    'quejas': quejas,
+                }
+            )
+
+            form = MonthYearForm(initial={
+                'year': start.year,
+                'mes': n,
+            })
+            form.helper.attrs = {'target': '_blank'}
+            form.set_action('clinique-monthly')
+            form.fields['year'].widget = HiddenInput()
+            form.fields['mes'].widget = HiddenInput()
+            form.helper.form_method = 'get'
+            form.helper.add_input(Submit(
+                'submit',
+                _('{0}'.format(calendar.month_name[n])),
+                css_class='btn-block'
+            ))
+
+            form.helper.form_class = ''
+            form.helper.label_class = ''
+            form.helper.field_class = ''
+            context['monthly_forms'].append(form)
+
+        context['tipos'] = tipos
+        context['meses'] = meses
 
         return context
 
 
-class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView,
-                            LoginRequiredMixin):
+class ConsultorioDetailView(LoginRequiredMixin, DateBoundView,
+                            SingleObjectMixin, ListView):
     paginate_by = 20
     template_name = 'clinique/consultorio_detail.html'
 
@@ -169,29 +272,6 @@ class ConsultorioDetailView(DateBoundView, SingleObjectMixin, ListView,
         return queryset
 
 
-class PacienteSearchView(ListView, LoginRequiredMixin):
-    context_object_name = 'pacientes'
-    model = Paciente
-    template_name = 'clinique/paciente_list.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        form = PacienteSearchForm(self.request.GET)
-        form.is_valid()
-
-        query = form.cleaned_data['query']
-        consultorio = form.cleaned_data['consultorio']
-
-        queryset = Paciente.objects.filter(
-            Q(persona__nombre__icontains=query) |
-            Q(persona__apellido__icontains=query) |
-            Q(persona__identificacion__icontains=query),
-            consultorio=consultorio,
-        )
-
-        return queryset.all()
-
-
 class ConsultorioCreateView(CurrentUserFormMixin, CreateView):
     model = Consultorio
     form_class = ConsultorioForm
@@ -211,15 +291,7 @@ class ConsultorioFormMixin(ConsultorioMixin):
         return initial
 
 
-class PacienteCreateView(PersonaFormMixin, CreateView, LoginRequiredMixin):
-    """Permite agregar una :class:`Persona` como un :class:`Paciente` de un
-    doctor que tiene un :class:`User` en el sistema"""
-
-    model = Paciente
-    form_class = PacienteForm
-
-
-class PacienteDetailView(DetailView, LoginRequiredMixin):
+class PacienteDetailView(LoginRequiredMixin, DetailView):
     """Permite ver los datos del :class"`Paciente` en la interfaz gráfica"""
 
     model = Persona
@@ -235,22 +307,7 @@ class PacienteDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class PacienteDeleteView(DeleteView, LoginRequiredMixin):
-    model = Paciente
-
-    def get_success_url(self):
-        return reverse('consultorio-index')
-
-
-class PacienteMixin(View):
-    """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
-
-    def dispatch(self, *args, **kwargs):
-        self.paciente = get_object_or_404(Paciente, pk=kwargs['paciente'])
-        return super(PacienteMixin, self).dispatch(*args, **kwargs)
-
-
-class ConsultaMixin(TemplateResponseMixin):
+class ConsultaMixin(ContextMixin):
     """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -265,16 +322,6 @@ class ConsultaMixin(TemplateResponseMixin):
         return context
 
 
-class PacienteFormMixin(FormMixin, PacienteMixin):
-    """Permite inicializar el paciente que se utilizará en un formulario"""
-
-    def get_initial(self):
-        initial = super(PacienteFormMixin, self).get_initial()
-        initial = initial.copy()
-        initial['paciente'] = self.paciente
-        return initial
-
-
 class ConsultaFormMixin(ConsultaMixin, FormMixin):
     """Permite inicializar el paciente que se utilizará en un formulario"""
 
@@ -285,27 +332,17 @@ class ConsultaFormMixin(ConsultaMixin, FormMixin):
         return initial
 
 
-class ConsultorioPacienteListView(ConsultorioMixin, ListView,
-                                  LoginRequiredMixin):
-    model = Paciente
-    context_object_name = 'pacientes'
-
-    def get_queryset(self):
-        return Paciente.objects.filter(consultorio=self.consultorio).order_by(
-            'created').all()
-
-
-class CitaCreateView(CreateView, LoginRequiredMixin):
+class CitaCreateView(LoginRequiredMixin, CreateView):
     model = Cita
     form_class = CitaForm
 
 
-class CitaPersonaCreateView(CreateView, PersonaFormMixin, LoginRequiredMixin):
+class CitaPersonaCreateView(LoginRequiredMixin, CreateView, PersonaFormMixin):
     model = Cita
     form_class = CitaPersonaForm
 
 
-class CitaPeriodoView(TemplateView, LoginRequiredMixin):
+class CitaPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los contratos de un periodo"""
     template_name = 'clinique/cita_periodo.html'
 
@@ -322,6 +359,9 @@ class CitaPeriodoView(TemplateView, LoginRequiredMixin):
         return super(CitaPeriodoView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        """
+        Adds the date range information to the template
+        """
         context = super(CitaPeriodoView, self).get_context_data(**kwargs)
 
         context['citas'] = self.citas
@@ -331,7 +371,7 @@ class CitaPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
+class DiagnosticoPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los :class:`DiagnosticoClinico` de un periodo"""
     template_name = 'clinique/diagnostico_periodo.html'
 
@@ -340,46 +380,37 @@ class DiagnosticoPeriodoView(TemplateView, LoginRequiredMixin):
 
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
-            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.fin = make_end_day(self.form.cleaned_data['fin'])
             self.diagnosticos = DiagnosticoClinico.objects.filter(
                 created__gte=self.inicio,
                 created__lte=self.fin
-            ).order_by('consulta__consultorio')
+            )
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
 
     def get_context_data(self, **kwargs):
+        """
+        Builds several data structures to be displayed in the template
+        """
         context = super(DiagnosticoPeriodoView, self).get_context_data(**kwargs)
 
-        context['diagnosticos'] = self.diagnosticos
+        context['diagnosticos'] = self.diagnosticos.order_by(
+            'consulta__consultorio__nombre'
+        )
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         context['total'] = self.diagnosticos.count()
 
-        DiagnosticoClinico.objects.values('consulta__consultorio').annotate(
-            consultorio_count=Count('consulta__consultorio')
-        ).filter(created__gte=self.inicio, created__lte=self.fin)
-
-        cons = defaultdict(int)
-        consultorios = Consultorio.objects.all()
-        for consultorio in consultorios:
-            cons[consultorio] = DiagnosticoClinico.objects.filter(
-                created__gte=self.inicio, created__lte=self.fin,
-                consulta__consultorio=consultorio).count()
-
-        cons = dict((k, v) for k, v in cons.items() if v > 0)
-
-        context['consultorios'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
-        context['consultorio_graph'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
-        context['consultorio_graph2'] = reversed(
-            sorted(cons.iteritems(), key=lambda x: x[1]))
+        context['consultorios'] = self.diagnosticos.values(
+            'consulta__consultorio__nombre'
+        ).annotate(
+            consultorio_count=Count('id')
+        ).order_by()
 
         return context
 
 
-class CargoPeriodoView(TemplateView, LoginRequiredMixin):
+class CargoPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los :class:`Cargo` de un periodo"""
     template_name = 'clinique/cargo_periodo.html'
 
@@ -410,7 +441,7 @@ class CargoPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class CitaListView(ConsultorioMixin, ListView, LoginRequiredMixin):
+class CitaListView(LoginRequiredMixin, ConsultorioMixin, ListView):
     model = Cita
     context_object_name = 'citas'
 
@@ -443,23 +474,23 @@ class CitaAusenteView(LoginRequiredMixin, RedirectView):
         cita.save()
         messages.info(
             self.request,
-            _(u'¡Se marco la espera como ausente!')
+            _('¡Se marco la espera como ausente!')
         )
         return cita.get_absolute_url()
 
 
-class EvaluacionCreateView(ConsultaFormMixin, PersonaFormMixin,
-                           CurrentUserFormMixin, CreateView):
+class EvaluacionCreateView(CurrentUserFormMixin, ConsultaFormMixin,
+                           PersonaFormMixin, CreateView):
     model = Evaluacion
     form_class = EvaluacionForm
 
 
-class EvaluacionUpdateView(UpdateView, LoginRequiredMixin):
+class EvaluacionUpdateView(LoginRequiredMixin, UpdateView):
     model = Evaluacion
     form_class = EvaluacionForm
 
 
-class EvaluacionPeriodoView(TemplateView, LoginRequiredMixin):
+class EvaluacionPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los :class:`Evaluacion` de un periodo"""
     template_name = 'clinique/evaluacion_periodo.html'
 
@@ -486,11 +517,96 @@ class EvaluacionPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class ConsultaCreateView(PersonaFormMixin, CurrentUserFormMixin,
-                         ConsultorioFormMixin, CreateView,
-                         LoginRequiredMixin):
+class EsperaMixin(object):
+    """
+    Populates a :class:`Espera` with data comming from the url
+    """
+
+    def dispatch(self, *args, **kwargs):
+        self.espera = get_object_or_404(Espera, pk=kwargs['espera'])
+        return super(EsperaMixin, self).dispatch(*args, **kwargs)
+
+
+class EsperaFormMixin(EsperaMixin, FormMixin):
+    """
+    Adds a :class:`Espera` data to a form initial arguments
+    """
+
+    def get_initial(self):
+        initial = super(EsperaFormMixin, self).get_initial()
+        initial['espera'] = self.espera
+        return initial
+
+
+class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
+                               CreateView):
+    """
+    Creates a :class:`Consulta` based in a :class:`Espera` data
+    """
+    model = Consulta
+    form_class = ConsultaEsperaForm
+
+    def get_initial(self):
+        initial = super(ConsultaEsperaCreateView, self).get_initial()
+        initial['persona'] = self.espera.persona
+        initial['poliza'] = self.espera.poliza
+        initial['consultorio'] = self.espera.consultorio
+        return initial
+
+
+def get_active_master_contracts(persona):
+    """
+    Builds a :class:`QuerySet` that searches the :class:`MasterContract`s
+    associated to all active :class:`Contract` of a :class:`Persona`
+    :param persona: The :class:`Persona` that will be used to obtain
+                    :class:`MasterContract`:s
+    :return: :class:`QuerySet`
+    """
+    queryset = None
+    if persona.contratos.filter(
+            vencimiento__gte=timezone.now()
+    ).count() >= 1:
+        masters = persona.contratos.filter(
+            vencimiento__gte=timezone.now()
+        ).values('master')
+        masters = [master['master'] for master in masters]
+        queryset = MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante'
+        ).filter(pk__in=masters)
+    elif persona.beneficiarios.filter(
+            contrato__vencimiento__gte=timezone.now()
+    ).count() >= 1:
+        masters = persona.beneficiarios.filter(
+            contrato__vencimiento__gte=timezone.now()
+        ).values('contrato__master')
+        masters = [master['contrato__master'] for master in masters]
+        queryset = MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante'
+        ).filter(pk__in=masters)
+    return queryset
+
+
+class ConsultaCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                         ConsultorioFormMixin, CreateView):
     model = Consulta
     form_class = ConsultaForm
+
+    def get_form(self, form_class=None):
+        """
+        Builds a form that contains all :class:`MasterContract` from the
+        :class:`Persona` that is getting a :class:`Consulta`
+        :param form_class:
+        :return: :class:`ConsultaForm` instance
+        """
+        form = super(ConsultaCreateView, self).get_form(form_class)
+        queryset = get_active_master_contracts(self.persona)
+        if queryset:
+            form.fields['poliza'].queryset = queryset
+        return form
 
 
 class ConsultaDetailView(LoginRequiredMixin, DetailView):
@@ -498,8 +614,7 @@ class ConsultaDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'consulta'
 
 
-class SeguimientoCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
-                            LoginRequiredMixin):
+class SeguimientoCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
     model = Seguimiento
     form_class = SeguimientoForm
 
@@ -535,7 +650,7 @@ class SeguimientoPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class LecturaSignosCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
+class LecturaSignosCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = LecturaSignos
     form_class = LecturaSignosForm
 
@@ -551,23 +666,23 @@ class LecturaSignosCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class LecturaSignosUpdateView(UpdateView, LoginRequiredMixin):
+class LecturaSignosUpdateView(LoginRequiredMixin, UpdateView):
     model = LecturaSignos
     form_class = LecturaSignosForm
 
 
-class DiagnosticoCreateView(PersonaFormMixin, ConsultaFormMixin,
-                            CurrentUserFormMixin, CreateView):
+class DiagnosticoCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                            ConsultaFormMixin, CreateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
 
-class DiagnosticoUpdateView(UpdateView, LoginRequiredMixin):
+class DiagnosticoUpdateView(LoginRequiredMixin, UpdateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
 
-class CliniquePersonaUpdateView(UpdateView, LoginRequiredMixin):
+class CliniquePersonaUpdateView(LoginRequiredMixin, UpdateView):
     model = Persona
     form_class = PersonaForm
     template_name = 'clinique/persona_update.html'
@@ -576,7 +691,7 @@ class CliniquePersonaUpdateView(UpdateView, LoginRequiredMixin):
         return reverse('clinique-fisico-editar', args=[self.object.id])
 
 
-class CliniqueFisicoUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueFisicoUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`Fisico` de una :class:`Persona`
     """
@@ -590,7 +705,7 @@ class CliniqueFisicoUpdateView(UpdateView, LoginRequiredMixin):
                        args=[self.object.persona.id])
 
 
-class CliniqueAntecedenteUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueAntecedenteUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`Antecedente` de una
     :class:`Persona`"""
 
@@ -609,7 +724,7 @@ class CliniqueAntecedenteObstetricoCreateView(AntecedenteObstetricoCreateView):
                        args=[self.object.persona.id])
 
 
-class CliniqueAntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueAntecedenteFamiliarUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
     :class:`Persona`"""
 
@@ -622,7 +737,7 @@ class CliniqueAntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
                        args=[self.object.persona.id])
 
 
-class CliniqueAntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueAntecedenteObstetricoUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
     :class:`Persona`"""
 
@@ -631,7 +746,7 @@ class CliniqueAntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/antecedente_obstetrico_update.html'
 
 
-class CliniqueAntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueAntecedenteQuirurgicoUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
 
@@ -644,18 +759,7 @@ class CliniqueAntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
                        args=[self.object.persona.id])
 
 
-class CliniqueAntecedenteQuirurgicoCreateView(CreateView, PersonaFormMixin,
-                                              PacienteMixin,
-                                              LoginRequiredMixin):
-    model = AntecedenteQuirurgico
-    form_class = AntecedenteQuirurgicoForm
-    template_name = 'clinique/antecedente_quirurgico_create.html'
-
-    def get_success_url(self):
-        return reverse('clinique-paciente', args=[self.paciente.id])
-
-
-class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
+class CliniqueEstiloVidaUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`EstiloVida` de una
     :class:`Persona`"""
 
@@ -664,7 +768,7 @@ class CliniqueEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'clinique/estilo_vida_update.html'
 
 
-class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin,
+class CargoCreateView(CurrentUserFormMixin, ConsultaFormMixin,
                       UserInventarioRequiredMixin, CreateView):
     """Permite crear :class:`Cargo`s durante una :class:`Consulta`"""
     model = Cargo
@@ -689,7 +793,7 @@ class CargoCreateView(ConsultaFormMixin, CurrentUserFormMixin,
         return HttpResponseRedirect(self.get_success_url())
 
 
-class OrdenMedicaCreateView(ConsultaFormMixin, CurrentUserFormMixin,
+class OrdenMedicaCreateView(CurrentUserFormMixin, ConsultaFormMixin,
                             CreateView):
     model = OrdenMedica
     form_class = OrdenMedicaForm
@@ -700,7 +804,7 @@ class OrdenMedicaUpdateView(LoginRequiredMixin, UpdateView):
     form_class = OrdenMedicaForm
 
 
-class OrdenMedicaDetailView(DetailView, LoginRequiredMixin):
+class OrdenMedicaDetailView(LoginRequiredMixin, DetailView):
     model = OrdenMedica
     context_object_name = 'orden'
 
@@ -712,13 +816,13 @@ class OrdenMedicaDetailView(DetailView, LoginRequiredMixin):
         helper = FormHelper()
         helper.form_action = reverse('prescripcion-guardar',
                                      args=[self.object.id])
-        helper.add_input(Submit('submit', _(u'Guardar')))
+        helper.add_input(Submit('submit', _('Guardar')))
         context['helper'] = helper
 
         return context
 
 
-class OrdenMedicaListView(ListView, LoginRequiredMixin):
+class OrdenMedicaListView(LoginRequiredMixin, ListView):
     model = OrdenMedica
     context_object_name = 'ordenes'
 
@@ -726,7 +830,7 @@ class OrdenMedicaListView(ListView, LoginRequiredMixin):
         return OrdenMedica.objects.filter(farmacia=False)
 
 
-class OrdenCompletarRedirect(RedirectView, LoginRequiredMixin):
+class OrdenCompletarRedirect(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -743,70 +847,109 @@ def save_prescriptions(request, orden):
         formset = PrescripcionFormSet(request.POST, instance=orden)
         if formset.is_valid():
             formset.save()
-            messages.info(request, _(u'Agregados los medicamentos'))
+            messages.info(request, _('Agregados los medicamentos'))
 
     return redirect(orden)
 
 
-class NotaEnfermeriaCreateView(PersonaFormMixin, CurrentUserFormMixin,
+class NotaEnfermeriaCreateView(CurrentUserFormMixin, PersonaFormMixin,
                                CreateView):
     model = NotaEnfermeria
     form_class = NotaEnfermeriaForm
 
 
-class ExamenCreateView(PacienteFormMixin, LoginRequiredMixin, CreateView):
+class ExamenCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = Examen
     form_class = ExamenForm
 
 
-class ExamenUpdateView(UpdateView, LoginRequiredMixin):
+class ExamenUpdateView(LoginRequiredMixin, UpdateView):
     model = Examen
     form_class = ExamenForm
 
 
-class EsperaCreateView(PersonaFormMixin, ConsultorioFormMixin,
-                       LoginRequiredMixin, CreateView):
+class ConsultorioEsperaCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                                  ConsultorioFormMixin, CreateView):
     model = Espera
     form_class = EsperaForm
 
+    def get_form(self, form_class=None):
+        """
+        Builds a form that contains all :class:`MasterContract` from the
+        :class:`Persona` that is getting a :class:`Consulta`
+        :param form_class:
+        :return: :class:`ConsultaForm` instance
+        """
+        form = super(ConsultorioEsperaCreateView, self).get_form(form_class)
 
-class EsperaConsultorioCreateView(PersonaFormMixin, LoginRequiredMixin,
-                                  CreateView):
+        queryset = get_active_master_contracts(self.persona)
+        if queryset:
+            form.fields['poliza'].queryset = queryset
+        return form
+
+
+class EsperaUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows the user to change the :class:`Consultorio` for a :class:`Espera`
+    """
+    model = Espera
+    form_class = EsperaConsultorioForm
+
+
+class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
+    """
+    Creates a :class:`Espera` according to the data entered in the
+    :class:`EsperaForm`
+    """
     model = Espera
     form_class = EsperaForm
 
+    def get_form(self, form_class=None):
+        """
+        Builds a form that contains all :class:`MasterContract` from the
+        :class:`Persona` that is getting a :class:`Consulta`
+        :param form_class:
+        :return: :class:`ConsultaForm` instance
+        """
+        form = super(EsperaCreateView, self).get_form(form_class)
+        queryset = get_active_master_contracts(self.persona)
+        if queryset:
+            form.fields['poliza'].queryset = queryset
+        return form
 
-class EsperaListView(ConsultorioMixin, LoginRequiredMixin, ListView):
+
+class EsperaListView(LoginRequiredMixin, ConsultorioMixin, ListView):
     model = Espera
 
 
-class EsperaAusenteView(RedirectView, LoginRequiredMixin):
+class EsperaAusenteView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.ausente = True
+        espera.fin = timezone.now()
         espera.save()
         messages.info(
             self.request,
-            _(u'¡Se marco la espera como ausente!')
+            _('¡Se marco la espera como ausente!')
         )
         return espera.get_absolute_url()
 
 
-class PrescripcionCreateView(PersonaFormMixin, ConsultaFormMixin,
-                             CurrentUserFormMixin, CreateView):
+class PrescripcionCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                             ConsultaFormMixin, CreateView):
     model = Prescripcion
     form_class = PrescripcionForm
 
 
-class PrescripcionUpdateView(UpdateView, LoginRequiredMixin):
+class PrescripcionUpdateView(LoginRequiredMixin, UpdateView):
     model = Prescripcion
     form_class = PrescripcionForm
 
 
-class IncapacidadCreateView(PersonaFormMixin, ConsultaFormMixin,
-                            CurrentUserFormMixin, CreateView):
+class IncapacidadCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                            ConsultaFormMixin, CreateView):
     model = Incapacidad
     form_class = IncapacidadForm
 
@@ -816,7 +959,7 @@ class IncapacidadUpdateView(LoginRequiredMixin, UpdateView):
     form_class = IncapacidadForm
 
 
-class IncapacidadListView(ListView, LoginRequiredMixin):
+class IncapacidadListView(LoginRequiredMixin, ListView):
     model = Incapacidad
     context_object_name = 'incapacidades'
 
@@ -826,14 +969,14 @@ class ReporteCreateView(ConsultorioFormMixin, LoginRequiredMixin, CreateView):
     form_class = ReporteForm
 
 
-class ReporteListView(ListView, LoginRequiredMixin):
+class ReporteListView(LoginRequiredMixin, ListView):
     model = Reporte
     queryset = Reporte.objects.order_by('-created')
     context_object_name = 'reportes'
     paginate_by = 20
 
 
-class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
+class CitaEsperaRedirectView(LoginRequiredMixin, RedirectView):
     """Crea una :class:´Espera´ a partir de una :class:´Cita´ y redirige al
     usuario al :class:´Consultorio´ asociado"""
 
@@ -845,12 +988,12 @@ class CitaEsperaRedirectView(RedirectView, LoginRequiredMixin):
         espera.save()
         messages.info(
             self.request,
-            _(u'¡Se envio el paciente a salada de espera!')
+            _('¡Se envio el paciente a sala de espera!')
         )
         return espera.get_absolute_url()
 
 
-class EsperaConsultaRedirectView(RedirectView, LoginRequiredMixin):
+class EsperaConsultaRedirectView(LoginRequiredMixin, RedirectView):
     """Crea una :class:´Espera´ a partir de una :class:´Cita´ y redirige al
     usuario al :class:´Consultorio´ asociado"""
 
@@ -859,16 +1002,16 @@ class EsperaConsultaRedirectView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.consulta = True
-        espera.inicio = timezone.now()
+        espera.fin = timezone.now()
         espera.save()
         messages.info(
             self.request,
-            _(u'¡Se envio el paciente a salada de consulta!')
+            _('¡Se envio el paciente a consulta!')
         )
         return espera.get_absolute_url()
 
 
-class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
+class EsperaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
     """Marca una Espera como terminada y coloca como inactivas las consultas"""
 
     permanent = False
@@ -876,17 +1019,15 @@ class EsperaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.terminada = True
-        espera.fin = timezone.now()
-        consultas = Consulta.objects.filter(activa=True, persona=espera.persona)
 
-        for consulta in consultas.all():
+        for consulta in espera.consulta_set.all():
             consulta.activa = False
             consulta.save()
 
         espera.save()
         messages.info(
             self.request,
-            _(u'¡La consulta se marcó como terminada!')
+            _('¡La consulta se marcó como terminada!')
         )
         return espera.get_absolute_url()
 
@@ -898,25 +1039,48 @@ class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     form_class = RemisionForm
 
 
-class ConsultaTerminadaRedirectView(RedirectView, LoginRequiredMixin):
+class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
+                                    RedirectView):
+    """
+    Marks a :class:`Consulta` as finished and updates some data that will be
+    later used to build statistics, for example duration.
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
         consulta.activa = False
         consulta.final = timezone.now()
+        consulta.duracion = consulta.final - consulta.created
         consulta.save()
+        if consulta.espera is not None:
+            consulta.espera.terminada = True
+            consulta.espera.save()
+        else:
+            Espera.objects.filter(
+                terminada=False, persona=consulta.persona
+            ).update(
+                terminada=True
+            )
 
-        esperas = Espera.objects.filter(terminada=False,
-                                        persona=consulta.persona)
-        for espera in esperas.all():
-            espera.terminada = True
+        espera = Espera.objects.filter(
+            consultorio__localidad=consulta.consultorio.localidad,
+            fecha__gte=self.yesterday,
+            consulta=False,
+            terminada=False,
+            atendido=False,
+            ausente=False
+        ).first()
+
+        if espera is not None:
+            espera.consulta = True
+            espera.consultorio = consulta.consultorio
             espera.fin = timezone.now()
             espera.save()
 
         messages.info(
             self.request,
-            _(u'¡La consulta se marcó como terminada!')
+            _('¡La consulta se marcó como terminada!')
         )
         return consulta.get_absolute_url()
 
@@ -933,8 +1097,24 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
         self.form = PeriodoForm(request.GET, prefix='consulta')
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
-            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
-            self.consultas = Consulta.objects.filter(
+            self.fin = self.form.cleaned_data['fin']
+            self.consultas = Consulta.objects.select_related(
+                'persona',
+                'tipo',
+                'consultorio',
+                'consultorio__usuario',
+                'consultorio__localidad',
+            ).prefetch_related(
+                'cargos',
+                'cargos__item',
+                'diagnosticos_clinicos',
+                'diagnosticos_clinicos__afeccion',
+                'persona__contratos',
+                'persona__contratos__master__aseguradora',
+                'persona__contratos__beneficiarios',
+                'persona__beneficiarios',
+                'persona__beneficiarios__contrato',
+            ).filter(
                 created__range=(self.inicio, self.fin)
             ).order_by('created')
         else:
@@ -954,6 +1134,61 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class ConsultaEstadisticaPeriodoListView(LoginRequiredMixin, ListView):
+    """
+    Shows a GUI with a list of :class:`Cheque that have been registered during
+    the period of time indicated by a :class:`PeriodoForm`
+    """
+    model = Consulta
+    context_object_name = 'consultas'
+    template_name = 'clinique/consulta_estadistica.html'
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Consulta` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = PeriodoForm(self.request.GET, prefix='consulta-estadistica')
+        if form.is_valid():
+            self.inicio = form.cleaned_data['inicio']
+            self.fin = form.cleaned_data['fin']
+            return Consulta.objects.filter(
+                created__range=(
+                    self.inicio,
+                    self.fin
+                )
+            ).select_related(
+                'consultorio',
+                'consultorio__usuario',
+            ).order_by()
+        return Consulta.objects.select_related(
+            'consultorio',
+            'consultorio__usuario',
+        ).order_by()
+
+    def get_context_data(self, **kwargs):
+        context = super(ConsultaEstadisticaPeriodoListView,
+                        self).get_context_data(**kwargs)
+
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        context['medicos'] = self.get_queryset().values(
+            'consultorio__usuario__first_name',
+            'consultorio__usuario__last_name'
+        ).annotate(
+            consultas=Count('consultorio__usuario')
+        )
+
+        context['ciudades'] = self.get_queryset().values(
+            'consultorio__localidad__nombre'
+        ).annotate(
+            consultas=Count('consultorio__localidad')
+        )
+
+        return context
+
+
 class ConsultaRemitirView(RedirectView):
     permanent = False
 
@@ -963,7 +1198,7 @@ class ConsultaRemitirView(RedirectView):
         consulta.save()
         messages.info(
             self.request,
-            _(u'¡Se remitio la consulta a especialista!')
+            _('¡Se remitio la consulta a especialista!')
         )
         return consulta.get_absolute_url()
 
@@ -975,7 +1210,7 @@ class ConsultaRevisarView(RedirectView):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
         consulta.revisada = True
         consulta.save()
-        messages.info(self.request, _(u'¡La Consulta ha sido revisada!'))
+        messages.info(self.request, _('¡La Consulta ha sido revisada!'))
         return consulta.get_absolute_url()
 
 
@@ -1002,5 +1237,132 @@ class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
         ).first()
         emergencia.save()
 
-        messages.info(self.request, _(u'¡Se Envio el Paciente a Emergencias!'))
+        messages.info(self.request, _('¡Se Envio el Paciente a Emergencias!'))
         return emergencia.get_absolute_url()
+
+
+class NotaMedicaCreateView(ConsultaFormMixin, CurrentUserFormMixin, CreateView):
+    """
+    Creates a new :class:`NotaMedica`
+    """
+    model = NotaMedica
+    form_class = NotaMedicaForm
+
+
+class ClinicalData(TemplateView, LoginRequiredMixin):
+    """
+    Creates a view that a allows a user to view the statistical data for any
+    given month.
+    """
+    template_name = 'clinique/resume.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        form = MonthYearForm(request.GET)
+
+        if form.is_valid():
+            self.year = form.cleaned_data['year']
+            self.mes = form.cleaned_data['mes']
+        else:
+            messages.info(
+                self.request,
+                _('Los Datos Ingresados en el formulario no son válidos')
+            )
+            return HttpResponseRedirect(reverse('consultorio-index'))
+
+        return super(ClinicalData, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+        Collects the data that will be shown in the statistical data view
+        :param kwargs: The original dictionary with data
+        :return: the final dict that will be used in the view
+        """
+        context = super(ClinicalData, self).get_context_data(**kwargs)
+
+        start = datetime(self.year, self.mes, 1)
+        inicio, fin = make_month_range(start)
+
+        context['fecha'] = inicio
+        consultas = Consulta.objects.atendidas(inicio, fin)
+
+        tipos = consultas.values('tipo__tipo').annotate(
+            count=Count('id')
+        ).order_by()
+
+        quejas = Queja.objects.filter(created__range=(inicio, fin))
+        atenciones = consultas.count()
+        diags = DiagnosticoClinico.objects.filter(
+            consulta__created__range=(inicio, fin)
+        )
+
+        diagnosticos = diags.values('diagnostico').annotate(
+            count=Count('id')
+        ).order_by('-count')[:10]
+
+        afecciones = diags.values('afeccion__nombre').annotate(
+            count=Count('id')
+        ).order_by('-count')[:10]
+
+        context['tipos'] = tipos
+        context['consultas'] = atenciones
+        context['quejas'] = quejas.count()
+
+        consultorios = consultas.values(
+            'consultorio__nombre',
+            'consultorio__localidad__nombre',
+        ).annotate(
+            count=Count('id'),
+            tiempo=Avg('duracion', output_field=DurationField()),
+            quejas=Count('respuesta__queja__id')
+        ).order_by('-count')
+
+        ciudades = consultas.values('consultorio__localidad__nombre').annotate(
+            count=Count('id')
+        ).order_by('-count')
+
+        context['diurnas'] = consultas.filter(
+            created__hour__range=(7, 19)
+        ).count()
+
+        context['nocturnas'] = consultas.exclude(
+            created__hour__range=(7, 19)
+        ).count()
+
+        quejas_tipo = quejas.values('departamento__nombre').annotate(
+            count=Count('id')
+        ).order_by('-count')
+
+        aseguradoras = consultas.values(
+            'contrato__master__aseguradora__nombre'
+        ).annotate(
+            count=Count('id')
+        ).order_by('-count')
+
+        esperas = Espera.objects.filter(
+            created__range=(inicio, fin)
+        )
+
+        esperas_data = esperas.values(
+            'usuario__first_name',
+            'usuario__last_name',
+            'consultorio__localidad__nombre',
+        ).annotate(
+            count=Count('id'),
+            quejas=Count('consulta_set__respuesta__queja__id')
+        ).order_by('count')
+
+        context['consultorios'] = consultorios
+        context['ciudades'] = ciudades
+        context['tipo_quejas'] = quejas_tipo
+        context['diagnosticos'] = diagnosticos
+        context['aseguradoras'] = aseguradoras
+        context['esperas'] = esperas.count()
+        context['esperas_data'] = esperas_data
+
+        context['aseguradoras'] = aseguradoras
+        context['esperas'] = esperas.count()
+        context['esperas_data'] = esperas_data
+        context['afecciones'] = afecciones
+
+        return context

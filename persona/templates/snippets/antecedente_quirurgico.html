@@ -1,22 +1,27 @@
-{% load l10n %}
+{% load i18n %}{% load l10n %}
 <div class="table-responsive">
-<table class="table table-striped">
-  <caption>Antecedentes Quir&uacute;rgicos</caption>
-  <thead>
-    <tr>
-      <th>Procedimiento</th>
-      <th>Efecuado</th>
-        <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for antecedente in persona.antecedentes_quirurgicos.all %}
-  <tr>
-    <td>{{ antecedente.procedimiento }}</td>
-    <td>{{ antecedente.fecha }}</td>
-    <td><a class="btn btn-success" href="{% url 'persona-antecedente-quirurgico-editar' antecedente.id %}">Editar</a></td>
-  </tr>
-  {% endfor %}
-  </tbody>
-</table>
+    <table class="table table-striped">
+        <caption>{% trans 'Antecedentes Quir&uacute;rgicos' %}</caption>
+        <thead>
+        <tr>
+            <th>{% trans 'Procedimiento' %}</th>
+            <th>{% trans 'Efecuado' %}</th>
+            <th>{% trans 'Acciones' %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for antecedente in persona.antecedentes_quirurgicos.all %}
+            <tr>
+                <td>{{ antecedente.procedimiento }}</td>
+                <td>{{ antecedente.fecha }}</td>
+                <td>
+                    <a class="btn btn-success"
+                       href="{% url 'persona-antecedente-quirurgico-editar' antecedente.id %}">
+                        {% trans 'Editar' %}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>

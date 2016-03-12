@@ -15,54 +15,52 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
-from statistics.views import (AtencionAdulto, Estadisticas, AtencionInfantil,
-    Productividad, IngresosHospitalarios, AdmisionPeriodo, EmergenciaPeriodo,
-    HabitacionPopularView, DiagnosticoView, DoctorView, CargoView)
+from django.conf.urls import url
+from statistics import views
 
-urlpatterns = patterns('',
-    
+urlpatterns = [
+
     url(r'^$',
-        Estadisticas.as_view(),
+        views.Estadisticas.as_view(),
         name='estadisticas'),
-    
+
     url(r'^estadisticas/adulto$',
-        AtencionAdulto.as_view(),
+        views.AtencionAdulto.as_view(),
         name='estadisticas-admision-adulto'),
-    
+
     url(r'^estadisticas/infantil$',
-        AtencionInfantil.as_view(),
+        views.AtencionInfantil.as_view(),
         name='estadisticas-admision-infantil'),
-    
+
     url(r'^estadisticas/productividad$',
-        Productividad.as_view(),
+        views.Productividad.as_view(),
         name='estadisticas-productividad'),
-    
+
     url(r'^estadisticas/ingresos$',
-        IngresosHospitalarios.as_view(),
+        views.IngresosHospitalarios.as_view(),
         name='estadisticas-ingresos-hospitalarios'),
-    
+
     url(r'^hospitalizado$',
-        AdmisionPeriodo.as_view(),
+        views.AdmisionPeriodo.as_view(),
         name='estadisticas-hospitalizacion'),
 
     url(r'^emergencia$',
-        EmergenciaPeriodo.as_view(),
+        views.EmergenciaPeriodo.as_view(),
         name='estadisticas-emergencias'),
 
     url(r'^habitacion/popular$',
-        HabitacionPopularView.as_view(),
+        views.HabitacionPopularView.as_view(),
         name='estadisticas-habitacion-popular'),
 
     url(r'^admision/diagnostico$',
-        DiagnosticoView.as_view(),
+        views.DiagnosticoView.as_view(),
         name='estadisticas-diagnostico'),
 
     url(r'^admision/doctor$',
-        DoctorView.as_view(),
+        views.DoctorView.as_view(),
         name='estadisticas-doctor'),
 
     url(r'^admision/cargos$',
-        CargoView.as_view(),
+        views.CargoView.as_view(),
         name='estadisticas-cargo'),
-)
+]

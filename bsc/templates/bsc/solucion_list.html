@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="main-content col-md-12">
+            <section class="page-header">
+                <h1>{% trans 'Soluciones Esperando Revisi&oacute;n' %}</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-9 col-xs-9 main-content">
+            <table class="table table-striped">
+                <tbody>
+                {% for solucion in object_list %}
+                    <tr>
+                        <td>
+                            <strong>{% trans 'Soluci&oacute;n' %}:</strong> {{ solucion.solucion }}<br>
+                            <strong>{% trans 'Fecha de la Queja' %}:</strong> {{ solucion.queja.created }}<br>
+                            <strong>{% trans 'Queja Original' %}: </strong> {{ solucion.queja.queja }}<br>
+                            <br>
+                            <div class="row">
+                                <form class="col-md-6 col-xs-6"
+                                      action="{% url 'solucion-aceptar' solucion.id %}"
+                                      method="post">
+                                    {% crispy form %}
+                                </form>
+                                <form class="col-md-6 col-xs-6"
+                                      action="{% url 'solucion-rechazar' solucion.id %}"
+                                      method="post">
+                                    {% crispy rechazada %}
+                                </form>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-xs-6">
+                                    <a class="btn btn-block btn-info"
+                                       href="{% url 'solucion-email-aseguradora-preview' solucion.id %}">
+                                        {% trans 'Notificar Aseguradora' %}
+                                    </a>
+                                </div>
+                                <div class="col-md-6 col-xs-6">
+                                    <a class="btn btn-block btn-info"
+                                       href="{% url 'solucion-email-preview' solucion.id %}">
+                                        {% trans 'Notificar Cliente' %}
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <strong>{% trans 'Paciente' %}: </strong>
+                                    </td>
+                                    <td>{{ solucion.queja.respuesta.consulta.persona }},
+                                        {{ solucion.queja.respuesta.consulta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>{% trans 'Categor&iacute;a' %}:</strong>
+                                    </td>
+                                    <td>
+                                        {% if solucion.queja.respuesta.consulta.contrato in solucion.queja.respuesta.consulta.poliza.contratos.all %}
+                                            {% trans 'Titular del Contrato' %}
+                                        {% endif %}
+                                        {% for beneficiario in solucion.queja.respuesta.consulta.persona.beneficiarios.all %}
+                                            {% if beneficiario.contrato == consulta.contrato %}
+                                                {% trans 'Beneficiario del Contrato' %}
+                                                {{ consulta.contrato.persona }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Departamento' %}</td>
+                                    <td>{{ solucion.queja.departamento }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Aseguradora' %}</td>
+                                    <td>{{ solucion.queja.respuesta.consulta.poliza.aseguradora }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Médico' %}</td>
+                                    <td>{{ solucion.queja.respuesta.consulta.consultorio.usuario.get_full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Enfermera' %}</td>
+                                    <td>{{ solucion.queja.respuesta.consulta.consultorio.secretaria.get_full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Usuario que Propone' %}</td>
+                                    <td>{{ solucion.usuario }}</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">{% trans 'Otras Soluciones' %}</th>
+                                </tr>
+                                {% for sol in solucion.queja.solucion_set.all %}
+                                    {% if solucion.id != sol.id %}
+                                    <tr>
+                                        <td colspan="2">
+                                            {{ sol.solucion }} <br>
+                                            {{ sol.rechazada|yesno:"Rechazada,Propuesta" }}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td>{% trans 'No hay Soluciones Pendientes' %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        {% include 'bsc/snippets/encuesta_menu.html' with object_list=encuestas %}
+    </div>
+{% endblock %}

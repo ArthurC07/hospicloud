@@ -14,25 +14,27 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-from guardian.decorators import permission_required
+from __future__ import unicode_literals
+
+from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, TemplateView, \
     DetailView, UpdateView, DeleteView
-from django.contrib import messages
 
+from emergency.forms import EmergenciaForm, TratamientoForm, HallazgoForm, \
+    RemisionInternaForm, RemisionExternaForm, CobroForm, DiagnosticoForm, \
+    ExamenFisicoForm
+from emergency.models import Emergencia, Tratamiento, RemisionInterna, \
+    RemisionExterna, Hallazgo, Cobro, Diagnostico, ExamenFisico
+from persona.forms import PersonaForm
 from persona.views import PersonaCreateView, FisicoUpdateView, \
     EstiloVidaUpdateView, AntecedenteUpdateView, PersonaFormMixin, \
     AntecedenteFamiliarUpdateView, AntecedenteQuirurgicoUpdateView, \
     AntecedenteObstetricoUpdateView, AntecedenteQuirurgicoCreateView
-from persona.forms import PersonaForm
-from emergency.models import Emergencia, Tratamiento, RemisionInterna, \
-    RemisionExterna, Hallazgo, Cobro, Diagnostico, ExamenFisico
-from emergency.forms import EmergenciaForm, TratamientoForm, HallazgoForm, \
-    RemisionInternaForm, RemisionExternaForm, CobroForm, DiagnosticoForm, \
-    ExamenFisicoForm
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -92,19 +94,19 @@ class EmergenciaCreateView(PersonaFormMixin, CurrentUserFormMixin, CreateView,
         return context
 
 
-class EmergenciaDetailView(DetailView, LoginRequiredMixin):
+class EmergenciaDetailView(LoginRequiredMixin, DetailView):
     """Permite mostrar los datos de la :class:`Emergencia`"""
 
     model = Emergencia
     template_name = 'emergency/emergency_detail.html'
 
 
-class EmergenciaUpdateView(UpdateView, LoginRequiredMixin):
+class EmergenciaUpdateView(LoginRequiredMixin, UpdateView):
     model = Emergencia
     form_class = EmergenciaForm
 
 
-class BaseCreateView(CreateView, LoginRequiredMixin):
+class BaseCreateView(LoginRequiredMixin, CreateView):
     """Permite llenar el formulario de una clase que requiera
     :class:`Emergencia`s de manera previa - DRY"""
 

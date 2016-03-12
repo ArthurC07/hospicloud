@@ -1,5 +1,4 @@
-{% load staticfiles %}
-{% load thumbnail %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}{% load thumbnail %}
 {% ifnotequal persona.fotografia None %}
 {% thumbnail persona.fotografia "100x100" crop="center" as im %}
     <img class="fotografia alinear-derecha" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">

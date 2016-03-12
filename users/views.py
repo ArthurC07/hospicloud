@@ -13,27 +13,27 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormMixin
-from persona.forms import (PersonaForm, AntecedenteForm, FisicoForm,
-                           AntecedenteFamiliarForm, AntecedenteObstetricoForm,
-                           AntecedenteQuirurgicoForm, EstiloVidaForm)
-from persona.models import (Persona, Antecedente, AntecedenteFamiliar,
-                            AntecedenteObstetrico, Fisico, EstiloVida,
-                            AntecedenteQuirurgico)
+
+from persona.forms import PersonaForm, AntecedenteForm, FisicoForm, \
+    AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
+    AntecedenteQuirurgicoForm, EstiloVidaForm
+from persona.models import Persona, Antecedente, AntecedenteFamiliar, \
+    AntecedenteObstetrico, Fisico, EstiloVida, AntecedenteQuirurgico
 from persona.views import PersonaFormMixin
 from users.mixins import LoginRequiredMixin
 from users.models import Ciudad
 
 
 class UserRedirectMixin(LoginRequiredMixin):
-
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
@@ -44,7 +44,6 @@ class UserPersonaCreateView(CreateView, UserRedirectMixin):
     template_name = 'users/persona_form.html'
 
     def form_valid(self, form):
-
         self.object = form.save()
         self.request.user.profile.persona = self.object
         self.request.user.profile.save()
@@ -55,33 +54,30 @@ class UserPersonaCreateView(CreateView, UserRedirectMixin):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
 
-class UserPersonaDetailView(DetailView, LoginRequiredMixin):
+class UserPersonaDetailView(LoginRequiredMixin, DetailView):
     model = Persona
     context_object_name = 'persona'
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
 
-class UserPersonaUpdateView(UpdateView, UserRedirectMixin):
+class UserPersonaUpdateView(UserRedirectMixin, UpdateView):
     model = Persona
     form_class = PersonaForm
     template_name = 'users/persona_form.html'
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
 
-class UserFisicoUpdateView(UpdateView, UserRedirectMixin):
+class UserFisicoUpdateView(UserRedirectMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`Fisico` de una :class:`Persona`
     """
@@ -90,12 +86,11 @@ class UserFisicoUpdateView(UpdateView, UserRedirectMixin):
     form_class = FisicoForm
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
 
-class UserAntecedenteUpdateView(UpdateView, UserRedirectMixin):
+class UserAntecedenteUpdateView(UserRedirectMixin, UpdateView):
     """Permite actualizar los datos del :class:`Antecedente` de una
     :class:`Persona`"""
 
@@ -103,12 +98,11 @@ class UserAntecedenteUpdateView(UpdateView, UserRedirectMixin):
     form_class = AntecedenteForm
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
 
-class UserAntecedenteFamiliarUpdateView(UpdateView, UserRedirectMixin):
+class UserAntecedenteFamiliarUpdateView(UserRedirectMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
     :class:`Persona`"""
 
@@ -116,12 +110,11 @@ class UserAntecedenteFamiliarUpdateView(UpdateView, UserRedirectMixin):
     form_class = AntecedenteFamiliarForm
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
 
-class UserAntecedenteObstetricoUpdateView(UpdateView, UserRedirectMixin):
+class UserAntecedenteObstetricoUpdateView(UserRedirectMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
     :class:`Persona`"""
 
@@ -129,7 +122,6 @@ class UserAntecedenteObstetricoUpdateView(UpdateView, UserRedirectMixin):
     form_class = AntecedenteObstetricoForm
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
@@ -142,7 +134,6 @@ class UserAntecedenteQuirurgicoCreateView(CreateView, PersonaFormMixin):
     form_class = AntecedenteQuirurgicoForm
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
@@ -155,12 +146,11 @@ class UserAntecedenteQuirurgicoUpdateView(UpdateView, UserRedirectMixin):
     form_class = AntecedenteQuirurgicoForm
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 
 
-class UserEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
+class UserEstiloVidaUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`EstiloVida` de una
     :class:`Persona`"""
 
@@ -168,7 +158,6 @@ class UserEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
     form_class = EstiloVidaForm
 
     def get_success_url(self):
-
         return reverse('userena_profile_detail',
                        args=[self.request.user.username])
 

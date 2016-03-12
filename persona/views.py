@@ -14,25 +14,26 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
+from django.db.models.query_utils import Q
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.views.generic import (CreateView, DetailView, UpdateView,
-                                  ListView, RedirectView)
-from django.views.generic.base import TemplateResponseMixin, ContextMixin
+from django.views.generic import CreateView, DetailView, UpdateView, ListView, \
+    RedirectView
+from django.views.generic.base import ContextMixin
 from django.views.generic.edit import FormMixin
-from django.shortcuts import get_object_or_404
-from django.db.models.query_utils import Q
 
-from persona.forms import (PersonaForm, FisicoForm, EstiloVidaForm,
-                           AntecedenteForm, AntecedenteFamiliarForm,
-                           AntecedenteObstetricoForm,
-                           AntecedenteQuirurgicoForm, PersonaSearchForm,
-                           EmpleadorForm, EmpleoForm, PersonaDuplicateForm)
-from persona.models import (Persona, Fisico, EstiloVida, Antecedente,
-                            AntecedenteFamiliar, AntecedenteObstetrico,
-                            AntecedenteQuirurgico, Empleo, Empleador)
+from persona.forms import PersonaForm, FisicoForm, EstiloVidaForm, \
+    AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
+    AntecedenteQuirurgicoForm, PersonaSearchForm, EmpleadorForm, EmpleoForm, \
+    PersonaAdvancedSearchForm
+from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
+    AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, Empleo, \
+    Empleador, remove_duplicates
 from users.mixins import LoginRequiredMixin
 
 
@@ -60,52 +61,47 @@ class PersonaFormMixin(FormMixin, PersonaMixin):
 
     def get_initial(self):
         initial = super(PersonaFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['persona'] = self.persona
         return initial
 
 
-class PersonaIndexView(ListView, PersonaPermissionMixin):
+class PersonaIndexView(LoginRequiredMixin, ListView):
     context_object_name = 'personas'
     model = Persona
     template_name = 'persona/index.html'
     paginate_by = 10
 
-
-class PersonaDetailView(DetailView, LoginRequiredMixin):
-    """Permite mostrar los datos de una :class:`Persona`"""
-
-    context_object_name = 'persona'
-    model = Persona
-
     def get_context_data(self, **kwargs):
-        context = super(PersonaDetailView, self).get_context_data(**kwargs)
+        context = super(PersonaIndexView, self).get_context_data(**kwargs)
 
-        if self.object.sexo == 'F':
-            antecedente_obstetrico = AntecedenteObstetrico(persona=self.object)
-            antecedente_obstetrico.created = timezone.now()
-            antecedente_obstetrico.save()
-
-        self.object.save()
+        context['advanced_search_form'] = PersonaAdvancedSearchForm()
 
         return context
 
 
-class PersonaCreateView(CreateView, LoginRequiredMixin):
+class PersonaDetailView(LoginRequiredMixin, DetailView):
+    """
+    Permite mostrar los datos de una :class:`Persona`
+    """
+    context_object_name = 'persona'
+    model = Persona
+
+
+class PersonaCreateView(LoginRequiredMixin, CreateView):
     """Permite ingresar :class:`Persona`s a la aplicación"""
 
     model = Persona
     form_class = PersonaForm
 
 
-class PersonaUpdateView(UpdateView, LoginRequiredMixin):
+class PersonaUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos de una :class:`Persona`"""
 
     model = Persona
     form_class = PersonaForm
 
 
-class FisicoUpdateView(UpdateView, LoginRequiredMixin):
+class FisicoUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`Fisico` de una :class:`Persona`
     """
@@ -114,70 +110,82 @@ class FisicoUpdateView(UpdateView, LoginRequiredMixin):
     form_class = FisicoForm
 
 
-class EstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
-    """Permite actualizar los datos del :class:`EstiloVida` de una
-    :class:`Persona`"""
-
+class EstiloVidaUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Permite actualizar los datos del :class:`EstiloVida` de una
+    :class:`Persona`
+    """
     model = EstiloVida
     form_class = EstiloVidaForm
 
 
-class AntecedenteUpdateView(UpdateView, LoginRequiredMixin):
-    """Permite actualizar los datos del :class:`Antecedente` de una
-    :class:`Persona`"""
-
+class AntecedenteUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Permite actualizar los datos del :class:`Antecedente` de una
+    :class:`Persona`
+    """
     model = Antecedente
     form_class = AntecedenteForm
 
 
-class AntecedenteFamiliarUpdateView(UpdateView, LoginRequiredMixin):
-    """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
-    :class:`Persona`"""
-
+class AntecedenteFamiliarUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
+    :class:`Persona`
+    """
     model = AntecedenteFamiliar
     form_class = AntecedenteFamiliarForm
 
 
-class AntecedenteObstetricoUpdateView(UpdateView, LoginRequiredMixin):
-    """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
-    :class:`Persona`"""
-
+class AntecedenteObstetricoUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
+    :class:`Persona`
+    """
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
 
 
-class AntecedenteQuirurgicoCreateView(CreateView, LoginRequiredMixin, PersonaFormMixin):
+class AntecedenteQuirurgicoCreateView(LoginRequiredMixin, CreateView,
+                                      PersonaFormMixin):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
-
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
 
 
-class AntecedenteQuirurgicoUpdateView(UpdateView, LoginRequiredMixin):
+class AntecedenteQuirurgicoUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteQuirurgico` de una
     :class:`Persona`"""
-
     model = AntecedenteQuirurgico
     form_class = AntecedenteQuirurgicoForm
 
 
-class PersonaSearchView(ListView, LoginRequiredMixin):
+class PersonaSearchView(LoginRequiredMixin, ListView):
+    """
+    Allows searching for :class:`Persona` by using information entered in a form
+    in the UI
+    """
     context_object_name = 'personas'
     model = Persona
     template_name = 'persona/index.html'
     paginate_by = 10
 
     def get_queryset(self):
+        """
+        Builds the queryset that will filter the :class:`Persona` objects based
+        in the :class:`PersonaSearchForm` given information
+        :return: a filtered :class:`QuerySet`
+        """
         form = PersonaSearchForm(self.request.GET)
 
         if form.is_valid():
             query = form.cleaned_data['query']
 
             queryset = Persona.objects.filter(
-                Q(nombre__icontains=query) |
-                Q(apellido__icontains=query) |
-                Q(identificacion__icontains=query)
+                    Q(nombre__icontains=query) |
+                    Q(apellido__icontains=query) |
+                    Q(identificacion__icontains=query)
             )
 
             return queryset.all()
@@ -185,22 +193,70 @@ class PersonaSearchView(ListView, LoginRequiredMixin):
         return Persona.objects.none()
 
 
-class EmpleadorCreateView(CreateView, LoginRequiredMixin):
+class PersonaAdvancedSearchView(LoginRequiredMixin, ListView):
+    """
+    Allows searching for a :class:`Persona` using its nombre and apellidos
+    """
+    context_object_name = 'personas'
+    model = Persona
+    template_name = 'persona/index.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Filters the queryset using the supplied data from a
+        :class:`PersonaAdvancedSearchForm`
+        :return: a queryset filtering the nombre and apellido fields using the
+                 values indicated by the form
+        """
+        form = PersonaAdvancedSearchForm(self.request.GET)
+
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            apellidos = form.cleaned_data['apellidos']
+
+            queryset = Persona.objects.filter(
+                    nombre__icontains=nombre,
+                    apellido__icontains=apellidos,
+            )
+
+            return queryset
+
+        return Persona.objects.none()
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the PersonaAdvancedSearchForm to the view's context
+        :param kwargs:
+        :return: context
+        """
+        context = super(PersonaAdvancedSearchView, self).get_context_data(
+                **kwargs)
+
+        context['advanced_search_form'] = PersonaAdvancedSearchForm()
+
+        return context
+
+
+class EmpleadorCreateView(LoginRequiredMixin, CreateView):
     model = Empleador
     form_class = EmpleadorForm
 
 
-class EmpleadorDetailView(DetailView, LoginRequiredMixin):
+class EmpleadorDetailView(LoginRequiredMixin, DetailView):
     model = Empleador
     context_object_name = 'empleador'
 
 
-class EmpleoCreateView(PersonaFormMixin, CreateView):
+class EmpleoCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = Empleo
     form_class = EmpleoForm
 
 
-class PersonaDuplicateView(RedirectView, LoginRequiredMixin):
+class PersonaDuplicateView(LoginRequiredMixin, RedirectView):
+    """
+    Reports a :class:`Persona` instance as duplicate for consolidation
+    """
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
@@ -215,7 +271,31 @@ class PersonaDuplicateView(RedirectView, LoginRequiredMixin):
             return persona.get_absolute_url()
 
 
-class AntecedenteObstetricoCreateView(PersonaFormMixin, CreateView,
-                                      LoginRequiredMixin):
+class AntecedenteObstetricoCreateView(PersonaFormMixin, LoginRequiredMixin,
+                                      CreateView):
     model = AntecedenteObstetrico
     form_class = AntecedenteObstetricoForm
+
+
+class PersonaDuplicateRemoveView(LoginRequiredMixin, RedirectView):
+    """
+    Allows the user to remove all reported duplicates from the :class:`Persona`
+    data
+    """
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        """
+        Processes the duplicates and return to the persona index.
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        cantidad = remove_duplicates()
+        messages.info(self.request,
+                      u'¡Se han limpiado {0} duplicados!'.format(cantidad))
+
+        if self.request.META['HTTP_REFERER']:
+            return self.request.META['HTTP_REFERER']
+        else:
+            return 'persona-index'

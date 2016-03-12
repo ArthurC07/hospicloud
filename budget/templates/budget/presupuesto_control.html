@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
@@ -8,7 +8,9 @@
                 <h1>{{ presupuesto }}</h1>
             </section>
             <div class="col-md-2 col-xs-2">
-                <a class="btn btn-block btn-primary" href="{% url 'budget-index' %}">Volver a Presupuesto</a>
+                <a class="btn btn-block btn-primary" href="{% url 'budget-index' %}">
+                    {% trans 'Volver a Presupuesto' %}
+                </a>
             </div>
         </div>
     </div>
@@ -17,19 +19,26 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="page-header">
-                        <h2>Total
-                            Presupuestado: {{ presupuesto.total_presupuestado }}</h2>
+                        <h2>
+                            {% trans 'Total Presupuestado:' %}
+                            {{ presupuesto.total_presupuestado }}
+                        </h2>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="page-header">
-                        <h2>Total
-                            Ejecutado: {{ presupuesto.total_gastos_mes_actual }}</h2>
+                        <h2>
+                            {% trans 'Total Ejecutado:' %}
+                            {{ presupuesto.total_gastos_mes_actual }}
+                        </h2>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="page-header">
-                        <h2>Total Facturado Mes Anterior: {{ presupuesto.ingresos_mes_anterior }}</h2>
+                        <h2>
+                            {% trans 'Total Facturado Mes Anterior:' %}
+                            {{ presupuesto.ingresos_mes_anterior }}
+                        </h2>
                     </div>
                 </div>
             </div>
@@ -50,7 +59,7 @@
     <div class="row">
         <section class="col-md-12 main-content">
             <div class="page-header">
-                <h2>Detalle de Gastos</h2>
+                <h2>{% trans 'Detalle de Gastos' %}</h2>
             </div>
             <div class="row">
                 {% for cuenta in presupuesto.cuenta_set.all %}
@@ -66,7 +75,7 @@
             {% for cuenta in presupuesto.cuenta_set.all %}
                 <div class="panel panel-primary" id="cuenta-{{ cuenta.id }}">
                     <div class="panel-heading">{{ cuenta.nombre }}</div>
-                    <div class="panel-body ">
+                    <div class="panel-body no-more-tables">
                         <div class="progress">
                             {% with cuenta.porcentaje_ejecutado_mes_actual as ejecutado %}
                                 <div class="progress-bar {% if ejecutado >= 75 and ejecutado < 100 %}progress-bar-warning{% endif %}{% if ejecutado >= 100 %}progress-bar-danger{% endif %}"
@@ -79,18 +88,18 @@
                                 </div>
                             {% endwith %}
                         </div>
-                        <table class="table">
-                            <caption>Cuentas Por Pagar</caption>
+                        <table class="table table-striped">
+                            <caption>{% trans 'Cuentas Por Pagar' %}</caption>
                             <thead>
                             <tr>
-                                <th>Fecha en Factura</th>
-                                <th>Fecha M&aacute;xima de Pago</th>
-                                <th>Descripci&oacute;n</th>
-                                <th>Usuario</th>
-                                <th>Proveedor</th>
-                                <th>N&uacute;mero de Factura</th>
-                                <th>Factura</th>
-                                <th>Monto</th>
+                                <th>{% trans 'Fecha en Factura' %}</th>
+                                <th>{% trans 'Fecha M&aacute;xima de Pago' %}</th>
+                                <th>{% trans 'Descripci&oacute;n' %}</th>
+                                <th>{% trans 'Usuario' %}</th>
+                                <th>{% trans 'Proveedor' %}</th>
+                                <th>{% trans 'N&uacute;mero de Factura' %}</th>
+                                <th>{% trans 'Factura' %}</th>
+                                <th>{% trans 'Monto' %}</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -108,7 +117,7 @@
                                             <a class="btn btn-success" target="_blank"
                                                href="{{ gasto.factura.url }}">
                                                 <i class="fa fa-download"></i>
-                                                Documento
+                                                {% trans 'Documento' %}
                                             </a>
                                         {% endif %}
                                     </td>
@@ -118,22 +127,22 @@
                                             <button class="btn btn-primary dropdown-toggle" type="button"
                                                     id="dropdownMenu1" data-toggle="dropdown"
                                                     aria-expanded="true">
-                                                Opciones
+                                                {% trans 'Opciones' %}
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu"
                                                 aria-labelledby="dropdownMenu1">
                                                 <li role="presentation">
-                                                    <a role="menuitem" href="{% url 'gasto-ejecutar' gasto.id %}"><i class="fa fa-play"></i> Ejecutar</a>
+                                                    <a role="menuitem" href="{% url 'gasto-ejecutar' gasto.id %}"><i class="fa fa-play"></i> {% trans 'Ejecutar' %}</a>
                                                 </li>
                                                 <li role="presentation">
-                                                    <a role="menuitem" href="{% url 'gasto-schedule' gasto.id %}"><i class="fa fa-calendar"></i> Programar</a>
+                                                    <a role="menuitem" href="{% url 'gasto-schedule' gasto.id %}"><i class="fa fa-calendar"></i> {% trans 'Programar' %}</a>
                                                 </li>
                                                 <li role="presentation">
-                                                    <a role="menuitem" href="{% url 'gasto-parcial' gasto.id %}"><i class="fa fa-plus-circle"></i> Pago Parcial</a>
+                                                    <a role="menuitem" href="{% url 'gasto-parcial' gasto.id %}"><i class="fa fa-plus-circle"></i> {% trans 'Pago Parcial' %}</a>
                                                 </li>
                                                 <li role="presentation">
-                                                    <a role="menuitem"  href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> Borrar</a>
+                                                    <a role="menuitem"  href="{% url 'gasto-delete' gasto.id %}"><i class="fa fa-trash-o"></i> {% trans 'Borrar' %}</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -141,32 +150,32 @@
                                 </tr>
                             {% empty %}
                                 <tr>
-                                    <td colspan="7" class="text-center">No hay
-                                        gastos registrados
+                                    <td colspan="7" class="text-center">
+                                        {% trans 'No hay gastos registrados' %}
                                     </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th colspan="7">Total de Cuentas por Pagar</th>
+                                <th colspan="7">{% trans 'Total de Cuentas por Pagar' %}</th>
                                 <th class="text-right">{{ cuenta.total_cuentas_por_pagar }}</th>
                                 <th>&nbsp;</th>
                             </tr>
                             </tfoot>
                         </table>
                         <table class="table">
-                            <caption>Gastos Completados</caption>
+                            <caption>{% trans 'Gastos Completados' %}</caption>
                             <thead>
                             <tr>
-                                <th>Fecha en Factura</th>
-                                <th>Fecha de Pago</th>
-                                <th>Descripci&oacute;n</th>
-                                <th>Usuario</th>
-                                <th>Proveedor</th>
-                                <th>N&uacute;mero de Comprobante</th>
-                                <th>Descargas</th>
-                                <th>Monto</th>
+                                <th>{% trans 'Fecha en Factura' %}</th>
+                                <th>{% trans 'Fecha de Pago' %}</th>
+                                <th>{% trans 'Descripci&oacute;n' %}</th>
+                                <th>{% trans 'Usuario' %}</th>
+                                <th>{% trans 'Proveedor' %}</th>
+                                <th>{% trans 'N&uacute;mero de Comprobante' %}</th>
+                                <th>{% trans 'Descargas' %}</th>
+                                <th>{% trans 'Monto' %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -183,7 +192,7 @@
                                             <button class="btn btn-primary dropdown-toggle" type="button"
                                                     id="dropdownMenu1" data-toggle="dropdown"
                                                     aria-expanded="true">
-                                                Documentos
+                                                {% trans 'Documentos' %}
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu"
@@ -193,7 +202,7 @@
                                                     <a role="menuitem" target="_blank"
                                                        href="{{ gasto.comprobante_de_pago.url }}">
                                                         <i class="fa fa-download"></i>
-                                                        Comprobante de Pago
+                                                        {% trans 'Comprobante de Pago' %}
                                                     </a>
                                                     </li>
                                                 {% endif %}
@@ -202,7 +211,7 @@
                                                     <a role="menuitem" target="_blank"
                                                        href="{{ gasto.factura.url }}">
                                                         <i class="fa fa-download"></i>
-                                                        Factura
+                                                        {% trans 'Factura' %}
                                                     </a>
                                                     </li>
                                                 {% endif %}
@@ -213,15 +222,15 @@
                                 </tr>
                             {% empty %}
                                 <tr>
-                                    <td colspan="7" class="text-center">No hay
-                                        gastos registrados
+                                    <td colspan="7" class="text-center">
+                                        {% trans 'No hay gastos registrados' %}
                                     </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th colspan="6">Total de Gastos</th>
+                                <th colspan="6">{% trans 'Total de Gastos' %}</th>
                                 <th class="text-right">{{ cuenta.total_gastos_mes_actual }}</th>
                                 <th>&nbsp;</th>
                             </tr>
@@ -232,17 +241,17 @@
                         <a class="btn btn-primary"
                            href="{% url 'budget-gasto-agregar' cuenta.id %}">
                             <i class="fa fa-plus-circle"></i>
-                            Agregar Gasto
+                            {% trans 'Agregar Gasto' %}
                         </a>
                         <a class="btn btn-primary"
                            href="{% url 'budget-gasto-pendiente-agregar' cuenta.id %}">
                             <i class="fa fa-plus-circle"></i>
-                            Agregar Cuenta por Pagar
+                            {% trans 'Agregar Cuenta por Pagar' %}
                         </a>
                     </div>
                 </div>
             {% empty %}
-                <p>No hay Cuentas Disponibles</p>
+                <p>{% trans 'No hay Cuentas Disponibles' %}</p>
             {% endfor %}
         </section>
     </div>

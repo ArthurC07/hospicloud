@@ -29,14 +29,17 @@
                                 {% trans 'Recibo Pendiente' %}
                             </a>
                         </li>
-                        <li><a href="#consulta" data-toggle="tab">Consulta</a>
-                        </li>
-                        {% if config.HOSPITALIZACION_ENABLED %}
                         <li>
-                            <a href="#admisiones" data-toggle="tab">
-                                {% trans 'Admisiones' %}
+                            <a href="#consulta" data-toggle="tab">
+                                {% trans 'Consulta' %}
                             </a>
                         </li>
+                        {% if config.HOSPITALIZACION_ENABLED %}
+                            <li>
+                                <a href="#admisiones" data-toggle="tab">
+                                    {% trans 'Admisiones' %}
+                                </a>
+                            </li>
                         {% endif %}
                         <li>
                             <a href="#emergencias" data-toggle="tab">
@@ -47,11 +50,6 @@
                             <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
                             </li>
                         {% endif %}
-                        <li>
-                            <a href="#contratos" data-toggle="tab">
-                                {% trans 'Contratos' %}
-                            </a>
-                        </li>
                         <li>
                             <a href="#reporte" data-toggle="tab">
                                 {% trans 'Reportes' %}
@@ -75,7 +73,7 @@
                                     </caption>
                                     <thead>
                                     <tr>
-                                        <th>Tipo de Pago' %}</th>
+                                        <th>{% trans 'Tipo de Pago' %}</th>
                                         <th>{% trans 'Monto' %}</th>
                                     </tr>
                                     </thead>
@@ -119,7 +117,7 @@
                                         <td>{{ turno.apertura }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Diferencia Total de Cierre' %}</th>
+                                        <th>{% trans 'Diferencia Total de Cierre' %}</th>
                                         <th>{{ turno.diferencia_total }}</th>
                                     </tr>
                                     <tr>
@@ -152,9 +150,14 @@
                                                 {% else %}
                                                     {{ recibo.cliente.id }}
                                                 {% endif %}
-                                            </a></td>
+                                            </a>
+                                        </td>
                                         <td>
                                             {{ recibo.cliente.nombre_completo }}
+                                            <p>
+                                                {{ recibo.numero }}
+                                                {{ recibo.created }}
+                                            </p>
                                         </td>
                                         <td>{{ recibo.cajero }}</td>
                                         <td>
@@ -187,7 +190,8 @@
                                                 {% else %}
                                                     {{ cotizacion.persona.id }}
                                                 {% endif %}
-                                            </a></td>
+                                            </a>
+                                        </td>
                                         <td>
                                             {{ cotizacion.persona.nombre_completo }}
                                         </td>
@@ -206,7 +210,7 @@
                         {% if config.HOSPITALIZACION_ENABLED %}
                             <article id="admisiones" class="tab-pane">
                                 <table class="table table-striped">
-                                    <caption>Admisiones sin Facturar</caption>
+                                    <caption>{% trans 'Admisiones sin Facturar' %}</caption>
                                     <thead class="gradient">
                                     <tr>
                                         <th>{% trans 'C&oacute;digo' %}</th>
@@ -254,7 +258,7 @@
                         {% endif %}
                         <article id="emergencias" class="tab-pane">
                             <table class="table table-striped no-more-tables">
-                                <caption>Emergencias sin Facturar</caption>
+                                <caption>{% trans 'Emergencias sin Facturar' %}</caption>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'Identificaci&oacute;n' %}</th>
@@ -298,7 +302,7 @@
                         </article>
                         <article id="consulta" class="tab-pane">
                             <table class="table table-striped no-more-tables">
-                                <caption>Consultas sin Facturar</caption>
+                                <caption>{% trans 'Consultas sin Facturar' %}</caption>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'Identificaci&oacute;n' %}</th>
@@ -376,72 +380,6 @@
                                 </table>
                             </article>
                         {% endif %}
-                        <article id="contratos" class="tab-pane">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <table class="table table-striped">
-                                        <caption>{% trans 'Contratos' %}</caption>
-                                        <thead>
-                                        <tr>
-                                            <th>{% trans 'Poliza' %}</th>
-                                            <th>{% trans 'Aseguradora' %}</th>
-                                            <th>{% trans 'Contratante' %}</th>
-                                            <th>{% trans 'Acciones' %}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for contrato in contratos.all %}
-                                            <tr>
-                                                <td>{{ contrato.poliza }}</td>
-                                                <td>{{ contrato.aseguradora }}</td>
-                                                <td>{{ contrato.contratante }}</td>
-                                                <td>
-                                                    <a class="btn btn-primary"
-                                                       href="{% url 'master-cotizar' contrato.id %}">
-                                                        {% trans 'Cotizar' %}
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                    <table class="table table-striped">
-                                        <caption>{% trans 'Aseguradoras' %}</caption>
-                                        <thead>
-                                        <tr>
-                                            <th>{% trans 'Aseguradora' %}</th>
-                                            <th>{% trans 'Polizas' %}</th>
-                                            <th>{% trans 'Acciones' %}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for aseguradora in aseguradoras.all %}
-                                            <tr>
-                                                <td>{{ aseguradora }}</td>
-                                                <td>
-                                                    <ul>
-                                                        {% for master in aseguradora.master_contracts.all %}
-                                                            <li>
-                                                                {{ master.poliza }} {{ master.plan }} {{ master.contratante }}
-                                                                -
-                                                                Activos: {{ master.active_contracts_count }}
-                                                            </li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </td>
-                                                <td>
-                                                    <a class="btn btn-block btn-primary"
-                                                       href="{% url 'aseguradora-cotizar-contrato' aseguradora.id %}">
-                                                        {% trans 'Cotizar Contratos' %}
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </article>
                         <article id="reporte" class="tab-pane">
                             <div class="row">
                                 <section class="col-md-4">
@@ -494,6 +432,9 @@
                                 <section class="col-md-4">
                                     {% crispy turnoform %}
                                 </section>
+                                <section class="col-md-4">
+                                    {% crispy numero_form %}
+                                </section>
                             </div>
                         </article>
                     </div>
@@ -522,13 +463,13 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'invoice-estadisticas' %}">
-                                {% trans 'Estad&iacute;sticas' %}
+                            <a href="{% url 'invoice-aseguradora-list' %}">
+                                {% trans 'Facturaci&oacute;n de Contratos' %}
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'invoice-pago-status-index' %}">
-                                {% trans 'Ver Status de los pagos' %}
+                            <a href="{% url 'invoice-estadisticas' %}">
+                                {% trans 'Estad&iacute;sticas' %}
                             </a>
                         </li>
                         <li>
@@ -538,7 +479,12 @@
                         </li>
                         <li>
                             <a href="{% url 'comprobante-agregar' %}">
-                                {% trans 'Crear un Comprobante de Deducci&oacute;n' %}
+                                {% trans 'Crear un Comprobante de Retenci&oacute;n' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-comprobantededuccion-list' %}">
+                                {% trans 'Ver Comprobantes de Retenci&oacute;n' %}
                             </a>
                         </li>
                     </ul>
