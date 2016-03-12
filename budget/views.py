@@ -842,6 +842,18 @@ class BalanceView(TemplateView, LoginRequiredMixin):
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
+        context['venta_credito'] = ventas.filter(
+            recibo__credito=True,
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+        context['venta_contado'] = ventas.filter(
+            recibo__credito=False,
+        ).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
         pagos = Pago.objects.select_related(
             'tipo',
         ).filter(
@@ -853,6 +865,10 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         ).annotate(
             total=Coalesce(Sum('monto'), Decimal())
         ).order_by()
+
+        context['pago_total'] = pagos.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
 
         pagos = Pago.objects.cuentas_por_cobrar().filter(
             recibo__created__lte=fin,
