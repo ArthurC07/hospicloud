@@ -835,7 +835,8 @@ class BalanceView(TemplateView, LoginRequiredMixin):
             'recibo',
             'item'
         ).filter(
-            recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False,
         )
 
         context['total_ventas'] = ventas.aggregate(
