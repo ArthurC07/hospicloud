@@ -732,7 +732,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         context['forms'] = []
         inicio = timezone.make_aware(datetime(self.year, self.mes, 1))
         fin = make_end_day(get_month_end(inicio))
-        previous_end, previous_start = previous_month_range(inicio)
+        previous_start, previous_end = previous_month_range(inicio)
 
         context['fecha'] = inicio
 
