@@ -858,7 +858,8 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         pagos = Pago.objects.select_related(
             'tipo',
         ).filter(
-            recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False,
         )
 
         context['pagos'] = pagos.values(
