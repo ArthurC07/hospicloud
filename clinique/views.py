@@ -25,7 +25,8 @@ from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
-from django.db.models import Count
+from django.db.models import Count, DurationField
+from django.db.models.aggregates import Avg
 from django.forms import HiddenInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -867,8 +868,8 @@ class ExamenUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ExamenForm
 
 
-class EsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
-                       ConsultorioFormMixin, CreateView):
+class ConsultorioEsperaCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                                  ConsultorioFormMixin, CreateView):
     model = Espera
     form_class = EsperaForm
 
@@ -879,7 +880,7 @@ class EsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
         :param form_class:
         :return: :class:`ConsultaForm` instance
         """
-        form = super(EsperaCreateView, self).get_form(form_class)
+        form = super(ConsultorioEsperaCreateView, self).get_form(form_class)
 
         queryset = get_active_master_contracts(self.persona)
         if queryset:
@@ -895,8 +896,11 @@ class EsperaUpdateView(LoginRequiredMixin, UpdateView):
     form_class = EsperaConsultorioForm
 
 
-class EsperaConsultorioCreateView(LoginRequiredMixin, PersonaFormMixin,
-                                  CreateView):
+class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
+    """
+    Creates a :class:`Espera` according to the data entered in the
+    :class:`EsperaForm`
+    """
     model = Espera
     form_class = EsperaForm
 
@@ -907,7 +911,7 @@ class EsperaConsultorioCreateView(LoginRequiredMixin, PersonaFormMixin,
         :param form_class:
         :return: :class:`ConsultaForm` instance
         """
-        form = super(EsperaConsultorioCreateView, self).get_form(form_class)
+        form = super(EsperaCreateView, self).get_form(form_class)
         queryset = get_active_master_contracts(self.persona)
         if queryset:
             form.fields['poliza'].queryset = queryset
@@ -1037,12 +1041,17 @@ class RemisionCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
 
 class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
                                     RedirectView):
+    """
+    Marks a :class:`Consulta` as finished and updates some data that will be
+    later used to build statistics, for example duration.
+    """
     permanent = False
 
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
         consulta.activa = False
         consulta.final = timezone.now()
+        consulta.duracion = consulta.final - consulta.created
         consulta.save()
         if consulta.espera is not None:
             consulta.espera.terminada = True
@@ -1283,10 +1292,15 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
 
         quejas = Queja.objects.filter(created__range=(inicio, fin))
         atenciones = consultas.count()
-
-        diagnosticos = DiagnosticoClinico.objects.filter(
+        diags = DiagnosticoClinico.objects.filter(
             consulta__created__range=(inicio, fin)
-        ).values('diagnostico').annotate(
+        )
+
+        diagnosticos = diags.values('diagnostico').annotate(
+            count=Count('id')
+        ).order_by('-count')[:10]
+
+        afecciones = diags.values('afeccion__nombre').annotate(
             count=Count('id')
         ).order_by('-count')[:10]
 
@@ -1294,21 +1308,61 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         context['consultas'] = atenciones
         context['quejas'] = quejas.count()
 
-        consultorios = consultas.values('consultorio__nombre').annotate(
-            count=Count('id')
-        ).order_by()
+        consultorios = consultas.values(
+            'consultorio__nombre',
+            'consultorio__localidad__nombre',
+        ).annotate(
+            count=Count('id'),
+            tiempo=Avg('duracion', output_field=DurationField()),
+            quejas=Count('respuesta__queja__id')
+        ).order_by('-count')
 
         ciudades = consultas.values('consultorio__localidad__nombre').annotate(
             count=Count('id')
-        ).order_by()
+        ).order_by('-count')
+
+        context['diurnas'] = consultas.filter(
+            created__hour__range=(7, 19)
+        ).count()
+
+        context['nocturnas'] = consultas.exclude(
+            created__hour__range=(7, 19)
+        ).count()
 
         quejas_tipo = quejas.values('departamento__nombre').annotate(
             count=Count('id')
-        ).order_by()
+        ).order_by('-count')
+
+        aseguradoras = consultas.values(
+            'contrato__master__aseguradora__nombre'
+        ).annotate(
+            count=Count('id')
+        ).order_by('-count')
+
+        esperas = Espera.objects.filter(
+            created__range=(inicio, fin)
+        )
+
+        esperas_data = esperas.values(
+            'usuario__first_name',
+            'usuario__last_name',
+            'consultorio__localidad__nombre',
+        ).annotate(
+            count=Count('id'),
+            quejas=Count('consulta_set__respuesta__queja__id')
+        ).order_by('count')
 
         context['consultorios'] = consultorios
         context['ciudades'] = ciudades
         context['tipo_quejas'] = quejas_tipo
         context['diagnosticos'] = diagnosticos
+        context['aseguradoras'] = aseguradoras
+        context['esperas'] = esperas.count()
+        context['esperas_data'] = esperas_data
+
+        context['aseguradoras'] = aseguradoras
+        context['esperas'] = esperas.count()
+        context['esperas_data'] = esperas_data
+        context['afecciones'] = afecciones
 
         return context

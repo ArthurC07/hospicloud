@@ -43,3 +43,28 @@
     </tbody>
 </table>
 </div>
+{% block scripts %}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var canvas = document.getElementById("chart");
+            var ctx = canvas.getContext("2d");
+            var chart = new Chart(ctx);
+            data = {
+                labels: [0, {% for historia in fisico.persona.historiafisica_set.all %} "{{ historia.fecha|escapejs }}",  {% endfor %} 0],
+                datasets: [
+                    {
+                        label: "{% trans 'Peso' %}",
+                        strokeColor: "blue",
+                        fillColor: "rgba(220,220,220,0)",
+                        data: [0, {% for historia in fisico.persona.historiafisica_set.all %} {{ historia.peso|escapejs }}, {% endfor %} 0]
+                    }
+                ]
+            };
+            var myLineChart = new Chart(ctx).Line(data);
+            document.getElementById('legend').innerHTML = myLineChart.generateLegend();
+        });
+    </script>
+{% endblock %}
+

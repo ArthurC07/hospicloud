@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from collections import defaultdict
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -122,6 +123,7 @@ class Espera(TimeStampedModel):
     atendido = models.BooleanField(default=False)
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     class Meta:
         ordering = ['created', ]
@@ -189,6 +191,7 @@ class Consulta(TimeStampedModel):
                                related_name='consulta_set')
     poliza = models.ForeignKey(MasterContract, blank=True, null=True)
     contrato = models.ForeignKey(Contrato, blank=True, null=True)
+    duracion = models.DurationField(default=timedelta)
 
     objects = ConsultaQuerySet.as_manager()
 
@@ -327,6 +330,7 @@ class Cita(TimeStampedModel):
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='citas', blank=True,
                                 null=True)
+    tipo = models.ForeignKey(TipoConsulta, blank=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True, default=timezone.now)
     ausente = models.BooleanField(default=False)
     atendida = models.BooleanField(default=False)
@@ -407,7 +411,7 @@ class OrdenMedica(TimeStampedModel):
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""
 
-        return reverse('consultorio-orden-medica', args=[self.id])
+        return self.consulta.get_absolute_url()
 
 
 @python_2_unicode_compatible

@@ -16,7 +16,7 @@
     <div class="row">
         <div class="col-md-12 col-xs-12 main-content">
             <div class="row">
-                <div class="col-md-6 col-xs-6" id="meses">
+                <div class="col-md-8 col-xs-8" id="meses">
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">
@@ -39,6 +39,14 @@
                                 </th>
                                 <th class="text-right">{{ consultas }}</th>
                             </tr>
+                            <tr>
+                                <td>{% trans 'Diurnas' %}</td>
+                                <td class="text-right">{{ diurnas }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Nocturnas' %}</td>
+                                <td class="text-right">{{ nocturnas }}</td>
+                            </tr>
                             </tfoot>
                         </table>
                     </div>
@@ -49,17 +57,29 @@
                             </h3>
                         </div>
                         <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Consultorio' %}</th>
+                                    <th>{% trans 'Consultas' %}</th>
+                                    <th>{% trans 'Tiempo Promedio' %}</th>
+                                    <th>{% trans 'Quejas' %}</th>
+                                    <th>{% trans 'Ciudad' %}</th>
+                                </tr>
+                            </thead>
                             <tbody>
                             {% for consultorio in consultorios %}
                                 <tr>
                                     <td>{{ consultorio.consultorio__nombre }}</td>
                                     <td class="text-right">{{ consultorio.count }}</td>
+                                    <td class="text-right">{{ consultorio.tiempo }}</td>
+                                    <td class="text-right">{{ consultorio.quejas }}</td>
+                                    <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th>{% trans 'Total de Consultas' %}</th>
+                                <th colspan="4">{% trans 'Total de Consultas' %}</th>
                                 <th class="text-right">{{ consultas }}</th>
                             </tr>
                             </tfoot>
@@ -68,27 +88,34 @@
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">
-                                {% trans 'Quejas por Área' %}
+                                {% trans 'Consultas por Enfermera' %}
                             </h3>
                         </div>
                         <table class="table table-striped">
-                            <tbody>
-                            {% for tipo in tipo_quejas %}
+                            <thead>
                                 <tr>
-                                    <td>{{ tipo.departamento__nombre }}</td>
-                                    <td class="text-right">{{ tipo.count }}</td>
+                                    <th>{% trans 'Usuario' %}</th>
+                                    <th>{% trans 'Consultas' %}</th>
+                                    <th>{% trans 'Tiempo Promedio' %}</th>
+                                    <th>{% trans 'Quejas' %}</th>
+                                    <th>{% trans 'Ciudad' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for espera in esperas_data %}
+                                <tr>
+                                    <td>{{ espera.usuario__first_name }} {{ usuario__last_name }}</td>
+                                    <td class="text-right">{{ espera.count }}</td>
+                                    <td class="text-right">{{ espera.tiempo }}</td>
+                                    <td class="text-right">{{ espera.quejas }}</td>
+                                    <td class="text-right">{{ espera.consultorio__localidad__nombre }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                             <tfoot>
                             <tr>
-                                <th>{% trans 'Total' %}</th>
-                                <th>
-                                    <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
-                                       target="_blank">
-                                        {{ quejas }}
-                                    </a>
-                                </th>
+                                <th colspan="4">{% trans 'Total de Consultas' %}</th>
+                                <th class="text-right">{{ esperas }}</th>
                             </tr>
                             </tfoot>
                         </table>
@@ -115,8 +142,30 @@
                             </tfoot>
                         </table>
                     </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Diagnósticos Clínicos por Afección' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for diagnostico in afecciones %}
+                                <tr>
+                                    <td>{{ diagnostico.afeccion__nombre }}</td>
+                                    <td class="text-right">{{ diagnostico.count }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
-                <div class="col-md-6 col-xs-6">
+                <div class="col-md-4 col-xs-4">
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">
@@ -170,14 +219,16 @@
                     </div>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">{% trans 'Tipo de Pago' %}</h3>
+                            <h3 class="panel-title">
+                                {% trans 'Consultas por Aseguradora' %}
+                            </h3>
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                            {% for facturado in pagos.all %}
+                            {% for aseguradora in aseguradoras %}
                                 <tr>
-                                    <td>{{ facturado.tipo__nombre }}</td>
-                                    <td class="text-right">{{ facturado.total }}</td>
+                                    <td>{{ aseguradora.contrato__master__aseguradora__nombre }}</td>
+                                    <td class="text-right">{{ aseguradora.count }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -186,40 +237,7 @@
                                 <th>
                                     {% trans 'Total' %}</th>
                                 <th>
-                                    <a href="{% url 'invoice-mensual' fecha.year fecha.month %}"
-                                       target="_blank">
-                                        {{ total_ventas }}
-                                    </a>
-                                </th>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                {% trans 'Cuentas por Cobrar' %}
-                            </h3>
-                        </div>
-                        <table class="table table-hover table-striped">
-                            <tbody>
-                            <tr>
-                                <td>{% trans 'Al Cr&eacute;dito' %}</td>
-                                <td class="text-right">{{ credito }}</td>
-                            </tr>
-                            <tr>
-                                <td>{% trans 'Reembolso' %}</td>
-                                <td class="text-right">{{ reembolso }}</td>
-                            </tr>
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <th>{% trans 'Total Cuentas por Cobrar' %}</th>
-                                <th class="text-right">
-                                    <a href="{% url 'invoice-pago-pendiente' %}"
-                                       target="_blank">
-                                        {{ cuentas_por_cobrar }}
-                                    </a>
+                                    {{ consultas }}
                                 </th>
                             </tr>
                             </tfoot>
