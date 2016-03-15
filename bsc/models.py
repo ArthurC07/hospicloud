@@ -502,6 +502,7 @@ class Respuesta(TimeStampedModel):
     consulta = models.ForeignKey(Consulta)
     persona = models.ForeignKey(Persona, blank=True, null=True)
     terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     class Meta:
         ordering = ['created', ]
@@ -545,7 +546,6 @@ class Departamento(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
-
         return self.nombre
 
 
@@ -598,7 +598,6 @@ class Rellamar(TimeStampedModel):
     hora = models.DateTimeField(default=timezone.now)
 
     def get_absolute_url(self):
-
         return self.encuesta.get_absolute_url()
 
 

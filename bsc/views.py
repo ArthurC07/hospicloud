@@ -16,15 +16,15 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-import calendar
-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.db.models import Avg
+from django.db import connections
+from django.db.models import Avg, Count
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -43,12 +43,10 @@ from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
-from hospinet.utils.date import make_day_start, make_end_day, get_month_end, \
-    make_month_range
+from hospinet.utils.date import make_day_start, make_end_day, make_month_range
 from hospinet.utils.forms import PeriodoForm
 from hospinet.utils.views import PeriodoView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
-from django.conf import settings
 
 
 class ScoreCardListView(LoginRequiredMixin, ListView):
@@ -126,7 +124,6 @@ class EncuestaListView(LoginRequiredMixin, ListView):
                 {
                     'inicio': inicio,
                     'fin': fin,
-                    'nombre': calendar.month_name[n],
                     'consultas': atenciones,
                     'encuestada': encuestadas,
                     'contactabilidad': contactabilidad,
@@ -135,6 +132,27 @@ class EncuestaListView(LoginRequiredMixin, ListView):
             )
 
         context['meses'] = meses
+
+        inicio_year = make_day_start(now.replace(month=1, day=1))
+        final_year = make_end_day(now.replace(month=12, day=31))
+
+        respuestas = Respuesta.objects.filter(
+            created__range=(inicio_year, final_year)
+        )
+
+        context['respuestas'] = respuestas.extra(
+            select={
+                'month': connections[Respuesta.objects.db].ops.date_trunc_sql(
+                    'month', 'created'
+                )
+            }
+        ).values(
+            'usuario__first_name',
+            'usuario__last_name',
+            'month',
+        ).annotate(
+            count=Count('id')
+        ).order_by('month', '-count')
 
         return context
 
@@ -341,6 +359,7 @@ class RespuestaRedirectView(LoginRequiredMixin, RedirectView):
         respuesta.consulta = consulta
         respuesta.encuesta = encuesta
         respuesta.persona = consulta.persona
+        respuesta.usuario = self.request.user
         consulta.encuestada = True
         consulta.save()
         respuesta.save()
