@@ -19,6 +19,7 @@ from __future__ import unicode_literals
 from django.conf.urls import url
 
 from budget import views
+from inventory.views import ProveedorDetailView, ProveedorListView
 
 urlpatterns = [
 
@@ -35,7 +36,7 @@ urlpatterns = [
     url(r'^anual', views.PresupuestoAnualView.as_view(), name='anual-budget'),
 
     url(r'^(?P<pk>\d+)/control$', views.PresupuestoDetailView.as_view(
-            template_name='budget/presupuesto_control.html'),
+        template_name='budget/presupuesto_control.html'),
         name='budget-control'),
 
     url(r'^mes/(?P<pk>\d+)$', views.PresupuestoMesDetailView.as_view(),
@@ -90,4 +91,16 @@ urlpatterns = [
     url(r'^presupuesto/gasto/periodo$',
         views.GastoPresupuestoPeriodoView.as_view(),
         name='gasto-presupuesto-periodo'),
+
+    url(r'^proveedores$',
+        ProveedorListView.as_view(
+            template_name='budget/proveedor_list.html'
+        ),
+        name='budget-proveedores'),
+
+    url(r'^proveedor/(?P<pk>\d+)$',
+        ProveedorDetailView.as_view(
+            template_name='budget/proveedor_gasto_detail.html'
+        ),
+        name='proveedor-gastos'),
 ]
