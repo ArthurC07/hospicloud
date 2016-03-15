@@ -26,7 +26,7 @@
                             <li>
                                 <a class="active" href="#paciente"
                                    data-toggle="tab">
-                                    Datos Personales
+                                    {% trans 'Datos Personales' %}
                                 </a>
                             </li>
                             {% if modules.consulta %}
@@ -109,6 +109,7 @@
                                         </p>
                                     {% endfor %}
                                 {% endif %}
+                                {% include 'bsc/snippets/respuestas.html' with respuestas=persona.respuesta_set %}
                             </article>
                             <article id="clinico" class="tab-pane">
                                 {% include 'persona/antecedentes.html' %}
