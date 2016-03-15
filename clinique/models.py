@@ -33,12 +33,14 @@ from contracts.models import Contrato, MasterContract
 from inventory.models import ItemTemplate, Inventario, ItemType
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
+from users.models import Ciudad
 
 
 @python_2_unicode_compatible
 class Localidad(TimeStampedModel):
     nombre = models.CharField(max_length=50, blank=True, null=True)
     habilitado = models.BooleanField(default=True)
+    ciudad = models.ForeignKey(Ciudad, blank=True, null=True)
 
     def __str__(self):
         return self.nombre
