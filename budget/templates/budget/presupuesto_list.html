@@ -350,7 +350,9 @@
                         strokeColor: "rgba(220,220,220,0.8)",
                         highlightFill: "rgba(220,220,220,0.75)",
                         highlightStroke: "rgba(220,220,220,1)",
-                        data: [0, {% for mes in meses %} {{ mes.total|escapejs }}, {% endfor %} 0]
+                        {% localize off %}
+                            data: [0, {% for mes in meses %} {{ mes.total }}, {% endfor %} 0]
+                        {% endlocalize %}
                     }
                 ]
             };
