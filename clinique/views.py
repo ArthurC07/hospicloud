@@ -51,8 +51,7 @@ from clinique.forms import CitaForm, EvaluacionForm, \
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
-    Remision, \
-    NotaMedica, TipoConsulta
+    Remision, NotaMedica, TipoConsulta
 from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
@@ -146,7 +145,8 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             consulta=False,
             terminada=False,
             atendido=False,
-            ausente=False
+            ausente=False,
+            consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
             'persona',
             'consultorio',
@@ -159,6 +159,7 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             terminada=False,
             ausente=False,
             atendido=False,
+            consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
             'persona',
             'consultorio',
