@@ -22,6 +22,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import QuerySet
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -112,8 +113,39 @@ class Consultorio(TimeStampedModel):
         return Consulta.objects.filter(remitida=True, revisada=False)
 
 
+class EsperaQuerySet(QuerySet):
+    """
+    Contains comon queries made to :class:`Espera`
+    """
+
+    def pendientes(self):
+        """
+        Returns all the class:`Espera`s that have not been yet attended
+        """
+        return self.filter(
+            consulta=False,
+            terminada=False,
+            atendido=False,
+            ausente=False,
+        )
+
+    def en_consulta(self):
+        """
+        Returns all the :class:`Espera` that are in the physician's office
+        """
+        return self.filter(
+            consulta=True,
+            terminada=False,
+            ausente=False,
+            atendido=False,
+        )
+
+
 @python_2_unicode_compatible
 class Espera(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to
+    """
     consultorio = models.ForeignKey(Consultorio, related_name='espera',
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='espera')
@@ -126,6 +158,8 @@ class Espera(TimeStampedModel):
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+
+    objects = EsperaQuerySet.as_manager()
 
     class Meta:
         ordering = ['created', ]
@@ -151,6 +185,7 @@ class ConsultaQuerySet(models.QuerySet):
     """
     Creates shortcuts for many common :class:`Consulta` operations
     """
+
     def pendientes_encuesta(self):
         """
         Obtains all :class:`Consulta`s that have not been polled yet.

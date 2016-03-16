@@ -76,6 +76,10 @@ urlpatterns = [
         views.ConsultorioCreateView.as_view(),
         name='consultorio-agregar'),
 
+    url(r'^esperas$',
+        views.EsperaListView.as_view(),
+        name='esperas'),
+
     url(r'^consultorio/(?P<consultorio>\d+)/reporte/agregar$',
         views.ReporteCreateView.as_view(),
         name='consultorio-report-agregar'),

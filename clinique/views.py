@@ -140,12 +140,8 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             'pacientesearch'].helper.form_action = \
             'clinique-paciente-search-add'
 
-        context['esperas'] = Espera.objects.filter(
+        context['esperas'] = Espera.objects.pendientes().filter(
             fecha__gte=self.yesterday,
-            consulta=False,
-            terminada=False,
-            atendido=False,
-            ausente=False,
             consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
             'persona',
@@ -154,11 +150,7 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             'consultorio__secretaria',
         ).all()
 
-        context['consultas'] = Espera.objects.filter(
-            consulta=True,
-            terminada=False,
-            ausente=False,
-            atendido=False,
+        context['consultas'] = Espera.objects.en_consulta().filter(
             consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
             'persona',
@@ -919,8 +911,15 @@ class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
         return form
 
 
-class EsperaListView(LoginRequiredMixin, ConsultorioMixin, ListView):
+class EsperaListView(LoginRequiredMixin, ListView):
+    """
+    Shows all pending :class:`Espera`
+    """
     model = Espera
+    queryset = Espera.objects.pendientes().select_related(
+        'persona',
+        'consultorio',
+    )
 
 
 class EsperaAusenteView(LoginRequiredMixin, RedirectView):
@@ -1064,13 +1063,9 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
                 terminada=True
             )
 
-        espera = Espera.objects.filter(
+        espera = Espera.objects.pendientes().filter(
             consultorio__localidad=consulta.consultorio.localidad,
             fecha__gte=self.yesterday,
-            consulta=False,
-            terminada=False,
-            atendido=False,
-            ausente=False
         ).first()
 
         if espera is not None:
