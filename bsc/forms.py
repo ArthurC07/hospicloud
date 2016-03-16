@@ -110,7 +110,7 @@ class SolucionForm(QuejaFormMixin, HiddenUserForm):
     """
     class Meta:
         model = Solucion
-        exclude = ('aceptada', 'rechazada')
+        exclude = ('aceptada', 'rechazada', 'notificada')
 
     def __init__(self, *args, **kwargs):
         super(SolucionForm, self).__init__(*args, **kwargs)
