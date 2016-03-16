@@ -529,10 +529,17 @@ class SolucionListView(LoginRequiredMixin, ListView):
         'queja__respuesta__consulta__consultorio__secretaria',
         'queja__respuesta__consulta__consultorio__usuario__profile',
         'queja__respuesta__consulta__consultorio__usuario__profile__ciudad',
-    ).filter(
-        aceptada=False,
-        rechazada=False,
     )
+
+    def get_queryset(self):
+        """
+        Refines the :class:`QuerySet` specified by the ListView
+        """
+
+        return super(SolucionListView, self).get_queryset().filter(
+            aceptada=False,
+            rechazada=False,
+        )
 
     def get_context_data(self, **kwargs):
         """
@@ -549,6 +556,18 @@ class SolucionListView(LoginRequiredMixin, ListView):
 
         context['encuestas'] = Encuesta.objects.filter(activa=True)
         return context
+
+
+class SolucionAceptadaListView(SolucionListView):
+    """
+    Shows the :class:`Solucion`s that have been accepted but not yet notified
+    """
+    def get_queryset(self):
+
+        return self.get_queryset().filter(
+            aceptada=True,
+            notificada=False,
+        )
 
 
 class SolucionUpdateView(LoginRequiredMixin, UpdateView):
@@ -675,6 +694,8 @@ class SolucionAseguradoraEmailView(LoginRequiredMixin, RedirectView):
                 from_email=settings.EMAIL_HOST_USER
             )
             message.send()
+            solucion.notificada = True
+            solucion.save()
 
         return reverse('solucion-list')
 

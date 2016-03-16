@@ -551,6 +551,10 @@ class Departamento(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Queja(TimeStampedModel):
+    """
+    Represents any complaint a :class:`Persona` or :class:`Aseguradora` has
+    raised over the :class:`Company` that is using the software.
+    """
     respuesta = models.ForeignKey(Respuesta, blank=True, null=True)
     aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
     departamento = models.ForeignKey(Departamento, null=True, blank=True)
@@ -570,11 +574,15 @@ class Queja(TimeStampedModel):
 
 
 class Solucion(TimeStampedModel):
+    """
+    Registers a posible fix for a :class:`Queja`
+    """
     queja = models.ForeignKey(Queja)
     solucion = models.TextField()
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     aceptada = models.BooleanField(default=False)
     rechazada = models.BooleanField(default=False)
+    notificada = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['queja__created', ]
