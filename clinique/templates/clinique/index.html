@@ -52,54 +52,6 @@
                             {% endfor %}
                         </div>
                     </div>
-                    {% for consultorio in user.consultorios_activos.all %}
-                        <div class="row">
-                            <div class="col-md-9">
-                                <div class="page-header">
-                                    <h2>
-                                        {{ consultorio }}
-                                        <small>{% trans 'M&eacute;dico' %}</small>
-                                        <a class="pull-right btn btn-primary"
-                                           href="{{ consultorio.get_absolute_url }}">
-                                            {% trans 'Ver' %}
-                                        </a>
-                                    </h2>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                    {% for consultorio in user.consultorios_administrados.all %}
-                        <div class="row">
-                            <div class="col-md-9">
-                                <div class="page-header">
-                                    <h2>
-                                        {{ consultorio }}
-                                        <small>{% trans 'Administrador' %}</small>
-                                        <a class="pull-right btn btn-primary"
-                                           href="{{ consultorio.get_absolute_url }}">
-                                            {% trans 'Ver' %}
-                                        </a>
-                                    </h2>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                    {% for consultorio in user.secretarias.all %}
-                        <div class="row">
-                            <div class="col-md-9">
-                                <div class="page-header">
-                                    <h2>
-                                        {{ consultorio }}
-                                        <small>{% trans 'Secretaria' %}</small>
-                                        <a class="pull-right btn btn-primary"
-                                           href="{{ consultorio.get_absolute_url }}">
-                                            {% trans 'Ver' %}
-                                        </a>
-                                    </h2>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
             </div>
             <div class="row">
