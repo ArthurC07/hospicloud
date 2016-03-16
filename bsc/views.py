@@ -564,7 +564,7 @@ class SolucionAceptadaListView(SolucionListView):
     """
     def get_queryset(self):
 
-        return self.get_queryset().filter(
+        return self.queryset.filter(
             aceptada=True,
             notificada=False,
         )
