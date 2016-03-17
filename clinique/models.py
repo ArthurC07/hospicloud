@@ -338,7 +338,26 @@ class LecturaSignos(TimeStampedModel):
 
 
 class Evaluacion(TimeStampedModel):
-    """Registra los análisis que se le efectua a la :class:`Persona`"""
+    """
+    Registra los análisis que se le efectua a la :class:`Persona`
+    """
+
+    ASPECTO = (
+        ('L', _('Lucido')),
+        ('C', _('Consciente')),
+        ('O', _('Orientado')),
+    )
+
+    NORMALIDAD = (
+        ('N', _('Normal')),
+        ('A', _('Anormal')),
+    )
+
+    SIMETRIA = (
+        ('S', _('Simétrico')),
+        ('A', _('Asimétrico')),
+    )
+
     persona = models.ForeignKey(Persona, related_name='evaluaciones',
                                 blank=True, null=True)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -346,7 +365,13 @@ class Evaluacion(TimeStampedModel):
                                 blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='evaluaciones',
                                  blank=True, null=True)
-    orl = models.TextField()
+    aspecto_general = models.CharField(max_length=1, choices=ASPECTO,
+                                       blank=True)
+    cabeza = models.CharField(max_length=1, choices=NORMALIDAD, blank=True)
+    ojos = models.CharField(max_length=1, choices=NORMALIDAD, blank=True)
+    cuello = models.CharField(max_length=1, choices=NORMALIDAD, blank=True)
+    orl = models.CharField(max_length=1, choices=NORMALIDAD, blank=True)
+    descripcion_orl = models.TextField()
     cardiopulmonar = models.TextField()
     gastrointestinal = models.TextField()
     extremidades = models.TextField()
