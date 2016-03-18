@@ -41,42 +41,42 @@ class ConsultorioFormMixin(FieldSetModelFormMixin):
     en los formularios que heredan de esta clase
     """
     consultorio = forms.ModelChoiceField(
-            queryset=Consultorio.objects.select_related(
-                    'usuario',
-            ).filter(activo=True).order_by(
-                    'nombre').all()
+        queryset=Consultorio.objects.select_related(
+            'usuario',
+        ).filter(activo=True).order_by(
+            'nombre').all()
     )
 
 
 class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
     consultorio = forms.ModelChoiceField(
-            queryset=Consultorio.objects.select_related(
-                    'usuario',
-            ).filter(activo=True).order_by(
-                    'nombre'
-            ).all(),
-            widget=forms.HiddenInput()
+        queryset=Consultorio.objects.select_related(
+            'usuario',
+        ).filter(activo=True).order_by(
+            'nombre'
+        ).all(),
+        widget=forms.HiddenInput()
     )
 
 
 class HiddenConsultaFormMixin(FieldSetModelFormMixin):
     consulta = forms.ModelChoiceField(
-            queryset=Consulta.objects.all(),
-            widget=forms.HiddenInput()
+        queryset=Consulta.objects.all(),
+        widget=forms.HiddenInput()
     )
 
 
 class HiddenOrdenMedicaFormMixin(FieldSetModelFormMixin):
     orden = forms.ModelChoiceField(
-            queryset=OrdenMedica.objects.all(),
-            widget=forms.HiddenInput()
+        queryset=OrdenMedica.objects.all(),
+        widget=forms.HiddenInput()
     )
 
 
 class HiddenEsperaForm(FieldSetModelFormMixin):
     espera = forms.ModelChoiceField(
-            queryset=Espera.objects.all(),
-            widget=forms.HiddenInput()
+        queryset=Espera.objects.all(),
+        widget=forms.HiddenInput()
     )
 
 
@@ -103,19 +103,20 @@ class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
     """
     Builds a form that is used to create or edit :class:`Consulta`
     """
+
     class Meta:
         model = Consulta
         exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
                    'espera', 'revisada', 'contrato', 'duracion')
 
     tipo = forms.ModelChoiceField(
-            queryset=TipoConsulta.objects.filter(habilitado=True).all())
+        queryset=TipoConsulta.objects.filter(habilitado=True).all())
     poliza = forms.ModelChoiceField(
-            queryset=MasterContract.objects.select_related(
-                    'aseguradora',
-                    'plan',
-                    'contratante'
-            ).filter(privado=True)
+        queryset=MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante'
+        ).filter(privado=True)
     )
 
     def __init__(self, *args, **kwargs):
@@ -127,6 +128,30 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
     class Meta:
         model = Evaluacion
         fields = '__all__'
+
+    cabeza = forms.ChoiceField(widget=forms.RadioSelect(),
+                               choices=Evaluacion.NORMALIDAD)
+    descripcion_cabeza = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2,})
+    )
+
+    ojos = forms.ChoiceField(widget=forms.RadioSelect(),
+                             choices=Evaluacion.NORMALIDAD)
+    descripcion_ojos = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2,})
+    )
+
+    cuello = forms.ChoiceField(widget=forms.RadioSelect(),
+                               choices=Evaluacion.NORMALIDAD)
+    descripcion_cuello = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2,})
+    )
+
+    orl = forms.ChoiceField(widget=forms.RadioSelect(),
+                            choices=Evaluacion.NORMALIDAD)
+    descripcion_orl = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2,})
+    )
 
     def __init__(self, *args, **kwargs):
         super(EvaluacionForm, self).__init__(*args, **kwargs)
@@ -182,8 +207,8 @@ class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin,
         fields = '__all__'
 
     afeccion = forms.ModelChoiceField(
-            queryset=Afeccion.objects.all().order_by('nombre'),
-            required=False
+        queryset=Afeccion.objects.all().order_by('nombre'),
+        required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -209,7 +234,7 @@ class CargoForm(HiddenConsultaFormMixin, ItemTemplateFormMixin, HiddenUserForm):
         exclude = ('facturado',)
 
     tipo = forms.ModelChoiceField(
-            queryset=ItemType.objects.filter(consulta=True).all()
+        queryset=ItemType.objects.filter(consulta=True).all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -256,11 +281,11 @@ class EsperaForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm,
         fields = ('persona', 'consultorio', 'poliza', 'usuario')
 
     poliza = forms.ModelChoiceField(
-            queryset=MasterContract.objects.select_related(
-                    'aseguradora',
-                    'plan',
-                    'contratante'
-            ).filter(privado=True)
+        queryset=MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante'
+        ).filter(privado=True)
     )
 
     def __init__(self, *args, **kwargs):
@@ -320,8 +345,8 @@ class PrescripcionForm(HiddenOrdenMedicaFormMixin):
         fields = '__all__'
 
     medicamento = forms.ModelChoiceField(
-            queryset=ItemTemplate.objects.filter(activo=True).order_by(
-                    'descripcion'), required=False)
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)
