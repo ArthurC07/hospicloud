@@ -89,7 +89,7 @@ class ConsultaEsperaForm(HiddenConsultorioFormMixin, HiddenEsperaForm,
     class Meta:
         model = Consulta
         exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
-                   'revisada', 'contrato', 'duracion')
+                   'revisada', 'contrato', 'duracion', 'no_desea_encuesta')
 
     poliza = forms.ModelChoiceField(queryset=MasterContract.objects.all(),
                                     widget=forms.HiddenInput())
@@ -107,7 +107,8 @@ class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
     class Meta:
         model = Consulta
         exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
-                   'espera', 'revisada', 'contrato', 'duracion')
+                   'espera', 'revisada', 'contrato', 'duracion',
+                   'no_desea_encuesta')
 
     tipo = forms.ModelChoiceField(
         queryset=TipoConsulta.objects.filter(habilitado=True).all())
@@ -150,6 +151,18 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
     orl = forms.ChoiceField(widget=forms.RadioSelect(),
                             choices=Evaluacion.NORMALIDAD)
     descripcion_orl = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+    hallazgos_genitales = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+    hallazgos_tacto_rectal = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+    hallazgos_extremidades = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+    hallazgos_genitales = forms.CharField(
         widget=forms.Textarea(attrs={'rows': 2}), required=False
     )
 
