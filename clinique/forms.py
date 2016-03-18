@@ -132,25 +132,25 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
     cabeza = forms.ChoiceField(widget=forms.RadioSelect(),
                                choices=Evaluacion.NORMALIDAD)
     descripcion_cabeza = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2,}), required=False
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
     )
 
     ojos = forms.ChoiceField(widget=forms.RadioSelect(),
                              choices=Evaluacion.NORMALIDAD)
     descripcion_ojos = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2,}), required=False
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
     )
 
     cuello = forms.ChoiceField(widget=forms.RadioSelect(),
                                choices=Evaluacion.NORMALIDAD)
     descripcion_cuello = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2,}), required=False
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
     )
 
     orl = forms.ChoiceField(widget=forms.RadioSelect(),
                             choices=Evaluacion.NORMALIDAD)
     descripcion_orl = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2,}), required=False
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
     )
 
     def __init__(self, *args, **kwargs):
