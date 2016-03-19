@@ -82,38 +82,11 @@
         {% endfor %}
         </tbody>
     </table>
-    <article id="examen_fisico" class="tab-pane table-responsive">
-        {% load l10n %}
-        <table class="table table-striped">
-            <caption>{% trans 'Examenes F&iacute;sicos' %}</caption>
-            <thead>
-            <tr>
-                <th>{% trans 'Fecha' %}</th>
-                <th>{% trans 'ORL' %}</th>
-                <th>{% trans 'Cardiopulmonar' %}</th>
-                <th>{% trans 'Gastrointestinal' %}</th>
-                <th>{% trans 'Extremidades' %}</th>
-                <th>{% trans 'Otras' %}</th>
-                <th>{% trans 'Acciones' %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for evaluacion in consulta.evaluaciones.all %}
-                <tr>
-                    <td>{{ evaluacion.created }}</td>
-                    <td>{{ evaluacion.orl }}</td>
-                    <td>{{ evaluacion.cardiopulmonar }}</td>
-                    <td>{{ evaluacion.gastrointestinal }}</td>
-                    <td>{{ evaluacion.extremidades }}</td>
-                    <td>{{ evaluacion.otras }}</td>
-                    <td><a class="btn btn-success"
-                           href="{% url 'clinique-evaluacion-edit' evaluacion.id %}"><i
-                            class="fa fa-edit"></i> {% trans 'Editar' %}</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <article id="examen_fisico" class="tab-pane">
+        <h2>{% trans 'Examenes Físicos' %}</h2>
+        {% for evaluacion in consulta.evaluaciones.all %}
+            {% include 'clinique/snippets/examen _fisico.html' %}
+        {% endfor %}
     </article>
     <article id="diagnostico" class="tab-pane table-responsive">
         {% load l10n %}
