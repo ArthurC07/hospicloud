@@ -126,6 +126,9 @@ class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
 
 
 class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
+    """
+    Allows creating and editing :class:`Evaluacion` data
+    """
     class Meta:
         model = Evaluacion
         fields = '__all__'
@@ -160,9 +163,6 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
         widget=forms.Textarea(attrs={'rows': 2}), required=False
     )
     hallazgos_extremidades = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
-    )
-    hallazgos_genitales = forms.CharField(
         widget=forms.Textarea(attrs={'rows': 2}), required=False
     )
 
