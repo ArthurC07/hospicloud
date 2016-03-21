@@ -219,13 +219,10 @@ class Fisico(TimeStampedModel, WeightBased):
         historia.persona = self.persona
         historia.peso = self.peso
         historia.altura = self.altura
-        historia.fecha = self.modified
+        historia.fecha = timezone.now()
         historia.bmr = self.bmr
         historia.bmi = self.bmi
         historia.medida_de_peso = self.medida_de_peso
-
-        if historia.fecha is None:
-            historia.fecha = timezone.now()
 
         historia.save()
 
