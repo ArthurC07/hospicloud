@@ -184,7 +184,7 @@ def check_line(line, vencimiento, master_dict):
     apellido_f = apellido_f.lstrip().rstrip()
     nombre_f = nombre_f.lstrip().rstrip()
     nacimiento_f = server_timezone.localize(
-            datetime.strptime(line[6], "%m/%d/%Y"))
+        datetime.strptime(line[6], "%m/%d/%Y"))
     sexo_f = smart_text(line[5])
     identificacion = smart_text(line[9])
     vencimiento_r = vencimiento
@@ -195,14 +195,13 @@ def check_line(line, vencimiento, master_dict):
     master = master_dict[poliza_f]
     suspendido = True if activo == 'S' else False
 
-    if line[8]:
-        vencimiento_r = make_end_day(datetime.strptime(line[8], '%m/%d/%Y'))
+    vencimiento_r = make_end_day(datetime.strptime(line[8], '%m/%d/%Y'))
 
     try:
         pcd = PCD.objects.prefetch_related(
-                'persona',
-                'persona__beneficiarios',
-                'persona__contratos',
+            'persona',
+            'persona__beneficiarios',
+            'persona__contratos',
         ).get(numero=file_pcd)
 
         persona = pcd.persona
@@ -210,15 +209,15 @@ def check_line(line, vencimiento, master_dict):
         contratos = persona.contratos.filter(certificado=file_certificado)
 
         contratos.update(
-                suspendido=suspendido,
-                exclusion=exclusion,
-                master=master,
-                plan=master.plan,
-                vencimiento=vencimiento_r
+            suspendido=suspendido,
+            exclusion=exclusion,
+            master=master,
+            plan=master.plan,
+            vencimiento=vencimiento_r
         )
 
         persona.beneficiarios.filter(
-                persona__contratos__certificado=file_certificado
+            persona__contratos__certificado=file_certificado
         ).update(
             exclusion=exclusion,
         )
@@ -235,18 +234,18 @@ def check_line(line, vencimiento, master_dict):
         if dependiente == 0:
 
             contract = master.create_contract(
-                    persona,
-                    vencimiento_r,
-                    file_certificado,
-                    file_pcd
+                persona,
+                vencimiento_r,
+                file_certificado,
+                file_pcd
             )
             contract.suspendido = suspendido
             contract.exclusion = exclusion
             contract.save()
         else:
             contract = Contrato.objects.filter(
-                    poliza=poliza_f,
-                    certificado=file_certificado
+                poliza=poliza_f,
+                certificado=file_certificado
             ).first()
 
             if contract:
@@ -293,9 +292,9 @@ class ImportFile(TimeStampedModel):
         data = unicodecsv.reader(archivo)
         vencimiento = make_end_day(self.created) + timedelta(days=8)
         masters = MasterContract.objects.select_related(
-                'plan',
-                'contratante',
-                'aseguradora'
+            'plan',
+            'contratante',
+            'aseguradora'
         ).all()
         master_dict = {master.poliza: master for master in masters}
 
@@ -360,7 +359,7 @@ class MasterContract(TimeStampedModel):
 
         if auto and certificado == 0:
             ultimo_certificado = self.contratos.aggregate(
-                    Max('certificado')
+                Max('certificado')
             )['certificado__max']
             if self.ultimo_certificado >= ultimo_certificado:
                 self.ultimo_certificado = F('ultimo_certificado') + 1
@@ -381,8 +380,8 @@ class MasterContract(TimeStampedModel):
 
         if auto:
             dependiente = Contrato.objects.filter(
-                    certificado=certificado,
-                    poliza=self.poliza
+                certificado=certificado,
+                poliza=self.poliza
             ).count()
 
             pcd = PCD()
@@ -407,8 +406,8 @@ class MasterContract(TimeStampedModel):
         vencimiento = timezone.now()
 
         return Contrato.objects.filter(
-                master=self,
-                vencimiento__gte=vencimiento
+            master=self,
+            vencimiento__gte=vencimiento
         ).all()
 
     def active_contracts_count(self):
@@ -463,8 +462,8 @@ class Contrato(TimeStampedModel):
     def total_hospitalizaciones(self):
         total = self.persona.admisiones.filter(ingresado__isnull=False).count()
         total += sum(
-                b.persona.admisiones.filter(ingresado__isnull=False).count()
-                for b in self.beneficiarios.all())
+            b.persona.admisiones.filter(ingresado__isnull=False).count()
+            for b in self.beneficiarios.all())
         return total
 
     def dias_mora(self):
@@ -472,7 +471,7 @@ class Contrato(TimeStampedModel):
         pagos = self.pagos.filter(precio=self.plan.precio, ciclo=True).count()
         ahora = timezone.now()
         cobertura = timezone.make_aware(
-                datetime.combine(self.inicio, time.min)
+            datetime.combine(self.inicio, time.min)
         ) + timedelta(pagos * 30)
         delta = ahora - cobertura
         dias = delta.days
@@ -616,9 +615,9 @@ class Evento(TimeStampedModel):
 
     def __str__(self):
         return _("Evento {0} de {1} de {2}").format(
-                self.tipo,
-                self.contrato.numero,
-                self.contrato.persona.nombre_completo()
+            self.tipo,
+            self.contrato.numero,
+            self.contrato.persona.nombre_completo()
         )
 
 
