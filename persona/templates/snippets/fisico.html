@@ -21,6 +21,12 @@
       <th class="data-label">{% trans 'Factor RH:' %}</th>
       <td class="patient-data">{{ fisico.get_factor_rh_display }}</td>
     </tr>
+  <tr>
+      <th>{% trans 'IMC' %}</th>
+      <td>{{ fisico.bmi }}</td>
+      <th>{% trans 'GEB' %}</th>
+      <td>{{ fisico.bmr }}</td>
+  </tr>
   </tbody>
 </table>
 <table class="table table-striped">
@@ -30,6 +36,8 @@
             <th>{% trans 'Fecha' %}</th>
             <th>{% trans 'Altura' %}</th>
             <th>{% trans 'Peso' %}</th>
+            <th>{% trans 'IMC' %}</th>
+            <th>{% trans 'GEB' %}</th>
         </tr>
     </thead>
     <tbody>
@@ -38,6 +46,8 @@
             <td>{{ historia.fecha }}</td>
             <td>{{ historia.altura }}</td>
             <td>{{ historia.peso }}</td>
+            <td>{{ bmi }}</td>
+            <td>{{ bmr }}</td>
         </tr>
     {% endfor %}
     </tbody>

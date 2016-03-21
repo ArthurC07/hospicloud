@@ -57,8 +57,8 @@ class BasePersonaForm(FieldSetModelFormMixin):
     """Permite editar la información que depende de una :class:`Persona`"""
 
     persona = forms.ModelChoiceField(
-            queryset=Persona.objects.all(),
-            widget=forms.HiddenInput()
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput()
     )
 
 
@@ -67,7 +67,7 @@ class FisicoForm(BasePersonaForm):
 
     class Meta:
         model = Fisico
-        fields = '__all__'
+        exclude = ('bmi', 'bmr',)
 
     def __init__(self, *args, **kwargs):
         super(FisicoForm, self).__init__(*args, **kwargs)
@@ -110,8 +110,8 @@ class AntecedenteFamiliarForm(BasePersonaForm):
     def __init__(self, *args, **kwargs):
         super(AntecedenteFamiliarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(
-                _('Editar Antecedentes Patológicos Familiares'),
-                *self.field_names)
+            _('Editar Antecedentes Patológicos Familiares'),
+            *self.field_names)
 
 
 class AntecedenteObstetricoForm(BasePersonaForm):

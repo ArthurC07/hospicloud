@@ -2,10 +2,10 @@
 {% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 main-header">
             <div class="page-header">
                 <h1>{{ consulta.persona }}
-                    <small>Consulta</small>
+                    <small>{% trans 'Consulta' %}</small>
                 </h1>
             </div>
             <div class="row">
@@ -15,14 +15,13 @@
                         {% include 'clinique/snippets/examen _fisico.html' %}
                     {% endfor %}
                     <article id="diagnostico" class="tab-pane table-responsive">
-                        {% load l10n %}
                         <table class="table table-striped">
-                            <caption>Diagn&oacute;stico</caption>
+                            <caption>{% trans 'Diagn&oacute;stico' %}</caption>
                             <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Consulta inicial</th>
-                                <th>Acciones</th>
+                                <th>{% trans 'Fecha' %}</th>
+                                <th>{% trans 'Consulta inicial' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -33,7 +32,7 @@
                                         {{ diagnostico.afeccion }}{{ diagnostico.diagnostico }}</td>
                                     <td><a class="btn btn-success"
                                            href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i
-                                            class="fa fa-edit"></i> Editar</a>
+                                            class="fa fa-edit"></i> {% trans 'Editar' %}</a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -41,13 +40,13 @@
                         </table>
 
                         <table class="table table-striped">
-                            <caption>Ordenes M&eacute;dicas</caption>
+                            <caption>{% trans 'Ordenes M&eacute;dicas' %}</caption>
                             <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Orden</th>
-                                <th>Evoluci&oacute;n</th>
-                                <th>Acciones</th>
+                                <th>{% trans 'Fecha' %}</th>
+                                <th>{% trans 'Orden' %}</th>
+                                <th>{% trans 'Evoluci&oacute;n' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -58,14 +57,14 @@
                                     <td>{{ orden.evolucion }}</td>
                                     <td><a class="btn btn-success"
                                            href="{% url 'clinique-orden-edit' orden.id %}"><i
-                                            class="fa fa-edit"></i> Editar</a>
+                                            class="fa fa-edit"></i> {% trans 'Editar' %}</a>
                                     </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                         <table class="table table-striped">
-                            <caption>Incapacidades</caption>
+                            <caption>{% trans 'Incapacidades' %}</caption>
                             <thead>
                             <tr>
                                 <th>Fecha</th>

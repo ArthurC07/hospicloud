@@ -24,6 +24,7 @@ from __future__ import unicode_literals
 import re
 from datetime import date
 
+from decimal import Decimal
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import lookups
@@ -138,10 +139,38 @@ class Persona(TimeStampedModel):
         today = date.today()
         born = self.nacimiento
         return today.year - born.year - (
-        (today.month, today.day) < (born.month, born.day))
+            (today.month, today.day) < (born.month, born.day))
 
 
-class Fisico(TimeStampedModel):
+class WeightBased(object):
+    MEDIDA_PESO = (
+        ('Lb', _('Libras')),
+        ('Kg', _('Kilogramos'))
+    )
+
+    def get_weight(self):
+
+        if self.medida_de_peso == 'Lb':
+            return self.peso / Decimal(2.22)
+        else:
+            return self.peso
+
+    def body_mass_index(self):
+
+        return self.get_weight() / self.altura
+
+    def basal_energetic_expense(self):
+        if self.persona.sexo == 'M':
+            return Decimal(66.5) + Decimal(13.75) * self.get_weight() + \
+                   Decimal(5) * self.altura * 100 + \
+                   Decimal(6.78) * self.persona.obtener_edad()
+        else:
+            return Decimal(655.1) + Decimal(9.56) * self.get_weight() + \
+                   Decimal(1.85) * self.altura * 100 + \
+                   Decimal(4.68) * self.persona.obtener_edad()
+
+
+class Fisico(TimeStampedModel, WeightBased):
     """Describe el estado fisico de una :class:`Persona`"""
 
     TIPOS_SANGRE = (
@@ -163,6 +192,9 @@ class Fisico(TimeStampedModel):
 
     persona = models.OneToOneField(Persona, primary_key=True)
     peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    medida_de_peso = models.CharField(max_length=2, blank=True,
+                                      choices=WeightBased.MEDIDA_PESO,
+                                      default='Lb')
     lateralidad = models.CharField(max_length=1, choices=LATERALIDAD,
                                    blank=True)
     altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
@@ -171,6 +203,8 @@ class Fisico(TimeStampedModel):
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
     tipo_de_sangre = models.CharField(max_length=2, blank=True,
                                       choices=TIPOS_SANGRE)
+    bmi = models.DecimalField(decimal_places=2, max_digits=11, null=True)
+    bmr = models.DecimalField(decimal_places=2, max_digits=11, null=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -178,11 +212,18 @@ class Fisico(TimeStampedModel):
         return reverse('persona-view-id', args=[self.persona.id])
 
     def save(self, **kwargs):
+        self.bmr = self.basal_energetic_expense()
+        self.bmi = self.body_mass_index()
+
         historia = HistoriaFisica()
         historia.persona = self.persona
         historia.peso = self.peso
         historia.altura = self.altura
         historia.fecha = self.modified
+        historia.bmr = self.bmr
+        historia.bmi = self.bmi
+        historia.medida_de_peso = self.medida_de_peso
+
         if historia.fecha is None:
             historia.fecha = timezone.now()
 
@@ -191,11 +232,16 @@ class Fisico(TimeStampedModel):
         super(Fisico, self).save(**kwargs)
 
 
-class HistoriaFisica(TimeStampedModel):
+class HistoriaFisica(TimeStampedModel, WeightBased):
     persona = models.ForeignKey(Persona)
     fecha = models.DateTimeField(default=timezone.now)
     peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    medida_de_peso = models.CharField(max_length=2, blank=True,
+                                      choices=WeightBased.MEDIDA_PESO,
+                                      default='Lb')
     altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    bmi = models.DecimalField(decimal_places=2, max_digits=11, null=True)
+    bmr = models.DecimalField(decimal_places=2, max_digits=11, null=True)
 
 
 class EstiloVida(TimeStampedModel):
