@@ -34,6 +34,7 @@ from django_extensions.db.models import TimeStampedModel
 from hospinet.utils import make_end_day
 from hospinet.utils.date import get_current_month_range
 from inventory.models import ItemTemplate, ItemType
+from persona.fields import ColorField
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
 
@@ -74,6 +75,7 @@ class Aseguradora(TimeStampedModel):
     cardex = models.ForeignKey(Persona, null=True, blank=True,
                                related_name='cardex',
                                verbose_name=_('Representante'))
+    color = ColorField(default='')
 
     def __str__(self):
         return self.nombre
