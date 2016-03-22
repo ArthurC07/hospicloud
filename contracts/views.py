@@ -23,7 +23,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.urlresolvers import reverse
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Avg
+from django.db.models.functions import Coalesce
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -37,7 +38,8 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 from extra_views import InlineFormSet, CreateWithInlinesView
 
-from clinique.models import Cita, Consulta, Seguimiento
+from bsc.models import Queja, Voto
+from clinique.models import Cita, Consulta, Seguimiento, Incapacidad
 from contracts.forms import PlanForm, ContratoForm, PagoForm, EventoForm, \
     VendedorForm, VendedorChoiceForm, ContratoSearchForm, PersonaForm, \
     TipoEventoForm, BeneficiarioForm, BeneficiarioPersonaForm, \
@@ -50,6 +52,7 @@ from contracts.models import Contrato, Plan, Pago, Evento, Vendedor, \
     TipoEvento, Beneficiario, LimiteEvento, Meta, Cancelacion, Precontrato, \
     Prebeneficiario, Beneficio, MasterContract, ImportFile, PCD, Aseguradora
 from hospinet.utils import get_current_month_range
+from hospinet.utils.date import make_month_range
 from invoice.forms import PeriodoForm
 from persona.forms import PersonaForm as ButtonPersonaForm
 from persona.forms import PersonaSearchForm
@@ -875,8 +878,73 @@ class AseguradoraCreateView(LoginRequiredMixin, CreateView):
 
 
 class AseguradoraDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows the Data corresponding to the :class:`Aseguradora`
+    """
     model = Aseguradora
     context_object_name = 'aseguradora'
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds statistical data concerning to the :class:`Aseguradora` displayed
+        in UI.
+        """
+        context = super(AseguradoraDetailView, self).get_context_data(**kwargs)
+
+        meses = []
+        now = timezone.now()
+
+        for n in range(1, 13):
+            start = now.replace(month=n, day=1)
+            inicio, fin = make_month_range(start)
+
+            consultas = Consulta.objects.atendidas(inicio, fin).filter(
+                poliza__aseguradora=self.object
+            )
+            quejas = Queja.objects.filter(
+                created__range=(inicio, fin),
+                respuesta__consulta__poliza__aseguradora=self.object,
+            ).count()
+
+            satisfaccion = Voto.objects.filter(
+                opcion__isnull=False,
+                created__range=(inicio, fin),
+                pregunta__calificable=True,
+                respuesta__consulta__poliza__aseguradora=self.object,
+            ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
+
+            incapacidades = Incapacidad.objects.filter(
+                consulta__poliza__aseguradora=self.object,
+                consulta__created__range=(inicio, fin)
+            )
+
+            total_incapacidades = incapacidades.aggregate(
+                total=Coalesce(Sum('dias'), 0)
+            )['total']
+
+            diurnas = consultas.filter(
+                created__hour__range=(7, 19)
+            ).count()
+
+            nocturnas = consultas.exclude(
+                created__hour__range=(7, 19)
+            ).count()
+
+            meses.append({
+                'inicio': inicio,
+                'fin': fin,
+                'consultas': consultas.count(),
+                'diurnas': diurnas,
+                'nocturnas': nocturnas,
+                'quejas': quejas,
+                'satisfaccion': satisfaccion,
+                'incapacidades': incapacidades.count(),
+                'total_incapacidades': total_incapacidades,
+            })
+
+        context['meses'] = meses
+
+        return context
 
 
 class AseguradoraUpdateView(LoginRequiredMixin, UpdateView):

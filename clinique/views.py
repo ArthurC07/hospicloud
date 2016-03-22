@@ -42,13 +42,12 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
 from bsc.models import Queja
-from clinique.forms import CitaForm, EvaluacionForm, \
+from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     ConsultaForm, SeguimientoForm, LecturaSignosForm, DiagnosticoClinicoForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
-    PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm, \
-    EsperaConsultorioForm
+    PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
@@ -56,8 +55,7 @@ from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
 from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
-from hospinet.utils.date import make_month_range, previous_month_range, \
-    make_end_day, make_day_start
+from hospinet.utils.date import make_month_range, make_end_day, make_day_start
 from hospinet.utils.forms import MonthYearForm
 from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
@@ -271,14 +269,18 @@ class ConsultorioCreateView(CurrentUserFormMixin, CreateView):
     form_class = ConsultorioForm
 
 
-class ConsultorioMixin(View):
+class ConsultorioMixin(ContextMixin):
     def dispatch(self, *args, **kwargs):
         self.consultorio = get_object_or_404(Consultorio,
                                              pk=kwargs['consultorio'])
         return super(ConsultorioMixin, self).dispatch(*args, **kwargs)
 
 
-class ConsultorioFormMixin(ConsultorioMixin):
+class ConsultorioFormMixin(ConsultorioMixin, FormMixin):
+    """
+    Adds the :class:`Consultorio` to the initial data of a form
+    """
+
     def get_initial(self):
         initial = super(ConsultorioFormMixin, self).get_initial()
         initial['consultorio'] = self.consultorio.id
@@ -321,7 +323,6 @@ class ConsultaFormMixin(ConsultaMixin, FormMixin):
 
     def get_initial(self):
         initial = super(ConsultaFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['consulta'] = self.consulta
         return initial
 
@@ -584,8 +585,8 @@ def get_active_master_contracts(persona):
     return queryset
 
 
-class ConsultaCreateView(CurrentUserFormMixin, PersonaFormMixin,
-                         ConsultorioFormMixin, CreateView):
+class ConsultaCreateView(CurrentUserFormMixin, ConsultorioFormMixin,
+                         PersonaFormMixin, CreateView):
     model = Consulta
     form_class = ConsultaForm
 
@@ -670,6 +671,7 @@ class AfeccionAutoComplete(LoginRequiredMixin,
     """
     Building an autocomplete view for forms needing a :class:`Afeccion`
     """
+
     def get_queryset(self):
         qs = Afeccion.objects.all()
         if self.q:

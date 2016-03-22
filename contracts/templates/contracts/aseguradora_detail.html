@@ -1,47 +1,80 @@
 {% extends 'base.html' %}
-{% load staticfiles %}{% load thumbnail %}{% load l10n %}{% load i18n %}
-{% block title %} {% trans 'Contrato' %} {{ contrato.numero }}{% endblock %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
+{% block title %} {% trans 'Aseguradora' %} {{ aseguradora }}{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="page-header">
-            <h1>
-                {% trans 'Aseguradora' %} {{ aseguradora }}
-                <small>{{ aseguradora.rtn }}</small>
-            </h1>
+        <div class="col-md-12 col-xs-12 main-header">
+            <div class="page-header">
+                <h1>
+                    {% trans 'Aseguradora' %} {{ aseguradora }}
+                    <small>{{ aseguradora.rtn }}</small>
+                </h1>
+            </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9">
-            <div class="main-content col-md-12">
-                <p>{% trans 'Representante:' %} {{ aseguradora.representante.nombre_completo }}</p>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <td>{% trans 'Poliza' %}</td>
-                            <td>{% trans 'Activos' %}</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for master in aseguradora.master_contracts.all %}
-                        <tr>
-                            <td>{{ master }}</td>
-                            <td>{{ master.active_contracts_count }}</td>
-                        </tr>
+        <section class="col-md-12 col-xs-12 main-content">
+            <h3>{% trans 'Representante:' %} {{ aseguradora.representante.nombre_completo }}</h3>
+            <a class="btn btn-primary" href="{% url 'aseguradora-editar' aseguradora.id %}">
+                {% trans 'Editar Aseguradora' %}
+            </a>
+            <h2>{% trans 'Estadísticas de Consulta' %}</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    {% for mes in meses %}
+                        <th>
+                            {{ mes.inicio|date:"N" }}
+                        </th>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{% trans 'Total de Consultas' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.consultas }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Incapacidades' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.incapacidades }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Días Incapacidad' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.total_incapacidades }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Consulta Diurna' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.diurnas }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Consulta Nocturna' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.nocturnas }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Satisfacción' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.satisfaccion|floatformat:2 }}%</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{% trans 'Quejas' %}</td>
+                    {% for mes in meses %}
+                        <td class="text-right">{{ mes.quejas }}</td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
         </section>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-tabs nav-stacked">
-                        <li>
-                            <a href="{% url 'aseguradora-editar' aseguradora.id %}">{% trans 'Editar Aseguradora' %}</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
     </div>
 {% endblock %}
