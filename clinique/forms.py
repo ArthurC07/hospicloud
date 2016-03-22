@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from crispy_forms.layout import Fieldset, Submit
+from dal import autocomplete
 from django import forms
 from django.forms import inlineformset_factory
 from django.utils import timezone
@@ -221,6 +222,7 @@ class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin,
 
     afeccion = forms.ModelChoiceField(
         queryset=Afeccion.objects.all().order_by('nombre'),
+        widget=autocomplete.ModelSelect2(url='afecciones'),
         required=False
     )
 

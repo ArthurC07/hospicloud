@@ -160,6 +160,10 @@ urlpatterns = [
         views.ConsultaRevisarView.as_view(),
         name='clinique-consulta-revisar'),
 
+    url(r'^afecciones$',
+        views.AfeccionAutoComplete.as_view(),
+        name='afecciones'),
+
     url(r'^diagnostico/(?P<persona>\d+)/(?P<consulta>\d+)/agregar$',
         views.DiagnosticoCreateView.as_view(),
         name='consultorio-diagnostico-agregar'),

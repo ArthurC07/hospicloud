@@ -22,6 +22,7 @@ from datetime import time, timedelta
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
@@ -51,7 +52,7 @@ from clinique.forms import CitaForm, EvaluacionForm, \
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
-    Remision, NotaMedica, TipoConsulta
+    Remision, NotaMedica, TipoConsulta, Afeccion
 from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
@@ -662,6 +663,19 @@ class LecturaSignosCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
 class LecturaSignosUpdateView(LoginRequiredMixin, UpdateView):
     model = LecturaSignos
     form_class = LecturaSignosForm
+
+
+class AfeccionAutoComplete(LoginRequiredMixin,
+                           autocomplete.Select2QuerySetView):
+    """
+    Building an autocomplete view for forms needing a :class:`Afeccion`
+    """
+    def get_queryset(self):
+        qs = Afeccion.objects.all()
+        if self.q:
+            qs = qs.filter(nombre__icontains=self.q)
+
+        return qs
 
 
 class DiagnosticoCreateView(CurrentUserFormMixin, PersonaFormMixin,
