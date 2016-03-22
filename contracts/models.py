@@ -84,6 +84,16 @@ class Aseguradora(TimeStampedModel):
     def master_contracts(self):
         return self.mastercontract_set.order_by('contratante__nombre')
 
+    def active_contracts(self):
+        """
+        Returns all active :class:`Contrato`s that belong to any
+        :class:`MasterContract` of the current :class:`Aseguradora`
+        """
+        return Contrato.objects.filter(
+            vencimiento__gte=timezone.now(),
+            master__aseguradora=self,
+        ).count()
+
 
 @python_2_unicode_compatible
 class Plan(TimeStampedModel):

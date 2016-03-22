@@ -191,13 +191,13 @@ class Fisico(TimeStampedModel, WeightBased):
     )
 
     persona = models.OneToOneField(Persona, primary_key=True)
-    peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    peso = models.DecimalField(decimal_places=2, max_digits=5, default=Decimal)
     medida_de_peso = models.CharField(max_length=2, blank=True,
                                       choices=WeightBased.MEDIDA_PESO,
                                       default='Lb')
     lateralidad = models.CharField(max_length=1, choices=LATERALIDAD,
                                    blank=True)
-    altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    altura = models.DecimalField(decimal_places=2, max_digits=5, default=Decimal)
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
