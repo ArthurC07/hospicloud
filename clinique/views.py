@@ -52,6 +52,7 @@ from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
     Remision, NotaMedica, TipoConsulta, Afeccion
+from contracts.forms import AseguradoraPeriodoForm
 from contracts.models import MasterContract
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
@@ -138,6 +139,10 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context[
             'pacientesearch'].helper.form_action = \
             'clinique-paciente-search-add'
+
+        aseg_form = AseguradoraPeriodoForm(prefix='consulta-aseguradora')
+        aseg_form.set_action('consulta-aseguradora-periodo')
+        context['aseguradora_form'] = aseg_form
 
         context['esperas'] = Espera.objects.pendientes().filter(
             fecha__gte=self.yesterday,
@@ -1098,7 +1103,10 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
 
 
 class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
-    """Muestra las opciones disponibles para la aplicación"""
+    """
+    Shows all :class:`Consulta` that happened in a Date range that is specified
+    by a :class:`PeriodoForm
+    """
 
     template_name = 'clinique/consulta_list.html'
 
@@ -1164,11 +1172,8 @@ class ConsultaEstadisticaPeriodoListView(LoginRequiredMixin, ListView):
         if form.is_valid():
             self.inicio = form.cleaned_data['inicio']
             self.fin = form.cleaned_data['fin']
-            return Consulta.objects.filter(
-                created__range=(
-                    self.inicio,
-                    self.fin
-                )
+            return Consulta.objects.atendidas(
+                self.inicio, self.fin
             ).select_related(
                 'consultorio',
                 'consultorio__usuario',
@@ -1197,6 +1202,69 @@ class ConsultaEstadisticaPeriodoListView(LoginRequiredMixin, ListView):
         ).annotate(
             consultas=Count('consultorio__localidad')
         )
+
+        return context
+
+
+class ConsultaAseguradoraPeriodoListView(LoginRequiredMixin, ListView):
+    """
+    Shows a GUI with a list of :class:`Consulta` that have been registered during
+    the period of time and :class:`Aseguradora` indicated by a
+    :class:`AseguradoraPeriodoForm`.
+    """
+    model = Consulta
+    context_object_name = 'consultas'
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Consulta` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = AseguradoraPeriodoForm(self.request.GET,
+                                      prefix='consulta-aseguradora')
+        if form.is_valid():
+            self.inicio = form.cleaned_data['inicio']
+            self.fin = form.cleaned_data['fin']
+            self.aseguradora = form.cleaned_data['aseguradora']
+
+            return Consulta.objects.atendidas(
+                self.inicio, self.fin
+            ).filter(
+                poliza__aseguradora=self.aseguradora,
+            ).select_related(
+                'persona',
+                'tipo',
+                'consultorio',
+                'consultorio__usuario',
+                'consultorio__localidad',
+            ).prefetch_related(
+                'cargos',
+                'cargos__item',
+                'diagnosticos_clinicos',
+                'diagnosticos_clinicos__afeccion',
+                'persona__contratos',
+                'persona__contratos__master__aseguradora',
+                'persona__contratos__beneficiarios',
+                'persona__beneficiarios',
+                'persona__beneficiarios__contrato',
+            ).order_by()
+
+        return Consulta.objects.select_related(
+            'consultorio',
+            'consultorio__usuario',
+        ).order_by()
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Aseguradora` to the context data.
+        """
+        context = super(
+            ConsultaAseguradoraPeriodoListView,
+            self
+        ).get_context_data(**kwargs)
+        context['aseguradora'] = self.aseguradora
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
 
         return context
 

@@ -92,6 +92,10 @@ urlpatterns = [
         views.ConsultaPeriodoView.as_view(),
         name='consulta-periodo'),
 
+    url(r'^consulta/aseguradora/periodo$',
+        views.ConsultaAseguradoraPeriodoListView.as_view(),
+        name='consulta-aseguradora-periodo'),
+
     url(r'^consulta/estadisticas$',
         views.ConsultaEstadisticaPeriodoListView.as_view(),
         name='consulta-estadisticas'),
