@@ -30,10 +30,10 @@ from django.views.generic.edit import FormMixin
 from persona.forms import PersonaForm, FisicoForm, EstiloVidaForm, \
     AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
     AntecedenteQuirurgicoForm, PersonaSearchForm, EmpleadorForm, EmpleoForm, \
-    PersonaAdvancedSearchForm
+    PersonaAdvancedSearchForm, HistoriaFisicaForm
 from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, Empleo, \
-    Empleador, remove_duplicates
+    Empleador, remove_duplicates, HistoriaFisica
 from users.mixins import LoginRequiredMixin
 
 
@@ -132,6 +132,15 @@ class FisicoUpdateView(LoginRequiredMixin, UpdateView):
 
     model = Fisico
     form_class = FisicoForm
+
+
+class HistoriaFisicaCreateView(LoginRequiredMixin, PersonaFormMixin,
+                               CreateView):
+    """"
+    Creates a new :class:`HistoriaFisica` instance
+    """
+    model = HistoriaFisica
+    form_class = HistoriaFisicaForm
 
 
 class EstiloVidaUpdateView(LoginRequiredMixin, UpdateView):

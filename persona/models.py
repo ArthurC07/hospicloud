@@ -144,35 +144,7 @@ class Persona(TimeStampedModel):
             (today.month, today.day) < (born.month, born.day))
 
 
-class WeightBased(object):
-    MEDIDA_PESO = (
-        ('Lb', _('Libras')),
-        ('Kg', _('Kilogramos'))
-    )
-
-    def get_weight(self):
-
-        if self.medida_de_peso == 'Lb':
-            return self.peso / Decimal(2.22)
-        else:
-            return self.peso
-
-    def body_mass_index(self):
-
-        return self.get_weight() / max(self.altura, Decimal(0.01))
-
-    def basal_energetic_expense(self):
-        if self.persona.sexo == 'M':
-            return Decimal(66.5) + Decimal(13.75) * self.get_weight() + \
-                   Decimal(5) * self.altura * 100 + \
-                   Decimal(6.78) * self.persona.obtener_edad()
-        else:
-            return Decimal(655.1) + Decimal(9.56) * self.get_weight() + \
-                   Decimal(1.85) * self.altura * 100 + \
-                   Decimal(4.68) * self.persona.obtener_edad()
-
-
-class Fisico(TimeStampedModel, WeightBased):
+class Fisico(TimeStampedModel):
     """Describe el estado fisico de una :class:`Persona`"""
 
     TIPOS_SANGRE = (
@@ -194,18 +166,32 @@ class Fisico(TimeStampedModel, WeightBased):
 
     persona = AutoOneToOneField(Persona, primary_key=True)
     peso = models.DecimalField(decimal_places=2, max_digits=5, default=Decimal)
-    medida_de_peso = models.CharField(max_length=2, blank=True,
-                                      choices=WeightBased.MEDIDA_PESO,
-                                      default='Lb')
     lateralidad = models.CharField(max_length=1, choices=LATERALIDAD,
                                    blank=True)
-    altura = models.DecimalField(decimal_places=2, max_digits=5,
-                                 default=Decimal)
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
     tipo_de_sangre = models.CharField(max_length=2, blank=True,
                                       choices=TIPOS_SANGRE)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('persona-view-id', args=[self.persona.id])
+
+
+class HistoriaFisica(TimeStampedModel):
+    MEDIDA_PESO = (
+        ('Lb', _('Libras')),
+        ('Kg', _('Kilogramos'))
+    )
+
+    persona = models.ForeignKey(Persona)
+    fecha = models.DateTimeField(default=timezone.now)
+    peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    medida_de_peso = models.CharField(max_length=2, blank=True,
+                                      choices=MEDIDA_PESO, default='Lb')
+    altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
     bmi = models.DecimalField(decimal_places=2, max_digits=11, null=True)
     bmr = models.DecimalField(decimal_places=2, max_digits=11, null=True)
 
@@ -214,34 +200,30 @@ class Fisico(TimeStampedModel, WeightBased):
 
         return reverse('persona-view-id', args=[self.persona.id])
 
-    def save(self, **kwargs):
-        self.bmr = self.basal_energetic_expense()
-        self.bmi = self.body_mass_index()
+    def get_weight(self):
 
-        historia = HistoriaFisica()
-        historia.persona = self.persona
-        historia.peso = self.peso
-        historia.altura = self.altura
-        historia.fecha = timezone.now()
-        historia.bmr = self.bmr
-        historia.bmi = self.bmi
-        historia.medida_de_peso = self.medida_de_peso
+        peso = 0
+        if self.peso is not None:
+            peso = self.peso
 
-        historia.save()
+        if self.medida_de_peso == 'Lb':
+            return peso / Decimal(2.22)
+        else:
+            return peso
 
-        super(Fisico, self).save(**kwargs)
+    def body_mass_index(self):
 
+        return self.get_weight() / max(self.altura, Decimal(0.01))
 
-class HistoriaFisica(TimeStampedModel, WeightBased):
-    persona = models.ForeignKey(Persona)
-    fecha = models.DateTimeField(default=timezone.now)
-    peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
-    medida_de_peso = models.CharField(max_length=2, blank=True,
-                                      choices=WeightBased.MEDIDA_PESO,
-                                      default='Lb')
-    altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
-    bmi = models.DecimalField(decimal_places=2, max_digits=11, null=True)
-    bmr = models.DecimalField(decimal_places=2, max_digits=11, null=True)
+    def basal_energetic_expense(self):
+        if self.persona.sexo == 'M':
+            return Decimal(66.5) + Decimal(13.75) * self.get_weight() + \
+                   Decimal(5) * self.altura * 100 + \
+                   Decimal(6.78) * self.persona.obtener_edad()
+        else:
+            return Decimal(655.1) + Decimal(9.56) * self.get_weight() + \
+                   Decimal(1.85) * self.altura * 100 + \
+                   Decimal(4.68) * self.persona.obtener_edad()
 
 
 class EstiloVida(TimeStampedModel):
