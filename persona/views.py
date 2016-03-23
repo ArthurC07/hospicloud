@@ -86,6 +86,30 @@ class PersonaDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'persona'
     model = Persona
 
+    def get_context_data(self, **kwargs):
+        """
+        Complete any missing data in the :class:`Persona` object
+        """
+
+        if self.object.fisico is None:
+            fisico = Fisico(persona=self.object)
+            fisico.save()
+
+        if self.object.antecedente is None:
+            antecedente = Antecedente(persona=self.object)
+            antecedente.save()
+
+        if self.object.antecedente_familiar is None:
+            antecedente_familiar = AntecedenteFamiliar(persona=self.object)
+            antecedente_familiar.save()
+
+            if self.object.sexo == 'F' and self.object.antecedente_obstetrico is None:
+                antecedente_obstetrico = AntecedenteObstetrico(
+                    persona=self.object)
+                antecedente_obstetrico.save()
+
+        return super(PersonaDetailView, self).get_context_data(**kwargs)
+
 
 class PersonaCreateView(LoginRequiredMixin, CreateView):
     """Permite ingresar :class:`Persona`s a la aplicación"""
@@ -183,9 +207,9 @@ class PersonaSearchView(LoginRequiredMixin, ListView):
             query = form.cleaned_data['query']
 
             queryset = Persona.objects.filter(
-                    Q(nombre__icontains=query) |
-                    Q(apellido__icontains=query) |
-                    Q(identificacion__icontains=query)
+                Q(nombre__icontains=query) |
+                Q(apellido__icontains=query) |
+                Q(identificacion__icontains=query)
             )
 
             return queryset.all()
@@ -216,8 +240,8 @@ class PersonaAdvancedSearchView(LoginRequiredMixin, ListView):
             apellidos = form.cleaned_data['apellidos']
 
             queryset = Persona.objects.filter(
-                    nombre__icontains=nombre,
-                    apellido__icontains=apellidos,
+                nombre__icontains=nombre,
+                apellido__icontains=apellidos,
             )
 
             return queryset
@@ -231,7 +255,7 @@ class PersonaAdvancedSearchView(LoginRequiredMixin, ListView):
         :return: context
         """
         context = super(PersonaAdvancedSearchView, self).get_context_data(
-                **kwargs)
+            **kwargs)
 
         context['advanced_search_form'] = PersonaAdvancedSearchForm()
 
