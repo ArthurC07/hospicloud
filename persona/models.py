@@ -159,7 +159,7 @@ class WeightBased(object):
 
     def body_mass_index(self):
 
-        return self.get_weight() / self.altura
+        return self.get_weight() / max(self.altura, Decimal(0.01))
 
     def basal_energetic_expense(self):
         if self.persona.sexo == 'M':
