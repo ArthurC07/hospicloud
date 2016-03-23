@@ -91,19 +91,19 @@ class PersonaDetailView(LoginRequiredMixin, DetailView):
         Complete any missing data in the :class:`Persona` object
         """
 
-        if self.object.fisico is None:
+        if not self.object.fisico:
             fisico = Fisico(persona=self.object)
             fisico.save()
 
-        if self.object.antecedente is None:
+        if not self.object.antecedente:
             antecedente = Antecedente(persona=self.object)
             antecedente.save()
 
-        if self.object.antecedente_familiar is None:
+        if not self.object.antecedente_familiar:
             antecedente_familiar = AntecedenteFamiliar(persona=self.object)
             antecedente_familiar.save()
 
-            if self.object.sexo == 'F' and self.object.antecedente_obstetrico is None:
+            if self.object.sexo == 'F' and not self.object.antecedente_obstetrico:
                 antecedente_obstetrico = AntecedenteObstetrico(
                     persona=self.object)
                 antecedente_obstetrico.save()
