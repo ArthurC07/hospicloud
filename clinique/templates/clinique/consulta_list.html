@@ -32,7 +32,7 @@
                 <tbody>
                 {% for consulta in consultas.all %}
                     <tr>
-                        <td>{{ consulta.created }}</td>
+                        <td><a href="{% url 'consulta' consulta.id %}">{{ consulta.created }}</a></td>
                         <td>{{ consulta.persona }}</td>
                         <td>{{ consulta.motivo_de_consulta }}</td>
                         <td>{{ consulta.HEA }}</td>

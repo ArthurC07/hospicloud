@@ -899,11 +899,11 @@ class AseguradoraDetailView(LoginRequiredMixin, DetailView):
             inicio, fin = make_month_range(start)
 
             consultas = Consulta.objects.atendidas(inicio, fin).filter(
-                poliza__aseguradora=self.object
+                contrato__master__aseguradora=self.object
             )
             quejas = Queja.objects.filter(
                 created__range=(inicio, fin),
-                respuesta__consulta__poliza__aseguradora=self.object,
+                respuesta__consulta__contrato__master__aseguradora=self.object,
             ).count()
 
             satisfaccion = Voto.objects.filter(
@@ -914,7 +914,7 @@ class AseguradoraDetailView(LoginRequiredMixin, DetailView):
             ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
 
             incapacidades = Incapacidad.objects.filter(
-                consulta__poliza__aseguradora=self.object,
+                consulta__contrato__master__aseguradora=self.object,
                 consulta__created__range=(inicio, fin)
             )
 

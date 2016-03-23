@@ -1226,11 +1226,10 @@ class ConsultaAseguradoraPeriodoListView(LoginRequiredMixin, ListView):
             self.inicio = form.cleaned_data['inicio']
             self.fin = form.cleaned_data['fin']
             self.aseguradora = form.cleaned_data['aseguradora']
+            print(self.aseguradora)
 
-            return Consulta.objects.atendidas(
+            qs = Consulta.objects.atendidas(
                 self.inicio, self.fin
-            ).filter(
-                poliza__aseguradora=self.aseguradora,
             ).select_related(
                 'persona',
                 'tipo',
@@ -1247,7 +1246,19 @@ class ConsultaAseguradoraPeriodoListView(LoginRequiredMixin, ListView):
                 'persona__contratos__beneficiarios',
                 'persona__beneficiarios',
                 'persona__beneficiarios__contrato',
-            ).order_by()
+            )
+
+            if self.aseguradora is None:
+
+                qs = qs.filter(
+                    contrato__master__aseguradora__isnull=True,
+                )
+
+                return qs
+
+            return qs.filter(
+                poliza__aseguradora=self.aseguradora,
+            )
 
         return Consulta.objects.select_related(
             'consultorio',

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2014 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -305,7 +305,8 @@ class MetaForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(MetaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Formulario de Meta'), *self.field_names)
+        self.helper.layout = Fieldset(_('Formulario de Meta'),
+                                      *self.field_names)
 
 
 class CancelacionForm(ContratoMixin):
@@ -373,7 +374,8 @@ class AseguradoraFormMixin(forms.Form):
     """
     Adds an aseguradora field to a form
     """
-    aseguradora = forms.ModelChoiceField(queryset=Aseguradora.objects.all())
+    aseguradora = forms.ModelChoiceField(queryset=Aseguradora.objects.all(),
+                                         required=False)
 
 
 class AseguradoraPeriodoForm(PeriodoForm, AseguradoraFormMixin):
