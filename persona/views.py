@@ -86,30 +86,6 @@ class PersonaDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'persona'
     model = Persona
 
-    def get_context_data(self, **kwargs):
-        """
-        Complete any missing data in the :class:`Persona` object
-        """
-
-        if not self.object.fisico:
-            fisico = Fisico(persona=self.object)
-            fisico.save()
-
-        if not self.object.antecedente:
-            antecedente = Antecedente(persona=self.object)
-            antecedente.save()
-
-        if not self.object.antecedente_familiar:
-            antecedente_familiar = AntecedenteFamiliar(persona=self.object)
-            antecedente_familiar.save()
-
-            if self.object.sexo == 'F' and not self.object.antecedente_obstetrico:
-                antecedente_obstetrico = AntecedenteObstetrico(
-                    persona=self.object)
-                antecedente_obstetrico.save()
-
-        return super(PersonaDetailView, self).get_context_data(**kwargs)
-
 
 class PersonaCreateView(LoginRequiredMixin, CreateView):
     """Permite ingresar :class:`Persona`s a la aplicación"""
