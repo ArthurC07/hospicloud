@@ -15,10 +15,8 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-import unicodecsv as csv
 from django.core.management.base import BaseCommand
 
-from clinique.models import Afeccion
 from persona.models import HistoriaFisica
 
 
