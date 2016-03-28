@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Submit
 from django import forms
 from django.utils import timezone
@@ -378,13 +379,24 @@ class AseguradoraFormMixin(forms.Form):
                                          required=False)
 
 
-class AseguradoraPeriodoForm(PeriodoForm, AseguradoraFormMixin):
+class AseguradoraPeriodoForm(AseguradoraFormMixin):
     """
     Builds a form that allows specifying a :class:`Aseguradora` and a
     Date range
     """
 
+    inicio = forms.DateTimeField(widget=DateTimeWidget)
+    fin = forms.DateTimeField(widget=DateTimeWidget)
+
     def __init__(self, *args, **kwargs):
         super(AseguradoraPeriodoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.form_method = 'get'
         self.helper.layout = Fieldset(_('Por Periodo y Aseguradora'),
                                       *self.field_names)
+
+    def set_action(self, action):
+        self.helper.form_action = action
+

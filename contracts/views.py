@@ -17,14 +17,17 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+import calendar
 from datetime import datetime, time
 
+from crispy_forms.layout import Submit, Layout
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.urlresolvers import reverse
-from django.db.models import Q, Sum, Avg
+from django.db.models import Q, Sum, Avg, Count
 from django.db.models.functions import Coalesce
+from django.forms import HiddenInput
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -47,13 +50,14 @@ from contracts.forms import PlanForm, ContratoForm, PagoForm, EventoForm, \
     ContratoEmpresarialForm, EmpleadorChoiceForm, VendedorPeriodoForm, \
     PrecontratoForm, PersonaPrecontratoForm, BeneficioForm, \
     MasterContractForm, ImportFileForm, ContratoMasterForm, PCDForm, \
-    AseguradoraForm
+    AseguradoraForm, AseguradoraPeriodoForm
 from contracts.models import Contrato, Plan, Pago, Evento, Vendedor, \
     TipoEvento, Beneficiario, LimiteEvento, Meta, Cancelacion, Precontrato, \
     Prebeneficiario, Beneficio, MasterContract, ImportFile, PCD, Aseguradora
 from hospinet.utils import get_current_month_range
 from hospinet.utils.date import make_month_range
 from invoice.forms import PeriodoForm
+from invoice.models import Venta
 from persona.forms import PersonaForm as ButtonPersonaForm
 from persona.forms import PersonaSearchForm
 from persona.models import Persona, Empleador
@@ -71,7 +75,7 @@ class IndexView(LoginRequiredMixin, TemplateView, ContratoPermissionMixin):
 
     def create_forms(self, context):
         context['vendedor-search'] = VendedorChoiceForm(
-                prefix='vendedor-search')
+            prefix='vendedor-search')
         context['vendedor-search'].helper.form_action = 'vendedor-search'
         context['plan-search'] = PlanChoiceForm(prefix='plan-search')
         context['plan-search'].helper.form_action = 'plan-search'
@@ -85,14 +89,14 @@ class IndexView(LoginRequiredMixin, TemplateView, ContratoPermissionMixin):
         context['evento-periodo'].helper.form_action = 'evento-periodo'
 
         context['vendedor-periodo'] = VendedorPeriodoForm(
-                prefix='vendedor-periodo')
+            prefix='vendedor-periodo')
         context['vendedor-periodo'].helper.form_action = 'vendedor-periodo'
 
         context['contrato-search'] = ContratoSearchForm(
-                prefix='contrato-search')
+            prefix='contrato-search')
         context['contrato-search'].helper.form_action = 'contrato-search'
         context['contrato-persona-search'] = PersonaSearchForm(
-                prefix='contrato-persona-search')
+            prefix='contrato-persona-search')
         context[
             'contrato-persona-search'].helper.form_action = \
             'contrato-persona-search'
@@ -120,53 +124,53 @@ class IndexView(LoginRequiredMixin, TemplateView, ContratoPermissionMixin):
         context['consulta'] = Consulta.objects.filter(created__gte=self.inicio,
                                                       created__lte=self.fin).count()
         context['seguimientos'] = Seguimiento.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin).count()
+            created__gte=self.inicio,
+            created__lte=self.fin).count()
 
         # TODO Optimize using a map or a process pool
         personas = Persona.objects.filter(contratos__in=privados)
         context['citas'] = Cita.objects.filter(
-                fecha__gte=self.inicio,
-                fecha__lte=self.fin,
-                persona__in=personas).count()
+            fecha__gte=self.inicio,
+            fecha__lte=self.fin,
+            persona__in=personas).count()
 
         personas = Persona.objects.filter(contratos__in=empresariales)
 
         context['citasp'] = Cita.objects.filter(
-                fecha__gte=self.inicio,
-                fecha__lte=self.fin,
-                persona__in=personas).count()
+            fecha__gte=self.inicio,
+            fecha__lte=self.fin,
+            persona__in=personas).count()
 
         context['consultasp'] = Consulta.objects.filter(
-                created__gte=self.inicio,
-                created__lte=self.fin,
-                persona__in=personas).count()
+            created__gte=self.inicio,
+            created__lte=self.fin,
+            persona__in=personas).count()
 
         morosos = Contrato.objects.filter(vencimiento__gte=self.fin,
                                           cancelado=False).all()
         context['mora'] = morosos.count()
 
         context['ingresos'] = Contrato.objects.filter(
-                cancelado=False).aggregate(Sum('plan__precio'))
+            cancelado=False).aggregate(Sum('plan__precio'))
 
         context['contratos'] = contratos.count()
         context['meta'] = Meta.objects.last()
         context['cancelaciones'] = Cancelacion.objects.filter(
-                fecha__gte=self.inicio).count()
+            fecha__gte=self.inicio).count()
         # TODO Hospitalizaciones y cirugias empresariales
         contratos_e = Contrato.objects.filter(inicio__gte=self.inicio,
                                               inicio__lte=self.fin)
         context['contratos_empresariales'] = contratos_e.count()
         context['hospitalizaciones'] = Admision.objects.filter(
-                ingreso__gte=self.inicio).count()
+            ingreso__gte=self.inicio).count()
         context['empresas'] = Empleador.objects.all()
         context['ingresos_empresa'] = Contrato.objects.filter(
-                cancelado=False).aggregate(Sum('plan__precio'))
+            cancelado=False).aggregate(Sum('plan__precio'))
         morosos = Contrato.objects.filter(vencimiento__lte=self.fin).all()
         context['mora_empresa'] = morosos.count()
 
         context['cancelaciones_empresa'] = Cancelacion.objects.filter(
-                fecha__gte=self.inicio).count()
+            fecha__gte=self.inicio).count()
 
         context['planes'] = Plan.objects.all()
 
@@ -334,7 +338,7 @@ class ContratoPersonaCreateView(LoginRequiredMixin, CreateView):
         self.persona_form.helper.form_tag = False
 
         context = super(ContratoPersonaCreateView, self).get_context_data(
-                **kwargs)
+            **kwargs)
         context['persona_form'] = self.persona_form
         return context
 
@@ -410,8 +414,8 @@ class ContratoListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Contrato.objects.filter(
-                cancelado=False,
-                vencimiento__gte=timezone.now()
+            cancelado=False,
+            vencimiento__gte=timezone.now()
         ).all()
 
     def get_context_data(self, **kwargs):
@@ -424,7 +428,7 @@ class ContratoListView(LoginRequiredMixin, ListView):
         context['morosos'] = len([c for c in contratos if c.dias_mora() > 0])
         if contratos.count() > 0:
             context['percentage'] = context['morosos'] / float(
-                    contratos.count()) * 100
+                contratos.count()) * 100
 
         return context
 
@@ -435,8 +439,8 @@ class ContratoEmpresarialListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Contrato.objects.filter(
-                cancelado=False,
-                vencimiento__gte=timezone.now()
+            cancelado=False,
+            vencimiento__gte=timezone.now()
         ).all()
 
 
@@ -451,8 +455,8 @@ class ContratoPeriodoView(LoginRequiredMixin, TemplateView):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.contratos = Contrato.objects.filter(
-                    inicio__gte=self.inicio,
-                    inicio__lte=self.fin,
+                inicio__gte=self.inicio,
+                inicio__lte=self.fin,
             )
         return super(ContratoPeriodoView, self).dispatch(request, *args,
                                                          **kwargs)
@@ -549,8 +553,8 @@ class EventoPeriodoView(LoginRequiredMixin, TemplateView):
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             self.eventos = Evento.objects.filter(
-                    fecha__gte=self.inicio,
-                    fecha__lte=self.fin,
+                fecha__gte=self.inicio,
+                fecha__lte=self.fin,
             )
         return super(EventoPeriodoView, self).dispatch(request, *args, **kwargs)
 
@@ -603,9 +607,9 @@ class VendedorPeriodoView(LoginRequiredMixin, TemplateView):
             self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
             vendedor = self.form.cleaned_data['vendedor']
             self.contratos = Contrato.objects.filter(
-                    inicio__gte=self.inicio,
-                    inicio__lte=self.fin,
-                    vendedor=vendedor,
+                inicio__gte=self.inicio,
+                inicio__lte=self.fin,
+                vendedor=vendedor,
             )
         return super(VendedorPeriodoView, self).dispatch(request, *args,
                                                          **kwargs)
@@ -662,7 +666,7 @@ class BeneficiarioPersonaCreateView(ContratoFormMixin, TemplateView):
         self.persona_form.helper.form_tag = False
 
         context = super(BeneficiarioPersonaCreateView, self).get_context_data(
-                **kwargs)
+            **kwargs)
         context['persona_form'] = self.persona_form
         return context
 
@@ -713,9 +717,9 @@ class ContratoPersonaSearchView(LoginRequiredMixin, ListView):
         query = form.cleaned_data['query']
 
         queryset = Contrato.objects.filter(
-                Q(persona__nombre__icontains=query) |
-                Q(persona__apellido__icontains=query) |
-                Q(persona__identificacion__icontains=query)
+            Q(persona__nombre__icontains=query) |
+            Q(persona__apellido__icontains=query) |
+            Q(persona__identificacion__icontains=query)
         )
 
         return queryset.all()
@@ -894,9 +898,36 @@ class AseguradoraDetailView(LoginRequiredMixin, DetailView):
         meses = []
         now = timezone.now()
 
+        forms = []
+
         for n in range(1, 13):
             start = now.replace(month=n, day=1)
             inicio, fin = make_month_range(start)
+
+            form = AseguradoraPeriodoForm(initial={
+                'aseguradora': self.object,
+                'inicio': inicio,
+                'fin': fin,
+            })
+
+            form.set_action('contracts-aseguradora-mensual')
+            form.helper.attrs = {'target': '_blank'}
+            form.helper.layout = Layout()
+            form.fields['inicio'].widget = HiddenInput()
+            form.fields['fin'].widget = HiddenInput()
+            form.fields['aseguradora'].widget = HiddenInput()
+            form.helper.form_method = 'get'
+            form.helper.add_input(Submit(
+                'submit',
+                _('{0}'.format(calendar.month_name[n])),
+                css_class='btn-block'
+            ))
+
+            form.helper.form_class = ''
+            form.helper.label_class = ''
+            form.helper.field_class = ''
+
+            forms.append(form)
 
             consultas = Consulta.objects.atendidas(inicio, fin).filter(
                 contrato__master__aseguradora=self.object
@@ -943,6 +974,7 @@ class AseguradoraDetailView(LoginRequiredMixin, DetailView):
             })
 
         context['meses'] = meses
+        context['forms'] = forms
 
         return context
 
@@ -964,5 +996,66 @@ class AseguradoraMixin(ContextMixin, View):
         context = super(AseguradoraMixin, self).get_context_data(**kwargs)
 
         context['aseguradora'] = self.aseguradora
+
+        return context
+
+
+class AseguradoraPeriodoView(LoginRequiredMixin, TemplateView):
+    """
+    Shows the monthly data related to a :class:`Aseguradora`
+    """
+    template_name = 'contracts/aseguradora_month.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        form = AseguradoraPeriodoForm(request.GET)
+
+        if form.is_valid():
+            self.inicio = form.cleaned_data['inicio']
+            self.fin = form.cleaned_data['fin']
+            self.aseguradora = form.cleaned_data['aseguradora']
+        else:
+            messages.info(
+                self.request,
+                _('Los Datos Ingresados en el formulario no son válidos')
+            )
+            return HttpResponseRedirect(reverse('contracts-index'))
+
+        return super(AseguradoraPeriodoView, self).dispatch(request, *args,
+                                                            **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+        Builds the data that will be displayed in the GUI
+        """
+        context = super(AseguradoraPeriodoView, self).get_context_data(**kwargs)
+        context['aseguradora'] = self.aseguradora
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+        inicio = self.inicio
+        fin = self.fin
+
+        context['ventas'] = Venta.objects.periodo(inicio, fin).filter(
+            recibo__cliente__contratos__master__aseguradora=self.aseguradora,
+        ).values(
+            'item__item_type__nombre',
+        ).annotate(
+            count=Count('id')
+        ).order_by('count')
+        context['consultas'] = Consulta.objects.atendidas(inicio, fin).filter(
+            contrato__master__aseguradora=self.aseguradora,
+        )
+
+        context['quejas'] = Queja.objects.filter(
+            created__range=(inicio, fin),
+            respuesta__consulta__contrato__master__aseguradora=self.aseguradora,
+        )
+
+        context['satisfaccion'] = Voto.objects.filter(
+            opcion__isnull=False,
+            created__range=(inicio, fin),
+            pregunta__calificable=True,
+            respuesta__consulta__poliza__aseguradora=self.aseguradora,
+        ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
 
         return context

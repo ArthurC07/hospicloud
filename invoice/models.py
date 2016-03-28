@@ -304,6 +304,28 @@ class Recibo(TimeStampedModel):
         self.correlativo = ciudad.correlativo_de_recibo
 
 
+class VentaManager(models.Manager):
+    """
+    Implements many shortcuts related to venta
+    """
+
+    def periodo(self, inicio, fin):
+        """
+        Returns all :class:`Venta` corresponding to :class:`Recibo` created in
+        the specified date range
+        """
+        return self.filter(recibo__created__range=(inicio, fin))
+
+    def total(self):
+        """
+        Obtains the total money from sales
+        """
+
+        return self.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+
 @python_2_unicode_compatible
 class Venta(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
@@ -328,6 +350,8 @@ class Venta(TimeStampedModel):
                                 decimal_places=2)
     monto = models.DecimalField(blank=True, null=True, max_digits=11,
                                 decimal_places=2)
+
+    objects = VentaManager()
 
     def __str__(self):
 

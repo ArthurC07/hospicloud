@@ -220,6 +220,9 @@ class PersonaRTNForm(FieldSetModelFormMixin):
 
 
 class HistoriaFisicaForm(BasePersonaForm):
+    """
+    Builds a form that allows for :class:`HistoriaFisica` adding and editing
+    """
     class Meta:
         model = HistoriaFisica
         exclude = ('bmi', 'bmr')
@@ -228,4 +231,3 @@ class HistoriaFisicaForm(BasePersonaForm):
         super(HistoriaFisicaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Agregar Historia Física-Metabólica'),
                                       *self.field_names)
-
