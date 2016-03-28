@@ -1,0 +1,42 @@
+{% load i18n %}{% load l10n %}
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>{% trans 'Encuesta' %}</th>
+        <th>{% trans 'Fecha de Respuesta' %}</th>
+        <th>{% trans 'Respuestas' %}</th>
+        <th>{% trans 'Quejas' %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for respuesta in respuestas.all %}
+        <tr>
+            <td>{{ respuesta.encuesta }}</td>
+            <td>{{ respuesta.created }}</td>
+            <td>
+                <table class="table table-striped">
+                    {% for voto in respuesta.voto_set.all %}
+                        <tr>
+                            <td>{{ voto.pregunta }}</td>
+                            <td>{{ voto.opcion }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td>
+                <table>
+                    {% for queja in respuesta.queja_set.all %}
+                        <tr>
+                            <td>
+                                <a href="{{ queja.get_absolute_url }}">
+                                    {{ queja.queja }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

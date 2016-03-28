@@ -73,6 +73,10 @@ urlpatterns = [
         views.FisicoUpdateView.as_view(),
         name='persona-fisico-editar'),
 
+    url(r'^(?P<persona>\d+)/historia/fisica/agregar$',
+        views.HistoriaFisicaCreateView.as_view(),
+        name='persona-historia-agregar'),
+
     url(r'^(?P<pk>\d+)/estilovida/editar$',
         views.EstiloVidaUpdateView.as_view(),
         name='persona-estilovida-editar'),

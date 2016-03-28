@@ -35,6 +35,9 @@ urlpatterns = [
     url(r'^soluciones$', views.SolucionListView.as_view(),
         name='solucion-list'),
 
+    url(r'^soluciones/aceptadas$', views.SolucionAceptadaListView.as_view(),
+        name='solucion-aceptada-list'),
+
     url(r'^encuesta/(?P<pk>\d+)$', views.EncuestaDetailView.as_view(),
         name='encuesta'),
 

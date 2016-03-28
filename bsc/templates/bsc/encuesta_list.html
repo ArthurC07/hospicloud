@@ -30,7 +30,7 @@
                 <tr>
                     <td>&nbsp;</td>
                     {% for mes in meses %}
-                        <td class="text-right">{{ mes.nombre }}</td>
+                        <td class="text-right">{{ mes.inicio|date:"N" }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
@@ -58,6 +58,24 @@
                     {% endfor %}
                 </tr>
             </table>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans 'Usuario' %}</th>
+                        <th>{% trans 'Mes' %}</th>
+                        <th>{% trans 'Detalle Encuestas' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for respuesta in respuestas %}
+                        <tr>
+                            <td>{{ respuesta.usuario__first_name }} {{ respuesta.last_name }}</td>
+                            <td>{{ respuesta.month|date:"N" }}</td>
+                            <td>{{ respuesta.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             <div class="row">
                 <canvas id="chart" class="col-md-12 col-xs-12 graph"
                         height="100"></canvas>
@@ -76,7 +94,7 @@
             var ctx = canvas.getContext("2d");
             var chart = new Chart(ctx);
             data = {
-                labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
+                labels: [0, {% for mes in meses %} "{{ mes.inicio|date:"N" }}",  {% endfor %} 0],
                 datasets: [
                     {
                         label: "{% trans 'Contactabilidad' %}",

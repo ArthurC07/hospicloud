@@ -30,10 +30,10 @@ from django.views.generic.edit import FormMixin
 from persona.forms import PersonaForm, FisicoForm, EstiloVidaForm, \
     AntecedenteForm, AntecedenteFamiliarForm, AntecedenteObstetricoForm, \
     AntecedenteQuirurgicoForm, PersonaSearchForm, EmpleadorForm, EmpleoForm, \
-    PersonaAdvancedSearchForm
+    PersonaAdvancedSearchForm, HistoriaFisicaForm
 from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, Empleo, \
-    Empleador, remove_duplicates
+    Empleador, remove_duplicates, HistoriaFisica
 from users.mixins import LoginRequiredMixin
 
 
@@ -110,6 +110,15 @@ class FisicoUpdateView(LoginRequiredMixin, UpdateView):
     form_class = FisicoForm
 
 
+class HistoriaFisicaCreateView(LoginRequiredMixin, PersonaFormMixin,
+                               CreateView):
+    """"
+    Creates a new :class:`HistoriaFisica` instance
+    """
+    model = HistoriaFisica
+    form_class = HistoriaFisicaForm
+
+
 class EstiloVidaUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`EstiloVida` de una
@@ -183,9 +192,9 @@ class PersonaSearchView(LoginRequiredMixin, ListView):
             query = form.cleaned_data['query']
 
             queryset = Persona.objects.filter(
-                    Q(nombre__icontains=query) |
-                    Q(apellido__icontains=query) |
-                    Q(identificacion__icontains=query)
+                Q(nombre__icontains=query) |
+                Q(apellido__icontains=query) |
+                Q(identificacion__icontains=query)
             )
 
             return queryset.all()
@@ -216,8 +225,8 @@ class PersonaAdvancedSearchView(LoginRequiredMixin, ListView):
             apellidos = form.cleaned_data['apellidos']
 
             queryset = Persona.objects.filter(
-                    nombre__icontains=nombre,
-                    apellido__icontains=apellidos,
+                nombre__icontains=nombre,
+                apellido__icontains=apellidos,
             )
 
             return queryset
@@ -231,7 +240,7 @@ class PersonaAdvancedSearchView(LoginRequiredMixin, ListView):
         :return: context
         """
         context = super(PersonaAdvancedSearchView, self).get_context_data(
-                **kwargs)
+            **kwargs)
 
         context['advanced_search_form'] = PersonaAdvancedSearchForm()
 

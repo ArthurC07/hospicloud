@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="main-content col-md-12">
+            <section class="page-header">
+                <h1>{% trans 'Proveedores' %}</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12 main-content">
+            <table class="table table-striped">
+                {% for proveedor in proveedores.all %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'proveedor-gastos' proveedor.id %}">
+                                {{ proveedor }}
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td>{% trans 'No hay proveedores registrados' %}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% if is_paginated %}
+                {% load bootstrap_pagination %}
+                {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

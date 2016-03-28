@@ -732,7 +732,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         context['forms'] = []
         inicio = timezone.make_aware(datetime(self.year, self.mes, 1))
         fin = make_end_day(get_month_end(inicio))
-        previous_end, previous_start = previous_month_range(inicio)
+        previous_start, previous_end = previous_month_range(inicio)
 
         context['fecha'] = inicio
 
@@ -835,7 +835,8 @@ class BalanceView(TemplateView, LoginRequiredMixin):
             'recibo',
             'item'
         ).filter(
-            recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False,
         )
 
         context['total_ventas'] = ventas.aggregate(
@@ -857,7 +858,8 @@ class BalanceView(TemplateView, LoginRequiredMixin):
         pagos = Pago.objects.select_related(
             'tipo',
         ).filter(
-            recibo__created__range=(inicio, fin)
+            recibo__created__range=(inicio, fin),
+            recibo__nulo=False,
         )
 
         context['pagos'] = pagos.values(

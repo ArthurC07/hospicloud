@@ -22,6 +22,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import QuerySet
 from django.db.models.aggregates import Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -33,12 +34,14 @@ from contracts.models import Contrato, MasterContract
 from inventory.models import ItemTemplate, Inventario, ItemType
 from persona.models import Persona, transfer_object_to_persona, \
     persona_consolidation_functions
+from users.models import Ciudad
 
 
 @python_2_unicode_compatible
 class Localidad(TimeStampedModel):
     nombre = models.CharField(max_length=50, blank=True, null=True)
     habilitado = models.BooleanField(default=True)
+    ciudad = models.ForeignKey(Ciudad, blank=True, null=True)
 
     def __str__(self):
         return self.nombre
@@ -110,8 +113,39 @@ class Consultorio(TimeStampedModel):
         return Consulta.objects.filter(remitida=True, revisada=False)
 
 
+class EsperaQuerySet(QuerySet):
+    """
+    Contains comon queries made to :class:`Espera`
+    """
+
+    def pendientes(self):
+        """
+        Returns all the class:`Espera`s that have not been yet attended
+        """
+        return self.filter(
+            consulta=False,
+            terminada=False,
+            atendido=False,
+            ausente=False,
+        )
+
+    def en_consulta(self):
+        """
+        Returns all the :class:`Espera` that are in the physician's office
+        """
+        return self.filter(
+            consulta=True,
+            terminada=False,
+            ausente=False,
+            atendido=False,
+        )
+
+
 @python_2_unicode_compatible
 class Espera(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to
+    """
     consultorio = models.ForeignKey(Consultorio, related_name='espera',
                                     blank=True, null=True)
     persona = models.ForeignKey(Persona, related_name='espera')
@@ -124,6 +158,8 @@ class Espera(TimeStampedModel):
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+
+    objects = EsperaQuerySet.as_manager()
 
     class Meta:
         ordering = ['created', ]
@@ -149,6 +185,7 @@ class ConsultaQuerySet(models.QuerySet):
     """
     Creates shortcuts for many common :class:`Consulta` operations
     """
+
     def pendientes_encuesta(self):
         """
         Obtains all :class:`Consulta`s that have not been polled yet.
@@ -301,7 +338,26 @@ class LecturaSignos(TimeStampedModel):
 
 
 class Evaluacion(TimeStampedModel):
-    """Registra los análisis que se le efectua a la :class:`Persona`"""
+    """
+    Registra los análisis que se le efectua a la :class:`Persona`
+    """
+
+    ASPECTO = (
+        ('L', _('Lucido')),
+        ('C', _('Consciente')),
+        ('O', _('Orientado')),
+    )
+
+    NORMALIDAD = (
+        ('N', _('Normal')),
+        ('A', _('Anormal')),
+    )
+
+    SIMETRIA = (
+        ('S', _('Simétrico')),
+        ('A', _('Asimétrico')),
+    )
+
     persona = models.ForeignKey(Persona, related_name='evaluaciones',
                                 blank=True, null=True)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -309,11 +365,53 @@ class Evaluacion(TimeStampedModel):
                                 blank=True, null=True)
     consulta = models.ForeignKey(Consulta, related_name='evaluaciones',
                                  blank=True, null=True)
-    orl = models.TextField()
-    cardiopulmonar = models.TextField()
-    gastrointestinal = models.TextField()
-    extremidades = models.TextField()
-    otras = models.TextField()
+    lucido = models.BooleanField(default=True)
+    consciente = models.BooleanField(default=True)
+    orientado = models.BooleanField(default=True)
+    cabeza = models.CharField(max_length=1, choices=NORMALIDAD, default='N')
+    descripcion_cabeza = models.TextField(blank=True)
+    ojos = models.CharField(max_length=1, choices=NORMALIDAD, default='N')
+    descripcion_ojos = models.TextField(blank=True)
+    cuello = models.CharField(max_length=1, choices=NORMALIDAD, default='N')
+    descripcion_cuello = models.TextField(blank=True)
+    pulmones_ventilados = models.BooleanField(default=True)
+    pulmones_crepitos = models.BooleanField(default=False)
+    pulmones_subcrepitos = models.BooleanField(default=False)
+    pulmones_roncus = models.BooleanField(default=False)
+    civilancias = models.BooleanField(default=False)
+    matides = models.BooleanField(default=False)
+    primer_ruido_cardiaco = models.BooleanField(default=True)
+    segundo_ruido_cardiaco = models.BooleanField(default=True)
+    tercer_ruido_cardiaco = models.BooleanField(default=False)
+    cuarto_ruido_cardiaco = models.BooleanField(default=False)
+    soplo = models.BooleanField(default=False)
+    arritmia = models.BooleanField(default=False)
+    orl = models.CharField(max_length=1, choices=NORMALIDAD, default='N')
+    descripcion_orl = models.TextField(blank=True)
+    mamas_normales = models.BooleanField(default=True)
+    nodulos = models.BooleanField(default=False)
+    retracciones_mamarias = models.BooleanField(default=False)
+    nopatias_satelites = models.BooleanField(default=False)
+    abdomen_blando = models.BooleanField(default=True)
+    abdomen_deprecible = models.BooleanField(default=True)
+    dolor_abdominal = models.BooleanField(default=False)
+    blumber = models.BooleanField(default=False)
+    rovsig = models.BooleanField(default=False)
+    gastrointestinal = models.TextField(blank=True)
+    tacto_rectal_diferido = models.BooleanField(default=True)
+    hallazgos_tacto_rectal = models.TextField(blank=True)
+    genitales_normales = models.BooleanField(default=True)
+    hallazgos_genitales = models.TextField(blank=True)
+    extremidades_simetricas = models.BooleanField(default=True)
+    hallazgos_extremidades = models.TextField(blank=True)
+    piel_normal = models.BooleanField(default=True)
+    hallazgos_piel = models.TextField(blank=True)
+    neurologico_normal = models.BooleanField(default=True)
+    focalizaciones = models.BooleanField(default=False)
+    atonia = models.BooleanField(default=False)
+    disminucion_de_la_fuerza = models.BooleanField(default=False)
+    movimientos_involuntarios = models.BooleanField(default=False)
+    otras = models.TextField(blank=True)
 
     def get_absolute_url(self):
         """Obtiene la url relacionada con un :class:`Paciente`"""

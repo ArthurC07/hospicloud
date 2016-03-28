@@ -20,6 +20,7 @@
                             <strong>{% trans 'Fecha de la Queja' %}:</strong> {{ solucion.queja.created }}<br>
                             <strong>{% trans 'Queja Original' %}: </strong> {{ solucion.queja.queja }}<br>
                             <br>
+                            {% if not solucion.aceptada %}
                             <div class="row">
                                 <form class="col-md-6 col-xs-6"
                                       action="{% url 'solucion-aceptar' solucion.id %}"
@@ -32,6 +33,8 @@
                                     {% crispy rechazada %}
                                 </form>
                             </div>
+                            {% endif %}
+                            {% if solucion.aceptada %}
                             <div class="row">
                                 <div class="col-md-6 col-xs-6">
                                     <a class="btn btn-block btn-info"
@@ -46,6 +49,7 @@
                                     </a>
                                 </div>
                             </div>
+                            {% endif %}
                         </td>
                         <td>
                             <table class="table">

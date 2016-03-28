@@ -1,47 +1,55 @@
 {% load i18n %}{% load l10n %}
 <div class="table-responsive">
-<table class="table table-striped">
-	<caption>{% trans 'Caracter&iacute;sticas F&iacute;sicas' %}</caption>
-  <tbody>
-    <tr>
-      <th class="data-label">{% trans 'Estatura:' %}</th>
-      <td class="patient-data">{{ fisico.altura }}</td>
-      <th class="data-label">{% trans '' %}Peso:</th>
-      <td class="patient-data">{{ fisico.peso }}</td>
-    </tr>
-    <tr>
-      <th class="data-label">{% trans 'Color de Ojos:' %}</th>
-      <td class="patient-data">{{ fisico.color_de_ojos }}</td>
-      <th class="data-label">{% trans 'Color de Cabello:' %}</th>
-      <td class="patient-data">{{ fisico.color_de_cabello }}</td>
-    </tr>
-    <tr>
-      <th class="data-label">{% trans 'Tipo de Sangre:' %}</th>
-      <td class="patient-data">{{ fisico.get_tipo_de_sangre_display }}</td>
-      <th class="data-label">{% trans 'Factor RH:' %}</th>
-      <td class="patient-data">{{ fisico.get_factor_rh_display }}</td>
-    </tr>
-  </tbody>
-</table>
-<table class="table table-striped">
-    <caption>{% trans 'Histora F&iacute;sica' %}</caption>
-    <thead>
+    <table class="table table-striped">
+        <caption>{% trans 'Caracter&iacute;sticas F&iacute;sicas' %}</caption>
+        <tbody>
+        <tr>
+            <th class="data-label">{% trans 'Color de Ojos:' %}</th>
+            <td class="patient-data">{{ fisico.color_de_ojos }}</td>
+            <th class="data-label">{% trans 'Color de Cabello:' %}</th>
+            <td class="patient-data">{{ fisico.color_de_cabello }}</td>
+        </tr>
+        <tr>
+            <th class="data-label">{% trans 'Tipo de Sangre:' %}</th>
+            <td class="patient-data">{{ fisico.get_tipo_de_sangre_display }}</td>
+            <th class="data-label">{% trans 'Factor RH:' %}</th>
+            <td class="patient-data">{{ fisico.get_factor_rh_display }}</td>
+        </tr>
+        </tbody>
+    </table>
+    {% if perms.persona.persona %}
+        <a href="{% url 'persona-fisico-editar' persona.id %}"
+           class="btn btn-primary">{% trans 'Editar F&iacute;sico' %}</a>
+    {% endif %}
+    <table class="table table-striped">
+        <caption>{% trans 'Histora F&iacute;sica-Metab&oacute;lica' %}</caption>
+        <thead>
         <tr>
             <th>{% trans 'Fecha' %}</th>
             <th>{% trans 'Altura' %}</th>
             <th>{% trans 'Peso' %}</th>
+            <th>{% trans 'IMC' %}</th>
+            <th>{% trans 'GEB' %}</th>
         </tr>
-    </thead>
-    <tbody>
-    {% for historia in fisico.persona.historiafisica_set.all %}
-        <tr>
-            <td>{{ historia.fecha }}</td>
-            <td>{{ historia.altura }}</td>
-            <td>{{ historia.peso }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        {% for historia in fisico.persona.historiafisica_set.all %}
+            <tr>
+                <td>{{ historia.fecha }}</td>
+                <td>{{ historia.altura }}</td>
+                <td>{{ historia.peso }} {{ historia.get_medida_de_peso_display }}</td>
+                <td>{{ historia.bmi }}</td>
+                <td>{{ historia.bmr }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if perms.persona.persona %}
+        <a class="btn btn-primary"
+           href="{% url 'persona-historia-agregar' persona.id %}">
+            {% trans 'Agregar Historia Física-Metabólica' %}
+        </a>
+    {% endif %}
 </div>
 {% block scripts %}
     <script type="text/javascript"
@@ -67,4 +75,3 @@
         });
     </script>
 {% endblock %}
-

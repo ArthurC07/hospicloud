@@ -24,6 +24,9 @@ from __future__ import unicode_literals
 import re
 from datetime import date
 
+from decimal import Decimal
+
+from annoying.fields import AutoOneToOneField
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import lookups
@@ -138,7 +141,7 @@ class Persona(TimeStampedModel):
         today = date.today()
         born = self.nacimiento
         return today.year - born.year - (
-        (today.month, today.day) < (born.month, born.day))
+            (today.month, today.day) < (born.month, born.day))
 
 
 class Fisico(TimeStampedModel):
@@ -161,11 +164,10 @@ class Fisico(TimeStampedModel):
         ('I', _('Izquierda')),
     )
 
-    persona = models.OneToOneField(Persona, primary_key=True)
-    peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    persona = AutoOneToOneField(Persona, primary_key=True)
+    peso = models.DecimalField(decimal_places=2, max_digits=5, default=Decimal)
     lateralidad = models.CharField(max_length=1, choices=LATERALIDAD,
                                    blank=True)
-    altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
@@ -177,32 +179,58 @@ class Fisico(TimeStampedModel):
 
         return reverse('persona-view-id', args=[self.persona.id])
 
-    def save(self, **kwargs):
-        historia = HistoriaFisica()
-        historia.persona = self.persona
-        historia.peso = self.peso
-        historia.altura = self.altura
-        historia.fecha = self.modified
-        if historia.fecha is None:
-            historia.fecha = timezone.now()
-
-        historia.save()
-
-        super(Fisico, self).save(**kwargs)
-
 
 class HistoriaFisica(TimeStampedModel):
+    MEDIDA_PESO = (
+        ('Lb', _('Libras')),
+        ('Kg', _('Kilogramos'))
+    )
+
     persona = models.ForeignKey(Persona)
     fecha = models.DateTimeField(default=timezone.now)
     peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    medida_de_peso = models.CharField(max_length=2, blank=True,
+                                      choices=MEDIDA_PESO, default='Lb')
     altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    bmi = models.DecimalField(decimal_places=2, max_digits=11, null=True)
+    bmr = models.DecimalField(decimal_places=2, max_digits=11, null=True)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('persona-view-id', args=[self.persona.id])
+
+    def get_weight(self):
+
+        peso = 0
+        if self.peso is not None:
+            peso = self.peso
+
+        if self.medida_de_peso == 'Lb':
+            return peso / Decimal(2.22)
+        else:
+            return peso
+
+    def body_mass_index(self):
+
+        return self.get_weight() / max(self.altura, Decimal(0.01))
+
+    def basal_energetic_expense(self):
+        if self.persona.sexo == 'M':
+            return Decimal(66.5) + Decimal(13.75) * self.get_weight() + \
+                   Decimal(5) * self.altura * 100 + \
+                   Decimal(6.78) * self.persona.obtener_edad()
+        else:
+            return Decimal(655.1) + Decimal(9.56) * self.get_weight() + \
+                   Decimal(1.85) * self.altura * 100 + \
+                   Decimal(4.68) * self.persona.obtener_edad()
 
 
 class EstiloVida(TimeStampedModel):
     """Resumen del estilo de vida de una :class:`Persona`"""
 
-    persona = models.OneToOneField(Persona, primary_key=True,
-                                   related_name='estilo_vida')
+    persona = AutoOneToOneField(Persona, primary_key=True,
+                                related_name='estilo_vida')
     consume_tabaco = models.BooleanField(default=False, blank=True)
     inicio_consumo_tabaco = models.CharField(max_length=30, blank=True)
     tipo_de_tabaco = models.CharField(max_length=30, blank=True)
@@ -235,7 +263,7 @@ class Antecedente(TimeStampedModel):
     consulta por primera vez
     """
 
-    persona = models.OneToOneField(Persona, primary_key=True)
+    persona = AutoOneToOneField(Persona, primary_key=True)
 
     cardiopatia = models.BooleanField(default=False, blank=True)
     hipertension = models.BooleanField(default=False, blank=True)
@@ -277,8 +305,8 @@ class Antecedente(TimeStampedModel):
 class AntecedenteFamiliar(TimeStampedModel):
     """Registra los antecedentes familiares de una :class:`Persona`"""
 
-    persona = models.OneToOneField(Persona, primary_key=True,
-                                   related_name='antecedente_familiar')
+    persona = AutoOneToOneField(Persona, primary_key=True,
+                                related_name='antecedente_familiar')
     sindrome_coronario_agudo = models.BooleanField(
         default=False, blank=True,
         verbose_name=_('cardiopatia')
@@ -317,8 +345,8 @@ class AntecedenteFamiliar(TimeStampedModel):
 class AntecedenteObstetrico(TimeStampedModel):
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
 
-    persona = models.OneToOneField(Persona, primary_key=True,
-                                   related_name='antecedente_obstetrico')
+    persona = AutoOneToOneField(Persona, primary_key=True,
+                                related_name='antecedente_obstetrico')
 
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)

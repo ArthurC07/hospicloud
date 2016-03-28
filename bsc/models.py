@@ -502,6 +502,7 @@ class Respuesta(TimeStampedModel):
     consulta = models.ForeignKey(Consulta)
     persona = models.ForeignKey(Persona, blank=True, null=True)
     terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     class Meta:
         ordering = ['created', ]
@@ -545,12 +546,15 @@ class Departamento(TimeStampedModel):
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
-
         return self.nombre
 
 
 @python_2_unicode_compatible
 class Queja(TimeStampedModel):
+    """
+    Represents any complaint a :class:`Persona` or :class:`Aseguradora` has
+    raised over the :class:`Company` that is using the software.
+    """
     respuesta = models.ForeignKey(Respuesta, blank=True, null=True)
     aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
     departamento = models.ForeignKey(Departamento, null=True, blank=True)
@@ -570,11 +574,15 @@ class Queja(TimeStampedModel):
 
 
 class Solucion(TimeStampedModel):
+    """
+    Registers a posible fix for a :class:`Queja`
+    """
     queja = models.ForeignKey(Queja)
     solucion = models.TextField()
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     aceptada = models.BooleanField(default=False)
     rechazada = models.BooleanField(default=False)
+    notificada = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['queja__created', ]
@@ -598,7 +606,6 @@ class Rellamar(TimeStampedModel):
     hora = models.DateTimeField(default=timezone.now)
 
     def get_absolute_url(self):
-
         return self.encuesta.get_absolute_url()
 
 

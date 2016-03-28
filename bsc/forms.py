@@ -105,9 +105,12 @@ class QuejaAseguradoraForm(FieldSetModelFormMixin):
 
 
 class SolucionForm(QuejaFormMixin, HiddenUserForm):
+    """
+    Shows a form to create or modify :class:`Solucion`
+    """
     class Meta:
         model = Solucion
-        exclude = ('aceptada',)
+        exclude = ('aceptada', 'rechazada', 'notificada')
 
     def __init__(self, *args, **kwargs):
         super(SolucionForm, self).__init__(*args, **kwargs)

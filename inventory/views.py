@@ -459,11 +459,15 @@ class ProveedorListView(LoginRequiredMixin, ListView):
     model = Proveedor
     context_object_name = 'proveedores'
     paginate_by = 10
+    ordering = ['name']
 
 
 class ProveedorDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows a :class:`Proveedor` data in the UI
+    """
     model = Proveedor
-    template_name = 'inventory/proveedor_detail.html'
+    context_object_name = 'proveedor'
 
 
 class ProveedorCreateView(LoginRequiredMixin, CreateView):

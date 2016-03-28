@@ -26,7 +26,7 @@ from hospinet.utils.forms import FieldSetModelFormMixin, DateWidget, \
     FieldSetModelFormMixinNoButton
 from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, \
-    Empleador, Empleo
+    Empleador, Empleo, HistoriaFisica
 
 
 class PersonaForm(FieldSetModelFormMixin):
@@ -57,8 +57,8 @@ class BasePersonaForm(FieldSetModelFormMixin):
     """Permite editar la información que depende de una :class:`Persona`"""
 
     persona = forms.ModelChoiceField(
-            queryset=Persona.objects.all(),
-            widget=forms.HiddenInput()
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput()
     )
 
 
@@ -67,7 +67,7 @@ class FisicoForm(BasePersonaForm):
 
     class Meta:
         model = Fisico
-        fields = '__all__'
+        exclude = ('bmi', 'bmr',)
 
     def __init__(self, *args, **kwargs):
         super(FisicoForm, self).__init__(*args, **kwargs)
@@ -110,8 +110,8 @@ class AntecedenteFamiliarForm(BasePersonaForm):
     def __init__(self, *args, **kwargs):
         super(AntecedenteFamiliarForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(
-                _('Editar Antecedentes Patológicos Familiares'),
-                *self.field_names)
+            _('Editar Antecedentes Patológicos Familiares'),
+            *self.field_names)
 
 
 class AntecedenteObstetricoForm(BasePersonaForm):
@@ -216,4 +216,18 @@ class PersonaRTNForm(FieldSetModelFormMixin):
     def __init__(self, *args, **kwargs):
         super(PersonaRTNForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Actualizar RTN de la Persona'),
+                                      *self.field_names)
+
+
+class HistoriaFisicaForm(BasePersonaForm):
+    """
+    Builds a form that allows for :class:`HistoriaFisica` adding and editing
+    """
+    class Meta:
+        model = HistoriaFisica
+        exclude = ('bmi', 'bmr')
+
+    def __init__(self, *args, **kwargs):
+        super(HistoriaFisicaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Agregar Historia Física-Metabólica'),
                                       *self.field_names)

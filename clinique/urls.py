@@ -76,6 +76,10 @@ urlpatterns = [
         views.ConsultorioCreateView.as_view(),
         name='consultorio-agregar'),
 
+    url(r'^esperas$',
+        views.EsperaListView.as_view(),
+        name='esperas'),
+
     url(r'^consultorio/(?P<consultorio>\d+)/reporte/agregar$',
         views.ReporteCreateView.as_view(),
         name='consultorio-report-agregar'),
@@ -87,6 +91,10 @@ urlpatterns = [
     url(r'^consulta/periodo$',
         views.ConsultaPeriodoView.as_view(),
         name='consulta-periodo'),
+
+    url(r'^consulta/aseguradora/periodo$',
+        views.ConsultaAseguradoraPeriodoListView.as_view(),
+        name='consulta-aseguradora-periodo'),
 
     url(r'^consulta/estadisticas$',
         views.ConsultaEstadisticaPeriodoListView.as_view(),
@@ -155,6 +163,10 @@ urlpatterns = [
     url(r'^consulta/(?P<pk>\d+)/revisar$',
         views.ConsultaRevisarView.as_view(),
         name='clinique-consulta-revisar'),
+
+    url(r'^afecciones$',
+        views.AfeccionAutoComplete.as_view(),
+        name='afecciones'),
 
     url(r'^diagnostico/(?P<persona>\d+)/(?P<consulta>\d+)/agregar$',
         views.DiagnosticoCreateView.as_view(),

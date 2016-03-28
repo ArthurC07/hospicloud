@@ -1,0 +1,196 @@
+{% load l10n %}{% load i18n %}
+<div class="row">
+    <div class="col-md-12">
+        {{ evaluacion.created }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <strong>{% trans 'Aspecto General' %}</strong>
+        <br>
+        {% trans 'Lúcido' %}:
+        {{ evaluacion.lucido|yesno }}
+        <br>
+        {% trans 'Consciente' %}:
+        {{ evaluacion.consciente|yesno }}
+        <br>
+        {% trans 'Orientado' %}:
+        {{ evaluacion.orientado|yesno }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Cabeza' %}</strong>
+        <br>
+        {% trans 'Estado Cabeza' %}:
+        {{ evaluacion.get_cabeza_display }}
+        <br>
+        {% trans 'Hallazgos Cabeza' %}: {{ evaluacion.descripcion_cabeza }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Cabeza' %}</strong>
+        <br>
+        {% trans 'Estado Ojos' %}:
+        {{ evaluacion.get_ojos_display }}
+        <br>
+        {% trans 'Hallazgos Ojos' %}:
+        {{ evaluacion.descripcion_ojos }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Cuello' %}</strong>
+        <br>
+        {% trans 'Estado Cuello' %}:
+        {{ evaluacion.get_cuello_display }}
+        <br>
+        {% trans 'Hallazgos Cuello' %}:
+        {{ evaluacion.descripcion_cuello }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <strong>{% trans 'Pulmones' %}</strong>
+        <br>
+        {% trans 'Pulmones Ventilados' %}:
+        {{ evaluacion.pulmones_ventilados|yesno }}
+        <br>
+        {% trans 'Pulmones Crepitos' %}:
+        {{ evaluacion.pulmones_crepitos|yesno }}
+        <br>
+        {% trans 'Pulmones Subcrepitos' %}:
+        {{ evaluacion.pulmones_subcrepitos|yesno }}
+        <br>
+        {% trans 'Roncus' %}:
+        {{ evaluacion.pulmones_roncus|yesno }}
+        <br>
+        {% trans 'Civilancias' %}:
+        {{ evaluacion.civilancias|yesno }}
+        <br>
+        {% trans 'Matides' %}:
+        {{ evaluacion.matides|yesno }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Corazón' %}</strong>
+        <br>
+        {% trans 'Primer Ruido Cardiaco' %}:
+        {{ evaluacion.primer_ruido_cardiaco|yesno }}
+        <br>
+        {% trans 'Segundo Ruido Cardiaco' %}:
+        {{ evaluacion.segundo_ruido_cardiaco|yesno }}
+        <br>
+        {% trans 'Tercer Ruido Cardiaco' %}:
+        {{ evaluacion.tercer_ruido_cardiaco|yesno }}
+        <br>
+        {% trans 'Cuarto Ruido Cardiaco' %}:
+        {{ evaluacion.cuarto_ruido_cardiaco|yesno }}
+        <br>
+        {% trans 'Soplo' %}:
+        {{ evaluacion.soplo|yesno }}
+        <br>
+        {% trans 'Arritmia' %}:
+        {{ evaluacion.arritmia|yesno }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'ORL' %}</strong>
+        {% trans 'ORL' %}:
+        {{ evaluacion.get_orl_display }}
+        <br>
+        {% trans 'Hallazgos ORL' %}:
+        {{ evaluacion.descripcion_orl }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Mamas' %}</strong>
+        <br>
+        {% trans 'Mamas Normales' %}:
+        {{ evaluacion.mamas_normales|yesno }}
+        <br>
+        {% trans 'Nodulos' %}:
+        {{ evaluacion.nodulos|yesno }}
+        <br>
+        {% trans 'Retracciones Mamarias' %}:
+        {{ evaluacion.retracciones_mamarias|yesno }}
+        <br>
+        {% trans 'Nopatias Satelites' %}:
+        {{ evaluacion.nopatias_satelites|yesno }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <strong>{% trans 'Abdomen' %}</strong>
+        <br>
+        {% trans 'Abdomen Blando' %}:
+        {{ evaluacion.abdomen_blando|yesno }}
+        <br>
+        {% trans 'Abdomen deprecible' %}:
+        {{ evaluacion.abdomen_deprecible|yesno }}
+        <br>
+        {% trans 'Dolor Abdominal' %}:
+        {{ evaluacion.dolor_abdominal|yesno }}
+        <br>
+        {% trans 'Blumber' %}:
+        {{ evaluacion.blumber|yesno }}
+        <br>
+        {% trans 'ROVSIG' %}:
+        {{ evaluacion.rovsig|yesno }}
+        <br>
+        {% trans 'Hallazgos Gastrointestinales' %}:
+        {{ evaluacion.gastrointestinal }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Tracto Rectal' %}</strong>
+        <br>
+        {% trans 'Tracto Rectal diferido' %}:
+        {{ evaluacion.tacto_rectal_diferido|yesno }}
+        <br>
+        {% trans 'Hallazgos Tracto Rectal' %}:
+        {{ evaluacion.hallazgos_tacto_rectal }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Genitales' %}</strong>
+        <br>
+        {% trans 'Genitales Normales' %}:
+        {{ evaluacion.genitales_normales|yesno }}
+        <br>
+        {% trans 'Hallazgos Genitales' %}:
+        {{ evaluacion.hallazgos_genitales }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Extremidades' %}</strong>
+        <br>
+        {% trans 'Extremidades Simetricas' %}:
+        {{ evaluacion.extremidades_simetricas|yesno }}
+        <br>
+        {% trans 'Hallazgos Extremidades' %}:
+        {{ evaluacion.hallazgos_extremidades }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <strong>{% trans 'Piel' %}</strong>
+        <br>
+        {% trans 'Piel Normal' %}:
+        {{ evaluacion.piel_normal|yesno }}
+        <br>
+        {% trans 'Hallazgos Piel' %}:
+        {{ evaluacion.hallazgos_piel }}
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Estado Neurológico' %}</strong>
+        {% trans 'Estado Neurologico Normal' %}:
+        {{ evaluacion.neurologico_normal|yesno }}
+        <br>
+        {% trans 'Focalizaciones' %}:
+        {{ evaluacion.focalizaciones|yesno }}
+        <br>
+        {% trans 'Atonia' %}:
+        {{ evaluacion.atonia|yesno }}
+        <br>
+        {% trans 'Disminucion de la Fuerza' %}:
+        {{ evaluacion.disminucion_de_la_fuerza|yesno }}
+        <br>
+        {% trans 'Movimientos Involuntarios' %}:
+        {{ evaluacion.movimientos_involuntarios|yesno }}
+        <br>
+    </div>
+    <div class="col-md-3">
+        <strong>{% trans 'Otras' %}:</strong>
+        {{ evaluacion.otras }}
+    </div>
+</div>

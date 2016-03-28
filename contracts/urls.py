@@ -242,4 +242,8 @@ urlpatterns = [
     url(r'^aseguradora/(?P<pk>\d+)$',
         views.AseguradoraDetailView.as_view(),
         name='aseguradora'),
+
+    url(r'^aseguradora/mensual$',
+        views.AseguradoraPeriodoView.as_view(),
+        name='contracts-aseguradora-mensual'),
 ]
