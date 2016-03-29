@@ -23,6 +23,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 from guardian.shortcuts import assign_perm
@@ -61,6 +62,33 @@ class Company(TimeStampedModel):
 
 
 @python_2_unicode_compatible
+class LegalData(TimeStampedModel):
+    """
+    Defines some data part of invoicing required by law
+    """
+
+    TIPOS = (
+        ('R', _('Recibo')),
+        ('CD', _('Comprobante de Deduccion')),
+        ('NC', _('Nota de Credito')),
+
+    )
+
+    tipo = models.CharField(max_length=2, choices=TIPOS, default='R')
+    ciudad_creacion = models.ForeignKey('Ciudad')
+    cai = models.CharField(max_length=255, blank=True)
+    correlativo = models.IntegerField(default=0)
+    inicio = models.CharField(max_length=100, blank=True)
+    fin = models.CharField(max_length=100, blank=True)
+    prefijo = models.CharField(max_length=100, blank=True)
+    limite_de_emision = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return '{0} {1} {2}'.format(self.tipo, self.ciudad_creacion.nombre,
+                                    self.cai)
+
+
+@python_2_unicode_compatible
 class Ciudad(TimeStampedModel):
     """
     Consolidates all City specific legal information for legal tending of
@@ -71,26 +99,12 @@ class Ciudad(TimeStampedModel):
     telefono = models.CharField(max_length=100, blank=True)
     tiene_presupuesto_global = models.BooleanField(default=False)
     company = models.ForeignKey(Company, blank=True, null=True)
-    # :class:`Recibo` Data
-    cai_recibo = models.CharField(max_length=255, blank=True)
-    correlativo_de_recibo = models.IntegerField(default=0)
-    inicio_rango = models.CharField(max_length=100, blank=True)
-    fin_rango = models.CharField(max_length=100, blank=True)
-    prefijo_recibo = models.CharField(max_length=100, blank=True)
-    limite_de_emision = models.DateTimeField(default=timezone.now)
-    # :class:`ComprobanteDeduccion` data
-    cai_comprobante = models.CharField(max_length=255, blank=True)
-    correlativo_de_comprobante = models.IntegerField(default=0)
-    prefijo_comprobante = models.CharField(max_length=100, blank=True)
-    correlativo_de_nota_de_credito = models.IntegerField(default=0)
-    fin_rango_comprobante = models.CharField(max_length=100, blank=True)
-    inicio_rango_comprobante = models.CharField(max_length=100, blank=True)
-    # :class:`NotaCredito` data
-    cai_nota_credito = models.CharField(max_length=255, blank=True)
-    prefijo_nota_credito = models.CharField(max_length=255, blank=True)
-    fin_rango_nota_credito = models.CharField(max_length=100, blank=True)
-    inicio_rango_nota_credito = models.CharField(max_length=100, blank=True)
-    limite_de_emision_nota_credito = models.DateTimeField(default=timezone.now)
+    recibo = models.OneToOneField(LegalData, blank=True, null=True,
+                                  related_name='ciudad_recibo')
+    comprobante = models.OneToOneField(LegalData, blank=True, null=True,
+                                       related_name='ciudad_comprobante')
+    nota_credito = models.OneToOneField(LegalData, blank=True, null=True,
+                                        related_name='ciudad_nota_credito')
 
     def __str__(self):
         return self.nombre
@@ -136,7 +150,7 @@ class UserProfile(UserenaBaseProfile):
 
             datos['ponderacion'] = meta.ponderacion(datos['logro'])
             datos['logro_ponderado'] = meta.logro_ponderado(
-                    datos['ponderacion'])
+                datos['ponderacion'])
             total += datos['logro_ponderado']
             goal['metas'].append(datos)
         goal['escalas'] = bsc.get_escala(total)

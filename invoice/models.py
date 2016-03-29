@@ -39,7 +39,7 @@ from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
 from spital.models import Deposito
-from users.models import Ciudad
+from users.models import Ciudad, LegalData
 
 dot01 = Decimal("0.01")
 
@@ -100,6 +100,7 @@ class Recibo(TimeStampedModel):
     cliente = models.ForeignKey(Persona, related_name='recibos')
     ciudad = models.ForeignKey(Ciudad, blank=True, null=True,
                                related_name='recibos')
+    legal_data = models.ForeignKey(LegalData, blank=True, null=True)
     cajero = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                related_name='recibos')
     tipo_de_venta = models.ForeignKey(TipoVenta, blank=True, null=True)
@@ -142,15 +143,15 @@ class Recibo(TimeStampedModel):
         prefijos para sus recibos.
         :return:
         """
-        ciudad = self.ciudad
-        if ciudad is None:
+        legal_data = self.legal_data
+        if legal_data is None:
             if self.cajero is None or self.cajero.profile is None or \
                             self.cajero.profile.ciudad is None:
                 return self.correlativo
 
-            ciudad = self.cajero.profile.ciudad
+            legal_data = self.cajero.profile.ciudad.recibo
 
-        return '{0}-{1:08d}'.format(ciudad.prefijo_recibo, self.correlativo)
+        return '{0}-{1:08d}'.format(legal_data.prefijo, self.correlativo)
 
     def other_currency(self):
 
@@ -268,8 +269,9 @@ class Recibo(TimeStampedModel):
         """
 
         if self.pk is None:
-            if self.cajero.profile is not None and self.cajero.profile.ciudad \
-                    is not None:
+            if self.cajero.profile is not None \
+                    and self.cajero.profile.ciudad is not None \
+                    and self.cajero.profile.ciudad.recibo is not None:
                 self.asignar_correlativo()
 
             turnos = TurnoCaja.objects.filter(
@@ -286,8 +288,13 @@ class Recibo(TimeStampedModel):
         super(Recibo, self).save(*args, **kwargs)
 
     def asignar_ciudad(self):
+        """
+        Assigns the :class:`Ciudad` and :class:`LegalData` to the
+        :class:`Recibo`
+        """
         if self.ciudad is None:
             self.ciudad = self.cajero.profile.ciudad
+            self.legal_data = self.ciudad.recibo
 
     def asignar_correlativo(self):
         """
@@ -297,11 +304,11 @@ class Recibo(TimeStampedModel):
         :return:
         """
 
-        ciudad = self.cajero.profile.ciudad
-        ciudad.correlativo_de_recibo = F('correlativo_de_recibo') + 1
-        ciudad.save()
-        ciudad.refresh_from_db()
-        self.correlativo = ciudad.correlativo_de_recibo
+        cai = self.cajero.profile.ciudad.recibo
+        cai.correlativo = F('correlativo') + 1
+        cai.save()
+        cai.refresh_from_db()
+        self.correlativo = cai.correlativo
 
 
 class VentaManager(models.Manager):
@@ -415,6 +422,7 @@ class PagoQuerySet(models.QuerySet):
     """
     Provides shortcuts to obtain common used data
     """
+
     def cuentas_por_cobrar(self):
         """
         Obtains all the :class:`Pago` that are yet to be completed or that
@@ -875,9 +883,7 @@ class ComprobanteDeduccion(TimeStampedModel):
     cai_proveedor = models.CharField(max_length=255, blank=True)
     numero_de_documento = models.CharField(max_length=255, blank=True)
     fecha_de_emision = models.DateTimeField(default=timezone.now)
-    cai = models.CharField(max_length=255, blank=True)
-    inicio_rango = models.DateTimeField(default=timezone.now)
-    fin_rango = models.DateTimeField(default=timezone.now)
+    legal_data = models.ForeignKey(LegalData, blank=True, null=True)
 
     def __str__(self):
         if self.proveedor is None:
@@ -888,8 +894,7 @@ class ComprobanteDeduccion(TimeStampedModel):
         return reverse('comprobante', args=[self.id])
 
     def numero(self):
-        return _('{0}-{1}').format(self.ciudad.prefijo_comprobante,
-                                   self.correlativo)
+        return _('{0}-{1}').format(self.legal_data.prefijo, self.correlativo)
 
     def total(self):
         """
@@ -902,16 +907,12 @@ class ComprobanteDeduccion(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if self.pk is None:
-            self.inicio_rango = self.ciudad.inicio_rango_comprobante
-            self.fin_rango = self.ciudad.fin_rango_comprobante
-            self.cai = self.ciudad.cai_comprobante
+            self.legal_data = self.ciudad.comprobante
 
-            ciudad = self.ciudad
-            ciudad.correlativo_de_comprobante = F(
-                'correlativo_de_comprobante') + 1
-            ciudad.save()
-            ciudad.refresh_from_db()
-            self.correlativo = ciudad.correlativo_de_comprobante
+            self.legal_data.correlativo = F('correlativo') + 1
+            self.legal_data.save()
+            self.legal_data.refresh_from_db()
+            self.correlativo = self.legal_data.correlativo
 
         super(ComprobanteDeduccion, self).save(*args, **kwargs)
 
@@ -954,10 +955,10 @@ class NotaCredito(TimeStampedModel):
     motivo_de_emision = models.CharField(max_length=1, choices=MOTIVOS,
                                          blank=True)
     cerrada = models.BooleanField(default=False)
+    legal_data = models.ForeignKey(LegalData, blank=True, null=True)
 
     def numero(self):
-        return '{0}-{1:08d}'.format(self.recibo.ciudad.prefijo_recibo,
-                                    self.correlativo)
+        return '{0}-{1:08d}'.format(self.legal_data.prefijo, self.correlativo)
 
     def __str__(self):
         return str(self.correlativo)
@@ -968,12 +969,12 @@ class NotaCredito(TimeStampedModel):
         generando el correlativo correspondiente a la ciudad.
         """
         if self.pk is None:
-            ciudad = self.recibo.cajero.profile.ciudad
-            ciudad.correlativo_de_nota_de_credito = F(
-                'correlativo_de_nota_de_credito') + 1
-            ciudad.save()
-            ciudad.refresh_from_db()
-            self.correlativo = ciudad.correlativo_de_nota_de_credito
+            self.legal_data = self.recibo.ciudad.comprobante
+
+            self.legal_data.correlativo = F('correlativo') + 1
+            self.legal_data.save()
+            self.legal_data.refresh_from_db()
+            self.correlativo = self.legal_data.correlativo
 
         super(NotaCredito, self).save(*args, **kwargs)
 
