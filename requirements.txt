@@ -18,3 +18,7 @@ django-storages
 boto
 gunicorn
 psycopg2
+django-debug-toolbar
+django-mail-templated
+django-autocomplete-light
+django-annoying

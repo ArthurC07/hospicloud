@@ -1,58 +1,27 @@
 ﻿{% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 main-header">
             <div class="page-header">
                 <h1>{{ consulta.persona }}
-                    <small>Consulta</small>
+                    <small>{% trans 'Consulta' %}</small>
                 </h1>
             </div>
             <div class="row">
                 <div class="col-md-9 main-content">
-                    <article id="examen_fisico"
-                             class="tab-pane table-responsive">
-                        {% load l10n %}
-                        <table class="table table-striped">
-                            <caption>Examenes F&iacute;sicos</caption>
-                            <thead>
-                            <tr>
-                                <th>fecha</th>
-                                <th>ORL</th>
-                                <th>Cardiopulmonar</th>
-                                <th>Gastrointestinal</th>
-                                <th>Extremidades</th>
-                                <th>Otras</th>
-                                <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for evaluacion in consulta.evaluaciones.all %}
-                                <tr>
-                                    <td>{{ evaluacion.created }}</td>
-                                    <td>{{ evaluacion.orl }}</td>
-                                    <td>{{ evaluacion.cardiopulmonar }}</td>
-                                    <td>{{ evaluacion.gastrointestinal }}</td>
-                                    <td>{{ evaluacion.extremidades }}</td>
-                                    <td>{{ evaluacion.otras }}</td>
-                                    <td><a class="btn btn-success"
-                                           href="{% url 'clinique-evaluacion-edit' evaluacion.id %}"><i
-                                            class="fa fa-edit"></i> Editar</a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </article>
+                    <h2>{% trans 'Examenes Físicos' %}</h2>
+                    {% for evaluacion in consulta.evaluaciones.all %}
+                        {% include 'clinique/snippets/examen _fisico.html' %}
+                    {% endfor %}
                     <article id="diagnostico" class="tab-pane table-responsive">
-                        {% load l10n %}
                         <table class="table table-striped">
-                            <caption>Diagn&oacute;stico</caption>
+                            <caption>{% trans 'Diagn&oacute;stico' %}</caption>
                             <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Consulta inicial</th>
-                                <th>Acciones</th>
+                                <th>{% trans 'Fecha' %}</th>
+                                <th>{% trans 'Consulta inicial' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -60,10 +29,14 @@
                                 <tr>
                                     <td>{{ diagnostico.created }}</td>
                                     <td>
-                                        {{ diagnostico.afeccion }}{{ diagnostico.diagnostico }}</td>
-                                    <td><a class="btn btn-success"
-                                           href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i
-                                            class="fa fa-edit"></i> Editar</a>
+                                        {{ diagnostico.afeccion }}
+                                        {{ diagnostico.diagnostico }}
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-success"
+                                           href="{% url 'clinique-diagnostico-edit' diagnostico.id %}">
+                                            <i class="fa fa-edit"></i> {% trans 'Editar' %}
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -71,13 +44,13 @@
                         </table>
 
                         <table class="table table-striped">
-                            <caption>Ordenes M&eacute;dicas</caption>
+                            <caption>{% trans 'Ordenes M&eacute;dicas' %}</caption>
                             <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Orden</th>
-                                <th>Evoluci&oacute;n</th>
-                                <th>Acciones</th>
+                                <th>{% trans 'Fecha' %}</th>
+                                <th>{% trans 'Orden' %}</th>
+                                <th>{% trans 'Evoluci&oacute;n' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -86,22 +59,24 @@
                                     <td>{{ orden.created }}</td>
                                     <td>{{ orden.orden }}</td>
                                     <td>{{ orden.evolucion }}</td>
-                                    <td><a class="btn btn-success"
-                                           href="{% url 'clinique-orden-edit' orden.id %}"><i
-                                            class="fa fa-edit"></i> Editar</a>
+                                    <td>
+                                        <a class="btn btn-success"
+                                           href="{% url 'clinique-orden-edit' orden.id %}">
+                                            <i class="fa fa-edit"></i> {% trans 'Editar' %}
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                         <table class="table table-striped">
-                            <caption>Incapacidades</caption>
+                            <caption>{% trans 'Incapacidades' %}</caption>
                             <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Descripci&oacute;n</th>
-                                <th>D&iacute;as</th>
-                                <th>Acciones</th>
+                                <th>{% trans 'Fecha' %}</th>
+                                <th>{% trans 'Descripci&oacute;n' %}</th>
+                                <th>{% trans 'D&iacute;as' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -110,20 +85,23 @@
                                     <td>{{ incapacidad.created }}</td>
                                     <td>{{ incapacidad.descripcion }}</td>
                                     <td>{{ incapacidad.dias }}</td>
-                                    <td><a class="btn btn-success"
-                                           href="{% url 'clinique-incapacidad-edit' incapacidad.id %}">Editar</a>
+                                    <td>
+                                        <a class="btn btn-success"
+                                           href="{% url 'clinique-incapacidad-edit' incapacidad.id %}">
+                                            {% trans 'Editar' %}
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                         <table class="table table-striped">
-                            <caption>Prescripciones</caption>
+                            <caption>{% trans 'Prescripciones' %}</caption>
                             <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Nota</th>
-                                <th>Acciones</th>
+                                <th>{% trans 'Fecha' %}</th>
+                                <th>{% trans 'Nota' %}</th>
+                                <th>{% trans 'Acciones' %}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -131,10 +109,22 @@
                                 <tr>
                                     <td>{{ prescripcion.created }}</td>
                                     <td>{{ prescripcion.medicamento }} {{ prescripcion.nota }}</td>
-                                    <td><a class="btn btn-success"
-                                           href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i
-                                            class="fa fa-edit"></i> Editar</a>
+                                    <td>
+                                        <a class="btn btn-success"
+                                           href="{% url 'clinique-prescripcion-edit' prescripcion.id %}">
+                                            <i class="fa fa-edit"></i> {% trans 'Editar' %}
+                                        </a>
                                     </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <table class="table table-striped">
+                            <caption>{% trans 'Observaciones del M&eacute;dico' %}</caption>
+                            <tbody>
+                            {% for nota in consulta.notamedica_set.all %}
+                                <tr>
+                                    <td>{{ nota.observacion }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -146,36 +136,46 @@
                         <nav class="sidebar-nav">
                             <ul class="nav nav-tabs nav-stacked">
                                 <li>
-                                    <a href="{% url 'consultorio-evaluacion-agregar' consulta.persona.id consulta.id %}">Agregar
-                                        Examen Físico</a>
+                                    <a href="{% url 'consultorio-evaluacion-agregar' consulta.persona.id consulta.id %}">
+                                        {% trans 'Agregar Examen Físico' %}
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'consultorio-prescripcion-agregar' consulta.persona.id consulta.id %}">Agregar
-                                        Prescripci&oacute;n</a>
+                                    <a href="{% url 'consultorio-prescripcion-agregar' consulta.persona.id consulta.id %}">
+                                        {% trans 'Agregar Prescripci&oacute;n' %}
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'consultorio-incapacidad-agregar' consulta.persona.id consulta.id %}">Agregar
-                                        Incapacidad</a>
+                                    <a href="{% url 'consultorio-incapacidad-agregar' consulta.persona.id consulta.id %}">
+                                        {% trans 'Agregar Incapacidad' %}
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'consultorio-diagnostico-agregar' consulta.persona.id consulta.id %}">Agregar
-                                        Diagnóstico</a>
+                                    <a href="{% url 'consultorio-diagnostico-agregar' consulta.persona.id consulta.id %}">
+                                        {% trans 'Agregar Diagnóstico' %}
+                                    </a>
                                 </li>
                                 <li>
                                     <a href="{% url 'consultorio-om-agregar' consulta.id %}">
                                         <i class="fa fa-stethoscope"></i>
-                                        Agregar Orden M&eacute;dica
+                                        {% trans 'Agregar Orden M&eacute;dica' %}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'nota-medica-agregar' consulta.id %}">
+                                        {% trans 'Agregar Nota' %}
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{% url 'clinique-consulta-revisar' consulta.id %}">
                                         <i class="fa fa-stethoscope"></i>
-                                        Completar Revisi&oacute;n de Consulta
+                                        {% trans 'Completar Revisi&oacute;n de Consulta' %}
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'persona-view-id' consulta.persona.id %}">Volver
-                                        al Paciente</a>
+                                    <a href="{% url 'persona-view-id' consulta.persona.id %}">
+                                        {% trans 'Volver al Paciente' %}
+                                    </a>
                                 </li>
                             </ul>
                         </nav>

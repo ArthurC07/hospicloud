@@ -65,7 +65,8 @@ class AdmisionIndexView(ListView, AdmisionPermissionMixin):
         context['preadmisiones'] = PreAdmision.objects.filter(completada=False)
         context['admision_periodo'] = PeriodoForm(prefix='admisiones')
         context[
-            'admision_periodo'].helper.form_action = 'estadisticas-hospitalizacion'
+            'admision_periodo'
+        ].helper.form_action = 'estadisticas-hospitalizacion'
         context['admision_periodo'].helper.layout = Fieldset(
                 'Admisiones por Periodo',
                 *context['admision_periodo'].field_names)
@@ -181,7 +182,7 @@ class PersonaReferenciaCreateView(PersonaCreateView):
         return context
 
 
-class ReferenciaAgregarView(RedirectView, LoginRequiredMixin):
+class ReferenciaAgregarView(LoginRequiredMixin, RedirectView):
     """Permite agregar una :class:`Persona` como referencia de una
     :class:`Admision`"""
     permanent = False
@@ -196,7 +197,7 @@ class ReferenciaAgregarView(RedirectView, LoginRequiredMixin):
         return reverse('admision-view-id', args=[admision.id])
 
 
-class FiadorAgregarView(RedirectView, LoginRequiredMixin):
+class FiadorAgregarView(LoginRequiredMixin, RedirectView):
     """Permite agregar una :class:`Persona` como fiador de una
     :class:`Admision`"""
     permanent = False
@@ -210,7 +211,7 @@ class FiadorAgregarView(RedirectView, LoginRequiredMixin):
         return reverse('admision-view-id', args=[admision.id])
 
 
-class AdmisionCreateView(CreateView, LoginRequiredMixin):
+class AdmisionCreateView(LoginRequiredMixin, CreateView):
     """Crea una :class:`Admision` para una :class:`Persona` ya existente en el
     sistema"""
 
@@ -243,7 +244,7 @@ class AdmisionCreateView(CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class AdmisionDetailView(DetailView, LoginRequiredMixin):
+class AdmisionDetailView(LoginRequiredMixin, DetailView):
     """Permite mostrar los datos de una :class:`Admision`"""
 
     context_object_name = 'admision'
@@ -251,7 +252,7 @@ class AdmisionDetailView(DetailView, LoginRequiredMixin):
     template_name = 'admision/admision_detail.html'
 
 
-class AutorizarView(RedirectView, LoginRequiredMixin):
+class AutorizarView(LoginRequiredMixin, RedirectView):
     """Permite marcar como autorizada una :class:`Admision`"""
 
     url = '/admision/autorizar'
@@ -264,7 +265,7 @@ class AutorizarView(RedirectView, LoginRequiredMixin):
         return reverse('admision-view-id', args=[admision.id])
 
 
-class PagarView(RedirectView, LoginRequiredMixin):
+class PagarView(LoginRequiredMixin, RedirectView):
     """Permite marcar como pagada una :class:`Admision`"""
 
     url = '/admision/hospitalizar'
@@ -310,7 +311,7 @@ class AdmisionPeriodoView(TemplateView, LoginRequiredMixin):
         return context
 
 
-class HabitacionListView(ListView, LoginRequiredMixin):
+class HabitacionListView(LoginRequiredMixin, ListView):
     """Muestra la lista de las :class:`Habitacion`es para tener una vista
     rápida de las que se encuentran disponibles en un determinado momento"""
 
@@ -319,7 +320,7 @@ class HabitacionListView(ListView, LoginRequiredMixin):
     template_name = 'admision/habitaciones.html'
 
 
-class HabitacionCreateView(CreateView, LoginRequiredMixin):
+class HabitacionCreateView(LoginRequiredMixin, CreateView):
     """Permite agregar una :class:`Habitacion` al :class:`Hospital`"""
 
     model = Habitacion
@@ -327,7 +328,7 @@ class HabitacionCreateView(CreateView, LoginRequiredMixin):
     template_name = 'admision/habitacion_create.html'
 
 
-class HabitacionDetailView(DetailView, LoginRequiredMixin):
+class HabitacionDetailView(LoginRequiredMixin, DetailView):
     """Permite mostrar el estado de una :class:`Habitacion`"""
 
     context_object_name = 'habitacion'
@@ -355,7 +356,7 @@ class HabitacionDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class HabitacionUpdateView(UpdateView, LoginRequiredMixin):
+class HabitacionUpdateView(LoginRequiredMixin, UpdateView):
     """Permite editar los datos de una :class:`Habitacion`"""
 
     model = Habitacion
@@ -363,7 +364,7 @@ class HabitacionUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'admision/habitacion_create.html'
 
 
-class PreAdmisionCreateView(CreateView, LoginRequiredMixin):
+class PreAdmisionCreateView(LoginRequiredMixin, CreateView):
     model = PreAdmision
     form_class = PreAdmisionForm
 
@@ -398,7 +399,7 @@ class PreAdmisionCreateView(CreateView, LoginRequiredMixin):
         return context
 
 
-class AdmisionPreCreateView(CreateView, LoginRequiredMixin):
+class AdmisionPreCreateView(LoginRequiredMixin, CreateView):
     """Crea una :class:`Admision` para una :class:`Persona` ya existente en el
     sistema"""
 
@@ -466,7 +467,7 @@ class PreAdmisionDeleteView(DeleteView, LoginRequiredMixin):
         return reverse('admision-index')
 
 
-class HospitalizarView(UpdateView, LoginRequiredMixin):
+class HospitalizarView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos de ingreso en la central de enfermeria"""
 
     model = Admision
@@ -492,6 +493,6 @@ class DepositoCreateView(AdmisionFormMixin):
     form_class = DepositoForm
 
 
-class DepositoUpdateView(UpdateView, LoginRequiredMixin):
+class DepositoUpdateView(LoginRequiredMixin, UpdateView):
     model = Deposito
     form_class = DepositoForm

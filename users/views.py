@@ -58,7 +58,7 @@ class UserPersonaCreateView(CreateView, UserRedirectMixin):
                        args=[self.request.user.username])
 
 
-class UserPersonaDetailView(DetailView, LoginRequiredMixin):
+class UserPersonaDetailView(LoginRequiredMixin, DetailView):
     model = Persona
     context_object_name = 'persona'
 
@@ -67,7 +67,7 @@ class UserPersonaDetailView(DetailView, LoginRequiredMixin):
                        args=[self.request.user.username])
 
 
-class UserPersonaUpdateView(UpdateView, UserRedirectMixin):
+class UserPersonaUpdateView(UserRedirectMixin, UpdateView):
     model = Persona
     form_class = PersonaForm
     template_name = 'users/persona_form.html'
@@ -77,7 +77,7 @@ class UserPersonaUpdateView(UpdateView, UserRedirectMixin):
                        args=[self.request.user.username])
 
 
-class UserFisicoUpdateView(UpdateView, UserRedirectMixin):
+class UserFisicoUpdateView(UserRedirectMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`Fisico` de una :class:`Persona`
     """
@@ -90,7 +90,7 @@ class UserFisicoUpdateView(UpdateView, UserRedirectMixin):
                        args=[self.request.user.username])
 
 
-class UserAntecedenteUpdateView(UpdateView, UserRedirectMixin):
+class UserAntecedenteUpdateView(UserRedirectMixin, UpdateView):
     """Permite actualizar los datos del :class:`Antecedente` de una
     :class:`Persona`"""
 
@@ -102,7 +102,7 @@ class UserAntecedenteUpdateView(UpdateView, UserRedirectMixin):
                        args=[self.request.user.username])
 
 
-class UserAntecedenteFamiliarUpdateView(UpdateView, UserRedirectMixin):
+class UserAntecedenteFamiliarUpdateView(UserRedirectMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteFamiliar` de una
     :class:`Persona`"""
 
@@ -114,7 +114,7 @@ class UserAntecedenteFamiliarUpdateView(UpdateView, UserRedirectMixin):
                        args=[self.request.user.username])
 
 
-class UserAntecedenteObstetricoUpdateView(UpdateView, UserRedirectMixin):
+class UserAntecedenteObstetricoUpdateView(UserRedirectMixin, UpdateView):
     """Permite actualizar los datos del :class:`AntecedenteObstetrico` de una
     :class:`Persona`"""
 
@@ -150,7 +150,7 @@ class UserAntecedenteQuirurgicoUpdateView(UpdateView, UserRedirectMixin):
                        args=[self.request.user.username])
 
 
-class UserEstiloVidaUpdateView(UpdateView, LoginRequiredMixin):
+class UserEstiloVidaUpdateView(LoginRequiredMixin, UpdateView):
     """Permite actualizar los datos del :class:`EstiloVida` de una
     :class:`Persona`"""
 

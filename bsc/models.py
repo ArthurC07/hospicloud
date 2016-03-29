@@ -14,25 +14,28 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
+
+from datetime import timedelta
 from decimal import Decimal
 
+import unicodecsv
+from django.conf import settings
 from django.contrib.auth.models import User, user_logged_in
-from django.core.urlresolvers import reverse
 from django.core.files.storage import default_storage as storage
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
+from django.db.models.aggregates import Avg
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django.conf import settings
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from django_extensions.db.models import TimeStampedModel
-import unicodecsv
-from budget.models import Presupuesto
 
+from budget.models import Presupuesto
 from clinique.models import Consulta, OrdenMedica, Incapacidad, Espera
-from contracts.models import MasterContract
+from contracts.models import MasterContract, Aseguradora
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from invoice.models import Recibo
@@ -82,8 +85,8 @@ class Extra(TimeStampedModel):
     EMERGENCIA = 'ER'
     EVALUACION = 'EV'
     EXTRAS = (
-        (EMERGENCIA, _(u'Emergencias Atendidas')),
-        (EVALUACION, _(u'Evaluación del Estudiante'))
+        (EMERGENCIA, _('Emergencias Atendidas')),
+        (EVALUACION, _('Evaluación del Estudiante'))
     )
     tipo_extra = models.CharField(max_length=3, choices=EXTRAS,
                                   default=Emergencia)
@@ -98,7 +101,7 @@ class Extra(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u'{0} de {1}').format(
+        return _('{0} de {1}').format(
             self.get_tipo_extra_display(),
             self.score_card.nombre
         )
@@ -132,9 +135,8 @@ class Puntuacion(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Meta(TimeStampedModel):
-
     class Meta:
-        ordering = ('tipo_meta', )
+        ordering = ('tipo_meta',)
 
     CONSULTA_TIME = 'CT'
     PRE_CONSULTA_TIME = 'PCT'
@@ -143,32 +145,32 @@ class Meta(TimeStampedModel):
     CLIENT_FEEDBACK_PERCENTAGE = 'CFP'
     CONSULTA_REMITIDA = 'CR'
     COACHING = 'CO'
-    PUNTUALIDAD = 'PU'
+    PUNTUALIDAD = 'P'
     QUEJAS = 'QJ'
     VENTAS = 'VE'
     PRESUPUESTO = 'PR'
-    TURNOS = 'TU'
+    TURNOS = 'T'
     TEACHING = 'TE'
     EVALUACION = 'EV'
     CAPACITACIONES = 'CA'
     METAS = (
-        (CONSULTA_TIME, _(u'Tiempo de Consulta')),
-        (PRE_CONSULTA_TIME, _(u'Tiempo en Preconsulta')),
-        (PRESCRIPTION_PERCENTAGE, _(u'Porcentaje de Recetas')),
-        (INCAPACIDAD_PERCENTAGE, _(u'Porcentaje de Incapacidades')),
+        (CONSULTA_TIME, _('Tiempo de Consulta')),
+        (PRE_CONSULTA_TIME, _('Tiempo en Preconsulta')),
+        (PRESCRIPTION_PERCENTAGE, _('Porcentaje de Recetas')),
+        (INCAPACIDAD_PERCENTAGE, _('Porcentaje de Incapacidades')),
         (
             CLIENT_FEEDBACK_PERCENTAGE,
-            _(u'Porcentaje de Aprobación del Cliente')),
-        (CONSULTA_REMITIDA, _(u'Consulta Remitida a Especialista')),
-        (COACHING, _(u'Coaching')),
-        (PUNTUALIDAD, _(u'Puntualidad')),
-        (QUEJAS, _(u'Manejo de Quejas')),
-        (VENTAS, _(u'Ventas del Mes')),
-        (PRESUPUESTO, _(u'Manejo de Presupuesto')),
-        (TURNOS, _(u'Manejo de Turnos')),
-        (TEACHING, _(u'Horas Enseñadas')),
-        (EVALUACION, _(u'Evaluación de Alumnos')),
-        (CAPACITACIONES, _(u'Capacitaciones')),
+            _('Porcentaje de Aprobación del Cliente')),
+        (CONSULTA_REMITIDA, _('Consulta Remitida a Especialista')),
+        (COACHING, _('Coaching')),
+        (PUNTUALIDAD, _('Puntualidad')),
+        (QUEJAS, _('Manejo de Quejas')),
+        (VENTAS, _('Ventas del Mes')),
+        (PRESUPUESTO, _('Manejo de Presupuesto')),
+        (TURNOS, _('Manejo de Turnos')),
+        (TEACHING, _('Horas Enseñadas')),
+        (EVALUACION, _('Evaluación de Alumnos')),
+        (CAPACITACIONES, _('Capacitaciones')),
     )
     score_card = models.ForeignKey(ScoreCard)
     tipo_meta = models.CharField(max_length=3, choices=METAS,
@@ -181,7 +183,7 @@ class Meta(TimeStampedModel):
 
     def __str__(self):
 
-        return _(u'{0} de {1}').format(
+        return _('{0} de {1}').format(
             self.get_tipo_meta_display(),
             self.score_card.nombre
         )
@@ -324,18 +326,12 @@ class Meta(TimeStampedModel):
 
     def poll_average(self, usuario, inicio, fin):
 
-        votos = Voto.objects.filter(
+        return Voto.objects.filter(
             opcion__isnull=False,
             created__range=(inicio, fin),
             respuesta__consulta__consultorio__usuario=usuario,
             pregunta__calificable=True
-        )
-
-        total = votos.aggregate(
-            total=Coalesce(Sum('opcion__valor'), Decimal())
-        )['total']
-
-        return Decimal(total) / max(votos.count(), 1)
+        ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
 
     def ventas(self, usuario, inicio, fin):
 
@@ -414,7 +410,7 @@ class ArchivoNotas(TimeStampedModel):
         return reverse('archivoNotas', args=[self.id])
 
     def procesar(self):
-        archivo = storage.open(self.archivo.name, 'rU')
+        archivo = storage.open(self.archivo.name, 'r')
         data = unicodecsv.reader(archivo)
         [procesar_notas(
             linea,
@@ -437,6 +433,7 @@ def procesar_notas(linea, fecha, meta, usuario, puntaje):
 @python_2_unicode_compatible
 class Encuesta(TimeStampedModel):
     nombre = models.CharField(max_length=255)
+    activa = models.BooleanField(default=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -445,6 +442,29 @@ class Encuesta(TimeStampedModel):
 
     def __str__(self):
         return self.nombre
+
+    def consultas(self):
+        """
+        Obtains the :class:`Consulta`s that will be interviewed
+        """
+        a_month_ago = timezone.now() - timedelta(days=30)
+        consultas = Consulta.objects.pendientes_encuesta().select_related(
+            'persona',
+            'poliza',
+            'contrato',
+            'poliza__aseguradora',
+            'persona__ciudad',
+        ).prefetch_related(
+            'persona__respuesta_set',
+            'persona__contratos',
+            'poliza__contratos',
+            'persona__beneficiarios',
+            'persona__beneficiarios__contrato'
+        ).exclude(
+            persona__respuesta__created__gte=a_month_ago,
+        )
+
+        return consultas
 
 
 @python_2_unicode_compatible
@@ -480,7 +500,13 @@ class Opcion(TimeStampedModel):
 class Respuesta(TimeStampedModel):
     encuesta = models.ForeignKey(Encuesta)
     consulta = models.ForeignKey(Consulta)
+    persona = models.ForeignKey(Persona, blank=True, null=True)
     terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+
+    class Meta:
+        ordering = ['created', ]
+        get_latest_by = 'created'
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -488,7 +514,7 @@ class Respuesta(TimeStampedModel):
         return reverse('respuesta', args=[self.id])
 
     def __str__(self):
-        return u'Respuesta a {0}'.format(self.encuesta.nombre)
+        return 'Respuesta a {0}'.format(self.encuesta.nombre)
 
     def puntuacion(self):
         votos = Voto.objects.filter(opcion__isnull=False, respuesta=self)
@@ -513,13 +539,32 @@ class Voto(TimeStampedModel):
 
 
 @python_2_unicode_compatible
+class Departamento(TimeStampedModel):
+    """
+    Allows a :class:`Queja` to be classified
+    """
+    nombre = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.nombre
+
+
+@python_2_unicode_compatible
 class Queja(TimeStampedModel):
-    respuesta = models.ForeignKey(Respuesta)
+    """
+    Represents any complaint a :class:`Persona` or :class:`Aseguradora` has
+    raised over the :class:`Company` that is using the software.
+    """
+    respuesta = models.ForeignKey(Respuesta, blank=True, null=True)
+    aseguradora = models.ForeignKey(Aseguradora, blank=True, null=True)
+    departamento = models.ForeignKey(Departamento, null=True, blank=True)
     queja = models.TextField()
     resuelta = models.BooleanField(default=False)
 
-    def __str__(self):
+    class Meta:
+        ordering = ['created', ]
 
+    def __str__(self):
         return self.queja
 
     def get_absolute_url(self):
@@ -529,13 +574,39 @@ class Queja(TimeStampedModel):
 
 
 class Solucion(TimeStampedModel):
+    """
+    Registers a posible fix for a :class:`Queja`
+    """
     queja = models.ForeignKey(Queja)
     solucion = models.TextField()
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
+    aceptada = models.BooleanField(default=False)
+    rechazada = models.BooleanField(default=False)
+    notificada = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['queja__created', ]
 
     def get_absolute_url(self):
-
         return reverse('queja', args=[self.queja.id])
+
+    def send_email(self):
+        """
+        Sends email to the involved parties
+        """
+        pass
+
+
+class Rellamar(TimeStampedModel):
+    """
+    Indicates that the :class:`Persona` wants to be called at another time
+    """
+    consulta = models.ForeignKey(Consulta)
+    encuesta = models.ForeignKey(Encuesta)
+    hora = models.DateTimeField(default=timezone.now)
+
+    def get_absolute_url(self):
+        return self.encuesta.get_absolute_url()
 
 
 class Holiday(TimeStampedModel):
@@ -560,11 +631,9 @@ def register_login(sender, user, request, **kwargs):
 
 user_logged_in.connect(register_login)
 
-Persona.cantidad_encuestas = property(lambda p: Respuesta.objects.filter(
-    consulta__persona=p).count())
+Persona.cantidad_encuestas = property(lambda p: p.respuesta_set.count())
 
-Persona.ultima_encuesta = property(lambda p: Respuesta.objects.filter(
-    consulta__persona=p).order_by('created').last())
+Persona.ultima_encuesta = property(lambda p: p.respuesta_set[-1])
 
 
 def get_login(turno, usuario):

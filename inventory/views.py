@@ -71,46 +71,46 @@ class InventarioFormMixin(CreateView):
         return initial
 
 
-class ItemTemplateDetailView(DetailView, LoginRequiredMixin):
+class ItemTemplateDetailView(LoginRequiredMixin, DetailView):
     model = ItemTemplate
     context_object_name = 'item_template'
 
 
-class ItemTemplateListView(ListView, LoginRequiredMixin):
+class ItemTemplateListView(LoginRequiredMixin, ListView):
     model = ItemTemplate
     context_object_name = 'item_templates'
 
 
-class ItemTemplateCreateView(CreateView, LoginRequiredMixin):
+class ItemTemplateCreateView(LoginRequiredMixin, CreateView):
     model = ItemTemplate
     form_class = ItemTemplateForm
 
 
-class ItemTypeCreateView(CreateView, LoginRequiredMixin):
+class ItemTypeCreateView(LoginRequiredMixin, CreateView):
     model = ItemType
     form_class = ItemTypeForm
 
 
-class ItemTypeDetailView(DetailView, LoginRequiredMixin):
+class ItemTypeDetailView(LoginRequiredMixin, DetailView):
     model = ItemType
 
 
-class ItemTypeListView(ListView, LoginRequiredMixin):
+class ItemTypeListView(LoginRequiredMixin, ListView):
     model = ItemType
 
 
-class ItemTemplateUpdateView(UpdateView, LoginRequiredMixin):
+class ItemTemplateUpdateView(LoginRequiredMixin, UpdateView):
     model = ItemTemplate
     form_class = ItemTemplateForm
 
 
-class InventarioListView(ListView, LoginRequiredMixin):
+class InventarioListView(LoginRequiredMixin, ListView):
     model = Inventario
     context_object_name = 'inventarios'
     paginate_by = 10
 
 
-class InventarioDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+class InventarioDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
     paginate_by = 10
     template_name = 'inventory/inventario_detail.html'
 
@@ -133,18 +133,18 @@ class InventarioMixin(TemplateView):
         return super(InventarioMixin, self).get_context_data(**kwargs)
 
 
-class InventarioCreateView(CreateView, LoginRequiredMixin):
+class InventarioCreateView(LoginRequiredMixin, CreateView):
     model = Inventario
     form_class = InventarioForm
 
 
-class ItemListView(ListView, LoginRequiredMixin):
+class ItemListView(LoginRequiredMixin, ListView):
     model = Item
     context_object_name = 'items'
     paginate_by = 10
 
 
-class ItemInventarioListView(ListView, LoginRequiredMixin):
+class ItemInventarioListView(LoginRequiredMixin, ListView):
     model = Item
     context_object_name = 'items'
 
@@ -172,12 +172,12 @@ class ItemCreateView(InventarioFormMixin, LoginRequiredMixin):
         return super(ItemCreateView, self).get_context_data(**kwargs)
 
 
-class ItemDetailView(ListView, LoginRequiredMixin):
+class ItemDetailView(LoginRequiredMixin, ListView):
     model = Item
     context_object_name = 'item'
 
 
-class RequisicionDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+class RequisicionDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
     paginate_by = 10
     template_name = 'inventory/requisicion_detail.html'
 
@@ -190,7 +190,7 @@ class RequisicionDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
         return self.object.items.all()
 
 
-class RequisicionListView(ListView, LoginRequiredMixin):
+class RequisicionListView(LoginRequiredMixin, ListView):
     model = Requisicion
     context_object_name = 'requisiciones'
 
@@ -200,7 +200,7 @@ class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin):
     form_class = RequisicionForm
 
 
-class RequisicionUpdateView(UpdateView, LoginRequiredMixin):
+class RequisicionUpdateView(LoginRequiredMixin, UpdateView):
     model = Requisicion
     form_class = RequisicionCompletarForm
 
@@ -293,13 +293,13 @@ class TransferenciaUpdateView(UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class TransferenciaListView(ListView, LoginRequiredMixin):
+class TransferenciaListView(LoginRequiredMixin, ListView):
     model = Transferencia
     context_object_name = 'transferencias'
     paginate_by = 10
 
 
-class TransferidoCreateView(CreateView, LoginRequiredMixin):
+class TransferidoCreateView(LoginRequiredMixin, CreateView):
     model = Transferido
     form_class = TransferidoForm
 
@@ -315,7 +315,7 @@ class TransferidoCreateView(CreateView, LoginRequiredMixin):
         return initial
 
 
-class TransferidoListView(ListView, LoginRequiredMixin):
+class TransferidoListView(LoginRequiredMixin, ListView):
     model = Transferido
     context_object_name = 'transferidos'
     paginate_by = 10
@@ -352,7 +352,7 @@ class CompraCreateView(InventarioFormMixin, LoginRequiredMixin):
     form_class = CompraForm
 
 
-class CompraUpdateView(UpdateView, LoginRequiredMixin):
+class CompraUpdateView(LoginRequiredMixin, UpdateView):
     model = Compra
     form_class = CompraForm
 
@@ -365,7 +365,7 @@ class CompraUpdateView(UpdateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class CompraDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+class CompraDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
     paginate_by = 10
     template_name = 'inventory/compra_detail.html'
 
@@ -390,7 +390,7 @@ class CompraFormMixin(CreateView):
         return initial
 
 
-class CompraListView(ListView, LoginRequiredMixin):
+class CompraListView(LoginRequiredMixin, ListView):
     model = Compra
     context_object_name = 'compras'
 
@@ -407,7 +407,7 @@ class ItemCompradoCreateView(CompraFormMixin, LoginRequiredMixin):
         return super(ItemCompradoCreateView, self).get_context_data(**kwargs)
 
 
-class ItemTemplateSearchView(ListView, LoginRequiredMixin):
+class ItemTemplateSearchView(LoginRequiredMixin, ListView):
     context_object_name = 'items'
     model = ItemTemplate
     paginate_by = 10
@@ -425,7 +425,7 @@ class ItemTemplateSearchView(ListView, LoginRequiredMixin):
         return queryset.all()
 
 
-class HistorialDetailView(SingleObjectMixin, ListView, LoginRequiredMixin):
+class HistorialDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
     paginate_by = 10
     template_name = 'inventory/historial_detail.html'
 
@@ -455,33 +455,37 @@ class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ProveedorListView(ListView, LoginRequiredMixin):
+class ProveedorListView(LoginRequiredMixin, ListView):
     model = Proveedor
     context_object_name = 'proveedores'
     paginate_by = 10
+    ordering = ['name']
 
 
-class ProveedorDetailView(DetailView, LoginRequiredMixin):
+class ProveedorDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows a :class:`Proveedor` data in the UI
+    """
     model = Proveedor
-    template_name = 'inventory/proveedor_detail.html'
+    context_object_name = 'proveedor'
 
 
-class ProveedorCreateView(CreateView, LoginRequiredMixin):
+class ProveedorCreateView(LoginRequiredMixin, CreateView):
     model = Proveedor
     form_class = ProveedorForm
 
 
-class ProveedorUpdateView(UpdateView, LoginRequiredMixin):
+class ProveedorUpdateView(LoginRequiredMixin, UpdateView):
     model = Proveedor
     form_class = ProveedorForm
 
 
-class CotizacionCreateView(CreateView, LoginRequiredMixin):
+class CotizacionCreateView(LoginRequiredMixin, CreateView):
     model = Cotizacion
     form_class = CotizacionForm
 
 
-class CotizacionDetailView(DetailView, LoginRequiredMixin):
+class CotizacionDetailView(LoginRequiredMixin, DetailView):
     model = Cotizacion
     context_object_name = 'cotizacion'
 

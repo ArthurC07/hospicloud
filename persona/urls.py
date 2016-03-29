@@ -37,6 +37,10 @@ urlpatterns = [
         views.PersonaCreateView.as_view(),
         name='persona-create'),
 
+    url(r'^persona/duplicados/limpiar$',
+        views.PersonaDuplicateRemoveView.as_view(),
+        name='persona-duplicate-clean'),
+
     url(r'^empresa/(?P<pk>\d+)$',
         views.EmpleadorDetailView.as_view(),
         name='empresa'),
@@ -48,6 +52,10 @@ urlpatterns = [
     url(r'^buscar$',
         views.PersonaSearchView.as_view(),
         name='persona-search'),
+
+    url(r'^buscar/avanzado$',
+        views.PersonaAdvancedSearchView.as_view(),
+        name='persona-advanced-search'),
 
     url(r'^(?P<pk>\d+)/editar$',
         views.PersonaUpdateView.as_view(),
@@ -64,6 +72,10 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/fisico/editar$',
         views.FisicoUpdateView.as_view(),
         name='persona-fisico-editar'),
+
+    url(r'^(?P<persona>\d+)/historia/fisica/agregar$',
+        views.HistoriaFisicaCreateView.as_view(),
+        name='persona-historia-agregar'),
 
     url(r'^(?P<pk>\d+)/estilovida/editar$',
         views.EstiloVidaUpdateView.as_view(),

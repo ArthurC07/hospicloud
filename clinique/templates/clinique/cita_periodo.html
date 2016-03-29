@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-{% load staticfiles %}{% load thumbnail %}
+{% load staticfiles %}{% load thumbnail %}{% load l10n %}{% load i18n %}
 {% block title %} Contratos{% endblock %}
 {% block content %}
     <div class="row">
         <div class="page-header">
-            <h1>Citas
+            <h1>
+                {% trans 'Citas' %}
                 <small>de {{ inicio }} al {{ fin }}</small>
             </h1>
         </div>
@@ -15,10 +16,11 @@
                 <table class="table table-stripped">
                     <thead>
                         <tr>
-                            <th>Paciente</th>
-                            <th>Fecha</th>
-                            <th>Consultorio</th>
-                            <th>Tel&eacute;fono</th>
+                            <th>{% trans 'Paciente' %}</th>
+                            <th>{% trans 'Fecha' %}</th>
+                            <th>{% trans 'Consultorio' %}</th>
+                            <th>{% trans 'Tipo de Cita' %}</th>
+                            <th>{% trans 'Tel&eacute;fono' %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,6 +29,7 @@
                             <td>{{ cita.persona }}</td>
                             <td>{{ cita.fecha }}</td>
                             <td>{{ cita.consultorio }}</td>
+                            <td>{{ cita.tipo }}</td>
                             <td>{{ cita.persona.telefono }} {{ cita.persona.celular }}</td>
                         </tr>
                         {% endfor %}

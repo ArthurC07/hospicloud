@@ -76,14 +76,14 @@ class NightingaleIndexView(ListView, EnfermeriaPermissionMixin):
         return context
 
 
-class AdmisionListView(ListView, LoginRequiredMixin):
+class AdmisionListView(LoginRequiredMixin, ListView):
     queryset = Admision.objects.all().order_by('-momento')
     context_object_name = 'admisiones'
     template_name = 'enfermeria/admisiones.html'
     paginate_by = 20
 
 
-class NotaUpdateView(UpdateView, LoginRequiredMixin):
+class NotaUpdateView(LoginRequiredMixin, UpdateView):
     """Permite editar una :class:`NotaEnfermeria` en caso de ser necesario"""
 
     model = NotaEnfermeria
@@ -91,7 +91,7 @@ class NotaUpdateView(UpdateView, LoginRequiredMixin):
     template_name = 'enfermeria/nota_create.html'
 
 
-class NotaCerrarView(RedirectView, LoginRequiredMixin):
+class NotaCerrarView(LoginRequiredMixin, RedirectView):
     """Permite cambiar el estado de un :class:`NotaEnfermeria`"""
 
     permanent = False
@@ -106,7 +106,7 @@ class NotaCerrarView(RedirectView, LoginRequiredMixin):
         return reverse('enfermeria-notas', args=[nota.admision.id])
 
 
-class NightingaleDetailView(DetailView, LoginRequiredMixin):
+class NightingaleDetailView(LoginRequiredMixin, DetailView):
     """Permite ver los datos de una :class:`Admision` desde la interfaz de
     enfermeria
     
@@ -128,7 +128,7 @@ class NightingaleDetailView(DetailView, LoginRequiredMixin):
         return context
 
 
-class SignosDetailView(DetailView, LoginRequiredMixin):
+class SignosDetailView(LoginRequiredMixin, DetailView):
     """Muestra los datos sobre los signos vitales de una :class:`Persona` en
     en una :class:`Admision`"""
 
@@ -306,7 +306,7 @@ class CargoDeleteView(DeleteView, LoginRequiredMixin):
         return self.admision.get_absolute_url()
 
 
-class CargoUpdateView(UpdateView, LoginRequiredMixin):
+class CargoUpdateView(LoginRequiredMixin, UpdateView):
     model = Cargo
     form_class = CargoForm
     template_name = 'enfermeria/cargo_create.html'
@@ -405,7 +405,7 @@ class MedicamentoCreateView(AdmisionFormMixin):
         return kwargs
 
 
-class DosisCreateView(CreateView, LoginRequiredMixin):
+class DosisCreateView(LoginRequiredMixin, CreateView):
     """Permite crear las :class:`Dosis` de un determinado :class:`Medicamento`
     que sera suministrado durante una :class:`Admision`
     
@@ -459,7 +459,7 @@ class DosisCreateView(CreateView, LoginRequiredMixin):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class DosisSuministrarView(RedirectView, LoginRequiredMixin):
+class DosisSuministrarView(LoginRequiredMixin, RedirectView):
     """Permite marcar una :class:`Dosis` como ya suministrada"""
 
     permanent = False
@@ -478,7 +478,7 @@ class DosisSuministrarView(RedirectView, LoginRequiredMixin):
                        args=[dosis.medicamento.admision.id])
 
 
-class MedicamentoSuspenderView(RedirectView, LoginRequiredMixin):
+class MedicamentoSuspenderView(LoginRequiredMixin, RedirectView):
     """Permite cambiar el estado de un :class:`Medicamento`"""
 
     permanent = False
@@ -538,7 +538,7 @@ class DosificarMedicamentoView(FormView, LoginRequiredMixin):
         return reverse('enfermeria-cargos', args=[self.medicamento.admision.id])
 
 
-class MedicamentoUpdateView(UpdateView, LoginRequiredMixin):
+class MedicamentoUpdateView(LoginRequiredMixin, UpdateView):
     model = Medicamento
     form_class = MedicamentoUpdateForm
     context_object_name = 'medicamento'
@@ -549,7 +549,7 @@ class OxigenoTerapiaCreateView(AdmisionFormMixin, CurrentUserFormMixin):
     form_class = OxigenoTerapiaForm
 
 
-class OxigenoTerapiaUpdateView(UpdateView, LoginRequiredMixin):
+class OxigenoTerapiaUpdateView(LoginRequiredMixin, UpdateView):
     model = OxigenoTerapia
     form_class = OxigenoTerapiaForm
     context_object_name = 'oxigeno_terapia'
@@ -560,7 +560,7 @@ class HonorarioCreateView(AdmisionFormMixin, CurrentUserFormMixin):
     form_class = HonorarioForm
 
 
-class HonorarioUpdateView(UpdateView, LoginRequiredMixin):
+class HonorarioUpdateView(LoginRequiredMixin, UpdateView):
     model = Honorario
     form_class = HonorarioForm
     context_object_name = 'honorario'

@@ -1,3 +1,4 @@
+{% load i18n %}{% load l10n %}
 <article id="consulta_inicio" class="tab-pane table-responsive">
     {% load l10n %}
     <table class="table table-striped">
@@ -88,6 +89,16 @@
                 <td>{{ remision.tipo }}</td>
                 <td>{{ remision.especilidad }}</td>
                 <td>{{ remision.motivo }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table class="table table-striped">
+        <caption>{% trans 'Observaciones del M&eacute;dico' %}</caption>
+        <tbody>
+        {% for nota in consulta.notamedica_set.all %}
+            <tr>
+                <td>{{ nota.observacion }}</td>
             </tr>
         {% endfor %}
         </tbody>

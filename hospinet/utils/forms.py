@@ -129,7 +129,12 @@ class YearForm(FieldSetFormMixin):
     """
     Builds a form that contains an integer representing a natural year.
     """
-    year = forms.IntegerField()
+    year = forms.IntegerField(label=_('Año'))
 
-    def __init__(self, *args, **kwargs):
-        super(YearForm, self).__init__(*args, **kwargs)
+
+class MonthYearForm(YearForm):
+    """
+    Builds a form that contains an integer representing a natural year and
+    another integer representing a natural month
+    """
+    mes = forms.IntegerField(min_value=1, max_value=12)

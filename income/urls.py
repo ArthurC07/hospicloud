@@ -24,8 +24,12 @@ urlpatterns = [
     url(r'^$', views.IncomeIndexView.as_view(), name='income-index'),
     url(r'^deposito/crear$', views.DepositoCreateView.as_view(),
         name='deposito-create'),
+    url(r'^deposito/periodo$', views.DepositoPeriodoListView.as_view(),
+        name='deposito-periodo'),
     url(r'^cheque/crear$', views.ChequeCreateView.as_view(),
         name='cheque-create'),
+    url(r'^cheque/periodo$', views.ChequePeriodoListView.as_view(),
+        name='cheque-periodo'),
     url(r'^cierre/crear$', views.CierrePOSCreateView.as_view(),
         name='cierre-create'),
     url(r'^cheque/(?P<pk>\d+)$', views.ChequeCobroDetailView.as_view(),
@@ -34,7 +38,9 @@ urlpatterns = [
         name='cheque-numero'),
     url(r'^cheque/detalle/crear$', views.DetallePagoCreateView.as_view(),
         name='detallepago-create'),
-    url(r'^deposito/(?P<pk>\d+)$', views.ChequeCobroDetailView.as_view(),
+    url(r'^deposito/(?P<pk>\d+)$', views.DepositoDetailView.as_view(),
         name='income-deposito'),
+    url(r'^deposito/tipo/(?P<pk>\d+)$', views.TipoDepositoDetailView.as_view(),
+        name='income-tipo-deposito'),
 
 ]

@@ -6,6 +6,11 @@
         <div class="col-md-12 main-content">
             <ul class="nav nav-tabs">
                 <li class="active" role="presentation">
+                    <a data-toggle="tab" href="resume">
+                        {% trans 'Resumen' %}
+                    </a>
+                </li>
+                <li role="presentation">
                     <a data-toggle="tab" href="#presupuesto">
                         {% trans 'Presupuesto Financiero' %}
                     </a>
@@ -22,7 +27,7 @@
                 </li>
                 <li role="presentation">
                     <a data-toggle="tab" href="#ingresos">
-                        {% trans 'Ingresos' %}
+                        {% trans 'Anual' %}
                     </a>
                 </li>
                 <li role="presentation">
@@ -32,7 +37,82 @@
                 </li>
             </ul>
             <div class="tab-content">
-                <div class="row tab-pane fade in active" id="presupuesto">
+                <div class="row tab-pane fade in active" id="resume">
+                    <div class="col-md-12 col-xs-12">
+                        <h2>{% trans 'Presupuesto Anual' %} {{ year }}</h2>
+                        <div class="row">
+                            {% for form in budget_forms %}
+                                <div class="col-md-2">
+                                    {% crispy form %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 table-responsive">
+                                <h1>{% trans 'Resumen Financiero' %}</h1>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        {% for mes in meses %}
+                                            <th>
+                                                {{ mes.inicio|date:"N" }}
+                                            </th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>{% trans 'Resultado Mes Anterior' %}</td>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.excedente }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td>{% trans 'Ingresos' %}</td>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.ingresos }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td>{% trans 'Egresos' %}</td>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.gastos }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>{% trans 'Total Mes' %}</th>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.total }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <th>{% trans 'Total Mes + Mes Anterior' %}</th>
+                                        {% for mes in meses %}
+                                            <td class="text-right">{{ mes.total_anterior }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-xs-6">
+                                <h2>{% trans 'Cuentas por Cobrar' %}: {{ cuentas_por_cobrar }}</h2>
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                <h2>{% trans 'Cuentas por Pagar' %}: {{ cuentas_por_pagar }}</h2>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <canvas id="chart" class="col-md-12 col-xs-12 graph"
+                                    height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="row tab-pane fade in" id="presupuesto">
                     <section class="col-md-12">
                         <div class="row">
                             <article class="col-md-12">
@@ -42,7 +122,8 @@
                                     </div>
                                     <div class="col-md-3 col-xs-3">
                                         <h3>
-                                            {% trans 'Presupuestado:' %} {{ presupuesto }}</h3>
+                                            {% trans 'Presupuestado:' %} {{ presupuesto }}
+                                        </h3>
                                     </div>
                                     <div class="col-md-3 col-xs-3">
                                         <h3>
@@ -221,63 +302,13 @@
                 </div>
                 <div class="row tab-pane fade in" id="ingresos">
                     <div class="col-md-12 table-responsive">
-                        <h2>{% trans 'Ingresos' %}</h2>
-                        <h3>
-                            {% trans 'Ingresos al Credito Mes Anterior' %}
-                            {{ credito_anterior }}
-                        </h3>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>{% trans 'Ciudad' %}</th>
-                                <th>{% trans 'Proyectado' %}</th>
-                                <th>{% trans 'Ingresado' %}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for income in incomes %}
-                                <tr>
-                                    <td>{{ income.ciudad }}</td>
-                                    <td class="text-right">{{ income.monto }}</td>
-                                    <td class="text-right">
-                                        {{ income.ingresado_mes_actual }}
-                                        <table class="table">
-                                            {% for pago in income.facturado_mes_actual %}
-                                                <tr>
-                                                    <td class="text-left">{{ pago.tipo__nombre }}</td>
-                                                    <td class="text-right">{{ pago.total }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </table>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                        <h2>{% trans 'Aseguradoras' %}</h2>
-                        {% for income in incomes %}
-                            <table class="table">
-                                <caption>{{ income.ciudad }}</caption>
-                                <tr>
-                                    <th>{% trans 'Aseguradora' %}</th>
-                                    <th>{% trans 'Monto Reembolsado Mes Actual' %}</th>
-                                    <th>{% trans 'Monto Pendiente' %}</th>
-                                    <th>{% trans 'Facturado' %}</th>
-                                </tr>
-                                {% for aseguradora in income.pendiente_aseguradoras %}
-                                    <tr>
-                                        <td>{{ aseguradora.0 }}</td>
-                                        <td class="text-right">{{ aseguradora.2 }}</td>
-                                        <td class="text-right">{{ aseguradora.3 }}</td>
-                                        <td class="text-right">{{ aseguradora.1 }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
-                        {% endfor %}
                     </div>
                 </div>
                 <div class="row tab-pane fade in" id="reportes">
                     <div class="col-md-12">
+                        <a href="{% url 'budget-proveedores' %}">
+                            {% trans 'Lista de  proveedores' %}
+                        </a>
                         <div class="row">
                             <div class="col-md-3">
                                 {% crispy gasto-periodo %}
@@ -290,13 +321,42 @@
                             </div>
                         </div>
                         <div class="row">
-                            {% for form in years %}
-                                {% crispy form %}
-                            {% endfor %}
+                            <div class="col-md-6">
+                                {% crispy budget-month-year %}
+                            </div>
+                            <div class="col-md-6">
+                                {% crispy balance-month-year %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var ctx = document.getElementById("chart").getContext("2d");
+            var chart = new Chart(ctx);
+            data = {
+                labels: [0, {% for mes in meses %} "{{ mes.inicio|date:"N" }}",  {% endfor %} 0],
+                datasets: [
+                    {
+                        label: "{% trans 'Total' %}",
+                        fillColor: "rgba(220,220,220,0.5)",
+                        strokeColor: "rgba(220,220,220,0.8)",
+                        highlightFill: "rgba(220,220,220,0.75)",
+                        highlightStroke: "rgba(220,220,220,1)",
+                        {% localize off %}
+                            data: [0, {% for mes in meses %} {{ mes.total }}, {% endfor %} 0]
+                        {% endlocalize %}
+                    }
+                ]
+            };
+            var myLineChart = new Chart(ctx).Bar(data);
+        });
+    </script>
 {% endblock %}

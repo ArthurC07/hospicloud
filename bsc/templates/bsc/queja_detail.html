@@ -13,11 +13,11 @@
         <div class="col-md-9 main-content table-responsive">
             <table class="table">
                 <thead>
-                    <tr>
-                        <td>{% trans 'Usuario' %}</td>
-                        <td>{% trans 'Fecha' %}</td>
-                        <td>{% trans 'Soluci&oacute;n' %}</td>
-                    </tr>
+                <tr>
+                    <td>{% trans 'Usuario' %}</td>
+                    <td>{% trans 'Fecha' %}</td>
+                    <td>{% trans 'Soluci&oacute;n' %}</td>
+                </tr>
                 </thead>
                 <tbody>
                 {% for solucion in object.solucion_set.all %}
@@ -34,8 +34,16 @@
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
-                        <li><a href="{% url 'quejas' %}">{% trans 'Volver a Quejas' %}</a></li>
-                        <li><a href="{% url 'solucion-agregar' object.id %}">{% trans 'Proponer Soluci&oacute;n' %}</a></li>
+                        <li>
+                            <a href="{% url 'quejas' %}">
+                                {% trans 'Volver a Quejas' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'solucion-agregar' object.id %}">
+                                {% trans 'Proponer Soluci&oacute;n' %}
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>

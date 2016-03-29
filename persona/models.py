@@ -24,12 +24,17 @@ from __future__ import unicode_literals
 import re
 from datetime import date
 
+from decimal import Decimal
+
+from annoying.fields import AutoOneToOneField
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import lookups
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+from django_extensions.db.fields import CreationDateTimeField
 from django_extensions.db.models import TimeStampedModel
 
 from persona.fields import OrderedCountryField
@@ -37,12 +42,19 @@ from persona.fields import OrderedCountryField
 
 @python_2_unicode_compatible
 class Persona(TimeStampedModel):
-    """Representación de una :class:`Persona` en la aplicación"""
+    """
+    Representación de una :class:`Persona` en la aplicación
+
+    Contiene los datos básicos que se utilizan para registar los datos de
+    personas reales que se ingresan a la aplicación y de esta manera poder
+    relacionarlos con el resto de las actividades que se realizan en la misma.
+    """
 
     class Meta:
         permissions = (
             ('persona', 'Permite al usuario gestionar persona'),
         )
+        ordering = ('created',)
 
     GENEROS = (
         ('M', _('Masculino')),
@@ -53,7 +65,8 @@ class Persona(TimeStampedModel):
         ('S', _('Soltero/a')),
         ('D', _('Divorciado/a')),
         ('C', _('Casado/a')),
-        ('', _('Union Libre'))
+        ('U', _('Union Libre')),
+        ('', _('---------'))
     )
     TIPOS_IDENTIDAD = (
         ("R", _("Carnet de Residencia")),
@@ -88,12 +101,14 @@ class Persona(TimeStampedModel):
     nacionalidad = OrderedCountryField(blank=True, ordered=('HN',))
     duplicado = models.BooleanField(default=False)
     rtn = models.CharField(max_length=200, blank=True, null=True)
-    mostrar_en_cardex = models.BooleanField(default=False)
+    mostrar_en_cardex = models.BooleanField(
+        default=False,
+        verbose_name=_("Es representante legal")
+    )
     ciudad = models.ForeignKey("users.Ciudad", blank=True, null=True)
 
     @staticmethod
     def validar_identidad(identidad):
-
         """Permite validar la identidad ingresada antes de asignarla a una
         :class:`Persona`
         
@@ -103,45 +118,30 @@ class Persona(TimeStampedModel):
         return Persona.__expresion__.match(identidad)
 
     def __str__(self):
-
         """Muestra el nombre completo de la persona"""
 
         return self.nombre_completo()
 
     def get_absolute_url(self):
-
         """Obtiene la URL absoluta"""
 
         return reverse('persona-view-id', args=[self.id])
 
     def nombre_completo(self):
-
         """Obtiene el nombre completo de la :class:`Persona`"""
 
         return _('{0} {1}').format(self.nombre, self.apellido).upper()
 
     def obtener_edad(self):
-
         """Obtiene la edad de la :class:`Persona`"""
 
         if self.nacimiento is None:
             return None
 
         today = date.today()
-        born = date(self.nacimiento.year,
-                    self.nacimiento.month,
-                    self.nacimiento.day)
-        try:
-            # raised when birth date is February 29 and the current year is
-            # not a leap year
-            birthday = born.replace(year=today.year)
-        except ValueError:
-            birthday = born.replace(year=today.year, day=born.day - 1)
-
-        if birthday > today:
-            return today.year - born.year - 1
-        else:
-            return today.year - born.year
+        born = self.nacimiento
+        return today.year - born.year - (
+            (today.month, today.day) < (born.month, born.day))
 
 
 class Fisico(TimeStampedModel):
@@ -164,11 +164,10 @@ class Fisico(TimeStampedModel):
         ('I', _('Izquierda')),
     )
 
-    persona = models.OneToOneField(Persona, primary_key=True)
-    peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    persona = AutoOneToOneField(Persona, primary_key=True)
+    peso = models.DecimalField(decimal_places=2, max_digits=5, default=Decimal)
     lateralidad = models.CharField(max_length=1, choices=LATERALIDAD,
                                    blank=True)
-    altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
     color_de_ojos = models.CharField(max_length=200, blank=True)
     color_de_cabello = models.CharField(max_length=200, blank=True)
     factor_rh = models.CharField(max_length=1, blank=True, choices=FACTOR_RH)
@@ -180,33 +179,58 @@ class Fisico(TimeStampedModel):
 
         return reverse('persona-view-id', args=[self.persona.id])
 
-    def save(self, **kwargs):
-
-        historia = HistoriaFisica()
-        historia.persona = self.persona
-        historia.peso = self.peso
-        historia.altura = self.altura
-        historia.fecha = self.modified
-        if historia.fecha is None:
-            historia.fecha = timezone.now()
-
-        historia.save()
-
-        super(Fisico, self).save(**kwargs)
-
 
 class HistoriaFisica(TimeStampedModel):
+    MEDIDA_PESO = (
+        ('Lb', _('Libras')),
+        ('Kg', _('Kilogramos'))
+    )
+
     persona = models.ForeignKey(Persona)
     fecha = models.DateTimeField(default=timezone.now)
     peso = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    medida_de_peso = models.CharField(max_length=2, blank=True,
+                                      choices=MEDIDA_PESO, default='Lb')
     altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+    bmi = models.DecimalField(decimal_places=2, max_digits=11, null=True)
+    bmr = models.DecimalField(decimal_places=2, max_digits=11, null=True)
+
+    def get_absolute_url(self):
+        """Obtiene la URL absoluta"""
+
+        return reverse('persona-view-id', args=[self.persona.id])
+
+    def get_weight(self):
+
+        peso = 0
+        if self.peso is not None:
+            peso = self.peso
+
+        if self.medida_de_peso == 'Lb':
+            return peso / Decimal(2.22)
+        else:
+            return peso
+
+    def body_mass_index(self):
+
+        return self.get_weight() / max(self.altura, Decimal(0.01))
+
+    def basal_energetic_expense(self):
+        if self.persona.sexo == 'M':
+            return Decimal(66.5) + Decimal(13.75) * self.get_weight() + \
+                   Decimal(5) * self.altura * 100 + \
+                   Decimal(6.78) * self.persona.obtener_edad()
+        else:
+            return Decimal(655.1) + Decimal(9.56) * self.get_weight() + \
+                   Decimal(1.85) * self.altura * 100 + \
+                   Decimal(4.68) * self.persona.obtener_edad()
 
 
 class EstiloVida(TimeStampedModel):
     """Resumen del estilo de vida de una :class:`Persona`"""
 
-    persona = models.OneToOneField(Persona, primary_key=True,
-                                   related_name='estilo_vida')
+    persona = AutoOneToOneField(Persona, primary_key=True,
+                                related_name='estilo_vida')
     consume_tabaco = models.BooleanField(default=False, blank=True)
     inicio_consumo_tabaco = models.CharField(max_length=30, blank=True)
     tipo_de_tabaco = models.CharField(max_length=30, blank=True)
@@ -239,7 +263,7 @@ class Antecedente(TimeStampedModel):
     consulta por primera vez
     """
 
-    persona = models.OneToOneField(Persona, primary_key=True)
+    persona = AutoOneToOneField(Persona, primary_key=True)
 
     cardiopatia = models.BooleanField(default=False, blank=True)
     hipertension = models.BooleanField(default=False, blank=True)
@@ -281,11 +305,12 @@ class Antecedente(TimeStampedModel):
 class AntecedenteFamiliar(TimeStampedModel):
     """Registra los antecedentes familiares de una :class:`Persona`"""
 
-    persona = models.OneToOneField(Persona, primary_key=True,
-                                   related_name='antecedente_familiar')
-    sindrome_coronario_agudo = models.BooleanField(default=False, blank=True,
-                                                   verbose_name=_(
-                                                       'cardiopatia'))
+    persona = AutoOneToOneField(Persona, primary_key=True,
+                                related_name='antecedente_familiar')
+    sindrome_coronario_agudo = models.BooleanField(
+        default=False, blank=True,
+        verbose_name=_('cardiopatia')
+    )
     hipertension = models.BooleanField(default=False, blank=True,
                                        verbose_name=_('Hipertensión Arterial'))
     tabaquismo = models.BooleanField(default=False, blank=True)
@@ -320,8 +345,8 @@ class AntecedenteFamiliar(TimeStampedModel):
 class AntecedenteObstetrico(TimeStampedModel):
     """Registra los antecedentes obstetricos de una :class:`Persona`"""
 
-    persona = models.OneToOneField(Persona, primary_key=True,
-                                   related_name='antecedente_obstetrico')
+    persona = AutoOneToOneField(Persona, primary_key=True,
+                                related_name='antecedente_obstetrico')
 
     menarca = models.DateField(default=date.today)
     ultimo_periodo = models.DateField(null=True, blank=True)
@@ -411,24 +436,26 @@ persona_consolidation_functions = []
 def remove_duplicates():
     count = Persona.objects.filter(duplicado=True).count()
     persona = Persona.objects.filter(duplicado=True).first()
-
+    cantidad = 0
     if count == 1:
         persona.duplicado = False
         persona.save()
 
     while persona and count > 1:
         print(persona)
+        cantidad += 1
         consolidate_into_persona(persona)
         persona = Persona.objects.filter(duplicado=True).first()
         count = Persona.objects.filter(duplicado=True).count()
+
+    return cantidad
 
 
 def consolidate_into_persona(persona):
     clones = Persona.objects.filter(
         nombre__iexact=persona.nombre,
         duplicado=True,
-        apellido__iexact=persona.apellido,
-        identificacion=persona.identificacion
+        apellido__iexact=persona.apellido
     ).exclude(pk=persona.pk)
 
     print(clones.count())

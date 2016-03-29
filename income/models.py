@@ -34,7 +34,10 @@ from persona.models import Persona
 
 
 @python_2_unicode_compatible
-class Banco(TimeStampedModel):
+class TipoDeposito(TimeStampedModel):
+    """
+    Indicates the origin of the money that will be used for a :class:`Deposito`
+    """
     nombre = models.CharField(max_length=255)
 
     def __str__(self):
@@ -42,16 +45,50 @@ class Banco(TimeStampedModel):
 
 
 @python_2_unicode_compatible
+class Banco(TimeStampedModel):
+    """
+    Represents the banking institution available to :class:`Company`s
+    """
+    nombre = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.nombre
+
+
+class DepositoQuerySet(models.QuerySet):
+    """
+    Creates filters for usual :class:`Deposito` :class:`QuerySet`s
+    """
+    def periodo(self, inicio, fin):
+        """
+        Returns all :class:`Deposito` with a fecha_de_deposito that falls
+        within the specified range.
+        """
+        return self.filter(fecha_de_deposito__range=(inicio, fin))
+
+    def total_periodo(self, inicio, fin):
+        """
+        Returns the sum of all :class:`Deposito` made between two dates
+        """
+        return self.periodo(inicio, fin).aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
+
+
+@python_2_unicode_compatible
 class Deposito(TimeStampedModel):
     """
     Represents money that has been sent to the bank.
     """
+    tipo = models.ForeignKey(TipoDeposito, null=True)
     cuenta = models.ForeignKey(Fuente)
     fecha_de_deposito = models.DateTimeField(default=timezone.now)
     monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     aplicado = models.BooleanField(default=False)
     comprobante = models.FileField(upload_to='income/deposito/%Y/%m/%d')
+
+    objects = DepositoQuerySet.as_manager()
 
     def __str__(self):
 
@@ -88,17 +125,31 @@ class Deposito(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class Cheque(Deposito):
+class TipoCheque(TimeStampedModel):
+    nombre = models.CharField(max_length=255)
+
+    def __str__(self):
+
+        return self.nombre
+
+
+@python_2_unicode_compatible
+class Cheque(TimeStampedModel):
     """
     Represents a cheque that has been sent
     """
+    tipo = models.ForeignKey(TipoCheque, null=True)
     banco_de_emision = models.ForeignKey(Banco)
     emisor = models.ForeignKey(Persona, null=True)
     fecha_de_entrega = models.DateTimeField(default=timezone.now)
     fecha_de_emision = models.DateTimeField(default=timezone.now)
     numero_de_cheque = models.CharField(max_length=255)
+    monto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     monto_retenido = models.DecimalField(max_digits=11, decimal_places=2,
                                          default=0)
+    imagen_de_cheque = models.FileField(upload_to='income/cheque/%Y/%m/%d',
+                                        null=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 
     def __str__(self):
         return _('{0} - {1}').format(

@@ -340,3 +340,9 @@ nav.navbar-inverse .navbar-inner {
 #toTop .fa {
     margin-right: 5px;
 }
+.btn-group {
+    display: flex;
+}
+.graph {
+    background-color: white;
+}

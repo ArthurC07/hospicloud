@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,15 +17,17 @@
 from __future__ import unicode_literals
 
 from crispy_forms.layout import Fieldset, Submit
+from dal import autocomplete
 from django import forms
 from django.forms import inlineformset_factory
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from clinique.models import Paciente, Cita, Evaluacion, Seguimiento, Consulta, \
+from clinique.models import Cita, Evaluacion, Seguimiento, Consulta, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
-    TipoConsulta, Remision, Afeccion
+    TipoConsulta, Remision, Afeccion, NotaMedica
+from contracts.models import MasterContract
 from inventory.forms import ItemTemplateFormMixin
 from inventory.models import ItemTemplate, ItemType
 from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
@@ -34,59 +36,90 @@ from persona.models import Persona
 from users.mixins import HiddenUserForm
 
 
-class PacienteFormMixin(FieldSetModelFormMixin):
-    paciente = forms.ModelChoiceField(label="", queryset=Paciente.objects.all(),
-                                      widget=forms.HiddenInput(),
-                                      required=False)
-
-
-class PacienteForm(FieldSetModelFormMixin):
-    """Permite editar los datos de un :class:`Paciente`"""
-
-    class Meta:
-        model = Paciente
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(PacienteForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Convertir en Paciente'),
-                                      *self.field_names)
-
-
 class ConsultorioFormMixin(FieldSetModelFormMixin):
+    """
+    Permite compartir agregar la información de consultorio automáticamente
+    en los formularios que heredan de esta clase
+    """
     consultorio = forms.ModelChoiceField(
-            queryset=Consultorio.objects.filter(activo=True).order_by(
-                    'nombre').all()
+        queryset=Consultorio.objects.select_related(
+            'usuario',
+        ).filter(activo=True).order_by(
+            'nombre').all()
     )
 
 
 class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
-    consultorio = forms.ModelChoiceField(label="",
-                                         queryset=Consultorio.objects.filter(
-                                                 activo=True).order_by(
-                                                 'nombre').all(),
-                                         widget=forms.HiddenInput())
+    consultorio = forms.ModelChoiceField(
+        queryset=Consultorio.objects.select_related(
+            'usuario',
+        ).filter(activo=True).order_by(
+            'nombre'
+        ).all(),
+        widget=forms.HiddenInput()
+    )
 
 
 class HiddenConsultaFormMixin(FieldSetModelFormMixin):
-    consulta = forms.ModelChoiceField(label="",
-                                      queryset=Consulta.objects.all(),
-                                      widget=forms.HiddenInput())
+    consulta = forms.ModelChoiceField(
+        queryset=Consulta.objects.all(),
+        widget=forms.HiddenInput()
+    )
 
 
 class HiddenOrdenMedicaFormMixin(FieldSetModelFormMixin):
-    orden = forms.ModelChoiceField(label="",
-                                   queryset=OrdenMedica.objects.all(),
-                                   widget=forms.HiddenInput())
+    orden = forms.ModelChoiceField(
+        queryset=OrdenMedica.objects.all(),
+        widget=forms.HiddenInput()
+    )
+
+
+class HiddenEsperaForm(FieldSetModelFormMixin):
+    espera = forms.ModelChoiceField(
+        queryset=Espera.objects.all(),
+        widget=forms.HiddenInput()
+    )
+
+
+class ConsultaEsperaForm(HiddenConsultorioFormMixin, HiddenEsperaForm,
+                         BasePersonaForm):
+    """
+    Creates a :class:`Consulta` using a :class:`Espera` data
+    """
+
+    class Meta:
+        model = Consulta
+        exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
+                   'revisada', 'contrato', 'duracion', 'no_desea_encuesta')
+
+    poliza = forms.ModelChoiceField(queryset=MasterContract.objects.all(),
+                                    widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(ConsultaEsperaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Agregar Consulta'), *self.field_names)
 
 
 class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
+    """
+    Builds a form that is used to create or edit :class:`Consulta`
+    """
+
     class Meta:
         model = Consulta
-        exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada')
+        exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
+                   'espera', 'revisada', 'contrato', 'duracion',
+                   'no_desea_encuesta')
 
     tipo = forms.ModelChoiceField(
-            queryset=TipoConsulta.objects.filter(habilitado=True).all())
+        queryset=TipoConsulta.objects.filter(habilitado=True).all())
+    poliza = forms.ModelChoiceField(
+        queryset=MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante'
+        ).filter(privado=True)
+    )
 
     def __init__(self, *args, **kwargs):
         super(ConsultaForm, self).__init__(*args, **kwargs)
@@ -94,9 +127,45 @@ class ConsultaForm(HiddenConsultorioFormMixin, BasePersonaForm):
 
 
 class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
+    """
+    Allows creating and editing :class:`Evaluacion` data
+    """
     class Meta:
         model = Evaluacion
         fields = '__all__'
+
+    cabeza = forms.ChoiceField(widget=forms.RadioSelect(),
+                               choices=Evaluacion.NORMALIDAD)
+    descripcion_cabeza = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+
+    ojos = forms.ChoiceField(widget=forms.RadioSelect(),
+                             choices=Evaluacion.NORMALIDAD)
+    descripcion_ojos = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+
+    cuello = forms.ChoiceField(widget=forms.RadioSelect(),
+                               choices=Evaluacion.NORMALIDAD)
+    descripcion_cuello = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+
+    orl = forms.ChoiceField(widget=forms.RadioSelect(),
+                            choices=Evaluacion.NORMALIDAD)
+    descripcion_orl = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+    hallazgos_genitales = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+    hallazgos_tacto_rectal = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
+    hallazgos_extremidades = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}), required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super(EvaluacionForm, self).__init__(*args, **kwargs)
@@ -134,13 +203,10 @@ class SeguimientoForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm):
                                       *self.field_names)
 
 
-class LecturaSignosForm(PacienteFormMixin):
+class LecturaSignosForm(BasePersonaForm):
     class Meta:
         model = LecturaSignos
         exclude = ('presion_arterial_media',)
-
-    persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(LecturaSignosForm, self).__init__(*args, **kwargs)
@@ -155,8 +221,10 @@ class DiagnosticoClinicoForm(BasePersonaForm, HiddenConsultaFormMixin,
         fields = '__all__'
 
     afeccion = forms.ModelChoiceField(
-            queryset=Afeccion.objects.all().order_by('nombre'),
-            required=False)
+        queryset=Afeccion.objects.all().order_by('nombre'),
+        widget=autocomplete.ModelSelect2(url='afecciones'),
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super(DiagnosticoClinicoForm, self).__init__(*args, **kwargs)
@@ -181,7 +249,7 @@ class CargoForm(HiddenConsultaFormMixin, ItemTemplateFormMixin, HiddenUserForm):
         exclude = ('facturado',)
 
     tipo = forms.ModelChoiceField(
-            queryset=ItemType.objects.filter(consulta=True).all()
+        queryset=ItemType.objects.filter(consulta=True).all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -211,7 +279,7 @@ class NotaEnfermeriaForm(BasePersonaForm, HiddenUserForm):
                                       *self.field_names)
 
 
-class ExamenForm(PacienteFormMixin):
+class ExamenForm(BasePersonaForm):
     class Meta:
         model = Examen
         fields = '__all__'
@@ -221,14 +289,34 @@ class ExamenForm(PacienteFormMixin):
         self.helper.layout = Fieldset(_('Agregar Examen'), *self.field_names)
 
 
-class EsperaForm(BasePersonaForm, ConsultorioFormMixin, FieldSetModelFormMixin):
+class EsperaForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm,
+                 FieldSetModelFormMixin):
     class Meta:
         model = Espera
-        fields = ('persona', 'consultorio',)
+        fields = ('persona', 'consultorio', 'poliza', 'usuario')
+
+    poliza = forms.ModelChoiceField(
+        queryset=MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante'
+        ).filter(privado=True)
+    )
 
     def __init__(self, *args, **kwargs):
         super(EsperaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Agregar Persona a la Sala de Espera'),
+                                      *self.field_names)
+
+
+class EsperaConsultorioForm(ConsultorioFormMixin, FieldSetModelFormMixin):
+    class Meta:
+        model = Espera
+        fields = ('consultorio',)
+
+    def __init__(self, *args, **kwargs):
+        super(EsperaConsultorioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Cambiar Consultorio'),
                                       *self.field_names)
 
 
@@ -272,8 +360,8 @@ class PrescripcionForm(HiddenOrdenMedicaFormMixin):
         fields = '__all__'
 
     medicamento = forms.ModelChoiceField(
-            queryset=ItemTemplate.objects.filter(activo=True).order_by(
-                    'descripcion'), required=False)
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion'), required=False)
 
     def __init__(self, *args, **kwargs):
         super(PrescripcionForm, self).__init__(*args, **kwargs)
@@ -313,4 +401,14 @@ class RemisionForm(ConsultorioFormMixin, BasePersonaForm):
 
     def __init__(self, *args, **kwargs):
         super(RemisionForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Remitir Paciente'), *self.field_names)
+
+
+class NotaMedicaForm(HiddenConsultaFormMixin, HiddenUserForm):
+    class Meta:
+        model = NotaMedica
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(NotaMedicaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Remitir Paciente'), *self.field_names)

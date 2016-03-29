@@ -14,13 +14,15 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
+from __future__ import unicode_literals
 from django.contrib import admin
 from django import forms
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 
 from bsc import models
 from bsc.models import Meta, ScoreCard, Escala, Extra, Encuesta, Opcion, \
-    Pregunta, Holiday, Login, Puntuacion, Queja, Evaluacion
+    Pregunta, Holiday, Login, Puntuacion, Queja, Evaluacion, Departamento, \
+    Respuesta
 
 
 class MetaAdmin(ForeignKeyAutocompleteAdmin):
@@ -82,6 +84,11 @@ class EvaluacionAdmin(ForeignKeyAutocompleteAdmin):
 class QuejaAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ['respuesta', 'get_usuario', 'queja', 'resuelta', 'created']
     ordering = ['queja', 'resuelta', 'resuelta', 'created']
+    search_fields = [
+        'respuesta__consulta__persona__nombre',
+        'respuesta__consulta__persona__apellido',
+        'respuesta__consulta__poliza__aseguradora__nombre',
+    ]
 
     def get_usuario(self, object):
 
@@ -99,4 +106,6 @@ admin.site.register(Holiday, HolidayAdmin)
 admin.site.register(Login, LoginAdmin)
 admin.site.register(Puntuacion, PuntuacionAdmin)
 admin.site.register(Queja, QuejaAdmin)
+admin.site.register(Respuesta)
 admin.site.register(Evaluacion, EvaluacionAdmin)
+admin.site.register(Departamento)

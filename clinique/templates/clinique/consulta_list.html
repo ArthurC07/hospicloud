@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% load l10n %}
+{% load l10n %}{% load i18n %}
 {% block content %}
     <div class="row">
         <section class="page-header col-md-12 main-content">
             <h1>
-                Consultas
+                {% trans 'Consultas' %}
                 <small>
-                    del {{ inicio }} al {{ fin }}
+                    {% trans 'del' %} {{ inicio }} {% trans 'al' %} {{ fin }}
                 </small>
             </h1>
         </section>
@@ -16,23 +16,23 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Paciente</th>
-                    <th>Motivo de Consulta</th>
-                    <th>HEA</th>
-                    <th>Tipo de Consulta</th>
-                    <th>Cargos</th>
-                    <th>Diagnostico</th>
-                    <th>Poliza</th>
-                    <th>Usuario</th>
-                    <th>Ciudad</th>
-                    <th>Acciones</th>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Paciente' %}</th>
+                    <th>{% trans 'Motivo de Consulta' %}</th>
+                    <th>{% trans 'HEA' %}</th>
+                    <th>{% trans 'Tipo de Consulta' %}</th>
+                    <th>{% trans 'Cargos' %}</th>
+                    <th>{% trans 'Diagn&oacute;stico' %}</th>
+                    <th>{% trans 'P&oacute;liza' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                    <th>{% trans 'Acciones' %}</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for consulta in consultas.all %}
                     <tr>
-                        <td>{{ consulta.created }}</td>
+                        <td><a href="{% url 'consulta' consulta.id %}">{{ consulta.created }}</a></td>
                         <td>{{ consulta.persona }}</td>
                         <td>{{ consulta.motivo_de_consulta }}</td>
                         <td>{{ consulta.HEA }}</td>
@@ -49,16 +49,18 @@
                         </td>
                         <td>
                             {% for contrato in consulta.persona.contratos.all %}
-                                Poliza: {{ contrato.poliza }}
+                                {% trans 'P&oacute;liza' %}: {{ contrato.poliza }}
                             {% endfor %}
                             {% for beneficiario in consulta.persona.beneficiarios.all %}
-                                {{ beneficiario.contrato.poliza }} Certificado: {{ beneficiario.contrato.certificado }}
+                                {{ beneficiario.contrato.poliza }}
+                                {% trans 'Certificado' %}:
+                                {{ beneficiario.contrato.certificado }}
                             {% endfor %}
                         </td>
                         <td>{{ consulta.consultorio.usuario.get_full_name }}</td>
                         <td>{{ consulta.consultorio.localidad }}</td>
                         <td><a class="btn btn-primary"
-                               href="{{ consulta.get_absolute_url }}">Ver</a>
+                               href="{{ consulta.get_absolute_url }}">{% trans 'Ver' %}</a>
                         </td>
                     </tr>
                 {% endfor %}

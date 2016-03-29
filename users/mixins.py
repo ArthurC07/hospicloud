@@ -48,14 +48,13 @@ class CurrentUserFormMixin(FormMixin, LoginRequiredMixin):
         """Agrega la :class:`User` a los campos del formulario"""
 
         initial = super(CurrentUserFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['usuario'] = self.request.user.id
         return initial
 
 
 class HiddenUserForm(FieldSetModelFormMixin):
     usuario = forms.ModelChoiceField(queryset=User.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+                                     widget=forms.HiddenInput(), required=True)
 
 
 class UserForm(FieldSetModelFormMixin):

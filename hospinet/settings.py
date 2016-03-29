@@ -16,6 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 # Django settings for hospicloud project.
+from __future__ import unicode_literals
 import os
 import environ
 
@@ -88,8 +89,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    str(root.path('persona/static/')),
-    str(root.path('assets'))
+    str(root.path('assets')),
 )
 
 # List of finder classes that know how to find static files in
@@ -103,7 +103,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            root.path('templates'),
+            str(root.path('templates')),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -129,6 +129,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 )
 
 ROOT_URLCONF = 'hospinet.urls'
@@ -145,6 +146,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
+    'dal',
+    'dal_select2',
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
@@ -173,6 +176,8 @@ INSTALLED_APPS = (
     'crispy_forms',
     'bootstrap_pagination',
     'storages',
+    'debug_toolbar',
+    'mail_templated',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -217,12 +222,21 @@ LOGGING = {
 
 # Django Storage Configuration
 
-DEFAULT_FILE_STORAGE = env.str('DEFAULT_FILE_STORAGE',
-                               default='django.core.files.storage.FileSystemStorage')
+DEFAULT_FILE_STORAGE = env.str(
+        'DEFAULT_FILE_STORAGE',
+        default='django.core.files.storage.FileSystemStorage'
+)
 AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME ', default='')
+
+if AWS_STORAGE_BUCKET_NAME:
+    S3_URL = 'https://{0}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
+    MEDIA_URL = S3_URL + '/media/'
+
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SITE_ID = 1
 USERENA_ACTIVATION_REQUIRED = False
 AUTH_PROFILE_MODULE = 'users.UserProfile'
+
+INTERNAL_IPS = ('127.0.0.1',)
