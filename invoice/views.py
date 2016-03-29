@@ -196,8 +196,8 @@ class EstadisticasView(LoginRequiredMixin, TemplateView):
         context['tipos'] = {}
         context['meses'] = OrderedDict()
 
-        fin = make_end_day(date(now.year, 12, 31))
-        inicio = make_day_start(date(now.year, 1, 1))
+        fin = make_end_day(now.replace(month=12, day=31))
+        inicio = make_day_start(now.replace(month=1, day=1))
 
         for tipo in TipoPago.objects.all():
             context['pagos'][tipo] = OrderedDict()
