@@ -486,8 +486,30 @@ class QuejaFormMixin(QuejaMixin, FormMixin):
         return initial
 
 
+class QuejaPeriodoListView(LoginRequiredMixin, PeriodoView, ListView):
+    """
+    Shows a list of :class:`Queja` based on a date range
+    """
+    prefix = None
+    model = Queja
+
+    def get_queryset(self):
+        """
+        Builds the queryset that will be used to look for the :class:`Queja`
+        """
+        return Queja.objects.select_related(
+            'aseguradora',
+            'respuesta__consulta',
+            'respuesta__consulta__persona',
+            'respuesta__consulta__consultorio__usuario',
+        ).filter(self.inicio, self.fin)
+
+
 class SolucionCreateView(QuejaFormMixin, CurrentUserFormMixin, CreateView,
                          LoginRequiredMixin):
+    """
+    Allows creating :class:`Solucion` from the user interface
+    """
     model = Solucion
     form_class = SolucionForm
 
@@ -562,8 +584,8 @@ class SolucionAceptadaListView(SolucionListView):
     """
     Shows the :class:`Solucion`s that have been accepted but not yet notified
     """
-    def get_queryset(self):
 
+    def get_queryset(self):
         return self.queryset.filter(
             aceptada=True,
             notificada=False,
