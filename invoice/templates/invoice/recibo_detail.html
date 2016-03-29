@@ -172,9 +172,11 @@
                     </tfoot>
                 </table>
             </div>
+            {% if not recibo.cerrado %}
             <div class="col-md-6">
                 {% crispy reembolso_form %}
             </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
