@@ -19,6 +19,7 @@ from __future__ import unicode_literals
 from datetime import timedelta
 from decimal import Decimal
 
+from annoying.fields import AutoOneToOneField
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
@@ -61,6 +62,22 @@ class Company(TimeStampedModel):
 
 
 @python_2_unicode_compatible
+class LegalData(TimeStampedModel):
+    """
+    Defines some data part of invoicing required by law
+    """
+    cai = models.CharField(max_length=255, blank=True)
+    correlativo = models.IntegerField(default=0)
+    inicio = models.CharField(max_length=100, blank=True)
+    fin = models.CharField(max_length=100, blank=True)
+    prefijo = models.CharField(max_length=100, blank=True)
+    limite_de_emision = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.cai
+
+
+@python_2_unicode_compatible
 class Ciudad(TimeStampedModel):
     """
     Consolidates all City specific legal information for legal tending of
@@ -85,12 +102,20 @@ class Ciudad(TimeStampedModel):
     correlativo_de_nota_de_credito = models.IntegerField(default=0)
     fin_rango_comprobante = models.CharField(max_length=100, blank=True)
     inicio_rango_comprobante = models.CharField(max_length=100, blank=True)
+    limite_de_emision_comprobante = models.DateTimeField(default=timezone.now)
     # :class:`NotaCredito` data
     cai_nota_credito = models.CharField(max_length=255, blank=True)
     prefijo_nota_credito = models.CharField(max_length=255, blank=True)
     fin_rango_nota_credito = models.CharField(max_length=100, blank=True)
     inicio_rango_nota_credito = models.CharField(max_length=100, blank=True)
     limite_de_emision_nota_credito = models.DateTimeField(default=timezone.now)
+
+    recibo = AutoOneToOneField(LegalData, blank=True, null=True,
+                               related_name='ciudad_recibo')
+    comprobante = AutoOneToOneField(LegalData, blank=True, null=True,
+                                    related_name='ciudad_comprobante')
+    nota_credito = AutoOneToOneField(LegalData, blank=True, null=True,
+                                     related_name='ciudad_nota_credito')
 
     def __str__(self):
         return self.nombre
@@ -136,7 +161,7 @@ class UserProfile(UserenaBaseProfile):
 
             datos['ponderacion'] = meta.ponderacion(datos['logro'])
             datos['logro_ponderado'] = meta.logro_ponderado(
-                    datos['ponderacion'])
+                datos['ponderacion'])
             total += datos['logro_ponderado']
             goal['metas'].append(datos)
         goal['escalas'] = bsc.get_escala(total)

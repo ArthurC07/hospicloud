@@ -56,15 +56,17 @@ class ReciboForm(FieldSetModelFormMixin):
     class Meta:
         model = Recibo
         exclude = (
-            'nulo', 'cerrado', 'discount', 'ciudad', 'emision', 'correlativo')
+            'nulo', 'cerrado', 'discount', 'ciudad', 'emision', 'correlativo',
+            'legal_data'
+        )
 
-    cajero = forms.ModelChoiceField(label="",
-                                    queryset=User.objects.all(),
-                                    widget=forms.HiddenInput(), required=False)
+    cajero = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
-    cliente = forms.ModelChoiceField(label="",
-                                     queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    cliente = forms.ModelChoiceField(
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
     tipo_de_venta = forms.ModelChoiceField(queryset=TipoVenta.objects.all())
 
@@ -91,11 +93,11 @@ class VentaForm(FieldSetModelFormMixin):
         model = Venta
         fields = ('item', 'cantidad', 'precio', 'descripcion', 'recibo')
 
-    recibo = forms.ModelChoiceField(label="",
-                                    queryset=Recibo.objects.all(),
-                                    widget=forms.HiddenInput(), required=False)
+    recibo = forms.ModelChoiceField(
+        queryset=Recibo.objects.all(),
+        widget=forms.HiddenInput(), required=False)
     item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
-            activo=True).order_by('descripcion').all())
+        activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
@@ -155,9 +157,9 @@ class PagoForm(FieldSetModelFormMixin):
         model = Pago
         exclude = ('status',)
 
-    recibo = forms.ModelChoiceField(label="",
-                                    queryset=Recibo.objects.all(),
-                                    widget=forms.HiddenInput(), required=False)
+    recibo = forms.ModelChoiceField(
+        queryset=Recibo.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(PagoForm, self).__init__(*args, **kwargs)
@@ -183,9 +185,9 @@ class CierreTurnoForm(FieldSetModelFormMixin):
         model = CierreTurno
         fields = '__all__'
 
-    turno = forms.ModelChoiceField(label="",
-                                   queryset=TurnoCaja.objects.all(),
-                                   widget=forms.HiddenInput(), required=False)
+    turno = forms.ModelChoiceField(
+        queryset=TurnoCaja.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(CierreTurnoForm, self).__init__(*args, **kwargs)
@@ -198,9 +200,9 @@ class TurnoCajaCierreForm(FieldSetModelFormMixin):
         model = TurnoCaja
         fields = ()
 
-    id = forms.ModelChoiceField(label="",
-                                queryset=TurnoCaja.objects.all(),
-                                widget=forms.HiddenInput(), required=False)
+    id = forms.ModelChoiceField(
+        queryset=TurnoCaja.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(TurnoCajaCierreForm, self).__init__(*args, **kwargs)
@@ -210,7 +212,7 @@ class TurnoCajaCierreForm(FieldSetModelFormMixin):
 
 class VentaPeriodoForm(PeriodoForm):
     item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
-            activo=True).order_by('descripcion').all())
+        activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(VentaPeriodoForm, self).__init__(*args, **kwargs)
@@ -267,9 +269,9 @@ class PagoCuentaForm(FieldSetModelFormMixin):
         model = PagoCuenta
         fields = '__all__'
 
-    cuenta = forms.ModelChoiceField(label="",
-                                    queryset=CuentaPorCobrar.objects.all(),
-                                    widget=forms.HiddenInput(), required=False)
+    cuenta = forms.ModelChoiceField(
+        queryset=CuentaPorCobrar.objects.all(),
+        widget=forms.HiddenInput(), required=False)
     fecha = forms.DateTimeField(widget=DateTimeWidget)
 
     def __init__(self, *args, **kwargs):
@@ -285,13 +287,13 @@ class CotizacionForm(FieldSetModelFormMixin):
         model = Cotizacion
         exclude = ('ciudad',)
 
-    usuario = forms.ModelChoiceField(label="",
-                                     queryset=User.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    usuario = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
-    persona = forms.ModelChoiceField(label="",
-                                     queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    persona = forms.ModelChoiceField(
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput(), required=False)
 
     tipo_de_venta = forms.ModelChoiceField(queryset=TipoVenta.objects.all())
 
@@ -307,12 +309,12 @@ class CotizadoForm(FieldSetModelFormMixin):
         model = Cotizado
         fields = ('item', 'cantidad', 'precio', 'descripcion', 'cotizacion')
 
-    cotizacion = forms.ModelChoiceField(label="",
-                                        queryset=Cotizacion.objects.all(),
-                                        widget=forms.HiddenInput(),
-                                        required=False)
+    cotizacion = forms.ModelChoiceField(
+        queryset=Cotizacion.objects.all(),
+        widget=forms.HiddenInput(),
+        required=False)
     item = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
-            activo=True).order_by('descripcion').all())
+        activo=True).order_by('descripcion').all())
 
     def __init__(self, *args, **kwargs):
         super(CotizadoForm, self).__init__(*args, **kwargs)
@@ -320,9 +322,16 @@ class CotizadoForm(FieldSetModelFormMixin):
 
 
 class ComprobanteDeduccionForm(FieldSetModelFormMixin):
+    """
+    Defines a :class:`Form` to create and edit :class:`ComprobanteDeduccion`
+    objects
+    """
     class Meta:
         model = ComprobanteDeduccion
-        exclude = ('correlativo', 'inicio_rango', 'fin_rango', 'cai')
+        exclude = (
+            'correlativo', 'inicio_rango', 'fin_rango', 'cai',
+            'legal_data'
+        )
 
     fecha_de_emision = forms.DateTimeField(widget=DateTimeWidget(),
                                            initial=timezone.now)
@@ -339,23 +348,27 @@ class ConceptoDeduccionForm(FieldSetModelFormMixin):
         fields = '__all__'
 
     comprobante = forms.ModelChoiceField(
-            label="",
-            queryset=ComprobanteDeduccion.objects.all(),
-            widget=forms.HiddenInput(),
-            required=False)
+        label="",
+        queryset=ComprobanteDeduccion.objects.all(),
+        widget=forms.HiddenInput(),
+        required=False)
     concepto = forms.ModelChoiceField(queryset=ItemTemplate.objects.filter(
-            activo=True).order_by('descripcion').all())
+        activo=True).order_by('descripcion').all())
 
 
 class ReembolsoForm(FieldSetFormMixin):
+    """
+    Creates a :class:`Form` that allows a user to quickly add a payment to a
+    receipt where it uses percentage based amounts of cash
+    """
     porcentaje = forms.IntegerField()
     tipo_de_pago = forms.ModelChoiceField(queryset=TipoPago.objects.all())
     recibo = forms.ModelChoiceField(
-            queryset=Recibo.objects.all(),
-            widget=forms.HiddenInput()
+        queryset=Recibo.objects.all(),
+        widget=forms.HiddenInput()
     )
     aseguradora = forms.ModelChoiceField(
-            queryset=Aseguradora.objects.all()
+        queryset=Aseguradora.objects.all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -368,10 +381,9 @@ class ReembolsoForm(FieldSetFormMixin):
 class NotaCreditoForm(FieldSetModelFormMixin):
     class Meta:
         model = NotaCredito
-        exclude = ('correlativo',)
+        exclude = ('correlativo', 'legal_data')
 
         recibo = forms.ModelChoiceField(
-            label='',
             queryset=Recibo.objects.all(),
             widget=forms.HiddenInput()
         )

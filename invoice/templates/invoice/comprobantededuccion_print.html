@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>{% trans 'Comprobante de Retenci&oacute;n' %} {{ recibo.numero }}</title>
     {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+    <title>{% trans 'Comprobante de Retenci&oacute;n' %} {{ recibo.numero }}</title>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
@@ -22,8 +22,8 @@
                 {{ comprobante.ciudad.company.nombre }}<br>
                 {{ comprobante.ciudad.company.address }}<br>
                 {% trans 'RTN' %}: {{ comprobante.ciudad.company.rtn }}<br>
-                {% trans 'Comprobante' %}: {{ comprobante.numero }}<br>
-                {% trans 'C.A.I' %}: {{ comprobante.ciudad.cai_comprobante }}
+                {% trans 'Comprobante' %}: {{ comprobante.legal_data.prefijo }}-{{ comprobante.correlativo }}<br>
+                {% trans 'C.A.I' %}: {{ comprobante.legal_data.cai }}
                 {% trans 'Fecha' %}: {{ comprobante.created }}<br>
             </p>
         </div>
@@ -83,7 +83,8 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            {{ recibo.ciudad.limite_de_emision }}<br>
+            {% trans 'Fecha L&iacute;mite de Emisi&oacute;n:' %}
+            {{ comprobante.legal_data.limite_de_emision }}<br>
             {% trans 'Rango Autorizado:' %} {{ comprobante.inicio_rango }}
             {% trans 'a la' %} {{ comprobante.fin_rango }}
         </div>
