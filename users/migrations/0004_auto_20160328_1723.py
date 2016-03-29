@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
             name='LegalData',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('ciudad_creacion', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.Ciudad')),
                 ('created', django_extensions.db.fields.CreationDateTimeField(auto_now_add=True, verbose_name='created')),
                 ('modified', django_extensions.db.fields.ModificationDateTimeField(auto_now=True, verbose_name='modified')),
                 ('cai', models.CharField(blank=True, max_length=255)),
@@ -28,6 +29,7 @@ class Migration(migrations.Migration):
                 ('fin', models.CharField(blank=True, max_length=100)),
                 ('prefijo', models.CharField(blank=True, max_length=100)),
                 ('limite_de_emision', models.DateTimeField(default=django.utils.timezone.now)),
+                ('tipo', models.CharField(choices=[('R', 'Recibo'), ('CD', 'Comprobante de Deduccion'), ('NC', 'Nota de Credito')], default='R', max_length=2)),
             ],
             options={
                 'ordering': ('-modified', '-created'),
@@ -43,16 +45,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ciudad',
             name='comprobante',
-            field=annoying.fields.AutoOneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ciudad_comprobante', to='users.LegalData'),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ciudad_comprobante', to='users.LegalData'),
         ),
         migrations.AddField(
             model_name='ciudad',
             name='nota_credito',
-            field=annoying.fields.AutoOneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ciudad_nota_credito', to='users.LegalData'),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ciudad_nota_credito', to='users.LegalData'),
         ),
         migrations.AddField(
             model_name='ciudad',
             name='recibo',
-            field=annoying.fields.AutoOneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ciudad_recibo', to='users.LegalData'),
+            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ciudad_recibo', to='users.LegalData'),
         ),
     ]

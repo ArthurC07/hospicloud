@@ -11,32 +11,43 @@ def forwards_func(apps, schema_editor):
     Ciudad = apps.get_model("users", "Ciudad")
     LegalData = apps.get_model("users", "LegalData")
     for ciudad in Ciudad.objects.all():
-        ciudad.recibo = LegalData()
-        ciudad.recibo.correlativo = ciudad.correlativo_de_recibo
-        ciudad.recibo.cai = ciudad.cai_recibo
-        ciudad.recibo.prefijo = ciudad.prefijo_recibo
-        ciudad.recibo.limite_de_emision = ciudad.limite_de_emision
-        ciudad.recibo.inicio = ciudad.inicio_rango
-        ciudad.recibo.fin = ciudad.fin_rango
-        ciudad.recibo.save()
+        recibo = LegalData()
+        recibo.ciudad_creacion = ciudad
+        recibo.correlativo = ciudad.correlativo_de_recibo
+        recibo.cai = ciudad.cai_recibo
+        recibo.prefijo = ciudad.prefijo_recibo
+        recibo.limite_de_emision = ciudad.limite_de_emision
+        recibo.inicio = ciudad.inicio_rango
+        recibo.fin = ciudad.fin_rango
+        recibo.tipo = 'R'
+        recibo.save()
+        ciudad.recibo = recibo
 
-        ciudad.comprobante = LegalData()
-        ciudad.comprobante.correlativo = ciudad.correlativo_de_comprobante
-        ciudad.comprobante.cai = ciudad.cai_comprobante
-        ciudad.comprobante.prefijo = ciudad.prefijo_comprobante
-        ciudad.comprobante.limite_de_emision = ciudad.limite_de_emision_comprobante
-        ciudad.comprobante.inicio = ciudad.inicio_rango_comprobante
-        ciudad.comprobante.fin = ciudad.fin_rango_comprobante
-        ciudad.comprobante.save()
+        comprobante = LegalData()
+        comprobante.ciudad_creacion = ciudad
+        comprobante.correlativo = ciudad.correlativo_de_comprobante
+        comprobante.cai = ciudad.cai_comprobante
+        comprobante.prefijo = ciudad.prefijo_comprobante
+        comprobante.limite_de_emision = ciudad.limite_de_emision_comprobante
+        comprobante.inicio = ciudad.inicio_rango_comprobante
+        comprobante.fin = ciudad.fin_rango_comprobante
+        comprobante.tipo = 'CD'
+        comprobante.save()
+        ciudad.comprobante = comprobante
 
-        ciudad.nota_credito = LegalData()
-        ciudad.nota_credito.correlativo = ciudad.correlativo_de_nota_de_credito
-        ciudad.nota_credito.cai = ciudad.cai_nota_credito
-        ciudad.nota_credito.prefijo = ciudad.prefijo_nota_credito
-        ciudad.nota_credito.limite_de_emision = ciudad.limite_de_emision_nota_credito
-        ciudad.nota_credito.inicio = ciudad.inicio_rango_nota_credito
-        ciudad.nota_credito.fin = ciudad.fin_rango_nota_credito
-        ciudad.nota_credito.save()
+        nota_credito = LegalData()
+        nota_credito.ciudad_creacion = ciudad
+        nota_credito.correlativo = ciudad.correlativo_de_nota_de_credito
+        nota_credito.cai = ciudad.cai_nota_credito
+        nota_credito.prefijo = ciudad.prefijo_nota_credito
+        nota_credito.limite_de_emision = ciudad.limite_de_emision_nota_credito
+        nota_credito.inicio = ciudad.inicio_rango_nota_credito
+        nota_credito.fin = ciudad.fin_rango_nota_credito
+        nota_credito.tipo = 'NC'
+        nota_credito.save()
+        ciudad.nota_credito = nota_credito
+
+        ciudad.save()
 
 
 class Migration(migrations.Migration):
