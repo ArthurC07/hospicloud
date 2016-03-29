@@ -23,7 +23,6 @@ from datetime import time, timedelta
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from dal import autocomplete
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
@@ -60,7 +59,7 @@ from contracts.models import MasterContract, Aseguradora
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from hospinet.utils.date import make_month_range, make_end_day, make_day_start
-from hospinet.utils.forms import MonthYearForm, PeriodoForm
+from hospinet.utils.forms import MonthYearForm
 from hospinet.utils.views import PeriodoView
 from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
