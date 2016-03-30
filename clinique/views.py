@@ -139,12 +139,9 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             _('Seguimientos por Periodo')
         )
 
-        context['pacientesearch'] = PacienteSearchForm()
-        context[
-            'pacientesearch'].helper.form_action = \
-            'clinique-paciente-search-add'
-
         aseg_form = AseguradoraPeriodoForm(prefix='consulta-aseguradora')
+        aseg_form.helper.add_input(Submit('submit', _('Mostrar')))
+
         aseg_form.set_action('consulta-aseguradora-periodo')
         context['aseguradora_form'] = aseg_form
 
