@@ -229,8 +229,8 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
             form.helper.label_class = ''
             form.helper.field_class = ''
             context['budget_forms'].append(form)
-
-            start = now.replace(month=n)
+            last_day = calendar.monthrange(now.year, n)[1]
+            start = now.replace(month=n, day=last_day)
             inicio, fin = make_month_range(start)
             previous_start, previous_end = previous_month_range(inicio)
 
