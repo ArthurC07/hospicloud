@@ -2,7 +2,7 @@
 {% load l10n %}{% load i18n %}
 {% block content %}
     <div class="row">
-        <section class="page-header col-md-12 main-content">
+        <section class="page-header col-md-12 col-xs-12 main-content">
             <h1>
                 {% trans 'Consultas' %} {{ aseguradora }} {{ ciudad }} {{ usuario }}
                 <small>
@@ -12,7 +12,7 @@
         </section>
     </div>
     <div class="row">
-        <div class="col-md-12 table-responsive main-content">
+        <div class="col-md-12 col-xs-12 table-responsive main-content">
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -23,16 +23,15 @@
                     <th>{% trans 'Tipo de Consulta' %}</th>
                     <th>{% trans 'Cargos' %}</th>
                     <th>{% trans 'Diagn&oacute;stico' %}</th>
-                    <th>{% trans 'P&oacute;liza' %}</th>
+                    <th>{% trans 'Aseguradora' %}</th>
                     <th>{% trans 'Usuario' %}</th>
-                    <th>{% trans 'Usuario' %}</th>
-                    <th>{% trans 'Acciones' %}</th>
+                    <th>{% trans 'Ciudad' %}</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for consulta in consultas.all %}
                     <tr>
-                        <td><a href="{% url 'consulta' consulta.id %}">{{ consulta.created }}</a></td>
+                        <td><a href="{{ consulta.get_absolute_url }}">{{ consulta.created }}</a></td>
                         <td>{{ consulta.persona }}</td>
                         <td>{{ consulta.motivo_de_consulta }}</td>
                         <td>{{ consulta.HEA }}</td>
@@ -47,21 +46,9 @@
                                 {{ diagnostico.diagnostico }}
                             {% endfor %}
                         </td>
-                        <td>
-                            {% for contrato in consulta.persona.contratos.all %}
-                                {% trans 'P&oacute;liza' %}: {{ contrato.poliza }}
-                            {% endfor %}
-                            {% for beneficiario in consulta.persona.beneficiarios.all %}
-                                {{ beneficiario.contrato.poliza }}
-                                {% trans 'Certificado' %}:
-                                {{ beneficiario.contrato.certificado }}
-                            {% endfor %}
-                        </td>
+                        <td>{{ consulta.poliza.aseguradora }}</td>
                         <td>{{ consulta.consultorio.usuario.get_full_name }}</td>
-                        <td>{{ consulta.consultorio.localidad }}</td>
-                        <td><a class="btn btn-primary"
-                               href="{{ consulta.get_absolute_url }}">{% trans 'Ver' %}</a>
-                        </td>
+                        <td>{{ consulta.consultorio.localidad.ciudad }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

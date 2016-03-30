@@ -1111,7 +1111,7 @@ class ConsultaPeriodoView(LoginRequiredMixin, PeriodoView, ListView):
 
     template_name = 'clinique/consulta_list.html'
     prefix = 'consulta'
-    redirect_on_invalid = 'invoice-index'
+    redirect_on_invalid = 'consultorio-index'
     context_object_name = 'consultas'
 
     def get_queryset(self):
@@ -1122,9 +1122,12 @@ class ConsultaPeriodoView(LoginRequiredMixin, PeriodoView, ListView):
         return Consulta.objects.atendidas(self.inicio, self.fin).select_related(
             'persona',
             'tipo',
+            'poliza',
             'consultorio',
+            'poliza__aseguradora',
             'consultorio__usuario',
             'consultorio__localidad',
+            'consultorio__localidad__ciudad',
         ).prefetch_related(
             'cargos',
             'cargos__item',
@@ -1161,9 +1164,12 @@ class ConsultaPeriodoDetailMixin(LoginRequiredMixin, DetailView):
             ).select_related(
                 'persona',
                 'tipo',
+                'poliza',
                 'consultorio',
+                'poliza__aseguradora',
                 'consultorio__usuario',
                 'consultorio__localidad',
+                'consultorio__localidad__ciudad',
             ).prefetch_related(
                 'cargos',
                 'cargos__item',
@@ -1357,16 +1363,18 @@ class ConsultaAseguradoraPeriodoListView(LoginRequiredMixin, ListView):
             self.inicio = form.cleaned_data['inicio']
             self.fin = form.cleaned_data['fin']
             self.aseguradora = form.cleaned_data['aseguradora']
-            print(self.aseguradora)
 
             qs = Consulta.objects.atendidas(
                 self.inicio, self.fin
             ).select_related(
                 'persona',
                 'tipo',
+                'poliza',
                 'consultorio',
+                'poliza__aseguradora',
                 'consultorio__usuario',
                 'consultorio__localidad',
+                'consultorio__localidad__ciudad',
             ).prefetch_related(
                 'cargos',
                 'cargos__item',
@@ -1512,6 +1520,7 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         ).order_by()
 
         quejas = Queja.objects.filter(created__range=(inicio, fin))
+        print quejas.query
         atenciones = consultas.count()
         diags = DiagnosticoClinico.objects.filter(
             consulta__created__range=(inicio, fin)
@@ -1583,6 +1592,14 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             {
                 'inicio': inicio.strftime('%d/%m/%Y %H:%M'),
                 'fin': fin.strftime('%d/%m/%Y %H:%M'),
+                'submit': 'Mostrar'
+            }
+        )
+
+        context['consulta_periodo_string'] = urlencode(
+            {
+                'consulta-inicio': inicio.strftime('%d/%m/%Y %H:%M'),
+                'consulta-fin': fin.strftime('%d/%m/%Y %H:%M'),
                 'submit': 'Mostrar'
             }
         )

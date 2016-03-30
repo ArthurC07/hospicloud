@@ -37,7 +37,11 @@
                                 <th>
                                     {% trans 'Total de Consultas' %}
                                 </th>
-                                <th class="text-right">{{ consultas }}</th>
+                                <th class="text-right">
+                                    <a href="{% url 'consulta-periodo' %}?{{ consulta_periodo_string }}">
+                                        {{ consultas }}
+                                    </a>
+                                </th>
                             </tr>
                             <tr>
                                 <td>{% trans 'Diurnas' %}</td>
