@@ -96,6 +96,10 @@ urlpatterns = [
         views.ConsultaFrecuenciaView.as_view(),
         name='consulta-frecuencia'),
 
+    url(r'^consulta/frecuencia/ciudad/(?P<pk>\d+)$',
+        views.ConsultaFrecuenciaCiudadView.as_view(),
+        name='consulta-frecuencia-ciudad'),
+
     url(r'^aseguradora/(?P<pk>\d+)$',
         views.ConsultaAseguradoraPeriodoView.as_view(),
         name='consulta-aseguradora'),

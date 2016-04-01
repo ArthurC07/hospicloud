@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 import calendar
+from abc import abstractmethod, ABCMeta
 from collections import defaultdict
 from datetime import time, timedelta
 
@@ -1620,26 +1621,11 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         return context
 
 
-class ConsultaFrecuenciaView(LoginRequiredMixin, PeriodoView, TemplateView):
-    """
-    Shows the frecuency of clinical visits during the days of the week of a
-    certain period.
-
-    It also clasifies those visits based on time of the day.
-    """
-    prefix = None
-    template_name = 'clinique/consulta_frecuencia.html'
-
-    def get_context_data(self, **kwargs):
-
-        context = super(ConsultaFrecuenciaView, self).get_context_data(**kwargs)
-
+class FrecuenciaView(PeriodoView):
+    def get_data(self):
         data = []
-
         for n in range(1, 8):
-            consultas = Consulta.objects.atendidas(
-                self.inicio, self.fin
-            ).filter(created__week_day=n)
+            consultas = self.get_consultas(n)
 
             weekday = []
             for m in range(24):
@@ -1648,8 +1634,71 @@ class ConsultaFrecuenciaView(LoginRequiredMixin, PeriodoView, TemplateView):
                 )
 
             data.append({'day': WEEKDAYS[n - 1], 'consultas': weekday})
+        return data
+
+    def get_consultas(self, n):
+        """
+        Filters the :class:`Consulta`s by  the creation date
+        """
+        pass
+
+
+class ConsultaFrecuenciaView(LoginRequiredMixin, TemplateView, FrecuenciaView):
+    """
+    Shows the frecuency of clinical visits during the days of the week of a
+    certain period.
+
+    It also clasifies those visits based on time of the day.
+    """
+    prefix = None
+    template_name = 'clinique/consulta_frecuencia.html'
+    redirect_on_invalid = 'consulta-index'
+
+    def get_context_data(self, **kwargs):
+        context = super(ConsultaFrecuenciaView, self).get_context_data(**kwargs)
+
+        data = self.get_data()
 
         context['data'] = data
-        context['hours'] = range(24)
 
         return context
+
+    def get_consultas(self, n):
+        """
+        Filters the :class:`Consulta`s by  the creation date
+        """
+        return Consulta.objects.atendidas(
+            self.inicio, self.fin
+        ).filter(created__week_day=n)
+
+
+class ConsultaFrecuenciaCiudadView(FrecuenciaView, DetailView):
+    """
+    Shows the frecuency of clinical visits during the days of the week of a
+    certain period and a certain :class:`Ciudad`
+    """
+    prefix = None
+    model = Ciudad
+    context_object_name = 'ciudad'
+    redirect_on_invalid = 'consulta-index'
+    template_name = 'clinique/consulta_frecuencia.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ConsultaFrecuenciaCiudadView, self).get_context_data(
+            **kwargs)
+
+        data = self.get_data()
+
+        context['data'] = data
+
+        return context
+
+    def get_consultas(self, n):
+        """
+        Filters the :class:`Consulta` by the :class:`Ciudad` it was made into
+        """
+        return Consulta.objects.atendidas(
+            self.inicio, self.fin
+        ).filter(created__week_day=n).filter(
+            consultorio__localidad__ciudad=self.object
+        )

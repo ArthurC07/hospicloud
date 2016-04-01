@@ -212,7 +212,16 @@
                                             {{ ciudad.consultorio__localidad__ciudad__nombre }}
                                         {% endif %}
                                     </td>
-                                    <td class="text-right">{{ ciudad.count }}</td>
+                                    <td class="text-right">
+                                        {% if not ciudad.consultorio__localidad__ciudad__id == None %}
+                                            <a href="{% url 'consulta-frecuencia-ciudad' ciudad.consultorio__localidad__ciudad__id %}?{{ periodo_string }}"
+                                               target="_blank">
+                                                {{ ciudad.count }}
+                                            </a>
+                                        {% else %}
+                                            {{ ciudad.count }}
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
