@@ -33,6 +33,7 @@ from django.forms import HiddenInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
+from django.utils.dates import WEEKDAYS
 from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
 from django.utils.http import urlencode
@@ -1520,7 +1521,6 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         ).order_by()
 
         quejas = Queja.objects.filter(created__range=(inicio, fin))
-        print quejas.query
         atenciones = consultas.count()
         diags = DiagnosticoClinico.objects.filter(
             consulta__created__range=(inicio, fin)
@@ -1616,5 +1616,40 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         context['esperas'] = esperas.count()
         context['esperas_data'] = esperas_data
         context['afecciones'] = afecciones
+
+        return context
+
+
+class ConsultaFrecuenciaView(LoginRequiredMixin, PeriodoView, TemplateView):
+    """
+    Shows the frecuency of clinical visits during the days of the week of a
+    certain period.
+
+    It also clasifies those visits based on time of the day.
+    """
+    prefix = None
+    template_name = 'clinique/consulta_frecuencia.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(ConsultaFrecuenciaView, self).get_context_data(**kwargs)
+
+        data = []
+
+        for n in range(1, 8):
+            consultas = Consulta.objects.atendidas(
+                self.inicio, self.fin
+            ).filter(created__week_day=n)
+
+            weekday = []
+            for m in range(24):
+                weekday.append(
+                    consultas.filter(created__hour=m).count()
+                )
+
+            data.append({'day': WEEKDAYS[n - 1], 'consultas': weekday})
+
+        context['data'] = data
+        context['hours'] = range(24)
 
         return context

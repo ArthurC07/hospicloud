@@ -51,6 +51,13 @@
                                 <td>{% trans 'Nocturnas' %}</td>
                                 <td class="text-right">{{ nocturnas }}</td>
                             </tr>
+                            <tr>
+                                <th colspan="2">
+                                    <a href="{% url 'consulta-frecuencia' %}?{{ periodo_string }}" target="_blank">
+                                        {% trans 'Frecuencia de Consulta' %}
+                                    </a>
+                                </th>
+                            </tr>
                             </tfoot>
                         </table>
                     </div>

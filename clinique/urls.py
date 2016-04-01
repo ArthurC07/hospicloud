@@ -92,6 +92,10 @@ urlpatterns = [
         views.ConsultaPeriodoView.as_view(),
         name='consulta-periodo'),
 
+    url(r'^consulta/frecuencia$',
+        views.ConsultaFrecuenciaView.as_view(),
+        name='consulta-frecuencia'),
+
     url(r'^aseguradora/(?P<pk>\d+)$',
         views.ConsultaAseguradoraPeriodoView.as_view(),
         name='consulta-aseguradora'),
