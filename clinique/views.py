@@ -17,7 +17,6 @@
 from __future__ import unicode_literals
 
 import calendar
-from abc import abstractmethod, ABCMeta
 from collections import defaultdict
 from datetime import time, timedelta
 
@@ -1622,6 +1621,9 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
 
 
 class FrecuenciaView(PeriodoView):
+    """
+    Allows spreading :class:`Consulta by their weekday and hour
+    """
     def get_data(self):
         data = []
         for n in range(1, 8):
