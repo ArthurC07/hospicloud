@@ -225,7 +225,7 @@ class HistoriaFisicaForm(BasePersonaForm):
     """
     class Meta:
         model = HistoriaFisica
-        exclude = ('bmi', 'bmr')
+        exclude = ('bmi', 'bmr', 'presion_arterial_media')
 
     def __init__(self, *args, **kwargs):
         super(HistoriaFisicaForm, self).__init__(*args, **kwargs)

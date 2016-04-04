@@ -30,6 +30,12 @@
             <th>{% trans 'Peso' %}</th>
             <th>{% trans 'IMC' %}</th>
             <th>{% trans 'GEB' %}</th>
+            <th>{% trans 'Pulso' %}</th>
+            <th>{% trans 'Temperatura' %}</th>
+            <th>{% trans 'Presi&oacute;n Sist&oacute;lica' %}</th>
+            <th>{% trans 'Presi&oacute;n Diast&oacute;lica' %}</th>
+            <th>{% trans 'Presi&oacute;n Arterial Media' %}</th>
+            <th>{% trans 'Respiraci&oacute;n' %}</th>
         </tr>
         </thead>
         <tbody>
@@ -40,6 +46,12 @@
                 <td>{{ historia.peso }} {{ historia.get_medida_de_peso_display }}</td>
                 <td>{{ historia.bmi }}</td>
                 <td>{{ historia.bmr }}</td>
+                <td>{{ historia.pulso }}</td>
+                <td>{{ historia.temperatura }}</td>
+                <td>{{ historia.presion_sistolica }}</td>
+                <td>{{ historia.presion_diastolica }}</td>
+                <td>{{ historia.presion_arterial_media }}</td>
+                <td>{{ historia.respiracion }}</td>
             </tr>
         {% endfor %}
         </tbody>
