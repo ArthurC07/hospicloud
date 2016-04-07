@@ -210,8 +210,7 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
             'recibo__ciudad',
         ).filter(
             status__reportable=True,
-            completado=False,
-            tipo__reembolso=True)
+            completado=False)
         for pago in pagos:
             form = DetallePagoForm(initial={
                 'pago': pago,
