@@ -25,6 +25,7 @@ from crispy_forms.layout import Submit
 from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import Count, DurationField
 from django.db.models.aggregates import Avg
@@ -32,8 +33,10 @@ from django.forms import HiddenInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
+from django.utils.dates import WEEKDAYS
 from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
+from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, CreateView, View, ListView, \
     UpdateView, TemplateView, RedirectView
@@ -53,11 +56,12 @@ from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
     Remision, NotaMedica, TipoConsulta, Afeccion
 from contracts.forms import AseguradoraPeriodoForm
-from contracts.models import MasterContract
+from contracts.models import MasterContract, Aseguradora
 from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
 from hospinet.utils.date import make_month_range, make_end_day, make_day_start
 from hospinet.utils.forms import MonthYearForm
+from hospinet.utils.views import PeriodoView
 from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
 from invoice.forms import PeriodoForm
@@ -68,6 +72,7 @@ from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
     AntecedenteObstetrico, AntecedenteQuirurgico, EstiloVida, Persona
 from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
+from users.models import Ciudad
 
 
 class ConsultorioPermissionMixin(LoginRequiredMixin):
@@ -135,12 +140,9 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             _('Seguimientos por Periodo')
         )
 
-        context['pacientesearch'] = PacienteSearchForm()
-        context[
-            'pacientesearch'].helper.form_action = \
-            'clinique-paciente-search-add'
-
         aseg_form = AseguradoraPeriodoForm(prefix='consulta-aseguradora')
+        aseg_form.helper.add_input(Submit('submit', _('Mostrar')))
+
         aseg_form.set_action('consulta-aseguradora-periodo')
         context['aseguradora_form'] = aseg_form
 
@@ -1102,28 +1104,73 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
         return consulta.get_absolute_url()
 
 
-class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
+class ConsultaPeriodoView(LoginRequiredMixin, PeriodoView, ListView):
     """
     Shows all :class:`Consulta` that happened in a Date range that is specified
     by a :class:`PeriodoForm
     """
 
     template_name = 'clinique/consulta_list.html'
+    prefix = 'consulta'
+    redirect_on_invalid = 'consultorio-index'
+    context_object_name = 'consultas'
+
+    def get_queryset(self):
+        """
+        Builds the :class:`QuerySet` that will be used to show the list of
+        :class:`Consulta` objects
+        """
+        return Consulta.objects.atendidas(self.inicio, self.fin).select_related(
+            'persona',
+            'tipo',
+            'poliza',
+            'consultorio',
+            'poliza__aseguradora',
+            'consultorio__usuario',
+            'consultorio__localidad',
+            'consultorio__localidad__ciudad',
+        ).prefetch_related(
+            'cargos',
+            'cargos__item',
+            'diagnosticos_clinicos',
+            'diagnosticos_clinicos__afeccion',
+            'persona__contratos',
+            'persona__contratos__master__aseguradora',
+            'persona__contratos__beneficiarios',
+            'persona__beneficiarios',
+            'persona__beneficiarios__contrato',
+        ).order_by('created')
+
+
+class ConsultaPeriodoDetailMixin(LoginRequiredMixin, DetailView):
+    """
+    Creates a basis for many :class:`Consulta` related queries
+    """
+    prefix = None
+    redirect_on_invalid = 'consultorio-index'
+    template_name = 'clinique/consulta_list.html'
 
     def dispatch(self, request, *args, **kwargs):
-        """Filtra las :class:`Emergencia` de acuerdo a los datos ingresados en
-        el formulario"""
+        """Efectua la consulta de los :class:`Recibo` de acuerdo a los
+        datos ingresados en el formulario"""
 
-        self.form = PeriodoForm(request.GET, prefix='consulta')
+        self.form = PeriodoForm(request.GET, prefix=self.prefix)
+
         if self.form.is_valid():
             self.inicio = self.form.cleaned_data['inicio']
             self.fin = self.form.cleaned_data['fin']
-            self.consultas = Consulta.objects.select_related(
+
+            self.consultas = Consulta.objects.atendidas(
+                self.inicio, self.fin
+            ).select_related(
                 'persona',
                 'tipo',
+                'poliza',
                 'consultorio',
+                'poliza__aseguradora',
                 'consultorio__usuario',
                 'consultorio__localidad',
+                'consultorio__localidad__ciudad',
             ).prefetch_related(
                 'cargos',
                 'cargos__item',
@@ -1134,23 +1181,114 @@ class ConsultaPeriodoView(LoginRequiredMixin, TemplateView):
                 'persona__contratos__beneficiarios',
                 'persona__beneficiarios',
                 'persona__beneficiarios__contrato',
-            ).filter(
-                created__range=(self.inicio, self.fin)
-            ).order_by('created')
-        else:
-            return redirect('invoice-index')
+            )
 
-        return super(ConsultaPeriodoView, self).dispatch(request, *args,
-                                                         **kwargs)
+        else:
+            messages.info(
+                self.request,
+                _(u'Los Datos Ingresados en el formulario no son validos')
+            )
+            return HttpResponseRedirect(reverse(self.redirect_on_invalid))
+
+        return super(ConsultaPeriodoDetailMixin, self).dispatch(request, *args,
+                                                                **kwargs)
+
+
+class ConsultaAseguradoraPeriodoView(ConsultaPeriodoDetailMixin):
+    """
+    Shows a list of :class:`Consulta` that have been related to a
+    :class:`Aseguradora`
+    """
+    model = Aseguradora
 
     def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Consultas` to the data in the template
+        """
+        context = super(ConsultaAseguradoraPeriodoView,
+                        self).get_context_data(**kwargs)
 
-        """Permite utilizar las :class:`Emergencia`s en la vista"""
-
-        context = super(ConsultaPeriodoView, self).get_context_data(**kwargs)
-        context['consultas'] = self.consultas
         context['inicio'] = self.inicio
         context['fin'] = self.fin
+
+        context['consultas'] = self.consultas.filter(
+            contrato__master__aseguradora=self.object
+        )
+
+        return context
+
+
+class ConsultaCiudadPeriodoView(ConsultaPeriodoDetailMixin):
+    """
+    Shows a list of :class:`Consulta` that have been related to a
+    :class:`Ciudad`
+    """
+    model = Ciudad
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Consultas` to the data in the template
+        """
+        context = super(ConsultaCiudadPeriodoView, self).get_context_data(
+            **kwargs)
+
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        context['consultas'] = self.consultas.filter(
+            consultorio__localidad__ciudad=self.object
+        )
+
+        return context
+
+
+class ConsultaEnfermeraPeriodoView(ConsultaPeriodoDetailMixin):
+    """
+    Shows a list of :class:`Consulta` that have been related to a
+    :class:`Usuario` as a nurse
+    """
+    model = User
+    context_object_name = 'usuario'
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Consultas` to the data in the template
+        """
+        context = super(ConsultaEnfermeraPeriodoView, self).get_context_data(
+            **kwargs)
+
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        context['consultas'] = self.consultas.filter(
+            espera__usuario=self.object
+        )
+
+        return context
+
+
+class ConsultaMedicoPeriodoView(ConsultaPeriodoDetailMixin):
+    """
+    Shows a list of :class:`Consulta` that have been related to a
+    :class:`Usuario` as a medic
+    """
+    model = User
+    context_object_name = 'usuario'
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Consultas` to the data in the template
+        """
+        context = super(ConsultaMedicoPeriodoView, self).get_context_data(
+            **kwargs)
+
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        context['consultas'] = self.consultas.filter(
+            consultorio__usuario=self.object
+        )
+
         return context
 
 
@@ -1226,16 +1364,18 @@ class ConsultaAseguradoraPeriodoListView(LoginRequiredMixin, ListView):
             self.inicio = form.cleaned_data['inicio']
             self.fin = form.cleaned_data['fin']
             self.aseguradora = form.cleaned_data['aseguradora']
-            print(self.aseguradora)
 
             qs = Consulta.objects.atendidas(
                 self.inicio, self.fin
             ).select_related(
                 'persona',
                 'tipo',
+                'poliza',
                 'consultorio',
+                'poliza__aseguradora',
                 'consultorio__usuario',
                 'consultorio__localidad',
+                'consultorio__localidad__ciudad',
             ).prefetch_related(
                 'cargos',
                 'cargos__item',
@@ -1249,7 +1389,6 @@ class ConsultaAseguradoraPeriodoListView(LoginRequiredMixin, ListView):
             )
 
             if self.aseguradora is None:
-
                 qs = qs.filter(
                     contrato__master__aseguradora__isnull=True,
                 )
@@ -1401,6 +1540,7 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
 
         consultorios = consultas.values(
             'consultorio__nombre',
+            'consultorio__usuario__id',
             'consultorio__localidad__nombre',
         ).annotate(
             count=Count('id'),
@@ -1408,7 +1548,10 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
             quejas=Count('respuesta__queja__id')
         ).order_by('-count')
 
-        ciudades = consultas.values('consultorio__localidad__nombre').annotate(
+        ciudades = consultas.values(
+            'consultorio__localidad__ciudad__nombre',
+            'consultorio__localidad__ciudad__id'
+        ).annotate(
             count=Count('id')
         ).order_by('-count')
 
@@ -1425,6 +1568,7 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         ).order_by('-count')
 
         aseguradoras = consultas.values(
+            'contrato__master__aseguradora__id',
             'contrato__master__aseguradora__nombre'
         ).annotate(
             count=Count('id')
@@ -1437,11 +1581,28 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         esperas_data = esperas.values(
             'usuario__first_name',
             'usuario__last_name',
+            'usuario__id',
             'consultorio__localidad__nombre',
         ).annotate(
             count=Count('id'),
             quejas=Count('consulta_set__respuesta__queja__id')
         ).order_by('count')
+
+        context['periodo_string'] = urlencode(
+            {
+                'inicio': inicio.strftime('%d/%m/%Y %H:%M'),
+                'fin': fin.strftime('%d/%m/%Y %H:%M'),
+                'submit': 'Mostrar'
+            }
+        )
+
+        context['consulta_periodo_string'] = urlencode(
+            {
+                'consulta-inicio': inicio.strftime('%d/%m/%Y %H:%M'),
+                'consulta-fin': fin.strftime('%d/%m/%Y %H:%M'),
+                'submit': 'Mostrar'
+            }
+        )
 
         context['consultorios'] = consultorios
         context['ciudades'] = ciudades
@@ -1457,3 +1618,89 @@ class ClinicalData(TemplateView, LoginRequiredMixin):
         context['afecciones'] = afecciones
 
         return context
+
+
+class FrecuenciaView(PeriodoView):
+    """
+    Allows spreading :class:`Consulta by their weekday and hour
+    """
+    def get_data(self):
+        data = []
+        for n in range(1, 8):
+            consultas = self.get_consultas(n)
+
+            weekday = []
+            for m in range(24):
+                weekday.append(
+                    consultas.filter(created__hour=m).count()
+                )
+
+            data.append({'day': WEEKDAYS[n - 1], 'consultas': weekday})
+        return data
+
+    def get_consultas(self, n):
+        """
+        Filters the :class:`Consulta`s by  the creation date
+        """
+        pass
+
+
+class ConsultaFrecuenciaView(LoginRequiredMixin, TemplateView, FrecuenciaView):
+    """
+    Shows the frecuency of clinical visits during the days of the week of a
+    certain period.
+
+    It also clasifies those visits based on time of the day.
+    """
+    prefix = None
+    template_name = 'clinique/consulta_frecuencia.html'
+    redirect_on_invalid = 'consulta-index'
+
+    def get_context_data(self, **kwargs):
+        context = super(ConsultaFrecuenciaView, self).get_context_data(**kwargs)
+
+        data = self.get_data()
+
+        context['data'] = data
+
+        return context
+
+    def get_consultas(self, n):
+        """
+        Filters the :class:`Consulta`s by  the creation date
+        """
+        return Consulta.objects.atendidas(
+            self.inicio, self.fin
+        ).filter(created__week_day=n)
+
+
+class ConsultaFrecuenciaCiudadView(FrecuenciaView, DetailView):
+    """
+    Shows the frecuency of clinical visits during the days of the week of a
+    certain period and a certain :class:`Ciudad`
+    """
+    prefix = None
+    model = Ciudad
+    context_object_name = 'ciudad'
+    redirect_on_invalid = 'consulta-index'
+    template_name = 'clinique/consulta_frecuencia.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ConsultaFrecuenciaCiudadView, self).get_context_data(
+            **kwargs)
+
+        data = self.get_data()
+
+        context['data'] = data
+
+        return context
+
+    def get_consultas(self, n):
+        """
+        Filters the :class:`Consulta` by the :class:`Ciudad` it was made into
+        """
+        return Consulta.objects.atendidas(
+            self.inicio, self.fin
+        ).filter(created__week_day=n).filter(
+            consultorio__localidad__ciudad=self.object
+        )

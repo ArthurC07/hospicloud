@@ -20,7 +20,7 @@ from userena.forms import AuthenticationForm
 from users.mixins import LoginRequiredMixin
 
 
-class IndexView(TemplateView):
+class IndexView(LoginRequiredMixin, TemplateView):
     
     template_name = 'index.html'
 

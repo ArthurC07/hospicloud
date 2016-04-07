@@ -32,7 +32,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView, View
-from django.views.generic.base import ContextMixin
+from django.views.generic.base import ContextMixin, TemplateView
 from django.views.generic.edit import FormMixin
 from mail_templated.message import EmailMessage
 
@@ -431,6 +431,7 @@ class QuejaListView(LoginRequiredMixin, ListView):
     model = Queja
     queryset = Queja.objects.filter(resuelta=False).select_related(
         'respuesta',
+        'departamento',
         'respuesta__persona',
         'respuesta__consulta',
         'respuesta__consulta__poliza',
@@ -486,8 +487,48 @@ class QuejaFormMixin(QuejaMixin, FormMixin):
         return initial
 
 
+class QuejaPeriodoListView(LoginRequiredMixin, PeriodoView, ListView):
+    """
+    Shows a list of :class:`Queja` based on a date range
+    """
+    prefix = None
+    model = Queja
+    context_object_name = 'quejas'
+
+    def get_queryset(self):
+        """
+        Builds the queryset that will be used to look for the :class:`Queja`
+        """
+        query = Queja.objects.select_related(
+            'respuesta',
+            'departamento',
+            'respuesta__persona',
+            'respuesta__consulta',
+            'respuesta__consulta__poliza',
+            'respuesta__consulta__contrato',
+            'respuesta__consulta__persona',
+            'respuesta__consulta__poliza__aseguradora',
+            'respuesta__consulta__consultorio__usuario',
+        ).prefetch_related(
+            'solucion_set',
+            'respuesta__consulta__persona__beneficiarios',
+            'respuesta__consulta__persona__beneficiarios',
+            'respuesta__consulta__persona__beneficiarios__contrato',
+            'respuesta__consulta__persona__beneficiarios__contrato__persona',
+            'respuesta__consulta__consultorio__secretaria',
+            'respuesta__consulta__consultorio__usuario__profile',
+            'respuesta__consulta__consultorio__usuario__profile__ciudad',
+        ).filter(created__range=(self.inicio, self.fin))
+        print(query.query)
+
+        return query
+
+
 class SolucionCreateView(QuejaFormMixin, CurrentUserFormMixin, CreateView,
                          LoginRequiredMixin):
+    """
+    Allows creating :class:`Solucion` from the user interface
+    """
     model = Solucion
     form_class = SolucionForm
 
@@ -562,8 +603,8 @@ class SolucionAceptadaListView(SolucionListView):
     """
     Shows the :class:`Solucion`s that have been accepted but not yet notified
     """
-    def get_queryset(self):
 
+    def get_queryset(self):
         return self.queryset.filter(
             aceptada=True,
             notificada=False,
@@ -721,7 +762,7 @@ class ArchivoNotasProcesarView(LoginRequiredMixin, RedirectView):
         return archivonotas.get_absolute_url()
 
 
-class LoginPeriodoView(PeriodoView, LoginRequiredMixin):
+class LoginPeriodoView(LoginRequiredMixin, PeriodoView, TemplateView):
     prefix = 'login'
     redirect_on_invalid = 'scorecard-index'
     model = Login

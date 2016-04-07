@@ -27,8 +27,8 @@
                     {% trans 'Cambiar Consultorio' %}
                 </a>
                 <a class="btn btn-success"
-                   href="{% url 'consultorio-lectura-agregar' espera.persona.id %}">
-                    {% trans 'Agregar Lectura de Signos' %}
+                   href="{% url 'persona-historia-agregar' espera.persona.id %}">
+                    {% trans 'Agregar Historia Fisiológica' %}
                 </a>
                 {% if espera.consulta %}
                     <a class="btn btn-info"

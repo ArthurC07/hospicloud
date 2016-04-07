@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import TemplateView
 from django.views.generic.edit import FormMixin
 from hospinet.utils.forms import PeriodoForm
 
 
-class PeriodoView(FormMixin, TemplateView):
-    """Obtiene los :class:`Recibo` de un periodo determinado en base
-    a un formulario que las clases derivadas deben proporcionar como
-    self.form
+class PeriodoView(FormMixin):
+    """
+    Allows basic handling of a :class:`PeriodoForm` making its beginning and
+    end date available for later usage as the inicio and fin class members.
     """
     form_class = PeriodoForm
     prefix = 'periodo'
@@ -29,14 +29,16 @@ class PeriodoView(FormMixin, TemplateView):
         else:
             messages.info(
                 self.request,
-                _(u'Los Datos Ingresados en el formulario no son validos')
+                _('Los Datos Ingresados en el formulario no son validos')
             )
             return HttpResponseRedirect(reverse(self.redirect_on_invalid))
 
         return super(PeriodoView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        """Agrega el formulario de :class:`Recibo`"""
+        """
+        Adds the beginning and end date to the template context
+        """
 
         context = super(PeriodoView, self).get_context_data(**kwargs)
         context['inicio'] = self.inicio

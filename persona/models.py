@@ -192,6 +192,14 @@ class HistoriaFisica(TimeStampedModel):
     medida_de_peso = models.CharField(max_length=2, blank=True,
                                       choices=MEDIDA_PESO, default='Lb')
     altura = models.DecimalField(decimal_places=2, max_digits=5, null=True)
+
+    pulso = models.IntegerField(null=True)
+    temperatura = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    presion_sistolica = models.IntegerField(null=True)
+    presion_diastolica = models.IntegerField(null=True)
+    respiracion = models.IntegerField(null=True)
+
+    presion_arterial_media = models.CharField(max_length=200, blank=True)
     bmi = models.DecimalField(decimal_places=2, max_digits=11, null=True)
     bmr = models.DecimalField(decimal_places=2, max_digits=11, null=True)
 
@@ -201,7 +209,10 @@ class HistoriaFisica(TimeStampedModel):
         return reverse('persona-view-id', args=[self.persona.id])
 
     def get_weight(self):
-
+        """
+        Calculates body weight in Kg
+        :return: Body weight in Kilograms
+        """
         peso = 0
         if self.peso is not None:
             peso = self.peso
@@ -224,6 +235,15 @@ class HistoriaFisica(TimeStampedModel):
             return Decimal(655.1) + Decimal(9.56) * self.get_weight() + \
                    Decimal(1.85) * self.altura * 100 + \
                    Decimal(4.68) * self.persona.obtener_edad()
+
+    def save(self, **kwargs):
+        self.bmr = self.basal_energetic_expense()
+        self.bmi = self.body_mass_index()
+
+        self.presion_arterial_media = float(self.presion_diastolica) + (
+            float(1) / float(3) * float(self.presion_sistolica -
+                                        self.presion_diastolica))
+        super(HistoriaFisica, self).save(**kwargs)
 
 
 class EstiloVida(TimeStampedModel):

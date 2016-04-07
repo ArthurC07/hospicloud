@@ -92,7 +92,31 @@ urlpatterns = [
         views.ConsultaPeriodoView.as_view(),
         name='consulta-periodo'),
 
-    url(r'^consulta/aseguradora/periodo$',
+    url(r'^consulta/frecuencia$',
+        views.ConsultaFrecuenciaView.as_view(),
+        name='consulta-frecuencia'),
+
+    url(r'^consulta/frecuencia/ciudad/(?P<pk>\d+)$',
+        views.ConsultaFrecuenciaCiudadView.as_view(),
+        name='consulta-frecuencia-ciudad'),
+
+    url(r'^aseguradora/(?P<pk>\d+)$',
+        views.ConsultaAseguradoraPeriodoView.as_view(),
+        name='consulta-aseguradora'),
+
+    url(r'^enfermera/(?P<pk>\d+)$',
+        views.ConsultaEnfermeraPeriodoView.as_view(),
+        name='consulta-enfermera'),
+
+    url(r'^medico/(?P<pk>\d+)$',
+        views.ConsultaMedicoPeriodoView.as_view(),
+        name='consulta-medico'),
+
+    url(r'^ciudad/(?P<pk>\d+)$',
+        views.ConsultaCiudadPeriodoView.as_view(),
+        name='consulta-ciudad'),
+
+    url(r'^aseguradora/periodo$',
         views.ConsultaAseguradoraPeriodoListView.as_view(),
         name='consulta-aseguradora-periodo'),
 
