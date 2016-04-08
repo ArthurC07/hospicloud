@@ -223,6 +223,8 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
                 'pago': pago
             })
 
+        context['cantidad'] = pagos.count()
+
         return context
 
 
