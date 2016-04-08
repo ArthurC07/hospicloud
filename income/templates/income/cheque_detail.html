@@ -19,8 +19,9 @@
     <div class="row">
         <div class="col-md-12 col-xs-12 main-header">
             <a class="btn btn-info" href="{% url 'deposito-create' %}">
-                {% trans 'Depositar' %} {% trans 'Pendientes' %} {{ cantidad }}
+                {% trans 'Depositar' %} {% trans 'Pendientes' %}
             </a>
+            {{ cantidad }}
         </div>
     </div>
     <div class="row">
