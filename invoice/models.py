@@ -254,7 +254,7 @@ class Recibo(TimeStampedModel):
 
     def pagado(self):
 
-        return self.pagos.filter(recibo=self).aggregate(
+        return self.pagos.aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
 
