@@ -64,6 +64,8 @@
                                             <dd>{{ pago.pago.recibo.created }}</dd>
                                             <dt>{% trans 'Aseguradora' %}</dt>
                                             <dd>{{ pago.pago.aseguradora }}</dd>
+                                            <dt>{% trans 'Por Conciliar' %}</dt>
+                                            <dl>{{ pago.pago.obtener_consolidacion_faltante }}</dl>
                                         </dl>
                                     </td>
                                     <td>{% crispy pago.form %}</td>
