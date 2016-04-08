@@ -488,9 +488,11 @@ class Pago(TimeStampedModel):
         :return: Amount missing from payment
         """
         if not self.tipo.reportable:
-            return self.monto - self.detallepago_set.aggregate(
+            total = self.detallepago_set.aggregate(
                 total=Coalesce(Sum('monto'), Decimal())
             )['total']
+
+            return self.monto - total
 
         return Decimal()
 
