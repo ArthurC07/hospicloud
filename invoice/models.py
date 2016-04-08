@@ -429,9 +429,8 @@ class PagoQuerySet(models.QuerySet):
         represent a partial payment of the :class:`Invoice`
         """
         return self.filter(
-            status__reportable=True,
             completado=False,
-            tipo__reembolso=True,
+            tipo__reportable=True,
         )
 
     def mensual(self):
