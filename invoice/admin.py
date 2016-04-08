@@ -60,7 +60,7 @@ class PagoAdmin(admin.ModelAdmin):
     exclude = ('recibo', )
 
     def get_recibo_number(self, instance):
-        return instance.recibo.numero()
+        return instance.recibo.numero
 
     def get_recibo_cajero(self, instance):
 
