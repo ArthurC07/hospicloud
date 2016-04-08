@@ -60,17 +60,7 @@ class PagoAdmin(admin.ModelAdmin):
     exclude = ('recibo', )
 
     def get_recibo_number(self, instance):
-        ciudad = instance.recibo.ciudad
-        if ciudad is None:
-            if instance.recibo.cajero is None or \
-                            instance.recibo.cajero.profile is None or \
-                            instance.recibo.cajero.profile.ciudad is None:
-                return instance.recibo.correlativo
-
-            ciudad = instance.recibo.cajero.profile.ciudad
-
-        return '{0}-{1:08d}'.format(instance.recibo.legal_data.correlativo,
-                                     instance.recibo.correlativo)
+        return instance.recibo.numero()
 
     def get_recibo_cajero(self, instance):
 
