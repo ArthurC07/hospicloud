@@ -486,14 +486,11 @@ class Pago(TimeStampedModel):
         """
         :return: Amount missing from payment
         """
-        if not self.tipo.reportable:
-            total = self.detallepago_set.aggregate(
-                total=Coalesce(Sum('monto'), Decimal())
-            )['total']
+        total = self.detallepago_set.aggregate(
+            total=Coalesce(Sum('monto'), Decimal())
+        )['total']
 
-            return self.monto - total
-
-        return Decimal()
+        return self.monto - total
 
     def save(self, *args, **kwargs):
         if self.tipo.reembolso and self.pk is None:
