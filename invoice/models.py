@@ -483,6 +483,17 @@ class Pago(TimeStampedModel):
 
         return self.recibo.get_absolute_url()
 
+    def obtener_consolidacion_faltante(self):
+        """
+        :return: Amount missing from payment
+        """
+        if not self.tipo.reportable:
+            return self.monto - self.detallepago_set.aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+            )['total']
+
+        return Decimal()
+
     def save(self, *args, **kwargs):
         if self.tipo.reembolso and self.pk is None:
             self.status = StatusPago.objects.filter(pending=True).first()

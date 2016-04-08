@@ -169,6 +169,10 @@
                         <th>{% trans 'Monto Debido' %}</th>
                         <th>{{ recibo.debido }}</th>
                     </tr>
+                    <tr>
+                        <th>{% trans 'Monto No Consolidado' %}</th>
+                        <th>{{ pago.obtener_consolidacion_faltante }}</th>
+                    </tr>
                     </tfoot>
                 </table>
             </div>
