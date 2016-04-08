@@ -69,7 +69,7 @@ class PagoAdmin(admin.ModelAdmin):
 
             ciudad = instance.recibo.cajero.profile.ciudad
 
-        return '{0}-{1:08d}'.format(ciudad.prefijo_recibo,
+        return '{0}-{1:08d}'.format(instance.recibo.legal_data.correlativo,
                                      instance.recibo.correlativo)
 
     def get_recibo_cajero(self, instance):
