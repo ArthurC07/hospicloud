@@ -44,7 +44,7 @@ class TurnoCajaAdmin(admin.ModelAdmin):
 
 class TipoPagoAdmin(admin.ModelAdmin):
     list_display = (
-    'nombre', 'color', 'reembolso', 'reportable', 'mensual' 'orden')
+    'nombre', 'color', 'reembolso', 'reportable', 'mensual', 'orden')
     ordering = ['nombre', 'color', 'reembolso']
 
 
