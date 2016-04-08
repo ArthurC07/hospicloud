@@ -206,8 +206,10 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
         context['pagos'] = []
         pagos = Pago.objects.select_related(
             'recibo',
+            'aseguradora',
             'recibo__cliente',
             'recibo__ciudad',
+            'recibo__legal_data',
         ).filter(
             tipo__reportable=True,
             completado=False)
