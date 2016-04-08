@@ -209,7 +209,7 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
             'recibo__cliente',
             'recibo__ciudad',
         ).filter(
-            status__reportable=True,
+            tipo__reportable=True,
             completado=False)
         for pago in pagos:
             form = DetallePagoForm(initial={
