@@ -60,6 +60,9 @@ class IndexView(TemplateView, InventarioPermissionMixin):
         context['productoform'] = ItemTemplateSearchForm()
         context['productoform'].helper.form_tag = False
 
+        context['pendientes'] = Cotizacion.objects.pendientes()
+        context['autorizadas'] = Cotizacion.objects.autorizadas()
+
         return context
 
 
