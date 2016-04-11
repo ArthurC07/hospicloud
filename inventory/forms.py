@@ -236,7 +236,7 @@ class CompraForm(ProveedorFormMixin):
 class CotizacionForm(ProveedorFormMixin):
     class Meta:
         model = Cotizacion
-        exclude = ('cotizacion', )
+        exclude = ('autorizada', 'denegada', 'comprada')
 
     vencimiento = forms.DateField(widget=FutureDateWidget())
 
