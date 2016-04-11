@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="main-content col-md-12">
                 <section class="page-header">
-                    <h1>Inventario</h1>
+                    <h1>{% trans 'Inventario' %}</h1>
                 </section>
             </div>
         </div>
@@ -28,11 +28,12 @@
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
-                        <li><a href="{% url 'itemtemplate-create' %}">Agregar Producto</a></li>
-                        <li><a href="{% url 'inventario-create' %}">Agregar Almacen de Inventario</a></li>
-                        <li><a href="{% url 'cotizacion-create' %}">Agregar Cotizaci&oacute;n</a></li>
-                        <li><a href="{% url 'itemtemplate-list' %}">Mostrar Lista de Productos</a></li>
+                        <li><a href="{% url 'itemtemplate-create' %}">{% trans 'Agregar Producto' %}</a></li>
+                        <li><a href="{% url 'inventario-create' %}">{% trans 'Agregar Almacen de Inventario' %}</a></li>
+                        <li><a href="{% url 'cotizacion-create' %}">{% trans 'Agregar Cotizaci&oacute;n' %}</a></li>
+                        <li><a href="{% url 'itemtemplate-list' %}">{% trans 'Mostrar Lista de Productos' %}</a></li>
                         <li><a href="{% url 'itemtype-list' %}">{% trans 'Tipos de Producto' %}</a></li>
+                        <li><a href="{% url 'cotizacion-list' %}">{% trans 'Cotizaciones' %}</a></li>
                     </ul>
                 </nav>
                 <form action="{% url 'itemtemplate-search' %}">

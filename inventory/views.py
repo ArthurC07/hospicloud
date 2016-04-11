@@ -544,6 +544,8 @@ class CotizacionListView(LoginRequiredMixin, ListView):
     """
     Displays a list of :class:`
     """
+    model = Cotizacion
+    paginate_by = 10
 
 
 class CotizacionFormMixin(CotizacionMixin, FormMixin):

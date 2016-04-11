@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import unicode_literals
 from django.conf.urls import url
 
 from inventory import views
@@ -152,6 +152,10 @@ urlpatterns = [
     url(r'^cotizacion/agregar$',
         views.CotizacionCreateView.as_view(),
         name='cotizacion-create'),
+
+    url(r'^cotizacion$',
+        views.CotizacionListView.as_view(),
+        name='cotizacion-list'),
 
     url(r'^cotizacion/(?P<pk>\d+)$',
         views.CotizacionDetailView.as_view(),
