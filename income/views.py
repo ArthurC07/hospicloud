@@ -204,14 +204,13 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
         context = super(ChequeCobroDetailView, self).get_context_data(**kwargs)
 
         context['pagos'] = []
-        pagos = Pago.objects.select_related(
+        pagos = Pago.objects.cuentas_por_cobrar().select_related(
             'recibo',
+            'aseguradora',
             'recibo__cliente',
             'recibo__ciudad',
-        ).filter(
-            status__reportable=True,
-            completado=False,
-            tipo__reembolso=True)
+            'recibo__legal_data',
+        )
         for pago in pagos:
             form = DetallePagoForm(initial={
                 'pago': pago,
@@ -223,6 +222,8 @@ class ChequeCobroDetailView(LoginRequiredMixin, DetailView):
                 'form': form,
                 'pago': pago
             })
+
+        context['cantidad'] = pagos.count()
 
         return context
 

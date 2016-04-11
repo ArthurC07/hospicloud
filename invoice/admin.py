@@ -26,7 +26,7 @@ class ReciboAdmin(admin.ModelAdmin):
     list_display = ('cliente', 'numero', 'cajero', 'created', 'cerrado', 'nulo')
     ordering = ['cliente', 'cajero', 'created', 'cerrado', 'nulo']
     search_fields = ['cliente__nombre', 'correlativo']
-    exclude = ('cliente', )
+    exclude = ('cliente',)
 
 
 class CierreturnoAdmin(admin.ModelAdmin):
@@ -43,7 +43,8 @@ class TurnoCajaAdmin(admin.ModelAdmin):
 
 
 class TipoPagoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'color', 'reembolso')
+    list_display = (
+    'nombre', 'color', 'reembolso', 'reportable', 'mensual', 'orden')
     ordering = ['nombre', 'color', 'reembolso']
 
 
@@ -55,29 +56,17 @@ class PagoAdmin(admin.ModelAdmin):
     search_fields = ['recibo__cajero__first_name',
                      'recibo__cajero__last_name',
                      'recibo__cliente__nombre',
-                    'recibo__cliente__apellido',
+                     'recibo__cliente__apellido',
                      'tipo__nombre', 'monto', 'recibo__correlativo']
-    exclude = ('recibo', )
+    exclude = ('recibo',)
 
     def get_recibo_number(self, instance):
-        ciudad = instance.recibo.ciudad
-        if ciudad is None:
-            if instance.recibo.cajero is None or \
-                            instance.recibo.cajero.profile is None or \
-                            instance.recibo.cajero.profile.ciudad is None:
-                return instance.recibo.correlativo
-
-            ciudad = instance.recibo.cajero.profile.ciudad
-
-        return '{0}-{1:08d}'.format(ciudad.prefijo_recibo,
-                                     instance.recibo.correlativo)
+        return instance.recibo.numero
 
     def get_recibo_cajero(self, instance):
-
         return instance.recibo.cajero
 
     def get_queryset(self, request):
-
         return super(PagoAdmin, self).get_queryset(request).select_related(
             'recibo',
             'recibo__cliente',
@@ -114,7 +103,7 @@ class CotizacionAdmin(admin.ModelAdmin):
     list_display = ('persona', 'usuario', 'created', 'facturada')
     ordering = ['persona', 'usuario', 'created', 'facturada']
     search_fields = ['persona__nombre', 'persona__apellido']
-    exclude = ('persona', )
+    exclude = ('persona',)
 
 
 class ComprobanteAdmin(admin.ModelAdmin):
@@ -144,10 +133,9 @@ class ConceptoDeduccionAdmin(admin.ModelAdmin):
         'comprobante__persona__nombre',
         'comprobante__persona__apellido',
     ]
-    exclude = ('comprobante', )
+    exclude = ('comprobante',)
 
     def get_correlativo(self, instance):
-
         return instance.comprobante.correlativo
 
 

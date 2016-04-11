@@ -136,6 +136,7 @@
                         <th>{% trans 'M&eacute;todo' %}</th>
                         <th>{% trans 'Monto' %}</th>
                         <th>{% trans 'Comprobante' %}</th>
+                        <th>{% trans 'Monto No Consolidado' %}:</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -150,13 +151,17 @@
                                 {% endif %}
                                 {{ pago.tipo }}
                                 {% for detalle in pago.detallepago_set.all %}
-                                    <a class="btn btn-info" href="{{ detalle.get_absolute_url }}">
+                                    <a class="btn btn-info"
+                                       href="{{ detalle.get_absolute_url }}">
                                         {{ detalle.monto }} {% trans 'Pagado' %}
                                     </a>
                                 {% endfor %}
                             </td>
                             <td>{{ pago.monto }}</td>
                             <td>{{ pago.comprobante }}</td>
+                            <td>
+                                {{ pago.obtener_consolidacion_faltante }}
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -173,9 +178,9 @@
                 </table>
             </div>
             {% if not recibo.cerrado %}
-            <div class="col-md-6">
-                {% crispy reembolso_form %}
-            </div>
+                <div class="col-md-6">
+                    {% crispy reembolso_form %}
+                </div>
             {% endif %}
         </div>
     </div>

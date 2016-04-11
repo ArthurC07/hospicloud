@@ -21,6 +21,7 @@ from decimal import Decimal
 
 import unicodecsv
 from django.conf import settings
+from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.files.storage import default_storage as storage
 from django.core.urlresolvers import reverse
@@ -373,16 +374,24 @@ class MasterContract(TimeStampedModel):
             ultimo_certificado = self.contratos.aggregate(
                 Max('certificado')
             )['certificado__max']
-            if self.ultimo_certificado >= ultimo_certificado:
-                self.ultimo_certificado = F('ultimo_certificado') + 1
-            else:
-                self.ultimo_certificado = ultimo_certificado + 1
+            try:
+                if self.ultimo_certificado >= ultimo_certificado:
+                    self.ultimo_certificado = F('ultimo_certificado') + 1
+                else:
+                    self.ultimo_certificado = ultimo_certificado + 1
 
-            self.save()
-            self.refresh_from_db()
+                self.save()
+                self.refresh_from_db()
 
-            certificado = self.ultimo_certificado
-            numero = self.ultimo_certificado
+                certificado = self.ultimo_certificado
+                numero = self.ultimo_certificado
+
+            except TypeError as error:
+                print(error)
+                print(_('Fallo al generar certificado a {0}, {1}'.format(
+                    self.id, ultimo_certificado)))
+                numero = 0
+                certificado = 0
 
         contract = Contrato(persona=persona, poliza=self.poliza, plan=self.plan,
                             inicio=timezone.now(), vencimiento=vencimiento,
