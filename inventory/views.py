@@ -202,8 +202,12 @@ class RequisicionDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
 
 
 class RequisicionListView(LoginRequiredMixin, ListView):
+    """
+    Displays a list of :class:`Requisicion`s
+    """
     model = Requisicion
-    context_object_name = 'requisiciones'
+    paginate_by = 10
+    ordering = ['-created', ]
 
 
 class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin):
