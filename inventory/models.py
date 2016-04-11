@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,25 +16,26 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-import calendar
-from datetime import date, time, datetime
 from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
+
+from hospinet.utils import get_current_month_range
 
 
 @python_2_unicode_compatible
 class Inventario(models.Model):
     class Meta:
         permissions = (
-            ('inventario', 'Permite al usuario gestionar inventario'),
+            ('inventario', _('Permite al usuario gestionar inventario')),
         )
 
     lugar = models.CharField(max_length=255, default='Bodega')
@@ -81,7 +82,8 @@ class Inventario(models.Model):
 class ItemType(TimeStampedModel):
     nombre = models.CharField(max_length=255)
     consulta = models.BooleanField(default=True,
-                                   verbose_name='Aparece en Cargos de Consulta')
+                                   verbose_name=_(
+                                       'Aparece en Cargos de Consulta'))
 
     def __str__(self):
         return self.nombre
@@ -134,7 +136,7 @@ class Proveedor(models.Model):
     class Meta:
         ordering = ('name', 'rtn')
 
-    name = models.CharField(verbose_name=_(u"Nombre Completo de la Empresa"),
+    name = models.CharField(verbose_name=_("Nombre Completo de la Empresa"),
                             max_length=255)
     rtn = models.CharField(max_length=255, blank=True)
     direccion = models.CharField(max_length=255, blank=True)
@@ -183,28 +185,13 @@ class Item(TimeStampedModel):
         self.save()
 
     def movimiento(self, inicio, fin):
-        total = Transaccion.objects.filter(
+        return Transaccion.objects.filter(
             created__range=(inicio, fin),
             item=self
-        ).aggregate(total=Sum('cantidad'))['total']
-
-        if total:
-            return total
-
-        return 0
+        ).aggregate(total=Coalesce(Sum('cantidad'), Decimal()))['total']
 
     def movimiento_mes(self):
-        now = timezone.now()
-        fin = date(now.year, now.month,
-                   calendar.monthrange(now.year, now.month)[1])
-        inicio = date(now.year, now.month, 1)
-
-        fin = datetime.combine(fin, time.max)
-        inicio = datetime.combine(inicio, time.min)
-
-        fin = timezone.make_aware(fin, timezone.get_current_timezone())
-        inicio = timezone.make_aware(inicio,
-                                     timezone.get_current_timezone())
+        fin, inicio = get_current_month_range()
 
         return self.movimiento(inicio, fin)
 
@@ -215,7 +202,7 @@ class Item(TimeStampedModel):
 
     def __str__(self):
         return '{0} en {1}'.format(self.plantilla.descripcion,
-                                    self.inventario.lugar)
+                                   self.inventario.lugar)
 
 
 @python_2_unicode_compatible
@@ -234,7 +221,7 @@ class Requisicion(TimeStampedModel):
 
     def __str__(self):
         return _('Requisición Número {1} de {0}').format(self.inventario.lugar,
-                                                       self.id)
+                                                         self.id)
 
     def buscar_item(self, item_template):
         item = self.items.filter(item=item_template).first()
@@ -324,7 +311,7 @@ class Transferido(TimeStampedModel):
 
     def __str__(self):
         return _('Transferir {1} {0}').format(self.item.descripcion,
-                                            self.cantidad)
+                                              self.cantidad)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -393,7 +380,7 @@ class Historial(TimeStampedModel):
 
     def __str__(self):
         return _('{0} el {1}').format(self.inventario.lugar,
-                                    self.fecha.strftime('%d/%m/Y'))
+                                      self.fecha.strftime('%d/%m/Y'))
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -409,9 +396,9 @@ class ItemHistorial(TimeStampedModel):
 
     def __str__(self):
         return _('{0} {1} el {2}').format(self.item.descripcion,
-                                        self.historial.inventario.lugar,
-                                        self.historial.created.strftime(
-                                            '%d/%m/Y'))
+                                          self.historial.inventario.lugar,
+                                          self.historial.created.strftime(
+                                              '%d/%m/Y'))
 
 
 class Transaccion(TimeStampedModel):
