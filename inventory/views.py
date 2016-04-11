@@ -555,6 +555,20 @@ class CotizacionListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
 
+class CotizacionUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows the user update :class:`Cotizacion` objects
+    """
+    model = Cotizacion
+    form_class = CotizacionForm
+
+
+class CotizacionAprobarUpdateView(CotizacionUpdateView):
+    """
+    Allows the user to mark a :class:`Cotizacion` as 
+    """
+
+
 class CotizacionFormMixin(CotizacionMixin, FormMixin):
     """Permite inicializar el :class:`Proveedor` que se utilizará en un
     formulario"""

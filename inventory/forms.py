@@ -126,8 +126,9 @@ class ItemRequisicionForm(ItemTemplateFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemRequisicionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Formulario de Requisición de Producto'),
-                                      *self.field_names)
+        self.helper.layout = Fieldset(
+            _('Formulario de Requisición de Producto'),
+            *self.field_names)
 
 
 class TransferenciaForm(HiddenUserForm):
@@ -229,7 +230,7 @@ class CompraForm(ProveedorFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Compra',
+        self.helper.layout = Fieldset(_('Formulario de Compra'),
                                       *self.field_names)
 
 
@@ -242,7 +243,7 @@ class CotizacionForm(ProveedorFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(CotizacionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Cotizacion',
+        self.helper.layout = Fieldset(_('Formulario de Cotizacion'),
                                       *self.field_names)
 
 
@@ -252,10 +253,79 @@ class CotizacionFormMixin(FieldSetModelFormMixin):
         widget=forms.HiddenInput())
 
 
-class CotizacionautorizarForm(forms.ModelForm):
+class CotizacionAutorizarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as authorized
+    """
+
     class Meta:
         model = Cotizacion
-        fields = ('autorizada', )
+        fields = ('autorizada',)
+
+        autorizada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'autorizada': True}
+        else:
+            kwargs['initial']['autorizada'] = True
+        super(CotizacionAutorizarForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Autorizar Compra'),
+                css_class='btn-success btn-block'
+            ))
+
+
+class CotizacionDenegarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as denied
+    """
+
+    class Meta:
+        model = Cotizacion
+        fields = ('denegada',)
+
+        autorizada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'denegada': True}
+        else:
+            kwargs['initial']['denegada'] = True
+        super(CotizacionDenegarForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Denegar Cotización'),
+                css_class='btn-success btn-block'
+            ))
+
+
+class CotizacionComprarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as denied
+    """
+
+    class Meta:
+        model = Cotizacion
+        fields = ('denegada',)
+
+        autorizada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'comprada': True}
+        else:
+            kwargs['initial']['comprada'] = True
+        super(CotizacionComprarForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Efectuar compra'),
+                css_class='btn-success btn-block'
+            ))
 
 
 class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
@@ -265,5 +335,5 @@ class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemCotizadoform, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Item Cotizado',
+        self.helper.layout = Fieldset(_('Formulario de Item Cotizado'),
                                       *self.field_names)
