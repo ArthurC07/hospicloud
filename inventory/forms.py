@@ -252,6 +252,12 @@ class CotizacionFormMixin(FieldSetModelFormMixin):
         widget=forms.HiddenInput())
 
 
+class CotizacionautorizarForm(forms.ModelForm):
+    class Meta:
+        model = Cotizacion
+        fields = ('autorizada', )
+
+
 class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
     class Meta:
         model = ItemCotizado

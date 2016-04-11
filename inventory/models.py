@@ -21,7 +21,7 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, QuerySet
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -408,10 +408,41 @@ class Transaccion(TimeStampedModel):
     user = models.ForeignKey(User, blank=True, null=True)
 
 
+class CotizacionQuerySet(QuerySet):
+    """
+    Contains shortcuts for querying :class:`Cotizacion`
+    """
+    def pendientes(self):
+        """
+        Filters the :class:`Cotizacion` only handling those pending
+        """
+        return self.filter(
+            comprada=False,
+            denegada=False,
+            autorizada=False,
+        )
+
+    def autorizadas(self):
+        return self.filter(
+            comprada=False,
+            autorizada=True,
+        )
+
+    def compradas(self):
+        return self.filter(
+            comprada=True,
+        )
+
+
 @python_2_unicode_compatible
 class Cotizacion(TimeStampedModel):
     proveedor = models.ForeignKey(Proveedor)
     vencimiento = models.DateTimeField(auto_now_add=True)
+    autorizada = models.BooleanField(default=False)
+    denegada = models.BooleanField(default=False)
+    comprada = models.BooleanField(default=False)
+
+    objects = CotizacionQuerySet.as_manager()
 
     def __str__(self):
         return _('Cotización de {0}').format(self.proveedor)
