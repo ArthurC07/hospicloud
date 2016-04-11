@@ -81,6 +81,7 @@ class Consultorio(TimeStampedModel):
     class Meta:
         permissions = (
             ('consultorio', 'Permite al usuario gestionar consultorios'),
+            ('clinical_read', _('Permite que el usuario tenga acceso a los consultorios'))
         )
         ordering = ["nombre", ]
 
