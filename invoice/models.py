@@ -294,7 +294,7 @@ class Recibo(TimeStampedModel):
         """
         if self.ciudad is None:
             self.ciudad = self.cajero.profile.ciudad
-            self.legal_data = self.ciudad.recibo
+        self.legal_data = self.ciudad.recibo
 
     def asignar_correlativo(self):
         """
