@@ -316,7 +316,7 @@ class CotizacionComprarForm(forms.ModelForm):
 
     class Meta:
         model = Cotizacion
-        fields = ('denegada',)
+        fields = ('comprada',)
 
     comprada = forms.BooleanField(widget=forms.HiddenInput())
 
