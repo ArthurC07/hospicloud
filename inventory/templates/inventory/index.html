@@ -55,13 +55,19 @@
                         <tbody>
                         {% for cotizacion in pendientes %}
                             <tr>
-                                <td>{{ cotizacion.created }}</td>
+                                <td>
+                                    <a href="{{ cotizacion.get_absolute_url }}">
+                                        {{ cotizacion.created }}
+                                    </a>
+                                </td>
                                 <td>{{ cotizacion.proveedor }}</td>
                                 <td>
-                                    <form action="{% url 'cotizacion-denegar' cotizacion.id %}">
+                                    <form action="{% url 'cotizacion-denegar' cotizacion.id %}"
+                                          method="post">
                                         {% crispy denegar %}
                                     </form>
-                                    <form action="{% url 'cotizacion-autorizar' cotizacion.id %}">
+                                    <form action="{% url 'cotizacion-autorizar' cotizacion.id %}"
+                                          method="post">
                                         {% crispy autorizar %}
                                     </form>
                                 </td>
@@ -81,10 +87,15 @@
                         <tbody>
                         {% for cotizacion in autorizadas %}
                             <tr>
-                                <td>{{ cotizacion.created }}</td>
+                                <td>
+                                    <a href="{{ cotizacion.get_absolute_url }}">
+                                        {{ cotizacion.created }}
+                                    </a>
+                                </td>
                                 <td>{{ cotizacion.proveedor }}</td>
                                 <td>
-                                    <form action="{% url 'cotizacion-comprar' cotizacion.id %}">
+                                    <form action="{% url 'cotizacion-comprar' cotizacion.id %}"
+                                          method="post">
                                         {% crispy comprar %}
                                     </form>
                                 </td>

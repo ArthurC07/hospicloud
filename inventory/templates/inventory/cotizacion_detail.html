@@ -42,9 +42,11 @@
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                     <li>
+                        {% if not cotizacion.denegada and not cotizacion.comprada and not cotizacion.autorizada %}
                         <a href="{% url 'itemcotizado-create' cotizacion.id %}">
                             {% trans 'Agregar Producto' %}
                         </a>
+                        {% endif %}
                     </li>
                 </ul>
             </nav>
