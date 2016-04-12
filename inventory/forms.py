@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -262,7 +262,7 @@ class CotizacionAutorizarForm(forms.ModelForm):
         model = Cotizacion
         fields = ('autorizada',)
 
-        autorizada = forms.BooleanField(widget=forms.HiddenInput())
+    autorizada = forms.BooleanField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         if 'initial' not in kwargs:
@@ -270,6 +270,9 @@ class CotizacionAutorizarForm(forms.ModelForm):
         else:
             kwargs['initial']['autorizada'] = True
         super(CotizacionAutorizarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
         self.helper.add_input(
             Submit(
                 'submit',
@@ -287,7 +290,7 @@ class CotizacionDenegarForm(forms.ModelForm):
         model = Cotizacion
         fields = ('denegada',)
 
-        autorizada = forms.BooleanField(widget=forms.HiddenInput())
+    denegada = forms.BooleanField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         if 'initial' not in kwargs:
@@ -295,11 +298,14 @@ class CotizacionDenegarForm(forms.ModelForm):
         else:
             kwargs['initial']['denegada'] = True
         super(CotizacionDenegarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
         self.helper.add_input(
             Submit(
                 'submit',
                 _('Denegar Cotización'),
-                css_class='btn-success btn-block'
+                css_class='btn-danger btn-block'
             ))
 
 
@@ -312,7 +318,7 @@ class CotizacionComprarForm(forms.ModelForm):
         model = Cotizacion
         fields = ('denegada',)
 
-        autorizada = forms.BooleanField(widget=forms.HiddenInput())
+    comprada = forms.BooleanField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         if 'initial' not in kwargs:
@@ -320,6 +326,9 @@ class CotizacionComprarForm(forms.ModelForm):
         else:
             kwargs['initial']['comprada'] = True
         super(CotizacionComprarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
         self.helper.add_input(
             Submit(
                 'submit',

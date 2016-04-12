@@ -34,7 +34,8 @@ from inventory.forms import InventarioForm, ItemTemplateForm, ItemTypeForm, \
     HistorialForm, ItemForm, RequisicionForm, ItemRequisicionForm, \
     TransferenciaForm, TransferidoForm, CompraForm, TransferirForm, \
     ItemTemplateSearchForm, RequisicionCompletarForm, ItemCompradoForm, \
-    ProveedorForm, CotizacionForm, ItemCotizadoform
+    ProveedorForm, CotizacionForm, ItemCotizadoform, CotizacionAutorizarForm, \
+    CotizacionDenegarForm, CotizacionComprarForm
 from inventory.models import Inventario, Item, ItemTemplate, Transferencia, \
     Historial, ItemComprado, Transferido, Compra, ItemType, Requisicion, \
     ItemRequisicion, ItemHistorial, Proveedor, Cotizacion, ItemCotizado
@@ -60,8 +61,25 @@ class IndexView(TemplateView, InventarioPermissionMixin):
         context['productoform'] = ItemTemplateSearchForm()
         context['productoform'].helper.form_tag = False
 
-        context['pendientes'] = Cotizacion.objects.pendientes()
-        context['autorizadas'] = Cotizacion.objects.autorizadas()
+        context['pendientes'] = Cotizacion.objects.pendientes().select_related(
+            'proveedor'
+        )
+        context[
+            'autorizadas'] = Cotizacion.objects.autorizadas().select_related(
+            'proveedor'
+        )
+
+        denegar_form = CotizacionDenegarForm()
+        context['denegar'] = denegar_form
+        denegar_form.helper.form_tag = False
+
+        autorizar_form = CotizacionAutorizarForm()
+        context['autorizar'] = autorizar_form
+        autorizar_form.helper.form_tag = False
+
+        comprar_form = CotizacionComprarForm()
+        context['comprar'] = comprar_form
+        comprar_form.helper.form_tag = False
 
         return context
 
@@ -563,15 +581,32 @@ class CotizacionUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CotizacionForm
 
 
-class CotizacionAprobarUpdateView(CotizacionUpdateView):
+class CotizacionAutorizarUpdateView(CotizacionUpdateView):
     """
-    Allows the user to mark a :class:`Cotizacion` as 
+    Allows the user to mark a :class:`Cotizacion` as authorized
     """
+    form_class = CotizacionAutorizarForm
+
+
+class CotizacionDenegarUpdateView(CotizacionUpdateView):
+    """
+        Allows the user to mark a :class:`Cotizacion` as denied
+        """
+    form_class = CotizacionDenegarForm
+
+
+class CotizacionComprarUpdateView(CotizacionUpdateView):
+    """
+        Allows the user to mark a :class:`Cotizacion` as denied
+        """
+    form_class = CotizacionComprarForm
 
 
 class CotizacionFormMixin(CotizacionMixin, FormMixin):
-    """Permite inicializar el :class:`Proveedor` que se utilizará en un
-    formulario"""
+    """
+    Permite inicializar el :class:`Proveedor` que se utilizará en un
+    formulario
+    """
 
     def get_initial(self):
         initial = super(CotizacionFormMixin, self).get_initial()
