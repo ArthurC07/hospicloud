@@ -11,4 +11,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         recibos = Recibo.objects.filter(legal_data__isnull=True)
 
-        [r.asignar_ciudad() for r in recibos]
+        for recibo in recibos:
+            recibo.legal_data = recibo.ciudad.recibo
+            recibo.save()
