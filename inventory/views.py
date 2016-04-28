@@ -397,7 +397,10 @@ class ProveedorFormMixin(FormMixin, ProveedorMixin):
         return initial
 
 
-class CompraCreateView(LoginRequiredMixin, InventarioFormMixin):
+class CompraCreateView(LoginRequiredMixin, InventarioFormMixin, CreateView):
+    """
+    Creates a :class:`Compra`
+    """
     model = Compra
     form_class = CompraForm
 
@@ -600,6 +603,26 @@ class CotizacionComprarUpdateView(CotizacionUpdateView):
         Allows the user to mark a :class:`Cotizacion` as denied
         """
     form_class = CotizacionComprarForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        compra = Compra()
+        compra.cotizacion = self.object
+        compra.inventario = self.object.inventario
+        compra.proveedor = self.object.proveedor
+
+        compra.save()
+
+        for item in self.object.itemcotizado_set.all():
+            item_comprado = ItemComprado(
+                compra=compra,
+                item=item.item,
+                precio=item.precio,
+            )
+            item.save()
+            
+        return HttpResponseRedirect(compra.get_absolute_url())
 
 
 class CotizacionFormMixin(CotizacionMixin, FormMixin):

@@ -346,6 +346,7 @@ class ItemComprado(TimeStampedModel):
                              null=True)
     ingresado = models.BooleanField(default=False)
     cantidad = models.IntegerField(default=0)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -441,6 +442,7 @@ class Cotizacion(TimeStampedModel):
     autorizada = models.BooleanField(default=False)
     denegada = models.BooleanField(default=False)
     comprada = models.BooleanField(default=False)
+    inventario = models.ForeignKey(Inventario, blank=True, null=True)
 
     objects = CotizacionQuerySet.as_manager()
 
