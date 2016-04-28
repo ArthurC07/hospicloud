@@ -619,9 +619,10 @@ class CotizacionComprarUpdateView(CotizacionUpdateView):
                 compra=compra,
                 item=item.item,
                 precio=item.precio,
+                cantidad=item.cantidad,
             )
             item.save()
-            
+
         return HttpResponseRedirect(compra.get_absolute_url())
 
 
