@@ -492,11 +492,11 @@ class Pago(TimeStampedModel):
 
         return self.monto - total
 
-    def save(self, *args, **kwargs):
+    def save(self, **kwargs):
         if self.tipo.reembolso and self.pk is None:
             self.status = StatusPago.objects.filter(pending=True).first()
 
-        super(Pago, self).save(*args, **kwargs)
+        super(Pago, self).save(**kwargs)
 
 
 @python_2_unicode_compatible
@@ -525,8 +525,13 @@ class TurnoCaja(TimeStampedModel):
         if fin is None:
             fin = timezone.now()
 
-        return Recibo.objects.filter(cajero=self.usuario,
-                                     created__range=(self.inicio, fin)).all()
+        return Recibo.objects.filter(
+            cajero=self.usuario,
+            created__range=(self.inicio, fin)
+        ).prefetch_related(
+            'legal_data',
+            'cliente',
+        )
 
     def nulos(self):
 
@@ -597,7 +602,7 @@ class TurnoCaja(TimeStampedModel):
         for tipo in TipoPago.objects.all():
             diferencia[tipo] = cierres[tipo] - metodos[tipo]
 
-        return diferencia.iteritems()
+        return list(diferencia.items())
 
     def diferencia_total(self):
 
