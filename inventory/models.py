@@ -326,6 +326,7 @@ class Compra(TimeStampedModel):
     ingresada = models.BooleanField(default=False)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
     cotizacion = models.ForeignKey('Cotizacion', blank=True, null=True)
+    transferida = models.BooleanField(default=False)
 
     def __str__(self):
         return _(u"Compra efectuada el {0}").format(self.created)
@@ -340,10 +341,14 @@ class Compra(TimeStampedModel):
             self.inventario.cargar(comprado.item, comprado.cantidad)
 
     def total(self):
-
+        """
+        Shows the total amount that the bought items represent in monetary value
+        :return: DecimalField
+        """
         return self.items.aggregate(
             total=Coalesce(
-                Sum(F('precio') * F('cantidad'), output_field=models.DecimalField()),
+                Sum(F('precio') * F('cantidad'),
+                    output_field=models.DecimalField()),
                 Decimal()
             )
         )['total']
@@ -422,6 +427,7 @@ class CotizacionQuerySet(QuerySet):
     """
     Contains shortcuts for querying :class:`Cotizacion`
     """
+
     def pendientes(self):
         """
         Filters the :class:`Cotizacion` only handling those pending
@@ -462,10 +468,14 @@ class Cotizacion(TimeStampedModel):
         return reverse('cotizacion-view', args=[self.id])
 
     def total(self):
-
+        """
+        Shows the total amount that the quoted items represent in monetary value
+        :return: DecimalField
+        """
         return self.itemcotizado_set.aggregate(
             total=Coalesce(
-                Sum(F('precio') * F('cantidad'), output_field=models.DecimalField()),
+                Sum(F('precio') * F('cantidad'),
+                    output_field=models.DecimalField()),
                 Decimal()
             )
         )['total']

@@ -69,6 +69,8 @@ class IndexView(TemplateView, InventarioPermissionMixin):
             'proveedor'
         )
 
+        context['compras'] = Compra.objects.filter(transferida=False)
+
         denegar_form = CotizacionDenegarForm()
         context['denegar'] = denegar_form
         denegar_form.helper.form_tag = False

@@ -103,6 +103,28 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Fecha de Compra' %}</th>
+                            <th>{% trans 'Proveedor' %}</th>
+                            <th>{% trans 'Total de la Compra' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for compra in compras.all %}
+                            <tr>
+                                <td>
+                                    <a href="{{ compra.get_absolute_url }}">
+                                        {{ compra.created }}
+                                    </a>
+                                </td>
+                            <td>{{ compra.proveedor }}</td>
+                            <td class="text-rightx">{{ compra.total }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
                 </section>
             </div>
         </div>
