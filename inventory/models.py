@@ -21,7 +21,7 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum, QuerySet
+from django.db.models import Sum, QuerySet, F
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -339,6 +339,15 @@ class Compra(TimeStampedModel):
         for comprado in self.items.all():
             self.inventario.cargar(comprado.item, comprado.cantidad)
 
+    def total(self):
+
+        return self.items.aggregate(
+            total=Coalesce(
+                Sum(F('precio') * F('cantidad'), output_field=models.DecimalField()),
+                Decimal()
+            )
+        )['total']
+
 
 class ItemComprado(TimeStampedModel):
     compra = models.ForeignKey(Compra, related_name='items')
@@ -451,6 +460,15 @@ class Cotizacion(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('cotizacion-view', args=[self.id])
+
+    def total(self):
+
+        return self.itemcotizado_set.aggregate(
+            total=Coalesce(
+                Sum(F('precio') * F('cantidad'), output_field=models.DecimalField()),
+                Decimal()
+            )
+        )['total']
 
 
 class ItemCotizado(TimeStampedModel):
