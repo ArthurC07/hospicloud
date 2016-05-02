@@ -19,6 +19,7 @@ from django.conf.urls import url
 
 from inventory import views
 
+
 urlpatterns = [
 
     url(r'^$',
@@ -170,10 +171,18 @@ urlpatterns = [
         name='cotizacion-denegar'),
 
     url(r'^cotizacion/(?P<pk>\d+)/comprar$',
-        views.CotizacionDetailView.as_view(),
+        views.CotizacionComprarUpdateView.as_view(),
         name='cotizacion-comprar'),
 
     url(r'^cotizacion/(?P<cotizacion>\d+)/item/agregar$',
         views.ItemCotizadoCreateView.as_view(),
         name='itemcotizado-create'),
+
+    url(r'^cotizacion/item/(?P<pk>\d+)/eliminar$',
+        views.ItemCotizadoDeleteView.as_view(),
+        name='cotizacion-item-borrar'),
+
+    url(r'^cotizacion/item/(?P<pk>\d+)/editar$',
+        views.ItemCotizadoUpdateView.as_view(),
+        name='cotizacion-item-editar'),
 ]

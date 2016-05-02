@@ -549,8 +549,21 @@ class CotizacionCreateView(LoginRequiredMixin, CreateView):
 
 
 class CotizacionDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays the information of a :class:`Cotizacion`
+    """
     model = Cotizacion
     context_object_name = 'cotizacion'
+
+    def get_context_data(self, **kwargs):
+
+        context = super(CotizacionDetailView, self).get_context_data(**kwargs)
+
+        comprar_form = CotizacionComprarForm()
+        context['comprar'] = comprar_form
+        comprar_form.helper.form_tag = False
+
+        return context
 
 
 class CotizacionMixin(ContextMixin, View):
@@ -600,8 +613,9 @@ class CotizacionDenegarUpdateView(CotizacionUpdateView):
 
 class CotizacionComprarUpdateView(CotizacionUpdateView):
     """
-        Allows the user to mark a :class:`Cotizacion` as denied
-        """
+    Allows the user to create a :class:`Compra` based in a :class:`Cotizacion`
+    transfering all the :class:`ItemCotizado` as :class:`ItemComprado`
+    """
     form_class = CotizacionComprarForm
 
     def form_valid(self, form):
@@ -621,7 +635,7 @@ class CotizacionComprarUpdateView(CotizacionUpdateView):
                 precio=item.precio,
                 cantidad=item.cantidad,
             )
-            item.save()
+            item_comprado.save()
 
         return HttpResponseRedirect(compra.get_absolute_url())
 
@@ -648,9 +662,34 @@ class ItemCotizadoCreateView(LoginRequiredMixin, CotizacionFormMixin,
         return reverse('itemcotizado-create', args=[self.cotizacion.id])
 
 
+class ItemCotizadoDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Removes an :class:`ItemCotizado` from a :class:`Cotizacion`
+    """
+    model = ItemCotizado
+
+    def get_object(self, queryset=None):
+        obj = super(ItemCotizadoDeleteView, self).get_object(queryset)
+        self.cotizacion = obj.cotizacion
+        return obj
+
+    def get_success_url(self):
+        return self.cotizacion.get_absolute_url()
+
+
+class ItemCotizadoUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Changes the values of a :class:`ItemCotizado`
+    """
+    model = ItemCotizado
+    form_class = ItemCotizadoform
+
+
 class UserInventarioRequiredMixin(View):
-    """Muestra un mensaje de error si el :class:`User` no tiene un
-    :class:`Inventario` asignado en su perfil"""
+    """
+    Muestra un mensaje de error si el :class:`User` no tiene un
+    :class:`Inventario` asignado en su perfil
+    """
 
     def dispatch(self, *args, **kwargs):
         if self.request.user.profile is None:

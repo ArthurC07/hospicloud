@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
-{% load staticfiles %}{% load i18n %}{% load l10n %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}
 {% block content %}
     <div class="row">
         <div class="col-md-12 col-xs-12 main-header">
             <section class="page-header">
                 <h1>{{ cotizacion }}
-                    <small>{{ cotizacion.created|date:"d/m/Y H:i" }}</small>
+                    <small>
+                        {{ cotizacion.inventario }}
+                        {{ cotizacion.created|date:"d/m/Y H:i" }}
+                    </small>
                 </h1>
             </section>
         </div>
@@ -32,20 +35,40 @@
                         <td>{{ item.item.descripcion }}</td>
                         <td>{{ item.cantidad }}</td>
                         <td>{{ item.precio }}</td>
-                        <td></td>
+                        <td>
+                            {% if not cotizacion.denegada and not cotizacion.comprada and not cotizacion.autorizada %}
+                                <a class="btn btn-success"
+                                   href="{% url 'cotizacion-item-borrar' item.id %}">
+                                    <i class="glyphicon glyphicon-edit"></i> {% trans 'Editar' %}
+                                </a>
+                                <a class="btn btn-danger"
+                                   href="{% url 'cotizacion-item-borrar' item.id %}">
+                                    <i class="glyphicon glyphicon-trash"></i> {% trans 'Borrar' %}
+                                </a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            {% if cotizacion.autorizada %}
+                <form action="{% url 'cotizacion-comprar' cotizacion.id %}"
+                      method="post">
+                    {% crispy comprar %}
+                </form>
+            {% endif %}
         </section>
         <aside class="col-md-3 toolbox  ">
             <nav class="sidebar-nav">
                 <ul class="nav nav-stacked nav-tabs">
                     <li>
+                        <a href="{% url 'inventario-index' %}">{% trans 'Regresar a Inventarios' %}</a>
+                    </li>
+                    <li>
                         {% if not cotizacion.denegada and not cotizacion.comprada and not cotizacion.autorizada %}
-                        <a href="{% url 'itemcotizado-create' cotizacion.id %}">
-                            {% trans 'Agregar Producto' %}
-                        </a>
+                            <a href="{% url 'itemcotizado-create' cotizacion.id %}">
+                                {% trans 'Agregar Producto' %}
+                            </a>
                         {% endif %}
                     </li>
                 </ul>

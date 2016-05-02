@@ -50,8 +50,10 @@ class TransaccionAdmin(admin.ModelAdmin):
 
 
 class CotizacionAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ['proveedor', 'created', 'vencimiento']
-    ordering = ['proveedor__name', 'created', 'vencimiento']
+    list_display = ['proveedor', 'created', 'vencimiento', 'autorizada',
+                    'comprada', 'denegada']
+    ordering = ['proveedor__name', 'created', 'vencimiento', 'autorizada',
+                'comprada', 'denegada']
     search_fields = ['proveedor__name']
 
 
