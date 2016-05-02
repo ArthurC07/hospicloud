@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
+{% block header %}
+    {{ form.media.css }}
+{% endblock %}
 {% block content %}
-    {% load crispy_forms_tags %}
-    {% block header %}
-        {{ form.media.css }}
-    {% endblock %}
     <div class="row">
-        <section class="col-md-9">
+        <section class="col-md-9 main-content">
             {% crispy form %}
         </section>
         <aside class="col-md-3">
-            <div class="toolbox col-md-12">
+            <div class="toolbox">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
-                        <li><a href="{{ cotizacion.get_absolute_url }}">Regresar a Cotizaci&oacute;n</a></li>
+                        <li>
+                            <a href="{{ cotizacion.get_absolute_url }}">
+                                {% trans 'Regresar a Cotizaci&oacute;n' %}
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>

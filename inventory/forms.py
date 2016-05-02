@@ -240,6 +240,9 @@ class CotizacionForm(ProveedorFormMixin):
         exclude = ('autorizada', 'denegada', 'comprada')
 
     vencimiento = forms.DateField(widget=FutureDateWidget())
+    inventario = forms.ModelChoiceField(
+        queryset=Inventario.objects.filter(activo=True)
+    )
 
     def __init__(self, *args, **kwargs):
         super(CotizacionForm, self).__init__(*args, **kwargs)
