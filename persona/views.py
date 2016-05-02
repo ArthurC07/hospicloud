@@ -85,6 +85,36 @@ class PersonaDetailView(LoginRequiredMixin, DetailView):
     """
     context_object_name = 'persona'
     model = Persona
+    queryset = Persona.objects.prefetch_related(
+        'antecedentes_quirurgicos',
+        'contratos',
+        'notas_enfermeria',
+        'historiafisica_set',
+        'resultados',
+        'contratos__master',
+        'contratos__master__plan',
+        'contratos__master__aseguradora',
+        'consultas',
+        'consultas__tipo',
+        'consultas__consultorio',
+        'consultas__consultorio__usuario',
+        'recibos',
+        'recibos__legal_data',
+        'respuesta_set',
+        'respuesta_set__encuesta',
+        'respuesta_set__voto_set',
+        'respuesta_set__voto_set__pregunta',
+        'respuesta_set__voto_set__opcion',
+        'emergencias',
+        'empleos',
+        'pcds',
+    ).select_related(
+        'antecedente',
+        'antecedente_familiar',
+        'ciudad',
+        'fisico',
+        'estilo_vida',
+    )
 
 
 class PersonaCreateView(LoginRequiredMixin, CreateView):
