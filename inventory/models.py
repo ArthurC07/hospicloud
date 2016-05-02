@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum, QuerySet, F
+from django.db.models.expressions import ExpressionWrapper
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -46,8 +47,17 @@ class Inventario(models.Model):
     def __str__(self):
         return _(u"Inventario de {0}").format(self.lugar)
 
+    def items(self):
+
+        return self.item_set.all().annotate(
+            valor=ExpressionWrapper(
+                F('cantidad') * F('plantilla__costo'),
+                output_field=models.DecimalField()
+            )
+        )
+
     def buscar_item(self, item_template):
-        item = self.items.filter(plantilla=item_template).first()
+        item = self.item_set.filter(plantilla=item_template).first()
 
         if not item:
             item = Item(inventario=self, plantilla=item_template)
@@ -56,7 +66,7 @@ class Inventario(models.Model):
         return item
 
     def costo(self):
-        return self.items.filter(
+        return self.item_set.filter(
             plantilla__servicio=False,
         ).aggregate(
             total=Coalesce(
@@ -67,7 +77,7 @@ class Inventario(models.Model):
         )['total']
 
     def valor(self):
-        return self.items.filter(
+        return self.item_set.filter(
             plantilla__servicio=False,
         ).aggregate(
             total=Coalesce(
@@ -181,7 +191,7 @@ class Proveedor(models.Model):
 class Item(TimeStampedModel):
     plantilla = models.ForeignKey(ItemTemplate, related_name='items',
                                   verbose_name='Item')
-    inventario = models.ForeignKey(Inventario, related_name='items')
+    inventario = models.ForeignKey(Inventario)
     vencimiento = models.DateTimeField(default=timezone.now)
     cantidad = models.IntegerField(default=0)
 

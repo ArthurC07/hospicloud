@@ -20,22 +20,22 @@
                         </caption>
                         <thead>
                         <tr>
-                            <th>{% trans 'C&oacute;digo' %}</th>
                             <th>{% trans 'Descripci&oacute;n' %}</th>
                             <th>{% trans 'Vencimiento' %}</th>
-                            <th>{% trans 'Modificado' %}</th>
+                            <th>{% trans 'Costo Unitario' %}</th>
                             <th>{% trans 'Cantidad' %}</th>
-                            <th>{% trans 'Movimientos' %}</th>
+                            <th>{% trans 'Costo Total' %}</th>
+                            <th>{% trans 'Mes Actual' %}</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for item in page_obj %}
                             <tr>
-                                <td>{{ item.plantilla.id }}</td>
                                 <td>{{ item.plantilla.descripcion }}</td>
-                                <td>{{ item.vencimiento }}</td>
-                                <td>{{ item.modified }}</td>
-                                <td>{{ item.cantidad }}</td>
+                                <td>{{ item.vencimiento|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td class="text-right">{{ item.plantilla.costo }}</td>
+                                <td class="text-right">{{ item.cantidad }}</td>
+                                <td class="text-right">{{ item.valor }}</td>
                                 <td>{{ item.movimiento_mes }}</td>
                             </tr>
                         {% endfor %}

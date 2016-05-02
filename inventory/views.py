@@ -164,7 +164,7 @@ class InventarioDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         self.object = self.get_object(Inventario.objects.all())
-        return self.object.items.all()
+        return self.object.items()
 
 
 class InventarioCreateView(LoginRequiredMixin, CreateView):
