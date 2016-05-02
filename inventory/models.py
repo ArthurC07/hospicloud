@@ -56,7 +56,9 @@ class Inventario(models.Model):
         return item
 
     def costo(self):
-        return self.items.aggregate(
+        return self.items.filter(
+            plantilla__servicio=False,
+        ).aggregate(
             total=Coalesce(
                 Sum(F('cantidad') * F('plantilla__costo'),
                     output_field=models.DecimalField()),
@@ -65,7 +67,9 @@ class Inventario(models.Model):
         )['total']
 
     def valor(self):
-        return self.items.aggregate(
+        return self.items.filter(
+            plantilla__servicio=False,
+        ).aggregate(
             total=Coalesce(
                 Sum(F('cantidad') * F('plantilla__precio_de_venta'),
                     output_field=models.DecimalField()),
@@ -75,11 +79,13 @@ class Inventario(models.Model):
 
     def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
-        item.disminuir(cantidad, user)
+        if not item.plantilla.servicio:
+            item.disminuir(cantidad, user)
 
     def cargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
-        item.aumentar(cantidad, user)
+        if not item.plantilla.servicio:
+            item.aumentar(cantidad, user)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -125,6 +131,7 @@ class ItemTemplate(TimeStampedModel):
     costo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unidad_de_medida = models.CharField(max_length=32, null=True, blank=True)
     impuestos = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    servicio = models.BooleanField(default=False)
     activo = models.BooleanField(default=True)
     item_type = models.ManyToManyField(ItemType, related_name='items',
                                        blank=True)
