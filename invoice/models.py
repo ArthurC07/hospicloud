@@ -261,7 +261,7 @@ class Recibo(TimeStampedModel):
     def debido(self):
         return self.total() - self.pagado()
 
-    def save(self, *args, **kwargs):
+    def save(self, **kwargs):
 
         """
         Guarda el recibo asignando :class:`Ciudad` y luego generando el
@@ -285,7 +285,7 @@ class Recibo(TimeStampedModel):
 
         self.asignar_ciudad()
 
-        super(Recibo, self).save(*args, **kwargs)
+        super(Recibo, self).save(**kwargs)
 
     def asignar_ciudad(self):
         """
