@@ -16,10 +16,14 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.db.models import Q
+from django.db.models.expressions import ExpressionWrapper, F
+from django.db.models.functions import Coalesce
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -69,7 +73,19 @@ class IndexView(TemplateView, InventarioPermissionMixin):
             'proveedor'
         )
 
-        context['compras'] = Compra.objects.filter(transferida=False)
+        context['compras'] = Compra.objects.filter(
+            transferida=False
+        ).select_related(
+            'proveedor',
+        ).annotate(
+            valor=Coalesce(
+                ExpressionWrapper(
+                    F('items__precio') * F('items__cantidad'),
+                    output_field=models.DecimalField()
+                ),
+                Decimal()
+            )
+        )
 
         denegar_form = CotizacionDenegarForm()
         context['denegar'] = denegar_form
@@ -558,7 +574,6 @@ class CotizacionDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'cotizacion'
 
     def get_context_data(self, **kwargs):
-
         context = super(CotizacionDetailView, self).get_context_data(**kwargs)
 
         comprar_form = CotizacionComprarForm()

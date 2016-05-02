@@ -49,7 +49,9 @@ class Inventario(models.Model):
 
     def items(self):
 
-        return self.item_set.all().annotate(
+        return self.item_set.prefetch_related(
+            'plantilla',
+        ).annotate(
             valor=ExpressionWrapper(
                 F('cantidad') * F('plantilla__costo'),
                 output_field=models.DecimalField()
@@ -361,7 +363,6 @@ class Compra(TimeStampedModel):
     ingresada = models.BooleanField(default=False)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
     cotizacion = models.ForeignKey('Cotizacion', blank=True, null=True)
-    transferida = models.BooleanField(default=False)
 
     def __str__(self):
         return _(u"Compra efectuada el {0}").format(self.created)
