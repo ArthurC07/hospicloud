@@ -55,6 +55,24 @@ class Inventario(models.Model):
 
         return item
 
+    def costo(self):
+        return self.items.aggregate(
+            total=Coalesce(
+                Sum(F('cantidad') * F('plantilla__costo'),
+                    output_field=models.DecimalField()),
+                Decimal()
+            )
+        )['total']
+
+    def valor(self):
+        return self.items.aggregate(
+            total=Coalesce(
+                Sum(F('cantidad') * F('plantilla__precio_de_venta'),
+                    output_field=models.DecimalField()),
+                Decimal()
+            )
+        )['total']
+
     def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         item.disminuir(cantidad, user)
