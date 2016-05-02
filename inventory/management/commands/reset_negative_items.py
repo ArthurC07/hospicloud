@@ -15,33 +15,14 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
-
-import csv
-
 from django.core.management.base import BaseCommand
 
-from inventory.models import ItemTemplate
+from inventory.models import Item
 
 
 class Command(BaseCommand):
-    args = 'csv files'
+    help = "Resets all items with negative quantities to zero."
 
     def handle(self, *args, **options):
 
-        for source in args:
-
-            reader = csv.reader(open(source))
-            for line in reader:
-                item = None
-                try:
-                    item = ItemTemplate.get(pk=line[0])
-
-                except:
-                    item = ItemTemplate()
-
-                item.id = line[0]
-                item.descripcion = line[1]
-                item.activo = True
-                item.precio_de_venta = line[3]
-                item.costo = line[4]
-                item.save()
+        Item.objects.filter(cantidad__lt=0).update(cantidad=0)

@@ -24,8 +24,8 @@ from inventory.models import ItemTemplate, Inventario, Requisicion, ItemType, \
 
 
 class ItemTemplateAdmin(admin.ModelAdmin):
-    list_display = (
-        'descripcion', 'costo', 'precio_de_venta', 'get_types', 'activo',)
+    list_display = ['descripcion', 'costo', 'precio_de_venta', 'get_types',
+                    'activo', 'servicio']
     list_filter = ('activo',)
     ordering = ('descripcion', 'activo', 'precio_de_venta', 'costo')
     filter_horizontal = ('item_type',)
@@ -33,7 +33,7 @@ class ItemTemplateAdmin(admin.ModelAdmin):
 
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('plantilla', 'inventario', 'vencimiento', 'created')
+    list_display = ('plantilla', 'inventario', 'vencimiento', 'cantidad')
     ordering = ['plantilla__descripcion', 'inventario', 'vencimiento',
                 'created']
     search_fields = ['plantilla__descripcion', 'inventario__lugar']
