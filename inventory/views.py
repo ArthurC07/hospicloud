@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from decimal import Decimal
+
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
@@ -39,7 +40,8 @@ from inventory.forms import InventarioForm, ItemTemplateForm, ItemTypeForm, \
     TransferenciaForm, TransferidoForm, CompraForm, TransferirForm, \
     ItemTemplateSearchForm, RequisicionCompletarForm, ItemCompradoForm, \
     ProveedorForm, CotizacionForm, ItemCotizadoform, CotizacionAutorizarForm, \
-    CotizacionDenegarForm, CotizacionComprarForm
+    CotizacionDenegarForm, CotizacionComprarForm, CompraIngresarForm, \
+    CompraDocumentosForm
 from inventory.models import Inventario, Item, ItemTemplate, Transferencia, \
     Historial, ItemComprado, Transferido, Compra, ItemType, Requisicion, \
     ItemRequisicion, ItemHistorial, Proveedor, Cotizacion, ItemCotizado
@@ -59,6 +61,12 @@ class IndexView(TemplateView, InventarioPermissionMixin):
     template_name = 'inventory/index.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Adds the contextual information that will be displayed in the Inventory
+        homepage.
+        :param kwargs:
+        :return:
+        """
         context = super(IndexView, self).get_context_data(**kwargs)
 
         context['inventarios'] = Inventario.objects.filter(activo=True).all()
@@ -74,13 +82,13 @@ class IndexView(TemplateView, InventarioPermissionMixin):
         )
 
         context['compras'] = Compra.objects.filter(
-            transferida=False
+            ingresada=False
         ).select_related(
             'proveedor',
         ).annotate(
             valor=Coalesce(
                 ExpressionWrapper(
-                    F('items__precio') * F('items__cantidad'),
+                    F('itemcomprado__precio') * F('itemcomprado__cantidad'),
                     output_field=models.DecimalField()
                 ),
                 Decimal()
@@ -171,7 +179,7 @@ class InventarioListView(LoginRequiredMixin, ListView):
 
 
 class InventarioDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
-    paginate_by = 10
+    paginate_by = 20
     template_name = 'inventory/inventario_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -410,22 +418,39 @@ class ProveedorFormMixin(FormMixin, ProveedorMixin):
 
     def get_initial(self):
         initial = super(ProveedorFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['proveedor'] = self.proveedor
         return initial
 
 
-class CompraCreateView(LoginRequiredMixin, InventarioFormMixin, CreateView):
+class CompraCreateView(CurrentUserFormMixin, InventarioFormMixin, CreateView):
     """
-    Creates a :class:`Compra`
+    Creates a :class:`Compra` using input from the user
     """
     model = Compra
     form_class = CompraForm
 
 
 class CompraUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows editing a :class:`Compra
+    """
     model = Compra
     form_class = CompraForm
+
+
+class CompraDocumentosView(CompraUpdateView):
+    """
+    Creates a UI to edit the documents related to a :class:`Compra`
+    """
+    form_class = CompraDocumentosForm
+
+
+class CompraIngresarUpdateView(CompraUpdateView):
+    """
+    Edits a :class:`Compra` to mark it as transfered and add its contents to
+    an :class:`Inventario`
+    """
+    form_class = CompraIngresarForm
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -437,6 +462,10 @@ class CompraUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CompraDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
+    """
+    Displays the data associated to a :class:`Compra` allowing the user to
+    review its contents and to indicate some specific actions to the object.
+    """
     paginate_by = 10
     template_name = 'inventory/compra_detail.html'
 
@@ -446,12 +475,12 @@ class CompraDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
 
     def get_queryset(self):
         self.object = self.get_object(Compra.objects.all())
-        return self.object.items.all()
+        return self.object.items().all()
 
 
 class CompraMixin(ContextMixin, View):
     """
-    Adds a :class:`Compra` to the view
+    Adds a :class:`Compra` to child views
     """
 
     def dispatch(self, *args, **kwargs):
@@ -466,12 +495,14 @@ class CompraFormMixin(FormMixin, CompraMixin):
 
     def get_initial(self):
         initial = super(CompraFormMixin, self).get_initial()
-        initial = initial.copy()
-        initial['compra'] = self.compra.id
+        initial['compra'] = self.compra
         return initial
 
 
 class CompraListView(LoginRequiredMixin, ListView):
+    """
+    Displays a list of :class:`Compra` to the user.
+    """
     model = Compra
     context_object_name = 'compras'
 
@@ -557,11 +588,17 @@ class ProveedorCreateView(LoginRequiredMixin, CreateView):
 
 
 class ProveedorUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows the user to update the data in a :class:`Proveedor` instance
+    """
     model = Proveedor
     form_class = ProveedorForm
 
 
-class CotizacionCreateView(LoginRequiredMixin, CreateView):
+class CotizacionCreateView(CurrentUserFormMixin, CreateView):
+    """
+    Allows the user to create new :class:`Cotizacion` objects
+    """
     model = Cotizacion
     form_class = CotizacionForm
 
@@ -600,7 +637,7 @@ class CotizacionMixin(ContextMixin, View):
 
 class CotizacionListView(LoginRequiredMixin, ListView):
     """
-    Displays a list of :class:`
+    Displays a list of :class:`Cotizacion`
     """
     model = Cotizacion
     paginate_by = 10
@@ -623,8 +660,8 @@ class CotizacionAutorizarUpdateView(CotizacionUpdateView):
 
 class CotizacionDenegarUpdateView(CotizacionUpdateView):
     """
-        Allows the user to mark a :class:`Cotizacion` as denied
-        """
+    Allows the user to mark a :class:`Cotizacion` as denied
+    """
     form_class = CotizacionDenegarForm
 
 
@@ -642,6 +679,7 @@ class CotizacionComprarUpdateView(CotizacionUpdateView):
         compra.cotizacion = self.object
         compra.inventario = self.object.inventario
         compra.proveedor = self.object.proveedor
+        compra.usuario = self.request.user
 
         compra.save()
 
@@ -665,13 +703,15 @@ class CotizacionFormMixin(CotizacionMixin, FormMixin):
 
     def get_initial(self):
         initial = super(CotizacionFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['cotizacion'] = self.cotizacion
         return initial
 
 
 class ItemCotizadoCreateView(LoginRequiredMixin, CotizacionFormMixin,
                              CreateView):
+    """
+    Allows the user to create new :class:`ItemCotizado` objects
+    """
     model = ItemCotizado
     form_class = ItemCotizadoform
 

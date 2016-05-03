@@ -223,10 +223,13 @@ class ProveedorFormMixin(FieldSetModelFormMixin):
     proveedor = forms.ModelChoiceField(queryset=Proveedor.objects.all())
 
 
-class CompraForm(ProveedorFormMixin):
+class CompraForm(ProveedorFormMixin, HiddenUserForm):
+    """
+    Describes a form that will be used to create :class:`Compra` objects
+    """
     class Meta:
         model = Compra
-        exclude = ('ingresada', )
+        exclude = ('ingresada',)
 
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
@@ -234,7 +237,53 @@ class CompraForm(ProveedorFormMixin):
                                       *self.field_names)
 
 
-class CotizacionForm(ProveedorFormMixin):
+class CompraDocumentosForm(FieldSetModelFormMixin):
+    """
+    Edits a :class:`Compra` to add missing documents
+    """
+
+    class Meta:
+        model = Compra
+        fields = ('comprobante', 'metodo_de_pago')
+
+    def __init__(self, *args, **kwargs):
+        super(CompraDocumentosForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Documentos de Compra'),
+                                      *self.field_names)
+
+
+class CompraIngresarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as denied
+    """
+
+    class Meta:
+        model = Compra
+        fields = ('ingresada', 'inventario')
+
+    transferida = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'transferida': True}
+        else:
+            kwargs['initial']['transferida'] = True
+        super(CompraIngresarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Transferir Compra'),
+                css_class='btn-success btn-block'
+            ))
+
+
+class CotizacionForm(HiddenUserForm, ProveedorFormMixin):
+    """
+    Describres a form that will be used to create :class:`Cotizacion` objects
+    """
     class Meta:
         model = Cotizacion
         exclude = ('autorizada', 'denegada', 'comprada')
@@ -349,31 +398,3 @@ class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
         super(ItemCotizadoform, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Formulario de Item Cotizado'),
                                       *self.field_names)
-
-
-class CompraIngresarForm(forms.ModelForm):
-    """
-    Creates a form that marks a :class:`Cotizacion` as denied
-    """
-
-    class Meta:
-        model = Compra
-        fields = ('ingresada', 'inventario')
-
-    transferida = forms.BooleanField(widget=forms.HiddenInput())
-
-    def __init__(self, *args, **kwargs):
-        if 'initial' not in kwargs:
-            kwargs['initial'] = {'transferida': True}
-        else:
-            kwargs['initial']['transferida'] = True
-        super(CompraIngresarForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.html5_required = True
-        self.field_names = self.fields.keys()
-        self.helper.add_input(
-            Submit(
-                'submit',
-                _('Transferir Compra'),
-                css_class='btn-success btn-block'
-            ))

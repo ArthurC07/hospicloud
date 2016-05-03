@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -246,10 +247,9 @@ class Item(TimeStampedModel):
 class Requisicion(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='requisiciones',
                                    null=True, blank=True)
-    aprobada = models.NullBooleanField(default=False)
-    entregada = models.NullBooleanField(default=False)
-    usuario = models.ForeignKey(User, related_name="requisiciones",
-                                null=True, blank=True)
+    aprobada = models.BooleanField(default=False)
+    entregada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -358,11 +358,22 @@ class Transferido(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Compra(TimeStampedModel):
+    """
+    Describes a series of items that have been bought and will be transfered to
+    a certain :class:`Inventario`
+    """
     inventario = models.ForeignKey(Inventario, blank=True, null=True,
                                    related_name='compras')
     ingresada = models.BooleanField(default=False)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
     cotizacion = models.ForeignKey('Cotizacion', blank=True, null=True)
+    comprobante = models.FileField(
+        upload_to='inventory/compra/comprobante/%Y/%m/%d', blank=True, null=True
+    )
+    metodo_de_pago = models.FileField(
+        upload_to='inventory/compra/pago/%Y/%m/%d', blank=True, null=True
+    )
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def __str__(self):
         return _(u"Compra efectuada el {0}").format(self.created)
@@ -373,7 +384,7 @@ class Compra(TimeStampedModel):
         return reverse('compra', args=[self.id])
 
     def transferir(self):
-        for comprado in self.items.all():
+        for comprado in self.items().all():
             self.inventario.cargar(comprado.item, comprado.cantidad)
 
     def total(self):
@@ -381,7 +392,7 @@ class Compra(TimeStampedModel):
         Shows the total amount that the bought items represent in monetary value
         :return: DecimalField
         """
-        return self.items.aggregate(
+        return self.items().aggregate(
             total=Coalesce(
                 Sum(F('precio') * F('cantidad'),
                     output_field=models.DecimalField()),
@@ -389,9 +400,21 @@ class Compra(TimeStampedModel):
             )
         )['total']
 
+    def items(self):
+        return self.itemcomprado_set.annotate(
+            valor=ExpressionWrapper(
+                F('precio') * F('cantidad'),
+                output_field=models.DecimalField()
+            )
+        )
+
 
 class ItemComprado(TimeStampedModel):
-    compra = models.ForeignKey(Compra, related_name='items')
+    """
+    Describes a :class:`ItemTemplate` that was bought as part of a
+    :class:`Compra`
+    """
+    compra = models.ForeignKey(Compra)
     item = models.ForeignKey(ItemTemplate, related_name='comprado', blank=True,
                              null=True)
     ingresado = models.BooleanField(default=False)
@@ -408,7 +431,7 @@ class ItemAction(TimeStampedModel):
     """Crea un registro de cada movimiento efectuado por un :class:`User`
     en un :class:`Item`"""
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     action = models.TextField()
     item = models.ForeignKey(ItemTemplate, related_name='acciones')
 
@@ -456,7 +479,7 @@ class ItemHistorial(TimeStampedModel):
 class Transaccion(TimeStampedModel):
     item = models.ForeignKey(Item)
     cantidad = models.IntegerField(default=0)
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
 
 class CotizacionQuerySet(QuerySet):
@@ -494,6 +517,8 @@ class Cotizacion(TimeStampedModel):
     denegada = models.BooleanField(default=False)
     comprada = models.BooleanField(default=False)
     inventario = models.ForeignKey(Inventario, blank=True, null=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
+                                related_name='cotizacion_inventario_set')
 
     objects = CotizacionQuerySet.as_manager()
 
