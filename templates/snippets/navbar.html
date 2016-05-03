@@ -1,0 +1,140 @@
+{% load l10n %}{% load i18n %}
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="sr-only">{% trans 'Toggle navigation' %}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'home' %}">Hospinet</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"
+                       data-toggle="dropdown">{% trans 'Cl&iacute;nico' %} <b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        {% if modules.hospitalizacion %}
+                            <li>
+                                <a href="{% url 'admision-index' %}">{% trans 'Admisiones' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.consulta %}
+                            <li>
+                                <a href="{% url 'consultorio-index' %}">{% trans 'Consulta' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.laboratorio %}
+                            <li>
+                                <a href="{% url 'lab-index' %}">{% trans 'Laboratorio' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.imagenes %}
+                            <li>
+                                <a href="{% url 'examen-index' %}">{% trans 'Centro de Im&aacute;genes' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.emergencia %}
+                            <li>
+                                <a href="{% url 'emergency-index' %}">{% trans 'Emergencias' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.hospitalizacion %}
+                            <li>
+                                <a href="{% url 'nightingale-index' %}">{% trans 'Hospitalizaci&oacute;n' %}</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"
+                       data-toggle="dropdown">{% trans 'Administrativo' %} <b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        {% if modules.caja %}
+                            <li>
+                                <a href="{% url 'invoice-index' %}">{% trans 'Caja' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'invoice-pago-list' %}">{% trans 'Cuentas por Cobrar' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.contratos %}
+                            <li>
+                                <a href="{% url 'contrato-index' %}">{% trans 'Contratos' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.rrhh %}
+                            <li>
+                                <a href="{% url 'scorecard-index' %}">{% trans 'BSC' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'encuesta-list' %}">{% trans 'Encuestas' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.inventario %}
+                            <li>
+                                <a href="{% url 'inventario-index' %}">{% trans 'Inventario' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if modules.presupuesto %}
+                            <li>
+                                <a href="{% url 'budget-index' %}">{% trans 'Presupuesto' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'income-index' %}">{% trans 'Ingresos' %}</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <a href="{% url 'persona-index' %}">{% trans 'Personas' %}</a>
+                </li>
+                <li>
+                    <a href="{% url 'admin:index' %}">{% trans 'Administraci&oacute;n' %}</a>
+                </li>
+            </ul>
+            <div class="navbar-right">
+                <form class="navbar-form navbar-left" method="get"
+                      action="{% url 'persona-search' %}">
+                    <div class="form-group">
+                        <input type="text" name="query" class="form-control"
+                               placeholder="Buscar Persona">
+                        {% csrf_token %}
+                    </div>
+                    <button type="submit" class="btn btn-default">
+                        {% trans 'Buscar' %}
+                    </button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        {% if user.is_authenticated %}
+                            <a class="btn-block dropdown-toggle"
+                               data-toggle="dropdown" href="#"> <i
+                                    class="glyphicon glyphicon-user"></i> {{ user }}
+                                <span class="caret"></span> </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="{% url 'userena_profile_detail' user.username %}">{% trans 'View profile' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'userena_signout' %}"
+                                       class="navbar-link">
+                                        {% trans 'Cerrar Sesi&oacute;n' %}
+                                    </a>
+                                </li>
+                            </ul>
+                        {% else %}
+                            <a href="{% url 'userena_signin' %}"
+                               class="navbar-link">{% trans 'Iniciar Sesi&oacute;n' %}</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

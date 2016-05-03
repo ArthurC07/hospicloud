@@ -1,0 +1,33 @@
+<table class="table table-striped no-more-tables">
+  <caption>Examenes Efectuados</caption>
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Paciente</th>
+      <th>Examen</th>
+      <th>Identificaci&oacute;n</th>
+      <th>Nacimiento</th>
+      <th>Radiologo</th>
+      <th>Usuario</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for examen in examenes%}
+    <tr>
+      <td>{{ examen.fecha }}</td>
+      <td>{{ examen.persona.nombre_completo }}</td>
+      <td>{{ examen.tipo_de_examen.nombre }}</td>
+      <td>{{ examen.persona.identificacion }}</td>
+      <td>{{ examen.persona.nacimiento }}</td>
+      <td>{{ examen.radiologo }}</td>
+      <td>{{ examen.usuario }}</td>
+      <td><a class="btn btn-success btn-block" href="{{ examen.get_absolute_url }}">Ver</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if is_paginated %}
+{% load bootstrap_pagination %}
+{% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+{% endif %}

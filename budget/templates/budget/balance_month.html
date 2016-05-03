@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12 col-md-12 main-header">
+            <section class="page-header">
+                <h1>
+                    {% trans 'Estado Financiero del Mes de' %}
+                    {{ fecha|date:"F" }}
+                    {% trans 'del' %}
+                    {{ fecha|date:"Y" }}
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12 main-content">
+            <div class="row">
+                <div class="col-md-6 col-xs-6" id="meses">
+                    <div class="panel {% if balance > 0 %} panel-success {% else %} panel-danger {% endif %}">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Resumen de Ingresos y Egresos' %}
+                            </h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            <tr>
+                                <td>{% trans 'Excedente Mes Anterior' %}</td>
+                                <td class="text-right">
+                                    <a href="{% url 'budget-balance-monthly' %}?{{ previous_string }}">
+                                        {{ previous_balance }}
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Total Depositado' %}</td>
+                                <td class="text-right">
+                                    <a href="{% url 'deposito-periodo' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ total_depositado }}
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Total Ejecutado' %}</td>
+                                <td class="text-right">
+                                    <a href="{% url 'gasto-periodo-list' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ total_gastos }}
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>
+                                    {% if balance > 0 %}
+                                        {% trans 'Utilidad del Periodo' %}
+                                    {% else %}
+                                        {% trans 'Perdida del Periodo' %}
+                                    {% endif %}
+                                </th>
+                                <th class="text-right">{{ balance }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Saldo en Cuentas' %}
+                            </h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for cuenta in cuentas %}
+                                <tr>
+                                    <td>{{ cuenta.nombre }}</td>
+                                    <td class="text-right">{{ cuenta.monto }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Saldo Total en Cuentas' %}</th>
+                                <th class="text-right">{{ saldo_cuentas }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Cheques' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for cheque in descripcion_cheques.all %}
+                                <tr>
+                                    <td>{{ cheque.tipo__nombre }}</td>
+                                    <td>{{ cheque.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total' %}</th>
+                                <th>
+                                    <a href="{% url 'cheque-periodo' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ total_cheques }}
+                                    </a>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Depositos' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for deposito in descripcion_depositos.all %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'income-tipo-deposito' deposito.tipo__id %}?{{ periodo_string }}"
+                                           target="_blank">
+                                            {{ deposito.tipo__nombre }}
+                                        </a>
+                                    </td>
+                                    <td class="text-right">{{ deposito.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total Depositado' %}</th>
+                                <th>
+                                    <a href="{% url 'deposito-periodo' %}?{{ periodo_string }}"
+                                       target="_blank">
+                                        {{ total_depositado }}
+                                    </a>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Descripción del Presupuesto por Ciudad' %}
+                            </h3>
+                        </div>
+                        <table class="table table-hover table-striped">
+                            <tbody>
+                            {% for presupuesto in presupuestado_ciudad.all %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'budget-month-show' presupuesto.cuenta__presupuesto_id fecha.year fecha.month %}"
+                                           target="_blank">
+                                            {{ presupuesto.cuenta__presupuesto__ciudad__nombre }}
+                                        </a>
+                                    </td>
+                                    <td class="text-right">{{ presupuesto.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total Presupuestado' %}</th>
+                                <th class="text-right">{{ presupuestado }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Facturaci&oacute;n' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td>{% trans 'Al Cr&eacute;dito' %}</td>
+                                    <td class="text-right">{{ venta_credito }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% trans 'Al Contado' %}</td>
+                                    <td class="text-right">{{ venta_contado }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>
+                                    {% trans 'Total' %}</th>
+                                <th>
+                                    <a href="{% url 'invoice-mensual' fecha.year fecha.month %}"
+                                       target="_blank">
+                                        {{ total_ventas }}
+                                    </a>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{% trans 'Tipo de Pago' %}</h3>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                            {% for facturado in pagos.all %}
+                                <tr>
+                                    <td>{{ facturado.tipo__nombre }}</td>
+                                    <td class="text-right">{{ facturado.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>
+                                    {% trans 'Total' %}</th>
+                                <th>
+                                    <a href="{% url 'invoice-mensual' fecha.year fecha.month %}"
+                                       target="_blank">
+                                        {{ pago_total }}
+                                    </a>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {% trans 'Cuentas por Cobrar' %}
+                            </h3>
+                        </div>
+                        <table class="table table-hover table-striped">
+                            <tbody>
+                            <tr>
+                                <td>{% trans 'Al Cr&eacute;dito' %}</td>
+                                <td class="text-right">{{ credito }}</td>
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Reembolso' %}</td>
+                                <td class="text-right">{{ reembolso }}</td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{% trans 'Total Cuentas por Cobrar' %}</th>
+                                <th class="text-right">
+                                    <a href="{% url 'invoice-pago-pendiente' %}"
+                                       target="_blank">
+                                        {{ cuentas_por_cobrar }}
+                                    </a>
+                                </th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

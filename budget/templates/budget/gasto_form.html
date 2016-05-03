@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% load crispy_forms_tags %}{% load staticfiles %}{% load l10n %}{% load i18n %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+        <section class="col-md-9">
+            <div class="main-content col-md-12">
+                {% crispy form %}
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li>
+                            <a href="{{ cuenta.get_absolute_url }}">{% trans 'Volver al Presupuesto' %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'proveedor-create' %}"
+                               onclick="window.open('{% url 'proveedor-create' %}', 'newwindow', 'width=500, height=500'); return false;">
+                                {% trans 'Agregar Proveedor' %}
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load l10n %}{% load i18n %}
+{% block content %}
+    <div class="row">
+        <section class="page-header col-md-12 col-xs-12 main-content">
+            <h1>
+                {% trans 'Consultas' %} {{ aseguradora }} {{ ciudad }} {{ usuario }}
+                <small>
+                    {% trans 'del' %} {{ inicio }} {% trans 'al' %} {{ fin }}
+                </small>
+            </h1>
+        </section>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12 table-responsive main-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Paciente' %}</th>
+                    <th>{% trans 'Motivo de Consulta' %}</th>
+                    <th>{% trans 'HEA' %}</th>
+                    <th>{% trans 'Tipo de Consulta' %}</th>
+                    <th>{% trans 'Cargos' %}</th>
+                    <th>{% trans 'Diagn&oacute;stico' %}</th>
+                    <th>{% trans 'Aseguradora' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                    <th>{% trans 'Ciudad' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for consulta in consultas.all %}
+                    <tr>
+                        <td><a href="{{ consulta.get_absolute_url }}">{{ consulta.created }}</a></td>
+                        <td>{{ consulta.persona }}</td>
+                        <td>{{ consulta.motivo_de_consulta }}</td>
+                        <td>{{ consulta.HEA }}</td>
+                        <td>{{ consulta.tipo }}</td>
+                        <td>
+                            {% for cargo in consulta.cargos.all %}
+                                {{ cargo.item }}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for diagnostico in consulta.diagnosticos_clinicos.all %}
+                                {{ diagnostico.diagnostico }}
+                            {% endfor %}
+                        </td>
+                        <td>{{ consulta.poliza.aseguradora }}</td>
+                        <td>{{ consulta.consultorio.usuario.get_full_name }}</td>
+                        <td>{{ consulta.consultorio.localidad.ciudad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

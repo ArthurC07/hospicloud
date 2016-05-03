@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+            <div class="main-content col-md-12">
+                <section class="page-header">
+                    <h1>Balanced Score Card</h1>
+                </section>
+            </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12 main-content">
+            <ul>
+                {% for scorecard in object_list.all %}
+                    <li><a href="{{ scorecard.get_absolute_url }}">{{ scorecard }}</a></li>
+                {% empty %}
+                    <li>No hay BSC definidos</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+    <div class="row">
+        <div class="col-md-12 main-content">
+        <div class="col-md-6">
+            {% crispy loginperiodo %}
+        </div>
+        </div>
+    </div>
+{% endblock %}

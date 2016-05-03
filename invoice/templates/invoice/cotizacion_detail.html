@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %} Cotizacion {{ cotizacion.id }} {% endblock %}
+{% block content %}
+    {% load humanize %}{% load i18n %}{% load l10n %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <section class="page-header">
+                    <h1>{{ cotizacion.numero }} - {{ cotizacion }}
+                        <small>{{ cotizacion.created|date:"d/m/Y P" }}</small>
+                    </h1>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="navbar-inner">
+                        <a href="#" class="navbar-brand">Acciones</a>
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="{% url 'invoice-index' %}">Regresar a Caja</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'cotizado-add' cotizacion.id %}">Agregar Venta</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'cotizacion-facturar' cotizacion.id %}">Facturar</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-content col-md-12">‏
+                <table class="table table-striped table-bordered">
+                    <caption>Conceptos a Facturar</caption>
+                    <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Concepto</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                        <th>Descuento {{ cotizacion.tipo_de_venta.descripcion }}</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for cotizado in cotizacion.cotizado_set.all %}
+                        <tr>
+                            <td>{{ cotizado.cantidad }}</td>
+                            <td>
+                                <a href="{% url 'cotizado-delete' cotizado.id %}">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                                <a href="{% url 'cotizado-edit' cotizado.id %}">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </a>{{ cotizado.descripcion }} {{ cotizado.item }}
+                            </td>
+                            <td>{{ cotizado.precio }}</td>
+                            <td>{{ cotizado.total_vendido }}</td>
+                            <td>{{ cotizado.descuento }}</td>
+                            <td>{{ cotizado.total }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Subtotal:</th>
+                        <th>{{ cotizacion.subtotal }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Impuestos:</th>
+                        <th>{{ cotizacion.impuesto }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Descuento:</th>
+                        <th>{{ cotizacion.descuento }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                        <th>Total:</th>
+                        <th>{{ cotizacion.total }}</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

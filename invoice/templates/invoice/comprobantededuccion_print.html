@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+    <title>{% trans 'Comprobante de Retenci&oacute;n' %} {{ recibo.numero }}</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+          crossorigin="anonymous">
+    <style type="text/css">
+        thead {
+            border-bottom: 2px dashed;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <p>
+                {{ comprobante.ciudad.company.nombre }}<br>
+                {{ comprobante.ciudad.company.address }}<br>
+                {% trans 'RTN' %}: {{ comprobante.ciudad.company.rtn }}<br>
+                {% trans 'Comprobante' %}: {{ comprobante.legal_data.prefijo }}-{{ comprobante.correlativo }}<br>
+                {% trans 'C.A.I' %}: {{ comprobante.legal_data.cai }}
+                {% trans 'Fecha' %}: {{ comprobante.created }}<br>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <table style="width: 100%;">
+            <tr>
+                <td>{% trans 'Proveedor:' %} {{ comprobante.proveedor }}</td>
+                <td>{% trans 'Numero de Documento' %} {{ comprobante.numero_de_documento }}</td>
+            </tr>
+            <tr>
+                <td>{% trans 'RTN:' %} {{ comprobante.proveedor.rtn }}</td>
+                <td class="text-right">{% trans 'C.A.I:' %} {{ comprobante.cai_proveedor }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table style="width: 100%;">
+                <thead>
+                <tr>
+                    <th>{% trans 'Concepto' %}</th>
+                    <th>{% trans 'Descripci&oacute;n' %}</th>
+                    <th>{% trans 'Monto' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for concepto in comprobante.conceptodeduccion_set.all %}
+                    <tr>
+                        <td>{{ concepto.concepto }}</td>
+                        <td>{{ concepto.descripcion }}</td>
+                        <td>{{ concepto.monto }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4" class="text-center">
+                        {% trans '::::Ultima L&iacute;nea::::' %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            {% trans 'Total' %}: {{ comprobante.total }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <br/>
+            <br/>
+            <br/>
+            <p class="text-center">_________________________________________</p>
+            <p class="text-center">{% trans 'Firma Proveedor' %}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% trans 'Fecha L&iacute;mite de Emisi&oacute;n:' %}
+            {{ comprobante.legal_data.limite_de_emision }}<br>
+            {% trans 'Rango Autorizado:' %} {{ comprobante.inicio_rango }}
+            {% trans 'a la' %} {{ comprobante.fin_rango }}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    window.onload = function () {
+        window.print();
+    }
+</script>
+</body>
+</html>

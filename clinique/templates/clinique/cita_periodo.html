@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}{% load l10n %}{% load i18n %}
+{% block title %} Contratos{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>
+                {% trans 'Citas' %}
+                <small>de {{ inicio }} al {{ fin }}</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">
+                <table class="table table-stripped">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Paciente' %}</th>
+                            <th>{% trans 'Fecha' %}</th>
+                            <th>{% trans 'Consultorio' %}</th>
+                            <th>{% trans 'Tipo de Cita' %}</th>
+                            <th>{% trans 'Tel&eacute;fono' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cita in citas.all %}
+                        <tr>
+                            <td>{{ cita.persona }}</td>
+                            <td>{{ cita.fecha }}</td>
+                            <td>{{ cita.consultorio }}</td>
+                            <td>{{ cita.tipo }}</td>
+                            <td>{{ cita.persona.telefono }} {{ cita.persona.celular }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+{% endblock %}

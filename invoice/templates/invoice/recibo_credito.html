@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+    <title>{% trans 'Factura al Cr&eacute;dito' %} {{ recibo.numero }}</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+          crossorigin="anonymous">
+    <style type="text/css">
+        thead {
+            border-bottom: 2px solid;
+        }
+
+        .sp-table > tbody > tr > td,
+        .sp-table > tbody > tr > th,
+        .sp-table > tfoot > tr > td,
+        .sp-table > tfoot > tr > th,
+        .sp-table > thead > tr > td,
+        .sp-table > thead > tr > th,
+        .hp-table > tbody > tr > td,
+        .hp-table > tbody > tr > th,
+        .hp-table > tfoot > tr > td,
+        .hp-table > tfoot > tr > th,
+        .hp-table > thead > tr > td,
+        .hp-table > thead > tr > th,
+        .lp-table > tbody > tr > td,
+        .lp-table > tbody > tr > th,
+        .lp-table > tfoot > tr > td,
+        .lp-table > tfoot > tr > th,
+        .lp-table > thead > tr > td,
+        .lp-table > thead > tr > th {
+            border-top: none;
+        }
+
+        .sp-table {
+            border-top: 2px solid #ddd;
+            border-bottom: 2px solid #ddd;
+            margin: 0;
+
+        }
+
+        .hp-table thead {
+            border-bottom: 2px solid #ddd;
+        }
+
+        hr {
+            height: 2px;
+        }
+
+        .lf {
+            float: left;
+        }
+
+        .rf {
+            float: right;
+        }
+
+        .sp-col {
+            position: relative;
+            left: 20px;
+            top: 40px;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .lp-table {
+            margin-top: -50px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>{% trans 'Factura al Cr&eacute;dito' %}</h1>
+            <p>
+                {{ recibo.ciudad.company.nombre }}<br>
+                {% trans 'RTN:' %} {{ recibo.ciudad.company.rtn }}<br>
+                {{ recibo.ciudad.company.direccion }}
+                {% trans 'Tel&eacute;fono:' %} {{ recibo.ciudad.company.telefono }}
+                {{ recibo.ciudad.company.email }}
+                {% trans 'Cajero:' %} {{ recibo.cajero }}<br>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <table style="width: 100%;">
+            <tr>
+                <td colspan="2">{% trans 'Cliente:' %} {{ recibo.cliente }}</td>
+            </tr>
+            <tr>
+                <td>{% trans 'RTN:' %} {{ recibo.cliente.rtn }}</td>
+                <td class="text-right">{% trans 'C.A.I:' %} {{ recibo.legal_data.cai }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table sp-table">
+                <tbody>
+                <tr>
+                    <td>
+                        {% trans 'Mes de Facturaci&oacute;n:' %}
+                        {{ recibo.facturacion|date:"E Y" }}
+                    </td>
+                    <td>
+                        {% trans 'Fecha de Emisi&oacute;n:' %}
+                        {{ recibo.created|date:"d/m/Y" }}
+                    </td>
+                    <td>
+                        {% trans 'Fecha de Vencimiento:' %}
+                        {{ recibo.vencimiento|date:"d/m/Y" }}
+                    </td>
+                    <td>
+                        {% trans 'Factura:' %}
+                        <span style="white-space: nowrap">{{ recibo.numero }}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table hp-table">
+                <thead>
+                <tr>
+                    <th>{% trans 'Póliza Descripci&oacute;n' %}</th>
+                    <th>{% trans 'Art&iacute;culo' %}</th>
+                    <th>{% trans 'Precio unitario' %}</th>
+                    <th>{% trans 'Cantidad' %}</th>
+                    <th>{% trans 'Total' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for venta in recibo.ventas.all %}
+                    <tr>
+                        <td>{{ venta.descripcion }}</td>
+                        <td>{{ venta.item }}</td>
+                        <td class="text-right">{{ venta.precio_unitario }}</td>
+                        <td class="text-right">{{ venta.cantidad }}</td>
+                        <td class="text-right">{{ venta.monto }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4"
+                        class="text-center">{% trans '::::Ultima L&iacute;nea::::' %}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        $ {{ recibo.other_currency }}
+        {% trans 'Tasa de cambio de mercado' %}
+        {{ recibo.ciudad.company.cambio_monetario }}<br>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="sp-col">
+                <h1>{% trans 'ORIGINAL' %}</h1>
+            </div>
+            <table class="table lp-table">
+                <tr>
+                    <td width="40%"></td>
+                    <td>{% trans 'Subtotal USD$' %}:</td>
+                    <td class="text-right">{{ recibo.subtotal_other }}</td>
+                    <td>{% trans 'Subtotal L.' %}:</td>
+                    <td class="text-right">{{ recibo.subtotal }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>{% trans 'Descuento USD$' %}:</td>
+                    <td class="text-right">{{ recibo.descuento_other }}</td>
+                    <td>{% trans 'Descuento L.' %}:</td>
+                    <td class="text-right">{{ recibo.descuento }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>{% trans 'Impuestos USD$' %}:</td>
+                    <td class="text-right">{{ recibo.impuesto_other }}</td>
+                    <td>{% trans 'Impuestos L.' %}:</td>
+                    <td class="text-right">{{ recibo.impuesto }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>{% trans 'Total USD$' %}:</td>
+                    <td class="text-right">{{ recibo.other_currency }}</td>
+                    <td>{% trans 'Total LPS' %}:</td>
+                    <td class="text-right">{{ recibo.total }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <table style="width: 100%">
+            <tr>
+                <td width="10%"></td>
+                <td width="25%">_________________________________________</td>
+                <td width="20%"></td>
+                <td width="25%">_________________________________________</td>
+                <td width="10%"></td>
+            </tr>
+            <tr>
+                <td width="10%"></td>
+                <td class="text-center">{% trans 'Recib&iacute; Conforme' %}</td>
+                <td width="20%"></td>
+                <td class="text-center">{% trans 'Firma y Sello' %}</td>
+            </tr>
+        </table>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <ol>
+                <li>
+                    {% blocktrans %}
+                        La factura se pagar&aacute; en USD$ o en su equivalencia
+                        en Lempiras al tipo de cambio vigente al día en que se
+                        efectua el pago utilizando el precio del USD$ conforme
+                        al contrato.
+                        Monto detallado en Lempiras solo para efecto de
+                        referencia.
+                    {% endblocktrans %}
+                </li>
+                <li>
+                    {% blocktrans %}
+                        La factura será pagada dentro de los primeros 20
+                        (veinte) días de cada mes. Además la contratante acepta
+                        pagar el 3.5% mensual de interés moratorio sobre el
+                        valor total del pago atrasado.
+                    {% endblocktrans %}
+                </li>
+                <li>
+                    {% blocktrans %}
+                        Recargo de L. 500.00 por cheque devuelto en Lempiras o
+                        de USD$60.00 por cheque devuelto en USD$.
+                    {% endblocktrans %}
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% trans 'Fecha L&iacute;mite de Emisi&oacute;n:' %}
+            {{ recibo.legal_data.limite_de_emision }}<br>
+            {% trans 'Rango Autorizado:' %} {{ recibo.legal_data.inicio }}
+            {% trans 'a la' %} {{ recibo.legal_data.fin }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            {% trans '"La factura es beneficio de todos, ex&iacute;jala"' %}
+            {% trans 'ORIGINAL: Cliente COPIA: Emisor' %}
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load l10n %}{% load i18n %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>{{ paciente }}
+            <small>{{ paciente.consultorio }}</small>
+        </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <div class="main-content col-md-12">‏
+            <table class="table table-striped">
+                <a class="btn bg-primary" href="{% url 'consultorio-lectura-agregar' paciente.id %}">
+                    {% trans 'Agregar Lectura de Signos' %}
+                </a>
+                <caption>{% trans 'Signos Vitales' %}</caption>
+                <thead>
+                <tr>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Pulso' %}</th>
+                    <th>{% trans 'Temperatura' %}</th>
+                    <th>{% trans 'Presi&oacute;n Sist&oacute;lica' %}</th>
+                    <th>{% trans 'Presi&oacute;n Diast&oacute;lica' %}</th>
+                    <th>{% trans 'Presi&oacute;n Arterial Media' %}</th>
+                    <th>{% trans 'Respiraci&oacute;n' %}</th>
+                    <th>{% trans 'Acciones' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for signos_vitales in paciente.lecturas_signos.all %}
+                    <tr>
+                        <td>{{ signos_vitales.created }}</td>
+                        <td>{{ signos_vitales.pulso }}</td>
+                        <td>{{ signos_vitales.temperatura }}</td>
+                        <td>{{ signos_vitales.presion_sistolica }}</td>
+                        <td>{{ signos_vitales.presion_diastolica }}</td>
+                        <td>{{ signos_vitales.presion_arterial_media }}</td>
+                        <td>{{ signos_vitales.respiracion }}</td>
+                        <td><a class="btn btn-success" href="{% url 'clinique-signos-edit' signos_vitales.id %}"><i class="fa fa-edit"></i> {% trans 'Editar' %}</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <aside class="col-md-3">
+        <div class="toolbox col-md-12">
+            {% include 'snippets/paciente_aside.html' %}
+        </div>
+    </aside>
+</div>
+{% endblock %}

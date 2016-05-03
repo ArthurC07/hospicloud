@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}{% load i18n %}{% load l10n %}
+{% block content %}
+    <div class="row">
+        <section class="col-md-12 main-header">
+            <section class="page-header">
+                <h1> {{ persona.nombre_completo }}
+                    <small>{% trans 'Informaci&oacute;n' %}</small>
+                </h1>
+            </section>
+        </section>
+    </div>
+    <div class="row">
+        <section id="informacion" class="col-md-9 main-content">
+            {% if persona.consultas_activas and perms.persona.persona %}
+                {% for consulta in persona.consultas_activas %}
+                    <div class="row">
+                        {% include 'clinique/snippets/consulta_activa.html' with persona=persona %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="row">
+                <div class="col-md-12">‏
+                    <section class="tabbable">
+                        <ul class="nav nav-tabs">
+                            <li>
+                                <a class="active" href="#paciente"
+                                   data-toggle="tab">
+                                    {% trans 'Datos Personales' %}
+                                </a>
+                            </li>
+                            {% if modules.consulta %}
+                                <li>
+                                    <a href="#consulta_inicio"
+                                       data-toggle="tab">{% trans 'Consultas' %}</a>
+                                </li>
+                            {% endif %}
+                            <li>
+                                <a href="#clinico" data-toggle="tab">
+                                    {% trans 'Datos Cl&iacute;nicos' %}</a>
+                            </li>
+                            <li>
+                                <a href="#vida" data-toggle="tab">
+                                    {% trans 'Estilo de Vida' %}
+                                </a>
+                            </li>
+                            {% if modules.emergencia %}
+                                <li>
+                                    <a href="#emergencias" data-toggle="tab">
+                                        {% trans 'Emergencias' %}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if modules.hospitalizacion %}
+                                <li>
+                                    <a href="#admisiones" data-toggle="tab">
+                                        {% trans 'Hospitalizaciones' %}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if modules.imagenes %}
+                                <li>
+                                    <a href="#examenes" data-toggle="tab">
+                                        {% trans 'Im&aacute;genes' %}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if modules.contratos %}
+                                <li>
+                                    <a href="#contratos" data-toggle="tab">
+                                        {% trans 'Contratos' %}</a>
+                                </li>
+                            {% endif %}
+                            {% if modules.caja %}
+                                <li>
+                                    <a href="#recibos" data-toggle="tab">
+                                        {% trans 'Recibos' %}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if modules.laboratorio %}
+                                <li>
+                                    <a href="#laboratorio" data-toggle="tab">
+                                        {% trans 'Laboratorio' %}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <div class="tab-content">
+                            <article id="paciente" class="tab-pane active">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {% include 'snippets/persona_fotografia.html'  with persona=persona %}
+                                        {% include 'snippets/persona.html' with persona=persona %}
+                                        <a href="{% url 'persona-editar' persona.id %}"
+                                           class="btn btn-primary">
+                                            {% trans 'Editar Datos' %}
+                                        </a>
+                                    </div>
+                                </div>
+                                {% if persona.contratos %}
+                                    {% include 'contracts/snippets/contracts.html' %}
+                                {% endif %}
+                                {% if persona.beneficiarios %}
+                                    {% for beneficiario in persona.beneficiarios.all %}
+                                        {% include 'contracts/snippets/beneficiario.html' with contrato=beneficiario.contrato %}
+                                        <p>
+                                            {% trans 'Exclusiones:' %} {{ beneficiario.exclusion }}
+                                        </p>
+                                    {% endfor %}
+                                {% endif %}
+                                {% include 'bsc/snippets/respuestas.html' with respuestas=persona.respuesta_set %}
+                            </article>
+                            <article id="clinico" class="tab-pane">
+                                {% include 'persona/antecedentes.html' %}
+                                <div class="row">
+                                    <canvas id="chart"
+                                            class="col-md-12 col-xs-12 graph"
+                                            height="100"></canvas>
+                                    <div id="legend"
+                                         class="graph col-md-12 col-xs-12"></div>
+                                </div>
+                            </article>
+                            <article id="vida" class="tab-pane">
+                                {% include 'snippets/estilo_vida.html' with estilo_vida=persona.estilo_vida %}
+                                {% if perms.persona.persona %}
+                                    <a href="{% url 'persona-estilovida-editar' persona.id %}"
+                                       class="btn btn-primary">
+                                        {% trans 'Editar Estilo de Vida' %}
+                                    </a>
+                                {% endif %}
+                            </article>
+                            {% if persona.emergencias %}
+                                <article id="emergencias" class="tab-pane">
+                                    {% include 'emergency/snippets/emergencia_list.html' with emergencias=persona.emergencias.all %}
+                                </article>
+                            {% endif %}
+                            {% if persona.admisiones %}
+                                <article id="admisiones" class="tab-pane">
+                                    {% include 'snippets/enfermeria_list.html' with admisiones=persona.admisiones.all %}
+                                </article>
+                            {% endif %}
+                            {% if persona.examenes %}
+                                <article id="examenes" class="tab-pane">
+                                    {% include 'snippets/examen_list.html' with examenes=persona.examenes.all %}
+                                </article>
+                            {% endif %}
+                            {% if persona.consultas %}
+                                {% include 'clinique/snippets/consulta.html' with persona=persona %}
+                            {% endif %}
+                            {% if persona.contratos %}
+                                <article id="contratos" class="tab-pane">
+                                    {% include 'contracts/snippets/pcd.html' with persona=persona %}
+                                </article>
+                            {% endif %}
+                            {% if persona.recibos %}
+                                <article id="recibos" class="tab-pane">
+                                    {% include 'invoice/persona.html' with recibos=persona.recibos %}
+                                </article>
+                            {% endif %}
+                            <article id="laboratorio" class="tab-pane">
+                                {% include 'lab/snippets/examen.html' with examenes=persona.resultados.all %}
+                            </article>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+        {% include 'snippets/persona_aside.html' with persona=persona %}
+    </div>
+{% endblock content %}

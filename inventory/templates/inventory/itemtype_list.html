@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="main-content col-md-12">
+            <section class="page-header">
+                <h1>{% trans 'Tipos de Producto' %}</h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12 main-content">
+            <ul>
+                {% for object in object_list.all %}
+                    <li><a href="{{ object.get_absolute_url }}">{{ object }}</a>
+                    </li>
+                    {% empty %}
+                    <li>{% trans 'No hay Tipos de Producto Definidos' %}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+{% endblock %}

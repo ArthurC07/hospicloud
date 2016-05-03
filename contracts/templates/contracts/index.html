@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}
+{% block title %}{% trans 'Contratos' %}{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 col-xs-12 main-header">
+            <div class="page-header">
+                <h1>{% trans 'Contratos' %}
+                    <small>{% trans 'P&aacute;gina Principal' %}</small>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-9 main-content">
+            <div class="row">
+                <section class="tabbable">
+                    <ul class="nav nav-tabs">
+                        <li>
+                            <a href="#estadisticas" data-toggle="tab">
+                                {% trans 'Contratos Privados' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#privados" data-toggle="tab">
+                                {% trans 'Contratos Empresariales' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#busqueda" data-toggle="tab">
+                                {% trans 'B&uacute;squeda' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#planes" data-toggle="tab">
+                                {% trans 'Planes' %}
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="#aseguradoras" data-toggle="tab">
+                                {% trans 'Aseguradoras' %}
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <article id="estadisticas" class="tab-pane">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <section class="col-md-12 page-header">
+                                        <h1>{% trans 'Contratos Privados' %}</h1>
+                                    </section>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <section class="page-header">
+                                            <h2>{% trans 'Estad&iacute;sticas' %}</h2>
+                                        </section>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <ul>
+                                                    <li>
+                                                        {% trans 'Citas del Mes:' %}
+                                                        {{ citas }}
+                                                    </li>
+                                                    <li>
+                                                        {% trans 'Contratos del Mes' %}: {{ contratos }}
+                                                    </li>
+                                                    <li>
+                                                        {% trans 'Ingresos proyectados para el mes actual:' %}
+                                                        {{ ingresos.plan__precio__sum }}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <ul>
+                                                    <li>
+                                                        {% trans 'Mora del Mes' %}:
+                                                        {{ mora }}
+                                                        {% trans 'contratos' %},
+                                                        {% trans 'valor' %}: {{ monto_mora }}
+                                                    </li>
+                                                    <li>
+                                                        {% trans 'Cancelaciones' %}: {{ cancelaciones }}
+                                                    </li>
+                                                    <li>
+                                                        {% trans 'Hospitalizaciones' %}: {{ hospitalizaciones }}
+                                                    </li>
+                                                    <li>
+                                                        {% trans 'Cirugias' %}: {{ cirugias }}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <section class="page-header">
+                                            <h2>{% trans 'Meta al' %} {{ meta.fecha }}</h2>
+                                        </section>
+                                        <ul>
+                                            <li>
+                                                {% trans 'Contratos' %}: {{ meta.contratos }}
+                                            </li>
+                                            {% for vendedor in vendedores %}
+                                                <li>
+                                                    {{ vendedor }}: {{ vendedor.get_contratos_mes }}
+                                                    {% trans 'contratos' %}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="privados" class="tab-pane">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <section class="page-header">
+                                            <h1>{% trans 'Contratos Empresariales' %}</h1>
+                                        </section>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h2>{% trans 'Empresas' %}</h2>
+                                        <ul>
+                                            {% for empresa in empresas %}
+                                                <li>
+                                                    <a href="{% url 'empresa' empresa.id %}">{{ empresa }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h2>{% trans 'Estad&iacute;sticas' %}</h2>
+                                        <ul>
+                                            <li>
+                                                {% trans 'Citas del Mes' %}: {{ citasp }}
+                                            </li>
+                                            <li>
+                                                {% trans 'Consultas Iniciales del Mes' %}:
+                                                {{ consulta }}
+                                            </li>
+                                            <li>
+                                                {% trans 'Consultas de Seguimiento del Mes' %}: {{ seguimientos }}
+                                            </li>
+                                            <li>
+                                                {% trans 'Contratos del Mes' %}: {{ contratos_empresariales }}
+                                            </li>
+                                            <li>
+                                                {% trans 'Hospitalizaciones' %}: {{ hospitalizaciones }}
+                                            </li>
+                                            <li>
+                                                {% trans 'Cirugias' %}: {{ cirugias }}</li>
+                                            <li>
+                                                {% trans 'Mora del Mes' %}: {{ mora_empresa }}
+                                                {% trans 'contratos' %},
+                                                {% trans 'valor' %}: {{ monto_mora_empresa }}
+                                            </li>
+                                            <li>
+                                                {% trans 'Ingresos proyectados para el mes actual' %}:
+                                                {{ ingresos_empresa.plan__precio__sum }}
+                                            </li>
+                                            <li>
+                                                {% trans 'Cancelaciones' %}: {{ cancelaciones_empresa }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="busqueda" class="tab-pane">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <section class="page-header">
+                                            <h2>{% trans 'Consultar' %}</h2>
+                                        </section>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <section class="col-md-4">
+                                        {% crispy contrato-search %}
+                                    </section>
+                                    <section class="col-md-4">
+                                        {% crispy contrato-periodo %}
+                                    </section>
+                                    <section class="col-md-4">
+                                        {% crispy vendedor-search %}
+                                    </section>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <section class="col-md-4">
+                                        {% crispy plan-search %}
+                                    </section>
+                                    <section class="col-md-4">
+                                        {% crispy contrato-persona-search %}
+                                    </section>
+                                    <section class="col-md-4">
+                                        {% crispy empresa-search %}
+                                    </section>
+                                </div>
+                                <div class="row">
+                                    <section class="col-md-4">
+                                        {% crispy evento-periodo %}
+                                    </section>
+                                    <section class="col-md-4">
+                                        {% crispy vendedor-periodo %}
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="planes" class="tab-pane">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <section class="page-header">
+                                            <h1>{% trans 'Planes' %}</h1>
+                                        </section>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul>
+                                            {% for plan in planes.all %}
+                                                <li>
+                                                    <a href="{% url 'contracts-plan' plan.id %}">
+                                                        {% trans 'Plan' %} {{ plan }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="aseguradoras" class="tab-pane active">
+                            <div class="col-md-12 col-xs-12">
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12">
+                                        <section class="page-header">
+                                            <h1>{% trans 'Aseguradoras' %}</h1>
+                                        </section>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>{% trans 'Aseguradora' %}</th>
+                                                <th>{% trans 'Contratos Activos' %}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for aseguradora in aseguradoras.all %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="{% url 'aseguradora' aseguradora.id %}">{{ aseguradora }}</a>
+                                                    </td>
+                                                    <td>{{ aseguradora.active_contracts }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <canvas id="chart-insurance"
+                                            class="col-md-12 col-xs-12 graph"
+                                            height="100"></canvas>
+                                    <div id="legend-insurance"
+                                         class="graph col-md-12 col-xs-12"></div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li>
+                            <a href="{% url 'contrato-add' %}">
+                                {% trans 'Crear Contrato' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contrato-empresarial-add' %}">
+                                {% trans 'Crear Contrato Empresarial' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contracts-master-add' %}">
+                                {% trans 'Crear Contrato Maestro' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contract-master-list' %}">
+                                {% trans 'Listar Contratos Maestros' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contracts-archivo-add' %}">
+                                {% trans 'Agregar Archivo de Importaci&oacute;n' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contracts-archivo-list' %}">
+                                {% trans 'Listar Archivo de Importaci&oacute;n' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'vendedor-add' %}">
+                                {% trans 'Agregar Vendedor' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contrato-tipoevento-add' %}">
+                                {% trans 'Agregar Tipo de Evento' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contrato-beneficiario-list' %}">
+                                {% trans 'Contratos y Beneficiarios' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contrato-empresarial-list' %}">
+                                {% trans 'Contratos Empresariales' %}
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'empresa-add' %}">
+                                {% trans 'Agregar Empresa' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contracts-aseguradora-add' %}">
+                                {% trans 'Agregar Aseguradora' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'contracts-meta-add' %}">
+                                {% trans 'Agregar Meta' %}
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var canvas = document.getElementById("chart-insurance");
+            var ctx = canvas.getContext("2d");
+            var chart = new Chart(ctx);
+            data = [
+                {% for aseguradora in aseguradoras.all %}
+                    {
+                        label: "{{ aseguradora.nombre }}",
+                        color: "{{ aseguradora.color }}",
+                        value: {{ aseguradora.active_contracts|escapejs }}
+                    },
+                {% endfor %}
+                {
+                    label: "{% trans 'Ninguna' %}",
+                    color: '#' + (Math.random() * 0xFFFFFF << 0).toString(16),
+                    value: 0
+                }
+            ];
+            var myLineChart = new Chart(ctx).Pie(data);
+            document.getElementById('legend-insurance').innerHTML = myLineChart.generateLegend();
+        });
+    </script>
+{% endblock %}

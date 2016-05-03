@@ -1,0 +1,68 @@
+{% load i18n %}{% load l10n %}
+<div class="table-responsive">
+<table class="table table-striped">
+    <caption>{% trans 'Antecedentes Patol&oacute;gicos Personales' %}</caption>
+    <tr>
+        <td class="data-label">{% trans 'Cardiopatías' %}</td>
+        <td class="patient-data">{{ antecedente.cardiopatia|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Hipertensión Arterial' %}</td>
+        <td class="patient-data">{{ antecedente.hipertension|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Diabetes Mellitus' %}</td>
+        <td class="patient-data">{{ antecedente.diabetes|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Hepatitis' %}</td>
+        <td class="patient-data">{{ antecedente.hepatitis|yesno:"Sí,No" }}</td>
+    </tr>
+    <tr>
+        <td class="data-label">{% trans 'Rinitis' %}</td>
+        <td class="patient-data">{{ antecedente.rinitis|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Tuberculosis' %}</td>
+        <td class="patient-data">{{ antecedente.tuberculosis|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Artritis' %}</td>
+        <td class="patient-data">{{ antecedente.artritis|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Asma' %}</td>
+        <td class="patient-data">{{ antecedente.asma|yesno:"Sí,No" }}</td>
+    </tr>
+    <tr>
+        <td class="data-label">{% trans 'Cancer' %}</td>
+        <td class="patient-data">{{ antecedente.cancer|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Gastritis' %}</td>
+        <td class="patient-data">{{ antecedente.gastritis|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Sinusitis' %}</td>
+        <td class="patient-data">{{ antecedente.sinusitis|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Migraña' %}</td>
+        <td class="patient-data">{{ antecedente.migrana|yesno:"Sí,No" }}</td>
+    </tr>
+    <tr>
+        <td class="data-label">{% trans 'Colitis' %}</td>
+        <td class="patient-data">{{ antecedente.colitis|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Obesidad' %}</td>
+        <td class="patient-data">{{ antecedente.obesidad|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Alcoholismo' %}</td>
+        <td class="patient-data">{{ antecedente.alcoholismo|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Trigliceridos' %}</td>
+        <td class="patient-data">{{ antecedente.trigliceridos|yesno:"Sí,No" }}</td>
+    </tr>
+    <tr>
+        <td class="data-label">{% trans 'Hipertrigliceridemia' %}</td>
+        <td class="patient-data">{{ antecedente.hipertrigliceridemia|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Colelitiasis' %}</td>
+        <td class="patient-data">{{ antecedente.colelitiasis|yesno:"Sí,No" }}</td>
+        <td class="data-label">{% trans 'Tiroides' %}</td>
+        <td class="patient-data">{{ antecedente.tiroides|yesno:"Sí,No" }}</td>
+    </tr>
+    <tr>
+        <td class="data-label">{% trans 'Alergias' %}</td>
+        <td class="patient-data">{{ antecedente.alergias }}</td>
+        <td class="data-label">{% trans 'Congenitas' %}</td>
+        <td class="patient-data">{{ antecedente.congenital }}</td>
+        <td class="data-label">{% trans 'General' %}</td>
+        <td class="patient-data">{{ antecedente.general }}</td>
+    </tr>
+    <tr>
+        <td class="data-label">{% trans 'Nutricional' %}</td>
+        <td class="patient-data">{{ antecedente.nutricional }}</td>
+        <td class="data-label">{% trans 'Otros' %}</td>
+        <td class="patient-data">{{ antecedente.otros }}</td>
+    </tr>
+</table>
+</div>

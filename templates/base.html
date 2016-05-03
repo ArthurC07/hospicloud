@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>HospiNet :: {% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width"/>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+    {% include 'styles.html' %}
+    {% block header %}{% endblock %}
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="{% static 'js/html5shiv.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'js/respond.min.js' %}"></script>
+    <![endif]-->
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
+</head>
+<body>
+{% include 'snippets/navbar.html' %}
+{% block heading %}{% endblock %}
+{% include 'javascript.html' %}
+{% block scripts %}{% endblock scripts %}
+<div id="content" class="container">
+    {% if messages %}
+        <div id="system-message" class="row">
+            <div class="col-md-12">
+                {% for message in messages %}
+                    <div class="alert alert-warning alert-dismissible {% if message.tags %} {{ message.tags }} {% endif %} " role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+</div>
+{% include 'snippets/footer.html' %}
+</body>
+</html>

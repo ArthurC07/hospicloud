@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load crispy_forms_tags %}{% load l10n %}{% load i18n %}
+{% block content %}
+    <div class="row">
+        <div class="main-content col-md-12">
+            <section class="page-header col-md-10 col-xs-10">
+                <h1>
+                    {% trans 'Gastos de' %} {{ motivo }}
+                    <small>{{ inicio }} {% trans 'al' %} {{ fin }}</small>
+                </h1>
+            </section>
+            <div class="col-md-2 col-xs-2">
+                <a class="btn btn-block btn-primary"
+                   href="{% url 'budget-index' %}">{% trans 'Volver a Presupuesto' %}</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 table-responsive main-content">
+            <table class="table">
+                <caption>{% trans 'Gastos Completados' %}</caption>
+                <thead>
+                <tr>
+                    <th>{% trans 'Fecha en Factura' %}</th>
+                    <th>{% trans 'Fecha de Pago' %}</th>
+                    <th>{% trans 'Descripci&oacute;n' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                    <th>{% trans 'Proveedor' %}</th>
+                    <th>{% trans 'N&uacute;mero de Comprobante' %}</th>
+                    <th>{% trans 'Descargas' %}</th>
+                    <th>{% trans 'Monto' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for gasto in gastos.all %}
+                    <tr>
+                        <td>{{ gasto.fecha_en_factura }}</td>
+                        <td>{{ gasto.fecha_de_pago }}</td>
+                        <td>{{ gasto.descripcion }}</td>
+                        <td>{{ gasto.usuario }}</td>
+                        <td>{{ gasto.proveedor.nombre }}</td>
+                        <td>{{ gasto.numero_de_comprobante_de_pago }}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle"
+                                        type="button"
+                                        id="dropdownMenu1"
+                                        data-toggle="dropdown"
+                                        aria-expanded="true">
+                                    {% trans 'Documentos' %}
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu"
+                                    aria-labelledby="dropdownMenu1">
+                                    {% if gasto.comprobante_de_pago %}
+                                        <li role="presentation">
+                                            <a role="menuitem" target="_blank"
+                                               href="{{ gasto.comprobante_de_pago.url }}">
+                                                <i class="fa fa-download"></i>
+                                                {% trans 'Comprobante de Pago' %}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% if gasto.factura %}
+                                        <li role="presentation">
+                                            <a role="menuitem" target="_blank"
+                                               href="{{ gasto.factura.url }}">
+                                                <i class="fa fa-download"></i>
+                                                {% trans 'Factura' %}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </td>
+                        <td class="text-right">{{ gasto.monto }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            {% trans 'No hay gastos registrados' %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="6">{% trans 'Total de Gastos' %}</th>
+                    <th class="text-right">{{ total }}</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% load i18n %}{% load l10n %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <caption>{% trans 'Caracter&iacute;sticas F&iacute;sicas' %}</caption>
+        <tbody>
+        <tr>
+            <th class="data-label">{% trans 'Color de Ojos:' %}</th>
+            <td class="patient-data">{{ fisico.color_de_ojos }}</td>
+            <th class="data-label">{% trans 'Color de Cabello:' %}</th>
+            <td class="patient-data">{{ fisico.color_de_cabello }}</td>
+        </tr>
+        <tr>
+            <th class="data-label">{% trans 'Tipo de Sangre:' %}</th>
+            <td class="patient-data">{{ fisico.get_tipo_de_sangre_display }}</td>
+            <th class="data-label">{% trans 'Factor RH:' %}</th>
+            <td class="patient-data">{{ fisico.get_factor_rh_display }}</td>
+        </tr>
+        </tbody>
+    </table>
+    {% if perms.persona.persona %}
+        <a href="{% url 'persona-fisico-editar' persona.id %}"
+           class="btn btn-primary">{% trans 'Editar F&iacute;sico' %}</a>
+    {% endif %}
+    <table class="table table-striped">
+        <caption>{% trans 'Histora F&iacute;sica-Metab&oacute;lica' %}</caption>
+        <thead>
+        <tr>
+            <th>{% trans 'Fecha' %}</th>
+            <th>{% trans 'Altura' %}</th>
+            <th>{% trans 'Peso' %}</th>
+            <th>{% trans 'IMC' %}</th>
+            <th>{% trans 'GEB' %}</th>
+            <th>{% trans 'Pulso' %}</th>
+            <th>{% trans 'Temperatura' %}</th>
+            <th>{% trans 'Presi&oacute;n Sist&oacute;lica' %}</th>
+            <th>{% trans 'Presi&oacute;n Diast&oacute;lica' %}</th>
+            <th>{% trans 'Presi&oacute;n Arterial Media' %}</th>
+            <th>{% trans 'Respiraci&oacute;n' %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for historia in fisico.persona.historiafisica_set.all %}
+            <tr>
+                <td>{{ historia.fecha }}</td>
+                <td>{{ historia.altura }}</td>
+                <td>{{ historia.peso }} {{ historia.get_medida_de_peso_display }}</td>
+                <td>{{ historia.bmi }}</td>
+                <td>{{ historia.bmr }}</td>
+                <td>{{ historia.pulso }}</td>
+                <td>{{ historia.temperatura }}</td>
+                <td>{{ historia.presion_sistolica }}</td>
+                <td>{{ historia.presion_diastolica }}</td>
+                <td>{{ historia.presion_arterial_media }}</td>
+                <td>{{ historia.respiracion }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if perms.persona.persona %}
+        <a class="btn btn-primary"
+           href="{% url 'persona-historia-agregar' persona.id %}">
+            {% trans 'Agregar Historia Física-Metabólica' %}
+        </a>
+    {% endif %}
+</div>
+{% block scripts %}
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var canvas = document.getElementById("chart");
+            var ctx = canvas.getContext("2d");
+            var chart = new Chart(ctx);
+            data = {
+                labels: [0, {% for historia in fisico.persona.historiafisica_set.all %} "{{ historia.fecha|escapejs }}",  {% endfor %} 0],
+                datasets: [
+                    {
+                        label: "{% trans 'Peso' %}",
+                        strokeColor: "blue",
+                        fillColor: "rgba(220,220,220,0)",
+                        data: [0, {% for historia in fisico.persona.historiafisica_set.all %} {{ historia.peso|escapejs }}, {% endfor %} 0]
+                    }
+                ]
+            };
+            var myLineChart = new Chart(ctx).Line(data);
+            document.getElementById('legend').innerHTML = myLineChart.generateLegend();
+        });
+    </script>
+{% endblock %}

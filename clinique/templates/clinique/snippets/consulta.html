@@ -1,0 +1,106 @@
+{% load i18n %}{% load l10n %}
+<article id="consulta_inicio" class="tab-pane table-responsive">
+    {% load l10n %}
+    <table class="table table-striped">
+        <caption>Consulta Inicial</caption>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Motivo de Consulta</th>
+            <th>HEA</th>
+            <th>Tipo de Consulta</th>
+            <th>Usuario</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for consulta in persona.consultas.all %}
+            <tr>
+                <td>{{ consulta.created }}</td>
+                <td>{{ consulta.motivo_de_consulta }}</td>
+                <td>{{ consulta.HEA }}</td>
+                <td>{{ consulta.tipo }}</td>
+                <td>{{ consulta.consultorio.usuario }}</td>
+                <td><a class="btn btn-primary" href="{% url 'consulta' consulta.id %}">Ver</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table class="table table-striped">
+        <caption>Notas de Enfermeria</caption>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>descripcion</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for nota in persona.notas_enfermeria.all %}
+            <tr>
+                <td>{{ nota.created }}</td>
+                <td>{{ nota.nota }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</article>
+<article id="prescripcion" class="tab-pane table-responsive">
+    <table class="table table-striped">
+        <caption>Signos Vitales</caption>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Pulso</th>
+            <th>Temperatura</th>
+            <th>Presi&oacute;n Sist&oacute;lica</th>
+            <th>Presi&oacute;n Diast&oacute;lica</th>
+            <th>Presi&oacute;n Arterial Media</th>
+            <th>Respiraci&oacute;n</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for signos_vitales in persona.lecturas_signos.all %}
+            <tr>
+                <td>{{ signos_vitales.created }}</td>
+                <td>{{ signos_vitales.pulso }}</td>
+                <td>{{ signos_vitales.temperatura }}</td>
+                <td>{{ signos_vitales.presion_sistolica }}</td>
+                <td>{{ signos_vitales.presion_diastolica }}</td>
+                <td>{{ signos_vitales.presion_arterial_media }}</td>
+                <td>{{ signos_vitales.respiracion }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table class="table table-striped">
+        <caption>Remisiones</caption>
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Especialidad</th>
+            <th>Motivo</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for remision in persona.remisiones.all %}
+            <tr>
+                <td>{{ remision.created }}</td>
+                <td>{{ remision.tipo }}</td>
+                <td>{{ remision.especilidad }}</td>
+                <td>{{ remision.motivo }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table class="table table-striped">
+        <caption>{% trans 'Observaciones del M&eacute;dico' %}</caption>
+        <tbody>
+        {% for nota in consulta.notamedica_set.all %}
+            <tr>
+                <td>{{ nota.observacion }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</article>

@@ -1,0 +1,37 @@
+{% load i18n %}{% load l10n %}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <caption class="persona">{% trans 'Datos Personales' %}</caption>
+        <tr>
+            <th>{% trans 'Identificaci&oacute;n' %}</th>
+            <td>{{ persona.identificacion }}</td>
+            <th>{% trans 'Sexo' %}</th>
+            <td>{{ persona.get_sexo_display }}</td>
+            <th>{% trans 'Edad' %}</th>
+            <td>{{ persona.obtener_edad }} a&ntilde;os</td>
+        </tr>
+        <tr>
+            <th>{% trans 'Nacimiento' %}</th>
+            <td>{{ persona.nacimiento|date:"d/m/Y" }}</td>
+            <th>{% trans 'Estado Civil' %}</th>
+            <td>{{ persona.get_estado_civil_display }}</td>
+            <th>{% trans 'Profesi&oacute;n' %}</th>
+            <td>{{ persona.profesion }}</td>
+        </tr>
+        <tr>
+            <th>{% trans 'Tel&eacute;fono' %}</th>
+            <td>{{ persona.telefono }}</td>
+            <th>{% trans 'Direcci&oacute;n' %}</th>
+            <td>{{ persona.domicilio }}</td>
+            <th>{% trans 'Celular' %}</th>
+            <td>{{ persona.celular }}</td>
+        </tr>
+        <tr>
+            <th>{% trans 'Fax:' %}</th>
+            <td>{{ persona.fax }}</td>
+            <th>{% trans 'Email:' %}</th>
+            <td>{{ persona.email }}</td>
+            <th colspan="2">&nbsp;</th>
+        </tr>
+    </table>
+</div>

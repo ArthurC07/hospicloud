@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12 col-md-12 main-header">
+            <section class="page-header">
+                <h1>
+                    {% trans 'Presupuesto del Mes de' %}
+                    {{ fecha|date:"F" }}
+                    {% trans 'del' %}
+                    {{ fecha|date:"Y" }}
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12 main-content">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans 'Cuenta' %}</th>
+                        <th>{% trans 'Monto' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for presupuesto in object_list.all %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'monthly-budget-update' presupuesto.id %}">
+                                {{ presupuesto.cuenta }}
+                            </a>
+                        </td>
+                        <td class="text-right">{{ presupuesto.monto }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>{% trans 'Total' %}</th>
+                        <th>{{ total }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {% if forms %}
+    <div class="row">
+        <div class="col-md-12 main-content" id="meses">
+            {% for form in forms %}
+                {% crispy form %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
