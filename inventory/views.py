@@ -74,11 +74,17 @@ class IndexView(TemplateView, InventarioPermissionMixin):
         context['productoform'].helper.form_tag = False
 
         context['pendientes'] = Cotizacion.objects.pendientes().select_related(
-            'proveedor'
+            'proveedor',
+            'usuario',
+            'inventario',
+            'inventario__ciudad',
         )
         context[
             'autorizadas'] = Cotizacion.objects.autorizadas().select_related(
-            'proveedor'
+            'proveedor',
+            'usuario',
+            'inventario',
+            'inventario__ciudad',
         )
 
         context['compras'] = Compra.objects.filter(
@@ -93,6 +99,16 @@ class IndexView(TemplateView, InventarioPermissionMixin):
                 ),
                 Decimal()
             )
+        )
+
+        context['requisiciones_pendientes'] = Requisicion.objects.filter(
+            aprobada=False,
+            entregada=False,
+        ).select_related(
+            'inventario',
+            'usuario',
+        ).prefetch_related(
+            'items'
         )
 
         denegar_form = CotizacionDenegarForm()
