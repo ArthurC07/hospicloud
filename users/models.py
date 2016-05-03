@@ -23,15 +23,14 @@ from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from guardian.shortcuts import assign_perm
 from userena.models import UserenaBaseProfile
 
-from emergency.models import Emergencia
 from hospinet.utils import get_current_month_range
-from inventory.models import Inventario, ItemTemplate
+from inventory.models import ItemTemplate
 from persona.models import Persona
 
 
@@ -114,7 +113,7 @@ class Ciudad(TimeStampedModel):
 class UserProfile(UserenaBaseProfile):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 related_name="profile", blank=True, null=True)
-    inventario = models.ForeignKey(Inventario, related_name='usuarios',
+    inventario = models.ForeignKey('inventory.Inventario', related_name='usuarios',
                                    blank=True, null=True)
     honorario = models.ForeignKey(ItemTemplate, related_name='usuarios',
                                   blank=True, null=True)
@@ -176,9 +175,9 @@ class UserProfile(UserenaBaseProfile):
 
         fin, inicio = get_current_month_range()
 
-        return Emergencia.objects.filter(usuario=self.user,
-                                         created__range=(inicio, fin)
-                                         ).count()
+        return self.user.emergencias.filter(
+            created_range=(inicio, fin)
+        ).count()
 
     def current_month_turns(self):
 

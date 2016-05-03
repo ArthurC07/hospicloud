@@ -23,6 +23,10 @@ from inventory.models import ItemTemplate, Inventario, Requisicion, ItemType, \
     Proveedor, Compra, Transaccion, Cotizacion, ItemCotizado
 
 
+class InventarioAdmin(admin.ModelAdmin):
+    list_display = ['lugar', 'ciudad', 'activo', 'puede_comprar']
+
+
 class ItemTemplateAdmin(admin.ModelAdmin):
     list_display = ['descripcion', 'costo', 'precio_de_venta', 'get_types',
                     'activo', 'servicio']
@@ -70,7 +74,7 @@ class ItemCotizadoAdmin(ForeignKeyAutocompleteAdmin):
 
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
 admin.site.register(Requisicion)
-admin.site.register(Inventario)
+admin.site.register(Inventario, InventarioAdmin)
 admin.site.register(ItemType)
 admin.site.register(TipoVenta)
 admin.site.register(Item, ItemAdmin)

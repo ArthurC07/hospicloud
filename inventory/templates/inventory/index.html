@@ -52,6 +52,7 @@
                             <th>{% trans 'Fecha' %}</th>
                             <th>{% trans 'Proveedor' %}</th>
                             <th>{% trans 'Usuario' %}</th>
+                            <th>{% trans 'Ciudad' %}</th>
                             <th>{% trans 'Acciones' %}</th>
                         </tr>
                         </thead>
@@ -65,6 +66,7 @@
                                 </td>
                                 <td>{{ cotizacion.proveedor }}</td>
                                 <td>{{ cotizacion.usuario }}</td>
+                                <td>{{ cotizacion.inventario.ciudad }}</td>
                                 <td>
                                     <form action="{% url 'cotizacion-denegar' cotizacion.id %}"
                                           method="post">
@@ -86,6 +88,7 @@
                             <th>{% trans 'Fecha' %}</th>
                             <th>{% trans 'Proveedor' %}</th>
                             <th>{% trans 'Usuario' %}</th>
+                            <th>{% trans 'Ciudad' %}</th>
                             <th>{% trans 'Acciones' %}</th>
                         </tr>
                         </thead>
@@ -99,6 +102,7 @@
                                 </td>
                                 <td>{{ cotizacion.proveedor }}</td>
                                 <td>{{ cotizacion.usuario }}</td>
+                                <td>{{ cotizacion.inventario.ciudad }}</td>
                                 <td>
                                     <form action="{% url 'cotizacion-comprar' cotizacion.id %}"
                                           method="post">
@@ -113,6 +117,7 @@
                         <thead>
                         <tr>
                             <th>{% trans 'Fecha de Compra' %}</th>
+                            <th>{% trans 'Cotizaci&oacute;n' %}</th>
                             <th>{% trans 'Proveedor' %}</th>
                             <th>{% trans 'Usuario' %}</th>
                             <th>{% trans 'Total de la Compra' %}</th>
@@ -124,6 +129,11 @@
                                 <td>
                                     <a href="{{ compra.get_absolute_url }}">
                                         {{ compra.created }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ compra.cotizacion.get_absolute_url }}">
+                                        {{ compra.cotizacion.id }}
                                     </a>
                                 </td>
                                 <td>{{ compra.proveedor }}</td>

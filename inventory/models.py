@@ -44,6 +44,7 @@ class Inventario(models.Model):
     puede_comprar = models.NullBooleanField(default=False, blank=True,
                                             null=True)
     activo = models.BooleanField(default=True)
+    ciudad = models.ForeignKey('users.Ciudad', blank=True, null=True)
 
     def __str__(self):
         return _(u"Inventario de {0}").format(self.lugar)
@@ -148,10 +149,6 @@ class ItemTemplate(TimeStampedModel):
     activo = models.BooleanField(default=True)
     item_type = models.ManyToManyField(ItemType, related_name='items',
                                        blank=True)
-    comision = models.DecimalField(decimal_places=2, max_digits=4,
-                                   default=Decimal("30.00"))
-    comision2 = models.DecimalField(decimal_places=2, max_digits=4,
-                                    default=Decimal("10.00"))
 
     def __str__(self):
         return self.descripcion
