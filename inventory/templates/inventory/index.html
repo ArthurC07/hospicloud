@@ -49,6 +49,7 @@
                         <caption>{% trans 'Cotizaciones Pendientes' %}</caption>
                         <thead>
                         <tr>
+                            <th>{% trans 'N&uacute;mero' %}</th>
                             <th>{% trans 'Fecha' %}</th>
                             <th>{% trans 'Proveedor' %}</th>
                             <th>{% trans 'Usuario' %}</th>
@@ -61,9 +62,10 @@
                             <tr>
                                 <td>
                                     <a href="{{ cotizacion.get_absolute_url }}">
-                                        {{ cotizacion.created }}
+                                        {{ cotizacion.id }}
                                     </a>
                                 </td>
+                                <td>{{ cotizacion.created }}</td>
                                 <td>{{ cotizacion.proveedor }}</td>
                                 <td>{{ cotizacion.usuario }}</td>
                                 <td>{{ cotizacion.inventario.ciudad }}</td>
@@ -85,6 +87,7 @@
                         <caption>{% trans 'Cotizaciones Aprobadas para Compra' %}</caption>
                         <thead>
                         <tr>
+                            <th>{% trans 'N&uacute;mero' %}</th>
                             <th>{% trans 'Fecha' %}</th>
                             <th>{% trans 'Proveedor' %}</th>
                             <th>{% trans 'Usuario' %}</th>
@@ -97,9 +100,10 @@
                             <tr>
                                 <td>
                                     <a href="{{ cotizacion.get_absolute_url }}">
-                                        {{ cotizacion.created }}
+                                        {{ cotizacion.id }}
                                     </a>
                                 </td>
+                                <td>{{ cotizacion.created }}</td>
                                 <td>{{ cotizacion.proveedor }}</td>
                                 <td>{{ cotizacion.usuario }}</td>
                                 <td>{{ cotizacion.inventario.ciudad }}</td>
