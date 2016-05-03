@@ -519,7 +519,6 @@ class QuejaPeriodoListView(LoginRequiredMixin, PeriodoView, ListView):
             'respuesta__consulta__consultorio__usuario__profile',
             'respuesta__consulta__consultorio__usuario__profile__ciudad',
         ).filter(created__range=(self.inicio, self.fin))
-        print(query.query)
 
         return query
 

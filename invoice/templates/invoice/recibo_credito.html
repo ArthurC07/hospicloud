@@ -249,9 +249,9 @@
     <div class="row">
         <div class="col-md-12">
             {% trans 'Fecha L&iacute;mite de Emisi&oacute;n:' %}
-            {{ recibo.ciudad.limite_de_emision }}<br>
-            {% trans 'Rango Autorizado:' %} {{ recibo.ciudad.inicio_rango }}
-            {% trans 'a la' %} {{ recibo.ciudad.fin_rango }}
+            {{ recibo.legal_data.limite_de_emision }}<br>
+            {% trans 'Rango Autorizado:' %} {{ recibo.legal_data.inicio }}
+            {% trans 'a la' %} {{ recibo.legal_data.fin }}
         </div>
     </div>
     <div class="row">

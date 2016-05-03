@@ -145,8 +145,10 @@ class IndexView(TemplateView, InvoicePermissionMixin):
             tipo__facturable=True
         ).select_related('persona', 'consultorio__usuario', 'consultorio')
 
-        context['turnos'] = TurnoCaja.objects.filter(usuario=self.request.user,
-                                                     finalizado=False).all()
+        context['turnos'] = TurnoCaja.objects.filter(
+            usuario=self.request.user,
+            finalizado=False
+        ).all()
 
         if context['turnos'].count() != 0:
             context['turno'] = True
@@ -160,6 +162,7 @@ class IndexView(TemplateView, InvoicePermissionMixin):
             'cliente',
             'ciudad',
             'cajero__profile__ciudad',
+            'legal_data',
         ).prefetch_related(
             'ventas',
             'ventas__item',

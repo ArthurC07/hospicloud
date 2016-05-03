@@ -612,8 +612,22 @@ class ConsultaCreateView(CurrentUserFormMixin, ConsultorioFormMixin,
 
 
 class ConsultaDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows the data of a :class:`Consulta`
+    """
     model = Consulta
     context_object_name = 'consulta'
+    queryset = Consulta.objects.prefetch_related(
+        'incapacidades',
+        'ordenes_medicas',
+        'diagnosticos_clinicos',
+        'notamedica_set',
+        'evaluaciones',
+    ).select_related(
+        'persona',
+        'espera',
+        'consultorio',
+    )
 
 
 class SeguimientoCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
