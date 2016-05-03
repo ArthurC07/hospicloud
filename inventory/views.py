@@ -749,7 +749,8 @@ class UserInventarioRequiredMixin(View):
     """
 
     def dispatch(self, *args, **kwargs):
-        if self.request.user.profile is None:
+        profile = self.request.user.profile
+        if profile is None or profile.inventario is None:
             messages.info(self.request,
                           _("Su usuario no tiene un Inventario asociado, por "
                             "favor edite su Perfil para asociar un Inventario"))
