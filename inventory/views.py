@@ -29,8 +29,8 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
-                                  DeleteView, View)
+from django.views.generic import CreateView, DetailView, UpdateView, ListView, \
+    DeleteView, View
 from django.views.generic.base import TemplateView, ContextMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
@@ -573,7 +573,7 @@ class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
     def form_valid(self, form):
         self.object = form.save()
 
-        for item in self.inventario.items.all():
+        for item in self.inventario.items():
             historico = ItemHistorial()
             historico.item = item.plantilla
             historico.historial = self.object
