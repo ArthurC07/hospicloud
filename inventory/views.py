@@ -708,7 +708,9 @@ class CotizacionComprarUpdateView(CotizacionUpdateView):
             )
             item_comprado.save()
 
-        return HttpResponseRedirect(compra.get_absolute_url())
+        return HttpResponseRedirect(
+            reverse('compra-documentos', args=[compra.id])
+        )
 
 
 class CotizacionFormMixin(CotizacionMixin, FormMixin):

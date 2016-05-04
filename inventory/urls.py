@@ -122,6 +122,10 @@ urlpatterns = [
         views.CompraUpdateView.as_view(),
         name='compra-edit'),
 
+    url(r'^compra/(?P<pk>\d+)/documentos$',
+        views.CompraDocumentosView.as_view(),
+        name='compra-documentos'),
+
     url(r'^historial/(?P<pk>\d+)$',
         views.HistorialDetailView.as_view(),
         name='historial'),
