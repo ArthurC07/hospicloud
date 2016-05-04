@@ -23,6 +23,7 @@ from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
+from django.db.models.aggregates import Count, Sum
 from django.db.models.expressions import ExpressionWrapper, F
 from django.db.models.functions import Coalesce
 from django.http.response import HttpResponseRedirect
@@ -69,7 +70,12 @@ class IndexView(TemplateView, InventarioPermissionMixin):
         """
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        context['inventarios'] = Inventario.objects.filter(activo=True).all()
+        context['inventarios'] = Inventario.objects.filter(
+            activo=True
+        ).annotate(
+            total_items=Count('item__id'),
+            total_inventory=Coalesce(Sum('item__cantidad'), Decimal()),
+        )
         context['productoform'] = ItemTemplateSearchForm()
         context['productoform'].helper.form_tag = False
 

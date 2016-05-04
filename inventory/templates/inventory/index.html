@@ -27,7 +27,8 @@
                             <th>{% trans 'Almacen' %}</th>
                             <th>{% trans 'Costo' %}</th>
                             <th>{% trans 'Valor de Venta' %}</th>
-                            <th>{% trans 'Acciones' %}</th>
+                            <th>{% trans 'Productos' %}</th>
+                            <th>{% trans 'Inventario Total' %}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -38,9 +39,10 @@
                                         {{ inventario.lugar }}
                                     </a>
                                 </td>
-                                <td>{{ inventario.costo }}</td>
-                                <td>{{ inventario.valor }}</td>
-                                <td>&nbsp;</td>
+                                <td class="text-right">{{ inventario.costo }}</td>
+                                <td class="text-right">{{ inventario.valor }}</td>
+                                <td class="text-right">{{ inventario.total_items }}</td>
+                                <td class="text-right">{{ inventario.total_inventory }} {% trans 'Unidades' %}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
