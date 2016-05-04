@@ -252,7 +252,7 @@ class PlanSearchView(LoginRequiredMixin, FormView):
         return self.plan.get_absolute_url()
 
 
-class BeneficioCreateView(PlanFormMixin, LoginRequiredMixin, CreateView):
+class BeneficioCreateView(LoginRequiredMixin, PlanFormMixin, CreateView):
     model = Beneficio
     form_class = BeneficioForm
 
@@ -275,7 +275,7 @@ class EmpresaSearchView(LoginRequiredMixin, FormView):
         return self.empresa.get_absolute_url()
 
 
-class LimiteEventoCreateView(PlanFormMixin, LoginRequiredMixin, CreateView):
+class LimiteEventoCreateView(LoginRequiredMixin, PlanFormMixin, CreateView):
     model = LimiteEvento
     form_class = LimiteEventoForm
 
@@ -305,7 +305,7 @@ class ContratoFormMixin(FormMixin, View):
         return super(ContratoFormMixin, self).dispatch(*args, **kwargs)
 
 
-class ContratoCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
+class ContratoCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = Contrato
     form_class = ContratoForm
 
@@ -367,7 +367,7 @@ class ContratoPersonaCreateView(LoginRequiredMixin, CreateView):
         return self.contrato.get_absolute_url()
 
 
-class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
+class ContratoMasterPersonaCreateView(LoginRequiredMixin, PersonaFormMixin,
                                       CreateView):
     model = Contrato
     form_class = ContratoMasterForm
@@ -383,7 +383,7 @@ class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ContratoDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
+class ContratoDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
     paginate_by = 10
     template_name = 'contracts/contrato_detail.html'
 
@@ -636,7 +636,8 @@ class BeneficiarioCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     form_class = BeneficiarioPersonaForm
 
 
-class BeneficiarioPersonaCreateView(ContratoFormMixin, TemplateView):
+class BeneficiarioPersonaCreateView(LoginRequiredMixin, ContratoFormMixin,
+                                    TemplateView):
     model = Beneficiario
     template_name = 'contracts/beneficiario_create.html'
 
