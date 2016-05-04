@@ -78,7 +78,7 @@ def create_periodo_form(context, object_name, prefix, legend, action):
     context[object_name].set_action(action)
 
 
-class IndexView(TemplateView, InvoicePermissionMixin):
+class IndexView(InvoicePermissionMixin, TemplateView):
     """Muestra las opciones disponibles para la aplicación"""
 
     template_name = 'invoice/index.html'
