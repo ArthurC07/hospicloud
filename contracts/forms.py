@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Submit
+from dal import autocomplete
 from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -219,8 +220,9 @@ class BeneficiarioPersonaForm(BasePersonaForm):
         model = Beneficiario
         exclude = ('activo', 'dependiente',)
 
-    contrato = forms.ModelChoiceField(
-        queryset=Contrato.objects.select_related('persona').all()
+    contrato =  forms.ModelChoiceField(
+        queryset=Contrato.objects.all().order_by('persona__nombre'),
+        widget=autocomplete.ModelSelect2(url='contratos')
     )
     inscripcion = forms.DateTimeField(widget=DateTimeWidget(), required=False,
                                       initial=timezone.now)

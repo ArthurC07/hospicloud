@@ -21,6 +21,7 @@ import calendar
 from datetime import datetime, time
 
 from crispy_forms.layout import Submit, Layout
+from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -384,6 +385,9 @@ class ContratoMasterPersonaCreateView(LoginRequiredMixin, PersonaFormMixin,
 
 
 class ContratoDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
+    """
+    Displays the data related to a :class:`Contrato`
+    """
     paginate_by = 10
     template_name = 'contracts/contrato_detail.html'
 
@@ -394,6 +398,24 @@ class ContratoDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
     def get_queryset(self):
         self.object = self.get_object(Contrato.objects.all())
         return self.object.beneficiarios.select_related('persona').all()
+
+
+class ContratoAutoCompleteView(LoginRequiredMixin,
+                           autocomplete.Select2QuerySetView):
+    """
+    Building an autocomplete view for forms needing a :class:`Contrato`
+    """
+
+    def get_queryset(self):
+        qs = Contrato.objects.all()
+        if self.q:
+            qs = qs.filter(
+                Q(persona__nombre__icontains=self.q) |
+                Q(persona__apellido__icontains=self.q) |
+                Q(persona__identificacion__icontains=self.q)
+            )
+
+        return qs
 
 
 class ContratoUpdateView(LoginRequiredMixin, UpdateView):
