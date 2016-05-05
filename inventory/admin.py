@@ -72,6 +72,11 @@ class ItemCotizadoAdmin(ForeignKeyAutocompleteAdmin):
         return obj.cotizacion.proveedor.name
 
 
+class CompraAdmin(admin.ModelAdmin):
+    list_display = ['proveedor', 'created', 'ingresada', 'usuario',
+                    'comprobante', 'metodo_de_pago']
+
+
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
 admin.site.register(Requisicion)
 admin.site.register(Inventario, InventarioAdmin)
@@ -80,7 +85,7 @@ admin.site.register(TipoVenta)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Transferido)
 admin.site.register(Transferencia)
-admin.site.register(Compra)
+admin.site.register(Compra, CompraAdmin)
 admin.site.register(ItemComprado)
 admin.site.register(ItemRequisicion)
 admin.site.register(Proveedor, ProveedorAdmin)

@@ -373,7 +373,9 @@ class Compra(TimeStampedModel):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def __str__(self):
-        return _(u"Compra efectuada el {0}").format(self.created)
+        if self.proveedor:
+            return _("Compra a {0}").format(self.proveedor.name)
+        return _('Compra').format()
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
