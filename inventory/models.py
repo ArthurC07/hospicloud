@@ -99,7 +99,7 @@ class Inventario(models.Model):
     def cargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
         if not item.plantilla.servicio:
-            item.aumentar(cantidad, user)
+            item.incrementar(cantidad, user)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
