@@ -128,6 +128,7 @@
                             <th>{% trans 'Proveedor' %}</th>
                             <th>{% trans 'Usuario' %}</th>
                             <th>{% trans 'Total de la Compra' %}</th>
+                            <th>{% trans 'Acciones' %}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -145,7 +146,12 @@
                                 </td>
                                 <td>{{ compra.proveedor }}</td>
                                 <td>{{ compra.usuario }}</td>
-                                <td class="text-rightx">{{ compra.valor }}</td>
+                                <td class="text-right">{{ compra.valor }}</td>
+                                <td>
+                                    <a href="{% url 'compra-edit' compra.id %}">
+                                        {% trans 'Transferir a Inventario' %}
+                                    </a>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
