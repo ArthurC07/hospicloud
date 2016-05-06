@@ -261,13 +261,13 @@ class CompraIngresarForm(forms.ModelForm):
         model = Compra
         fields = ('ingresada', 'inventario')
 
-    transferida = forms.BooleanField(widget=forms.HiddenInput())
+    ingresada = forms.BooleanField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         if 'initial' not in kwargs:
-            kwargs['initial'] = {'transferida': True}
+            kwargs['initial'] = {'ingresada': True}
         else:
-            kwargs['initial']['transferida'] = True
+            kwargs['initial']['ingresada'] = True
         super(CompraIngresarForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True

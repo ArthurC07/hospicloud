@@ -52,16 +52,18 @@
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
+                        {% if not compra.ingresada %}
                         <li>
                             <a href="{% url 'compra-item-create' compra.id %}">
                                 {% trans 'Agregar Producto' %}
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'compra-edit' compra.id %}">
+                            <a href="{% url 'compra-transferir' compra.id %}">
                                 {% trans 'Transferir a Inventario' %}
                             </a>
                         </li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>
