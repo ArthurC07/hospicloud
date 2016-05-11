@@ -130,6 +130,7 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
     """
     Allows creating and editing :class:`Evaluacion` data
     """
+
     class Meta:
         model = Evaluacion
         fields = '__all__'
@@ -188,8 +189,11 @@ class CitaForm(ConsultorioFormMixin):
 
 
 class CitaPersonaForm(CitaForm):
-    persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    persona = forms.ModelChoiceField(
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput(),
+        required=False
+    )
 
 
 class SeguimientoForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm):

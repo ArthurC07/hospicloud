@@ -408,6 +408,7 @@ class Compra(TimeStampedModel):
         )
 
 
+@python_2_unicode_compatible
 class ItemComprado(TimeStampedModel):
     """
     Describes a :class:`ItemTemplate` that was bought as part of a
@@ -420,16 +421,51 @@ class ItemComprado(TimeStampedModel):
     cantidad = models.IntegerField(default=0)
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def __str__(self):
+
+        return self.item.descripcion
+
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
 
         return self.compra.get_absolute_url()
 
 
-class ItemAction(TimeStampedModel):
-    """Crea un registro de cada movimiento efectuado por un :class:`User`
-    en un :class:`Item`"""
+class TransferenciaCompra(TimeStampedModel):
+    """
+    Registers the date when a :class:`Compra` has been transfered
+    """
+    compra = models.ForeignKey(Compra)
 
+
+class ItemTransferido(TimeStampedModel):
+    """
+    Register the items that have been transfered from :class:`Compra`
+    """
+    transferencia = models.ForeignKey(TransferenciaCompra)
+    item = models.ForeignKey(ItemTemplate)
+    cantidad = models.IntegerField(default=0)
+
+
+class AnomaliaCompra(TimeStampedModel):
+    """
+    Registers discrepancies between the aproved :class:`Compra` and the
+    actual presented :class:`Item`s
+    """
+    item = models.ForeignKey(ItemComprado)
+    cantidad = models.IntegerField(default=0)
+    detalle = models.TextField()
+
+    def get_absolute_url(self):
+
+        return self.item.compra.get_absolute_url()
+
+
+class ItemAction(TimeStampedModel):
+    """
+    Crea un registro de cada movimiento efectuado por un :class:`User`
+    en un :class:`Item`
+    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     action = models.TextField()
     item = models.ForeignKey(ItemTemplate, related_name='acciones')
@@ -511,6 +547,7 @@ class CotizacionQuerySet(QuerySet):
 @python_2_unicode_compatible
 class Cotizacion(TimeStampedModel):
     proveedor = models.ForeignKey(Proveedor)
+    creacion = models.DateTimeField(auto_now_add=True)
     vencimiento = models.DateTimeField(auto_now_add=True)
     autorizada = models.BooleanField(default=False)
     denegada = models.BooleanField(default=False)

@@ -42,10 +42,11 @@ from inventory.forms import InventarioForm, ItemTemplateForm, ItemTypeForm, \
     ItemTemplateSearchForm, RequisicionCompletarForm, ItemCompradoForm, \
     ProveedorForm, CotizacionForm, ItemCotizadoform, CotizacionAutorizarForm, \
     CotizacionDenegarForm, CotizacionComprarForm, CompraIngresarForm, \
-    CompraDocumentosForm
+    CompraDocumentosForm, AnomaliaCompraForm
 from inventory.models import Inventario, Item, ItemTemplate, Transferencia, \
     Historial, ItemComprado, Transferido, Compra, ItemType, Requisicion, \
-    ItemRequisicion, ItemHistorial, Proveedor, Cotizacion, ItemCotizado
+    ItemRequisicion, ItemHistorial, Proveedor, Cotizacion, ItemCotizado, \
+    AnomaliaCompra
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -496,7 +497,12 @@ class CompraDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
         return super(CompraDetailView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
-        self.object = self.get_object(Compra.objects.all())
+        self.object = self.get_object(
+            Compra.objects.prefetch_related(
+                'itemcomprado_set',
+                'itemcomprado_set__anomaliacompra_set'
+            )
+        )
         return self.object.items().all()
 
 
@@ -529,7 +535,10 @@ class CompraListView(LoginRequiredMixin, ListView):
     context_object_name = 'compras'
 
 
-class ItemCompradoCreateView(LoginRequiredMixin, CompraFormMixin):
+class ItemCompradoCreateView(LoginRequiredMixin, CompraFormMixin, CreateView):
+    """
+    Create :class:`ItemComprado` from the UI
+    """
     model = ItemComprado
     form_class = ItemCompradoForm
 
@@ -539,6 +548,44 @@ class ItemCompradoCreateView(LoginRequiredMixin, CompraFormMixin):
         extra_form.helper.form_id = 'add-item-form'
         kwargs['itemTemplateForm'] = extra_form
         return super(ItemCompradoCreateView, self).get_context_data(**kwargs)
+
+
+class ItemCompradoMixin(ContextMixin, View):
+    """
+    Adds a :class:`ItemComprado` to the :class:`View`
+    """
+
+    def dispatch(self, *args, **kwargs):
+        self.item_comprado = get_object_or_404(ItemComprado, pk=kwargs['item'])
+        return super(ItemCompradoMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+
+        context = super(ItemCompradoMixin, self).get_context_data(**kwargs)
+
+        context['item'] = self.item_comprado
+
+        return context
+
+
+class ItemCompradoFormMixin(FormMixin, ItemCompradoMixin):
+    """
+    Adds a :class:`ItemComprado` to the form used in a view
+    """
+
+    def get_initial(self):
+        initial = super(ItemCompradoFormMixin, self).get_initial()
+        initial['item'] = self.item_comprado
+        return initial
+
+
+class AnomaliaCompraCreateView(LoginRequiredMixin, ItemCompradoFormMixin,
+                               CreateView):
+    """
+    Allows adding a :class:`AnomaliaCompra` to a :class:`Compra`
+    """
+    model = AnomaliaCompra
+    form_class = AnomaliaCompraForm
 
 
 class ItemTemplateSearchView(LoginRequiredMixin, ListView):

@@ -126,6 +126,10 @@ urlpatterns = [
         views.CompraDocumentosView.as_view(),
         name='compra-documentos'),
 
+    url(r'^compra/(?P<item>\d+)/anomalia/agregar$',
+        views.AnomaliaCompraCreateView.as_view(),
+        name='compra-anomalia-agregar'),
+
     url(r'^compra/(?P<pk>\d+)/transferir$',
         views.CompraIngresarUpdateView.as_view(),
         name='compra-transferir'),

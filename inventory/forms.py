@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.models import ItemTemplate, Inventario, Item, Compra, ItemType, \
     Requisicion, ItemRequisicion, Transferencia, Transferido, ItemComprado, \
-    Historial, Proveedor, Cotizacion, ItemCotizado
+    Historial, Proveedor, Cotizacion, ItemCotizado, AnomaliaCompra
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
     DateTimeWidget, FutureDateWidget
 from users.mixins import HiddenUserForm
@@ -193,6 +193,11 @@ class ItemCompradoForm(ItemTemplateFormMixin):
         model = ItemComprado
         exclude = ('ingresado',)
 
+    compra = forms.ModelChoiceField(
+        queryset=Compra.objects.all(),
+        widget=forms.HiddenInput(),
+    )
+
     def __init__(self, *args, **kwargs):
         super(ItemCompradoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Agregar Producto Comprado'),
@@ -227,6 +232,7 @@ class CompraForm(ProveedorFormMixin, HiddenUserForm):
     """
     Describes a form that will be used to create :class:`Compra` objects
     """
+
     class Meta:
         model = Compra
         exclude = ('ingresada',)
@@ -280,10 +286,32 @@ class CompraIngresarForm(forms.ModelForm):
             ))
 
 
+class AnomaliaCompraForm(FieldSetModelFormMixin):
+    """
+    Creates a form that allows registering the discrepancies of a
+    :class:`Compra` on a certain :class:`ItemComprado`
+    """
+
+    class Meta:
+        model = AnomaliaCompra
+        fields = '__all__'
+
+    item = forms.ModelChoiceField(
+        queryset=ItemComprado.objects.select_related('item').all(),
+        widget=forms.HiddenInput()
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(AnomaliaCompraForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Formulario de Anomalias'),
+                                      *self.field_names)
+
+
 class CotizacionForm(HiddenUserForm, ProveedorFormMixin):
     """
     Describres a form that will be used to create :class:`Cotizacion` objects
     """
+
     class Meta:
         model = Cotizacion
         exclude = ('autorizada', 'denegada', 'comprada')
