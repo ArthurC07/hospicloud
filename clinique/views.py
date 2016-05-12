@@ -50,11 +50,13 @@ from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
-    PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm
+    PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm, \
+    OrdenLaboratorioForm, OrdenLaboratorioItemForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
-    Remision, NotaMedica, TipoConsulta, Afeccion
+    Remision, NotaMedica, TipoConsulta, Afeccion, OrdenLaboratorio, \
+    OrdenLaboratorioItem
 from contracts.forms import AseguradoraPeriodoForm
 from contracts.models import MasterContract, Aseguradora
 from emergency.models import Emergencia
@@ -139,6 +141,13 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['seguimientoperiodoform'].set_legend(
             _('Seguimientos por Periodo')
         )
+
+        context['ordenlperiodoform'] = PeriodoForm(prefix='laboratorio')
+        context[
+            'ordenlperiodoform'
+        ].helper.form_action = 'clinique-orden-laboratorio-periodo'
+        context['ordenlperiodoform'].set_legend(
+            _('Ordenes de Laboratorio por Periodo'))
 
         aseg_form = AseguradoraPeriodoForm(prefix='consulta-aseguradora')
         aseg_form.helper.add_input(Submit('submit', _('Mostrar')))
@@ -623,6 +632,7 @@ class ConsultaDetailView(LoginRequiredMixin, DetailView):
         'diagnosticos_clinicos',
         'notamedica_set',
         'evaluaciones',
+        'ordenlaboratorio_set',
     ).select_related(
         'persona',
         'espera',
@@ -1638,6 +1648,7 @@ class FrecuenciaView(PeriodoView):
     """
     Allows spreading :class:`Consulta by their weekday and hour
     """
+
     def get_data(self):
         data = []
         for n in range(1, 8):
@@ -1718,3 +1729,92 @@ class ConsultaFrecuenciaCiudadView(FrecuenciaView, DetailView):
         ).filter(created__week_day=n).filter(
             consultorio__localidad__ciudad=self.object
         )
+
+
+class OrdenLaboratorioCreateView(LoginRequiredMixin, ConsultaFormMixin,
+                                 CreateView):
+    """Creates a :class:`OrdenLaboratorio` instance from the UI"""
+    model = OrdenLaboratorio
+    form_class = OrdenLaboratorioForm
+
+
+class OrdenLaboratorioDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays the data
+    """
+    model = OrdenLaboratorio
+    queryset = OrdenLaboratorio.objects.prefetch_related(
+        'ordenlaboratorioitem_set',
+        'ordenlaboratorioitem_set__item'
+    )
+
+
+class OrdenLaboratorioEnviarView(LoginRequiredMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        orden = get_object_or_404(OrdenLaboratorio, pk=kwargs['pk'])
+
+        orden.enviar()
+
+        return orden.get_absolute_url()
+
+
+class OrdenLaboratorioMixin(ContextMixin, View):
+    """Permite obtener un :class:`Paciente` desde los argumentos en una url"""
+
+    def dispatch(self, *args, **kwargs):
+        self.orden = get_object_or_404(OrdenLaboratorio, pk=kwargs['orden'])
+        return super(OrdenLaboratorioMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(OrdenLaboratorioMixin, self).get_context_data(**kwargs)
+
+        context['orden'] = self.orden
+
+        return context
+
+
+class OrdenLaboratorioFormMixin(OrdenLaboratorioMixin, FormMixin):
+    """Permite inicializar el paciente que se utilizará en un formulario"""
+
+    def get_initial(self):
+        initial = super(OrdenLaboratorioFormMixin, self).get_initial()
+        initial['orden'] = self.orden
+        return initial
+
+
+class OrdenLaboratorioItemCreateView(LoginRequiredMixin,
+                                     OrdenLaboratorioFormMixin, CreateView):
+    """
+    Allows the creation of :class:`OrdenLaboratorioItem` from the UI
+    """
+    model = OrdenLaboratorioItem
+    form_class = OrdenLaboratorioItemForm
+
+
+class OrdenLaboratorioPeriodoView(LoginRequiredMixin, PeriodoView, ListView):
+    """
+    Shows all :class:`Consulta` that happened in a Date range that is specified
+    by a :class:`PeriodoForm
+    """
+
+    template_name = 'clinique/ordenlaboratorio_list.html'
+    prefix = 'laboratorio'
+    redirect_on_invalid = 'consultorio-index'
+    context_object_name = 'ordenes'
+
+    def get_queryset(self):
+        """
+        Builds the :class:`QuerySet` that will be used to show the list of
+        :class:`OrdenLaboratorio` objects
+        """
+        return OrdenLaboratorio.objects.filter(
+            created__range=(self.inicio, self.fin)
+        ).select_related(
+            'consulta',
+            'consulta__persona',
+            'consulta__consultorio',
+            'consulta__consultorio__usuario',
+        ).prefetch_related(
+            'ordenlaboratorioitem_set',
+            'ordenlaboratorioitem_set__item',
+        ).order_by('created')

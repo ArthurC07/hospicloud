@@ -131,6 +131,20 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                <table class="table table-striped">
+                    <caption>{% trans 'Ordenes de Laboratorio' %}</caption>
+                    <tbody>
+                    {% for orden in consulta.ordenlaboratorio_set.all %}
+                        <tr>
+                            <td>
+                                <a href="{{ orden.get_absolute_url }}">
+                                    {{ orden.created }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </article>
         </div>
         <div class="col-md-3">
@@ -161,6 +175,12 @@
                             <a href="{% url 'consultorio-om-agregar' consulta.id %}">
                                 <i class="fa fa-stethoscope"></i>
                                 {% trans 'Agregar Orden M&eacute;dica' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'clinique-orden-laboratorio-agregar' consulta.id %}">
+                                <i class="fa fa-stethoscope"></i>
+                                {% trans 'Agregar Orden Laboratorio' %}
                             </a>
                         </li>
                         <li>

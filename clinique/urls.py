@@ -250,6 +250,26 @@ urlpatterns = [
         views.OrdenCompletarRedirect.as_view(),
         name='clinique-orden-completar'),
 
+    url(r'^consulta/(?P<consulta>\d+)/orden/laboratorio/agregar$',
+        views.OrdenLaboratorioCreateView.as_view(),
+        name='clinique-orden-laboratorio-agregar'),
+
+    url(r'^consulta/orden/laboratorio/(?P<pk>\d+)$',
+        views.OrdenLaboratorioDetailView.as_view(),
+        name='clinique-orden-laboratorio'),
+
+    url(r'^consulta/orden/laboratorio/(?P<orden>\d+)/examen/agregar$',
+        views.OrdenLaboratorioItemCreateView.as_view(),
+        name='clinique-orden-laboratorio-item-agregar'),
+
+    url(r'^consulta/orden/laboratorio/(?P<pk>\d+)/enviar$',
+        views.OrdenLaboratorioEnviarView.as_view(),
+        name='clinique-orden-laboratorio-enviar'),
+
+    url(r'^consulta/orden/laboratorio/periodo$',
+        views.OrdenLaboratorioPeriodoView.as_view(),
+        name='clinique-orden-laboratorio-periodo'),
+
     url(r'^orden/(?P<orden>\d+)/prescripcion/guardar$',
         views.save_prescriptions,
         name='prescripcion-guardar'),

@@ -27,6 +27,9 @@ urlpatterns = [
     url(r'^contrato/(?P<pk>\d+)$', views.ContratoDetailView.as_view(),
         name='contrato'),
 
+    url(r'^contratos$', views.ContratoAutoCompleteView.as_view(),
+        name='contratos'),
+
     url(r'^plan/(?P<pk>\d+)$', views.PlanDetailView.as_view(),
         name='contracts-plan'),
 

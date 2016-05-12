@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load l10n %}{% load i18n %}
+{% block content %}
+    <div class="row">
+        <section class="page-header col-md-12 col-xs-12 main-content">
+            <h1>
+                {% trans 'Orden de Laboratorio' %} {{ ordenlaboratorio.consulta.persona.nombre_completo }}
+                <small>
+                    {{ ordenlaboratorio.created }}
+                </small>
+            </h1>
+        </section>
+    </div>
+    <div class="row">
+        <div class="col-md-9 col-xs-9 table-responsive main-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Examen' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for examen in ordenlaboratorio.ordenlaboratorioitem_set.all %}
+                    <tr>
+                        <td>{{ examen.item.descripcion }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked">
+                        {% if not ordenlaboratorio.enviado %}
+                            <li>
+                                <a href="{% url 'clinique-orden-laboratorio-item-agregar' ordenlaboratorio.id %}">
+                                    {% trans 'Agregar Examen' %}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'clinique-orden-laboratorio-enviar' ordenlaboratorio.id %}">
+                                    {% trans 'Enviar Orden' %}
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

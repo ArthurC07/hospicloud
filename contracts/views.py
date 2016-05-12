@@ -21,6 +21,7 @@ import calendar
 from datetime import datetime, time
 
 from crispy_forms.layout import Submit, Layout
+from dal import autocomplete
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -252,7 +253,7 @@ class PlanSearchView(LoginRequiredMixin, FormView):
         return self.plan.get_absolute_url()
 
 
-class BeneficioCreateView(PlanFormMixin, LoginRequiredMixin, CreateView):
+class BeneficioCreateView(LoginRequiredMixin, PlanFormMixin, CreateView):
     model = Beneficio
     form_class = BeneficioForm
 
@@ -275,7 +276,7 @@ class EmpresaSearchView(LoginRequiredMixin, FormView):
         return self.empresa.get_absolute_url()
 
 
-class LimiteEventoCreateView(PlanFormMixin, LoginRequiredMixin, CreateView):
+class LimiteEventoCreateView(LoginRequiredMixin, PlanFormMixin, CreateView):
     model = LimiteEvento
     form_class = LimiteEventoForm
 
@@ -305,7 +306,7 @@ class ContratoFormMixin(FormMixin, View):
         return super(ContratoFormMixin, self).dispatch(*args, **kwargs)
 
 
-class ContratoCreateView(PersonaFormMixin, LoginRequiredMixin, CreateView):
+class ContratoCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     model = Contrato
     form_class = ContratoForm
 
@@ -367,7 +368,7 @@ class ContratoPersonaCreateView(LoginRequiredMixin, CreateView):
         return self.contrato.get_absolute_url()
 
 
-class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
+class ContratoMasterPersonaCreateView(LoginRequiredMixin, PersonaFormMixin,
                                       CreateView):
     model = Contrato
     form_class = ContratoMasterForm
@@ -383,7 +384,10 @@ class ContratoMasterPersonaCreateView(PersonaFormMixin, LoginRequiredMixin,
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ContratoDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
+class ContratoDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
+    """
+    Displays the data related to a :class:`Contrato`
+    """
     paginate_by = 10
     template_name = 'contracts/contrato_detail.html'
 
@@ -394,6 +398,24 @@ class ContratoDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
     def get_queryset(self):
         self.object = self.get_object(Contrato.objects.all())
         return self.object.beneficiarios.select_related('persona').all()
+
+
+class ContratoAutoCompleteView(LoginRequiredMixin,
+                           autocomplete.Select2QuerySetView):
+    """
+    Building an autocomplete view for forms needing a :class:`Contrato`
+    """
+
+    def get_queryset(self):
+        qs = Contrato.objects.all()
+        if self.q:
+            qs = qs.filter(
+                Q(persona__nombre__icontains=self.q) |
+                Q(persona__apellido__icontains=self.q) |
+                Q(persona__identificacion__icontains=self.q)
+            )
+
+        return qs
 
 
 class ContratoUpdateView(LoginRequiredMixin, UpdateView):
@@ -636,7 +658,8 @@ class BeneficiarioCreateView(LoginRequiredMixin, PersonaFormMixin, CreateView):
     form_class = BeneficiarioPersonaForm
 
 
-class BeneficiarioPersonaCreateView(ContratoFormMixin, TemplateView):
+class BeneficiarioPersonaCreateView(LoginRequiredMixin, ContratoFormMixin,
+                                    TemplateView):
     model = Beneficiario
     template_name = 'contracts/beneficiario_create.html'
 
