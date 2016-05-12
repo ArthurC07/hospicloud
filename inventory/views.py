@@ -241,7 +241,7 @@ class ItemInventarioListView(LoginRequiredMixin, ListView):
         return Item.objects.filter(inventario=self.inventario).all()
 
 
-class ItemCreateView(InventarioFormMixin, LoginRequiredMixin):
+class ItemCreateView(LoginRequiredMixin, InventarioFormMixin, CreateView):
     model = Item
     form_class = ItemForm
 
@@ -259,6 +259,9 @@ class ItemDetailView(LoginRequiredMixin, ListView):
 
 
 class RequisicionDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
+    """
+    Displays the details of a :class:`Requisicion`
+    """
     paginate_by = 10
     template_name = 'inventory/requisicion_detail.html'
 
@@ -280,7 +283,11 @@ class RequisicionListView(LoginRequiredMixin, ListView):
     ordering = ['-created', ]
 
 
-class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin):
+class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin,
+                            CreateView):
+    """
+    Allows a user to create new :class:`Requisicion` instances
+    """
     model = Requisicion
     form_class = RequisicionForm
 
@@ -314,7 +321,6 @@ class RequisicionFormMixin(FormMixin, RequisicionMixin):
 
     def get_initial(self):
         initial = super(RequisicionFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['requisicion'] = self.requisicion.id
         return initial
 
@@ -560,7 +566,6 @@ class ItemCompradoMixin(ContextMixin, View):
         return super(ItemCompradoMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-
         context = super(ItemCompradoMixin, self).get_context_data(**kwargs)
 
         context['item'] = self.item_comprado
