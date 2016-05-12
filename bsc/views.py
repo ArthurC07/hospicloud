@@ -685,7 +685,7 @@ class SolucionEmailView(LoginRequiredMixin, RedirectView):
                     'fecha': timezone.now().date(),
                 },
                 to=[solucion.queja.respuesta.consulta.persona.email,
-                    'sac@epsmedical.com'],
+                    solucion.usuario.profile.ciudad.company.sac],
                 from_email=settings.EMAIL_HOST_USER
             )
             message.send()
@@ -730,7 +730,7 @@ class SolucionAseguradoraEmailView(LoginRequiredMixin, RedirectView):
                     'aseguradora': consulta.poliza.aseguradora,
                     'fecha': timezone.now().date(),
                 },
-                to=[email, 'sac@epsmedical.com'],
+                to=[email, solucion.usuario.profile.ciudad.company.sac],
                 from_email=settings.EMAIL_HOST_USER
             )
             message.send()

@@ -56,6 +56,7 @@ class Company(TimeStampedModel):
     cambio_monetario = models.DecimalField(max_digits=11, decimal_places=4,
                                            default=0)
     receipt_days = models.IntegerField(default=30)
+    sac = models.EmailField(blank=True)
 
     def __str__(self):
         return self.nombre
@@ -105,6 +106,7 @@ class Ciudad(TimeStampedModel):
                                        related_name='ciudad_comprobante')
     nota_credito = models.OneToOneField(LegalData, blank=True, null=True,
                                         related_name='ciudad_nota_credito')
+    correo_laboratorio = models.EmailField(blank=True)
 
     def __str__(self):
         return self.nombre

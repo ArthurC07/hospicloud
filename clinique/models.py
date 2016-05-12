@@ -29,6 +29,7 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
+from mail_templated import EmailMessage
 
 from contracts.models import Contrato, MasterContract
 from inventory.models import ItemTemplate, Inventario, ItemType
@@ -636,6 +637,51 @@ class NotaMedica(TimeStampedModel):
 
     def get_absolute_url(self):
         return self.consulta.get_absolute_url()
+
+
+@python_2_unicode_compatible
+class OrdenLaboratorio(TimeStampedModel):
+    """
+    Contains a set of exams that the medic indicates to a :class:`Persona`
+    """
+    consulta = models.ForeignKey(Consulta)
+    enviado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.consulta.persona.nombre_completo()
+
+    def get_absolute_url(self):
+        return reverse('clinique-orden-laboratorio', args=[self.id])
+
+    def enviar(self):
+        self.enviado = True
+        self.save()
+
+        message = EmailMessage(
+            str('clinique/solucion_email.tpl'),
+            {
+                'examen': self.examen.descripcion,
+                'fecha': timezone.now().date(),
+            },
+            to=[self.usuario.profile.ciudad.correo_laboratorio, ],
+            from_email=settings.EMAIL_HOST_USER
+        )
+        message.send()
+
+
+@python_2_unicode_compatible
+class OrdenLaboratorioItem(TimeStampedModel):
+    """
+    Represents an exam a :class:`Persona` was sent to make.
+    """
+    orden = models.ForeignKey(OrdenLaboratorio)
+    item = models.ForeignKey(ItemTemplate)
+
+    def __str__(self):
+        return self.item.descripcion
+
+    def get_absolute_url(self):
+        return self.orden.get_absolute_url()
 
 
 def consolidate_clinique(persona, clone):

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load l10n %}{% load i18n %}
+{% block content %}
+    <div class="row">
+        <section class="page-header col-md-12 col-xs-12 main-content">
+            <h1>
+                {% trans 'Ordenes de Laboratorio' %}
+                <small>
+                    {% trans 'del' %} {{ inicio }} {% trans 'al' %} {{ fin }}
+                </small>
+            </h1>
+        </section>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12 table-responsive main-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Paciente' %}</th>
+                    <th>{% trans 'Motivo de Consulta' %}</th>
+                    <th>{% trans 'M&eacute;dico' %}</th>
+                    <th>{% trans 'Examenes' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for orden in ordenes %}
+                    <tr>
+                        <td><a href="{{ orden.consulta.get_absolute_url }}">{{ orden.consulta.created }}</a></td>
+                        <td>{{ orden.consulta.persona }}</td>
+                        <td>{{ orden.consulta.motivo_de_consulta }}</td>
+                        <td>{{ orden.consulta.consultorio.usuario }}</td>
+                        <td>
+                            {% for examen in orden.ordenlaboratorioitem_set.all %}
+                                {{ examen.item }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

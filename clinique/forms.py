@@ -26,7 +26,8 @@ from django.utils.translation import ugettext_lazy as _
 from clinique.models import Cita, Evaluacion, Seguimiento, Consulta, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
-    TipoConsulta, Remision, Afeccion, NotaMedica
+    TipoConsulta, Remision, Afeccion, NotaMedica, OrdenLaboratorio, \
+    OrdenLaboratorioItem
 from contracts.models import MasterContract
 from inventory.forms import ItemTemplateFormMixin
 from inventory.models import ItemTemplate, ItemType
@@ -130,6 +131,7 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
     """
     Allows creating and editing :class:`Evaluacion` data
     """
+
     class Meta:
         model = Evaluacion
         fields = '__all__'
@@ -411,4 +413,34 @@ class NotaMedicaForm(HiddenConsultaFormMixin, HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(NotaMedicaForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset(_('Remitir Paciente'), *self.field_names)
+        self.helper.layout = Fieldset(_('Formulario de Nota Medica'),
+                                      *self.field_names)
+
+
+class OrdenLaboratorioForm(HiddenConsultaFormMixin):
+    class Meta:
+        model = OrdenLaboratorio
+        exclude = ('enviado',)
+
+    def __init__(self, *args, **kwargs):
+        super(OrdenLaboratorioForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Formulario de Orden de Laboratorio'),
+                                      *self.field_names)
+
+
+class OrdenLaboratorioItemForm(FieldSetModelFormMixin):
+    """
+    Builds a form that allows creating and editing :class:`OrdenLaboratorioItem`
+    instances
+    """
+    class Meta:
+        model = OrdenLaboratorioItem
+        fields = '__all__'
+
+    orden = forms.ModelChoiceField(queryset=OrdenLaboratorio.objects.all(),
+                                   widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(OrdenLaboratorioItemForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Formulario de Orden de Laboratorio'),
+                                      *self.field_names)
