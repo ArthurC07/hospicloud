@@ -56,6 +56,7 @@ class Company(TimeStampedModel):
                                            default=0)
     receipt_days = models.IntegerField(default=30)
     sac = models.EmailField(blank=True)
+    laboratorios = models.EmailField(blank=True)
 
     def __str__(self):
         return self.nombre

@@ -1,7 +1,7 @@
 {% extends "mail_templated/base.tpl" %}
 
 {% block subject %}
-    Atención al Cliente EPS Medical
+    Atención al Cliente {{ company.nombre_comercial }}
 {% endblock %}
 
 {% block body %}
@@ -13,7 +13,7 @@
 
     Estimado (a) {{ persona.nombre }}
 
-    Por este medio EPS Medical le agradece por compartir con nosotros su
+    Por este medio {{ company.nombre_comercial }} le agradece por compartir con nosotros su
     sugerencia, por lo que queremos hacer de su conocimiento que hemos
     tomado acciones en base a sus comentarios ya que estamos en la mejora
     continua para darle el servicio que usted se merece, nuestra idea es
@@ -27,7 +27,7 @@
     gente!
 
     Atentamente,
-    EPS Medical
+    {{ company.nombre_comercial }}
 {% endblock %}
 
 {% block html %}
@@ -39,7 +39,7 @@
         Estimado (a) {{ persona.nombre }}<br>
     </p>
     <p>
-        Por este medio EPS Medical le agradece por compartir con nosotros su
+        Por este medio {{ company.nombre_comercial }} le agradece por compartir con nosotros su
         sugerencia, por lo que queremos hacer de su conocimiento que hemos
         tomado acciones en base a sus comentarios ya que estamos en la mejora
         continua para darle el servicio que usted se merece, nuestra idea es
@@ -57,6 +57,6 @@
     <p>
     <p>
         Atentamente,<br>
-        EPS Medical
+        {{ company.nombre_comercial }}
     </p>
 {% endblock %}

@@ -683,6 +683,7 @@ class SolucionEmailView(LoginRequiredMixin, RedirectView):
                 {
                     'persona': solucion.queja.respuesta.persona,
                     'fecha': timezone.now().date(),
+                    'company': solucion.queja.respuesta.consulta.consultorio.localidad.ciudad.company,
                 },
                 to=[solucion.queja.respuesta.consulta.persona.email,
                     solucion.usuario.profile.ciudad.company.sac],
