@@ -19,6 +19,7 @@ from __future__ import unicode_literals
 import calendar
 from collections import defaultdict
 from datetime import time, timedelta
+from decimal import Decimal
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -27,8 +28,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.db.models import Count, DurationField
-from django.db.models.aggregates import Avg
+from django.db.models.aggregates import Avg, Sum
+from django.db.models.expressions import ExpressionWrapper, F
+from django.db.models.functions import Coalesce
 from django.forms import HiddenInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -1814,7 +1818,36 @@ class OrdenLaboratorioPeriodoView(LoginRequiredMixin, PeriodoView, ListView):
             'consulta__persona',
             'consulta__consultorio',
             'consulta__consultorio__usuario',
+            'consulta__consultorio__localidad',
+            'consulta__consultorio__localidad__ciudad',
         ).prefetch_related(
             'ordenlaboratorioitem_set',
             'ordenlaboratorioitem_set__item',
+        ).annotate(
+            total=Coalesce(
+                Sum('ordenlaboratorioitem__item__precio_de_venta'),
+                Decimal()
+            ),
+            ganancia=Coalesce(
+                ExpressionWrapper(
+                    F('ordenlaboratorioitem__item__precio_de_venta') - F(
+                        'ordenlaboratorioitem__item__costo'),
+                    output_field=models.DecimalField()
+                ),
+                Decimal()
+            )
         ).order_by('created')
+
+    def get_context_data(self, **kwargs):
+        context = super(OrdenLaboratorioPeriodoView, self).get_context_data(
+            **kwargs
+        )
+
+        context['total'] = self.get_queryset().aggregate(
+            total=Coalesce(
+                Sum('ordenlaboratorioitem__item__precio_de_venta'),
+                Decimal()
+            )
+        )['total']
+
+        return context

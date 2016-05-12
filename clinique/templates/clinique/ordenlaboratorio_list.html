@@ -20,7 +20,10 @@
                     <th>{% trans 'Paciente' %}</th>
                     <th>{% trans 'Motivo de Consulta' %}</th>
                     <th>{% trans 'M&eacute;dico' %}</th>
+                    <th>{% trans 'Ciudad' %}</th>
                     <th>{% trans 'Examenes' %}</th>
+                    <th>{% trans 'Precio' %}</th>
+                    <th>{% trans 'Costo' %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -29,15 +32,24 @@
                         <td><a href="{{ orden.consulta.get_absolute_url }}">{{ orden.consulta.created }}</a></td>
                         <td>{{ orden.consulta.persona }}</td>
                         <td>{{ orden.consulta.motivo_de_consulta }}</td>
-                        <td>{{ orden.consulta.consultorio.usuario }}</td>
+                        <td>{{ orden.consulta.consultorio.usuario.get_full_name }}</td>
+                        <td>{{ orden.consulta.consultorio.localidad.ciudad }}</td>
                         <td>
                             {% for examen in orden.ordenlaboratorioitem_set.all %}
                                 {{ examen.item }}
                             {% endfor %}
                         </td>
+                        <td>{{ orden.total }}</td>
+                        <td>{{ orden.ganancia }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4">{% trans 'Total' %}</th>
+                    <th colspan="4">{{ total }}</th>
+                </tr>
+            </tfoot>
             </table>
         </div>
     </div>
