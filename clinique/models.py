@@ -654,19 +654,27 @@ class OrdenLaboratorio(TimeStampedModel):
         return reverse('clinique-orden-laboratorio', args=[self.id])
 
     def enviar(self):
-        self.enviado = True
-        self.save()
+        ciudad = self.consulta.consultorio.localidad.ciudad
+
+        correos = [ciudad.company.laboratorios, ]
+
+        correos.extend(ciudad.correo_laboratorio.split())
 
         message = EmailMessage(
-            str('clinique/solucion_email.tpl'),
+            str('clinique/laboratorio_email.tpl'),
             {
-                'examen': self.examen.descripcion,
+                'examenes': self.ordenlaboratorioitem_set.all(),
                 'fecha': timezone.now().date(),
+                'persona': self.consulta.persona,
+                'doctor': self.consulta.consultorio.usuario.get_full_name(),
             },
-            to=[self.usuario.profile.ciudad.correo_laboratorio, ],
+            to=correos,
             from_email=settings.EMAIL_HOST_USER
         )
         message.send()
+
+        self.enviado = True
+        self.save()
 
 
 @python_2_unicode_compatible
