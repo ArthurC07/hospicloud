@@ -22,8 +22,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum, QuerySet, F, Max
-from django.db.models.expressions import ExpressionWrapper
+from django.db.models import Sum, QuerySet, F
+from django.db.models.expressions import ExpressionWrapper, When, Case
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -41,8 +41,7 @@ class Inventario(models.Model):
         )
 
     lugar = models.CharField(max_length=255, default='Bodega')
-    puede_comprar = models.NullBooleanField(default=False, blank=True,
-                                            null=True)
+    puede_comprar = models.BooleanField(default=False)
     activo = models.BooleanField(default=True)
     ciudad = models.ForeignKey('users.Ciudad', blank=True, null=True)
 
@@ -587,10 +586,19 @@ class Cotizacion(TimeStampedModel):
             'requisicion__inventario',
             'requisicion__inventario__ciudad',
         ).annotate(
-            existencias=Coalesce(
-                Sum('item__items__cantidad'),
-                Decimal()
+            existencias=Case(
+                When(
+                    item__items__inventario__puede_comprar=True,
+                    then=Coalesce(
+                        Sum('item__items__cantidad'),
+                        Decimal()
+                    )
+                )
             )
+        ).exclude(
+            existencias__isnull=True,
+        ).order_by(
+            'item__descripcion',
         )
 
 
