@@ -165,6 +165,16 @@ class ItemTemplateDetailView(LoginRequiredMixin, DetailView):
     """
     model = ItemTemplate
     context_object_name = 'item_template'
+    queryset = ItemTemplate.objects.prefetch_related(
+        'items',
+        'items__inventario',
+        'items__inventario__ciudad',
+    ).annotate(
+        existencia=Coalesce(
+            Sum('items__cantidad'),
+            Decimal()
+        )
+    )
 
 
 class ItemTemplateListView(LoginRequiredMixin, ListView):
