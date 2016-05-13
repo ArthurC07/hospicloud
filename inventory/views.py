@@ -109,7 +109,7 @@ class IndexView(TemplateView, InventarioPermissionMixin):
         )
 
         context['requisiciones_pendientes'] = Requisicion.objects.filter(
-            aprobada=False,
+            denegada=False,
             entregada=False,
         ).select_related(
             'inventario',
@@ -293,6 +293,9 @@ class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin,
 
 
 class RequisicionUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows a user to edit :class:`Requisicion` from the UI
+    """
     model = Requisicion
     form_class = RequisicionCompletarForm
 
@@ -359,28 +362,34 @@ class ItemRequisicionDeleteView(LoginRequiredMixin, DeleteView):
 
 class TransferenciaCreateView(LoginRequiredMixin, RequisicionFormMixin,
                               CreateView):
+    """
+    Allows the user to create a :class:`Transferencia` from the UI
+    """
     model = Transferencia
     form_class = TransferenciaForm
 
     def get_initial(self):
         initial = super(TransferenciaCreateView, self).get_initial()
-        initial = initial.copy()
         initial['destino'] = self.requisicion.inventario.id
         return initial
 
 
-class TransferenciaDetailView(CurrentUserFormMixin, SingleObjectMixin,
-                              ListView):
-    paginate_by = 10
-    template_name = 'inventory/transferencia_detail.html'
-
-    def get_context_data(self, **kwargs):
-        kwargs['transferencia'] = self.object
-        return super(TransferenciaDetailView, self).get_context_data(**kwargs)
-
-    def get_queryset(self):
-        self.object = self.get_object(Transferencia.objects.all())
-        return self.object.transferidos.all()
+class TransferenciaDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays the data associated to a :class:`Transferencia`
+    """
+    models = Transferencia
+    context_object_name = 'transferencia'
+    queryset = Transferencia.objects.select_related(
+        'destino',
+        'origen',
+        'requisicion',
+        'origen__ciudad',
+        'destino__ciudad',
+    ).prefetch_related(
+        'transferidos',
+        'transferidos__item',
+    )
 
 
 class TransferenciaUpdateView(LoginRequiredMixin, UpdateView):
@@ -683,6 +692,12 @@ class CotizacionDetailView(LoginRequiredMixin, DetailView):
     """
     model = Cotizacion
     context_object_name = 'cotizacion'
+    queryset = Cotizacion.objects.select_related(
+        'inventario',
+        'proveedor',
+    ).prefetch_related(
+        'itemcotizado_set',
+    )
 
     def get_context_data(self, **kwargs):
         context = super(CotizacionDetailView, self).get_context_data(**kwargs)

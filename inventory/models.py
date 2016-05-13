@@ -22,7 +22,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum, QuerySet, F
+from django.db.models import Sum, QuerySet, F, Max
 from django.db.models.expressions import ExpressionWrapper
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -244,7 +244,7 @@ class Item(TimeStampedModel):
 class Requisicion(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='requisiciones',
                                    null=True, blank=True)
-    aprobada = models.BooleanField(default=False)
+    denegada = models.BooleanField(default=False)
     entregada = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
@@ -298,7 +298,7 @@ class Transferencia(TimeStampedModel):
                                null=True, blank=True)
     destino = models.ForeignKey(Inventario, related_name='entradas',
                                 null=True, blank=True)
-    aplicada = models.NullBooleanField(default=False, null=True, blank=True)
+    aplicada = models.NullBooleanField(default=False)
     usuario = models.ForeignKey(User, related_name="transferencias",
                                 null=True, blank=True)
 
@@ -422,7 +422,6 @@ class ItemComprado(TimeStampedModel):
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
-
         return self.item.descripcion
 
     def get_absolute_url(self):
@@ -457,7 +456,6 @@ class AnomaliaCompra(TimeStampedModel):
     detalle = models.TextField()
 
     def get_absolute_url(self):
-
         return self.item.compra.get_absolute_url()
 
 
@@ -576,6 +574,24 @@ class Cotizacion(TimeStampedModel):
                 Decimal()
             )
         )['total']
+
+    def items_requeridos(self):
+        return ItemRequisicion.objects.filter(
+            cantidad__gt=0,
+            requisicion__denegada=False,
+            requisicion__entregada=False,
+        ).prefetch_related(
+            'item',
+            'item__items',
+            'requisicion',
+            'requisicion__inventario',
+            'requisicion__inventario__ciudad',
+        ).annotate(
+            existencias=Coalesce(
+                Sum('item__items__cantidad'),
+                Decimal()
+            )
+        )
 
 
 class ItemCotizado(TimeStampedModel):

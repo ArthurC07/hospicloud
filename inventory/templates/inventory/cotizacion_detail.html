@@ -38,7 +38,7 @@
                         <td>
                             {% if not cotizacion.denegada and not cotizacion.comprada and not cotizacion.autorizada %}
                                 <a class="btn btn-success"
-                                   href="{% url 'cotizacion-item-borrar' item.id %}">
+                                   href="{% url 'cotizacion-item-editar' item.id %}">
                                     <i class="glyphicon glyphicon-edit"></i> {% trans 'Editar' %}
                                 </a>
                                 <a class="btn btn-danger"
@@ -51,10 +51,10 @@
                 {% endfor %}
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <th colspan="4">{% trans 'Total' %}</th>
-                        <th class="text-right">{{ cotizacion.total }}</th>
-                    </tr>
+                <tr>
+                    <th colspan="4">{% trans 'Total' %}</th>
+                    <th class="text-right">{{ cotizacion.total }}</th>
+                </tr>
                 </tfoot>
             </table>
             {% if cotizacion.autorizada and not cotizacion.comprada %}
@@ -63,6 +63,31 @@
                     {% crispy comprar %}
                 </form>
             {% endif %}
+            <table class="table table-hover table-striped">
+                <caption>{% trans 'Productos Requeridos' %}</caption>
+                <thead>
+                <tr>
+                    <th>{% trans 'Producto' %}</th>
+                    <th>{% trans 'Solicitante' %}</th>
+                    <th>{% trans 'Cantidad Requerida' %}</th>
+                    <th>{% trans 'Cantidad en Existencia' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in cotizacion.items_requeridos.all %}
+                    <tr>
+                        <td>
+                            <a href="{{ item.item.get_absolute_url }}">
+                                {{ item.item }}
+                            </a>
+                        </td>
+                        <td>{{ item.requisicion.inventario }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>{{ item.existencias }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </section>
         <aside class="col-md-3 toolbox  ">
             <nav class="sidebar-nav">
