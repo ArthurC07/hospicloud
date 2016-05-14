@@ -103,6 +103,34 @@ class RequisicionForm(HiddenUserForm):
                                       *self.field_names)
 
 
+class RequisicionDenegarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as authorized
+    """
+
+    class Meta:
+        model = Cotizacion
+        fields = ('denegada',)
+
+    autorizada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'denegada': True}
+        else:
+            kwargs['initial']['denegada'] = True
+        super(RequisicionDenegarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Denegar Requisicion'),
+                css_class='btn-success btn-block'
+            ))
+
+
 class RequisicionCompletarForm(forms.ModelForm):
     class Meta:
         model = Requisicion
