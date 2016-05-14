@@ -644,6 +644,7 @@ class ReciboMixin(ContextMixin, View):
     """
     Adds a :class:`Recibo` to all child views
     """
+
     def dispatch(self, *args, **kwargs):
         self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
         return super(ReciboMixin, self).dispatch(*args, **kwargs)
@@ -1899,6 +1900,10 @@ class VentaAreaListView(ListView):
 
 
 class CiudadPeriodoListView(ListView):
+    """
+    Displays all :class:`Recibo` that have been created in a :class:`Ciudad`
+    during a certain date range.
+    """
     context_object_name = 'recibos'
 
     def dispatch(self, request, *args, **kwargs):
@@ -1912,9 +1917,11 @@ class CiudadPeriodoListView(ListView):
                                                            **kwargs)
 
     def get_queryset(self):
-        return Recibo.objects.filter(created__range=(self.inicio, self.fin),
-                                     nulo=False,
-                                     ciudad=self.ciudad)
+        return Recibo.objects.filter(
+            created__range=(self.inicio, self.fin),
+            nulo=False,
+            ciudad=self.ciudad
+        )
 
     def get_context_data(self, **kwargs):
         context = super(CiudadPeriodoListView, self).get_context_data(**kwargs)
