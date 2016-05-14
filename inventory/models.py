@@ -131,8 +131,6 @@ class ItemType(TimeStampedModel):
 
 @python_2_unicode_compatible
 class ItemTemplate(TimeStampedModel):
-    """"""
-
     descripcion = models.CharField(max_length=255)
     marca = models.CharField(max_length=32, null=True, blank=True)
     modelo = models.CharField(max_length=32, null=True, blank=True)
@@ -543,6 +541,9 @@ class CotizacionQuerySet(QuerySet):
 
 @python_2_unicode_compatible
 class Cotizacion(TimeStampedModel):
+    """
+    Represents a quotation that will be made in the UI
+    """
     proveedor = models.ForeignKey(Proveedor)
     creacion = models.DateTimeField(auto_now_add=True)
     vencimiento = models.DateTimeField(auto_now_add=True)
@@ -575,6 +576,11 @@ class Cotizacion(TimeStampedModel):
         )['total']
 
     def items_requeridos(self):
+        """
+        Creates a :class:`QuerySet` that displays the :class:`ItemTemplate`s
+        needed in the current :class:`Cotizacion`
+        :return: :class:`QuerySet`
+        """
         return ItemRequisicion.objects.filter(
             cantidad__gt=0,
             requisicion__denegada=False,
@@ -603,6 +609,10 @@ class Cotizacion(TimeStampedModel):
 
 
 class ItemCotizado(TimeStampedModel):
+    """
+    Represents an :class:`ItemTemplate` that will be part of a
+    :class:`Cotizacion`
+    """
     cotizacion = models.ForeignKey(Cotizacion)
     item = models.ForeignKey(ItemTemplate)
     cantidad = models.IntegerField(default=0)
