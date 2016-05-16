@@ -33,7 +33,12 @@
                                     <td>{{ item.item.id }}</td>
                                     <td>{{ item.item.descripcion }}</td>
                                     <td>{{ item.cantidad }}</td>
-                                    <td></td>
+                                    <td>
+                                        <a class="btn btn-danger"
+                                           href="{% url 'transferencia-anomalia-create' transferencia.id item.id %}">
+                                            {% trans 'Registrar Anomalia' %}
+                                        </a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>

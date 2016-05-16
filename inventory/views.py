@@ -23,7 +23,7 @@ from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from django.db.models.aggregates import Count, Sum
+from django.db.models.aggregates import Sum
 from django.db.models.expressions import ExpressionWrapper, F
 from django.db.models.functions import Coalesce
 from django.http.response import HttpResponseRedirect
@@ -42,11 +42,11 @@ from inventory.forms import InventarioForm, ItemTemplateForm, ItemTypeForm, \
     ItemTemplateSearchForm, RequisicionCompletarForm, ItemCompradoForm, \
     ProveedorForm, CotizacionForm, ItemCotizadoform, CotizacionAutorizarForm, \
     CotizacionDenegarForm, CotizacionComprarForm, CompraIngresarForm, \
-    CompraDocumentosForm, AnomaliaCompraForm
+    CompraDocumentosForm, AnomaliaCompraForm, AnomaliaTransferenciaForm
 from inventory.models import Inventario, Item, ItemTemplate, Transferencia, \
     Historial, ItemComprado, Transferido, Compra, ItemType, Requisicion, \
     ItemRequisicion, ItemHistorial, Proveedor, Cotizacion, ItemCotizado, \
-    AnomaliaCompra
+    AnomaliaCompra, AnomaliaTransferencia
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -407,26 +407,82 @@ class TransferenciaListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
 
-class TransferidoCreateView(LoginRequiredMixin, CreateView):
-    model = Transferido
-    form_class = TransferidoForm
+class TransferenciaMixin(ContextMixin, View):
+    """
+    Adds a :class:`Transferencia` to a view
+    """
 
     def dispatch(self, *args, **kwargs):
         self.transferencia = get_object_or_404(Transferencia,
                                                pk=kwargs['transferencia'])
-        return super(TransferidoCreateView, self).dispatch(*args, **kwargs)
+        return super(TransferenciaMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs['transferencia'] = self.transferencia
+        return super(TransferenciaMixin, self).get_context_data(**kwargs)
+
+
+class TransferenciaFormMixin(TransferenciaMixin, FormMixin):
+    """
+    Adds a :class:`Transferencia` instance to a form
+    """
 
     def get_initial(self):
-        initial = super(TransferidoCreateView, self).get_initial()
-        initial = initial.copy()
-        initial['transferencia'] = self.transferencia.id
+        initial = super(TransferenciaFormMixin, self).get_initial()
+        initial['transferencia'] = self.transferencia
         return initial
+
+
+class TransferidoCreateView(LoginRequiredMixin, TransferenciaFormMixin,
+                            CreateView):
+    """
+    Allows the user to create :class:`Transferido` objects
+    """
+    model = Transferido
+    form_class = TransferidoForm
 
 
 class TransferidoListView(LoginRequiredMixin, ListView):
     model = Transferido
     context_object_name = 'transferidos'
     paginate_by = 10
+
+
+class TransferidoMixin(ContextMixin, View):
+    """
+    Adds a :class:`Transferido` to a view
+    """
+
+    def dispatch(self, *args, **kwargs):
+        self.transferido = get_object_or_404(Transferido,
+                                             pk=kwargs['transferido'])
+        return super(TransferidoMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs['transferido'] = self.transferido
+        return super(TransferidoMixin, self).get_context_data(**kwargs)
+
+
+class TransferidoFormMixin(TransferidoMixin, FormMixin):
+    """
+    Adds a :class:`Transferencia` instance to a form
+    """
+
+    def get_initial(self):
+        initial = super(TransferidoFormMixin, self).get_initial()
+        initial['transferido'] = self.transferido
+        return initial
+
+
+class AnomaliaTransferenciaCreateView(LoginRequiredMixin,
+                                      TransferenciaFormMixin,
+                                      TransferidoFormMixin, CreateView):
+    """
+    Allows the user to create a :class:`AnomaliaTransferencia` object from the
+    UI
+    """
+    model = AnomaliaTransferencia
+    form_class = AnomaliaTransferenciaForm
 
 
 class ProveedorMixin(ContextMixin, View):

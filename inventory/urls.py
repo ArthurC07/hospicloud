@@ -106,6 +106,10 @@ urlpatterns = [
         views.TransferidoCreateView.as_view(),
         name='transferido-create'),
 
+    url(r'^transferencia/(?P<transferencia>\d+)/(?P<transferido>\d+)/anomalia/agregar$',
+        views.AnomaliaTransferenciaCreateView.as_view(),
+        name='transferencia-anomalia-create'),
+
     url(r'^(?P<inventario>\d+)/compra/agregar$',
         views.CompraCreateView.as_view(),
         name='compra-create'),

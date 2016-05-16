@@ -23,7 +23,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.models import ItemTemplate, Inventario, Item, Compra, ItemType, \
     Requisicion, ItemRequisicion, Transferencia, Transferido, ItemComprado, \
-    Historial, Proveedor, Cotizacion, ItemCotizado, AnomaliaCompra
+    Historial, Proveedor, Cotizacion, ItemCotizado, AnomaliaCompra, \
+    AnomaliaTransferencia
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
     DateTimeWidget, FutureDateWidget
 from users.mixins import HiddenUserForm
@@ -205,6 +206,16 @@ class TransferirForm(FieldSetModelFormMixin):
                                       *self.field_names)
 
 
+class TransferenciaFormMixin(FieldSetModelFormMixin):
+    """
+    Adds a :class:`Transferencia` hidden field to a form.
+    """
+    transferencia = forms.ModelChoiceField(
+        queryset=Transferencia.objects.all(),
+        widget=forms.HiddenInput(),
+    )
+
+
 class TransferidoForm(ItemTemplateFormMixin):
     class Meta:
         model = Transferido
@@ -214,6 +225,34 @@ class TransferidoForm(ItemTemplateFormMixin):
         super(TransferidoForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Agregar Producto a Transferir'),
                                       *self.field_names)
+
+
+class TransferidoFormMixin(FieldSetModelFormMixin):
+    """
+    Adds a :class:`Transferido` hidden field to a form.
+    """
+    transferido = forms.ModelChoiceField(
+        queryset=Transferido.objects.all(),
+        widget=forms.HiddenInput(),
+    )
+
+
+class AnomaliaTransferenciaForm(TransferenciaFormMixin, TransferidoFormMixin):
+    """
+    Builds a form that will be used to create new :class:`AnomaliaTransferencia`
+    objects
+    """
+
+    class Meta:
+        model = AnomaliaTransferencia
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(AnomaliaTransferenciaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(
+            _('Formulario de Anomalia de Transferencia'),
+            *self.field_names
+        )
 
 
 class HistorialForm(FieldSetModelFormMixin):

@@ -332,6 +332,20 @@ class Transferido(TimeStampedModel):
         return reverse('transferencia', args=[self.transferencia.id])
 
 
+class AnomaliaTransferencia(TimeStampedModel):
+    """
+    Registers the problems present in a  :class:`Transferencia
+    """
+    transferencia = models.ForeignKey(Transferencia)
+    item = models.ForeignKey(Transferido)
+    cantidad = models.IntegerField(default=0)
+    detalle = models.TextField()
+
+    def get_absolute_url(self):
+
+        return self.transferencia.get_absolute_url()
+
+
 @python_2_unicode_compatible
 class Compra(TimeStampedModel):
     """
