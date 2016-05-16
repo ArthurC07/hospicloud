@@ -147,7 +147,18 @@ class RequisicionCompletarForm(forms.ModelForm):
                                       *self.field_names)
 
 
-class ItemRequisicionForm(ItemTemplateFormMixin):
+class RequsicionFormMixin(forms.ModelForm):
+    """
+    Adds a :class:`HiddenInput` widget for adding a :class:`Requisicion` to a
+    form
+    """
+    requisicion = forms.ModelChoiceField(
+        queryset=Requisicion.objects.all(),
+        widget=forms.HiddenInput()
+    )
+
+
+class ItemRequisicionForm(ItemTemplateFormMixin, RequsicionFormMixin):
     class Meta:
         model = ItemRequisicion
         exclude = ('entregada', 'pendiente')
