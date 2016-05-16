@@ -289,6 +289,10 @@ class GastoManager(models.Manager):
     """
 
     def get_queryset(self):
+        """
+        Builds the :class:`QuerySet which this manager is built upon.
+        :return: a :class:`GastoQuerySet` instance
+        """
         return GastoQuerySet(self.model, using=self._db).select_related(
             'cuenta',
             'usuario',
