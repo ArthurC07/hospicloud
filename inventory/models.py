@@ -22,7 +22,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum, QuerySet, F
+from django.db.models import Sum, F
 from django.db.models.expressions import ExpressionWrapper, When, Case
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
 from hospinet.utils import get_current_month_range
+from inventory import managers
 
 
 @python_2_unicode_compatible
@@ -44,6 +45,8 @@ class Inventario(models.Model):
     puede_comprar = models.BooleanField(default=False)
     activo = models.BooleanField(default=True)
     ciudad = models.ForeignKey('users.Ciudad', blank=True, null=True)
+
+    objects = managers.InventarioManager()
 
     def __str__(self):
         return _(u"Inventario de {0}").format(self.lugar)
@@ -67,28 +70,6 @@ class Inventario(models.Model):
             item.save()
 
         return item
-
-    def costo(self):
-        return self.item_set.filter(
-            plantilla__servicio=False,
-        ).aggregate(
-            total=Coalesce(
-                Sum(F('cantidad') * F('plantilla__costo'),
-                    output_field=models.DecimalField()),
-                Decimal()
-            )
-        )['total']
-
-    def valor(self):
-        return self.item_set.filter(
-            plantilla__servicio=False,
-        ).aggregate(
-            total=Coalesce(
-                Sum(F('cantidad') * F('plantilla__precio_de_venta'),
-                    output_field=models.DecimalField()),
-                Decimal()
-            )
-        )['total']
 
     def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
@@ -118,9 +99,10 @@ class Inventario(models.Model):
 @python_2_unicode_compatible
 class ItemType(TimeStampedModel):
     nombre = models.CharField(max_length=255)
-    consulta = models.BooleanField(default=True,
-                                   verbose_name=_(
-                                       'Aparece en Cargos de Consulta'))
+    consulta = models.BooleanField(
+        default=True,
+        verbose_name=_('Aparece en Cargos de Consulta')
+    )
 
     def __str__(self):
         return self.nombre
@@ -512,33 +494,6 @@ class Transaccion(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
 
-class CotizacionQuerySet(QuerySet):
-    """
-    Contains shortcuts for querying :class:`Cotizacion`
-    """
-
-    def pendientes(self):
-        """
-        Filters the :class:`Cotizacion` only handling those pending
-        """
-        return self.filter(
-            comprada=False,
-            denegada=False,
-            autorizada=False,
-        )
-
-    def autorizadas(self):
-        return self.filter(
-            comprada=False,
-            autorizada=True,
-        )
-
-    def compradas(self):
-        return self.filter(
-            comprada=True,
-        )
-
-
 @python_2_unicode_compatible
 class Cotizacion(TimeStampedModel):
     """
@@ -554,26 +509,13 @@ class Cotizacion(TimeStampedModel):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
                                 related_name='cotizacion_inventario_set')
 
-    objects = CotizacionQuerySet.as_manager()
+    objects = managers.CotizacionManager()
 
     def __str__(self):
         return _('Cotización de {0}').format(self.proveedor)
 
     def get_absolute_url(self):
         return reverse('cotizacion-view', args=[self.id])
-
-    def total(self):
-        """
-        Shows the total amount that the quoted items represent in monetary value
-        :return: DecimalField
-        """
-        return self.itemcotizado_set.aggregate(
-            total=Coalesce(
-                Sum(F('precio') * F('cantidad'),
-                    output_field=models.DecimalField()),
-                Decimal()
-            )
-        )['total']
 
     def items_requeridos(self):
         """

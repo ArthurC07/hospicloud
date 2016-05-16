@@ -73,26 +73,12 @@ class IndexView(TemplateView, InventarioPermissionMixin):
 
         context['inventarios'] = Inventario.objects.filter(
             activo=True
-        ).annotate(
-            total_items=Count('item__id'),
-            total_inventory=Coalesce(Sum('item__cantidad'), Decimal()),
         )
         context['productoform'] = ItemTemplateSearchForm()
         context['productoform'].helper.form_tag = False
 
-        context['pendientes'] = Cotizacion.objects.pendientes().select_related(
-            'proveedor',
-            'usuario',
-            'inventario',
-            'inventario__ciudad',
-        )
-        context[
-            'autorizadas'] = Cotizacion.objects.autorizadas().select_related(
-            'proveedor',
-            'usuario',
-            'inventario',
-            'inventario__ciudad',
-        )
+        context['pendientes'] = Cotizacion.objects.pendientes()
+        context['autorizadas'] = Cotizacion.objects.autorizadas()
 
         context['compras'] = Compra.objects.filter(
             ingresada=False
