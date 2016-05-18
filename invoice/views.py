@@ -199,7 +199,7 @@ class EstadisticasView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EstadisticasView, self).get_context_data(**kwargs)
-        recibos = Recibo.objects.annotate(sold=Sum('ventas__total'))
+        recibos = Recibo.objects.all()
 
         now = timezone.now()
         context['pagos'] = OrderedDict()
@@ -230,7 +230,7 @@ class EstadisticasView(LoginRequiredMixin, TemplateView):
 
             total = recibos.filter(
                 created__range=(inicio, fin)
-            ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
+            ).aggregate(total=Coalesce(Sum('valor'), Decimal()))['total']
 
             context['meses'][inicio] = []
             context['recibos'].append(total)
@@ -644,6 +644,7 @@ class ReciboMixin(ContextMixin, View):
     """
     Adds a :class:`Recibo` to all child views
     """
+
     def dispatch(self, *args, **kwargs):
         self.recibo = get_object_or_404(Recibo, pk=kwargs['recibo'])
         return super(ReciboMixin, self).dispatch(*args, **kwargs)
