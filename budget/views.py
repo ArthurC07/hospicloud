@@ -489,10 +489,13 @@ class GastoPeriodoListView(LoginRequiredMixin, ListView):
         """
         form = PeriodoForm(self.request.GET)
         if form.is_valid():
+
+            self.inicio = form.cleaned_data['inicio']
+            self.fin = form.cleaned_data['fin']
             return Gasto.objects.filter(
                 fecha_de_pago__range=(
-                    form.cleaned_data['inicio'],
-                    form.cleaned_data['fin']
+                    self.inicio,
+                    self.fin
                 ),
                 ejecutado=True
             ).select_related('proveedor', 'usuario')
@@ -503,6 +506,8 @@ class GastoPeriodoListView(LoginRequiredMixin, ListView):
         context['total'] = self.get_queryset().aggregate(
             total=Coalesce(Sum('monto'), Decimal())
         )['total']
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
 
         return context
 

@@ -24,7 +24,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import F, Sum, Min
+from django.db.models import F, Sum, Min, QuerySet
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -89,6 +89,42 @@ class StatusPago(TimeStampedModel):
         )['total']
 
 
+class ReciboQuerySet(QuerySet):
+    """
+    Creates a default :class:`QuerySet` for the :class:`Recibo`
+    """
+
+    def calculate(self):
+        raise NotImplementedError()
+
+
+class ReciboManager(models.Manager):
+    """
+    Builds a manager for the :class:`Recibo` model
+    """
+
+    def get_queryset(self):
+        return ReciboQuerySet(
+            self.model,
+            using=self._db
+        ).select_related(
+            'cliente',
+            'ciudad',
+            'legal_data',
+            'cajero',
+        ).prefetch_related(
+            'ventas',
+            'pagos',
+            'pagos__aseguradora',
+            'ventas__item',
+        ).annotate(
+            valor=Coalesce(
+                Sum('ventas__total'),
+                Decimal()
+            )
+        )
+
+
 @python_2_unicode_compatible
 class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
@@ -112,6 +148,7 @@ class Recibo(TimeStampedModel):
     nulo = models.BooleanField(default=False)
     emision = models.DateTimeField(default=timezone.now)
     month_offset = models.IntegerField(default=0)
+    objects = ReciboManager()
 
     objects = managers.ReciboManager()
 

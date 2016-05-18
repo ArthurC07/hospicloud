@@ -25,7 +25,10 @@
                     <th>{% trans 'Fecha' %}</th>
                     <th>{% trans 'Nombre' %}</th>
                     <th>{% trans 'Aseguradora' %}</th>
+                    <th>{% trans 'Ciudad' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
                     <th>{% trans 'Monto' %}</th>
+                    <th>{% trans 'Total' %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -36,17 +39,20 @@
                                 {{ pago.recibo.numero }}
                             </a>
                         </td>
-                        <td>{{ pago.recibo.created }}</td>
+                        <td>{{ pago.recibo.created|date:"SHORT_DATETIME_FORMAT" }}</td>
                         <td>{{ pago.recibo.cliente }}</td>
                         <td>{{ pago.aseguradora }}</td>
+                        <td>{{ pago.recibo.ciudad }}</td>
+                        <td>{{ pago.recibo.cajero }}</td>
                         <td class="text-right">{{ pago.monto }}</td>
+                        <td class="text-right">{{ pago.valor }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="4">{% trans 'Total' %}:</th>
-                    <th>{{ total }}</th>
+                    <th colspan="6">{% trans 'Total' %}:</th>
+                    <th colspan="2">{{ total }}</th>
                 </tr>
                 </tfoot>
             </table>

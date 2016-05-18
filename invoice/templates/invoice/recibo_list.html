@@ -12,16 +12,17 @@
         </div>
     </div>
     <div class="row">
-        <div class="main-content col-md-12 table-responsive">‏
+        <div class="main-content col-md-12 col-xs-12 table-responsive">‏
             <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>{% trans 'N&uacute;mero' %}</th>
                     <th>{% trans 'Fecha' %}</th>
                     <th>{% trans 'Paciente' %}</th>
+                    <th>{% trans 'Cajero' %}</th>
                     <th>{% trans 'Tipo' %}</th>
-                    <th>{% trans 'Pagos' %}</th>
                     <th>{% trans 'Total' %}</th>
+                    <th>{% trans 'M&eacute;todo de Pago' %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -31,22 +32,25 @@
                             <a href="{{ recibo.get_absolute_url }}">{{ recibo.numero }}</a>
                         </td>
                         <td>
-                            {{ recibo.created|date:"SHORT_DATETIME_FORMAT" }}</td>
+                            {{ recibo.created|date:"SHORT_DATETIME_FORMAT" }}
+                        </td>
                         <td>{{ recibo }}</td>
+                        <td>{{ recibo.cajero }}</td>
                         <td>{{ recibo.credito|yesno:"Crédito,Contado" }}</td>
+                        <td>{{ recibo.valor }}</td>
                         <td>
                             {% for pago in recibo.pagos.all %}
-                                <p>{{ pago.tipo }}: {{ pago.monto }} {{ pago.aseguradora }}</p>
+                                {{ pago.tipo }}: {{ pago.monto }} <br>
+                                {{ pago.aseguradora }}
                             {% endfor %}
                         </td>
-                        <td>{{ recibo.valor }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 <tr>
                     <th colspan="3">{% trans 'Total:' %}</th>
-                    <th>{{ total }}</th>
+                    <th colspan="4">{{ total }}</th>
                 </tr>
                 </tfoot>
             </table>
