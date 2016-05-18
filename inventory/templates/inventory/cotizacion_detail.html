@@ -63,6 +63,10 @@
                     {% crispy comprar %}
                 </form>
             {% endif %}
+            <a class="btn btn-info btn-block"
+               href="{% url 'cotizacion-condensar' cotizacion.id %}">
+                {% trans 'Agregar todos los Productos' %}
+            </a>
             <table class="table table-hover table-striped">
                 <caption>{% trans 'Productos Requeridos' %}</caption>
                 <thead>

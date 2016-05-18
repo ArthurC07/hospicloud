@@ -16,12 +16,13 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+from collections import defaultdict
 from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.db.models.aggregates import Sum
 from django.db.models.expressions import ExpressionWrapper, F
@@ -32,7 +33,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, DetailView, UpdateView, ListView, \
     DeleteView, View
-from django.views.generic.base import TemplateView, ContextMixin
+from django.views.generic.base import TemplateView, ContextMixin, RedirectView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
@@ -836,6 +837,32 @@ class CotizacionComprarUpdateView(CotizacionUpdateView):
         return HttpResponseRedirect(
             reverse('compra-documentos', args=[compra.id])
         )
+
+
+class CotizacionAgregarItemsView(LoginRequiredMixin, RedirectView):
+    """
+    Creates a :class:`Recibo` object from a :class:`Emergencia` instance
+    """
+    permanent = False
+
+    @transaction.atomic
+    def get_redirect_url(self, **kwargs):
+        cotizacion = get_object_or_404(Cotizacion, pk=kwargs['pk'])
+
+        cotizar = defaultdict(int)
+
+        for item in cotizacion.items_requeridos():
+            cotizar[item.item] += item.cantidad
+
+        for item in cotizar:
+            cotizado = ItemCotizado(
+                cotizacion=cotizacion,
+                cantidad=cotizar[item],
+                item=item
+            )
+            cotizado.save()
+
+        return cotizacion.get_absolute_url()
 
 
 class CotizacionFormMixin(CotizacionMixin, FormMixin):

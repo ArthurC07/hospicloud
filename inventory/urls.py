@@ -182,6 +182,10 @@ urlpatterns = [
         views.CotizacionAutorizarUpdateView.as_view(),
         name='cotizacion-autorizar'),
 
+    url(r'^cotizacion/(?P<pk>\d+)/condensar$',
+        views.CotizacionAgregarItemsView.as_view(),
+        name='cotizacion-condensar'),
+
     url(r'^cotizacion/(?P<pk>\d+)/denegar$',
         views.CotizacionDenegarUpdateView.as_view(),
         name='cotizacion-denegar'),
