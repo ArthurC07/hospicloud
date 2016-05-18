@@ -396,7 +396,12 @@ class CotizacionForm(HiddenUserForm, ProveedorFormMixin):
 
     vencimiento = forms.DateField(widget=FutureDateWidget())
     inventario = forms.ModelChoiceField(
-        queryset=Inventario.objects.filter(activo=True)
+        queryset=Inventario.objects.filter(
+            activo=True,
+            puede_comprar=True,
+        ).select_related(
+            'ciudad',
+        )
     )
 
     def __init__(self, *args, **kwargs):
