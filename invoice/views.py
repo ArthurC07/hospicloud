@@ -1933,7 +1933,7 @@ class CiudadPeriodoListView(ListView):
         return context
 
 
-class TipoPagoPeriodoView(ListView):
+class TipoPagoPeriodoView(LoginRequiredMixin, ListView):
     context_object_name = 'pagos'
 
     def dispatch(self, request, *args, **kwargs):
@@ -1950,7 +1950,20 @@ class TipoPagoPeriodoView(ListView):
         return Pago.objects.filter(
             recibo__created__range=(self.inicio, self.fin),
             tipo=self.tipo_pago,
-        ).select_related('recibo__cliente')
+        ).select_related(
+            'aseguradora',
+            'recibo__cliente',
+            'recibo__cajero',
+            'recibo__ciudad',
+            'recibo__legal_data',
+        ).annotate(
+            valor=(
+                Coalesce(
+                    Sum('recibo__ventas__total'),
+                    Decimal()
+                )
+            )
+        )
 
     def get_context_data(self, **kwargs):
         context = super(TipoPagoPeriodoView, self).get_context_data(**kwargs)
