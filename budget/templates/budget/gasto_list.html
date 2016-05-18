@@ -27,6 +27,7 @@
                     <th>{% trans 'Usuario' %}</th>
                     <th>{% trans 'Proveedor' %}</th>
                     <th>{% trans 'N&uacute;mero de Comprobante' %}</th>
+                    <th>{% trans 'N&uacute;mero de Factura' %}</th>
                     <th>{% trans 'Descargas' %}</th>
                     <th>{% trans 'Monto' %}</th>
                 </tr>
@@ -40,6 +41,7 @@
                         <td>{{ gasto.usuario }}</td>
                         <td>{{ gasto.proveedor }}</td>
                         <td>{{ gasto.numero_de_comprobante_de_pago }}</td>
+                        <td>{{ gasto.numero_de_factura }}</td>
                         <td>
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle"
