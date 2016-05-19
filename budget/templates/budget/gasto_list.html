@@ -28,6 +28,7 @@
                     <th>{% trans 'Proveedor' %}</th>
                     <th>{% trans 'N&uacute;mero de Comprobante' %}</th>
                     <th>{% trans 'N&uacute;mero de Factura' %}</th>
+                    <tH>{% trans 'Fuente de Pago' %}</tH>
                     <th>{% trans 'Descargas' %}</th>
                     <th>{% trans 'Monto' %}</th>
                 </tr>
@@ -35,13 +36,14 @@
                 <tbody>
                 {% for gasto in gastos.all %}
                     <tr>
-                        <td>{{ gasto.fecha_en_factura }}</td>
-                        <td>{{ gasto.fecha_de_pago }}</td>
+                        <td>{{ gasto.fecha_en_factura|date:"SHORT_DATETIME_FORMAT" }}</td>
+                        <td>{{ gasto.fecha_de_pago|date:"SHORT_DATETIME_FORMAT" }}</td>
                         <td>{{ gasto.descripcion }}</td>
                         <td>{{ gasto.usuario }}</td>
                         <td>{{ gasto.proveedor }}</td>
                         <td>{{ gasto.numero_de_comprobante_de_pago }}</td>
                         <td>{{ gasto.numero_de_factura }}</td>
+                        <td>{{ gasto.fuente_de_pago }}</td>
                         <td>
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle"
@@ -88,7 +90,7 @@
                 <tfoot>
                 <tr>
                     <th colspan="6">{% trans 'Total de Gastos' %}</th>
-                    <th class="text-right">{{ total }}</th>
+                    <th class="text-right" colspan="3">{{ total }}</th>
                     <th>&nbsp;</th>
                 </tr>
                 </tfoot>

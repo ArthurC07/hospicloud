@@ -297,6 +297,7 @@ class GastoManager(models.Manager):
             'cuenta',
             'usuario',
             'proveedor',
+            'fuente_de_pago',
             'cuenta__presupuesto',
             'cuenta__presupuesto__ciudad',
         )
