@@ -23,9 +23,13 @@ from inventory.models import ItemTemplate, Inventario, Requisicion, ItemType, \
     Proveedor, Compra, Transaccion, Cotizacion, ItemCotizado
 
 
+class InventarioAdmin(admin.ModelAdmin):
+    list_display = ['lugar', 'ciudad', 'activo', 'puede_comprar']
+
+
 class ItemTemplateAdmin(admin.ModelAdmin):
-    list_display = (
-        'descripcion', 'costo', 'precio_de_venta', 'get_types', 'activo',)
+    list_display = ['descripcion', 'costo', 'precio_de_venta', 'get_types',
+                    'activo', 'servicio']
     list_filter = ('activo',)
     ordering = ('descripcion', 'activo', 'precio_de_venta', 'costo')
     filter_horizontal = ('item_type',)
@@ -33,7 +37,7 @@ class ItemTemplateAdmin(admin.ModelAdmin):
 
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('plantilla', 'inventario', 'vencimiento', 'created')
+    list_display = ('plantilla', 'inventario', 'vencimiento', 'cantidad')
     ordering = ['plantilla__descripcion', 'inventario', 'vencimiento',
                 'created']
     search_fields = ['plantilla__descripcion', 'inventario__lugar']
@@ -50,8 +54,10 @@ class TransaccionAdmin(admin.ModelAdmin):
 
 
 class CotizacionAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ['proveedor', 'created', 'vencimiento']
-    ordering = ['proveedor__name', 'created', 'vencimiento']
+    list_display = ['proveedor', 'created', 'vencimiento', 'autorizada',
+                    'comprada', 'denegada']
+    ordering = ['proveedor__name', 'created', 'vencimiento', 'autorizada',
+                'comprada', 'denegada']
     search_fields = ['proveedor__name']
 
 
@@ -66,15 +72,20 @@ class ItemCotizadoAdmin(ForeignKeyAutocompleteAdmin):
         return obj.cotizacion.proveedor.name
 
 
+class CompraAdmin(admin.ModelAdmin):
+    list_display = ['proveedor', 'created', 'ingresada', 'usuario',
+                    'comprobante', 'metodo_de_pago']
+
+
 admin.site.register(ItemTemplate, ItemTemplateAdmin)
 admin.site.register(Requisicion)
-admin.site.register(Inventario)
+admin.site.register(Inventario, InventarioAdmin)
 admin.site.register(ItemType)
 admin.site.register(TipoVenta)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Transferido)
 admin.site.register(Transferencia)
-admin.site.register(Compra)
+admin.site.register(Compra, CompraAdmin)
 admin.site.register(ItemComprado)
 admin.site.register(ItemRequisicion)
 admin.site.register(Proveedor, ProveedorAdmin)

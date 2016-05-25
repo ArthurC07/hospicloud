@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,16 +16,24 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
+from collections import defaultdict
+from decimal import Decimal
+
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.core.urlresolvers import reverse
+from django.db import models, transaction
 from django.db.models import Q
+from django.db.models.aggregates import Sum
+from django.db.models.expressions import ExpressionWrapper, F
+from django.db.models.functions import Coalesce
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import (CreateView, DetailView, UpdateView, ListView,
-                                  DeleteView, View)
-from django.views.generic.base import TemplateView, TemplateResponseMixin
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic import CreateView, DetailView, UpdateView, ListView, \
+    DeleteView, View
+from django.views.generic.base import TemplateView, ContextMixin, RedirectView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
@@ -33,10 +41,13 @@ from inventory.forms import InventarioForm, ItemTemplateForm, ItemTypeForm, \
     HistorialForm, ItemForm, RequisicionForm, ItemRequisicionForm, \
     TransferenciaForm, TransferidoForm, CompraForm, TransferirForm, \
     ItemTemplateSearchForm, RequisicionCompletarForm, ItemCompradoForm, \
-    ProveedorForm, CotizacionForm, ItemCotizadoform
+    ProveedorForm, CotizacionForm, ItemCotizadoform, CotizacionAutorizarForm, \
+    CotizacionDenegarForm, CotizacionComprarForm, CompraIngresarForm, \
+    CompraDocumentosForm, AnomaliaCompraForm, AnomaliaTransferenciaForm
 from inventory.models import Inventario, Item, ItemTemplate, Transferencia, \
     Historial, ItemComprado, Transferido, Compra, ItemType, Requisicion, \
-    ItemRequisicion, ItemHistorial, Proveedor, Cotizacion, ItemCotizado
+    ItemRequisicion, ItemHistorial, Proveedor, Cotizacion, ItemCotizado, \
+    AnomaliaCompra, AnomaliaTransferencia
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -47,22 +58,86 @@ class InventarioPermissionMixin(LoginRequiredMixin):
 
 
 class IndexView(TemplateView, InventarioPermissionMixin):
+    """
+    Displays an entry point for :class:`Inventory`
+    """
     template_name = 'inventory/index.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Adds the contextual information that will be displayed in the Inventory
+        homepage.
+        :param kwargs:
+        :return:
+        """
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        context['inventarios'] = Inventario.objects.filter(activo=True).all()
+        context['inventarios'] = Inventario.objects.filter(
+            activo=True
+        )
         context['productoform'] = ItemTemplateSearchForm()
         context['productoform'].helper.form_tag = False
+
+        context['pendientes'] = Cotizacion.objects.pendientes()
+        context['autorizadas'] = Cotizacion.objects.autorizadas()
+
+        context['compras'] = Compra.objects.filter(
+            ingresada=False
+        ).select_related(
+            'proveedor',
+        ).annotate(
+            valor=Coalesce(
+                ExpressionWrapper(
+                    F('itemcomprado__precio') * F('itemcomprado__cantidad'),
+                    output_field=models.DecimalField()
+                ),
+                Decimal()
+            )
+        )
+
+        context['requisiciones_pendientes'] = Requisicion.objects.filter(
+            denegada=False,
+            entregada=False,
+        ).select_related(
+            'inventario',
+            'usuario',
+        ).prefetch_related(
+            'items'
+        )
+
+        denegar_form = CotizacionDenegarForm()
+        context['denegar'] = denegar_form
+        denegar_form.helper.form_tag = False
+
+        autorizar_form = CotizacionAutorizarForm()
+        context['autorizar'] = autorizar_form
+        autorizar_form.helper.form_tag = False
+
+        comprar_form = CotizacionComprarForm()
+        context['comprar'] = comprar_form
+        comprar_form.helper.form_tag = False
 
         return context
 
 
-class InventarioFormMixin(CreateView):
+class InventarioMixin(ContextMixin, View):
+    """
+    Adds :class:`Inventario` to child views
+    """
+
     def dispatch(self, *args, **kwargs):
         self.inventario = get_object_or_404(Inventario, pk=kwargs['inventario'])
-        return super(InventarioFormMixin, self).dispatch(*args, **kwargs)
+        return super(InventarioMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs['inventario'] = self.inventario
+        return super(InventarioMixin, self).get_context_data(**kwargs)
+
+
+class InventarioFormMixin(FormMixin, InventarioMixin):
+    """
+    Adds the :class:`Inventario` to the form used in the view
+    """
 
     def get_initial(self):
         initial = super(InventarioFormMixin, self).get_initial()
@@ -72,8 +147,21 @@ class InventarioFormMixin(CreateView):
 
 
 class ItemTemplateDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays the data related to a :class:`ItemTemplate`
+    """
     model = ItemTemplate
     context_object_name = 'item_template'
+    queryset = ItemTemplate.objects.prefetch_related(
+        'items',
+        'items__inventario',
+        'items__inventario__ciudad',
+    ).annotate(
+        existencia=Coalesce(
+            Sum('items__cantidad'),
+            Decimal()
+        )
+    )
 
 
 class ItemTemplateListView(LoginRequiredMixin, ListView):
@@ -111,7 +199,7 @@ class InventarioListView(LoginRequiredMixin, ListView):
 
 
 class InventarioDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
-    paginate_by = 10
+    paginate_by = 20
     template_name = 'inventory/inventario_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -120,17 +208,7 @@ class InventarioDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         self.object = self.get_object(Inventario.objects.all())
-        return self.object.items.all()
-
-
-class InventarioMixin(TemplateView):
-    def dispatch(self, *args, **kwargs):
-        self.inventario = get_object_or_404(Inventario, pk=kwargs['inventario'])
-        return super(InventarioMixin, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        kwargs['inventario'] = self.inventario
-        return super(InventarioMixin, self).get_context_data(**kwargs)
+        return self.object.items()
 
 
 class InventarioCreateView(LoginRequiredMixin, CreateView):
@@ -160,7 +238,7 @@ class ItemInventarioListView(LoginRequiredMixin, ListView):
         return Item.objects.filter(inventario=self.inventario).all()
 
 
-class ItemCreateView(InventarioFormMixin, LoginRequiredMixin):
+class ItemCreateView(LoginRequiredMixin, InventarioFormMixin, CreateView):
     model = Item
     form_class = ItemForm
 
@@ -178,6 +256,9 @@ class ItemDetailView(LoginRequiredMixin, ListView):
 
 
 class RequisicionDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
+    """
+    Displays the details of a :class:`Requisicion`
+    """
     paginate_by = 10
     template_name = 'inventory/requisicion_detail.html'
 
@@ -191,40 +272,61 @@ class RequisicionDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
 
 
 class RequisicionListView(LoginRequiredMixin, ListView):
+    """
+    Displays a list of :class:`Requisicion`s
+    """
     model = Requisicion
-    context_object_name = 'requisiciones'
+    paginate_by = 10
+    ordering = ['-created', ]
 
 
-class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin):
+class RequisicionCreateView(InventarioFormMixin, CurrentUserFormMixin,
+                            CreateView):
+    """
+    Allows a user to create new :class:`Requisicion` instances
+    """
     model = Requisicion
     form_class = RequisicionForm
 
 
 class RequisicionUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows a user to edit :class:`Requisicion` from the UI
+    """
     model = Requisicion
     form_class = RequisicionCompletarForm
 
 
-class RequisicionFormMixin(CreateView):
+class RequisicionMixin(ContextMixin, View):
+    """
+    Adds :class:`Requisicion` to the data of a view
+    """
+
     def dispatch(self, *args, **kwargs):
         self.requisicion = get_object_or_404(Requisicion,
                                              pk=kwargs['requisicion'])
-        return super(RequisicionFormMixin, self).dispatch(*args, **kwargs)
-
-    def get_initial(self):
-        initial = super(RequisicionFormMixin, self).get_initial()
-        initial = initial.copy()
-        initial['requisicion'] = self.requisicion.id
-        return initial
+        return super(RequisicionMixin, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(RequisicionFormMixin, self).get_context_data(**kwargs)
+        context = super(RequisicionMixin, self).get_context_data(**kwargs)
         context['requisicion'] = self.requisicion
 
         return context
 
 
-class ItemRequisicionCreateView(RequisicionFormMixin, LoginRequiredMixin):
+class RequisicionFormMixin(FormMixin, RequisicionMixin):
+    """
+    Add the :class:`Requisicion` to a form used in the view
+    """
+
+    def get_initial(self):
+        initial = super(RequisicionFormMixin, self).get_initial()
+        initial['requisicion'] = self.requisicion.id
+        return initial
+
+
+class ItemRequisicionCreateView(LoginRequiredMixin, RequisicionFormMixin,
+                                CreateView):
     model = ItemRequisicion
     form_class = ItemRequisicionForm
 
@@ -243,7 +345,7 @@ class ItemRequisicionCreateView(RequisicionFormMixin, LoginRequiredMixin):
         return super(ItemRequisicionCreateView, self).get_context_data(**kwargs)
 
 
-class ItemRequisicionDeleteView(DeleteView, LoginRequiredMixin):
+class ItemRequisicionDeleteView(LoginRequiredMixin, DeleteView):
     model = ItemRequisicion
 
     def get_object(self, queryset=None):
@@ -255,32 +357,39 @@ class ItemRequisicionDeleteView(DeleteView, LoginRequiredMixin):
         return self.requisicion.get_absolute_url()
 
 
-class TransferenciaCreateView(RequisicionFormMixin, LoginRequiredMixin):
+class TransferenciaCreateView(LoginRequiredMixin, RequisicionFormMixin,
+                              CreateView):
+    """
+    Allows the user to create a :class:`Transferencia` from the UI
+    """
     model = Transferencia
     form_class = TransferenciaForm
 
     def get_initial(self):
         initial = super(TransferenciaCreateView, self).get_initial()
-        initial = initial.copy()
         initial['destino'] = self.requisicion.inventario.id
         return initial
 
 
-class TransferenciaDetailView(SingleObjectMixin, ListView,
-                              CurrentUserFormMixin):
-    paginate_by = 10
-    template_name = 'inventory/transferencia_detail.html'
+class TransferenciaDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays the data associated to a :class:`Transferencia`
+    """
+    models = Transferencia
+    context_object_name = 'transferencia'
+    queryset = Transferencia.objects.select_related(
+        'destino',
+        'origen',
+        'requisicion',
+        'origen__ciudad',
+        'destino__ciudad',
+    ).prefetch_related(
+        'transferidos',
+        'transferidos__item',
+    )
 
-    def get_context_data(self, **kwargs):
-        kwargs['transferencia'] = self.object
-        return super(TransferenciaDetailView, self).get_context_data(**kwargs)
 
-    def get_queryset(self):
-        self.object = self.get_object(Transferencia.objects.all())
-        return self.object.transferidos.all()
-
-
-class TransferenciaUpdateView(UpdateView):
+class TransferenciaUpdateView(LoginRequiredMixin, UpdateView):
     model = Transferencia
     form_class = TransferirForm
     context_object_name = 'trasferencia'
@@ -299,20 +408,39 @@ class TransferenciaListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
 
-class TransferidoCreateView(LoginRequiredMixin, CreateView):
-    model = Transferido
-    form_class = TransferidoForm
+class TransferenciaMixin(ContextMixin, View):
+    """
+    Adds a :class:`Transferencia` to a view
+    """
 
     def dispatch(self, *args, **kwargs):
         self.transferencia = get_object_or_404(Transferencia,
                                                pk=kwargs['transferencia'])
-        return super(TransferidoCreateView, self).dispatch(*args, **kwargs)
+        return super(TransferenciaMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs['transferencia'] = self.transferencia
+        return super(TransferenciaMixin, self).get_context_data(**kwargs)
+
+
+class TransferenciaFormMixin(TransferenciaMixin, FormMixin):
+    """
+    Adds a :class:`Transferencia` instance to a form
+    """
 
     def get_initial(self):
-        initial = super(TransferidoCreateView, self).get_initial()
-        initial = initial.copy()
-        initial['transferencia'] = self.transferencia.id
+        initial = super(TransferenciaFormMixin, self).get_initial()
+        initial['transferencia'] = self.transferencia
         return initial
+
+
+class TransferidoCreateView(LoginRequiredMixin, TransferenciaFormMixin,
+                            CreateView):
+    """
+    Allows the user to create :class:`Transferido` objects
+    """
+    model = Transferido
+    form_class = TransferidoForm
 
 
 class TransferidoListView(LoginRequiredMixin, ListView):
@@ -321,7 +449,44 @@ class TransferidoListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
 
-class ProveedorMixin(TemplateResponseMixin):
+class TransferidoMixin(ContextMixin, View):
+    """
+    Adds a :class:`Transferido` to a view
+    """
+
+    def dispatch(self, *args, **kwargs):
+        self.transferido = get_object_or_404(Transferido,
+                                             pk=kwargs['transferido'])
+        return super(TransferidoMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        kwargs['transferido'] = self.transferido
+        return super(TransferidoMixin, self).get_context_data(**kwargs)
+
+
+class TransferidoFormMixin(TransferidoMixin, FormMixin):
+    """
+    Adds a :class:`Transferencia` instance to a form
+    """
+
+    def get_initial(self):
+        initial = super(TransferidoFormMixin, self).get_initial()
+        initial['transferido'] = self.transferido
+        return initial
+
+
+class AnomaliaTransferenciaCreateView(LoginRequiredMixin,
+                                      TransferenciaFormMixin,
+                                      TransferidoFormMixin, CreateView):
+    """
+    Allows the user to create a :class:`AnomaliaTransferencia` object from the
+    UI
+    """
+    model = AnomaliaTransferencia
+    form_class = AnomaliaTransferenciaForm
+
+
+class ProveedorMixin(ContextMixin, View):
     """Permite obtener un :class:`Proveedor` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -336,25 +501,47 @@ class ProveedorMixin(TemplateResponseMixin):
         return context
 
 
-class ProveedorFormMixin(ProveedorMixin, FormMixin):
-    """Permite inicializar el :class:`Proveedor` que se utilizará en un
-    formulario"""
+class ProveedorFormMixin(FormMixin, ProveedorMixin):
+    """
+    Permite inicializar el :class:`Proveedor` que se utilizará en un
+    formulario
+    """
 
     def get_initial(self):
         initial = super(ProveedorFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['proveedor'] = self.proveedor
         return initial
 
 
-class CompraCreateView(InventarioFormMixin, LoginRequiredMixin):
+class CompraCreateView(CurrentUserFormMixin, InventarioFormMixin, CreateView):
+    """
+    Creates a :class:`Compra` using input from the user
+    """
     model = Compra
     form_class = CompraForm
 
 
 class CompraUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows editing a :class:`Compra
+    """
     model = Compra
     form_class = CompraForm
+
+
+class CompraDocumentosView(CompraUpdateView):
+    """
+    Creates a UI to edit the documents related to a :class:`Compra`
+    """
+    form_class = CompraDocumentosForm
+
+
+class CompraIngresarUpdateView(CompraUpdateView):
+    """
+    Edits a :class:`Compra` to mark it as transfered and add its contents to
+    an :class:`Inventario`
+    """
+    form_class = CompraIngresarForm
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -365,7 +552,11 @@ class CompraUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class CompraDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
+class CompraDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
+    """
+    Displays the data associated to a :class:`Compra` allowing the user to
+    review its contents and to indicate some specific actions to the object.
+    """
     paginate_by = 10
     template_name = 'inventory/compra_detail.html'
 
@@ -374,28 +565,48 @@ class CompraDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
         return super(CompraDetailView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
-        self.object = self.get_object(Compra.objects.all())
-        return self.object.items.all()
+        self.object = self.get_object(
+            Compra.objects.prefetch_related(
+                'itemcomprado_set',
+                'itemcomprado_set__anomaliacompra_set'
+            )
+        )
+        return self.object.items().all()
 
 
-class CompraFormMixin(CreateView):
+class CompraMixin(ContextMixin, View):
+    """
+    Adds a :class:`Compra` to child views
+    """
+
     def dispatch(self, *args, **kwargs):
         self.compra = get_object_or_404(Compra, pk=kwargs['compra'])
-        return super(CompraFormMixin, self).dispatch(*args, **kwargs)
+        return super(CompraMixin, self).dispatch(*args, **kwargs)
+
+
+class CompraFormMixin(FormMixin, CompraMixin):
+    """
+    Adds a :class:`Compra` to the form used in a view
+    """
 
     def get_initial(self):
         initial = super(CompraFormMixin, self).get_initial()
-        initial = initial.copy()
-        initial['compra'] = self.compra.id
+        initial['compra'] = self.compra
         return initial
 
 
 class CompraListView(LoginRequiredMixin, ListView):
+    """
+    Displays a list of :class:`Compra` to the user.
+    """
     model = Compra
     context_object_name = 'compras'
 
 
-class ItemCompradoCreateView(CompraFormMixin, LoginRequiredMixin):
+class ItemCompradoCreateView(LoginRequiredMixin, CompraFormMixin, CreateView):
+    """
+    Create :class:`ItemComprado` from the UI
+    """
     model = ItemComprado
     form_class = ItemCompradoForm
 
@@ -405,6 +616,43 @@ class ItemCompradoCreateView(CompraFormMixin, LoginRequiredMixin):
         extra_form.helper.form_id = 'add-item-form'
         kwargs['itemTemplateForm'] = extra_form
         return super(ItemCompradoCreateView, self).get_context_data(**kwargs)
+
+
+class ItemCompradoMixin(ContextMixin, View):
+    """
+    Adds a :class:`ItemComprado` to the :class:`View`
+    """
+
+    def dispatch(self, *args, **kwargs):
+        self.item_comprado = get_object_or_404(ItemComprado, pk=kwargs['item'])
+        return super(ItemCompradoMixin, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ItemCompradoMixin, self).get_context_data(**kwargs)
+
+        context['item'] = self.item_comprado
+
+        return context
+
+
+class ItemCompradoFormMixin(FormMixin, ItemCompradoMixin):
+    """
+    Adds a :class:`ItemComprado` to the form used in a view
+    """
+
+    def get_initial(self):
+        initial = super(ItemCompradoFormMixin, self).get_initial()
+        initial['item'] = self.item_comprado
+        return initial
+
+
+class AnomaliaCompraCreateView(LoginRequiredMixin, ItemCompradoFormMixin,
+                               CreateView):
+    """
+    Allows adding a :class:`AnomaliaCompra` to a :class:`Compra`
+    """
+    model = AnomaliaCompra
+    form_class = AnomaliaCompraForm
 
 
 class ItemTemplateSearchView(LoginRequiredMixin, ListView):
@@ -419,13 +667,13 @@ class ItemTemplateSearchView(LoginRequiredMixin, ListView):
         query = form.cleaned_data['query']
 
         queryset = ItemTemplate.objects.filter(
-                Q(descripcion__icontains=query)
+            Q(descripcion__icontains=query)
         )
 
         return queryset.all()
 
 
-class HistorialDetailView(SingleObjectMixin, LoginRequiredMixin, ListView):
+class HistorialDetailView(LoginRequiredMixin, SingleObjectMixin, ListView):
     paginate_by = 10
     template_name = 'inventory/historial_detail.html'
 
@@ -445,7 +693,7 @@ class HistorialCreateView(InventarioFormMixin, LoginRequiredMixin):
     def form_valid(self, form):
         self.object = form.save()
 
-        for item in self.inventario.items.all():
+        for item in self.inventario.items():
             historico = ItemHistorial()
             historico.item = item.plantilla
             historico.historial = self.object
@@ -476,21 +724,45 @@ class ProveedorCreateView(LoginRequiredMixin, CreateView):
 
 
 class ProveedorUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows the user to update the data in a :class:`Proveedor` instance
+    """
     model = Proveedor
     form_class = ProveedorForm
 
 
-class CotizacionCreateView(LoginRequiredMixin, CreateView):
+class CotizacionCreateView(CurrentUserFormMixin, CreateView):
+    """
+    Allows the user to create new :class:`Cotizacion` objects
+    """
     model = Cotizacion
     form_class = CotizacionForm
 
 
 class CotizacionDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays the information of a :class:`Cotizacion`
+    """
     model = Cotizacion
     context_object_name = 'cotizacion'
+    queryset = Cotizacion.objects.select_related(
+        'inventario',
+        'proveedor',
+    ).prefetch_related(
+        'itemcotizado_set',
+    )
+
+    def get_context_data(self, **kwargs):
+        context = super(CotizacionDetailView, self).get_context_data(**kwargs)
+
+        comprar_form = CotizacionComprarForm()
+        context['comprar'] = comprar_form
+        comprar_form.helper.form_tag = False
+
+        return context
 
 
-class CotizacionMixin(TemplateResponseMixin):
+class CotizacionMixin(ContextMixin, View):
     """Permite obtener un :class:`Cotizacion` desde los argumentos en una url"""
 
     def dispatch(self, *args, **kwargs):
@@ -505,19 +777,111 @@ class CotizacionMixin(TemplateResponseMixin):
         return context
 
 
+class CotizacionListView(LoginRequiredMixin, ListView):
+    """
+    Displays a list of :class:`Cotizacion`
+    """
+    model = Cotizacion
+    paginate_by = 10
+
+
+class CotizacionUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Allows the user update :class:`Cotizacion` objects
+    """
+    model = Cotizacion
+    form_class = CotizacionForm
+
+
+class CotizacionAutorizarUpdateView(CotizacionUpdateView):
+    """
+    Allows the user to mark a :class:`Cotizacion` as authorized
+    """
+    form_class = CotizacionAutorizarForm
+
+
+class CotizacionDenegarUpdateView(CotizacionUpdateView):
+    """
+    Allows the user to mark a :class:`Cotizacion` as denied
+    """
+    form_class = CotizacionDenegarForm
+
+
+class CotizacionComprarUpdateView(CotizacionUpdateView):
+    """
+    Allows the user to create a :class:`Compra` based in a :class:`Cotizacion`
+    transfering all the :class:`ItemCotizado` as :class:`ItemComprado`
+    """
+    form_class = CotizacionComprarForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        compra = Compra()
+        compra.cotizacion = self.object
+        compra.inventario = self.object.inventario
+        compra.proveedor = self.object.proveedor
+        compra.usuario = self.request.user
+
+        compra.save()
+
+        for item in self.object.itemcotizado_set.all():
+            item_comprado = ItemComprado(
+                compra=compra,
+                item=item.item,
+                precio=item.precio,
+                cantidad=item.cantidad,
+            )
+            item_comprado.save()
+
+        return HttpResponseRedirect(
+            reverse('compra-documentos', args=[compra.id])
+        )
+
+
+class CotizacionAgregarItemsView(LoginRequiredMixin, RedirectView):
+    """
+    Creates a :class:`Recibo` object from a :class:`Emergencia` instance
+    """
+    permanent = False
+
+    @transaction.atomic
+    def get_redirect_url(self, **kwargs):
+        cotizacion = get_object_or_404(Cotizacion, pk=kwargs['pk'])
+
+        cotizar = defaultdict(int)
+
+        for item in cotizacion.items_requeridos():
+            cotizar[item.item] += item.cantidad
+
+        for item in cotizar:
+            cotizado = ItemCotizado(
+                cotizacion=cotizacion,
+                cantidad=cotizar[item],
+                item=item
+            )
+            cotizado.save()
+
+        return cotizacion.get_absolute_url()
+
+
 class CotizacionFormMixin(CotizacionMixin, FormMixin):
-    """Permite inicializar el :class:`Proveedor` que se utilizará en un
-    formulario"""
+    """
+    Permite inicializar el :class:`Proveedor` que se utilizará en un
+    formulario
+    """
 
     def get_initial(self):
         initial = super(CotizacionFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['cotizacion'] = self.cotizacion
         return initial
 
 
-class ItemCotizadoCreateView(CotizacionFormMixin, CreateView,
-                             LoginRequiredMixin):
+class ItemCotizadoCreateView(LoginRequiredMixin, CotizacionFormMixin,
+                             CreateView):
+    """
+    Allows the user to create new :class:`ItemCotizado` objects
+    """
     model = ItemCotizado
     form_class = ItemCotizadoform
 
@@ -525,14 +889,40 @@ class ItemCotizadoCreateView(CotizacionFormMixin, CreateView,
         return reverse('itemcotizado-create', args=[self.cotizacion.id])
 
 
+class ItemCotizadoDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Removes an :class:`ItemCotizado` from a :class:`Cotizacion`
+    """
+    model = ItemCotizado
+
+    def get_object(self, queryset=None):
+        obj = super(ItemCotizadoDeleteView, self).get_object(queryset)
+        self.cotizacion = obj.cotizacion
+        return obj
+
+    def get_success_url(self):
+        return self.cotizacion.get_absolute_url()
+
+
+class ItemCotizadoUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Changes the values of a :class:`ItemCotizado`
+    """
+    model = ItemCotizado
+    form_class = ItemCotizadoform
+
+
 class UserInventarioRequiredMixin(View):
-    """Muestra un mensaje de error si el :class:`User` no tiene un
-    :class:`Inventario` asignado en su perfil"""
+    """
+    Muestra un mensaje de error si el :class:`User` no tiene un
+    :class:`Inventario` asignado en su perfil
+    """
 
     def dispatch(self, *args, **kwargs):
-        if self.request.user.profile is None:
+        profile = self.request.user.profile
+        if profile is None or profile.inventario is None:
             messages.info(self.request,
-                          "Su usuario no tiene un Inventario asociado, por "
-                          "favor edite su Perfil para asociar un Inventario")
+                          _("Su usuario no tiene un Inventario asociado, por "
+                            "favor edite su Perfil para asociar un Inventario"))
         return super(UserInventarioRequiredMixin, self).dispatch(*args,
                                                                  **kwargs)

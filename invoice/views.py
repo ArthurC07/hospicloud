@@ -199,7 +199,7 @@ class EstadisticasView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EstadisticasView, self).get_context_data(**kwargs)
-        recibos = Recibo.objects.annotate(sold=Sum('ventas__total'))
+        recibos = Recibo.objects.all()
 
         now = timezone.now()
         context['pagos'] = OrderedDict()
@@ -230,7 +230,7 @@ class EstadisticasView(LoginRequiredMixin, TemplateView):
 
             total = recibos.filter(
                 created__range=(inicio, fin)
-            ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
+            ).aggregate(total=Coalesce(Sum('valor'), Decimal()))['total']
 
             context['meses'][inicio] = []
             context['recibos'].append(total)

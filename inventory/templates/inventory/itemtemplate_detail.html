@@ -1,49 +1,78 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 main-header">
             <section class="page-header">
                 <h1>{{ item_template.descripcion }}
-                    <small>Producto</small>
+                    <small>{% trans 'Producto' %}</small>
                 </h1>
             </section>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9">
-            <div class="main-content col-md-12">
-                <div class="row">
-                    <section class="col-md-6">
-                        <ul>
-                            <li>Marca: {{ item_template.marca }}</li>
-                            <li>Modelo: {{ item_template.modelo }}</li>
-                            <li>Notas: {{ item_template.notas }}</li>
-                            <li>Precio de venta: {{ item_template.precio_de_venta }}</li>
-                            <li>Precio de Costo: {{ item_template.costo }}</li>
-                            <li>Impuestos: {{ item_template.impuestos }}</li>
-                            <li>Activo: {{ item_template.activo|yesno }}</li>
-                            <li>Grupos:
-                                <ul>
-                                    {% for grupo in item_template.item_type.all %}
-                                        <li>{{ grupo }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                        </ul>
-                    </section>
-                </div>
-            </div>
+        <section class="col-md-9 col-xs-9 main-content">
+            <dl class="dl-horizontal">
+                <dt>{% trans 'Marca' %}</dt>
+                <dd>{{ item_template.marca }}</dd>
+                <dt>{% trans 'Modelo' %}</dt>
+                <dd>{{ item_template.modelo }}</dd>
+                <dt>{% trans 'Notas' %}</dt>
+                <dd>{{ item_template.notas }}</dd>
+                <dt>{% trans 'Precio de venta' %}</dt>
+                <dd>{{ item_template.precio_de_venta }}</dd>
+                <dt>{% trans 'Precio de Costo' %}</dt>
+                <dd>{{ item_template.costo }}</dd>
+                <dt>{% trans 'Impuestos' %}</dt>
+                <dd>{{ item_template.impuestos }}</dd>
+                <dt>{% trans 'Activo' %}</dt>
+                <dd>{{ item_template.activo|yesno }}</dd>
+                <dt>{% trans 'Grupos' %}</dt>
+                <dd>
+                    <ul>
+                        {% for grupo in item_template.item_type.all %}
+                            <li>{{ grupo }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </dl>
+            <table class="table table-striped">
+                <caption>{% trans 'Existencias' %}</caption>
+                <thead>
+                    <tr>
+                        <th>{% trans 'Inventario' %}</th>
+                        <th>{% trans 'Cantidad' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in item_template.items.all %}
+                    <tr>
+                        <td>{{ item.inventario }}</td>
+                        <td>{{ item.cantidad }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>{% trans 'Total de Existencias' %}</th>
+                        <th>{{ item_template.existencia }}</th>
+                    </tr>
+                </tfoot>
+            </table>
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
                         <li>
-                            <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar {{ item_template.descripcion }}</a>
+                            <a href="{% url 'itemtemplate-edit' item_template.id %}">
+                                {% trans 'Editar' %} {{ item_template.descripcion }}
+                            </a>
                         </li>
                         <li>
-                            <a href="{% url 'inventario-index' %}">Regresar a Inventario</a>
+                            <a href="{% url 'inventario-index' %}">
+                                {% trans 'Regresar a Inventario' %}
+                            </a>
                         </li>
                     </ul>
                 </nav>

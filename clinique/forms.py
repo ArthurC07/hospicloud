@@ -190,8 +190,11 @@ class CitaForm(ConsultorioFormMixin):
 
 
 class CitaPersonaForm(CitaForm):
-    persona = forms.ModelChoiceField(label="", queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput(), required=False)
+    persona = forms.ModelChoiceField(
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput(),
+        required=False
+    )
 
 
 class SeguimientoForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm):

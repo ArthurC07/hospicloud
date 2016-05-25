@@ -35,6 +35,7 @@ from django_extensions.db.models import TimeStampedModel
 from clinique.models import Consulta
 from contracts.models import Aseguradora
 from inventory.models import ItemTemplate, TipoVenta, Proveedor
+from invoice import managers
 from persona.fields import ColorField
 from persona.models import Persona, persona_consolidation_functions, \
     transfer_object_to_persona
@@ -88,42 +89,6 @@ class StatusPago(TimeStampedModel):
         )['total']
 
 
-class ReciboQuerySet(QuerySet):
-    """
-    Creates a default :class:`QuerySet` for the :class:`Recibo`
-    """
-
-    def calculate(self):
-        raise NotImplementedError()
-
-
-class ReciboManager(models.Manager):
-    """
-    Builds a manager for the :class:`Recibo` model
-    """
-
-    def get_queryset(self):
-        return ReciboQuerySet(
-            self.model,
-            using=self._db
-        ).select_related(
-            'cliente',
-            'ciudad',
-            'legal_data',
-            'cajero',
-        ).prefetch_related(
-            'ventas',
-            'pagos',
-            'pagos__aseguradora',
-            'ventas__item',
-        ).annotate(
-            valor=Coalesce(
-                Sum('ventas__total'),
-                Decimal()
-            )
-        )
-
-
 @python_2_unicode_compatible
 class Recibo(TimeStampedModel):
     """Permite registrar pagos por productos y servicios"""
@@ -147,7 +112,8 @@ class Recibo(TimeStampedModel):
     nulo = models.BooleanField(default=False)
     emision = models.DateTimeField(default=timezone.now)
     month_offset = models.IntegerField(default=0)
-    objects = ReciboManager()
+
+    objects = managers.ReciboManager()
 
     def get_absolute_url(self):
 
@@ -348,28 +314,6 @@ class Recibo(TimeStampedModel):
         self.correlativo = cai.correlativo
 
 
-class VentaManager(models.Manager):
-    """
-    Implements many shortcuts related to venta
-    """
-
-    def periodo(self, inicio, fin):
-        """
-        Returns all :class:`Venta` corresponding to :class:`Recibo` created in
-        the specified date range
-        """
-        return self.filter(recibo__created__range=(inicio, fin))
-
-    def total(self):
-        """
-        Obtains the total money from sales
-        """
-
-        return self.aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
-        )['total']
-
-
 @python_2_unicode_compatible
 class Venta(TimeStampedModel):
     """Relaciona :class:`Producto` a un :class:`Recibo` lo cual permite
@@ -395,7 +339,7 @@ class Venta(TimeStampedModel):
     monto = models.DecimalField(blank=True, null=True, max_digits=11,
                                 decimal_places=2)
 
-    objects = VentaManager()
+    objects = managers.VentaManager()
 
     def __str__(self):
 

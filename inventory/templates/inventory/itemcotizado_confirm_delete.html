@@ -2,14 +2,14 @@
 {% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block content %}
     <div class="row">
-        <section class="col-md-9 col-xs-9 main-content">
+        <section class="col-md-9 main-content">
             <form method="post">{% csrf_token %}
                 <fieldset>
                     <legend>{% trans '¿Esta Seguro de Borrar el Item?' %}</legend>
                     <a class="btn btn-success"
                        href="javascript:back();">{% trans 'No' %}</a>
                     <input class="btn btn-danger" type="submit"
-                           value="{% trans'S&iacute;' %}">
+                           value="S&iacute;">
                 </fieldset>
             </form>
         </section>

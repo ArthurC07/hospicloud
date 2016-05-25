@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,10 +14,11 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import unicode_literals
 from django.conf.urls import url
 
 from inventory import views
+
 
 urlpatterns = [
 
@@ -105,6 +106,10 @@ urlpatterns = [
         views.TransferidoCreateView.as_view(),
         name='transferido-create'),
 
+    url(r'^transferencia/(?P<transferencia>\d+)/(?P<transferido>\d+)/anomalia/agregar$',
+        views.AnomaliaTransferenciaCreateView.as_view(),
+        name='transferencia-anomalia-create'),
+
     url(r'^(?P<inventario>\d+)/compra/agregar$',
         views.CompraCreateView.as_view(),
         name='compra-create'),
@@ -120,6 +125,18 @@ urlpatterns = [
     url(r'^compra/(?P<pk>\d+)/edit$',
         views.CompraUpdateView.as_view(),
         name='compra-edit'),
+
+    url(r'^compra/(?P<pk>\d+)/documentos$',
+        views.CompraDocumentosView.as_view(),
+        name='compra-documentos'),
+
+    url(r'^compra/(?P<item>\d+)/anomalia/agregar$',
+        views.AnomaliaCompraCreateView.as_view(),
+        name='compra-anomalia-agregar'),
+
+    url(r'^compra/(?P<pk>\d+)/transferir$',
+        views.CompraIngresarUpdateView.as_view(),
+        name='compra-transferir'),
 
     url(r'^historial/(?P<pk>\d+)$',
         views.HistorialDetailView.as_view(),
@@ -153,11 +170,39 @@ urlpatterns = [
         views.CotizacionCreateView.as_view(),
         name='cotizacion-create'),
 
+    url(r'^cotizacion$',
+        views.CotizacionListView.as_view(),
+        name='cotizacion-list'),
+
     url(r'^cotizacion/(?P<pk>\d+)$',
         views.CotizacionDetailView.as_view(),
         name='cotizacion-view'),
 
+    url(r'^cotizacion/(?P<pk>\d+)/autorizar$',
+        views.CotizacionAutorizarUpdateView.as_view(),
+        name='cotizacion-autorizar'),
+
+    url(r'^cotizacion/(?P<pk>\d+)/condensar$',
+        views.CotizacionAgregarItemsView.as_view(),
+        name='cotizacion-condensar'),
+
+    url(r'^cotizacion/(?P<pk>\d+)/denegar$',
+        views.CotizacionDenegarUpdateView.as_view(),
+        name='cotizacion-denegar'),
+
+    url(r'^cotizacion/(?P<pk>\d+)/comprar$',
+        views.CotizacionComprarUpdateView.as_view(),
+        name='cotizacion-comprar'),
+
     url(r'^cotizacion/(?P<cotizacion>\d+)/item/agregar$',
         views.ItemCotizadoCreateView.as_view(),
         name='itemcotizado-create'),
+
+    url(r'^cotizacion/item/(?P<pk>\d+)/eliminar$',
+        views.ItemCotizadoDeleteView.as_view(),
+        name='cotizacion-item-borrar'),
+
+    url(r'^cotizacion/item/(?P<pk>\d+)/editar$',
+        views.ItemCotizadoUpdateView.as_view(),
+        name='cotizacion-item-editar'),
 ]

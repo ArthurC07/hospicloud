@@ -23,12 +23,12 @@ urlpatterns = [
 
     url(r'^$', views.IndexView.as_view(), name='invoice-index'),
 
-    url(r'^nuevo', views.ReciboCreateView.as_view(), name='invoice-new'),
+    url(r'^nuevo$', views.ReciboCreateView.as_view(), name='invoice-new'),
 
-    url(r'^(?P<persona>\d+)/crear', views.ReciboPersonaCreateView.as_view(),
+    url(r'^(?P<persona>\d+)/crear$', views.ReciboPersonaCreateView.as_view(),
         name='invoice-create'),
 
-    url(r'^examen/(?P<examen>\d+)/crear',
+    url(r'^examen/(?P<examen>\d+)/crear$',
         views.ReciboExamenCreateView.as_view(),
         name='invoice-create-examen'),
 

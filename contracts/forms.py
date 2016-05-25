@@ -87,9 +87,10 @@ class ContratoForm(BasePersonaForm):
 
 
 class ContratoMasterForm(FieldSetFormMixin):
-    persona = forms.ModelChoiceField(label="",
-                                     queryset=Persona.objects.all(),
-                                     widget=forms.HiddenInput())
+    persona = forms.ModelChoiceField(
+        queryset=Persona.objects.all(),
+        widget=forms.HiddenInput()
+    )
     master = forms.ModelChoiceField(
         label=_('Contrato Maestro'),
         queryset=MasterContract.objects.all().order_by('plan__nombre')
@@ -236,9 +237,11 @@ class BeneficiarioPersonaForm(BasePersonaForm):
 
 
 class PlanFormMixin(FieldSetModelFormMixin):
-    plan = forms.ModelChoiceField(label="", queryset=Plan.objects.all(),
-                                  widget=forms.HiddenInput(),
-                                  required=False)
+    plan = forms.ModelChoiceField(
+        queryset=Plan.objects.all(),
+        widget=forms.HiddenInput(),
+        required=False
+    )
 
 
 class LimiteEventoForm(PlanFormMixin):
@@ -401,4 +404,3 @@ class AseguradoraPeriodoForm(AseguradoraFormMixin):
 
     def set_action(self, action):
         self.helper.form_action = action
-

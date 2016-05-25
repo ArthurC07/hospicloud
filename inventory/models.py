@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,37 +16,54 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-import calendar
-from datetime import date, time, datetime
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, F
+from django.db.models.expressions import ExpressionWrapper, When, Case
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
+
+from hospinet.utils import get_current_month_range
+from inventory import managers
 
 
 @python_2_unicode_compatible
 class Inventario(models.Model):
     class Meta:
         permissions = (
-            ('inventario', 'Permite al usuario gestionar inventario'),
+            ('inventario', _('Permite al usuario gestionar inventario')),
         )
 
     lugar = models.CharField(max_length=255, default='Bodega')
-    puede_comprar = models.NullBooleanField(default=False, blank=True,
-                                            null=True)
+    puede_comprar = models.BooleanField(default=False)
     activo = models.BooleanField(default=True)
+    ciudad = models.ForeignKey('users.Ciudad', blank=True, null=True)
+
+    objects = managers.InventarioManager()
 
     def __str__(self):
         return _(u"Inventario de {0}").format(self.lugar)
 
+    def items(self):
+
+        return self.item_set.prefetch_related(
+            'plantilla',
+        ).annotate(
+            valor=ExpressionWrapper(
+                F('cantidad') * F('plantilla__costo'),
+                output_field=models.DecimalField()
+            )
+        )
+
     def buscar_item(self, item_template):
-        item = self.items.filter(plantilla=item_template).first()
+        item = self.item_set.filter(plantilla=item_template).first()
 
         if not item:
             item = Item(inventario=self, plantilla=item_template)
@@ -56,11 +73,13 @@ class Inventario(models.Model):
 
     def descargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
-        item.disminuir(cantidad, user)
+        if not item.plantilla.servicio:
+            item.disminuir(cantidad, user)
 
     def cargar(self, item_template, cantidad, user=None):
         item = self.buscar_item(item_template)
-        item.aumentar(cantidad, user)
+        if not item.plantilla.servicio:
+            item.incrementar(cantidad, user)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -80,8 +99,10 @@ class Inventario(models.Model):
 @python_2_unicode_compatible
 class ItemType(TimeStampedModel):
     nombre = models.CharField(max_length=255)
-    consulta = models.BooleanField(default=True,
-                                   verbose_name='Aparece en Cargos de Consulta')
+    consulta = models.BooleanField(
+        default=True,
+        verbose_name=_('Aparece en Cargos de Consulta')
+    )
 
     def __str__(self):
         return self.nombre
@@ -92,8 +113,6 @@ class ItemType(TimeStampedModel):
 
 @python_2_unicode_compatible
 class ItemTemplate(TimeStampedModel):
-    """"""
-
     descripcion = models.CharField(max_length=255)
     marca = models.CharField(max_length=32, null=True, blank=True)
     modelo = models.CharField(max_length=32, null=True, blank=True)
@@ -105,13 +124,10 @@ class ItemTemplate(TimeStampedModel):
     costo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unidad_de_medida = models.CharField(max_length=32, null=True, blank=True)
     impuestos = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    servicio = models.BooleanField(default=False)
     activo = models.BooleanField(default=True)
     item_type = models.ManyToManyField(ItemType, related_name='items',
                                        blank=True)
-    comision = models.DecimalField(decimal_places=2, max_digits=4,
-                                   default=Decimal("30.00"))
-    comision2 = models.DecimalField(decimal_places=2, max_digits=4,
-                                    default=Decimal("10.00"))
 
     def __str__(self):
         return self.descripcion
@@ -134,7 +150,7 @@ class Proveedor(models.Model):
     class Meta:
         ordering = ('name', 'rtn')
 
-    name = models.CharField(verbose_name=_(u"Nombre Completo de la Empresa"),
+    name = models.CharField(verbose_name=_("Nombre Completo de la Empresa"),
                             max_length=255)
     rtn = models.CharField(max_length=255, blank=True)
     direccion = models.CharField(max_length=255, blank=True)
@@ -154,7 +170,7 @@ class Proveedor(models.Model):
 class Item(TimeStampedModel):
     plantilla = models.ForeignKey(ItemTemplate, related_name='items',
                                   verbose_name='Item')
-    inventario = models.ForeignKey(Inventario, related_name='items')
+    inventario = models.ForeignKey(Inventario)
     vencimiento = models.DateTimeField(default=timezone.now)
     cantidad = models.IntegerField(default=0)
 
@@ -183,28 +199,13 @@ class Item(TimeStampedModel):
         self.save()
 
     def movimiento(self, inicio, fin):
-        total = Transaccion.objects.filter(
+        return Transaccion.objects.filter(
             created__range=(inicio, fin),
             item=self
-        ).aggregate(total=Sum('cantidad'))['total']
-
-        if total:
-            return total
-
-        return 0
+        ).aggregate(total=Coalesce(Sum('cantidad'), Decimal()))['total']
 
     def movimiento_mes(self):
-        now = timezone.now()
-        fin = date(now.year, now.month,
-                   calendar.monthrange(now.year, now.month)[1])
-        inicio = date(now.year, now.month, 1)
-
-        fin = datetime.combine(fin, time.max)
-        inicio = datetime.combine(inicio, time.min)
-
-        fin = timezone.make_aware(fin, timezone.get_current_timezone())
-        inicio = timezone.make_aware(inicio,
-                                     timezone.get_current_timezone())
+        fin, inicio = get_current_month_range()
 
         return self.movimiento(inicio, fin)
 
@@ -215,17 +216,16 @@ class Item(TimeStampedModel):
 
     def __str__(self):
         return '{0} en {1}'.format(self.plantilla.descripcion,
-                                    self.inventario.lugar)
+                                   self.inventario.lugar)
 
 
 @python_2_unicode_compatible
 class Requisicion(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='requisiciones',
                                    null=True, blank=True)
-    aprobada = models.NullBooleanField(default=False)
-    entregada = models.NullBooleanField(default=False)
-    usuario = models.ForeignKey(User, related_name="requisiciones",
-                                null=True, blank=True)
+    denegada = models.BooleanField(default=False)
+    entregada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -234,7 +234,7 @@ class Requisicion(TimeStampedModel):
 
     def __str__(self):
         return _('Requisición Número {1} de {0}').format(self.inventario.lugar,
-                                                       self.id)
+                                                         self.id)
 
     def buscar_item(self, item_template):
         item = self.items.filter(item=item_template).first()
@@ -277,7 +277,7 @@ class Transferencia(TimeStampedModel):
                                null=True, blank=True)
     destino = models.ForeignKey(Inventario, related_name='entradas',
                                 null=True, blank=True)
-    aplicada = models.NullBooleanField(default=False, null=True, blank=True)
+    aplicada = models.NullBooleanField(default=False)
     usuario = models.ForeignKey(User, related_name="transferencias",
                                 null=True, blank=True)
 
@@ -324,7 +324,7 @@ class Transferido(TimeStampedModel):
 
     def __str__(self):
         return _('Transferir {1} {0}').format(self.item.descripcion,
-                                            self.cantidad)
+                                              self.cantidad)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -332,15 +332,43 @@ class Transferido(TimeStampedModel):
         return reverse('transferencia', args=[self.transferencia.id])
 
 
+class AnomaliaTransferencia(TimeStampedModel):
+    """
+    Registers the problems present in a  :class:`Transferencia
+    """
+    transferencia = models.ForeignKey(Transferencia)
+    item = models.ForeignKey(Transferido)
+    cantidad = models.IntegerField(default=0)
+    detalle = models.TextField()
+
+    def get_absolute_url(self):
+
+        return self.transferencia.get_absolute_url()
+
+
 @python_2_unicode_compatible
 class Compra(TimeStampedModel):
+    """
+    Describes a series of items that have been bought and will be transfered to
+    a certain :class:`Inventario`
+    """
     inventario = models.ForeignKey(Inventario, blank=True, null=True,
                                    related_name='compras')
     ingresada = models.BooleanField(default=False)
     proveedor = models.ForeignKey(Proveedor, blank=True, null=True)
+    cotizacion = models.ForeignKey('Cotizacion', blank=True, null=True)
+    comprobante = models.FileField(
+        upload_to='inventory/compra/comprobante/%Y/%m/%d', blank=True, null=True
+    )
+    metodo_de_pago = models.FileField(
+        upload_to='inventory/compra/pago/%Y/%m/%d', blank=True, null=True
+    )
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
 
     def __str__(self):
-        return _(u"Compra efectuada el {0}").format(self.created)
+        if self.proveedor:
+            return _("Compra a {0}").format(self.proveedor.name)
+        return _('Compra').format()
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -348,16 +376,46 @@ class Compra(TimeStampedModel):
         return reverse('compra', args=[self.id])
 
     def transferir(self):
-        for comprado in self.items.all():
+        for comprado in self.items().all():
             self.inventario.cargar(comprado.item, comprado.cantidad)
 
+    def total(self):
+        """
+        Shows the total amount that the bought items represent in monetary value
+        :return: DecimalField
+        """
+        return self.items().aggregate(
+            total=Coalesce(
+                Sum(F('precio') * F('cantidad'),
+                    output_field=models.DecimalField()),
+                Decimal()
+            )
+        )['total']
 
+    def items(self):
+        return self.itemcomprado_set.annotate(
+            valor=ExpressionWrapper(
+                F('precio') * F('cantidad'),
+                output_field=models.DecimalField()
+            )
+        )
+
+
+@python_2_unicode_compatible
 class ItemComprado(TimeStampedModel):
-    compra = models.ForeignKey(Compra, related_name='items')
+    """
+    Describes a :class:`ItemTemplate` that was bought as part of a
+    :class:`Compra`
+    """
+    compra = models.ForeignKey(Compra)
     item = models.ForeignKey(ItemTemplate, related_name='comprado', blank=True,
                              null=True)
     ingresado = models.BooleanField(default=False)
     cantidad = models.IntegerField(default=0)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return self.item.descripcion
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -365,11 +423,41 @@ class ItemComprado(TimeStampedModel):
         return self.compra.get_absolute_url()
 
 
-class ItemAction(TimeStampedModel):
-    """Crea un registro de cada movimiento efectuado por un :class:`User`
-    en un :class:`Item`"""
+class TransferenciaCompra(TimeStampedModel):
+    """
+    Registers the date when a :class:`Compra` has been transfered
+    """
+    compra = models.ForeignKey(Compra)
 
-    user = models.ForeignKey(User)
+
+class ItemTransferido(TimeStampedModel):
+    """
+    Register the items that have been transfered from :class:`Compra`
+    """
+    transferencia = models.ForeignKey(TransferenciaCompra)
+    item = models.ForeignKey(ItemTemplate)
+    cantidad = models.IntegerField(default=0)
+
+
+class AnomaliaCompra(TimeStampedModel):
+    """
+    Registers discrepancies between the aproved :class:`Compra` and the
+    actual presented :class:`Item`s
+    """
+    item = models.ForeignKey(ItemComprado)
+    cantidad = models.IntegerField(default=0)
+    detalle = models.TextField()
+
+    def get_absolute_url(self):
+        return self.item.compra.get_absolute_url()
+
+
+class ItemAction(TimeStampedModel):
+    """
+    Crea un registro de cada movimiento efectuado por un :class:`User`
+    en un :class:`Item`
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     action = models.TextField()
     item = models.ForeignKey(ItemTemplate, related_name='acciones')
 
@@ -393,7 +481,7 @@ class Historial(TimeStampedModel):
 
     def __str__(self):
         return _('{0} el {1}').format(self.inventario.lugar,
-                                    self.fecha.strftime('%d/%m/Y'))
+                                      self.fecha.strftime('%d/%m/Y'))
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -409,21 +497,33 @@ class ItemHistorial(TimeStampedModel):
 
     def __str__(self):
         return _('{0} {1} el {2}').format(self.item.descripcion,
-                                        self.historial.inventario.lugar,
-                                        self.historial.created.strftime(
-                                            '%d/%m/Y'))
+                                          self.historial.inventario.lugar,
+                                          self.historial.created.strftime(
+                                              '%d/%m/Y'))
 
 
 class Transaccion(TimeStampedModel):
     item = models.ForeignKey(Item)
     cantidad = models.IntegerField(default=0)
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
 
 @python_2_unicode_compatible
 class Cotizacion(TimeStampedModel):
+    """
+    Represents a quotation that will be made in the UI
+    """
     proveedor = models.ForeignKey(Proveedor)
+    creacion = models.DateTimeField(auto_now_add=True)
     vencimiento = models.DateTimeField(auto_now_add=True)
+    autorizada = models.BooleanField(default=False)
+    denegada = models.BooleanField(default=False)
+    comprada = models.BooleanField(default=False)
+    inventario = models.ForeignKey(Inventario, blank=True, null=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,
+                                related_name='cotizacion_inventario_set')
+
+    objects = managers.CotizacionManager()
 
     def __str__(self):
         return _('Cotización de {0}').format(self.proveedor)
@@ -431,8 +531,44 @@ class Cotizacion(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('cotizacion-view', args=[self.id])
 
+    def items_requeridos(self):
+        """
+        Creates a :class:`QuerySet` that displays the :class:`ItemTemplate`s
+        needed in the current :class:`Cotizacion`
+        :return: :class:`QuerySet`
+        """
+        return ItemRequisicion.objects.filter(
+            cantidad__gt=0,
+            requisicion__denegada=False,
+            requisicion__entregada=False,
+        ).prefetch_related(
+            'item',
+            'item__items',
+            'requisicion',
+            'requisicion__inventario',
+            'requisicion__inventario__ciudad',
+        ).annotate(
+            existencias=Case(
+                When(
+                    item__items__inventario__puede_comprar=True,
+                    then=Coalesce(
+                        Sum('item__items__cantidad'),
+                        Decimal()
+                    )
+                )
+            )
+        ).exclude(
+            existencias__isnull=True,
+        ).order_by(
+            'item__descripcion',
+        )
+
 
 class ItemCotizado(TimeStampedModel):
+    """
+    Represents an :class:`ItemTemplate` that will be part of a
+    :class:`Cotizacion`
+    """
     cotizacion = models.ForeignKey(Cotizacion)
     item = models.ForeignKey(ItemTemplate)
     cantidad = models.IntegerField(default=0)

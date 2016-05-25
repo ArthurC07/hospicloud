@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2011-2013 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from inventory.models import ItemTemplate, Inventario, Item, Compra, ItemType, \
     Requisicion, ItemRequisicion, Transferencia, Transferido, ItemComprado, \
-    Historial, Proveedor, Cotizacion, ItemCotizado
+    Historial, Proveedor, Cotizacion, ItemCotizado, AnomaliaCompra, \
+    AnomaliaTransferencia
 from persona.forms import FieldSetModelFormMixin, FieldSetFormMixin, \
     DateTimeWidget, FutureDateWidget
 from users.mixins import HiddenUserForm
@@ -36,14 +37,14 @@ class ItemTemplateForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemTemplateForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Producto',
+        self.helper.layout = Fieldset(_('Formulario de Producto'),
                                       *self.field_names)
 
 
 class ItemTemplateFormMixin(FieldSetModelFormMixin):
     item = forms.ModelChoiceField(
-            queryset=ItemTemplate.objects.filter(activo=True).order_by(
-                    'descripcion')
+        queryset=ItemTemplate.objects.filter(activo=True).order_by(
+            'descripcion')
     )
 
 
@@ -54,7 +55,7 @@ class InventarioForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(InventarioForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Bódega de Inventario',
+        self.helper.layout = Fieldset(_('Formulario de Bódega de Inventario'),
                                       *self.field_names)
 
 
@@ -70,14 +71,14 @@ class ItemForm(FieldSetModelFormMixin):
 
     plantilla = forms.ModelChoiceField(label=_("Item"),
                                        queryset=ItemTemplate.objects.filter(
-                                               activo=True).order_by(
-                                               'descripcion').all())
+                                           activo=True).order_by(
+                                           'descripcion').all())
 
     vencimiento = forms.DateTimeField(widget=DateTimeWidget())
 
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Item Inventariado',
+        self.helper.layout = Fieldset(_('Formulario de Item Inventariado'),
                                       *self.field_names)
 
 
@@ -88,7 +89,7 @@ class ItemTypeForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemTypeForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Tipos de Producto',
+        self.helper.layout = Fieldset(_('Formulario de Tipos de Producto'),
                                       *self.field_names)
 
 
@@ -99,8 +100,36 @@ class RequisicionForm(HiddenUserForm):
 
     def __init__(self, *args, **kwargs):
         super(RequisicionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Requisición',
+        self.helper.layout = Fieldset(_('Formulario de Requisición'),
                                       *self.field_names)
+
+
+class RequisicionDenegarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as authorized
+    """
+
+    class Meta:
+        model = Cotizacion
+        fields = ('denegada',)
+
+    autorizada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'denegada': True}
+        else:
+            kwargs['initial']['denegada'] = True
+        super(RequisicionDenegarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Denegar Requisicion'),
+                css_class='btn-success btn-block'
+            ))
 
 
 class RequisicionCompletarForm(forms.ModelForm):
@@ -115,19 +144,31 @@ class RequisicionCompletarForm(forms.ModelForm):
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
         self.helper.add_input(Submit('submit', 'Aplicar'))
-        self.helper.layout = Fieldset('¿Completar la Requisición Ahora?',
+        self.helper.layout = Fieldset(_('¿Completar la Requisición Ahora?'),
                                       *self.field_names)
 
 
-class ItemRequisicionForm(ItemTemplateFormMixin):
+class RequsicionFormMixin(forms.ModelForm):
+    """
+    Adds a :class:`HiddenInput` widget for adding a :class:`Requisicion` to a
+    form
+    """
+    requisicion = forms.ModelChoiceField(
+        queryset=Requisicion.objects.all(),
+        widget=forms.HiddenInput()
+    )
+
+
+class ItemRequisicionForm(ItemTemplateFormMixin, RequsicionFormMixin):
     class Meta:
         model = ItemRequisicion
         exclude = ('entregada', 'pendiente')
 
     def __init__(self, *args, **kwargs):
         super(ItemRequisicionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Requisición de Producto',
-                                      *self.field_names)
+        self.helper.layout = Fieldset(
+            _('Formulario de Requisición de Producto'),
+            *self.field_names)
 
 
 class TransferenciaForm(HiddenUserForm):
@@ -136,18 +177,18 @@ class TransferenciaForm(HiddenUserForm):
         exclude = ('aplicada',)
 
     origen = forms.ModelChoiceField(
-            queryset=Inventario.objects.filter(activo=True).all()
+        queryset=Inventario.objects.filter(activo=True).all()
     )
 
     destino = forms.ModelChoiceField(
-            queryset=Inventario.objects.filter(activo=True).all()
+        queryset=Inventario.objects.filter(activo=True).all()
     )
 
     def __init__(self, *args, **kwargs):
         super(TransferenciaForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(
-                'Formulario de Transferencia de Inventario',
-                *self.field_names)
+            _('Formulario de Transferencia de Inventario'),
+            *self.field_names)
 
 
 class TransferirForm(FieldSetModelFormMixin):
@@ -155,14 +196,24 @@ class TransferirForm(FieldSetModelFormMixin):
         model = Transferencia
         fields = ('aplicada',)
         item = forms.ModelChoiceField(
-                queryset=Requisicion.objects.filter(entregada=False).all()
+            queryset=Requisicion.objects.filter(entregada=False).all()
         )
 
     def __init__(self, *args, **kwargs):
         super(TransferirForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Aplicar'))
-        self.helper.layout = Fieldset('¿Aplicar la Transferencia Ahora?',
+        self.helper.layout = Fieldset(_('¿Aplicar la Transferencia Ahora?'),
                                       *self.field_names)
+
+
+class TransferenciaFormMixin(FieldSetModelFormMixin):
+    """
+    Adds a :class:`Transferencia` hidden field to a form.
+    """
+    transferencia = forms.ModelChoiceField(
+        queryset=Transferencia.objects.all(),
+        widget=forms.HiddenInput(),
+    )
 
 
 class TransferidoForm(ItemTemplateFormMixin):
@@ -172,8 +223,36 @@ class TransferidoForm(ItemTemplateFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(TransferidoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Agregar Producto a Transferir',
+        self.helper.layout = Fieldset(_('Agregar Producto a Transferir'),
                                       *self.field_names)
+
+
+class TransferidoFormMixin(FieldSetModelFormMixin):
+    """
+    Adds a :class:`Transferido` hidden field to a form.
+    """
+    transferido = forms.ModelChoiceField(
+        queryset=Transferido.objects.all(),
+        widget=forms.HiddenInput(),
+    )
+
+
+class AnomaliaTransferenciaForm(TransferenciaFormMixin, TransferidoFormMixin):
+    """
+    Builds a form that will be used to create new :class:`AnomaliaTransferencia`
+    objects
+    """
+
+    class Meta:
+        model = AnomaliaTransferencia
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(AnomaliaTransferenciaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(
+            _('Formulario de Anomalia de Transferencia'),
+            *self.field_names
+        )
 
 
 class HistorialForm(FieldSetModelFormMixin):
@@ -183,7 +262,7 @@ class HistorialForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(HistorialForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Crear Historial de Inventario',
+        self.helper.layout = Fieldset(_('Crear Historial de Inventario'),
                                       *self.field_names)
 
 
@@ -192,9 +271,14 @@ class ItemCompradoForm(ItemTemplateFormMixin):
         model = ItemComprado
         exclude = ('ingresado',)
 
+    compra = forms.ModelChoiceField(
+        queryset=Compra.objects.all(),
+        widget=forms.HiddenInput(),
+    )
+
     def __init__(self, *args, **kwargs):
         super(ItemCompradoForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Agregar Producto Comprado',
+        self.helper.layout = Fieldset(_('Agregar Producto Comprado'),
                                       *self.field_names)
 
 
@@ -203,8 +287,8 @@ class ItemTemplateSearchForm(FieldSetFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemTemplateSearchForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', 'Buscar'))
-        self.helper.layout = Fieldset('Buscar Producto', *self.field_names)
+        self.helper.add_input(Submit('submit', _('Buscar')))
+        self.helper.layout = Fieldset(_('Buscar Producto'), *self.field_names)
 
 
 class ProveedorForm(FieldSetModelFormMixin):
@@ -214,7 +298,7 @@ class ProveedorForm(FieldSetModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ProveedorForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Proveedor',
+        self.helper.layout = Fieldset(_('Formulario de Proveedor'),
                                       *self.field_names)
 
 
@@ -222,34 +306,198 @@ class ProveedorFormMixin(FieldSetModelFormMixin):
     proveedor = forms.ModelChoiceField(queryset=Proveedor.objects.all())
 
 
-class CompraForm(ProveedorFormMixin):
+class CompraForm(ProveedorFormMixin, HiddenUserForm):
+    """
+    Describes a form that will be used to create :class:`Compra` objects
+    """
+
     class Meta:
         model = Compra
-        fields = '__all__'
+        exclude = ('ingresada',)
 
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Compra',
+        self.helper.layout = Fieldset(_('Formulario de Compra'),
                                       *self.field_names)
 
 
-class CotizacionForm(ProveedorFormMixin):
+class CompraDocumentosForm(FieldSetModelFormMixin):
+    """
+    Edits a :class:`Compra` to add missing documents
+    """
+
     class Meta:
-        model = Cotizacion
+        model = Compra
+        fields = ('comprobante', 'metodo_de_pago')
+
+    def __init__(self, *args, **kwargs):
+        super(CompraDocumentosForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Documentos de Compra'),
+                                      *self.field_names)
+
+
+class CompraIngresarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as denied
+    """
+
+    class Meta:
+        model = Compra
+        fields = ('ingresada', 'inventario')
+
+    ingresada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'ingresada': True}
+        else:
+            kwargs['initial']['ingresada'] = True
+        super(CompraIngresarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Transferir Compra'),
+                css_class='btn-success btn-block'
+            ))
+
+
+class AnomaliaCompraForm(FieldSetModelFormMixin):
+    """
+    Creates a form that allows registering the discrepancies of a
+    :class:`Compra` on a certain :class:`ItemComprado`
+    """
+
+    class Meta:
+        model = AnomaliaCompra
         fields = '__all__'
 
+    item = forms.ModelChoiceField(
+        queryset=ItemComprado.objects.select_related('item').all(),
+        widget=forms.HiddenInput()
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(AnomaliaCompraForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Formulario de Anomalias'),
+                                      *self.field_names)
+
+
+class CotizacionForm(HiddenUserForm, ProveedorFormMixin):
+    """
+    Describres a form that will be used to create :class:`Cotizacion` objects
+    """
+
+    class Meta:
+        model = Cotizacion
+        exclude = ('autorizada', 'denegada', 'comprada')
+
     vencimiento = forms.DateField(widget=FutureDateWidget())
+    inventario = forms.ModelChoiceField(
+        queryset=Inventario.objects.filter(
+            activo=True,
+            puede_comprar=True,
+        ).select_related(
+            'ciudad',
+        )
+    )
 
     def __init__(self, *args, **kwargs):
         super(CotizacionForm, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Cotizacion',
+        self.helper.layout = Fieldset(_('Formulario de Cotizacion'),
                                       *self.field_names)
 
 
 class CotizacionFormMixin(FieldSetModelFormMixin):
-    cotizacion = forms.ModelChoiceField(label="",
-                                        queryset=Cotizacion.objects.all(),
-                                        widget=forms.HiddenInput())
+    cotizacion = forms.ModelChoiceField(
+        queryset=Cotizacion.objects.all(),
+        widget=forms.HiddenInput())
+
+
+class CotizacionAutorizarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as authorized
+    """
+
+    class Meta:
+        model = Cotizacion
+        fields = ('autorizada',)
+
+    autorizada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'autorizada': True}
+        else:
+            kwargs['initial']['autorizada'] = True
+        super(CotizacionAutorizarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Autorizar Compra'),
+                css_class='btn-success btn-block'
+            ))
+
+
+class CotizacionDenegarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as denied
+    """
+
+    class Meta:
+        model = Cotizacion
+        fields = ('denegada',)
+
+    denegada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'denegada': True}
+        else:
+            kwargs['initial']['denegada'] = True
+        super(CotizacionDenegarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Denegar Cotización'),
+                css_class='btn-danger btn-block'
+            ))
+
+
+class CotizacionComprarForm(forms.ModelForm):
+    """
+    Creates a form that marks a :class:`Cotizacion` as denied
+    """
+
+    class Meta:
+        model = Cotizacion
+        fields = ('comprada',)
+
+    comprada = forms.BooleanField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {'comprada': True}
+        else:
+            kwargs['initial']['comprada'] = True
+        super(CotizacionComprarForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.add_input(
+            Submit(
+                'submit',
+                _('Efectuar compra'),
+                css_class='btn-success btn-block'
+            ))
 
 
 class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
@@ -259,5 +507,5 @@ class ItemCotizadoform(CotizacionFormMixin, ItemTemplateFormMixin):
 
     def __init__(self, *args, **kwargs):
         super(ItemCotizadoform, self).__init__(*args, **kwargs)
-        self.helper.layout = Fieldset('Formulario de Item Cotizado',
+        self.helper.layout = Fieldset(_('Formulario de Item Cotizado'),
                                       *self.field_names)
