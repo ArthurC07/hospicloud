@@ -43,8 +43,8 @@ class DepositoAdmin(admin.ModelAdmin):
     Describes the interface to manage :class:`Deposito`s in the Django
     administrative interface
     """
-    list_display = ['tipo', 'cuenta', 'monto', 'fecha_de_deposito']
-    ordering = ['monto', 'cuenta__nombre', 'tipo__nombre']
+    list_display = ['tipo', 'cuenta', 'monto', 'fecha_de_deposito', 'usuario']
+    ordering = ['monto', 'cuenta__nombre', 'tipo__nombre', 'usuario']
 
 
 class TipoChequeAdmin(admin.ModelAdmin):

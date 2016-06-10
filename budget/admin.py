@@ -45,6 +45,7 @@ class GastoAdmin(admin.ModelAdmin):
                     'monto', 'ejecutado', 'fecha_de_pago',
                     'fecha_maxima_de_pago']
     ordering = ['descripcion', 'monto']
+    search_fields = ['descripcion', 'proveedor__name', 'cuenta__nombre']
 
     def get_ciudad(self, obj):
         return obj.cuenta.presupuesto.ciudad

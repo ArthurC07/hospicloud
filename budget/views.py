@@ -24,7 +24,7 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, Max
+from django.db.models import Sum, Max, Case, When
 from django.db.models.functions import Coalesce
 from django.forms.widgets import HiddenInput
 from django.http import HttpResponseRedirect
@@ -46,7 +46,7 @@ from hospinet.utils import get_current_month_range, get_previous_month_range
 from hospinet.utils.date import get_month_end, make_end_day, make_month_range, \
     previous_month_range
 from hospinet.utils.forms import YearForm, MonthYearForm, PeriodoForm
-from income.models import Deposito, Cheque
+from income.models import Deposito, Cheque, TipoDeposito, CierrePOS
 from invoice.models import Venta, Pago
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
@@ -548,7 +548,7 @@ class GastoPresupuestoPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """
         Allows adding the calculated data into the template
-        :param kwargs: 
+        :param kwargs:
         :return: The context that will be rendered in the template
         """
         context = super(GastoPresupuestoPeriodoView, self).get_context_data(
@@ -763,9 +763,17 @@ class BalanceView(TemplateView, LoginRequiredMixin):
 
         context['total_depositado'] = total_depositado
 
+        tipoPOS = TipoDeposito.objects.get(nombre='POS')
+        comisiones = CierrePOS.objects.filter(fecha_de_deposito__range=(inicio, fin)).aggregate(Sum('comision'))['comision__sum']
+
         context['descripcion_depositos'] = depositos.values(
             'tipo__nombre', 'tipo__id'
-        ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
+        ).annotate(
+            total=Case(
+                When(tipo__id=tipoPOS.id, then=Coalesce(Sum('monto'), Decimal()) - comisiones),
+                default=Coalesce(Sum('monto'), Decimal())
+            )
+        ).order_by()
 
         gastos = Gasto.objects.ejecutado_periodo(inicio, fin)
 
