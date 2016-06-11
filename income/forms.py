@@ -36,7 +36,7 @@ class DepositoForm(HiddenUserForm):
 
     class Meta:
         model = Deposito
-        exclude = ('aplicado',)
+        exclude = ('aplicado','comision',)
 
     cuenta = forms.ModelChoiceField(queryset=Fuente.objects.filter(caja=False))
     fecha_de_deposito = forms.DateTimeField(widget=DateTimeWidget(),

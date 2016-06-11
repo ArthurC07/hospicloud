@@ -24,7 +24,7 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, Max, Case, When
+from django.db.models import Sum, Max, Case, When, F
 from django.db.models.functions import Coalesce
 from django.forms.widgets import HiddenInput
 from django.http import HttpResponseRedirect
@@ -768,12 +768,7 @@ class BalanceView(TemplateView, LoginRequiredMixin):
 
         context['descripcion_depositos'] = depositos.values(
             'tipo__nombre', 'tipo__id'
-        ).annotate(
-            total=Case(
-                When(tipo__id=tipoPOS.id, then=Coalesce(Sum('monto'), Decimal()) - comisiones),
-                default=Coalesce(Sum('monto'), Decimal())
-            )
-        ).order_by()
+        ).annotate(total=Coalesce(Sum(F('monto') - F('comision')), Decimal())).order_by()
 
         gastos = Gasto.objects.ejecutado_periodo(inicio, fin)
 
