@@ -24,7 +24,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import F, Sum, Min, QuerySet
+from django.db.models import F, Sum, Min
 from django.db.models.fields.related import ForeignKey
 from django.db.models.functions import Coalesce
 from django.utils import timezone

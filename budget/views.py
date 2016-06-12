@@ -20,11 +20,10 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from crispy_forms.layout import Submit
-from dateutil.relativedelta import relativedelta
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, Max, Case, When, F
+from django.db.models import Sum, Max, F
 from django.db.models.functions import Coalesce
 from django.forms.widgets import HiddenInput
 from django.http import HttpResponseRedirect
@@ -46,7 +45,7 @@ from hospinet.utils import get_current_month_range, get_previous_month_range
 from hospinet.utils.date import get_month_end, make_end_day, make_month_range, \
     previous_month_range
 from hospinet.utils.forms import YearForm, MonthYearForm, PeriodoForm
-from income.models import Deposito, Cheque, TipoDeposito, CierrePOS
+from income.models import Deposito, Cheque
 from invoice.models import Venta, Pago
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
@@ -199,9 +198,10 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         context['budget_forms'] = []
         context['year'] = year
 
-        context['cuentas_por_cobrar'] = Pago.objects.cuentas_por_cobrar().aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
-        )['total']
+        context['cuentas_por_cobrar'] = \
+            Pago.objects.cuentas_por_cobrar().aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+            )['total']
 
         context['cuentas_por_pagar'] = Gasto.objects.total_pendiente()
 
@@ -489,7 +489,6 @@ class GastoPeriodoListView(LoginRequiredMixin, ListView):
         """
         form = PeriodoForm(self.request.GET)
         if form.is_valid():
-
             self.inicio = form.cleaned_data['inicio']
             self.fin = form.cleaned_data['fin']
             return Gasto.objects.filter(
@@ -763,12 +762,14 @@ class BalanceView(TemplateView, LoginRequiredMixin):
 
         context['total_depositado'] = total_depositado
 
-        tipoPOS = TipoDeposito.objects.get(nombre='POS')
-        comisiones = CierrePOS.objects.filter(fecha_de_deposito__range=(inicio, fin)).aggregate(Sum('comision'))['comision__sum']
-
         context['descripcion_depositos'] = depositos.values(
             'tipo__nombre', 'tipo__id'
-        ).annotate(total=Coalesce(Sum(F('monto') - F('comision')), Decimal())).order_by()
+        ).annotate(
+            total=Coalesce(
+                Sum(F('monto') - F('comision')),
+                Decimal()
+            )
+        ).order_by()
 
         gastos = Gasto.objects.ejecutado_periodo(inicio, fin)
 
