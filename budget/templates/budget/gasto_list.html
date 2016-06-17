@@ -17,34 +17,34 @@
     </div>
     <div class="row">
         <div class="col-md-12 table-responsive main-content">
-            <table class="table">
+            <table class="table gastos_list col-md-12">
                 <caption>{% trans 'Gastos Completados' %}</caption>
                 <thead>
                 <tr>
-                    <th>{% trans 'Fecha en Factura' %}</th>
-                    <th>{% trans 'Fecha de Pago' %}</th>
-                    <th>{% trans 'Descripci&oacute;n' %}</th>
-                    <th>{% trans 'Usuario' %}</th>
-                    <th>{% trans 'Proveedor' %}</th>
-                    <th>{% trans 'N&uacute;mero de Comprobante' %}</th>
-                    <th>{% trans 'N&uacute;mero de Factura' %}</th>
-                    <tH>{% trans 'Fuente de Pago' %}</tH>
-                    <th>{% trans 'Descargas' %}</th>
-                    <th>{% trans 'Monto' %}</th>
+                    <th class="col-md-1">{% trans 'Fecha en Factura' %}</th>
+                    <th class="col-md-1">{% trans 'Fecha de Pago' %}</th>
+                    <th class="col-md-1">{% trans 'Descripci&oacute;n' %}</th>
+                    <th class="col-md-1">{% trans 'Usuario' %}</th>
+                    <th class="col-md-1">{% trans 'Proveedor' %}</th>
+                    <th class="col-md-1">{% trans 'N&uacute;mero de Comprobante' %}</th>
+                    <th class="col-md-1">{% trans 'N&uacute;mero de Factura' %}</th>
+                    <th class="col-md-1">{% trans 'Fuente de Pago' %}</th>
+                    <th class="col-md-1">{% trans 'Descargas' %}</th>
+                    <th class="col-md-1">{% trans 'Monto' %}</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for gasto in gastos.all %}
                     <tr>
-                        <td>{{ gasto.fecha_en_factura|date:"SHORT_DATETIME_FORMAT" }}</td>
-                        <td>{{ gasto.fecha_de_pago|date:"SHORT_DATETIME_FORMAT" }}</td>
-                        <td>{{ gasto.descripcion }}</td>
-                        <td>{{ gasto.usuario }}</td>
-                        <td>{{ gasto.proveedor }}</td>
-                        <td>{{ gasto.numero_de_comprobante_de_pago }}</td>
-                        <td>{{ gasto.numero_de_factura }}</td>
-                        <td>{{ gasto.fuente_de_pago }}</td>
-                        <td>
+                        <td class="col-md-1">{{ gasto.fecha_en_factura|date:"SHORT_DATETIME_FORMAT" }}</td>
+                        <td class="col-md-1">{{ gasto.fecha_de_pago|date:"SHORT_DATETIME_FORMAT" }}</td>
+                        <td class="col-md-1">{{ gasto.descripcion }}</td>
+                        <td class="col-md-1">{{ gasto.usuario }}</td>
+                        <td class="col-md-1">{{ gasto.proveedor }}</td>
+                        <td class="col-md-1">{{ gasto.numero_de_comprobante_de_pago }}</td>
+                        <td class="col-md-1">{{ gasto.numero_de_factura }}</td>
+                        <td class="col-md-1">{{ gasto.fuente_de_pago }}</td>
+                        <td class="col-md-1">
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle"
                                         type="button"
@@ -77,7 +77,7 @@
                                 </ul>
                             </div>
                         </td>
-                        <td class="text-right">{{ gasto.monto }}</td>
+                        <td class="col-md-1" class="text-right">{{ gasto.monto }}</td>
                     </tr>
                     {% empty %}
                     <tr>
