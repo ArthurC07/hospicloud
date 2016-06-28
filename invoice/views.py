@@ -97,9 +97,11 @@ class IndexView(InvoicePermissionMixin, TemplateView):
                             'Detalle de Recibos de un Periodo',
                             'invoice-periodo-detail')
 
+        """
         create_periodo_form(context, 'tipoform', 'tipo',
                             'Productos por Área y Periodo',
                             'invoice-tipo')
+        """
 
         create_periodo_form(context, 'productoperiodoform', 'producto',
                             'Productos Facturados en un Periodo',
@@ -116,6 +118,10 @@ class IndexView(InvoicePermissionMixin, TemplateView):
         create_periodo_form(context, 'estadisticasform', 'estadisticas',
                             'Estadísticas por periodo',
                             'invoice-estadisticas-periodo')
+
+        context['tipoform'] = PeriodoCiudadForm(prefix='tipo')
+        context['tipoform'].set_action('invoice-tipo')
+        context['tipoform'].helper.layout.legend = _('Productos por Ciudad y Periodo')
 
         context['corteform'] = CorteForm(prefix='corte')
         context['corteform'].set_action('invoice-corte')
@@ -901,9 +907,25 @@ class ReporteTipoView(ReciboPeriodoView):
     """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
     durante el periodo especificado
     """
-
+    
     template_name = 'invoice/tipo_list.html'
     prefix = 'tipo'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoCiudadForm(request.GET, prefix='tipo')
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = self.form.cleaned_data['fin']
+            self.ciudad = self.form.cleaned_data['ciudad']
+
+        return super(ReporteTipoView, self).dispatch(request, *args,
+                                                           **kwargs)
+    def get_queryset(self):
+        return Recibo.objects.filter(
+            created__range=(self.inicio, self.fin),
+            nulo=False,
+            ciudad=self.ciudad
+        )
 
     def get_context_data(self, **kwargs):
 
@@ -914,8 +936,8 @@ class ReporteTipoView(ReciboPeriodoView):
         context['cantidad'] = 0
         context['total'] = Decimal()
         categorias = defaultdict(lambda: defaultdict(Decimal))
-        self.recibos = self.recibos.filter(nulo=False)
-        for recibo in self.recibos.all():
+        self.recibos = self.get_queryset()
+        for recibo in self.recibos:
 
             for venta in recibo.ventas.all():
                 monto = venta.total
