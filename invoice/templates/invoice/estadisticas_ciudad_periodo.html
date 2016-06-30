@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load l10n %}{% load staticfiles %}{% load humanize %}
+{% block header %}
+    <style type="text/css">
+        canvas {
+            display: block;
+            margin: auto;
+        }
+
+        .squared {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12 main-content">
+            <section class="page-header">
+                <h1>
+                    Estad&iacute;sticas de Ventas
+                    <small>del {{ inicio }} al {{ fin }}</small>
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-9">
+            <div class="row">
+                <div class="main-content col-md-12">
+                    <h2>Total de Ventas: {{ recibos }}</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul>
+                                {% for pair in pagos %}
+                                    <li>
+                                        <div class="squared"
+                                             style="background-color: {{ pair.0.color }}">&nbsp;</div>
+                                        {{ pair.0.nombre }}: {{ pair.1 }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <canvas width="400" height="400"
+                                    id="pagos"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="main-content col-md-12 table-responsive">‏
+                    <table class="table table-stripped">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in ventas %}
+                                <tr>
+                                    <td>{{ producto.item__descripcion }}</td>
+                                    <td>{{ producto.cantidad }}</td>
+                                    <td class="text-right">{{ producto.monto }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li>
+                            <a href="{% url 'invoice-index' %}">Regresar a
+                                Caja</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {% localize off %}
+        <script type="text/javascript"
+                src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript">
+            var data = [
+                {% for pair in pagos %}
+                    {
+
+                        color: "{{ pair.0.color }}",
+                        label: "{{ pair.0.nombre }}",
+                        value: {{ pair.1 }}
+                    },
+                {% endfor %}
+                {
+                    value: 0,
+                    color: "black",
+                    label: "Ninguno"
+                }
+            ];
+            var canvas = $('#pagos');
+            var ctx = canvas.get(0).getContext("2d");
+            var chart = new Chart(ctx).Pie(data);
+        </script>
+    {% endlocalize %}
+{% endblock %}
