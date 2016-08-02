@@ -18,7 +18,15 @@
 from django.views.generic.base import TemplateView
 from userena.forms import AuthenticationForm
 from users.mixins import LoginRequiredMixin
+from userena.views import signin
+from django.http import HttpResponseRedirect
 
+def SigninPathAction(request, **kwargs):
+    if request.user.is_authenticated():
+        # do whatever you want
+        return HttpResponseRedirect('/')
+    else:
+        return signin(request, **kwargs)
 
 class IndexView(LoginRequiredMixin, TemplateView):
     
