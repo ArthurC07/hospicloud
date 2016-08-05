@@ -119,7 +119,7 @@ class ItemTemplate(TimeStampedModel):
     notas = models.TextField(null=True, blank=True)
     suppliers = models.ManyToManyField("Proveedor", blank=True,
                                        related_name='plantillas')
-    precio_de_venta = models.DecimalField(max_digits=10, decimal_places=2,
+    precio_de_venta = models.DecimalField(max_digits=12, decimal_places=4,
                                           default=0)
     costo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unidad_de_medida = models.CharField(max_length=32, null=True, blank=True)
@@ -342,7 +342,6 @@ class AnomaliaTransferencia(TimeStampedModel):
     detalle = models.TextField()
 
     def get_absolute_url(self):
-
         return self.transferencia.get_absolute_url()
 
 

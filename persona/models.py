@@ -85,6 +85,7 @@ class Persona(TimeStampedModel):
     estado_civil = models.CharField(max_length=1, choices=ESTADOS_CIVILES,
                                     blank=True)
     profesion = models.CharField(max_length=200, blank=True)
+    cargo = models.CharField(max_length=50, blank=True)
     telefono = models.CharField(max_length=200, blank=True)
     celular = models.CharField(max_length=200, blank=True)
     domicilio = models.CharField(max_length=200, blank=True)

@@ -151,6 +151,13 @@
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked">
+                        {% if not consulta.facturada %}
+                            <li>
+                                <a href="{% url 'consultorio-cargo-agregar' consulta.id %}">
+                                    {% trans 'Agregar Cargos, Medicamentos y Honorarios' %}
+                                </a>
+                            </li>
+                        {% endif %}
                         <li>
                             <a href="{% url 'consultorio-evaluacion-agregar' consulta.persona.id consulta.id %}">
                                 {% trans 'Agregar Examen Físico' %}
