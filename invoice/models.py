@@ -321,8 +321,8 @@ class Venta(TimeStampedModel):
 
     cantidad = models.IntegerField()
     descripcion = models.TextField(blank=True)
-    precio = models.DecimalField(blank=True, null=True, max_digits=11,
-                                 decimal_places=2)
+    precio = models.DecimalField(blank=True, null=True, max_digits=12,
+                                 decimal_places=4)
     impuesto = models.DecimalField(blank=True, default=0, max_digits=11,
                                    decimal_places=2)
     descuento = models.IntegerField(default=0)
@@ -823,7 +823,7 @@ class Cotizado(TimeStampedModel):
     cantidad = models.IntegerField()
     descripcion = models.TextField(blank=True)
     porcentaje_descuento = models.IntegerField(default=0)
-    precio = models.DecimalField(max_digits=11, decimal_places=2,
+    precio = models.DecimalField(max_digits=12, decimal_places=4,
                                  null=True, blank=True)
     impuesto = models.DecimalField(max_digits=11, decimal_places=2, default=0)
     discount = models.DecimalField(max_digits=11, decimal_places=2, default=0)

@@ -23,6 +23,7 @@
                             <address>
                                 <strong>{{ consulta.persona }}</strong>,
                                 {{ consulta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}<br>
+                                <strong>{% trans 'Cargo' %}</strong> {{ consulta.persona.cargo }}<br>
                                 <strong>{% trans 'Ciudad' %}:</strong> {{ consulta.persona.ciudad }}<br>
                                 <strong>{% trans 'Atendido' %}:</strong> {{ consulta.created }}<br>
                                 <strong>{% trans 'Encuestada' %}:</strong> {{ consulta.persona.respuesta_set.count }}
