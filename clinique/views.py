@@ -192,6 +192,7 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         now = timezone.now()
         tipos = {}
         context['monthly_forms'] = []
+        months_name = {1:'Enero', 2:'Febrero', 3:'Marzo', 4:'Abril', 5:'Mayo', 6:'Junio', 7:'Julio', 8:'Agosto', 9:'Septiembre', 10:'Octubre', 11:'Noviembre', 12:'Diciembre'}
 
         year_start = make_day_start(now.replace(month=1, day=1))
         year_end = make_end_day(now.replace(month=12, day=31))
@@ -223,6 +224,7 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                     'inicio': inicio,
                     'atenciones': atenciones,
                     'quejas': quejas,
+                    'nombre': months_name[n],
                 }
             )
 
