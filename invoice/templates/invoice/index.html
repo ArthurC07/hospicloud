@@ -330,8 +330,7 @@
                                         <td>{{ consulta.persona.nombre_completo }}</td>
                                         <td>{{ consulta.persona.obtener_edad }}</td>
                                         <td>{{ consulta.persona.get_sexo_display }}</td>
-                                        <td>
-                                            {{ consulta.created|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ consulta.created|date:"d/m/Y H:i" }}</td>
                                         <td>{{ consulta.consultorio }}</td>
                                         <td>
                                             {% if not consulta.facturada %}
