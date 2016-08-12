@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load i18n %}{% load crispy_forms_tags %}
 {% block title %} {% trans 'Aseguradora' %} {{ aseguradora }}{% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab25' %}
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-12 col-xs-12 main-header">
-            <div class="page-header">
-                <h1>
-                    {% trans 'Aseguradora' %} {{ aseguradora }}
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans 'Aseguradora' %} {{ aseguradora }}
                     <small>{{ aseguradora.rtn }}</small>
-                </h1>
+                </h4>
             </div>
         </div>
     </div>

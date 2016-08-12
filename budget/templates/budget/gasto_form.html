@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab53' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}{% load staticfiles %}{% load l10n %}{% load i18n %}
     {% block header %}
@@ -12,7 +15,7 @@
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
+                <nav class="sidebar-nav panel panel-border">
                     <ul class="nav nav-stacked nav-tabs">
                         <li>
                             <a href="{{ cuenta.get_absolute_url }}">{% trans 'Volver al Presupuesto' %}</a>

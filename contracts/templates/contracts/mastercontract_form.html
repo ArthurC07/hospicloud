@@ -1,11 +1,19 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab28' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="col-md-9">
+        <div class="col-md-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Crear Contrato Maestro</h4>
+            </div>
+        </div>
+        <section class="col-md-9 panel panel-default">
             <div class="main-content col-md-12">
                 {% crispy form %}
             </div>

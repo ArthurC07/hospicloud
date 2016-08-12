@@ -2,10 +2,13 @@
 {% load staticfiles %}
 {% block header %}
 {% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab14' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="page-header">
-            <h1>Hospitalizaci&oacute;n</h1>
+        <div class="page-title-box">
+            <h4 class="page-title">Hospitalizaci&oacute;n</h4>
         </div>
         <div class="row">
             <section class="col-md-12">

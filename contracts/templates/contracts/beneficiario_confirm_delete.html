@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab27' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
-
-        <section class="col-md-9">
-            <div class="main-content col-md-12">
+        <section class="col-md-5 panel panel-border">
+            <div class="col-md-12 m-t-15 m-b-15">
                 <form method="post">{% csrf_token %}
                     <fieldset>
                         <legend>Esta Seguro de Eliminar el Beneficiario?</legend>
@@ -14,7 +16,7 @@
                 </form>
             </div>
         </section>
-        <aside class="col-md-3">
+        <!-- <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="well sidebar-nav">
                     <ul class="nav nav-list">
@@ -22,6 +24,6 @@
                     </ul>
                 </nav>
             </div>
-        </aside>
+        </aside> -->
     </div>
 {% endblock %}

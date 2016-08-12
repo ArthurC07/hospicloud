@@ -3,6 +3,9 @@
 {% block header %}
     {{ form.media.css }}
 {% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab43' %}
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-12 col-xs-12 main-content">
@@ -10,11 +13,13 @@
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9 col-xs-9 main-content">
-            {% crispy form %}
-        </section>
+        <div class="col-md-9 panel panel-border">
+            <section class="col-md-12 col-xs-9 main-content m-t-10">
+                {% crispy form %}
+            </section>
+        </div>
         <aside class="col-md-3">
-            <nav class="toolbox sidebar-nav">
+            <nav class="toolbox sidebar-nav panel panel-border">
                 <ul class="nav nav-stacked nav-tabs">
                     <li>
                         <a href="{{ queja.respuesta.consulta.persona.get_absolute_url }}" target="_blank">

@@ -1,7 +1,7 @@
 {% load i18n %}{% load l10n %}
 <div class="table-responsive">
 <table class="table table-striped">
-    <caption>{% trans 'Antecedentes Patol&oacute;gicos Familiares' %}</caption>
+    <h4>{% trans 'Antecedentes Patol&oacute;gicos Familiares' %}</h4>
     <tr>
         <td class="data-label">{% trans 'Cardiopat&iacute;as' %}</td>
         <td class="patient-data">{{ antecedente.sindrome_coronario_agudo|yesno:"Sí,No" }}</td>

@@ -30,53 +30,69 @@
       </div>
   </section>
 </div>
-<div class="row">
-  <section id="hallazgos" class="col-md-4">
-    <div class="page-header">
-      <h3>Hallazgos</h3>
+<div class="row m-t-10">
+  <section id="hallazgos" class="col-lg-5">
+    <div class="panel panel-border panel-primary">
+      <div class="panel-heading">
+        <h4 class="title-heading">Hallazgos</h4>
+      </div>
+      {% for hallazgo in emergencia.hallazgos.all %}
+      <article class="hallazgo panel-body">
+        <p>
+          {{ hallazgo.hallazgo }}
+        </p>
+      </article>
+      {% endfor %}
     </div>
-    {% for hallazgo in emergencia.hallazgos.all %}
-    <article class="hallazgo">
-      <p>
-        {{ hallazgo.hallazgo }}
-      </p>
-    </article>
-    {% endfor %}
   </section>
-  <section id="tratamientos" class="col-md-5">
-    <div class="page-header">
-      <h3>Tratamientos</h3>
+  <section id="tratamientos" class="col-lg-5">
+    <div class="panel panel-border panel-primary">
+      <div class="panel-heading">
+        <h4 class="title-heading">Tratamientos</h4>
+      </div>
+      {% for tratamiento in emergencia.tratamientos.all %}
+      <article class="tratamiento panel-body">
+        <p>
+          Indicaciones: {{ tratamiento.indicaciones }}
+        </p>
+      </article>
+      {% endfor %}
     </div>
-    {% for tratamiento in emergencia.tratamientos.all %}
-    <article class="tratamiento">
-      <p>
-        Indicaciones: {{ tratamiento.indicaciones }}
-      </p>
-    </article>
-    {% endfor %}
   </section>
 </div>
 <div class="row">
   {% for remision_interna in emergencia.remisiones_externas.all %}
-  <article class="col-md-4">
-    <h3>Remisi&oacute;n a Especialista</h3>
-    <p>
-      M&eacute;dico: {{ remision_interna.doctor }}
-    </p>
+  <article class="col-lg-5">
+    <div class="panel panel-border panel-primary">
+      <div class="panel-heading">
+        <h4 class="title-heading">Remisi&oacute;n a Especialista</h4>
+      </div>
+      <div class="panel-body">
+        <p>
+          M&eacute;dico: {{ remision_interna.doctor }}
+        </p>
+      </div>
+    </div>
   </article>
   {% endfor %}
   {% for remision_externa in emergencia.remisiones_externas.all %}
-  <article class="col-md-4">
-    <h3>Remisi&oacute;n a otro Centro</h3>
-    <p>
-      Destino: {{ remision_externa.destino }}
-    </p>
-    <p>
-      Diagn&oacute;stico: {{ remision_externa.diagnostico }}
-    </p>
-    <p>
-      Notas: {{ remision_externa.notas }}
-    </p>
+  <article class="col-lg-5">
+    <div class="panel panel-border panel-primary">
+      <div class="panel-heading">
+        <h4 class="title-heading">Remisi&oacute;n a otro Centro</h4>
+      </div>
+      <div class="panel-body">
+        <p>
+          Destino: {{ remision_externa.destino }}
+        </p>
+        <p>
+          Diagn&oacute;stico: {{ remision_externa.diagnostico }}
+        </p>
+        <p>
+          Notas: {{ remision_externa.notas }}
+        </p>
+      </div>
+    </div>
   </article>
   {% endfor %}
 </div>

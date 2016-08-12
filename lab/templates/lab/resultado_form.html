@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab9' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     {% block header %}
@@ -6,8 +9,10 @@
     {% endblock %}
     <div class="row">
         <section class="col-md-6">
-            <div class="main-content col-md-12">
+            <div class="main-content col-md-12 panel panel-default">
+              <div class="m-t-5">
                 {% crispy form %}
+              </div>
             </div>
         </section>
         <aside class="col-md-3">

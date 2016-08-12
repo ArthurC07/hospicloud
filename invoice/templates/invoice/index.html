@@ -4,64 +4,66 @@
 {% block header %}
     {{ ventaperiodoform.media.css }}
 {% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab15' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <section class="page-header">
-                    <h1>{% trans 'Caja' %}</h1>
+        <div class="col-sm-12">
+                <section class="page-title-box">
+                    <h4 class="page-title">{% trans 'Caja' %}</h4>
                 </section>
-            </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-12 panel panel-border">
             <div class="main-content col-md-12">‏
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
-                        <li class="active">
+                        <li class="active tab" style="width: 20%;">
                             <a href="#turno" data-toggle="tab">
                                 {% trans 'Turno' %}
                             </a>
                         </li>
-                        <li>
+                        <li class="tab" style="width: 20%;">
                             <a href="#pendientes" data-toggle="tab">
                                 {% trans 'Recibo Pendiente' %}
                             </a>
                         </li>
-                        <li>
+                        <li class="tab" style="width: 20%;">
                             <a href="#consulta" data-toggle="tab">
                                 {% trans 'Consulta' %}
                             </a>
                         </li>
                         {% if config.HOSPITALIZACION_ENABLED %}
-                            <li>
+                            <li class="tab" style="width: 20%;">
                                 <a href="#admisiones" data-toggle="tab">
                                     {% trans 'Admisiones' %}
                                 </a>
                             </li>
                         {% endif %}
-                        <li>
+                        <li class="tab" style="width: 20%;">
                             <a href="#emergencias" data-toggle="tab">
                                 {% trans 'Emergencias' %}
                             </a>
                         </li>
                         {% if config.IMAGENES_ENABLED %}
-                            <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
+                            <li class="tab" style="width: 20%;"><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
                             </li>
                         {% endif %}
-                        <li>
+                        <li class="tab" style="width: 20%;">
                             <a href="#reporte" data-toggle="tab">
                                 {% trans 'Reportes' %}
                             </a>
                         </li>
+                        <div class="indicator" style="right: 491px; left: 0px;"></div>
                     </ul>
                     <div class="tab-content">
                         <article id="turno" class="tab-pane active">
                             {% for turno in turnos %}
-                                <h1>
+                                <h4>
                                     <a href="{% url 'invoice-turno' turno.id %}">{{ turno }}</a>
-                                </h1>
+                                </h4>
                                 <dl class="dl-horizontal">
                                     <dt>{% trans 'Total de Ventas' %}</dt>
                                     <dd>{{ turno.venta }}</dd>
@@ -130,7 +132,7 @@
                         </article>
                         <article id="pendientes" class="tab-pane">
                             <table class="table table-striped">
-                                <caption>{% trans 'Recibos Pendientes' %}</caption>
+                                <h3>{% trans 'Recibos Pendientes' %}</h3>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'C&oacute;digo' %}</th>
@@ -170,7 +172,7 @@
                                 </tbody>
                             </table>
                             <table class="table table-striped">
-                                <caption>{% trans 'Cotizaciones Pendientes' %}</caption>
+                                <h3>{% trans 'Cotizaciones Pendientes' %}</h3>
                                 <thead>
                                 <tr>
                                     <th>{% trans 'C&oacute;digo' %}</th>
@@ -258,7 +260,7 @@
                         {% endif %}
                         <article id="emergencias" class="tab-pane">
                             <table class="table table-striped no-more-tables">
-                                <caption>{% trans 'Emergencias sin Facturar' %}</caption>
+                                <h3>{% trans 'Emergencias sin Facturar' %}</h3>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'Identificaci&oacute;n' %}</th>
@@ -302,7 +304,7 @@
                         </article>
                         <article id="consulta" class="tab-pane">
                             <table class="table table-striped no-more-tables">
-                                <caption>{% trans 'Consultas sin Facturar' %}</caption>
+                                <h3>{% trans 'Consultas sin Facturar' %}</h3>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'Identificaci&oacute;n' %}</th>
@@ -318,7 +320,7 @@
                                 {% for consulta in consultas %}
                                     <tr>
                                         <td>
-                                            <a class="btn btn-info btn-block"
+                                            <a class="btn btn-primary btn-block"
                                                href="{% url 'persona-view-id' consulta.persona.id %}">
                                                 {% if consulta.persona.identificacion %}
                                                     {{ consulta.persona.identificacion }}
@@ -335,7 +337,7 @@
                                         <td>{{ consulta.consultorio }}</td>
                                         <td>
                                             {% if not consulta.facturada %}
-                                                <a class="btn btn-block btn-primary"
+                                                <a class="btn btn-block btn-success"
                                                    href="{% url 'consulta-invoice' consulta.id %}">
                                                     {% trans 'Facturar' %}
                                                 </a>
@@ -422,21 +424,16 @@
                                     {% crispy pagoform %}
                                 </section>
                                 <section class="col-md-4">
-                                    {% crispy estadisticasciudadform %}
+                                    {% crispy estadisticasform %}
                                 </section>
                             </div>
                             <div class="row">
-                                <section class="col-md-4">
-                                    {% crispy estadisticasform %}
-                                </section>
                                 <section class="col-md-4">
                                     {% crispy ciudadform %}
                                 </section>
                                 <section class="col-md-4">
                                     {% crispy turnoform %}
                                 </section>
-                            </div>
-                            <div class="row">
                                 <section class="col-md-4">
                                     {% crispy numero_form %}
                                 </section>
@@ -446,7 +443,7 @@
                 </section>
             </div>
         </div>
-        <aside class="col-md-3">
+        <!-- <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked">
@@ -495,7 +492,7 @@
                     </ul>
                 </nav>
             </div>
-        </aside>
+        </aside> -->
     </div>
 {% endblock %}
 {% block scripts %}

@@ -1,77 +1,83 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load i18n %}{% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab40' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
-        <div class="main-content col-md-12">
-            <section class="page-header">
-                <h1>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">
                     {{ object }}
                     <small>
                         {% trans 'Encuestas pendientes' %}: {{ consultas.count }}
                     </small>
-                </h1>
-            </section>
+                </h4>
+            </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-9 col-xs-9 main-content table-responsive">
-            <table class="table">
-                {% for consulta in consultas %}
-                    <tr>
-                        <td>
-                            <address>
-                                <strong>{{ consulta.persona }}</strong>,
-                                {{ consulta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}<br>
-                                <strong>{% trans 'Cargo' %}</strong> {{ consulta.persona.cargo }}<br>
-                                <strong>{% trans 'Ciudad' %}:</strong> {{ consulta.persona.ciudad }}<br>
-                                <strong>{% trans 'Atendido' %}:</strong> {{ consulta.created }}<br>
-                                <strong>{% trans 'Encuestada' %}:</strong> {{ consulta.persona.respuesta_set.count }}
-                                {% trans 'veces' %}<br>
-                                <strong>{% trans '&Uacute;ltima Encuesta' %}:</strong>
-                                {% for encuesta in consulta.persona.respuesta_set.all|slice:":1" %}
-                                    {{ encuesta.created }}
-                                {% endfor %}
-                                <br>
-                                <strong>{% trans 'Aseguradora' %}:</strong> {{ consulta.poliza.aseguradora }},
-                                {% if consulta.contrato in consulta.poliza.contratos.all %}
-                                    {% trans 'Titular del Contrato' %}
-                                {% endif %}
-                                {% for beneficiario in consulta.persona.beneficiarios.all %}
-                                    {% if beneficiario.contrato == consulta.contrato %}
-                                        {% trans 'Beneficiario del Contrato' %}
-                                    {% endif %}
-                                {% endfor %}
-                                <br>
-                                {% trans 'Tel&eacute;fono:' %} {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
-                            </address>
-                        </td>
-                        <td>
-                            <a class="btn btn-block btn-warning"
-                               href="{% url 'encuesta-responder' encuesta.id consulta.id %}">
-                                {% trans 'Responder' %}
-                            </a>
-                            <a class="btn btn-block btn-danger"
-                               href="{% url 'encuesta-no-respondida' encuesta.id consulta.id %}">
-                                {% trans 'No Contesta' %}
-                            </a>
-                            <a class="btn btn-block btn-info"
-                               href="{% url 'encuesta-rellamar' encuesta.id consulta.id %}">
-                                {% trans 'Rellamar' %}
-                            </a>
-                            <a class="btn btn-block btn-danger"
-                               href="{% url 'encuesta-no-respondida' encuesta.id consulta.id %}">
-                                {% trans 'No Desea Responder' %}
-                            </a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td>{% trans 'No hay preguntas agregadas' %}</td>
-                    </tr>
-                {% endfor %}
-            </table>
+        <div class="col-lg-12">
+            <div class="col-md-12 panel panel-border">
+                <div class="m-t-15">
+                    <table class="table table-striped">
+                        {% for consulta in consultas %}
+                            <tr>
+                                <td>
+                                    <address>
+                                        <strong>{{ consulta.persona }}</strong>,
+                                        {{ consulta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}<br>
+                                        <strong>{% trans 'Ciudad' %}:</strong> {{ consulta.persona.ciudad }}<br>
+                                        <strong>{% trans 'Atendido' %}:</strong> {{ consulta.created }}<br>
+                                        <strong>{% trans 'Encuestada' %}:</strong> {{ consulta.persona.respuesta_set.count }}
+                                        {% trans 'veces' %}<br>
+                                        <strong>{% trans '&Uacute;ltima Encuesta' %}:</strong>
+                                        {% for encuesta in consulta.persona.respuesta_set.all|slice:":1" %}
+                                            {{ encuesta.created }}
+                                        {% endfor %}
+                                        <br>
+                                        <strong>{% trans 'Aseguradora' %}:</strong> {{ consulta.poliza.aseguradora }},
+                                        {% if consulta.contrato in consulta.poliza.contratos.all %}
+                                            {% trans 'Titular del Contrato' %}
+                                        {% endif %}
+                                        {% for beneficiario in consulta.persona.beneficiarios.all %}
+                                            {% if beneficiario.contrato == consulta.contrato %}
+                                                {% trans 'Beneficiario del Contrato' %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <br>
+                                        {% trans 'Tel&eacute;fono:' %} {{ consulta.persona.telefono }} {{ consulta.persona.celular }}
+                                    </address>
+                                </td>
+                                <td>
+                                    <a class="btn btn-block btn-primary"
+                                       href="{% url 'encuesta-responder' encuesta.id consulta.id %}">
+                                        {% trans 'Responder' %}
+                                    </a>
+                                    <a class="btn btn-block btn-success"
+                                       href="{% url 'encuesta-no-respondida' encuesta.id consulta.id %}">
+                                        {% trans 'No Contesta' %}
+                                    </a>
+                                    <a class="btn btn-block btn-info"
+                                       href="{% url 'encuesta-rellamar' encuesta.id consulta.id %}">
+                                        {% trans 'Rellamar' %}
+                                    </a>
+                                    <a class="btn btn-block btn-danger"
+                                       href="{% url 'encuesta-no-respondida' encuesta.id consulta.id %}">
+                                        {% trans 'No Desea Responder' %}
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td>{% trans 'No hay preguntas agregadas' %}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
         </div>
-    {% include 'bsc/snippets/encuesta_menu.html' with object_list=encuestas %}
+    <!-- {% include 'bsc/snippets/encuesta_menu.html' with object_list=encuestas %} -->
     </div>
 {% endblock %}

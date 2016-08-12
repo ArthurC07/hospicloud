@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab4' %}
+{% endblock %}
 {% block header %}
     <style type="text/css">
         .line-legend li {
@@ -14,148 +17,200 @@
             margin-top: 4px;
             margin-right: 8px;
         }
+
+        .card-box1 {
+            background-color: #FFF;
+            border: 2px solid #e6e7e9;
+            padding: 20px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+            background-clip: padding-box;
+            margin-bottom: 0px;
+            margin: 1.5%;
+        }
     </style>
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="main-header col-md-12">‏
-            <section class="page-header">
-                <h1>{% trans 'Consultorios Médicos' %}
+        <div class="col-md-12">‏
+            <section class="page-title-box">
+                <h4 class="page-title">{% trans 'Consultorios Médicos' %}
                     <small>{{ user.get_full_name }}</small>
-                </h1>
+                </h4>
             </section>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-9">
-            <div class="row">
-                <div class="main-content col-md-12">‏
-                    <section class="page-header">
-                        <h2>{% trans 'En Consulta' %}</h2>
-                    </section>
-                    {% for espera in consultas %}
-                        {% include 'clinique/snippets/espera.html' with espera=espera %}
-                    {% endfor %}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <section class="page-header">
-                                <h2>
+        <div class="col-md-12">
+                <div class="col-md-6">‏
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">{% trans 'En Consulta' %}</h4>
+                        </div>
+                        {% for espera in consultas %}
+                            {% include 'clinique/snippets/espera.html' with espera=espera %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="page-title">
                                     {% trans 'Sala de Espera' %}
                                     <small>
                                         {% trans 'Promedio de Espera Ultimo mes' %}
                                         {{ total }} {% trans 'minutos' %}
                                     </small>
-                                </h2>
-                            </section>
+                                </h4>
+                            </div>
                             {% for espera in esperas %}
                                 {% include 'clinique/snippets/espera.html' with espera=espera %}
                             {% endfor %}
                         </div>
                     </div>
                 </div>
-            </div>
             <div class="row">
                 <div class="col-md-12 col-xs-12 main-content">
-                    <div class="row">
-                        {% for form in monthly_forms %}
-                            <div class="col-md-2">
-                                {% crispy form %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Operación clínica</h3>
+                                <p class="panel-sub-title font-13 text-muted">Seleccionar el mes</p>
                             </div>
-                        {% endfor %}
-                    </div>
-                    <h2>{% trans 'Estadísticas de Consulta' %}</h2>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            {% for mes in meses %}
-                                <th>
-                                    {{ mes.inicio|date:"N" }}
-                                </th>
-                            {% endfor %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for tipo, lista in tipos.items %}
+                                {% for form in monthly_forms %}
+                                    <div class="col-md-1 m-t-10">
+                                        {% crispy form %}
+                                    </div>
+                                {% endfor %}
+                                <div style="line-height: 0rem;">&nbsp;</div>
+                        </div>
+                    <div class="panel panel-default col-md-12">
+                        <h3 class="panel-title">{% trans 'Estadísticas de Consulta' %}</h3>
+                        <table class="table table-striped">
+                            <thead>
                             <tr>
-                                <td>{{ tipo }}</td>
-                                {% for item in lista %}
-                                    <td>{{ item }}</td>
+                                <th>&nbsp;</th>
+                                {% for mes in meses %}
+                                    <th>
+                                        {{ mes.inicio|date:"N" }}
+                                    </th>
                                 {% endfor %}
                             </tr>
-                        {% endfor %}
-                        <tr>
-                            <td>{% trans 'Total de Consultas' %}</td>
-                            {% for mes in meses %}
-                                <td>{{ mes.atenciones }}</td>
+                            </thead>
+                            <tbody>
+                            {% for tipo, lista in tipos.items %}
+                                <tr>
+                                    <td>{{ tipo }}</td>
+                                    {% for item in lista %}
+                                        <td>{{ item }}</td>
+                                    {% endfor %}
+                                </tr>
                             {% endfor %}
-                        </tr>
-                        <tr>
-                            <td>{% trans 'Quejas' %}</td>
-                            {% for mes in meses %}
-                                <td>{{ mes.quejas }}</td>
-                            {% endfor %}
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="row">
-                        <div class="col-md-4 col-xs-4">
-                            {% trans 'Total Consultas del Año' %} {{ consulta_anual }}
+                            <tr>
+                                <td>{% trans 'Total de Consultas' %}</td>
+                                {% for mes in meses %}
+                                    <td>{{ mes.atenciones }}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>{% trans 'Quejas' %}</td>
+                                {% for mes in meses %}
+                                    <td>{{ mes.quejas }}</td>
+                                {% endfor %}
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="row m-t-15">
+                            <div class="col-md-4 col-xs-4">
+                                <div class="col-md-6"style="
+                                background-color: #33c37d;
+                                padding: 6px 10px;
+                                border-radius: 3px 0px 0px 3px;
+                                color: #FFF;">{% trans 'Total Consultas del Año' %}</div>
+                                <div class="col-md-3" style="
+                                background-color: #f3f3f3;
+                                padding: 4px;
+                                border-radius: 0px 3px 3px 0px;
+                                border: 1px #e6e7e9 solid;
+                                text-align: center;
+                                font-weight: bold;
+                                font-size: 115%;">{{ consulta_anual }}</div>
+                            </div>
+                            <div class="col-md-4 col-xs-4">
+                                <div class="col-md-6"style="
+                                background-color: #00a2b1;
+                                padding: 6px 10px;
+                                border-radius: 3px 0px 0px 3px;
+                                color: #FFF;">{% trans 'Total Quejas del Año' %}</div>
+                                <div class="col-md-3" style="
+                                background-color: #f3f3f3;
+                                padding: 4px;
+                                border-radius: 0px 3px 3px 0px;
+                                border: 1px #e6e7e9 solid;
+                                text-align: center;
+                                font-weight:
+                                bold; font-size: 115%;">{{ queja_anual }}</div>
+                            </div>
+                            <div class="col-md-4 col-xs-4">
+                                <div class="col-md-7"style="
+                                background-color: #33c37d;
+                                padding: 6px 10px;
+                                border-radius: 3px 0px 0px 3px;
+                                color: #FFF;">{% trans 'Procentaje Quejas del Año' %}</div>
+                                <div class="col-md-3" style="
+                                background-color: #f3f3f3;
+                                padding: 4px;
+                                border-radius: 0px 3px 3px 0px;
+                                border: 1px #e6e7e9 solid;
+                                text-align: center;
+                                font-weight: bold;
+                                font-size: 115%;">{% widthratio queja_anual consulta_anual 100 %}%</div>
+                            </div>
                         </div>
-                        <div class="col-md-4 col-xs-4">
-                            {% trans 'Total Quejas del Año' %} {{ queja_anual }}
+                        <div class="row">
+                            <canvas id="chart" class="col-md-12 col-xs-12 graph"
+                                    height="100"></canvas>
+                            <div id="legend"
+                                 class="graph col-md-12 col-xs-12"></div>
                         </div>
-                        <div class="col-md-4 col-xs-4">
-                            {% trans 'Procentaje Quejas del Año' %} {% widthratio queja_anual consulta_anual 100 %}%
-                        </div>
-                    </div>
-                    <div class="row">
-                        <canvas id="chart" class="col-md-12 col-xs-12 graph"
-                                height="100"></canvas>
-                        <div id="legend"
-                             class="graph col-md-12 col-xs-12"></div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="main-content col-md-12">
-                    <div class="row">
-                        <div class="col-md-4">
+            <div class="row panel panel-default">
+                    <div>
+                        <div class="col-md-4 card-box1">
                             {% crispy citaperiodoform %}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 card-box1">
                             {% crispy diagnosticoperiodoform %}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 card-box1">
                             {% crispy cargosperiodoform %}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">
+                    <div>
+                        <div class="col-md-4 card-box1">
                             {% crispy evaluacionperiodoform %}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 card-box1">
                             {% crispy seguimientoperiodoform %}
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 card-box1">
                             {% crispy consultasperiodoform %}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4 col-xs-4">
+                    <div>
+                        <div class="col-md-4 card-box1">
                             {% crispy consulta_estadistica %}
                         </div>
-                        <div class="col-md-4 col-xs-4">
+                        <div class="col-md-4 card-box1">
                             {% crispy aseguradora_form %}
                         </div>
-                        <div class="col-md-4 col-xs-4">
-                            {% crispy ordenlperiodoform %}
-                        </div>
                     </div>
-                </div>
             </div>
         </div>
-        <aside class="col-md-3">
+        <!-- <aside class="col-md-3">
             <div class="col-md-12 toolbox">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked">
@@ -182,10 +237,14 @@
                     </ul>
                 </nav>
             </div>
-        </aside>
+        </aside> -->
     </div>
 {% endblock %}
 {% block scripts %}
+    <script>
+        var resizefunc = [];
+    </script>
+
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
     <script type="text/javascript">

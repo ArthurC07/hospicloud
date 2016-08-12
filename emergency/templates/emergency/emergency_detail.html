@@ -1,40 +1,43 @@
 {% extends 'base.html' %}
 {% block title %}{{ emergencia.persona.nombre_completo }}{% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab12' %}
+{% endblock %}
 {% block content %}
     <div class="row main-header">
         <div class="col-md-12">
-        <div class="page-header">
-            <h1>{{ emergencia.persona.nombre_completo }}
-                <small>Emergencia</small>
-            </h1>
-            <h2>M&eacute;dico Tratante: Dr. {{ emergencia.usuario.get_full_name }}</h2>
-        </div>
+            <div class="page-title-box">‏
+                <h4 class="page-title">{{ emergencia.persona.nombre_completo }} <small>Emergencia</small></h4>
+            </div>
         </div>
     </div>
     <div class="row">
         <section class="col-md-9">
             <div class="row">
-            <div class="main-content col-md-12">‏
-                    <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
+              <div class="main-content col-md-12 panel panel-default">‏
+                <div class="panel-heading m-0" style="padding: 0px; margin-bottom: 10px !important;">
+                  <h4 class="title-heading">M&eacute;dico Tratante: Dr. {{ emergencia.usuario.get_full_name }}</h4>
+                </div>
+                <p>Hora de Registro: {{ emergencia.created|date:"d/m/Y P" }}</p>
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
-                        <li><a class="active" href="#paciente" data-toggle="tab">Datos Personales</a></li>
+                        <li class="active tab"><a href="#paciente" data-toggle="tab">Datos Personales</a></li>
                         <li><a href="#emergencia" data-toggle="tab">Datos Emergencia</a></li>
                     </ul>
                     <div class="tab-content">
-                        <article id="paciente" class="tab-pane">
+                        <article id="paciente" class="tab-pane active">
                             {% include 'persona/antecedentes.html' with persona=emergencia.persona %}
                         </article>
-                        <article id="emergencia" class="tab-pane active">
+                        <article id="emergencia" class="tab-pane">
                             {% include 'emergency/snippets/emergencia.html' with emergencia=emergencia %}
                         </article>
                     </div>
                 </section>
-            </div>
+              </div>
             </div>
         </section>
         <aside class="col-md-3">
-            <div class="toolbox col-md-12">
+            <div class="toolbox panel panel-cardbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked">
                         <li><a href="{% url 'emergencia-update' emergencia.id %}">Editar Emergencia</a></li>

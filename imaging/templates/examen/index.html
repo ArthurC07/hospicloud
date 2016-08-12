@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab10' %}
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <div class="page-header">
-                    <h1>Centro de Im&aacute;genes</h1>
-                    <small></small>
-                </div>
+            <div class="page-title-box">
+                <h4 class="page-title">Centro de Im&aacute;genes</h4>
             </div>
         </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md-12">
             <div class="main-content col-md-12">‏
                 <nav class="navbar navbar-default" role="navigation">
@@ -24,51 +24,60 @@
                 </nav>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="row">
         <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <table class="table table-striped no-more-tables">
-                    <caption>Estudios Programados</caption>
-                    <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Paciente</th>
-                        <th>Examen</th>
-                        <th>Remiti&oacute;</th>
-                        <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for estudio in estudios_programados %}
+            <div class="row panel panel-default">‏
+                <div class="panel-heading">
+                    <h3 class="panel-title">Estudios Programados</h3>
+                </div>
+                <div class="col-md-12 m-t-15">
+                    <table class="table table-striped no-more-tables">
+                        <thead>
                         <tr>
-                            <td>{{ estudio.fecha }}</td>
-                            <td>{{ estudio.persona.nombre_completo }}</td>
-                            <td>{{ estudio.tipo_de_examen.nombre }}</td>
-                            <td>{{ estudio.remitio }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Acciones <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="{% url 'examen-efectuar' estudio.id %}">Efectuar</a></li>
-                                        <li role="separator" class="divider"></li>
-                                        <li><a href="{% url 'examen-cancelar' estudio.id %}">Cancelar</a></li>
-                                    </ul>
-                                </div>
-                            </td>
+                            <th>Fecha</th>
+                            <th>Paciente</th>
+                            <th>Examen</th>
+                            <th>Remiti&oacute;</th>
+                            <th>Acciones</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for estudio in estudios_programados %}
+                            <tr>
+                                <td>{{ estudio.fecha }}</td>
+                                <td>{{ estudio.persona.nombre_completo }}</td>
+                                <td>{{ estudio.tipo_de_examen.nombre }}</td>
+                                <td>{{ estudio.remitio }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Acciones <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="{% url 'examen-efectuar' estudio.id %}">Efectuar</a></li>
+                                            <li role="separator" class="divider"></li>
+                                            <li><a href="{% url 'examen-cancelar' estudio.id %}">Cancelar</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                {% include 'snippets/examen_list.html' with examenes=examenes %}
+            <div class="row panel panel-default">‏
+                <div class="panel-heading">
+                    <h3 class="panel-title">Estudios Efectuados</h3>
+                </div>
+                <div class="col-md-12 m-t-15">
+                    {% include 'snippets/examen_list.html' with examenes=examenes %}
+                </div>
             </div>
         </div>
     </div>

@@ -2,59 +2,62 @@
 {% load i18n %}{% load l10n %}
 {% block title %}{% trans 'Contratos' %}{% endblock %}
 {% load crispy_forms_tags %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab25' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 col-xs-12 main-header">
-            <div class="page-header">
-                <h1>{% trans 'Contratos' %}
+        <div class="col-md-12 col-xs-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans 'Contratos' %}
                     <small>{% trans 'P&aacute;gina Principal' %}</small>
-                </h1>
+                </h4>
             </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9 main-content">
-            <div class="row">
+        <div class="col-md-12 panel panel-border">
+            <div class="row col-md-12">
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
-                        <li>
-                            <a href="#estadisticas" data-toggle="tab">
+                        <li class="active tab" style="width: 20%;">
+                            <a href="#contratos-privados" data-toggle="tab">
                                 {% trans 'Contratos Privados' %}
                             </a>
                         </li>
-                        <li>
-                            <a href="#privados" data-toggle="tab">
+                        <li class="tab" style="width: 20%;">
+                            <a href="#contratos-empresariales" data-toggle="tab">
                                 {% trans 'Contratos Empresariales' %}
                             </a>
                         </li>
-                        <li>
+                        <li class="tab" style="width: 20%;">
                             <a href="#busqueda" data-toggle="tab">
                                 {% trans 'B&uacute;squeda' %}
                             </a>
                         </li>
-                        <li>
+                        <li class="tab" style="width: 20%;">
                             <a href="#planes" data-toggle="tab">
                                 {% trans 'Planes' %}
                             </a>
                         </li>
-                        <li class="active">
+                        <li class="tab" style="width: 20%;">
                             <a href="#aseguradoras" data-toggle="tab">
                                 {% trans 'Aseguradoras' %}
                             </a>
                         </li>
                     </ul>
-                    <div class="tab-content">
-                        <article id="estadisticas" class="tab-pane">
+                    <div class="tab-content col-md-12">
+                        <article id="contratos-privados" class="tab-pane active">
                             <div class="col-md-12">
-                                <div class="row">
+                                <!-- <div class="row">
                                     <section class="col-md-12 page-header">
                                         <h1>{% trans 'Contratos Privados' %}</h1>
                                     </section>
-                                </div>
+                                </div> -->
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <section class="page-header">
-                                            <h2>{% trans 'Estad&iacute;sticas' %}</h2>
+                                        <section class="page-header m-t-0 m-b-15" style="padding-bottom: 0px;">
+                                            <h4>{% trans 'Estad&iacute;sticas' %}</h4>
                                         </section>
                                         <div class="row">
                                             <div class="col-md-6">
@@ -94,8 +97,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <section class="page-header">
-                                            <h2>{% trans 'Meta al' %} {{ meta.fecha }}</h2>
+                                        <section class="page-header m-t-0 m-b-15" style="padding-bottom: 0px;">
+                                            <h4>{% trans 'Meta al' %} {{ meta.fecha }}</h4>
                                         </section>
                                         <ul>
                                             <li>
@@ -112,18 +115,20 @@
                                 </div>
                             </div>
                         </article>
-                        <article id="privados" class="tab-pane">
+                        <article id="contratos-empresariales" class="tab-pane">
                             <div class="col-md-12">
-                                <div class="row">
+                                <!-- <div class="row">
                                     <div class="col-md-12">
                                         <section class="page-header">
                                             <h1>{% trans 'Contratos Empresariales' %}</h1>
                                         </section>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <h2>{% trans 'Empresas' %}</h2>
+                                        <section class="page-header m-t-0 m-b-15" style="padding-bottom: 0px;">
+                                            <h4>{% trans 'Empresas' %}</h4>
+                                        </section>
                                         <ul>
                                             {% for empresa in empresas %}
                                                 <li>
@@ -133,7 +138,9 @@
                                         </ul>
                                     </div>
                                     <div class="col-md-6">
-                                        <h2>{% trans 'Estad&iacute;sticas' %}</h2>
+                                        <section class="page-header m-t-0 m-b-15" style="padding-bottom: 0px;">
+                                            <h4>{% trans 'Estad&iacute;sticas' %}</h4>
+                                        </section>
                                         <ul>
                                             <li>
                                                 {% trans 'Citas del Mes' %}: {{ citasp }}
@@ -173,40 +180,40 @@
                         <article id="busqueda" class="tab-pane">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <!-- <div class="col-md-12">
                                         <section class="page-header">
                                             <h2>{% trans 'Consultar' %}</h2>
                                         </section>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="row">
-                                    <section class="col-md-4">
+                                    <section class="col-md-4 panel panel-primary">
                                         {% crispy contrato-search %}
                                     </section>
-                                    <section class="col-md-4">
+                                    <section class="col-md-4 panel panel-primary">
                                         {% crispy contrato-periodo %}
                                     </section>
-                                    <section class="col-md-4">
+                                    <section class="col-md-4 panel panel-primary">
                                         {% crispy vendedor-search %}
                                     </section>
                                 </div>
                                 <br/>
                                 <div class="row">
-                                    <section class="col-md-4">
+                                    <section class="col-md-4 panel panel-primary">
                                         {% crispy plan-search %}
                                     </section>
-                                    <section class="col-md-4">
+                                    <section class="col-md-4 panel panel-primary">
                                         {% crispy contrato-persona-search %}
                                     </section>
-                                    <section class="col-md-4">
+                                    <section class="col-md-4 panel panel-primary">
                                         {% crispy empresa-search %}
                                     </section>
                                 </div>
                                 <div class="row">
-                                    <section class="col-md-4">
+                                    <section class="col-md-4 panel panel-primary">
                                         {% crispy evento-periodo %}
                                     </section>
-                                    <section class="col-md-4">
+                                    <section class="col-md-4 panel panel-primary">
                                         {% crispy vendedor-periodo %}
                                     </section>
                                 </div>
@@ -215,11 +222,11 @@
                         <article id="planes" class="tab-pane">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <!-- <div class="col-md-12">
                                         <section class="page-header">
                                             <h1>{% trans 'Planes' %}</h1>
                                         </section>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -236,14 +243,14 @@
                                 </div>
                             </div>
                         </article>
-                        <article id="aseguradoras" class="tab-pane active">
+                        <article id="aseguradoras" class="tab-pane">
                             <div class="col-md-12 col-xs-12">
                                 <div class="row">
-                                    <div class="col-md-12 col-xs-12">
+                                    <!-- <div class="col-md-12 col-xs-12">
                                         <section class="page-header">
                                             <h1>{% trans 'Aseguradoras' %}</h1>
                                         </section>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12 col-xs-12">
@@ -279,8 +286,8 @@
                     </div>
                 </section>
             </div>
-        </section>
-        <aside class="col-md-3">
+        </div>
+        <!-- <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked">
@@ -353,10 +360,14 @@
                     </ul>
                 </nav>
             </div>
-        </aside>
+        </aside> -->
     </div>
 {% endblock %}
 {% block scripts %}
+  <script>
+      var resizefunc = [];
+  </script>
+
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
     <script type="text/javascript">

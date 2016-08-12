@@ -1,18 +1,14 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
-{% block header %}
-    {{ form.media.css }}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab46' %}
 {% endblock %}
 {% block content %}
+    {% load crispy_forms_tags %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
     <div class="row">
-        <div class="col-xs-12 col-md-12 main-header">
-            <div class="page-header">
-                <h1>{{ requisicion }}</h1>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <section class="col-md-9 col-xs-9 main-content">
+        <section class="col-md-9 main-content panel panel-border">
             <div class="row">
                 <div class="col-md-12">
                     {% crispy form %}
@@ -33,54 +29,26 @@
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
+                <nav class="sidebar-nav panel panel-border">
                     <ul class="nav nav-stacked nav-tabs">
-                        <li>
-                            <a href="#add-product" data-toggle="modal">
-                                {% trans 'Agregar Producto' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ requisicion.get_absolute_url }}">
-                                {% trans 'Regresar a la Requisici&oacute;n' %}
-                            </a>
-                        </li>
+                        <li><a href="#add-product" data-toggle="modal">Agregar Producto</a></li>
                     </ul>
                 </nav>
             </div>
         </aside>
     </div>
-    <div class="row">
-        <div class="col-md-12 col-xs-12 table-responsive main-content">
-            <table class="table table-striped">
-                <caption>{% trans 'Productos en Requisici&oacute;n' %}</caption>
-                <thead>
-                <th>{% trans 'Producto' %}</th>
-                <th>{% trans 'Cantidad' %}</th>
-                </thead>
-                <tbody>
-                {% for item in requisicion.items.all %}
-                    <tr>
-                        <td>{{ item.item.descripcion }}</td>
-                        <td>{{ item.cantidad }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
 {% endblock %}
 {% block scripts %}
     {{ form.media.js }}
     <script type="text/javascript">
-        jQuery(document).ready(function () {
-            jQuery("#add-item-form").submit(function (e) {
+        jQuery(document).ready(function() {
+            jQuery("#add-item-form").submit(function(e){
                 var form = jQuery(this);
                 jQuery.ajax({
                     url: form.attr('action'),
                     type: form.attr('method'),
                     data: form.serialize(),
-                    success: function (response) {
+                    success: function(response) {
                         location.reload();
                     }
                 });

@@ -1,23 +1,27 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}
 {% block title %} Contrato {{ contrato.numero }}{% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab27' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="page-header">
-            <h1>{{ contrato }}
-                <small>Plan {{ contrato.plan }} {{ contrato.empresa }}</small>
-            </h1>
+        <div class="col-md-12 col-xs-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{{ contrato }}
+                     <small>Plan {{ contrato.plan }} {{ contrato.empresa }}</small>
+                </h4>
+            </div>
         </div>
     </div>
     <div class="row">
         <section class="col-md-9">
-            <div class="main-content col-md-12">
+            <div class="main-content col-md-12 panel panel-default">
                 <div class="row">
                     <article class="col-md-12">
                         <section class="tabbable">
                             <ul class="nav nav-tabs">
-                                <li class="active"><a href="#contrato"
-                                                      data-toggle="tab">Contrato</a>
+                                <li class="active"><a href="#contrato" data-toggle="tab">Contrato</a>
                                 </li>
                                 <li><a href="#beneficiarios" data-toggle="tab">Beneficiarios</a>
                                 </li>
@@ -29,9 +33,7 @@
                             <div class="tab-content">
                                 <article id="contrato" class="tab-pane active">
                                     <div class="row">
-                                        <section class="page-header">
-                                            <h2>Titular</h2>
-                                        </section>
+                                            <h4>Titular</h4>
                                         <div class="col-md-2">
                                             {% if contrato.persona.fotografia == None %}
                                                 {% thumbnail contrato.persona.fotografia "100x100" crop="center" as im %}
@@ -45,11 +47,12 @@
                                             {% endif %}
                                         </div>
                                         <div class="col-md-9">
-                                            <h3>{{ contrato.persona }}
-                                                <small>{{ contrato.persona.obtener_edad }}
-                                                    a&ntilde;os
-                                                </small>
-                                            </h3>
+                                            <h4>{{ contrato.persona }}</h4>
+                                            <p>
+                                              <small>{{ contrato.persona.obtener_edad }}
+                                                  a&ntilde;os
+                                              </small>
+                                            </p>
                                             <a class="btn btn-primary"
                                                href="{% url 'persona-view-id' contrato.persona.id %}">Ver
                                                 <i class="fa fa-arrow-right"></i></a>
@@ -59,9 +62,7 @@
                                         </div>
                                     </div>
                                     <hr>
-                                    <section class="page-header">
-                                        <h2>Informaci&oacute;n del Contrato</h2>
-                                    </section>
+                                        <h4>Informaci&oacute;n del Contrato</h4>
                                     <ul>
                                         <li>
                                             D&iacute;as en Mora: {{ contrato.dias_mora }}
@@ -101,11 +102,13 @@
                                                 {% endif %}
                                             </div>
                                             <div class="col-md-9">
-                                                <h3>{{ beneficiario.persona }}
-                                                    <small>{{ beneficiario.persona.obtener_edad }}
-                                                        a&ntilde;os
-                                                    </small>
-                                                </h3>
+                                                <h4>{{ beneficiario.persona }}
+                                                </h4>
+                                                <p>
+                                                  <small>{{ beneficiario.persona.obtener_edad }}
+                                                      a&ntilde;os
+                                                  </small>
+                                                </p>
                                                 <a class="btn btn-primary"
                                                    href="{% url 'persona-view-id' beneficiario.persona.id %}">Ver
                                                     <i class="fa fa-arrow-right"></i></a>
@@ -124,7 +127,6 @@
                                 </article>
                                 <article id="pagos" class="tab-pane">
                                     <table class="table table-striped">
-                                        <caption>Pagos</caption>
                                         <thead>
                                         <tr>
                                             <th>Fecha</th>
@@ -153,7 +155,7 @@
                                 </article>
                                 <article id="eventos" class="tab-pane table-responsive">
                                     <table class="table table-striped">
-                                        <caption>Eventos</caption>
+                                        <h4>Eventos</h4>
                                         <thead class="gradient">
                                         <tr>
                                             <th>Fecha</th>
@@ -182,7 +184,7 @@
                                         </tbody>
                                     </table>
                                 <table class="table table-striped">
-                                    <caption>Examenes de Laboratorio</caption>
+                                    <h4>Examenes de Laboratorio</h4>
                                     <thead>
                                         <tr>
                                             <th>Paciente</th>
@@ -220,7 +222,7 @@
             </div>
         </section>
         <aside class="col-md-3">
-            <div class="toolbox col-md-12">
+            <div class="toolbox col-md-12 panel panel-border">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked">
                         <li><a href="{% url 'contrato-pago-add' contrato.id %}">Agregar

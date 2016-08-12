@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load i18n %}{% load l10n %}
 {% block title %} Recibo {{ recibo.numero }} {% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab22' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     {% load humanize %}
@@ -12,13 +15,11 @@
     {% endblock %}
     <div class="row">
         <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <section class="page-header">
-                    <h1>{{ comprobante.numero }} - {{ comprobante.proveedor }}
-                        <small>{{ comprobante.created|date:"d/m/Y P" }}</small>
-                    </h1>
-                </section>
-            </div>
+            <section class="page-title-box">
+                <h4 class="page-title">{{ comprobante.numero }} - {{ comprobante.proveedor }}
+                    <small>{{ comprobante.created|date:"d/m/Y P" }}</small>
+                </h4>
+            </section>
         </div>
     </div>
     <div class="row">

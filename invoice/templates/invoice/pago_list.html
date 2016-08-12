@@ -1,61 +1,69 @@
 {% extends 'base.html' %}
 {% load i18n %}{% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab24' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 col-xs-12 main-header">
-            <section class="page-header">
-                <h1>{% trans 'Pagos' %}</h1>
-            </section>
+        <div class="col-md-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Cuentas por Cobrar</h4>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12 col-xs-12 main-content table-responsive">
-            <table class="table table-striped">
-                {% for aseguradora in aseguradoras %}
-                    <tr>
-                        <td>{{ aseguradora.aseguradora__nombre }}</td>
-                        <td>{{ aseguradora.total }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>{% trans 'Recibo' %}</th>
-                    <th>{% trans 'Fecha' %}</th>
-                    <th>{% trans 'Nombre' %}</th>
-                    <th>{% trans 'Aseguradora' %}</th>
-                    <th>{% trans 'Ciudad' %}</th>
-                    <th>{% trans 'Usuario' %}</th>
-                    <th>{% trans 'Monto' %}</th>
-                    <th>{% trans 'Total' %}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for pago in pagos %}
-                    <tr>
-                        <td>
-                            <a href="{{ pago.recibo.get_absolute_url }}">
-                                {{ pago.recibo.numero }}
-                            </a>
-                        </td>
-                        <td>{{ pago.recibo.created|date:"SHORT_DATETIME_FORMAT" }}</td>
-                        <td>{{ pago.recibo.cliente }}</td>
-                        <td>{{ pago.aseguradora }}</td>
-                        <td>{{ pago.recibo.ciudad }}</td>
-                        <td>{{ pago.recibo.cajero }}</td>
-                        <td class="text-right">{{ pago.monto }}</td>
-                        <td class="text-right">{{ pago.valor }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th colspan="6">{% trans 'Total' %}:</th>
-                    <th colspan="2">{{ total }}</th>
-                </tr>
-                </tfoot>
-            </table>
+    <div class="row col-md-12">
+        <div class="col-md-12">
+            <div class="panel panel-default col-md-12">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{% trans 'Pagos' %}</h3>
+                </div>
+                <div class="col-md-12 col-xs-12 main-content table-responsive">
+                    <div class="col-md-6 m-t-20">
+                        <table class="table table-striped">
+                            {% for aseguradora in aseguradoras %}
+                                <tr>
+                                    <td>{{ aseguradora.aseguradora__nombre }}</td>
+                                    <td>{{ aseguradora.total }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col-md-12 m-t-15">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'Recibo' %}</th>
+                                <th>{% trans 'Fecha' %}</th>
+                                <th>{% trans 'Nombre' %}</th>
+                                <th>{% trans 'Aseguradora' %}</th>
+                                <th>{% trans 'Monto' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for pago in pagos %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ pago.recibo.get_absolute_url }}">
+                                            {{ pago.recibo.numero }}
+                                        </a>
+                                    </td>
+                                    <td>{{ pago.recibo.created }}</td>
+                                    <td>{{ pago.recibo.cliente }}</td>
+                                    <td>{{ pago.aseguradora }}</td>
+                                    <td class="text-right">{{ pago.monto }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="4">{% trans 'Total' %}:</th>
+                                <th>{{ total }}</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
             {% if is_paginated %}
                 {% load bootstrap_pagination %}
                 {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}

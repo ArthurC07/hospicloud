@@ -1,56 +1,59 @@
 {% load staticfiles %}{% load thumbnail %}{% load i18n %}{% load l10n %}
-<div class="col-md-12">
-    <div class="row">
-        <div class="col-md-2">
+<div class="row">
+  <div class="col-md-12">
+    <div class="card-box widget-user">
+        <div>
             <img src="{% static 'images/face.jpg' %}"
-                 width="100" height="100"/>
+
+                 class="img-responsive img-circle m-t-10"/>
         </div>
-        <div class="col-md-9">
-            <h3>
+        <div class="wid-u-info">
+            <h6 class="m-t-0 m-b-5">
                 <a href="{{ espera.persona.get_absolute_url }}">
                     {{ espera.persona }}
                 </a>
-                <small>{{ espera.persona.obtener_edad }}
+            </h6>
+            <p class="text-muted m-b-5 font-13">{{ espera.persona.obtener_edad }}
                     {% trans 'a&ntilde;os' %}
-                </small>
-            </h3>
-            <p>
-                {{ espera.persona.get_sexo_display }}
-                {% trans 'Programado para el' %} {{ espera.fecha }}
-                {% trans 'Tiempo en espera:' %} {{ espera.tiempo }}
-                {% trans 'minutos' %}
-                {{ espera.consultorio }}
             </p>
-            <div class="btn-group" role="group">
-                <a class="btn btn-primary"
-                   href="{% url 'clinique-espera-editar' espera.id %}">
-                    {% trans 'Cambiar Consultorio' %}
+            <p class="text-muted">
+                <b>{{ espera.persona.get_sexo_display }}</b><br/>
+                <b>{% trans 'Programado:' %}</b> {{ espera.fecha }}<br/>
+                <b>{% trans 'Tiempo en espera:' %}</b> {{ espera.tiempo }}<br/>
+                <b>{% trans 'Minutos:' %}</b><br/>
+                <b>{% trans 'Consultorio: ' %}</b>{{ espera.consultorio }}
+            </p>
+
+        </div>
+        <div class="btn-group" role="group">
+            <a class="btn btn-default m-r-5"
+               href="{% url 'clinique-espera-editar' espera.id %}">
+                {% trans 'Cambiar Consultorio' %}
+            </a>
+            <a class="btn btn-primary m-r-5"
+               href="{% url 'persona-historia-agregar' espera.persona.id %}">
+                {% trans 'Agregar Historia Fisiológica' %}
+            </a>
+            {% if espera.consulta %}
+                <a class="btn btn-success m-r-5"
+                   href="{% url 'espera-consulta-iniciar' espera.id %}">
+                    {% trans 'Iniciar Consulta' %}
                 </a>
-                <a class="btn btn-success"
-                   href="{% url 'persona-historia-agregar' espera.persona.id %}">
-                    {% trans 'Agregar Historia Fisiológica' %}
+                <a class="btn btn-danger v m-r-5"
+                   href="{% url 'clinique-espera-terminada' espera.id %}">
+                    {% trans 'Terminar Consulta' %}
                 </a>
-                {% if espera.consulta %}
-                    <a class="btn btn-info"
-                       href="{% url 'espera-consulta-iniciar' espera.id %}">
-                        {% trans 'Iniciar Consulta' %}
-                    </a>
-                    <a class="btn btn-danger"
-                       href="{% url 'clinique-espera-terminada' espera.id %}">
-                        {% trans 'Terminar Consulta' %}
-                    </a>
-                {% else %}
-                    <a class="btn btn-success"
-                       href="{% url 'clinique-espera-ausente' espera.id %}">
-                        {% trans 'No se Present&oacute;' %}
-                    </a>
-                    <a class="btn btn-danger"
-                       href="{% url 'clinique-espera-consulta' espera.id %}">
-                        {% trans 'A Consulta' %}
-                    </a>
-                {% endif %}
-            </div>
+            {% else %}
+                <a class="btn btn-success m-r-5"
+                   href="{% url 'clinique-espera-ausente' espera.id %}">
+                    {% trans 'No se Present&oacute;' %}
+                </a>
+                <a class="btn btn-danger"
+                   href="{% url 'clinique-espera-consulta' espera.id %}">
+                    {% trans 'A Consulta' %}
+                </a>
+            {% endif %}
         </div>
     </div>
+  </div>
 </div>
-<hr>

@@ -53,13 +53,6 @@
                     {% trans 'Agregar Cargos, Medicamentos y Honorarios' %}
                 </a>
             </li>
-            <li role="presentation">
-                <a role="menuitem"
-                   href="{% url 'clinique-orden-laboratorio-agregar' consulta.id %}">
-                    <i class="fa fa-stethoscope"></i>
-                    {% trans 'Agregar Orden Laboratorio' %}
-                </a>
-            </li>
         </ul>
         <a class="btn btn-danger"
            href="{% url 'clinique-consulta-terminada' consulta.id %}">
@@ -235,20 +228,6 @@
                     <td><a class="btn btn-success"
                            href="{% url 'clinique-signos-edit' signos_vitales.id %}"><i
                             class="fa fa-edit"></i> {% trans 'Editar' %}</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <table class="table table-striped">
-            <caption>{% trans 'Ordenes de Laboratorio' %}</caption>
-            <tbody>
-            {% for orden in consulta.ordenlaboratorio_set.all %}
-                <tr>
-                    <td>
-                        <a href="{{ orden.get_absolute_url }}">
-                            {{ orden.created }}
-                        </a>
                     </td>
                 </tr>
             {% endfor %}
