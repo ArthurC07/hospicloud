@@ -40,6 +40,22 @@
                         <div class="col-md-12">
                             <section class="page-header">
                                 <h2>
+                                    {% trans 'Sala de Espera de Consulta' %}
+                                    <small>
+                                        {% trans 'Promedio de Espera Ultimo mes' %}
+                                        {{ total }} {% trans 'minutos' %}
+                                    </small>
+                                </h2>
+                            </section>
+                            {% for espera in esperas_consulta %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section class="page-header">
+                                <h2>
                                     {% trans 'Sala de Espera' %}
                                     <small>
                                         {% trans 'Promedio de Espera Ultimo mes' %}

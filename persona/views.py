@@ -35,6 +35,7 @@ from persona.models import Persona, Fisico, EstiloVida, Antecedente, \
     AntecedenteFamiliar, AntecedenteObstetrico, AntecedenteQuirurgico, Empleo, \
     Empleador, remove_duplicates, HistoriaFisica
 from users.mixins import LoginRequiredMixin
+from clinique.models import Espera, EsperaSap, EsperaDatos, EsperaEnfermeria
 
 
 class PersonaPermissionMixin(LoginRequiredMixin):
@@ -139,7 +140,6 @@ class FisicoUpdateView(LoginRequiredMixin, UpdateView):
     model = Fisico
     form_class = FisicoForm
 
-
 class HistoriaFisicaCreateView(LoginRequiredMixin, PersonaFormMixin,
                                CreateView):
     """"
@@ -148,7 +148,49 @@ class HistoriaFisicaCreateView(LoginRequiredMixin, PersonaFormMixin,
     model = HistoriaFisica
     form_class = HistoriaFisicaForm
 
+class HistoriaFisicaEsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
+                               CreateView):
+    """"
+    Creates a new :class:`HistoriaFisica` instance
+    """
+    model = HistoriaFisica
+    form_class = HistoriaFisicaForm
+    
+    def get(self, request, *args, **kwargs):
+        """ Stop espera_sap time """
+        espera_sap = get_object_or_404(EsperaSap, espera= self.kwargs['espera'])
+        espera_sap.fin = timezone.now()
+        espera_sap.terminada = True
+        espera_sap.duracion = espera_sap.fin - espera_sap.inicio 
+        espera_sap.save()
 
+        """ Start espera_datos time """
+        espera = get_object_or_404(Espera, pk = self.kwargs['espera'])
+        EsperaDatos.objects.create(persona = espera.persona,
+                                usuario = espera.usuario,
+                                espera = espera)
+
+        return super(HistoriaFisicaEsperaCreateView, self).get(request, *args, **kwargs)
+
+
+    def get_success_url(self):
+        """ Stop espera_datos time """
+        espera = Espera.objects.get(id = self.kwargs['espera'])
+        espera.datos = True
+        espera_datos = get_object_or_404(EsperaDatos, espera = self.kwargs['espera'])
+        espera_datos.fin = timezone.now()
+        espera_datos.terminada = True
+        espera_datos.duracion = espera_datos.fin - espera_datos.inicio 
+        espera.save()
+        espera_datos.save()
+
+        """ Start espera_enf time """
+        EsperaEnfermeria.objects.create(persona = espera.persona,
+                         usuario = espera.usuario,
+                         espera = espera)
+
+        return espera.get_absolute_url()
+        
 class EstiloVidaUpdateView(LoginRequiredMixin, UpdateView):
     """
     Permite actualizar los datos del :class:`EstiloVida` de una
