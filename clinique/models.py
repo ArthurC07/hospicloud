@@ -132,6 +132,7 @@ class EsperaQuerySet(QuerySet):
             terminada=False,
             atendido=False,
             ausente=False,
+            datos = False
         )
 
     def en_consulta(self):
@@ -143,6 +144,18 @@ class EsperaQuerySet(QuerySet):
             terminada=False,
             ausente=False,
             atendido=False,
+        )
+
+    def espera_consulta(self):
+        """
+        Returns all the :class:`Espera` that are been taked physical history
+        """
+        return self.filter(
+            consulta=False,
+            terminada=False,
+            ausente=False,
+            atendido=False,
+            datos = True
         )
 
 
@@ -162,6 +175,7 @@ class Espera(TimeStampedModel):
     atendido = models.BooleanField(default=False)
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
+    datos = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     objects = EsperaQuerySet.as_manager()
@@ -185,6 +199,95 @@ class Espera(TimeStampedModel):
 
         return delta.seconds / 60
 
+@python_2_unicode_compatible
+class EsperaSap(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    """
+
+    persona = models.ForeignKey(Persona, related_name='espera_sap')
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    duracion = models.DurationField(default=timedelta)
+    terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    espera = models.OneToOneField(Espera, blank=True, null=True,
+                               related_name='espera_sap')
+
+    class Meta:
+        ordering = ['created', ]
+
+    def __str__(self):
+
+        return self.persona.nombre_completo()
+
+@python_2_unicode_compatible
+class EsperaDatos(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    """
+
+    persona = models.ForeignKey(Persona, related_name='espera_datos')
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    duracion = models.DurationField(default=timedelta)
+    terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    espera = models.OneToOneField(Espera, blank=True, null=True,
+                               related_name='espera_datos')
+
+    class Meta:
+        ordering = ['created', ]
+
+    def __str__(self):
+
+        return self.persona.nombre_completo()
+
+@python_2_unicode_compatible
+class EsperaEnfermeria(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    """
+
+    persona = models.ForeignKey(Persona, related_name='espera_enf')
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    duracion = models.DurationField(default=timedelta)
+    terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    espera = models.OneToOneField(Espera, blank=True, null=True,
+                               related_name='espera_enf')
+
+    class Meta:
+        ordering = ['created', ]
+
+    def __str__(self):
+
+        return self.persona.nombre_completo()
+
+@python_2_unicode_compatible
+class EsperaDoctor(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    """
+
+    persona = models.ForeignKey(Persona, related_name='espera_doctor')
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    duracion = models.DurationField(default=timedelta)
+    terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    espera = models.OneToOneField(Espera, blank=True, null=True,
+                               related_name='espera_doctor')
+    consultorio = models.ForeignKey(Consultorio, related_name='espera_doctor',
+                                    blank=True, null=True)
+
+    class Meta:
+        ordering = ['created', ]
+
+    def __str__(self):
+
+        return self.persona.nombre_completo()
 
 class ConsultaQuerySet(models.QuerySet):
     """
