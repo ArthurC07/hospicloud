@@ -58,7 +58,7 @@ from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     OrdenLaboratorioForm, OrdenLaboratorioItemForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
-    NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
+    NotaEnfermeria, Examen, Espera, EsperaSap, Prescripcion, Incapacidad, Reporte, \
     Remision, NotaMedica, TipoConsulta, Afeccion, OrdenLaboratorio, \
     OrdenLaboratorioItem
 from contracts.forms import AseguradoraPeriodoForm
@@ -160,6 +160,16 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['aseguradora_form'] = aseg_form
 
         context['esperas'] = Espera.objects.pendientes().filter(
+            fecha__gte=self.yesterday,
+            consultorio__localidad__ciudad=self.request.user.profile.ciudad,
+        ).select_related(
+            'persona',
+            'consultorio',
+            'consultorio__usuario',
+            'consultorio__secretaria',
+        ).all()
+
+        context['esperas_consulta'] = Espera.objects.espera_consulta().filter(
             fecha__gte=self.yesterday,
             consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
@@ -963,6 +973,12 @@ class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
             form.fields['poliza'].queryset = queryset
         return form
 
+    def get_success_url(self):
+        EsperaSap.objects.create(persona = self.object.persona,
+                         usuario= self.object.usuario,
+                         espera = self.object)
+
+        return self.object.get_absolute_url()
 
 class EsperaListView(LoginRequiredMixin, ListView):
     """
