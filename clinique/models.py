@@ -33,7 +33,7 @@ from mail_templated import EmailMessage
 
 from contracts.models import Contrato, MasterContract
 from inventory.models import ItemTemplate, Inventario, ItemType
-from persona.models import Persona, transfer_object_to_persona, \
+from persona.models import Persona, HistoriaFisica, transfer_object_to_persona, \
     persona_consolidation_functions
 from users.models import Ciudad
 
@@ -221,6 +221,11 @@ class EsperaSap(TimeStampedModel):
 
         return self.persona.nombre_completo()
 
+    def tiempo(self):
+        delta = timezone.now() - self.inicio
+
+        return delta.seconds / 60
+
 @python_2_unicode_compatible
 class EsperaDatos(TimeStampedModel):
     """
@@ -249,14 +254,16 @@ class EsperaEnfermeria(TimeStampedModel):
     Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
     """
 
-    persona = models.ForeignKey(Persona, related_name='espera_enf')
+    persona = models.ForeignKey(Persona, related_name='espera_enfermeria')
     inicio = models.DateTimeField(default=timezone.now)
     fin = models.DateTimeField(default=timezone.now)
     duracion = models.DurationField(default=timedelta)
     terminada = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     espera = models.OneToOneField(Espera, blank=True, null=True,
-                               related_name='espera_enf')
+                               related_name='espera_enfermeria')
+    historiafisica = models.OneToOneField(HistoriaFisica, blank=True, null=True,
+                               related_name='espera_enfermeria')
 
     class Meta:
         ordering = ['created', ]
@@ -264,6 +271,11 @@ class EsperaEnfermeria(TimeStampedModel):
     def __str__(self):
 
         return self.persona.nombre_completo()
+
+    def tiempo(self):
+        delta = timezone.now() - self.inicio
+
+        return delta.seconds / 60
 
 @python_2_unicode_compatible
 class EsperaDoctor(TimeStampedModel):
@@ -288,6 +300,11 @@ class EsperaDoctor(TimeStampedModel):
     def __str__(self):
 
         return self.persona.nombre_completo()
+    
+    def tiempo(self):
+        delta = timezone.now() - self.inicio
+
+        return delta.seconds / 60
 
 class ConsultaQuerySet(models.QuerySet):
     """

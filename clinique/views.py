@@ -1162,16 +1162,31 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
                 terminada=True
             )
 
-        espera = Espera.objects.pendientes().filter(
+        espera = Espera.objects.espera_consulta().filter(
             consultorio__localidad=consulta.consultorio.localidad,
             fecha__gte=self.yesterday,
         ).first()
-
+        
+        """ Assing automatically a person in EsperaEnfermeria to medical waiting room """
         if espera is not None:
             espera.consulta = True
             espera.consultorio = consulta.consultorio
-            espera.fin = timezone.now()
             espera.save()
+
+            """Stop EsperaEnfermeria time"""
+            espera_enfermeria = get_object_or_404(EsperaEnfermeria, espera = espera)
+            espera_enfermeria.fin = timezone.now()
+            espera_enfermeria.terminada = True
+            espera_enfermeria.duracion = espera_enfermeria.fin - espera_enfermeria.inicio 
+            espera_enfermeria.save()
+
+            """Start EsperaDoctor time"""
+            EsperaDoctor.objects.create(persona = espera.persona,
+                                        usuario = espera.usuario,
+                                        espera = espera,
+                                        consultorio = espera.consultorio)
+            
+            
 
         messages.info(
             self.request,

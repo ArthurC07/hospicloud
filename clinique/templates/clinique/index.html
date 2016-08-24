@@ -34,7 +34,7 @@
                         <h2>{% trans 'En Consulta' %}</h2>
                     </section>
                     {% for espera in consultas %}
-                        {% include 'clinique/snippets/espera.html' with espera=espera %}
+                        {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_doctor %}
                     {% endfor %}
                     <div class="row">
                         <div class="col-md-12">
@@ -48,7 +48,7 @@
                                 </h2>
                             </section>
                             {% for espera in esperas_consulta %}
-                                {% include 'clinique/snippets/espera.html' with espera=espera %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_enfermeria %}
                             {% endfor %}
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                                 </h2>
                             </section>
                             {% for espera in esperas %}
-                                {% include 'clinique/snippets/espera.html' with espera=espera %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_sap %}
                             {% endfor %}
                         </div>
                     </div>
