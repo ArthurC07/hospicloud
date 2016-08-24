@@ -58,7 +58,7 @@ from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     OrdenLaboratorioForm, OrdenLaboratorioItemForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
-    NotaEnfermeria, Examen, Espera, EsperaSap, Prescripcion, Incapacidad, Reporte, \
+    NotaEnfermeria, Examen, Espera, EsperaSap,EsperaEnfermeria, EsperaDoctor, Prescripcion, Incapacidad, Reporte, \
     Remision, NotaMedica, TipoConsulta, Afeccion, OrdenLaboratorio, \
     OrdenLaboratorioItem
 from contracts.forms import AseguradoraPeriodoForm
@@ -573,6 +573,21 @@ class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
     model = Consulta
     form_class = ConsultaEsperaForm
 
+    def get(self, request, *args, **kwargs):
+        """ Stop Espera time """
+        espera = get_object_or_404(Espera, pk = self.kwargs['espera'])
+        espera.fin = timezone.now()
+        espera.save()
+
+        """ Stop EsperaDoctor time """
+        espera_doctor = get_object_or_404(EsperaDoctor, espera = self.kwargs['espera'])
+        espera_doctor.fin = timezone.now()
+        espera_doctor.terminada = True
+        espera_doctor.duracion = espera_doctor.fin - espera_doctor.inicio 
+        espera_doctor.save()
+
+        return super(ConsultaEsperaCreateView, self).get(request, *args, **kwargs)
+
     def get_initial(self):
         initial = super(ConsultaEsperaCreateView, self).get_initial()
         initial['persona'] = self.espera.persona
@@ -1071,12 +1086,27 @@ class EsperaConsultaRedirectView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.consulta = True
-        espera.fin = timezone.now()
-        espera.save()
         messages.info(
             self.request,
             _('¡Se envio el paciente a consulta!')
         )
+        espera.save()
+        
+        """Stop EsperaEnfermeria time"""
+        espera_enfermeria = get_object_or_404(EsperaEnfermeria, espera = kwargs['pk'])
+        espera_enfermeria.fin = timezone.now()
+        espera_enfermeria.terminada = True
+        espera_enfermeria.duracion = espera_enfermeria.fin - espera_enfermeria.inicio 
+        espera_enfermeria.save()
+
+        """Start EsperaDoctor time"""
+        EsperaDoctor.objects.create(persona = espera.persona,
+                         usuario = espera.usuario,
+                         espera = espera,
+                         consultorio = espera.consultorio)
+
+
+        
         return espera.get_absolute_url()
 
 
