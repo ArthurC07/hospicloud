@@ -187,7 +187,8 @@ class HistoriaFisicaEsperaCreateView(LoginRequiredMixin, PersonaFormMixin,
         """ Start espera_enf time """
         EsperaEnfermeria.objects.create(persona = espera.persona,
                          usuario = espera.usuario,
-                         espera = espera)
+                         espera = espera,
+                         historiafisica = self.object)
 
         return espera.get_absolute_url()
         
