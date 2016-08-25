@@ -115,6 +115,10 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['citaperiodoform'].helper.form_action = 'cita-periodo'
         context['citaperiodoform'].set_legend(_('Citas por Periodo'))
 
+        context['esperaperiodoform'] = PeriodoForm(prefix='espera-periodo')
+        context['esperaperiodoform'].helper.form_action = 'espera-periodo'
+        context['esperaperiodoform'].set_legend(_('Esperas por Periodo'))
+
         context['diagnosticoperiodoform'] = PeriodoForm(
             prefix='diagnostico-periodo')
         context[
@@ -392,6 +396,35 @@ class CitaPeriodoView(LoginRequiredMixin, TemplateView):
         context = super(CitaPeriodoView, self).get_context_data(**kwargs)
 
         context['citas'] = self.citas
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
+
+class EsperaPeriodoView(LoginRequiredMixin, TemplateView):
+    """Muestra las esperas por consulta de un periodo"""
+    template_name = 'clinique/espera_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='espera-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.esperas = Consulta.objects.filter(
+                created__gte=self.inicio,
+                created__lte=self.fin,
+                activa = False
+            ).select_related('espera')
+        return super(EsperaPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the date range information to the template
+        """
+        context = super(EsperaPeriodoView, self).get_context_data(**kwargs)
+
+        context['esperas'] = self.esperas
         context['inicio'] = self.inicio
         context['fin'] = self.fin
 

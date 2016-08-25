@@ -199,6 +199,27 @@ class Espera(TimeStampedModel):
 
         return delta.seconds / 60
 
+    def tiempo_espera(self):
+        total_seconds = self.espera_sap.total_seconds() + self.espera_datos.total_seconds() + self.espera_enfermeria.total_seconds() + self.espera_doctor.total_seconds() 
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
+
 @python_2_unicode_compatible
 class EsperaSap(TimeStampedModel):
     """
@@ -226,6 +247,35 @@ class EsperaSap(TimeStampedModel):
 
         return delta.seconds / 60
 
+    def total_seconds(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds() 
+        seconds = int(total_seconds)
+
+        return seconds
+    
+    def tiempo_total(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds()
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
+
 @python_2_unicode_compatible
 class EsperaDatos(TimeStampedModel):
     """
@@ -247,6 +297,35 @@ class EsperaDatos(TimeStampedModel):
     def __str__(self):
 
         return self.persona.nombre_completo()
+    
+    def total_seconds(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds() 
+        seconds = int(total_seconds)
+
+        return seconds
+
+    def tiempo_total(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds()
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
 
 @python_2_unicode_compatible
 class EsperaEnfermeria(TimeStampedModel):
@@ -276,6 +355,35 @@ class EsperaEnfermeria(TimeStampedModel):
         delta = timezone.now() - self.inicio
 
         return delta.seconds / 60
+    
+    def total_seconds(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds() 
+        seconds = int(total_seconds)
+
+        return seconds
+
+    def tiempo_total(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds()
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
 
 @python_2_unicode_compatible
 class EsperaDoctor(TimeStampedModel):
@@ -305,6 +413,35 @@ class EsperaDoctor(TimeStampedModel):
         delta = timezone.now() - self.inicio
 
         return delta.seconds / 60
+    
+    def total_seconds(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds() 
+        seconds = int(total_seconds)
+
+        return seconds
+
+    def tiempo_total(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds()
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
 
 class ConsultaQuerySet(models.QuerySet):
     """

@@ -306,6 +306,10 @@ urlpatterns = [
         views.CitaPeriodoView.as_view(),
         name='cita-periodo'),
 
+    url(r'^espera/periodo$',
+        views.EsperaPeriodoView.as_view(),
+        name='espera-periodo'),
+
     url(r'^diagnostico/periodo$',
         views.DiagnosticoPeriodoView.as_view(),
         name='diagnostico-periodo'),
