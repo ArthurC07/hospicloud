@@ -23,8 +23,8 @@
                 {% trans 'minutos' %}
                 {{ espera.consultorio }}
                 {% if espera.datos %}
-                    {% trans 'Presion:' %} {{ espera.espera_enfermeria.historiafisica.presion_sistolica }}:{{ espera.espera_enfermeria.historiafisica.presion_diastolica }}
-                    {% trans 'Temperatura:' %} {{ espera.espera_enfermeria.historiafisica.temperatura }}
+                    {% trans 'Presion:' %} {{ espera.espera_enfermeria.historiafisica.presion_sistolica }}/{{ espera.espera_enfermeria.historiafisica.presion_diastolica }}
+                    {% trans 'Temperatura:' %} {{ espera.espera_enfermeria.historiafisica.temperatura }}°
                 {% endif %}
             </p>
             <div class="btn-group" role="group">
