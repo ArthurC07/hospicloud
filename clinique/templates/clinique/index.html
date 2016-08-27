@@ -34,8 +34,24 @@
                         <h2>{% trans 'En Consulta' %}</h2>
                     </section>
                     {% for espera in consultas %}
-                        {% include 'clinique/snippets/espera.html' with espera=espera %}
+                        {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_doctor %}
                     {% endfor %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section class="page-header">
+                                <h2>
+                                    {% trans 'Sala de Espera de Consulta' %}
+                                    <small>
+                                        {% trans 'Promedio de Espera Ultimo mes' %}
+                                        {{ total }} {% trans 'minutos' %}
+                                    </small>
+                                </h2>
+                            </section>
+                            {% for espera in esperas_consulta %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_enfermeria %}
+                            {% endfor %}
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <section class="page-header">
@@ -48,7 +64,7 @@
                                 </h2>
                             </section>
                             {% for espera in esperas %}
-                                {% include 'clinique/snippets/espera.html' with espera=espera %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_sap %}
                             {% endfor %}
                         </div>
                     </div>
@@ -150,6 +166,11 @@
                         </div>
                         <div class="col-md-4 col-xs-4">
                             {% crispy ordenlperiodoform %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            {% crispy esperaperiodoform %}
                         </div>
                     </div>
                 </div>

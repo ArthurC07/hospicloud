@@ -33,7 +33,7 @@ from mail_templated import EmailMessage
 
 from contracts.models import Contrato, MasterContract
 from inventory.models import ItemTemplate, Inventario, ItemType
-from persona.models import Persona, transfer_object_to_persona, \
+from persona.models import Persona, HistoriaFisica, transfer_object_to_persona, \
     persona_consolidation_functions
 from users.models import Ciudad
 
@@ -132,6 +132,7 @@ class EsperaQuerySet(QuerySet):
             terminada=False,
             atendido=False,
             ausente=False,
+            datos = False
         )
 
     def en_consulta(self):
@@ -143,6 +144,18 @@ class EsperaQuerySet(QuerySet):
             terminada=False,
             ausente=False,
             atendido=False,
+        )
+
+    def espera_consulta(self):
+        """
+        Returns all the :class:`Espera` that are been taked physical history
+        """
+        return self.filter(
+            consulta=False,
+            terminada=False,
+            ausente=False,
+            atendido=False,
+            datos = True
         )
 
 
@@ -162,6 +175,7 @@ class Espera(TimeStampedModel):
     atendido = models.BooleanField(default=False)
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
+    datos = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     objects = EsperaQuerySet.as_manager()
@@ -185,6 +199,249 @@ class Espera(TimeStampedModel):
 
         return delta.seconds / 60
 
+    def tiempo_espera(self):
+        total_seconds = self.espera_sap.total_seconds() + self.espera_datos.total_seconds() + self.espera_enfermeria.total_seconds() + self.espera_doctor.total_seconds() 
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
+
+@python_2_unicode_compatible
+class EsperaSap(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    """
+
+    persona = models.ForeignKey(Persona, related_name='espera_sap')
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    duracion = models.DurationField(default=timedelta)
+    terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    espera = models.OneToOneField(Espera, blank=True, null=True,
+                               related_name='espera_sap')
+
+    class Meta:
+        ordering = ['created', ]
+
+    def __str__(self):
+
+        return self.persona.nombre_completo()
+
+    def tiempo(self):
+        delta = timezone.now() - self.inicio
+
+        return delta.seconds / 60
+
+    def total_seconds(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds() 
+        seconds = int(total_seconds)
+
+        return seconds
+    
+    def tiempo_total(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds()
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
+
+@python_2_unicode_compatible
+class EsperaDatos(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    """
+
+    persona = models.ForeignKey(Persona, related_name='espera_datos')
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    duracion = models.DurationField(default=timedelta)
+    terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    espera = models.OneToOneField(Espera, blank=True, null=True,
+                               related_name='espera_datos')
+
+    class Meta:
+        ordering = ['created', ]
+
+    def __str__(self):
+
+        return self.persona.nombre_completo()
+    
+    def total_seconds(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds() 
+        seconds = int(total_seconds)
+
+        return seconds
+
+    def tiempo_total(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds()
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
+
+@python_2_unicode_compatible
+class EsperaEnfermeria(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    """
+
+    persona = models.ForeignKey(Persona, related_name='espera_enfermeria')
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    duracion = models.DurationField(default=timedelta)
+    terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    espera = models.OneToOneField(Espera, blank=True, null=True,
+                               related_name='espera_enfermeria')
+    historiafisica = models.OneToOneField(HistoriaFisica, blank=True, null=True,
+                               related_name='espera_enfermeria')
+
+    class Meta:
+        ordering = ['created', ]
+
+    def __str__(self):
+
+        return self.persona.nombre_completo()
+
+    def tiempo(self):
+        delta = timezone.now() - self.inicio
+
+        return delta.seconds / 60
+    
+    def total_seconds(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds() 
+        seconds = int(total_seconds)
+
+        return seconds
+
+    def tiempo_total(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds()
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
+
+@python_2_unicode_compatible
+class EsperaDoctor(TimeStampedModel):
+    """
+    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    """
+
+    persona = models.ForeignKey(Persona, related_name='espera_doctor')
+    inicio = models.DateTimeField(default=timezone.now)
+    fin = models.DateTimeField(default=timezone.now)
+    duracion = models.DurationField(default=timedelta)
+    terminada = models.BooleanField(default=False)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    espera = models.OneToOneField(Espera, blank=True, null=True,
+                               related_name='espera_doctor')
+    consultorio = models.ForeignKey(Consultorio, related_name='espera_doctor',
+                                    blank=True, null=True)
+
+    class Meta:
+        ordering = ['created', ]
+
+    def __str__(self):
+
+        return self.persona.nombre_completo()
+    
+    def tiempo(self):
+        delta = timezone.now() - self.inicio
+
+        return delta.seconds / 60
+    
+    def total_seconds(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds() 
+        seconds = int(total_seconds)
+
+        return seconds
+
+    def tiempo_total(self):
+        delta = self.duracion
+        total_seconds = delta.total_seconds()
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = str(seconds)+" seg"
+        if total_seconds > 60:
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            minutes = int(minutes)
+            delta = str(minutes) + ":" + str(total_seconds)+" min"
+        if minutes > 60:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            minutes = "%02d" % (minutes)  
+            total_seconds = int(total_seconds % 60)
+            total_seconds = "%02d" % (total_seconds)  
+            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
+            
+        return delta
 
 class ConsultaQuerySet(models.QuerySet):
     """
