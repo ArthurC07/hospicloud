@@ -349,4 +349,8 @@ urlpatterns = [
     url(r'^(?P<persona>\d+)/remision/agregar$',
         views.RemisionCreateView.as_view(),
         name='consultorio-remision-agregar'),
+
+    url(r'^(?P<persona>\d+)/historia/fisica/(?P<espera>\d+)/agregar$',
+        views.HistoriaFisicaEsperaCreateView.as_view(),
+        name='persona-historia-agregar-espera'),
 ]

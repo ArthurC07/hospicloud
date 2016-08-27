@@ -19,13 +19,15 @@
                 {% trans 'Programado para el' %} {{ espera.fecha }}
                 {% trans 'Tiempo total de espera:' %} {{ espera.tiempo|floatformat:2 }}
                 {% trans 'minutos' %}
-                {% trans 'Tiempo de espera actual:' %} {{ actual.tiempo|floatformat:2 }}
+                {% trans 'Tiempo de espera actual:' %} {{ actual|floatformat:2 }}
                 {% trans 'minutos' %}
                 {{ espera.consultorio }}
-                {% if espera.datos %}
-                    {% trans 'Presion:' %} {{ espera.espera_enfermeria.historiafisica.presion_sistolica }}/{{ espera.espera_enfermeria.historiafisica.presion_diastolica }}
-                    {% trans 'Temperatura:' %} {{ espera.espera_enfermeria.historiafisica.temperatura }}°
-                {% endif %}
+                {% for historia_espera in espera.historiafisicaespera_set.all %}
+                    {% with historia_espera.historia_fisica as historia %}
+                        {% trans 'Presion:' %} {{ historia.presion_sistolica }} / {{ historia.presion_diastolica }}
+                    {% trans 'Temperatura:' %} {{ historia.temperatura }}°
+                    {% endwith %}
+                {% endfor %}
             </p>
             <div class="btn-group" role="group">
                 

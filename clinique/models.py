@@ -132,7 +132,7 @@ class EsperaQuerySet(QuerySet):
             terminada=False,
             atendido=False,
             ausente=False,
-            datos = False
+            datos=False
         )
 
     def en_consulta(self):
@@ -155,7 +155,7 @@ class EsperaQuerySet(QuerySet):
             terminada=False,
             ausente=False,
             atendido=False,
-            datos = True
+            datos=True
         )
 
 
@@ -178,6 +178,23 @@ class Espera(TimeStampedModel):
     datos = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
+    # Tracking several different moments of the waiting room experience
+    tiempo_sap = models.DurationField(default=timedelta)
+    tiempo_datos = models.DurationField(default=timedelta)
+    tiempo_enfermeria = models.DurationField(default=timedelta)
+    tiempo_consultorio = models.DurationField(default=timedelta)
+
+    inicio_sap = models.DateTimeField(default=timezone.now)
+    fin_sap = models.DateTimeField(default=timezone.now)
+    inicio_datos = models.DateTimeField(default=timezone.now)
+    fin_datos = models.DateTimeField(default=timezone.now)
+    inicio_enfermeria = models.DateTimeField(default=timezone.now)
+    fin_enfermeria = models.DateTimeField(default=timezone.now)
+    inicio_doctor = models.DateTimeField(default=timezone.now)
+    fin_consultorio = models.DateTimeField(default=timezone.now)
+
+    duracion_total = models.DurationField(default=timedelta)
+
     objects = EsperaQuerySet.as_manager()
 
     class Meta:
@@ -199,249 +216,18 @@ class Espera(TimeStampedModel):
 
         return delta.seconds / 60
 
-    def tiempo_espera(self):
-        total_seconds = self.espera_sap.total_seconds() + self.espera_datos.total_seconds() + self.espera_enfermeria.total_seconds() + self.espera_doctor.total_seconds() 
-        minutes = (total_seconds % 3600) // 60
-        hours = total_seconds // 3600 
-        seconds = int(total_seconds)
-        delta = str(seconds)+" seg"
-        if total_seconds > 60:
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            minutes = int(minutes)
-            delta = str(minutes) + ":" + str(total_seconds)+" min"
-        if minutes > 60:
-            hours = int(hours)
-            minutes = int(minutes % 60)
-            minutes = "%02d" % (minutes)  
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
-            
-        return delta
 
-@python_2_unicode_compatible
-class EsperaSap(TimeStampedModel):
+class HistoriaFisicaEspera(TimeStampedModel):
     """
-    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
+    Relates a :class:`Espera` to a :class`HistoriaFisica` while allowing both
+    classes to be completely independent
     """
+    espera = models.ForeignKey(Espera)
+    historia_fisica = models.ForeignKey(HistoriaFisica)
 
-    persona = models.ForeignKey(Persona, related_name='espera_sap')
-    inicio = models.DateTimeField(default=timezone.now)
-    fin = models.DateTimeField(default=timezone.now)
-    duracion = models.DurationField(default=timedelta)
-    terminada = models.BooleanField(default=False)
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
-    espera = models.OneToOneField(Espera, blank=True, null=True,
-                               related_name='espera_sap')
+    def get_absolute_url(self):
+        return self.espera.get_absolute_url()
 
-    class Meta:
-        ordering = ['created', ]
-
-    def __str__(self):
-
-        return self.persona.nombre_completo()
-
-    def tiempo(self):
-        delta = timezone.now() - self.inicio
-
-        return delta.seconds / 60
-
-    def total_seconds(self):
-        delta = self.duracion
-        total_seconds = delta.total_seconds() 
-        seconds = int(total_seconds)
-
-        return seconds
-    
-    def tiempo_total(self):
-        delta = self.duracion
-        total_seconds = delta.total_seconds()
-        minutes = (total_seconds % 3600) // 60
-        hours = total_seconds // 3600 
-        seconds = int(total_seconds)
-        delta = str(seconds)+" seg"
-        if total_seconds > 60:
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            minutes = int(minutes)
-            delta = str(minutes) + ":" + str(total_seconds)+" min"
-        if minutes > 60:
-            hours = int(hours)
-            minutes = int(minutes % 60)
-            minutes = "%02d" % (minutes)  
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
-            
-        return delta
-
-@python_2_unicode_compatible
-class EsperaDatos(TimeStampedModel):
-    """
-    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
-    """
-
-    persona = models.ForeignKey(Persona, related_name='espera_datos')
-    inicio = models.DateTimeField(default=timezone.now)
-    fin = models.DateTimeField(default=timezone.now)
-    duracion = models.DurationField(default=timedelta)
-    terminada = models.BooleanField(default=False)
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
-    espera = models.OneToOneField(Espera, blank=True, null=True,
-                               related_name='espera_datos')
-
-    class Meta:
-        ordering = ['created', ]
-
-    def __str__(self):
-
-        return self.persona.nombre_completo()
-    
-    def total_seconds(self):
-        delta = self.duracion
-        total_seconds = delta.total_seconds() 
-        seconds = int(total_seconds)
-
-        return seconds
-
-    def tiempo_total(self):
-        delta = self.duracion
-        total_seconds = delta.total_seconds()
-        minutes = (total_seconds % 3600) // 60
-        hours = total_seconds // 3600 
-        seconds = int(total_seconds)
-        delta = str(seconds)+" seg"
-        if total_seconds > 60:
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            minutes = int(minutes)
-            delta = str(minutes) + ":" + str(total_seconds)+" min"
-        if minutes > 60:
-            hours = int(hours)
-            minutes = int(minutes % 60)
-            minutes = "%02d" % (minutes)  
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
-            
-        return delta
-
-@python_2_unicode_compatible
-class EsperaEnfermeria(TimeStampedModel):
-    """
-    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
-    """
-
-    persona = models.ForeignKey(Persona, related_name='espera_enfermeria')
-    inicio = models.DateTimeField(default=timezone.now)
-    fin = models.DateTimeField(default=timezone.now)
-    duracion = models.DurationField(default=timedelta)
-    terminada = models.BooleanField(default=False)
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
-    espera = models.OneToOneField(Espera, blank=True, null=True,
-                               related_name='espera_enfermeria')
-    historiafisica = models.OneToOneField(HistoriaFisica, blank=True, null=True,
-                               related_name='espera_enfermeria')
-
-    class Meta:
-        ordering = ['created', ]
-
-    def __str__(self):
-
-        return self.persona.nombre_completo()
-
-    def tiempo(self):
-        delta = timezone.now() - self.inicio
-
-        return delta.seconds / 60
-    
-    def total_seconds(self):
-        delta = self.duracion
-        total_seconds = delta.total_seconds() 
-        seconds = int(total_seconds)
-
-        return seconds
-
-    def tiempo_total(self):
-        delta = self.duracion
-        total_seconds = delta.total_seconds()
-        minutes = (total_seconds % 3600) // 60
-        hours = total_seconds // 3600 
-        seconds = int(total_seconds)
-        delta = str(seconds)+" seg"
-        if total_seconds > 60:
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            minutes = int(minutes)
-            delta = str(minutes) + ":" + str(total_seconds)+" min"
-        if minutes > 60:
-            hours = int(hours)
-            minutes = int(minutes % 60)
-            minutes = "%02d" % (minutes)  
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
-            
-        return delta
-
-@python_2_unicode_compatible
-class EsperaDoctor(TimeStampedModel):
-    """
-    Represents a :class:`Persona` that is waiting for a physician to consult to in SAP
-    """
-
-    persona = models.ForeignKey(Persona, related_name='espera_doctor')
-    inicio = models.DateTimeField(default=timezone.now)
-    fin = models.DateTimeField(default=timezone.now)
-    duracion = models.DurationField(default=timedelta)
-    terminada = models.BooleanField(default=False)
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
-    espera = models.OneToOneField(Espera, blank=True, null=True,
-                               related_name='espera_doctor')
-    consultorio = models.ForeignKey(Consultorio, related_name='espera_doctor',
-                                    blank=True, null=True)
-
-    class Meta:
-        ordering = ['created', ]
-
-    def __str__(self):
-
-        return self.persona.nombre_completo()
-    
-    def tiempo(self):
-        delta = timezone.now() - self.inicio
-
-        return delta.seconds / 60
-    
-    def total_seconds(self):
-        delta = self.duracion
-        total_seconds = delta.total_seconds() 
-        seconds = int(total_seconds)
-
-        return seconds
-
-    def tiempo_total(self):
-        delta = self.duracion
-        total_seconds = delta.total_seconds()
-        minutes = (total_seconds % 3600) // 60
-        hours = total_seconds // 3600 
-        seconds = int(total_seconds)
-        delta = str(seconds)+" seg"
-        if total_seconds > 60:
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            minutes = int(minutes)
-            delta = str(minutes) + ":" + str(total_seconds)+" min"
-        if minutes > 60:
-            hours = int(hours)
-            minutes = int(minutes % 60)
-            minutes = "%02d" % (minutes)  
-            total_seconds = int(total_seconds % 60)
-            total_seconds = "%02d" % (total_seconds)  
-            delta = str(hours) + ":" + str(minutes) + ":" + str(total_seconds)+" horas"
-            
-        return delta
 
 class ConsultaQuerySet(models.QuerySet):
     """
