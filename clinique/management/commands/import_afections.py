@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
             reader = csv.reader(open(source))
             for line in reader:
-                afeccion = Afeccion()
-                afeccion.codigo = line[0]
-                afeccion.nombre = line[1]
-                afeccion.save()
+                Afeccion.objects.create(
+                    codigo=line[0],
+                    nombre=line[1]
+                )
