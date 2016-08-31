@@ -447,3 +447,13 @@ class OrdenLaboratorioItemForm(FieldSetModelFormMixin):
         super(OrdenLaboratorioItemForm, self).__init__(*args, **kwargs)
         self.helper.layout = Fieldset(_('Formulario de Orden de Laboratorio'),
                                       *self.field_names)
+
+class AfeccionSearchForm(FieldSetFormMixin):
+    query = forms.CharField(label=_("Nombre"))
+
+    def __init__(self, *args, **kwargs):
+        super(AfeccionSearchForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Buscar'))
+        self.helper.layout = Fieldset(_('Buscar Afeccion'), *self.field_names)
+        self.helper.form_method = 'GET'
+        self.helper.form_action = 'afecciones-search'
