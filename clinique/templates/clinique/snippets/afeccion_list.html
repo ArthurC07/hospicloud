@@ -1,0 +1,16 @@
+{% load i18n %}{% load l10n %}
+{% if afecciones %}
+    <ul>
+        {% for afeccion in afecciones %}  
+        <li><a href="{% url 'diagnostico-agregar' consulta=consulta afeccion=afeccion.id %}">{{ afeccion.nombre }}</a></li>
+        {% endfor %}
+    </ul>
+    {% if is_paginated %}
+        {% load bootstrap_pagination %}
+        {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
+    {% endif %}
+{% else %}
+    <p>
+        {% trans 'No se han encontrado Afecciones' %}
+    </p>
+{% endif %}
