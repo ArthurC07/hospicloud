@@ -42,7 +42,6 @@ class ReciboManager(models.Manager):
         ).prefetch_related(
             'ventas',
             'pagos',
-            'pagos__aseguradora',
         )
 
 
