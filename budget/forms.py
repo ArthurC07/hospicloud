@@ -99,11 +99,11 @@ class GastoForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
                    'fecha_de_recepcion_de_factura')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
-            attrs={'rows': 2, 'cols': 40}))
+        attrs={'rows': 2, 'cols': 40}))
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
     fuente_de_pago = forms.ModelChoiceField(queryset=Fuente.objects.filter(
-            caja=True)
+        caja=True)
     )
     fecha_en_factura = forms.DateTimeField(widget=DateTimeWidget(),
                                            initial=timezone.now)
@@ -128,7 +128,7 @@ class GastoPendienteForm(CuentaFormMixin, ProveedorFormMixin, HiddenUserForm):
                    'recepcion_de_facturas_originales')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
-            attrs={'rows': 2, 'cols': 40}))
+        attrs={'rows': 2, 'cols': 40}))
 
     fecha_maxima_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                                required=False,
@@ -150,9 +150,9 @@ class GastoEjecutarFrom(ProveedorFormMixin, CuentaFormMixin):
                    'recepcion_de_facturas_originales')
 
     descripcion = forms.CharField(required=True, widget=forms.Textarea(
-            attrs={'rows': 2, 'cols': 40}))
+        attrs={'rows': 2, 'cols': 40}))
     fuente_de_pago = forms.ModelChoiceField(queryset=Fuente.objects.filter(
-            caja=False)
+        caja=False)
     )
     fecha_de_pago = forms.DateTimeField(widget=DateTimeWidget(),
                                         initial=timezone.now)
@@ -176,9 +176,8 @@ class MontoForm(FieldSetFormMixin):
 
 class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
     cuenta = forms.ModelChoiceField(queryset=Cuenta.objects.select_related(
-            'presupuesto',
-            'presupuesto__ciudad',
-            'presupuesto__ciudad__nombre'
+        'presupuesto',
+        'presupuesto__ciudad',
     ).all())
 
     def __init__(self, *args, **kwargs):
@@ -189,7 +188,7 @@ class GastoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
 
 class GastoPresupuestoPeriodoCuentaForm(PeriodoForm, FieldSetFormMixin):
     presupuesto = forms.ModelChoiceField(
-            queryset=Presupuesto.objects.select_related('ciudad').all()
+        queryset=Presupuesto.objects.select_related('ciudad').all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -203,9 +202,8 @@ class PresupuestoMesForm(FieldSetModelFormMixin):
     Builds the form required to create new :class:`PresupuestoMes` instances
     """
     cuenta = forms.ModelChoiceField(queryset=Cuenta.objects.select_related(
-            'presupuesto',
-            'presupuesto__ciudad',
-            'presupuesto__ciudad__nombre'
+        'presupuesto',
+        'presupuesto__ciudad',
     ).all())
 
     class Meta:
