@@ -192,9 +192,17 @@ urlpatterns = [
         views.AfeccionAutoComplete.as_view(),
         name='afecciones'),
 
-    url(r'^diagnostico/(?P<persona>\d+)/(?P<consulta>\d+)/agregar$',
-        views.DiagnosticoCreateView.as_view(),
+    url(r'^diagnostico/(?P<persona>\d+)/(?P<consulta>\d+)/buscar$',
+        views.AfecionesSearchView.as_view(),
         name='consultorio-diagnostico-agregar'),
+
+    url(r'^afeccion/(?P<consulta>\d+)/lista$',
+        views.AfeccionListView.as_view(),
+        name='afecciones-search'),
+
+    url(r'^diagnostico/(?P<consulta>\d+)/(?P<afeccion>\d+)/agregar$',
+        views.DiagnosticoRedirectView.as_view(),
+        name='diagnostico-agregar'),
 
     url(r'^profile/persona/(?P<pk>\d+)/editar$',
         views.CliniquePersonaUpdateView.as_view(),
