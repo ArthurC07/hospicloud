@@ -41,10 +41,8 @@ class ReciboManager(models.Manager):
             'cajero',
         ).prefetch_related(
             'ventas',
-            'ventas__item',
             'pagos',
             'pagos__aseguradora',
-            'pagos__tipo',
         )
 
 
@@ -57,6 +55,7 @@ class VentaManager(models.Manager):
         return super(VentaManager, self).get_queryset().select_related(
             'recibo',
             'recibo__legal_data',
+            'item',
         )
 
     def periodo(self, inicio, fin):
