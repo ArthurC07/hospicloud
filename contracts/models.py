@@ -21,12 +21,12 @@ from decimal import Decimal
 
 import unicodecsv
 from django.conf import settings
-from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.files.storage import default_storage as storage
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import F, Max
+from django.db.utils import IntegrityError
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ugettext_lazy as _
@@ -412,7 +412,13 @@ class MasterContract(TimeStampedModel):
             pcd.numero = '{0}{1:0>6}{2:0>2}'.format(self.poliza,
                                                     contract.certificado,
                                                     dependiente)
-            pcd.save()
+
+            try:
+                pcd.save()
+            except IntegrityError:
+                pcd.numero += 'A'
+                pcd.save()
+
             contract.numero = pcd.numero
             contract.save()
 
