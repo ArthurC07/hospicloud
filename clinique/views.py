@@ -621,7 +621,7 @@ class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
 
         # Calculate doctor waiting time
         self.espera.fin_consultorio = timezone.now()
-        self.espera.tiempo_consultorio = self.espera.fin_consultorio - self.espera.inicio_consultorio
+        self.espera.tiempo_consultorio = self.espera.fin_consultorio - self.espera.inicio_doctor
         self.espera.save()
 
         return HttpResponseRedirect(self.get_success_url())
