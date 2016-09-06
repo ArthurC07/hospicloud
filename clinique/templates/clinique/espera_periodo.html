@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load thumbnail %}{% load l10n %}{% load i18n %}
+{% load timedelta_filter %}
+{% block title %} {% trans 'Esperas por Periodo' %} {% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="page-header">
+            <h1>
+                {% trans 'Esperas' %}
+                <small>de {{ inicio }} al {{ fin }}</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12">
+            <div class="main-content col-md-12">
+                <table class="table table-stripped">
+                    <thead>
+                        <tr>
+                            <th class="col-md-2" >{% trans 'Fecha' %}</th>
+                            <th class="col-md-3">{% trans 'Paciente' %}</th>
+                            <th class="col-md-2">{% trans 'Consultorio' %}</th>
+                            <th class="col-md-1">{% trans 'Espera SAP' %}</th>
+                            <th class="col-md-1">{% trans 'Espera Recolección Datos' %}</th>
+                            <th class="col-md-1">{% trans 'Espera Enfermería' %}</th>
+                            <th class="col-md-1">{% trans 'Espera Sala Doctor' %}</th>
+                            <th class="col-md-1">{% trans 'Espera Total' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for espera in esperas %}
+                        <tr>
+                            <td>{{ espera.created|date:"d N Y" }}</td>
+                            <td>{{ espera.persona }}</td>
+                            <td>{{ espera.consultorio }}</td>
+                            <td class="text-center">{{ espera.tiempo_sap|timedelta }}</td>
+                            <td class="text-center">{{ espera.tiempo_datos|timedelta }}</td>
+                            <td class="text-center">{{ espera.tiempo_enfermeria|timedelta }}</td>
+                            <td class="text-center">{{ espera.tiempo_consultorio|timedelta }}</td>
+                            <td class="text-center">{{ espera.duracion_total|timedelta }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+{% endblock %}

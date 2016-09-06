@@ -33,7 +33,7 @@ from mail_templated import EmailMessage
 
 from contracts.models import Contrato, MasterContract
 from inventory.models import ItemTemplate, Inventario, ItemType
-from persona.models import Persona, transfer_object_to_persona, \
+from persona.models import Persona, HistoriaFisica, transfer_object_to_persona, \
     persona_consolidation_functions
 from users.models import Ciudad
 
@@ -132,6 +132,7 @@ class EsperaQuerySet(QuerySet):
             terminada=False,
             atendido=False,
             ausente=False,
+            datos=False
         )
 
     def en_consulta(self):
@@ -143,6 +144,18 @@ class EsperaQuerySet(QuerySet):
             terminada=False,
             ausente=False,
             atendido=False,
+        )
+
+    def espera_consulta(self):
+        """
+        Returns all the :class:`Espera` that are been taked physical history
+        """
+        return self.filter(
+            consulta=False,
+            terminada=False,
+            ausente=False,
+            atendido=False,
+            datos=True
         )
 
 
@@ -162,7 +175,25 @@ class Espera(TimeStampedModel):
     atendido = models.BooleanField(default=False)
     ausente = models.BooleanField(default=False)
     consulta = models.BooleanField(default=False)
+    datos = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+
+    # Tracking several different moments of the waiting room experience
+    tiempo_sap = models.DurationField(default=timedelta)
+    tiempo_datos = models.DurationField(default=timedelta)
+    tiempo_enfermeria = models.DurationField(default=timedelta)
+    tiempo_consultorio = models.DurationField(default=timedelta)
+
+    inicio_sap = models.DateTimeField(default=timezone.now)
+    fin_sap = models.DateTimeField(default=timezone.now)
+    inicio_datos = models.DateTimeField(default=timezone.now)
+    fin_datos = models.DateTimeField(default=timezone.now)
+    inicio_enfermeria = models.DateTimeField(default=timezone.now)
+    fin_enfermeria = models.DateTimeField(default=timezone.now)
+    inicio_doctor = models.DateTimeField(default=timezone.now)
+    fin_consultorio = models.DateTimeField(default=timezone.now)
+
+    duracion_total = models.DurationField(default=timedelta)
 
     objects = EsperaQuerySet.as_manager()
 
@@ -184,6 +215,18 @@ class Espera(TimeStampedModel):
         delta = timezone.now() - self.created
 
         return delta.seconds / 60
+
+
+class HistoriaFisicaEspera(TimeStampedModel):
+    """
+    Relates a :class:`Espera` to a :class`HistoriaFisica` while allowing both
+    classes to be completely independent
+    """
+    espera = models.ForeignKey(Espera)
+    historia_fisica = models.ForeignKey(HistoriaFisica)
+
+    def get_absolute_url(self):
+        return self.espera.get_absolute_url()
 
 
 class ConsultaQuerySet(models.QuerySet):

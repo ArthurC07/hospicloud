@@ -20,11 +20,10 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from crispy_forms.layout import Submit
-from dateutil.relativedelta import relativedelta
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, Max
+from django.db.models import Sum, Max, F
 from django.db.models.functions import Coalesce
 from django.forms.widgets import HiddenInput
 from django.http import HttpResponseRedirect
@@ -199,9 +198,10 @@ class PresupuestoListView(LoginRequiredMixin, ListView):
         context['budget_forms'] = []
         context['year'] = year
 
-        context['cuentas_por_cobrar'] = Pago.objects.cuentas_por_cobrar().aggregate(
-            total=Coalesce(Sum('monto'), Decimal())
-        )['total']
+        context['cuentas_por_cobrar'] = \
+            Pago.objects.cuentas_por_cobrar().aggregate(
+                total=Coalesce(Sum('monto'), Decimal())
+            )['total']
 
         context['cuentas_por_pagar'] = Gasto.objects.total_pendiente()
 
@@ -489,7 +489,6 @@ class GastoPeriodoListView(LoginRequiredMixin, ListView):
         """
         form = PeriodoForm(self.request.GET)
         if form.is_valid():
-
             self.inicio = form.cleaned_data['inicio']
             self.fin = form.cleaned_data['fin']
             return Gasto.objects.filter(
@@ -548,7 +547,7 @@ class GastoPresupuestoPeriodoView(FormMixin, LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """
         Allows adding the calculated data into the template
-        :param kwargs: 
+        :param kwargs:
         :return: The context that will be rendered in the template
         """
         context = super(GastoPresupuestoPeriodoView, self).get_context_data(
@@ -765,7 +764,12 @@ class BalanceView(TemplateView, LoginRequiredMixin):
 
         context['descripcion_depositos'] = depositos.values(
             'tipo__nombre', 'tipo__id'
-        ).annotate(total=Coalesce(Sum('monto'), Decimal())).order_by()
+        ).annotate(
+            total=Coalesce(
+                Sum(F('monto') - F('comision')),
+                Decimal()
+            )
+        ).order_by()
 
         gastos = Gasto.objects.ejecutado_periodo(inicio, fin)
 

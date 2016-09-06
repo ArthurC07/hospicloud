@@ -330,8 +330,7 @@
                                         <td>{{ consulta.persona.nombre_completo }}</td>
                                         <td>{{ consulta.persona.obtener_edad }}</td>
                                         <td>{{ consulta.persona.get_sexo_display }}</td>
-                                        <td>
-                                            {{ consulta.created|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ consulta.created|date:"d/m/Y H:i" }}</td>
                                         <td>{{ consulta.consultorio }}</td>
                                         <td>
                                             {% if not consulta.facturada %}
@@ -422,16 +421,21 @@
                                     {% crispy pagoform %}
                                 </section>
                                 <section class="col-md-4">
-                                    {% crispy estadisticasform %}
+                                    {% crispy estadisticasciudadform %}
                                 </section>
                             </div>
                             <div class="row">
+                                <section class="col-md-4">
+                                    {% crispy estadisticasform %}
+                                </section>
                                 <section class="col-md-4">
                                     {% crispy ciudadform %}
                                 </section>
                                 <section class="col-md-4">
                                     {% crispy turnoform %}
                                 </section>
+                            </div>
+                            <div class="row">
                                 <section class="col-md-4">
                                     {% crispy numero_form %}
                                 </section>

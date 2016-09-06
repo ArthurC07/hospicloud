@@ -87,6 +87,7 @@ class Deposito(TimeStampedModel):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL)
     aplicado = models.BooleanField(default=False)
     comprobante = models.FileField(upload_to='income/deposito/%Y/%m/%d')
+    comision = models.DecimalField(max_digits=11, decimal_places=2, default=0)
 
     objects = DepositoQuerySet.as_manager()
 

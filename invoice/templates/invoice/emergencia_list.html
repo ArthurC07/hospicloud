@@ -11,19 +11,17 @@
                     <th>Sexo</th>
                     <th>Hora de Ingreso</th>
                     <th>M&eacute;dico</th>
-                    <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for emergencia in emergencias %}
                     <tr>
-                        <td>{{ emergencia.persona.identificacion }}</td>
+                        <td><a href="{% url 'emergency-view-id' emergencia.id %}">{{ emergencia.persona.identificacion }}</td>
                         <td>{{ emergencia.persona.nombre_completo }}</td>
                         <td>{{ emergencia.persona.obtener_edad }}</td>
                         <td>{{ emergencia.persona.get_sexo_display }}</td>
                         <td>{{ emergencia.created|date:"d/m/Y H:i" }}</td>
                         <td>{{ emergencia.usuario.get_full_name }}</td>
-                        <td><a class="btn btn-block" href="{% url 'emergency-view-id' emergencia.id %}">Ver</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>

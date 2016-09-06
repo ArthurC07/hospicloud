@@ -20,7 +20,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.db.models.query_utils import Q
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, DetailView, UpdateView, ListView, \
     RedirectView

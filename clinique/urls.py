@@ -314,6 +314,10 @@ urlpatterns = [
         views.CitaPeriodoView.as_view(),
         name='cita-periodo'),
 
+    url(r'^espera/periodo$',
+        views.EsperaPeriodoView.as_view(),
+        name='espera-periodo'),
+
     url(r'^diagnostico/periodo$',
         views.DiagnosticoPeriodoView.as_view(),
         name='diagnostico-periodo'),
@@ -353,4 +357,8 @@ urlpatterns = [
     url(r'^(?P<persona>\d+)/remision/agregar$',
         views.RemisionCreateView.as_view(),
         name='consultorio-remision-agregar'),
+
+    url(r'^(?P<persona>\d+)/historia/fisica/(?P<espera>\d+)/agregar$',
+        views.HistoriaFisicaEsperaCreateView.as_view(),
+        name='persona-historia-agregar-espera'),
 ]

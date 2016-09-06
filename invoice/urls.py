@@ -88,6 +88,10 @@ urlpatterns = [
         views.EstadisticasPeriodoView.as_view(),
         name='invoice-estadisticas-periodo'),
 
+    url(r'^estadistica/periodo/ciudad$',
+    views.EstadisticasPeriodoCiudadView.as_view(),
+    name='invoice-estadisticas-ciudad-periodo'),
+
     url(r'^periodo/detalle$',
         views.ReporteReciboDetailView.as_view(),
         name='invoice-periodo-detail'),

@@ -34,8 +34,24 @@
                         <h2>{% trans 'En Consulta' %}</h2>
                     </section>
                     {% for espera in consultas %}
-                        {% include 'clinique/snippets/espera.html' with espera=espera %}
+                        {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_doctor %}
                     {% endfor %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section class="page-header">
+                                <h2>
+                                    {% trans 'Sala de Espera de Consulta' %}
+                                    <small>
+                                        {% trans 'Promedio de Espera Ultimo mes' %}
+                                        {{ total }} {% trans 'minutos' %}
+                                    </small>
+                                </h2>
+                            </section>
+                            {% for espera in esperas_consulta %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_enfermeria %}
+                            {% endfor %}
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <section class="page-header">
@@ -48,7 +64,7 @@
                                 </h2>
                             </section>
                             {% for espera in esperas %}
-                                {% include 'clinique/snippets/espera.html' with espera=espera %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_sap %}
                             {% endfor %}
                         </div>
                     </div>
@@ -152,6 +168,11 @@
                             {% crispy ordenlperiodoform %}
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            {% crispy esperaperiodoform %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -194,7 +215,7 @@
             var ctx = canvas.getContext("2d");
             var chart = new Chart(ctx);
             data = {
-                labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
+                labels: [0, {% for mes in meses %} "{{ mes.nombre|date:"F" }}",  {% endfor %} 0],
                 datasets: [
                     {% for tipo, lista in tipos.items %}
                         {
