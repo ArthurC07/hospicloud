@@ -215,7 +215,7 @@
             var ctx = canvas.getContext("2d");
             var chart = new Chart(ctx);
             data = {
-                labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
+                labels: [0, {% for mes in meses %} "{{ mes.nombre|date:"F" }}",  {% endfor %} 0],
                 datasets: [
                     {% for tipo, lista in tipos.items %}
                         {
