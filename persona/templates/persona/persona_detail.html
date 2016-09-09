@@ -4,9 +4,17 @@
     <div class="row">
         <section class="col-md-12 main-header">
             <section class="page-header">
+                {% if persona.consultas_activas and perms.persona.persona %}
+                    {% for consulta in persona.consultas_activas %}
+                        <h3><small> {{ consulta.poliza.aseguradora }} {% if consulta.titularDependiente %} | {% endif %} {{ consulta.titularDependiente }} </small></h3>
+                    {% endfor %}
+                {% endif %}
                 <h1> {{ persona.nombre_completo }}
                     <small>{% trans 'Informaci&oacute;n' %}</small>
                 </h1>
+                {% if persona.consultas_activas and perms.persona.persona %}
+                    <h3><small>Cargo: {{ persona.cargo }}  |  Edad: {{ persona.obtener_edad }} años</small></h3>
+                {% endif %}
             </section>
         </section>
     </div>

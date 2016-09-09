@@ -357,6 +357,24 @@ class Consulta(TimeStampedModel):
 
         super(Consulta, self).save(**kwargs)
 
+    def titularDependiente(self):
+        try:
+            is_beneficiario = None
+            beneficiarios = self.contrato.beneficiarios.all()
+            
+            if beneficiarios:
+                for beneficiario in beneficiarios:
+                    if beneficiario.persona == self.persona:
+                        is_beneficiario = True
+
+            if self.contrato.persona == self.persona:
+                return 'Titular'
+            elif is_beneficiario is not None:
+                return 'Dependiente'
+            else:
+                return ''
+        except:
+            return ''
 
 class LecturaSignos(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='lecturas_signos',
