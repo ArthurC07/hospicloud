@@ -55,12 +55,12 @@ from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
     PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm, \
-    OrdenLaboratorioForm, OrdenLaboratorioItemForm
+    OrdenLaboratorioForm, OrdenLaboratorioItemForm, AfeccionSearchForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
     Remision, NotaMedica, TipoConsulta, Afeccion, OrdenLaboratorio, \
-    OrdenLaboratorioItem
+    OrdenLaboratorioItem, HistoriaFisicaEspera
 from contracts.forms import AseguradoraPeriodoForm
 from contracts.models import MasterContract, Aseguradora
 from emergency.models import Emergencia
@@ -76,7 +76,8 @@ from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
     AntecedenteQuirurgicoForm
 from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
     AntecedenteObstetrico, AntecedenteQuirurgico, EstiloVida, Persona
-from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView
+from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView, \
+    HistoriaFisicaCreateView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from users.models import Ciudad
 
@@ -114,6 +115,10 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['citaperiodoform'] = PeriodoForm(prefix='cita-periodo')
         context['citaperiodoform'].helper.form_action = 'cita-periodo'
         context['citaperiodoform'].set_legend(_('Citas por Periodo'))
+
+        context['esperaperiodoform'] = PeriodoForm(prefix='espera-periodo')
+        context['esperaperiodoform'].helper.form_action = 'espera-periodo'
+        context['esperaperiodoform'].set_legend(_('Esperas por Periodo'))
 
         context['diagnosticoperiodoform'] = PeriodoForm(
             prefix='diagnostico-periodo')
@@ -160,6 +165,16 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['aseguradora_form'] = aseg_form
 
         context['esperas'] = Espera.objects.pendientes().filter(
+            fecha__gte=self.yesterday,
+            consultorio__localidad__ciudad=self.request.user.profile.ciudad,
+        ).select_related(
+            'persona',
+            'consultorio',
+            'consultorio__usuario',
+            'consultorio__secretaria',
+        ).all()
+
+        context['esperas_consulta'] = Espera.objects.espera_consulta().filter(
             fecha__gte=self.yesterday,
             consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
@@ -223,6 +238,7 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                     'inicio': inicio,
                     'atenciones': atenciones,
                     'quejas': quejas,
+                    'nombre': inicio,
                 }
             )
 
@@ -386,6 +402,38 @@ class CitaPeriodoView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class EsperaPeriodoView(LoginRequiredMixin, TemplateView):
+    """Muestra las esperas por consulta de un periodo"""
+    template_name = 'clinique/espera_periodo.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.form = PeriodoForm(request.GET, prefix='espera-periodo')
+
+        if self.form.is_valid():
+            self.inicio = self.form.cleaned_data['inicio']
+            self.fin = datetime.combine(self.form.cleaned_data['fin'], time.max)
+            self.esperas = Espera.objects.filter(
+                created__range=(self.inicio, self.fin),
+            ).select_related(
+                'persona',
+                'consultorio',
+                'usuario',
+            )
+        return super(EsperaPeriodoView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the date range information to the template
+        """
+        context = super(EsperaPeriodoView, self).get_context_data(**kwargs)
+
+        context['esperas'] = self.esperas
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
+
+
 class DiagnosticoPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra los :class:`DiagnosticoClinico` de un periodo"""
     template_name = 'clinique/diagnostico_periodo.html'
@@ -534,7 +582,7 @@ class EvaluacionPeriodoView(LoginRequiredMixin, TemplateView):
 
 class EsperaMixin(object):
     """
-    Populates a :class:`Espera` with data comming from the url
+    Populates a :class:`Espera` with data coming from the url
     """
 
     def dispatch(self, *args, **kwargs):
@@ -561,12 +609,67 @@ class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
     model = Consulta
     form_class = ConsultaEsperaForm
 
+    def form_valid(self, form):
+        """
+        Adds the required calculations to register the adequate wating time
+        :param form:
+        :return:
+        """
+        self.object = form.save(commit=True)
+
+        self.espera.fin = timezone.now()
+
+        # Calculate doctor waiting time
+        self.espera.fin_consultorio = timezone.now()
+        self.espera.tiempo_consultorio = self.espera.fin_consultorio - self.espera.inicio_doctor
+        self.espera.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_initial(self):
         initial = super(ConsultaEsperaCreateView, self).get_initial()
         initial['persona'] = self.espera.persona
         initial['poliza'] = self.espera.poliza
         initial['consultorio'] = self.espera.consultorio
         return initial
+
+
+class HistoriaFisicaEsperaCreateView(EsperaMixin, HistoriaFisicaCreateView):
+    """"
+    Creates a new :class:`HistoriaFisica` instance and relates it to a
+    :class:`Espera`
+    """
+
+    def get(self, request, *args, **kwargs):
+        """ Stop espera_sap time """
+
+        self.espera.fin_sap = timezone.now()
+        self.espera.tiempo_sap = self.espera.fin_sap - self.espera.inicio_sap
+
+        self.espera.inicio_datos = timezone.now()
+
+        self.espera.save()
+
+        return super(HistoriaFisicaEsperaCreateView, self).get(request, *args,
+                                                               **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=True)
+
+        HistoriaFisicaEspera.objects.create(
+            espera=self.espera,
+            historia_fisica=self.object
+        )
+
+        self.espera.datos = True
+        self.espera.fin_datos = timezone.now()
+        self.espera.tiempo_datos = self.espera.fin_datos - self.espera.inicio_datos
+
+        self.espera.inicio_enfermeria = timezone.now()
+
+        self.espera.save()
+
+        return HttpResponseRedirect(self.espera.get_absolute_url())
 
 
 def get_active_master_contracts(persona):
@@ -714,9 +817,77 @@ class AfeccionAutoComplete(LoginRequiredMixin,
 
         return qs
 
+class AfecionesSearchView(TemplateView):
 
-class DiagnosticoCreateView(CurrentUserFormMixin, PersonaFormMixin,
-                            ConsultaFormMixin, CreateView):
+    """
+    Redirect to a form to perform a search
+    """
+    template_name="clinique/diagnosticoclinico_cie_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(AfecionesSearchView, self).get_context_data(
+            **kwargs)
+    
+        context['consulta'] = self.kwargs['consulta']
+
+        return context
+
+class AfeccionListView(LoginRequiredMixin, ListView):
+
+    context_object_name = 'afecciones'
+    model = Afeccion
+    template_name = 'clinique/afeccion_index.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Builds the queryset that will filter the :class:`Afeccion`
+        :return: a filtered :class:`QuerySet`
+        """
+        form = AfeccionSearchForm(self.request.GET)
+
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            queryset = Afeccion.objects.filter(
+                nombre__icontains=query
+            )
+
+            return queryset.all()
+
+        return Afeccion.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super(AfeccionListView, self).get_context_data(
+        **kwargs)
+
+        context['consulta'] = self.kwargs['consulta']
+
+        return context
+
+class DiagnosticoRedirectView(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        
+        """
+        Create a object :class:`Diagnostico`
+        """
+        consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
+        afeccion = get_object_or_404(Afeccion, pk=kwargs['afeccion'])
+        usuario = self.request.user
+        diagnostico = DiagnosticoClinico.objects.create(persona = consulta.persona,
+                         usuario = usuario,
+                         afeccion = afeccion,
+                         consulta = consulta,
+                         )
+
+        messages.info(
+            self.request,
+            _('¡Se agregó el diagnostico!')
+        )
+        return diagnostico.get_absolute_url()
+
+class DiagnosticoCreateView(CurrentUserFormMixin, PersonaFormMixin, ConsultaFormMixin, CreateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
@@ -1053,12 +1224,19 @@ class EsperaConsultaRedirectView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
         espera.consulta = True
-        espera.fin = timezone.now()
-        espera.save()
         messages.info(
             self.request,
             _('¡Se envio el paciente a consulta!')
         )
+
+        # end infirmary time
+        espera.fin_enfermeria = timezone.now()
+        espera.tiempo_enfermeria = espera.fin_enfermeria - espera.inicio_enfermeria
+
+        # start medic time
+        espera.inicio_doctor = timezone.now()
+        espera.save()
+
         return espera.get_absolute_url()
 
 
@@ -1069,6 +1247,8 @@ class EsperaTerminadaRedirectView(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, **kwargs):
         espera = get_object_or_404(Espera, pk=kwargs['pk'])
+
+        espera.duracion_total = espera.tiempo_sap + espera.tiempo_datos + espera.tiempo_consultorio + espera.tiempo_enfermeria
         espera.terminada = True
 
         for consulta in espera.consulta_set.all():
@@ -1105,8 +1285,10 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
         consulta.duracion = consulta.final - consulta.created
         consulta.save()
         if consulta.espera is not None:
-            consulta.espera.terminada = True
-            consulta.espera.save()
+            espera = consulta.espera
+            espera.duracion_total = espera.tiempo_sap + espera.tiempo_datos + espera.tiempo_consultorio + espera.tiempo_enfermeria
+            espera.terminada = True
+            espera.save()
         else:
             Espera.objects.filter(
                 terminada=False, persona=consulta.persona
@@ -1114,15 +1296,20 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
                 terminada=True
             )
 
-        espera = Espera.objects.pendientes().filter(
+        espera = Espera.objects.espera_consulta().filter(
             consultorio__localidad=consulta.consultorio.localidad,
             fecha__gte=self.yesterday,
         ).first()
 
+        # Update waiting room data
         if espera is not None:
             espera.consulta = True
             espera.consultorio = consulta.consultorio
-            espera.fin = timezone.now()
+            espera.fin_enfermeria = timezone.now()
+            espera.tiempo_enfermeria = espera.fin_enfermeria - espera.inicio_enfermeria
+
+            espera.inicio_doctor = timezone.now()
+
             espera.save()
 
         messages.info(

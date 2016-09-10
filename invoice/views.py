@@ -152,7 +152,8 @@ class IndexView(InvoicePermissionMixin, TemplateView):
         context['consultas'] = Consulta.objects.filter(
             facturada=False,
             activa=False,
-            tipo__facturable=True
+            tipo__facturable=True,
+            consultorio__localidad__ciudad=self.request.user.profile.ciudad
         ).select_related('persona', 'consultorio__usuario', 'consultorio')
 
         context['turnos'] = TurnoCaja.objects.filter(

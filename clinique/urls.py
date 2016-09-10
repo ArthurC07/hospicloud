@@ -192,9 +192,17 @@ urlpatterns = [
         views.AfeccionAutoComplete.as_view(),
         name='afecciones'),
 
-    url(r'^diagnostico/(?P<persona>\d+)/(?P<consulta>\d+)/agregar$',
-        views.DiagnosticoCreateView.as_view(),
+    url(r'^diagnostico/(?P<persona>\d+)/(?P<consulta>\d+)/buscar$',
+        views.AfecionesSearchView.as_view(),
         name='consultorio-diagnostico-agregar'),
+
+    url(r'^afeccion/(?P<consulta>\d+)/lista$',
+        views.AfeccionListView.as_view(),
+        name='afecciones-search'),
+
+    url(r'^diagnostico/(?P<consulta>\d+)/(?P<afeccion>\d+)/agregar$',
+        views.DiagnosticoRedirectView.as_view(),
+        name='diagnostico-agregar'),
 
     url(r'^profile/persona/(?P<pk>\d+)/editar$',
         views.CliniquePersonaUpdateView.as_view(),
@@ -306,6 +314,10 @@ urlpatterns = [
         views.CitaPeriodoView.as_view(),
         name='cita-periodo'),
 
+    url(r'^espera/periodo$',
+        views.EsperaPeriodoView.as_view(),
+        name='espera-periodo'),
+
     url(r'^diagnostico/periodo$',
         views.DiagnosticoPeriodoView.as_view(),
         name='diagnostico-periodo'),
@@ -345,4 +357,8 @@ urlpatterns = [
     url(r'^(?P<persona>\d+)/remision/agregar$',
         views.RemisionCreateView.as_view(),
         name='consultorio-remision-agregar'),
+
+    url(r'^(?P<persona>\d+)/historia/fisica/(?P<espera>\d+)/agregar$',
+        views.HistoriaFisicaEsperaCreateView.as_view(),
+        name='persona-historia-agregar-espera'),
 ]

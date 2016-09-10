@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% load timedelta_filter %}
 {% block menu %}
     {% include "snippets/navbar.html" with active_tab='tab4' %}
 {% endblock %}
@@ -132,9 +133,22 @@
                                 <th>{% trans 'Quejas' %}</th>
                                 <th>{% trans 'Ciudad' %}</th>
                             </tr>
-                          </thead>
-                          <tbody>
-                          {% for consultorio in consultorios %}
+                            </thead>
+                            <tbody>
+                            {% for consultorio in consultorios %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'consulta-medico' consultorio.consultorio__usuario__id %}?{{ periodo_string }}"
+                                           target="_blank">
+                                            {{ consultorio.consultorio__nombre }}
+                                        </a>
+                                    </td>
+                                    <td class="text-right">{{ consultorio.count }}</td>
+                                    <td class="text-right">{{ consultorio.tiempo|timedelta }}</td>
+                                    <td class="text-right">{{ consultorio.quejas }}</td>
+                                    <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
+                                </tr>
+                            {% endfor %}
                             <tr>
                               <td>
                                   <a href="{% url 'consulta-medico' consultorio.consultorio__usuario__id %}?{{ periodo_string }}"
@@ -337,118 +351,7 @@
                     </div>
                   </div>
                 </div>
-                <!-- <div class="col-md-4 col-xs-4">
-                  <div class="panel panel-color panel-green">
-                      <div class="panel-heading-green">
-                            <h3 class="panel-title">
-                                {% trans 'Consultas por Ciudad' %}
-                            </h3>
-                        </div>
-                        <div class="panel-body">
-                          <table class="table table-hover table-striped">
-                              <tbody>
-                              {% for ciudad in ciudades %}
-                                  <tr>
-                                      <td>
-                                          {% if not ciudad.consultorio__localidad__ciudad__id == None %}
-                                              <a href="{% url 'consulta-ciudad' ciudad.consultorio__localidad__ciudad__id %}?{{ periodo_string }}"
-                                                 target="_blank">
-                                                  {{ ciudad.consultorio__localidad__ciudad__nombre }}
-                                              </a>
-                                          {% else %}
-                                              {{ ciudad.consultorio__localidad__ciudad__nombre }}
-                                          {% endif %}
-                                      </td>
-                                      <td class="text-right">
-                                          {% if not ciudad.consultorio__localidad__ciudad__id == None %}
-                                              <a href="{% url 'consulta-frecuencia-ciudad' ciudad.consultorio__localidad__ciudad__id %}?{{ periodo_string }}"
-                                                 target="_blank">
-                                                  {{ ciudad.count }}
-                                              </a>
-                                          {% else %}
-                                              {{ ciudad.count }}
-                                          {% endif %}
-                                      </td>
-                                  </tr>
-                              {% endfor %}
-                              </tbody>
-                              <tfoot>
-                              <tr>
-                                  <th>{% trans 'Total de Consultas' %}</th>
-                                  <th class="text-right">{{ consultas }}</th>
-                              </tr>
-                              </tfoot>
-                          </table>
-                        </div>
-                    </div>
-                    <div class="panel panel-color panel-green">
-                        <div class="panel-heading-green">
-                            <h3 class="panel-title">
-                                {% trans 'Quejas por Área' %}
-                            </h3>
-                        </div>
-                        <div class="panel-body">
-                          <table class="table table-striped">
-                              <tbody>
-                              {% for tipo in tipo_quejas %}
-                                  <tr>
-                                      <td>{{ tipo.departamento__nombre }}</td>
-                                      <td class="text-right">{{ tipo.count }}</td>
-                                  </tr>
-                              {% endfor %}
-                              </tbody>
-                              <tfoot>
-                              <tr>
-                                  <th>{% trans 'Total' %}</th>
-                                  <th>
-                                      <a href="{% url 'quejas-periodo' %}?{{ periodo_string }}"
-                                         target="_blank">
-                                          {{ quejas }}
-                                      </a>
-                                  </th>
-                              </tr>
-                              </tfoot>
-                          </table>
-                        </div>
-                    </div>
-                    <div class="panel panel-color panel-green">
-                        <div class="panel-heading-green">
-                            <h3 class="panel-title">
-                                {% trans 'Consultas por Aseguradora' %}
-                            </h3>
-                        </div>
-                        <div class="panel-body">
-                          <table class="table table-striped">
-                              <tbody>
-                              {% for aseguradora in aseguradoras %}
-                                  <tr>
-                                      <td>
-                                          {% if not aseguradora.contrato__master__aseguradora__id == None %}
-                                              <a href="{% url 'consulta-aseguradora' aseguradora.contrato__master__aseguradora__id %}?{{ periodo_string }}"
-                                                 target="_blank">
-                                                  {{ aseguradora.contrato__master__aseguradora__nombre }}
-                                              </a>
-                                          {% else %}
-                                              {{ aseguradora.contrato__master__aseguradora__nombre }}
-                                          {% endif %}
-                                      </td>
-                                      <td class="text-right">{{ aseguradora.count }}</td>
-                                  </tr>
-                              {% endfor %}
-                              </tbody>
-                              <tfoot>
-                              <tr>
-                                  <th>
-                                      {% trans 'Total' %}</th>
-                                  <th>
-                                      {{ consultas }}
-                                  </th>
-                              </tr>
-                              </tfoot>
-                          </table>
-                        </div>
-                    </div>
-                </div> -->
+
             </div>
         </div>
     </div>

@@ -42,22 +42,35 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-                <div class="col-md-6">‏
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">{% trans 'En Consulta' %}</h4>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="main-content col-md-12">‏
+                    <section class="page-header">
+                        <h2>{% trans 'En Consulta' %}</h2>
+                    </section>
+                    {% for espera in consultas %}
+                        {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_doctor %}
+                    {% endfor %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section class="page-header">
+                                <h2>
+                                    {% trans 'Sala de Espera de Consulta' %}
+                                    <small>
+                                        {% trans 'Promedio de Espera Ultimo mes' %}
+                                        {{ total }} {% trans 'minutos' %}
+                                    </small>
+                                </h2>
+                            </section>
+                            {% for espera in esperas_consulta %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_enfermeria %}
+                            {% endfor %}
                         </div>
-                        {% for espera in consultas %}
-                            {% include 'clinique/snippets/espera.html' with espera=espera %}
-                        {% endfor %}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="page-title">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section class="page-header">
+                                <h2>
                                     {% trans 'Sala de Espera' %}
                                     <small>
                                         {% trans 'Promedio de Espera Ultimo mes' %}
@@ -66,7 +79,7 @@
                                 </h4>
                             </div>
                             {% for espera in esperas %}
-                                {% include 'clinique/snippets/espera.html' with espera=espera %}
+                                {% include 'clinique/snippets/espera.html' with espera=espera actual=espera.espera_sap %}
                             {% endfor %}
                         </div>
                     </div>
@@ -208,36 +221,12 @@
                             {% crispy aseguradora_form %}
                         </div>
                     </div>
-            </div>
-        </div>
-        <!-- <aside class="col-md-3">
-            <div class="col-md-12 toolbox">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-tabs nav-stacked">
-                        <li>
-                            <a href="{% url 'consultorio-agregar' %}">
-                                {% trans 'Agregar Consultorio' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'clinique-orden-list' %}">
-                                {% trans 'Lista de Ordenes M&eacute;dicas' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'clinique-incapacidad-list' %}">
-                                {% trans 'Lista de Incapacidades' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'esperas' %}">
-                                {% trans 'Mostrar todos los pacientes en Espera' %}
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </aside> -->
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            {% crispy esperaperiodoform %}
+                        </div>
+                    </div>
+                </div>
     </div>
 {% endblock %}
 {% block scripts %}
@@ -253,7 +242,7 @@
             var ctx = canvas.getContext("2d");
             var chart = new Chart(ctx);
             data = {
-                labels: [0, {% for mes in meses %} "{{ mes.nombre }}",  {% endfor %} 0],
+                labels: [0, {% for mes in meses %} "{{ mes.nombre|date:"F" }}",  {% endfor %} 0],
                 datasets: [
                     {% for tipo, lista in tipos.items %}
                         {

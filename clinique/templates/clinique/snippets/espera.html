@@ -3,9 +3,7 @@
   <div class="col-md-12">
     <div class="card-box widget-user">
         <div>
-            <img src="{% static 'images/face.jpg' %}"
-
-                 class="img-responsive img-circle m-t-10"/>
+            <img src="{% static 'images/face.jpg' %}" class="img-responsive img-circle m-t-10"/>
         </div>
         <div class="wid-u-info">
             <h6 class="m-t-0 m-b-5">
@@ -15,44 +13,55 @@
             </h6>
             <p class="text-muted m-b-5 font-13">{{ espera.persona.obtener_edad }}
                     {% trans 'a&ntilde;os' %}
+            <p>
+                {{ espera.persona.get_sexo_display }}
+                {% trans 'Programado para el' %} {{ espera.fecha }}
+                {% trans 'Tiempo total de espera:' %} {{ espera.tiempo|floatformat:2 }}
+                {% trans 'minutos' %}
+                {% trans 'Tiempo de espera actual:' %} {{ actual|floatformat:2 }}
+                {% trans 'minutos' %}
+                {{ espera.consultorio }}
+                {% for historia_espera in espera.historiafisicaespera_set.all %}
+                    {% with historia_espera.historia_fisica as historia %}
+                        {% trans 'Presion:' %} {{ historia.presion_sistolica }} / {{ historia.presion_diastolica }}
+                    {% trans 'Temperatura:' %} {{ historia.temperatura }}°
+                    {% endwith %}
+                {% endfor %}
             </p>
-            <p class="text-muted">
-                <b>{{ espera.persona.get_sexo_display }}</b><br/>
-                <b>{% trans 'Programado:' %}</b> {{ espera.fecha }}<br/>
-                <b>{% trans 'Tiempo en espera:' %}</b> {{ espera.tiempo }}<br/>
-                <b>{% trans 'Minutos:' %}</b><br/>
-                <b>{% trans 'Consultorio: ' %}</b>{{ espera.consultorio }}
-            </p>
+            <div class="btn-group" role="group">
 
-        </div>
-        <div class="btn-group" role="group">
-            <a class="btn btn-default m-r-5"
-               href="{% url 'clinique-espera-editar' espera.id %}">
-                {% trans 'Cambiar Consultorio' %}
-            </a>
-            <a class="btn btn-primary m-r-5"
-               href="{% url 'persona-historia-agregar' espera.persona.id %}">
-                {% trans 'Agregar Historia Fisiológica' %}
-            </a>
-            {% if espera.consulta %}
-                <a class="btn btn-success m-r-5"
-                   href="{% url 'espera-consulta-iniciar' espera.id %}">
-                    {% trans 'Iniciar Consulta' %}
-                </a>
-                <a class="btn btn-danger v m-r-5"
-                   href="{% url 'clinique-espera-terminada' espera.id %}">
-                    {% trans 'Terminar Consulta' %}
-                </a>
-            {% else %}
-                <a class="btn btn-success m-r-5"
-                   href="{% url 'clinique-espera-ausente' espera.id %}">
-                    {% trans 'No se Present&oacute;' %}
-                </a>
-                <a class="btn btn-danger"
-                   href="{% url 'clinique-espera-consulta' espera.id %}">
-                    {% trans 'A Consulta' %}
-                </a>
-            {% endif %}
+                {% if espera.consulta %}
+                    <a class="btn btn-info"
+                       href="{% url 'espera-consulta-iniciar' espera.id %}">
+                        {% trans 'Iniciar Consulta' %}
+                    </a>
+                    <a class="btn btn-danger"
+                       href="{% url 'clinique-espera-terminada' espera.id %}">
+                        {% trans 'Terminar Consulta' %}
+                    </a>
+                {% else %}
+                    <a class="btn btn-primary"
+                        href="{% url 'clinique-espera-editar' espera.id %}">
+                        {% trans 'Cambiar Consultorio' %}
+                    </a>
+                    {% if not espera.datos %}
+                        <a class="btn btn-success"
+                            href="{% url 'persona-historia-agregar-espera' persona=espera.persona.id espera=espera.id %}">
+                            {% trans 'Agregar Historia Fisiológica' %}
+                        </a>
+                    {% endif %}
+                    <a class="btn btn-success"
+                        href="{% url 'clinique-espera-ausente' espera.id %}">
+                        {% trans 'No se Present&oacute;' %}
+                    </a>
+                    {% if espera.datos %}
+                        <a class="btn btn-danger"
+                            href="{% url 'clinique-espera-consulta' espera.id %}">
+                            {% trans 'A Consulta' %}
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
   </div>

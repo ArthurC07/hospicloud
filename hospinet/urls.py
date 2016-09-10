@@ -18,6 +18,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
 from userena.views import profile_edit
+from hospinet import views
 
 from hospinet.views import IndexView
 # Uncomment the next two lines to enable the admin:
@@ -56,6 +57,9 @@ urlpatterns = [
         profile_edit,
         {'edit_profile_form': CustomEditProfileForm},
         name='userena_profile_edit'),
+    url(r'^accounts/signin',
+        views.SigninPathAction,
+        name='user-signin-path'),
     url(r'^accounts/', include('userena.urls')),
 ]
 

@@ -54,7 +54,7 @@
                 </a>
             </li>
         </ul>
-        <a class="btn btn-danger"
+        <a id="terminar-consulta" class="btn btn-danger"
            href="{% url 'clinique-consulta-terminada' consulta.id %}">
             {% trans 'Terminar Consulta' %}
         </a>
@@ -235,3 +235,10 @@
         </table>
     </article>
 </div>
+{% block scripts %}>
+    <script type="text/javascript">
+        $('#terminar-consulta').click(function(){
+             $(this).addClass('disabled');
+        });
+    </script>
+{% endblock %}
