@@ -1,1250 +1,349 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+{% include 'styles.html' %}
 {% load l10n %}{% load i18n %}
-<!-- <html> -->
-<!-- <head>
-    <meta charset="utf-8"/>
-    <title>HospiNet</title>
-    <meta name="viewport" content="width=device-width"/>
-    <meta name="description" content="">
-    <meta name="author" content="">
-    {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
-    {% include 'styles.html' %}
-    <link href="{% static 'css/login.css' %}" rel="stylesheet"/>
-    <link href="{% static 'css/index.css' %}" rel="stylesheet"/> -->
-
-
-    <!--[if lt IE 9]>
-      <script type="text/javascript" src="{% static 'js/html5shiv.min.js' %}"></script>
-      <script type="text/javascript" src="{% static 'js/respond.min.js' %}"></script>
-    <![endif]-->
-
-
-    <!-- {% block header %}{% endblock %} -->
-    <!-- Fav and touch icons -->
-    <!-- <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
-</head> -->
-<!-- <body> -->
 {% block menu %}
     {% include "snippets/navbar.html" with active_tab='tab1' %}
 {% endblock %}
 {% block content %}
 
-<!-- <div id="logo">
-    <img src="{% static 'images/hospinet.svg' %}" width="107" height="149"/>
-</div>
-    <aside id="navigation">
-        <a href="{% url 'userena_profile_detail' user.username %}">
-            <div class="image-holder flex-container">
-                <i class="fa fa-user"></i>
-            </div>
-            <div class="flex-container">
-                <div>{{ user }}</div>
-            </div>
-        </a>
-        {% if user.is_staff %}
-            <a href="{% url 'persona-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon4.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Pacientes' %}</div>
-                </div>
-            </a>
-            {% if modules.hospitalizacion %}
-            <a href="{% url 'admision-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon3.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Admisiones' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.laboratorio %}
-            <a href="{% url 'lab-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon6.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Laboratorio' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.imagenes %}
-            <a href="{% url 'examen-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon6.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Centro de Im&aacute;genes' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.hospitalizacion %}
-            <a href="{% url 'nightingale-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon5.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Hospitalizaci&oacute;n' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.inventario %}
-            <a href="{% url 'inventario-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon7.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Inventario' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.emergencia %}
-            <a href="{% url 'emergency-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon2.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Emergencia' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.consulta %}
-            <a href="{% url 'consultorio-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon8.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Consultorios' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.caja %}
-            <a href="{% url 'invoice-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon9.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Caja' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.contratos %}
-            <a href="{% url 'contrato-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon1.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Contratos' %}</div>
-                </div>
-            </a>
-            {% endif %}
-    </aside>
-{% endif %}
-<div class="container fill">
-    <div class="flex-container">
-        <div class="row">
-            <div class="col-md-4 col-md-offset-8">
-
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans '¡Bienvenido!' %}</h4>
             </div>
         </div>
     </div>
-</div>
-<div id="help">
-    <a onclick="if(navigator.userAgent.toLowerCase().indexOf('opera') != -1 &amp;&amp; window.event.preventDefault) window.event.preventDefault();this.newWindow = window.open('{{ online_help }}', 'mibew', 'toolbar=0,scrollbars=0,location=0,status=1,menubar=0,width=640,height=480,resizable=1');this.newWindow.focus();this.newWindow.opener=window;return false;"
-       href="{{ online_help }}" target="_blank">
-        <i class="fa fa-4x fa-question-circle"></i>
-        {% trans 'Ayuda en L&iacute;nea' %}
-    </a>
-</div>
-<script type="text/javascript"
-        src="{% static 'js/jquery.backstretch.min.js' %}"></script>
-<script type="text/javascript"
-        src="{% static 'js/jquery.placeholder.js' %}"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('input, textarea').placeholder();
-        $.backstretch([
-            "{% static 'images/slide2.jpg' %}",
-            "{% static 'images/slide3.jpg' %}",
-            "{% static 'images/slide4.jpg' %}",
-            "{% static 'images/slide5.jpg' %}",
-            "{% static 'images/slide6.jpg' %}",
-            "{% static 'images/slide7.jpg' %}"
-        ], {duration: 10000, fade: 'slow'});
-    });
-</script> -->
 
+    <div class="row">
+        <div class="col-sm-6 col-lg-3">
+            <div class="widget-simple-chart text-right panel-box">
+                <div class="circliful-chart" data-dimension="90" data-text="35%"
+                     data-width="5" data-fontsize="14" data-percent="35"
+                     data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
+                <h3 class="text-success counter">2569</h3>
+                <p class="text-muted text-nowrap">{% trans 'Ventas del mes' %}</p>
+            </div>
+        </div>
 
-
-<!-- <div id="wrapper"> -->
-
-            <!-- Top Bar Start -->
-            <!-- <div class="topbar"> -->
-
-                <!-- LOGO -->
-                <!-- <div class="topbar-left">
-                    <div class="text-center">
-                        <a href="{% url 'home' %}" class="logo"><img
-                                src="{% static 'assets/images/logo-eps-medical.png' %}" alt="logo-img"> </a>
+        <div class="col-sm-6 col-lg-4">
+            <div class="panel-box widget-icon">
+                <div>
+                    <i class="md md-account-child text-primary"></i>
+                    <div class="wid-icon-info">
+                        <p class="text-muted m-b-5 font-13">{% trans 'Total de pacientes del Mes' %}</p>
+                        <h4 class="m-t-0 m-b-5 counter">1452</h4>
+                        <small class="text-success"><b>39% nuevos</b></small>
                     </div>
-                </div> -->
-
-                <!-- Navbar -->
-                <!-- <div class="navbar navbar-default" role="navigation">
-                    <div class="container">
-                        <div class="">
-                            <div class="pull-left">
-                                <button class="button-menu-mobile open-left waves-effect">
-                                    <i class="md md-menu"></i>
-                                </button>
-                                <span class="clearfix"></span>
-                            </div> -->
-
-                            <!-- LO COMENTE PARA QUITAR EL MENU AL LADO DEL BUSCADOR
-                            <ul class="nav navbar-nav hidden-xs">
-                                <li><a href="#" class="waves-effect">Files</a></li>
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle waves-effect" data-toggle="dropdown"
-                                       role="button" aria-haspopup="true" aria-expanded="false">Projects <span
-                                            class="caret"></span></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Web design</a></li>
-                                        <li><a href="#">Projects two</a></li>
-                                        <li><a href="#">Graphic design</a></li>
-                                        <li><a href="#">Projects four</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                            -->
-
-                            <!-- <div role="search" class="navbar-left app-search pull-left hidden-xs">
-                                 <input type="text" placeholder="Buscar..." class="form-control app-search-input">
-                                 <a href=""><i class="fa fa-search"></i></a>
-                            </div>
-
-                            <div class="pull-right">
-                                <div class="user-detail">
-                                    <div class="dropup">
-                                        <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true"><img
-                                                src="{% static 'assets/images/users/avatar-2.jpg' %}" alt="user-img" class="img-circle"> </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="javascript:void(0)"><i class="md md-face-unlock"></i> Profile</a></li>
-                                            <li><a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a></li>
-                                            <li><a href="javascript:void(0)"><i class="md md-lock"></i> Lock screen</a></li>
-                                            <li><a href="javascript:void(0)"><i class="md md-settings-power"></i> Logout</a></li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="dropup">
-                                        <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true">
-                                            <h5 class="m-t-10 m-b-0 pull-left">{{ user }} <span class="fa fa-sort-desc fa-lg m-l-10"></span></h5> </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="{% url 'userena_profile_detail' user.username %}"><i class="md md-face-unlock"></i> {% trans 'View profile' %}</a></li>
-                                            <li><a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a></li>
-                                            <li><a href="javascript:void(0)"><i class="md md-lock"></i> Lock screen</a></li>
-                                            <li><a href="{% url 'userena_signout' %}"><i class="md md-settings-power"></i> {% trans 'Cerrar Sesi&oacute;n' %}</a></li>
-                                        </ul>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div> -->
-                        <!--/.nav-collapse -->
-                   <!--  </div>
                 </div>
-            </div> -->
-            <!-- Top Bar End -->
-
-
-            <!-- ========== Left Sidebar Start ========== -->
-            <!-- <div class="left side-menu">
-                <div class="sidebar-inner slimscrollleft">
-
-                    <div id="sidebar-menu">
-                        <ul>
-                            <li class="text-muted menu-title">Menu</li>
-
-                            <li>
-                                <a href="{% url 'home' %}" class="waves-effect waves-primary subdrop"><i
-                                        class="md md-dashboard"></i><span> Dashboard </span></a>
-                            </li>
-
-
-                            <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i class="fa fa-stethoscope"></i> <span> Clínico </span>
-                                </a>
-                                <ul class="list-unstyled">
-                                    <li class="has_sub"><a href="#">Admisiones <i
-                                        class="fa fa-sort-desc pull-right"></i></a>
-                                        <ul class="list-unstyled">
-                                            <li><a href="{% url 'admision-index' %}">Remitidos por Emergencia</a></li> --> <!-- Falta añadirle diccionario -->
-                                            <!-- <li><a href="{% url 'admision-iniciar' %}">Admitir pacientes</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="has_sub"><a href="#">Consulta <i
-                                        class="fa fa-sort-desc pull-right"></i></a>
-                                        <ul class="list-unstyled">
-                                            <li><a href="{% url 'consultorio-index' %}">{% trans 'Consulta' %}</a></li>
-                                            <li><a href="{% url 'consultorio-agregar' %}">{% trans 'Agregar Consultorio' %}</a></li>
-                                            <li><a href="{% url 'clinique-orden-list' %}">{% trans 'Lista de Ordenes M&eacute;dicas' %}</a></li>
-                                            <li><a href="{% url 'clinique-incapacidad-list' %}">{% trans 'Lista de Incapacidades' %}</a></li>
-                                            <li><a href="{% url 'esperas' %}">{% trans 'Mostrar todos los pacientes en Espera' %}</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="{% url 'lab-index' %}">{% trans 'Laboratorio' %}</a></li>
-                                    <li class="has_sub"><a href="#">{% trans 'Centro de Im&aacute;genes' %} <i
-                                        class="fa fa-sort-desc pull-right"></i></a>
-                                        <ul class="list-unstyled">
-                                            <li><a href="{% url 'examen-index' %}">Estudios programados</a></li>
-                                            <li><a href="{% url 'examen-nuevo' %}">Programa estudio nuevo</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="has_sub"><a href="#">{% trans 'Emergencias' %} <i
-                                        class="fa fa-sort-desc pull-right"></i></a>
-                                        <ul class="list-unstyled">
-                                            <li><a href="{% url 'emergency-index' %}">Admisiones</a></li>
-                                            <li><a href="{% url 'emergency-ingresar' %}">Admitir paciente</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="{% url 'nightingale-index' %}">{% trans 'Hospitalizaci&oacute;n' %}</a></li> -->
-                                    <!-- <li><a href="ui-progressbars.html">Progress Bars</a></li>
-                                    <li><a href="ui-notification.html">Notification</a></li>
-                                    <li><a href="ui-bootstrap.html">BS Elements</a></li>
-                                    <li><a href="ui-typography.html">Typography</a></li> -->
-                                <!-- </ul>
-                            </li>
-
-                            <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i
-                                        class="oin ion-folder "></i><span> Administrativo </span> </a>
-                                <ul class="list-unstyled">
-                                    <li class="has_sub"><a href="#">{% trans 'Caja' %} <i
-                                        class="fa fa-sort-desc pull-right"></i></a>
-                                        <ul class="list-unstyled">
-                                            <li><a href="{% url 'invoice-index' %}">Ver Caja</a></li>
-                                            <li><a href="{% url 'invoice-new' %}html">{% trans 'Crear Recibo' %}</a></li>
-                                            <li><a href="{% url 'invoice-turno-nuevo' %}">{% trans 'Abrir Turno' %}</a></li>
-                                            <li><a href="{% url 'invoice-turno-activo' %}">{% trans 'Turnos Activos' %}</a></li>
-                                            <li><a href="{% url 'invoice-aseguradora-list' %}">{% trans 'Facturaci&oacute;n de Contratos' %}</a></li>
-                                            <li><a href="{% url 'invoice-estadisticas' %}">{% trans 'Estad&iacute;sticas' %}</a></li>
-                                            <li><a href="{% url 'invoice-cpc-list' %}">{% trans 'Cuentas Por Cobrar' %}</a></li>
-                                            <li><a href="{% url 'comprobante-agregar' %}">{% trans 'Crear un Comprobante de Retenci&oacute;n' %}</a></li>
-                                            <li><a href="{% url 'invoice-comprobantededuccion-list' %}">{% trans 'Ver Comprobantes de Retenci&oacute;n' %}</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="{% url 'invoice-pago-list' %}">{% trans 'Cuentas por Cobrar' %}</a></li>
-                                    <li class="has_sub"><a href="#">{% trans 'Contratos' %} <i
-                                        class="fa fa-sort-desc pull-right"></i></a>
-                                        <ul class="list-unstyled">
-                                            <li><a href="{% url 'contrato-index' %}">Ver Contratos</a></li>
-                                            <li><a href="{% url 'contrato-add' %}html">{% trans 'Crear Contrato' %}</a></li>
-                                            <li><a href="{% url 'contrato-empresarial-add' %}">{% trans 'Crear Contrato Empresarial' %}</a></li>
-                                            <li><a href="{% url 'contracts-master-add' %}">{% trans 'Crear Contrato Maestro' %}</a></li>
-                                            <li><a href="{% url 'contract-master-list' %}">{% trans 'Listar Contratos Maestros' %}</a></li>
-                                            <li><a href="{% url 'contracts-archivo-add' %}">{% trans 'Agregar Archivo de Importaci&oacute;n' %}</a></li>
-                                            <li><a href="{% url 'contracts-archivo-list' %}">{% trans 'Listar Archivo de Importaci&oacute;n' %}</a></li>
-                                            <li><a href="{% url 'vendedor-add' %}">{% trans 'Agregar Vendedor' %}</a></li>
-                                            <li><a href="{% url 'contrato-tipoevento-add' %}">{% trans 'Agregar Tipo de Evento' %}</a></li>
-                                            <li><a href="{% url 'contrato-beneficiario-list' %}">{% trans 'Contratos y Beneficiarios' %}</a></li>
-                                            <li><a href="{% url 'contrato-empresarial-list' %}">{% trans 'Contratos Empresariales' %}</a></li>
-                                            <li><a href="{% url 'empresa-add' %}">{% trans 'Agregar Empresa' %}</a></li>
-                                            <li><a href="{% url 'contracts-aseguradora-add' %}">{% trans 'Agregar Aseguradora' %}</a></li>
-                                            <li><a href="{% url 'contracts-meta-add' %}">{% trans 'Agregar Meta' %}</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="{% url 'scorecard-index' %}">{% trans 'BSC' %} </a></li>
-                                    <li class="has_sub"><a href="#">{% trans 'Encuestas' %} <i
-                                        class="fa fa-sort-desc pull-right"></i></a>
-                                        <ul class="list-unstyled">
-                                            <li><a href="{% url 'encuesta-list' %}">Ver Encuestas</a></li>
-                                            <li><a href="{% url 'encuesta-list' %}"> {% trans 'Regresar a Encuestas' %}</a></li>
-
-                                            {% for encuesta in object_list.all %}
-                                                <li> <a href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a></li>
-                                                {% empty %}
-                                                <li>{% trans 'No hay Encuestas Disponibles' %}</li>
-                                            {% endfor %}
-
-                                            <li><a href="{% url 'queja-aseguradora-agregar' %}">{% trans 'Agregar Queja de Aseguradora' %}</a></li>
-                                            <li><a href="{% url 'quejas' %}">{% trans 'Quejas' %}</a></li>
-                                            <li><a href="{% url 'solucion-list' %}">{% trans 'Soluciones Pendientes de Aprobaci&oacute;n' %}</a></li>
-                                            <li><a href="{% url 'solucion-aceptada-list' %}">{% trans 'Soluciones Pendientes de Notificaci&oacute;n' %}</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="has_sub"><a href="#">{% trans 'Inventario' %} <i
-                                        class="fa fa-sort-desc pull-right"></i></a>
-                                        <ul class="list-unstyled">
-                                            <li><a href="{% url 'inventario-index' %}">Ver Inventario</a></li>
-                                            <li><a href="{% url 'itemtemplate-create' %}">{% trans 'Agregar Producto' %}</a></li>
-                                            <li><a href="{% url 'inventario-create' %}">{% trans 'Agregar Almacen de Inventario' %}</a></li>
-                                            <li><a href="{% url 'cotizacion-create' %}">{% trans 'Agregar Cotizaci&oacute;n' %}</a></li>
-                                            <li><a href="{% url 'itemtemplate-list' %}">{% trans 'Mostrar Lista de Productos' %}</a></li>
-                                            <li><a href="{% url 'itemtype-list' %}">{% trans 'Tipos de Producto' %}</a></li>
-                                            <li><a href="{% url 'cotizacion-list' %}">{% trans 'Cotizaciones' %}</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="{% url 'budget-index' %}">{% trans 'Presupuesto' %} </a></li>
-                                    <li><a href="components-sweet-alert.html">{% trans 'Ingresos' %} </a></li>
-                                </ul>
-                            </li>
-                            <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i class="glyphicon glyphicon-user"></i><span> {% trans 'Pacientes' %} </span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="{% url 'persona-index' %}">Ver Pacientes</a></li>
-                                    <li><a href="{% url 'persona-create' %}">{% trans 'Agregar Paciente' %}</a></li>
-                                    <li><a href="{% url 'persona-duplicate-clean' %}">{% trans 'Unir Duplicados' %}</a></li>
-                                </ul>
-                            </li>
-
-                            <li>
-                                <a href="{% url 'admin:index' %}" class="waves-effect waves-primary"><i class="md md-settings"></i><span> {% trans 'Administraci&oacute;n' %} </span></a> -->
-                                <!-- <ul class="list-unstyled">
-                                    <li><a href="form-elements.html">General Elements</a></li>
-                                    <li><a href="form-advanced.html">Advanced Form</a></li>
-                                    <li><a href="form-validation.html">Form Validation</a></li>
-                                    <li><a href="form-wizard.html">Form Wizard</a></li>
-                                    <li><a href="form-wysiwig.html">WYSIWYG Editor</a></li>
-                                    <li><a href="form-summernote.html">Summernote</a></li>
-                                    <li><a href="form-uploads.html">Multiple File Upload</a></li>
-                                    <li><a href="form-xeditable.html">X-editable</a></li>
-                                </ul> -->
-                            <!-- </li> -->
-
-                            <!-- <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i class="md md-view-list"></i><span> Tables </span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="tables-basic.html">Basic Tables</a></li>
-                                    <li><a href="tables-datatable.html">Data Table</a></li>
-                                    <li><a href="tables-editable.html">Editable Table</a></li>
-                                    <li><a href="tables-responsive.html">Responsive Table</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i
-                                        class="md md-poll"></i><span> Charts </span> </a>
-                                <ul class="list-unstyled">
-                                    <li><a href="chart-flot.html">Flot Chart</a></li>
-                                    <li><a href="chart-morris.html">Morris Chart</a></li>
-                                    <li><a href="chart-chartist.html">Chartist chart</a></li>
-                                    <li><a href="chart-nvd3.html">Nvd3 charts</a></li>
-                                    <li><a href="chart-peity.html">Peity Charts</a></li>
-                                    <li><a href="chart-sparkline.html">Sparkline Charts</a></li>
-                                    <li><a href="chart-other.html">Other Chart</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i
-                                        class="md md-place"></i><span> Maps </span> <span
-                                        class="label label-primary pull-right">2</span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="map-google.html"> Google Map</a></li>
-                                    <li><a href="map-vector.html"> Vector Map</a></li>
-                                </ul>
-                            </li> -->
-
-                            <!-- <li class="text-muted menu-title">More</li>
-
-                            <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i
-                                        class="md md-mail"></i><span> Mail </span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="mail-inbox.html">Inbox</a></li>
-                                    <li><a href="mail-compose.html">Compose Mail</a></li>
-                                    <li><a href="mail-read.html">View Mail</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i
-                                        class="md md-pages"></i><span> Pages </span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="pages-blank.html">Blank Page</a></li>
-                                    <li><a href="pages-login.html">Login</a></li>
-                                    <li><a href="pages-register.html">Register</a></li>
-                                    <li><a href="pages-recoverpw.html">Recover Password</a></li>
-                                    <li><a href="pages-lock-screen.html">Lock Screen</a></li>
-                                    <li><a href="pages-404.html">404 Error</a></li>
-                                    <li><a href="pages-500.html">500 Error</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="has_sub">
-                                <a href="#" class="waves-effect waves-primary"><i
-                                        class="md md-place"></i><span> Extras </span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="extras-timeline.html">Timeline</a></li>
-                                    <li><a href="extras-invoice.html">Invoice</a></li>
-                                    <li><a href="extras-calendar.html"> Calendar</a></li>
-                                    <li><a href="extras-email-template.html">Email template</a></li>
-                                    <li><a href="extras-maintenance.html">Maintenance</a></li>
-                                    <li><a href="extras-coming-soon.html">Coming-soon</a></li>
-                                    <li><a href="extras-gallery.html"> Gallery</a></li>
-                                </ul>
-                            </li> -->
-
-                        <!-- </ul>
-                        <div class="clearfix"></div>
-                    </div>
-
-
-                    <div class="clearfix"></div>
-                </div> -->
-
-                <!-- <div class="user-detail">
-                    <div class="dropup">
-                        <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true"><img
-                                src="assets/images/users/avatar-2.jpg" alt="user-img" class="img-circle"> </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="javascript:void(0)"><i class="md md-face-unlock"></i> Profile</a></li>
-                            <li><a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a></li>
-                            <li><a href="javascript:void(0)"><i class="md md-lock"></i> Lock screen</a></li>
-                            <li><a href="javascript:void(0)"><i class="md md-settings-power"></i> Logout</a></li>
-                        </ul>
-                    </div>
-
-                    <h5 class="m-t-0 m-b-0">John Deo</h5>
-                    <p class="text-muted m-b-0">
-                        <small><i class="fa fa-circle text-success"></i> <span>Online</span></small>
-                    </p>
-                </div> -->
-            <!-- </div> -->
-            <!-- Left Sidebar End -->
-
-
-
-            <!-- ============================================================== -->
-            <!-- Start right Content here -->
-            <!-- ============================================================== -->
-            <!-- <div class="content-page"> -->
-                <!-- Start content -->
-                <!-- <div class="content">
-                    <div class="container"> -->
-
-                        <!-- Page-Title -->
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="page-title-box">
-                                    <h4 class="page-title">Bienvenido!</h4>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="widget-simple-chart text-right panel-box">
-                                    <div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
-                                    <h3 class="text-success counter">2569</h3>
-                                    <p class="text-muted text-nowrap">Ventas del mes</p>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6 col-lg-4">
-                                <div class="panel-box widget-icon">
-                                    <div>
-                                        <i class="md md-account-child text-primary"></i>
-                                        <div class="wid-icon-info">
-                                            <p class="text-muted m-b-5 font-13">Total de pacientes del mes</p>
-                                            <h4 class="m-t-0 m-b-5 counter">1452</h4>
-                                            <small class="text-success"><b>39% nuevos</b></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6 col-lg-4">
-                                <div class="panel-box widget-user">
-                                    <img src="static/assets/images/users/avatar-1.jpg" class="img-responsive img-circle" alt="user">
-                                    <div class="wid-u-info">
-                                        <h4 class="m-t-0 m-b-5">Nombre Gerente</h4>
-                                        <p class="text-muted m-b-5 font-13">Gerente General</p>
-                                        <!-- <small class="text-warning col-md-7"><b>Tareas generadas: 23</b></small>
-                                        <small class="text-warning col-md-5"><b>Preguntas: 14</b></small> -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end row -->
-
-                        <div class="row">
-                             <div class="col-lg-4">
-                                <div class="panel-box">
-                                    <h4 class="text-dark header-title m-t-0 m-b-30">Total de encuestas realizadas</h4>
-
-                                    <div class="widget-chart text-center">
-                                        <div id="sparkline2"></div>
-                                        <ul class="list-inline m-t-15">
-                                            <li>
-                                                <h5 class="text-muted m-t-20">Total</h5>
-                                                <h4 class="m-b-0">1500</h4>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4">
-                                <div class="panel-box">
-                                    <h4 class="text-dark header-title m-t-0 m-b-30">Quejas del mes</h4>
-
-                                    <div class="widget-chart text-center">
-                                        <div id="sparkline6"></div>
-                                        <ul class="list-inline m-t-15">
-                                            <li>
-                                                <h5 class="text-muted m-t-20">Total</h5>
-                                                <h4 class="m-b-0">153</h4>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4">
-                                <div class="panel-box">
-                                    <h4 class="text-dark  header-title m-t-0 m-b-30">Pacientes totales/atendidos del mes</h4>
-
-                                    <div class="widget-chart text-center">
-                                        <div id="sparkline1"></div>
-                                        <ul class="list-inline m-t-15">
-                                            <li>
-                                                <h5 class="text-muted m-t-20" style="color: #47b4dc;">Pacientes totales</h5>
-                                                <h4 class="m-b-0">1000</h4>
-                                            </li>
-                                            <li>
-                                                <h5 class="text-muted m-t-20" style="color:#5d9cec;">Pacientes del mes</h5>
-                                                <h4 class="m-b-0">523</h4>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <!-- end row -->
-
-                        <!-- start row -->
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="panel-box">
-                                    <h4 class="text-dark header-title m-t-0 m-b-30">Quejas vs Atenciones</h4>
-
-                                    <div class="widget-chart text-center">
-                                        <div id="sparkline3"></div>
-                                        <ul class="list-inline m-t-15">
-                                            <li>
-                                                <h5 class="text-muted m-t-20" style="color: #33c37d;">Quejas</h5>
-                                                <h4 class="m-b-0">20</h4>
-                                            </li>
-                                            <li>
-                                                <h5 class="text-muted m-t-20"  style="color:#3bafda;">Atenciones</h5>
-                                                <h4 class="m-b-0">80</h4>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4">
-                                <div class="panel-box">
-                                    <h4 class="text-dark  header-title m-t-0 m-b-30">Ventas por aseguradoras</h4>
-
-                                    <div class="widget-chart text-center">
-                                        <div id="sparkline4"></div>
-                                        <ul class="list-inline m-t-15">
-                                            <li>
-                                                <h5 class="text-muted m-t-20" style="color:#3bafda;">Total</h5>
-                                                <h4 class="m-b-0">1350</h4>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6 col-lg-4">
-                                <div class="panel-box widget-icon">
-                                    <div>
-                                        <i class="md md-assignment-turned-in text-primary"></i>
-                                        <div class="wid-icon-info">
-                                            <p class="text-muted m-b-5 font-13">Tareas generadas del mes</p>
-                                            <h4 class="m-t-0 m-b-5 counter">638</h4>
-                                            <small class="text-success"><b>28% nuevos</b></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6 col-lg-4">
-                                <div class="panel-box widget-icon">
-                                    <div>
-                                        <i class="md md-question-answer text-primary"></i>
-                                        <div class="wid-icon-info">
-                                            <p class="text-muted m-b-5 font-13">Preguntas realizadas</p>
-                                            <h4 class="m-t-0 m-b-5 counter">80</h4>
-                                            <small class="text-success"><b>85% contestadas</b></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end row -->
-
-
-                        <!-- WEATHER WIDGET -->
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="panel-box">
-                                     <h4 class="text-dark  header-title m-t-0 m-b-30">Tegucigalpa</h4>
-                                    <div class="row">
-                                        <div class="col-sm-7">
-
-                                                <div class="row">
-                                                    <div class="col-xs-6 text-center">
-                                                        <canvas id="cloudy" width="100" height="100"></canvas>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <h2 class="m-t-0 text-muted"><b> 23°</b></h2>
-                                                        <p class="text-muted">Nublado</p>
-                                                        <p class="text-muted">15km/h - 37%</p>
-                                                    </div>
-                                                </div> <!-- end row -->
-
-                                        </div>
-                                        <div class="col-sm-5">
-                                            <div class="row">
-                                                <div class="col-xs-4 text-center">
-                                                    <h4 class="text-muted m-t-0">MIE</h4>
-                                                    <canvas id="sleet" width="35" height="35"></canvas>
-                                                    <h4 class="text-muted">30<i class="wi-degrees"></i></h4>
-                                                </div>
-                                                <div class="col-xs-4 text-center">
-                                                    <h4 class="text-muted m-t-0">JUE</h4>
-                                                    <canvas id="fog" width="35" height="35"></canvas>
-                                                    <h4 class="text-muted">28<i class="wi-degrees"></i></h4>
-                                                </div>
-                                                <div class="col-xs-4 text-center">
-                                                    <h4 class="text-muted m-t-0">VIE</h4>
-                                                    <canvas id="partly-cloudy-night" width="35" height="35"></canvas>
-                                                    <h4 class="text-muted">33<i class="wi-degrees"></i></h4>
-                                                </div>
-                                            </div> <!--  End row -->
-                                        </div> <!-- col-->
-                                    </div> <!-- End row -->
-                                </div>
-                            </div> <!--  end col -->
-
-                            <div class="col-lg-6">
-                                <div class="panel-box">
-                                     <h4 class="text-dark  header-title m-t-0 m-b-30">San Pedro Sula</h4>
-                                    <div class="row">
-                                        <div class="col-sm-7">
-                                            <div class="row">
-                                                <div class="col-xs-6 text-center">
-                                                    <canvas id="clear-day" width="100" height="100"></canvas>
-                                                </div>
-                                                <div class="col-xs-6">
-                                                    <h2 class="m-t-0 text-muted"><b>33°</b></h2>
-                                                    <p class="text-muted">Soleado</p>
-                                                    <p class="text-muted">10km/h - 28%</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-5">
-                                            <div class="row">
-                                                <div class="col-xs-4 text-center">
-                                                    <h4 class="text-muted m-t-0">MIE</h4>
-                                                    <canvas id="snow" width="35" height="35"></canvas>
-                                                    <h4 class="text-muted">30<i class="wi-degrees"></i></h4>
-                                                </div>
-                                                <div class="col-xs-4 text-center">
-                                                    <h4 class="text-muted m-t-0">JUE</h4>
-                                                    <canvas id="wind" width="35" height="35"></canvas>
-                                                    <h4 class="text-muted">28<i class="wi-degrees"></i></h4>
-                                                </div>
-                                                <div class="col-xs-4 text-center">
-                                                    <h4 class="text-muted m-t-0">VIE</h4>
-                                                    <canvas id="partly-cloudy-day" width="35" height="35"></canvas>
-                                                    <h4 class="text-muted">33<i class="wi-degrees"></i></h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-                        <!-- end row/ WEATHER -->
-
-
-
-                        <!-- <div class="row"> -->
-                            <!-- <div class="col-lg-8">
-                                <div class="card-box">
-                                    <h4 class="text-dark  header-title m-t-0">Latest Projects</h4>
-                                    <p class="text-muted m-b-25 font-13">
-                                        Your awesome text goes here.
-                                    </p>
-
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Project Name</th>
-                                                <th>Start Date</th>
-                                                <th>Due Date</th>
-                                                <th>Status</th>
-                                                <th>Assign</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Minton Admin v1</td>
-                                                    <td>01/01/2016</td>
-                                                    <td>26/04/2016</td>
-                                                    <td><span class="label label-info">Released</span></td>
-                                                    <td>Coderthemes</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>Minton Frontend v1</td>
-                                                    <td>01/01/2016</td>
-                                                    <td>26/04/2016</td>
-                                                    <td><span class="label label-success">Released</span></td>
-                                                    <td>Minton admin</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>Minton Admin v1.1</td>
-                                                    <td>01/05/2016</td>
-                                                    <td>10/05/2016</td>
-                                                    <td><span class="label label-pink">Pending</span></td>
-                                                    <td>Coderthemes</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>4</td>
-                                                    <td>Minton Frontend v1.1</td>
-                                                    <td>01/01/2016</td>
-                                                    <td>31/05/2016</td>
-                                                    <td><span class="label label-purple">Work in Progress</span>
-                                                    </td>
-                                                    <td>Minton admin</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>5</td>
-                                                    <td>Minton Admin v1.3</td>
-                                                    <td>01/01/2016</td>
-                                                    <td>31/05/2016</td>
-                                                    <td><span class="label label-warning">Coming soon</span></td>
-                                                    <td>Coderthemes</td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>6</td>
-                                                    <td>Minton Admin v1.3</td>
-                                                    <td>01/01/2016</td>
-                                                    <td>31/05/2016</td>
-                                                    <td><span class="label label-primary">Coming soon</span></td>
-                                                    <td>Minton admin</td>
-                                                </tr>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div> -->
-                            <!-- end col -8 -->
-
-                            <!-- <div class="col-lg-4">
-                                <div class="card-box widget-user">
-                                    <div>
-                                        <img src="static/assets/images/users/avatar-1.jpg" class="img-responsive img-circle" alt="user">
-                                        <div class="wid-u-info">
-                                            <h4 class="m-t-0 m-b-5">Nombre Gerente</h4>
-                                            <p class="text-muted m-b-5 font-13">Gerente General</p>
-                                            <small class="text-warning col-md-7"><b>Tareas generadas</b></small>
-                                            <small class="text-warning col-md-5"><b>Preguntas</b></small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card-box widget-user">
-                                    <div>
-                                        <img src="static/assets/images/users/avatar-2.jpg" class="img-responsive img-circle" alt="user">
-                                        <div class="wid-u-info">
-                                            <h4 class="m-t-0 m-b-5">Tomaslau</h4>
-                                            <p class="text-muted m-b-5 font-13">coderthemes@gmail.com</p>
-                                            <small class="text-success"><b>User</b></small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card-box widget-user">
-                                    <div>
-                                        <img src="static/assets/images/users/avatar-7.jpg" class="img-responsive img-circle" alt="user">
-                                        <div class="wid-u-info">
-                                            <h4 class="m-t-0 m-b-5">Ok</h4>
-                                            <p class="text-muted m-b-5 font-13">coderthemes@gmail.com</p>
-                                            <small class="text-pink"><b>Admin</b></small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div> -->
-
-                        <!-- </div> -->
-                        <!-- end row -->
-
-
-                    <!-- </div> -->
-                    <!-- end container -->
-                <!-- </div> -->
-                <!-- end content -->
-
-                <!-- <footer class="footer text-right">
-                    2016 © Hospinet
-                </footer>
- -->
-            <!-- </div> -->
-            <!-- ============================================================== -->
-            <!-- End Right content here -->
-            <!-- ============================================================== -->
-
-
-            <!-- Right Sidebar
-            <div class="side-bar right-bar">
-                <div class="nicescroll">
-                    <ul class="nav nav-tabs tabs">
-                        <li class="active tab">
-                            <a href="#home-2" data-toggle="tab" aria-expanded="false">
-                                <span class="visible-xs"><i class="fa fa-home"></i></span>
-                                <span class="hidden-xs">Activity</span>
-                            </a>
-                        </li>
-                        <li class="tab">
-                            <a href="#profile-2" data-toggle="tab" aria-expanded="false">
-                                <span class="visible-xs"><i class="fa fa-user"></i></span>
-                                <span class="hidden-xs">Chat</span>
-                            </a>
-                        </li>
-                        <li class="tab">
-                            <a href="#messages-2" data-toggle="tab" aria-expanded="true">
-                                <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
-                                <span class="hidden-xs">Settings</span>
-                            </a>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="panel-box widget-user">
+                <img src="{% static 'images/users/avatar-1.jpg' %}"
+                     class="img-responsive img-circle" alt="user">
+                <div class="wid-u-info">
+                    <h4 class="m-t-0 m-b-5">{% trans 'Nombre Gerente' %}</h4>
+                    <p class="text-muted m-b-5 font-13">{% trans 'Gerente General' %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark header-title m-t-0 m-b-30">{% trans 'Total de Encuestas Realizadas' %}</h4>
+
+                <div class="widget-chart text-center">
+                    <div id="sparkline2"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20">{% trans 'Total' %}</h5>
+                            <h4 class="m-b-0">1500</h4>
                         </li>
                     </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade in active" id="home-2">
-                            <div class="timeline-2">
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">5 minutes ago</small>
-                                        <p><strong><a href="#" class="text-info">John Doe</a></strong> Uploaded a photo <strong>"DSC000586.jpg"</strong></p>
-                                    </div>
-                                </div>
+                </div>
+            </div>
+        </div>
 
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">30 minutes ago</small>
-                                        <p><a href="" class="text-info">Lorem</a> commented your post.</p>
-                                        <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
-                                    </div>
-                                </div>
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark header-title m-t-0 m-b-30">
+                    {% trans 'Quejas del Mes' %}
+                </h4>
+                <div class="widget-chart text-center">
+                    <div id="sparkline6"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20">Total</h5>
+                            <h4 class="m-b-0">153</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">59 minutes ago</small>
-                                        <p><a href="" class="text-info">Jessi</a> attended a meeting with<a href="#" class="text-success">John Doe</a>.</p>
-                                        <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
-                                    </div>
-                                </div>
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark  header-title m-t-0 m-b-30">{% trans 'Pacientes del Mes' %}</h4>
 
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">1 hour ago</small>
-                                        <p><strong><a href="#" class="text-info">John Doe</a></strong>Uploaded 2 new photos</p>
-                                    </div>
-                                </div>
+                <div class="widget-chart text-center">
+                    <div id="sparkline1"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color: #47b4dc;">{% trans 'Pacientes Totales' %}</h5>
+                            <h4 class="m-b-0">1000</h4>
+                        </li>
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color:#5d9cec;">{% trans 'Pacientes del mes' %}</h5>
+                            <h4 class="m-b-0">523</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">3 hours ago</small>
-                                        <p><a href="" class="text-info">Lorem</a> commented your post.</p>
-                                        <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
-                                    </div>
-                                </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark header-title m-t-0 m-b-30">{% trans 'Quejas y Atenciones' %}</h4>
 
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">5 hours ago</small>
-                                        <p><a href="" class="text-info">Jessi</a> attended a meeting with<a href="#" class="text-success">John Doe</a>.</p>
-                                        <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
-                                    </div>
-                                </div>
+                <div class="widget-chart text-center">
+                    <div id="sparkline3"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color: #33c37d;">{% trans 'Quejas' %}</h5>
+                            <h4 class="m-b-0">20</h4>
+                        </li>
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color:#3bafda;">{% trans 'Atenciones' %}</h5>
+                            <h4 class="m-b-0">80</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark  header-title m-t-0 m-b-30">{% trans 'Ventas por Aseguradora' %}</h4>
+
+                <div class="widget-chart text-center">
+                    <div id="sparkline4"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color:#3bafda;">Total</h5>
+                            <h4 class="m-b-0">1350</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="panel-box widget-icon">
+                <div>
+                    <i class="md md-assignment-turned-in text-primary"></i>
+                    <div class="wid-icon-info">
+                        <p class="text-muted m-b-5 font-13">Tareas generadas del
+                            mes</p>
+                        <h4 class="m-t-0 m-b-5 counter">638</h4>
+                        <small class="text-success"><b>28% nuevos</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="panel-box widget-icon">
+                <div>
+                    <i class="md md-question-answer text-primary"></i>
+                    <div class="wid-icon-info">
+                        <p class="text-muted m-b-5 font-13">{% trans 'Encuestas' %}</p>
+                        <h4 class="m-t-0 m-b-5 counter">80</h4>
+                        <small class="text-success"><b>85% contestadas</b>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel-box">
+                <h4 class="text-dark  header-title m-t-0 m-b-30">
+                    Tegucigalpa</h4>
+                <div class="row">
+                    <div class="col-sm-7">
+
+                        <div class="row">
+                            <div class="col-xs-6 text-center">
+                                <canvas id="cloudy" width="100"
+                                        height="100"></canvas>
                             </div>
-                        </div>
-
-
-
-                        <div class="tab-pane fade" id="profile-2">
-                            <div class="contact-list nicescroll">
-                                <ul class="list-group contacts-list">
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-1.jpg" alt="">
-                                            </div>
-                                            <span class="name">Chadengle</span>
-                                            <i class="fa fa-circle online"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-2.jpg" alt="">
-                                            </div>
-                                            <span class="name">Tomaslau</span>
-                                            <i class="fa fa-circle online"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-3.jpg" alt="">
-                                            </div>
-                                            <span class="name">Stillnotdavid</span>
-                                            <i class="fa fa-circle online"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-4.jpg" alt="">
-                                            </div>
-                                            <span class="name">Kurafire</span>
-                                            <i class="fa fa-circle online"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-5.jpg" alt="">
-                                            </div>
-                                            <span class="name">Shahedk</span>
-                                            <i class="fa fa-circle away"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-6.jpg" alt="">
-                                            </div>
-                                            <span class="name">Adhamdannaway</span>
-                                            <i class="fa fa-circle away"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-7.jpg" alt="">
-                                            </div>
-                                            <span class="name">Ok</span>
-                                            <i class="fa fa-circle away"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-8.jpg" alt="">
-                                            </div>
-                                            <span class="name">Arashasghari</span>
-                                            <i class="fa fa-circle offline"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-9.jpg" alt="">
-                                            </div>
-                                            <span class="name">Joshaustin</span>
-                                            <i class="fa fa-circle offline"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="#">
-                                            <div class="avatar">
-                                                <img src="assets/images/users/avatar-10.jpg" alt="">
-                                            </div>
-                                            <span class="name">Sortino</span>
-                                            <i class="fa fa-circle offline"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                </ul>
+                            <div class="col-xs-6">
+                                <h2 class="m-t-0 text-muted"><b> 23°</b></h2>
+                                <p class="text-muted">Nublado</p>
+                                <p class="text-muted">15km/h - 37%</p>
                             </div>
-                        </div>
+                        </div> <!-- end row -->
 
-
-
-                        <div class="tab-pane fade" id="messages-2">
-
-                            <div class="row m-t-20">
-                                <div class="col-xs-8">
-                                    <h5 class="m-0">Notifications</h5>
-                                    <p class="text-muted m-b-0"><small>Do you need them?</small></p>
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    <input type="checkbox" checked data-plugin="switchery" data-color="#3bafda" data-size="small"/>
-                                </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">MIE</h4>
+                                <canvas id="sleet" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">30<i
+                                        class="wi-degrees"></i></h4>
                             </div>
-
-                            <div class="row m-t-20">
-                                <div class="col-xs-8">
-                                    <h5 class="m-0">API Access</h5>
-                                    <p class="m-b-0 text-muted"><small>Enable/Disable access</small></p>
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    <input type="checkbox" checked data-plugin="switchery" data-color="#3bafda" data-size="small"/>
-                                </div>
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">JUE</h4>
+                                <canvas id="fog" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">28<i
+                                        class="wi-degrees"></i></h4>
                             </div>
-
-                            <div class="row m-t-20">
-                                <div class="col-xs-8">
-                                    <h5 class="m-0">Auto Updates</h5>
-                                    <p class="m-b-0 text-muted"><small>Keep up to date</small></p>
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    <input type="checkbox" checked data-plugin="switchery" data-color="#3bafda" data-size="small"/>
-                                </div>
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">VIE</h4>
+                                <canvas id="partly-cloudy-night" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">33<i
+                                        class="wi-degrees"></i></h4>
                             </div>
-
-                            <div class="row m-t-20">
-                                <div class="col-xs-8">
-                                    <h5 class="m-0">Online Status</h5>
-                                    <p class="m-b-0 text-muted"><small>Show your status to all</small></p>
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    <input type="checkbox" checked data-plugin="switchery" data-color="#3bafda" data-size="small"/>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
-            </div>-->
-            <!-- /Right-bar -->
+            </div>
+        </div>
 
-        <!-- </div> -->
-        <!-- END wrapper -->
+        <div class="col-lg-6">
+            <div class="panel-box">
+                <h4 class="text-dark  header-title m-t-0 m-b-30">San Pedro
+                    Sula</h4>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="row">
+                            <div class="col-xs-6 text-center">
+                                <canvas id="clear-day" width="100"
+                                        height="100"></canvas>
+                            </div>
+                            <div class="col-xs-6">
+                                <h2 class="m-t-0 text-muted"><b>33°</b></h2>
+                                <p class="text-muted">Soleado</p>
+                                <p class="text-muted">10km/h - 28%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">MIE</h4>
+                                <canvas id="snow" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">30<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">JUE</h4>
+                                <canvas id="wind" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">28<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">VIE</h4>
+                                <canvas id="partly-cloudy-day" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">33<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var resizefunc = [];
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js" integrity="sha256-jDnOKIOq2KNsQZTcBTEnsp76FnfMEttF6AV2DF2fFNE=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js" integrity="sha256-JtQPj/3xub8oapVMaIijPNoM0DHoAtgh/gwFYuN5rik=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js" integrity="sha256-egVvxkq6UBCQyKzRBrDHu8miZ5FOaVrjSqQqauKglKc=" crossorigin="anonymous"></script>
 
+    <!-- flot Chart -->
+    <script type="text/javascript"
+            src="{% static 'assets/plugins/flot-chart/jquery.flot.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'assets/plugins/flot-chart/jquery.flot.time.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'assets/plugins/flot-chart/jquery.flot.tooltip.min.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'assets/plugins/flot-chart/jquery.flot.resize.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'assets/plugins/flot-chart/jquery.flot.pie.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'assets/plugins/flot-chart/jquery.flot.selection.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'assets/plugins/flot-chart/jquery.flot.stack.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'assets/plugins/flot-chart/jquery.flot.crosshair.js' %}">
 
+    </script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/circliful/1.0.2/js/jquery.circliful.min.js" integrity="sha256-miYqLLtjt0ebMfVWpkCKQgbfdx4ppjim+JYZPewRTZk=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js" integrity="sha256-BuAkLaFyq4WYXbN3TFSsG1M5GltEeFehAMURi4KBpUM=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skycons/1396634940/skycons.min.js" integrity="sha256-tZNzlXmrMrO9BLT6Gv4Y0LfAN8HdbZ7+LIuNf6WkFC0=" crossorigin="anonymous"></script>
 
-        <script>
-            var resizefunc = [];
-        </script>
+    <!-- Todos app  -->
+    <script type="text/javascript"src="{% static 'pages/jquery.todo.js' %}"></script>
 
-        <!-- Plugins  -->
-        <!-- <script type="text/javascript" src="{% static 'assets/js/jquery.min.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/bootstrap.min.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/detect.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/fastclick.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/jquery.blockUI.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/waves.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/wow.min.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/jquery.nicescroll.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/js/jquery.scrollTo.min.js' %}"></script>
-         <script type="text/javascript" src="{% static 'assets/plugins/switchery/switchery.min.js' %}"></script>
+    <!-- Chat App  -->
+    <script type="text/javascript"src="{% static 'pages/jquery.chat.js' %}"></script>
 
+    <!-- Page js  -->
+    <script type="text/javascript"src="{% static 'pages/jquery.dashboard.js' %}"></script>
 
-        <!-- Moment  -->
-        <script type="text/javascript" src="{% static 'assets/plugins/moment/moment.js' %}"></script>
+    <script type="text/javascript"src="{% static 'pages/jquery.widgets.js' %}"></script>
 
-        <!-- Counter Up  -->
-        <script type="text/javascript" src="{% static 'assets/plugins/waypoints/lib/jquery.waypoints.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/counterup/jquery.counterup.min.js' %}"></script>
-
-        <!-- Sweet Alert  -->
-        <script type="text/javascript" src="{% static 'assets/plugins/sweetalert/dist/sweetalert.min.js' %}"></script>
-
-        <!-- flot Chart -->
-        <script type="text/javascript" src="{% static 'assets/plugins/flot-chart/jquery.flot.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/flot-chart/jquery.flot.time.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/flot-chart/jquery.flot.tooltip.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/flot-chart/jquery.flot.resize.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/flot-chart/jquery.flot.pie.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/flot-chart/jquery.flot.selection.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/flot-chart/jquery.flot.stack.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/flot-chart/jquery.flot.crosshair.js' %}"></script>
-
-        <!-- circliful Chart -->
-        <script type="text/javascript" src="{% static 'assets/plugins/jquery-circliful/js/jquery.circliful.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/plugins/jquery-sparkline/jquery.sparkline.min.js' %}"></script>
-
-        <!-- skycons -->
-        <script type="text/javascript" src="{% static 'assets/plugins/skyicons/skycons.min.js' %}"></script>
-
-        <!-- Todos app  -->
-        <script type="text/javascript" src="{% static 'assets/pages/jquery.todo.js' %}"></script>
-
-        <!-- Chat App  -->
-        <script type="text/javascript" src="{% static 'assets/pages/jquery.chat.js' %}"></script>
-
-        <!-- Page js  -->
-        <script type="text/javascript" src="{% static 'assets/pages/jquery.dashboard.js' %}"></script>
-
-        <script type="text/javascript" src="{% static 'assets/pages/jquery.widgets.js' %}"></script>
-
-
-        <!-- Custom main Js -->
-        <!-- <script type="text/javascript" src="{% static 'assets/js/jquery.core.js' %}"></script>
-        <script type="text/javascript" src="{% static 'assets/js/jquery.app.js' %}"></script> -->
-
-
-        <script type="text/javascript">
-            jQuery(document).ready(function($) {
-                $('.counter').counterUp({
-                    delay: 100,
-                    time: 1200
-                });
-                $('.circliful-chart').circliful();
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $('.counter').counterUp({
+                delay: 100,
+                time: 1200
             });
+            $('.circliful-chart').circliful();
+        });
 
-            /* BEGIN SVG WEATHER ICON */
-            if (typeof Skycons !== 'undefined'){
+        /* BEGIN SVG WEATHER ICON */
+        if (typeof Skycons !== 'undefined') {
             var icons = new Skycons(
-                {"color": "#00b19d"},
-                {"resizeClear": true}
-                ),
-                    list  = [
+                    {"color": "#00b19d"},
+                    {"resizeClear": true}
+                    ),
+                    list = [
                         "clear-day", "clear-night", "partly-cloudy-day",
                         "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
                         "fog"
                     ],
                     i;
 
-                for(i = list.length; i--; )
+            for (i = list.length; i--;)
                 icons.set(list[i], list[i]);
-                icons.play();
-            };
+            icons.play();
+        }
+        ;
 
-        </script>
+    </script>
 {% endblock %}
 <!-- </html> -->
