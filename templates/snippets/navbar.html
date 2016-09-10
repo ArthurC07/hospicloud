@@ -1,140 +1,776 @@
-{% load l10n %}{% load i18n %}
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse"
-                    data-target=".navbar-collapse">
-                <span class="sr-only">{% trans 'Toggle navigation' %}</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{% url 'home' %}">Hospinet</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle"
-                       data-toggle="dropdown">{% trans 'Cl&iacute;nico' %} <b
-                            class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        {% if modules.hospitalizacion %}
-                            <li>
-                                <a href="{% url 'admision-index' %}">{% trans 'Admisiones' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.consulta %}
-                            <li>
-                                <a href="{% url 'consultorio-index' %}">{% trans 'Consulta' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.laboratorio %}
-                            <li>
-                                <a href="{% url 'lab-index' %}">{% trans 'Laboratorio' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.imagenes %}
-                            <li>
-                                <a href="{% url 'examen-index' %}">{% trans 'Centro de Im&aacute;genes' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.emergencia %}
-                            <li>
-                                <a href="{% url 'emergency-index' %}">{% trans 'Emergencias' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.hospitalizacion %}
-                            <li>
-                                <a href="{% url 'nightingale-index' %}">{% trans 'Hospitalizaci&oacute;n' %}</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle"
-                       data-toggle="dropdown">{% trans 'Administrativo' %} <b
-                            class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        {% if modules.caja %}
-                            <li>
-                                <a href="{% url 'invoice-index' %}">{% trans 'Caja' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'invoice-pago-list' %}">{% trans 'Cuentas por Cobrar' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.contratos %}
-                            <li>
-                                <a href="{% url 'contrato-index' %}">{% trans 'Contratos' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.rrhh %}
-                            <li>
-                                <a href="{% url 'scorecard-index' %}">{% trans 'BSC' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'encuesta-list' %}">{% trans 'Encuestas' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.inventario %}
-                            <li>
-                                <a href="{% url 'inventario-index' %}">{% trans 'Inventario' %}</a>
-                            </li>
-                        {% endif %}
-                        {% if modules.presupuesto %}
-                            <li>
-                                <a href="{% url 'budget-index' %}">{% trans 'Presupuesto' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'income-index' %}">{% trans 'Ingresos' %}</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </li>
-                <li>
-                    <a href="{% url 'persona-index' %}">{% trans 'Personas' %}</a>
-                </li>
-                <li>
-                    <a href="{% url 'admin:index' %}">{% trans 'Administraci&oacute;n' %}</a>
-                </li>
-            </ul>
-            <div class="navbar-right">
-                <form class="navbar-form navbar-left" method="get"
-                      action="{% url 'persona-search' %}">
-                    <div class="form-group">
-                        <input type="text" name="query" class="form-control"
-                               placeholder="Buscar Persona">
-                        {% csrf_token %}
-                    </div>
-                    <button type="submit" class="btn btn-default">
-                        {% trans 'Buscar' %}
-                    </button>
-                </form>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        {% if user.is_authenticated %}
-                            <a class="btn-block dropdown-toggle"
-                               data-toggle="dropdown" href="#"> <i
-                                    class="glyphicon glyphicon-user"></i> {{ user }}
-                                <span class="caret"></span> </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{% url 'userena_profile_detail' user.username %}">{% trans 'View profile' %}</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'userena_signout' %}"
-                                       class="navbar-link">
-                                        {% trans 'Cerrar Sesi&oacute;n' %}
-                                    </a>
-                                </li>
-                            </ul>
-                        {% else %}
-                            <a href="{% url 'userena_signin' %}"
-                               class="navbar-link">{% trans 'Iniciar Sesi&oacute;n' %}</a>
-                        {% endif %}
-                    </li>
-                </ul>
-            </div>
+{% load l10n %}{% load i18n %}{% load staticfiles %}
+<!-- Top Bar Start -->
+<div class="topbar">
+
+    <!-- LOGO -->
+    <div class="topbar-left">
+        <div class="text-center">
+            <a href="{% url 'home' %}" class="logo">
+                <img src="{% static 'assets/images/logo-eps-medical.png' %}"
+                     alt="logo-img">
+            </a>
         </div>
     </div>
-</nav>
+
+    <!-- Navbar -->
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="">
+                <div class="pull-left">
+                    <button class="button-menu-mobile open-left waves-effect">
+                        <i class="md md-menu"></i>
+                    </button>
+                    <span class="clearfix"></span>
+                </div>
+                <!-- <form role="search" class="navbar-left app-search pull-left hidden-xs">
+                     <input type="text" placeholder="Buscar..." class="form-control app-search-input">
+                     <a href=""><i class="fa fa-search"></i></a>
+                </form> -->
+                <ul class="nav navbar-nav">
+                    <!-- SUBMENU ADMISIONES -->
+                    <li class="{% if active_tab == 'tab2' %} active {% else %} hidden {% endif %}">
+                        <a class="waves-effect"
+                           href="{% url 'admision-index' %}"
+                           style="color: #fff !important;">{% trans 'Remitidos por Emergencia' %}</a>
+                    </li> <!-- Falta añadirle diccionario -->
+                    <li class="{% if active_tab == 'tab2' %} active {% else %} hidden {% endif %}">
+                        <a class="waves-effect"
+                           href="{% url 'admision-iniciar' %}"
+                           style="color: #fff !important;">{% trans 'Admitir pacientes' %}</a>
+                    </li>
+                    <!-- SUBMENU CONSULTA -->
+                    <li class="{% if active_tab == 'tab4' %} active {% else %} hidden {% endif %}">
+                        <a class="waves-effect"
+                           href="{% url 'consultorio-index' %}"
+                           style="color: #fff !important;">{% trans 'Consulta' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab5' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'consultorio-agregar' %}"
+                           style="color: #fff !important;">{% trans 'Agregar Consultorio' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab6' %} active {% else %} hidden {% endif %}">
+                        <a class="dropdown-toggle waves-effect"
+                           data-toggle="dropdown" href="#"
+                           style="color: #fff !important;">Lista <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="waves-effect {% if active_tab == 'tab6' %} active {% else %} hidden {% endif %}"
+                                   href="{% url 'clinique-orden-list' %}">{% trans 'Lista de Ordenes M&eacute;dicas' %}</a>
+                            </li>
+                            <li>
+                                <a class="waves-effect {% if active_tab == 'tab7' %} active {% else %} hidden {% endif %}"
+                                   href="{% url 'clinique-incapacidad-list' %}">{% trans 'Lista de Incapacidades' %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="{% if active_tab == 'tab8' %} active {% else %} hidden {% endif %}">
+                        <a class="waves-effect" href="{% url 'esperas' %}"
+                           style="color: #fff !important;">{% trans 'Pacientes en Espera' %}</a>
+                    </li>
+
+                    <!-- CENTRO DE IMAGENES -->
+                    <li class="{% if active_tab == 'tab10' %} active {% else %} hidden{% endif %}">
+                        <a href="{% url 'examen-index' %}"
+                           style="color: #fff !important;">{% trans 'Estudios programados' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab11' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'examen-nuevo' %}"
+                           style="color: #fff !important;">{% trans 'Programar Estudio Nuevo' %}</a>
+                    </li>
+
+                    <!-- SUBMENU EMERGENCIAS -->
+                    <li class="
+                              {% if active_tab == 'tab12' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'emergency-index' %}"
+                           style="color: #fff !important;">{% trans 'Admisiones' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab13' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'emergency-ingresar' %}"
+                           style="color: #fff !important;">{% trans 'Admitir Paciente' %}</a>
+                    </li>
+
+                    <!-- SUBMENU CAJA -->
+                    <li class="{% if active_tab == 'tab15' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'invoice-index' %}"
+                           style="color: #fff !important;">{% trans 'Caja' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab16' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'invoice-new' %}"
+                           style="color: #fff !important;">{% trans 'Crear Recibo' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab17' %} active {% else %} hidden {% endif %}">
+                        <a class="dropdown-toggle waves-effect"
+                           data-toggle="dropdown"
+                           href="{% url 'invoice-turno-nuevo' %}"
+                           style="color: #fff !important;">
+                            {% trans 'Turno' %}<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="waves-effect{% if active_tab == 'tab17' %} active  {% else %} hidden {% endif %}">
+                                <a href="{% url 'invoice-turno-nuevo' %}">{% trans 'Abrir Turno' %}</a>
+                            </li>
+                            <li class="waves-effect{% if active_tab == 'tab18' %} active{% endif %}">
+                                <a href="{% url 'invoice-turno-activo' %}">{% trans 'Turnos Activos' %}</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="{% if active_tab == 'tab19' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'invoice-aseguradora-list' %}"
+                           style="color: #fff !important;">{% trans 'Facturaci&oacute;n de Contratos' %}</a>
+                    </li>
+                    <li class="
+                              {% if active_tab == 'tab20' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'invoice-estadisticas' %}"
+                           style="color: #fff !important;">{% trans 'Estad&iacute;sticas' %}</a>
+                    </li>
+                    <li class="
+                              {% if active_tab == 'tab21' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'invoice-cpc-list' %}"
+                           style="color: #fff !important;">{% trans 'Cuentas Por Cobrar' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab22' or active_tab == 'tab23' %} active {% else %} hidden {% endif %}">
+                        <a class="dropdown-toggle waves-effect"
+                           data-toggle="dropdown"
+                           href="{% url 'invoice-turno-nuevo' %}"
+                           style="color: #fff !important;">{% trans 'Comprobantes' %}
+                            <span
+                                    class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="waves-effect{% if active_tab == 'tab22' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'comprobante-agregar' %}">{% trans 'Crear un Comprobante de Retenci&oacute;n' %}</a>
+                            </li>
+                            <li class="waves-effect{% if active_tab == 'tab23' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'invoice-comprobantededuccion-list' %}">{% trans 'Ver Comprobantes de Retenci&oacute;n' %}</a>
+                        </ul>
+                    </li>
+
+                    <!-- SUBMENU CONTRATOS -->
+                    <li class="dropdown {% if active_tab == 'tab25' or active_tab == 'tab26' or active_tab == 'tab27' or active_tab == 'tab28' or active_tab == 'tab29' %} active {% else %} hidden {% endif %}">
+                        <a class="dropdown-toggle waves-effect"
+                           data-toggle="dropdown" href="#"
+                           style="color: #fff !important;">
+                            {% trans 'Contratos' %} <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="{% if active_tab == 'tab25' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contrato-index' %}">{% trans 'Ver Contratos' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab26' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contrato-add' %}html">{% trans 'Crear Contrato' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab27' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contrato-empresarial-add' %}">{% trans 'Crear Contrato Empresarial' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab28' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contracts-master-add' %}">{% trans 'Crear Contrato Maestro' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab29' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contract-master-list' %}">{% trans 'Listar Contratos Maestros' %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="{% if active_tab == 'tab30' or active_tab == 'tab32' or active_tab == 'tab33' or active_tab == 'tab36' or active_tab == 'tab37' or active_tab == 'tab38' %} active {% else %} hidden {% endif %}">
+                        <a class="dropdown-toggle waves-effect"
+                           data-toggle="dropdown" href="#"
+                           style="color: #fff !important;">
+                            {% trans 'Agregar' %} <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="{% if active_tab == 'tab30' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contracts-archivo-add' %}">{% trans 'Agregar Archivo de Importaci&oacute;n' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab32' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'vendedor-add' %}">{% trans 'Agregar Vendedor' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab33' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contrato-tipoevento-add' %}">{% trans 'Agregar Tipo de Evento' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab36' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'empresa-add' %}">{% trans 'Agregar Empresa' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab37' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contracts-aseguradora-add' %}">{% trans 'Agregar Aseguradora' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab38' %} active {% else %} hidden {% endif %}">
+                                <a href="{% url 'contracts-meta-add' %}">{% trans 'Agregar Meta' %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="{% if active_tab == 'tab31' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'contracts-archivo-list' %}"
+                           style="color: #fff !important;">{% trans 'Listar Archivo de Importaci&oacute;n' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab34' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'contrato-beneficiario-list' %}"
+                           style="color: #fff !important;">{% trans 'Contratos y Beneficiarios' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab35' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'contrato-empresarial-list' %}"
+                           style="color: #fff !important;">{% trans 'Contratos Empresariales' %}</a>
+                    </li>
+
+                    <!-- SUBMENU ENCUESTAS -->
+                    <li class="{% if active_tab == 'tab40' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'encuesta-list' %}"
+                           style="color: #fff !important;">{% trans 'Ver Encuestas' %}</a>
+                    </li>
+                    <li class="
+                              {% if active_tab == 'tab42' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'queja-aseguradora-agregar' %}"
+                           style="color: #fff !important;">{% trans 'Agregar Queja de Aseguradora' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab43' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'quejas' %}"
+                           style="color: #fff !important;">
+                            {% trans 'Quejas' %}
+                        </a>
+                    </li>
+                    <li class="dropdown
+                              {% if active_tab == 'tab44' %} active {% else %} hidden {% endif %}">
+                        <a class="dropdown-toggle waves-effect"
+                           data-toggle="dropdown" href="#"
+                           style="color: #fff !important;">
+                            {% trans 'Soluciones' %} <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="{% if active_tab == 'tab44' %} active{% endif %}">
+                                <a href="{% url 'solucion-list' %}">{% trans 'Pendientes de Aprobaci&oacute;n' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab45' %} active{% endif %}">
+                                <a href="{% url 'solucion-aceptada-list' %}">{% trans 'Pendientes de Notificaci&oacute;n' %}</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- SUBMENU INVENTARIO -->
+                    <li class="{% if active_tab == 'tab46' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'inventario-index' %}"
+                           style="color: #fff !important;">{% trans 'Ver Inventario' %}</a>
+                    </li>
+                    <li class="
+                              {% if active_tab == 'tab47' or active_tab == 'tab48' or active_tab == 'tab49' %} active {% else %} hidden {% endif %}">
+                        <a class="dropdown-toggle waves-effect"
+                           data-toggle="dropdown" href="#"
+                           style="color: #fff !important;">
+                            {% trans 'Agregar' %} <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="{% if active_tab == 'tab47' %} active{% endif %}">
+                                <a href="{% url 'itemtemplate-create' %}">{% trans 'Agregar Producto' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab48' %} active{% endif %}">
+                                <a href="{% url 'inventario-create' %}">{% trans 'Agregar Almacen de Inventario' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab49' %} active{% endif %}">
+                                <a href="{% url 'cotizacion-create' %}">{% trans 'Agregar Cotizaci&oacute;n' %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="{% if active_tab == 'tab50' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'itemtemplate-list' %}"
+                           style="color: #fff !important;">{% trans 'Mostrar Lista de Productos' %}</a>
+                    </li>
+                    <li class="{% if active_tab == 'tab51' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'itemtype-list' %}"
+                           style="color: #fff !important;">{% trans 'Tipos de Producto' %}</a>
+                    </li>
+                    <li class="waves-effect
+                              {% if active_tab == 'tab52' %} active {% else %} hidden {% endif %}">
+                        <a href="{% url 'cotizacion-list' %}"
+                           style="color: #fff !important;">{% trans 'Cotizaciones' %}</a>
+                    </li>
+
+                </ul>
+                <!-- END NAVBAR MENU -->
+
+                <div class="pull-right">
+                    <div class="user-detail">
+                        <div class="dropup">
+                            <a href="" class="dropdown-toggle profile"
+                               data-toggle="dropdown" aria-expanded="true">
+                                <img src="{{ user.profile.get_mugshot_url }}" alt="user-img" class="img-circle"> </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:void(0)"><i
+                                        class="md md-face-unlock"></i>
+                                    Profile</a></li>
+                                <li><a href="javascript:void(0)"><i
+                                        class="md md-settings"></i> Settings</a>
+                                </li>
+                                <li><a href="javascript:void(0)"><i
+                                        class="md md-lock"></i> Lock screen</a>
+                                </li>
+                                <li><a href="javascript:void(0)"><i
+                                        class="md md-settings-power"></i> Logout</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="dropup">
+                            <a href="" class="dropdown-toggle profile"
+                               data-toggle="dropdown" aria-expanded="true">
+                                <h5 class="m-t-10 m-b-0 pull-left">{{ user }}
+                                    <span class="fa fa-sort-desc fa-lg m-l-10"></span>
+                                </h5></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="{% url 'userena_profile_detail' user.username %}"><i
+                                            class="md md-face-unlock"></i> {% trans 'View profile' %}
+                                    </a></li>
+                                <li><a href="javascript:void(0)"><i
+                                        class="md md-settings"></i> Settings</a>
+                                </li>
+                                <li><a href="javascript:void(0)"><i
+                                        class="md md-lock"></i> Lock screen</a>
+                                </li>
+                                <li><a href="{% url 'userena_signout' %}"><i
+                                        class="md md-settings-power"></i> {% trans 'Cerrar Sesi&oacute;n' %}
+                                </a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+<!-- Top Bar End -->
+
+<!-- ========== Left Sidebar Start MENU========== -->
+<div class="left side-menu">
+    <div class="sidebar-inner slimscrollleft">
+
+        <div id="sidebar-menu">
+            <ul class="tab-menu">
+                <li class="text-muted menu-title">Menu</li>
+
+                <li>
+                    <a href="{% url 'home' %}"
+                       class="waves-effect waves-primary {% if active_tab == 'tab1' %} active{% endif %}"><i
+                            class="md md-dashboard"></i><span>{% trans 'Dashboard' %}</span></a>
+                </li>
+
+
+                <li class="has_sub">
+                    <a href="#" class="waves-effect waves-primary
+                                {% if active_tab == 'tab2' %} active{% endif %}
+                                {% if active_tab == 'tab3' %} active{% endif %}
+                                {% if active_tab == 'tab9' %} active{% endif %}
+                                {% if active_tab == 'tab4' %} active{% endif %}
+                                {% if active_tab == 'tab5' %} active{% endif %}
+                                {% if active_tab == 'tab6' %} active{% endif %}
+                                {% if active_tab == 'tab7' %} active{% endif %}
+                                {% if active_tab == 'tab8' %} active{% endif %}
+                                {% if active_tab == 'tab10' %} active{% endif %}
+                                {% if active_tab == 'tab11' %} active{% endif %}
+                                {% if active_tab == 'tab12' %} active{% endif %}
+                                {% if active_tab == 'tab13' %} active{% endif %}
+                                {% if active_tab == 'tab14' %} active{% endif %}"><i
+                            class="fa fa-stethoscope"></i>
+                        <span> {% trans 'Clínico' %} </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li class="
+                                    {% if active_tab == 'tab2' %} active{% endif %}
+                                    {% if active_tab == 'tab3' %} active{% endif %}">
+                            <a href="{% url 'admision-index' %}">{% trans 'Admisiones' %}</a>
+                            <!-- <ul class="list-unstyled">
+                                            <li class="
+                                    {% if active_tab == 'tab2' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'admision-index' %}">Remitidos por Emergencia</a>
+                                            </li>-->
+                            <!-- Falta añadirle diccionario -->
+                            <!-- <li class="{% if active_tab == 'tab3' %}
+                                 active{% endif %}">
+                                                <a href="{% url 'admision-iniciar' %}">Admitir pacientes</a>
+                                            </li>
+                                       </ul> -->
+                        </li>
+                        <li class="{% if active_tab == 'tab4' %} active{% endif %}
+                                    {% if active_tab == 'tab5' %} active{% endif %}
+                                    {% if active_tab == 'tab6' %} active{% endif %}
+                                    {% if active_tab == 'tab7' %} active{% endif %}
+                                    {% if active_tab == 'tab8' %} active{% endif %}">
+                            <a href="{% url 'consultorio-index' %}">{% trans 'Consulta' %}</a>
+                            <!-- <ul class="list-unstyled">
+                                            <li class="
+                                    {% if active_tab == 'tab4' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'consultorio-index' %}">{% trans 'Consulta' %}</a>
+                                            <li class="
+                                    {% if active_tab == 'tab5' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'consultorio-agregar' %}">{% trans 'Agregar Consultorio' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab6' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'clinique-orden-list' %}">{% trans 'Lista de Ordenes M&eacute;dicas' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab7' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'clinique-incapacidad-list' %}">{% trans 'Lista de Incapacidades' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab8' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'esperas' %}">{% trans 'Mostrar todos los pacientes en Espera' %}</a>
+                                            </li>
+                                        </ul> -->
+                        </li>
+                        <li class="{% if active_tab == 'tab9' %} active{% endif %}">
+                            <a href="{% url 'lab-index' %}">{% trans 'Laboratorio' %}</a>
+                        </li>
+                        <li class="
+                                    {% if active_tab == 'tab10' %} active{% endif %}
+                                    {% if active_tab == 'tab11' %} active{% endif %}">
+                            <a href="{% url 'examen-index' %}">{% trans 'Centro de Im&aacute;genes' %}</a>
+                            <!-- <ul class="list-unstyled">
+                                            <li class="
+                                    {% if active_tab == 'tab10' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'examen-index' %}">Estudios programados</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab11' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'examen-nuevo' %}">Programa estudio nuevo</a>
+                                            </li>
+                                        </ul> -->
+                        </li>
+                        <li class="
+                                    {% if active_tab == 'tab12' %} active{% endif %}
+                                    {% if active_tab == 'tab13' %} active{% endif %}">
+                            <a href="{% url 'emergency-index' %}">{% trans 'Emergencias' %}</a>
+                            <!-- <ul class="list-unstyled">
+                                            <li class="
+                                    {% if active_tab == 'tab12' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'emergency-index' %}">{% trans 'Admisiones' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab13' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'emergency-ingresar' %}">{% trans 'Admitir paciente' %}</a>
+                                            </li>
+                                        </ul> -->
+                        </li>
+                        <li class="{% if active_tab == 'tab14' %} active{% endif %}">
+                            <a href="{% url 'nightingale-index' %}">{% trans 'Hospitalizaci&oacute;n' %}</a>
+                        </li>
+                        <!-- <li><a href="ui-progressbars.html">Progress Bars</a></li>
+                        <li><a href="ui-notification.html">Notification</a></li>
+                        <li><a href="ui-bootstrap.html">BS Elements</a></li>
+                        <li><a href="ui-typography.html">Typography</a></li> -->
+                    </ul>
+                </li>
+
+                <li class="has_sub">
+                    <a href="#"
+                       class="waves-effect waves-primary {% if active_tab == 'tab15' %} active{% endif %}
+                                {% if active_tab == 'tab16' %} active{% endif %}
+                                {% if active_tab == 'tab17' %} active{% endif %}
+                                {% if active_tab == 'tab18' %} active{% endif %}
+                                {% if active_tab == 'tab19' %} active{% endif %}
+                                {% if active_tab == 'tab20' %} active{% endif %}
+                                {% if active_tab == 'tab21' %} active{% endif %}
+                                {% if active_tab == 'tab22' %} active{% endif %}
+                                {% if active_tab == 'tab23' %} active{% endif %}
+                                {% if active_tab == 'tab24' %} active{% endif %}
+                                {% if active_tab == 'tab25' %} active{% endif %}
+                                {% if active_tab == 'tab26' %} active{% endif %}
+                                {% if active_tab == 'tab27' %} active{% endif %}
+                                {% if active_tab == 'tab28' %} active{% endif %}
+                                {% if active_tab == 'tab29' %} active{% endif %}
+                                {% if active_tab == 'tab30' %} active{% endif %}
+                                {% if active_tab == 'tab31' %} active{% endif %}
+                                {% if active_tab == 'tab32' %} active{% endif %}
+                                {% if active_tab == 'tab33' %} active{% endif %}
+                                {% if active_tab == 'tab34' %} active{% endif %}
+                                {% if active_tab == 'tab35' %} active{% endif %}
+                                {% if active_tab == 'tab36' %} active{% endif %}
+                                {% if active_tab == 'tab37' %} active{% endif %}
+                                {% if active_tab == 'tab38' %} active{% endif %}
+                                {% if active_tab == 'tab39' %} active{% endif %}
+                                {% if active_tab == 'tab40' %} active{% endif %}
+                                {% if active_tab == 'tab41' %} active{% endif %}
+                                {% if active_tab == 'tab42' %} active{% endif %}
+                                {% if active_tab == 'tab43' %} active{% endif %}
+                                {% if active_tab == 'tab44' %} active{% endif %}
+                                {% if active_tab == 'tab45' %} active{% endif %}
+                                {% if active_tab == 'tab46' %} active{% endif %}
+                                {% if active_tab == 'tab47' %} active{% endif %}
+                                {% if active_tab == 'tab48' %} active{% endif %}
+                                {% if active_tab == 'tab49' %} active{% endif %}
+                                {% if active_tab == 'tab50' %} active{% endif %}
+                                {% if active_tab == 'tab51' %} active{% endif %}
+                                {% if active_tab == 'tab52' %} active{% endif %}
+                                {% if active_tab == 'tab53' %} active{% endif %}
+                                {% if active_tab == 'tab54' %} active{% endif %}
+                                "><i class="oin ion-folder "></i><span>{% trans 'Administrativo' %}</span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li class="
+                                    {% if active_tab == 'tab15' %} active{% endif %}
+                                    {% if active_tab == 'tab16' %} active{% endif %}
+                                    {% if active_tab == 'tab17' %} active{% endif %}
+                                    {% if active_tab == 'tab18' %} active{% endif %}
+                                    {% if active_tab == 'tab19' %} active{% endif %}
+                                    {% if active_tab == 'tab20' %} active{% endif %}
+                                    {% if active_tab == 'tab21' %} active{% endif %}
+                                    {% if active_tab == 'tab22' %} active{% endif %}
+                                    {% if active_tab == 'tab23' %} active{% endif %}">
+                            <a href="{% url 'invoice-index' %}">{% trans 'Caja' %}</a>
+                            <!-- <ul class="list-unstyled">
+                                            <li class="
+                                    {% if active_tab == 'tab15' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'invoice-index' %}">Ver Caja</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab16' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'invoice-new' %}html">{% trans 'Crear Recibo' %}</a></li>
+                                            <li class="
+                                    {% if active_tab == 'tab17' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'invoice-turno-nuevo' %}">{% trans 'Abrir Turno' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab18' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'invoice-turno-activo' %}">{% trans 'Turnos Activos' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab19' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'invoice-aseguradora-list' %}">{% trans 'Facturaci&oacute;n de Contratos' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab20' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'invoice-estadisticas' %}">{% trans 'Estad&iacute;sticas' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab21' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'invoice-cpc-list' %}">{% trans 'Cuentas Por Cobrar' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab22' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'comprobante-agregar' %}">{% trans 'Crear un Comprobante de Retenci&oacute;n' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab23' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'invoice-comprobantededuccion-list' %}">{% trans 'Ver Comprobantes de Retenci&oacute;n' %}</a>
+                                            </li>
+                                        </ul> -->
+                        </li>
+                        <li class="{% if active_tab == 'tab24' %} active{% endif %}">
+                            <a href="{% url 'invoice-pago-list' %}">{% trans 'Cuentas por Cobrar' %}</a>
+                        </li>
+                        <li class="{% if active_tab == 'tab25' %} active{% endif %}
+                                    {% if active_tab == 'tab26' %} active{% endif %}
+                                    {% if active_tab == 'tab27' %} active{% endif %}
+                                    {% if active_tab == 'tab28' %} active{% endif %}
+                                    {% if active_tab == 'tab29' %} active{% endif %}
+                                    {% if active_tab == 'tab30' %} active{% endif %}
+                                    {% if active_tab == 'tab31' %} active{% endif %}
+                                    {% if active_tab == 'tab32' %} active{% endif %}
+                                    {% if active_tab == 'tab33' %} active{% endif %}
+                                    {% if active_tab == 'tab34' %} active{% endif %}
+                                    {% if active_tab == 'tab35' %} active{% endif %}
+                                    {% if active_tab == 'tab36' %} active{% endif %}
+                                    {% if active_tab == 'tab37' %} active{% endif %}
+                                    {% if active_tab == 'tab38' %} active{% endif %}">
+                            <a href="{% url 'contrato-index' %}">{% trans 'Contratos' %}</a>
+                            <!-- <ul class="list-unstyled">
+                                            <li class="
+                                    {% if active_tab == 'tab25' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contrato-index' %}">Ver Contratos</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab26' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contrato-add' %}html">{% trans 'Crear Contrato' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab27' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contrato-empresarial-add' %}">{% trans 'Crear Contrato Empresarial' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab28' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contracts-master-add' %}">{% trans 'Crear Contrato Maestro' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab29' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contract-master-list' %}">{% trans 'Listar Contratos Maestros' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab30' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contracts-archivo-add' %}">{% trans 'Agregar Archivo de Importaci&oacute;n' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab31' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contracts-archivo-list' %}">{% trans 'Listar Archivo de Importaci&oacute;n' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab32' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'vendedor-add' %}">{% trans 'Agregar Vendedor' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab33' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contrato-tipoevento-add' %}">{% trans 'Agregar Tipo de Evento' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab34' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contrato-beneficiario-list' %}">{% trans 'Contratos y Beneficiarios' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab35' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contrato-empresarial-list' %}">{% trans 'Contratos Empresariales' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab36' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'empresa-add' %}">{% trans 'Agregar Empresa' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab37' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contracts-aseguradora-add' %}">{% trans 'Agregar Aseguradora' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab38' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'contracts-meta-add' %}">{% trans 'Agregar Meta' %}</a>
+                                            </li>
+                                        </ul> -->
+                        </li>
+                        <li class="{% if active_tab == 'tab39' %} active{% endif %}">
+                            <a href="{% url 'scorecard-index' %}">{% trans 'BSC' %} </a>
+                        </li>
+                        <li class="{% if active_tab == 'tab40' %} active{% endif %}
+                                    {% if active_tab == 'tab41' %} active{% endif %}
+                                    {% if active_tab == 'tab42' %} active{% endif %}
+                                    {% if active_tab == 'tab43' %} active{% endif %}
+                                    {% if active_tab == 'tab44' %} active{% endif %}
+                                    {% if active_tab == 'tab45' %} active{% endif %}">
+                            <a href="{% url 'encuesta-list' %}">{% trans 'Encuestas' %}</a>
+                            <!-- <ul class="list-unstyled">
+                                            <li class="
+                                    {% if active_tab == 'tab40' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'encuesta-list' %}">Ver Encuestas</a>
+                                            </li>
+                                            <li>
+                                                <a href="{% url 'encuesta-list' %}"> {% trans 'Regresar a Encuestas' %}</a>
+                                            </li>
+
+
+                                    {% for encuesta in object_list.all %}
+                                                <li>
+                                                    <a class="
+                                        {% if active_tab == 'tab41' %} active
+                                        {% endif %}" href="
+                                        {{ encuesta.get_absolute_url }}">
+                                        {{ encuesta }}</a>
+                                                </li>
+                                                {% empty %}
+                                                <li class="
+                                        {% if active_tab == 'tab41' %} active
+                                        {% endif %}">
+
+                                {% trans 'No hay Encuestas Disponibles' %}</li>
+                                            {% endfor %}
+
+                                            <li class="
+                                    {% if active_tab == 'tab42' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'queja-aseguradora-agregar' %}">{% trans 'Agregar Queja de Aseguradora' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab43' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'quejas' %}">{% trans 'Quejas' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab44' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'solucion-list' %}">{% trans 'Soluciones Pendientes de Aprobaci&oacute;n' %}</a>
+                                            </li>
+                                            <li class="
+                                    {% if active_tab == 'tab45' %}
+                                         active{% endif %}">
+                                                <a href="{% url 'solucion-aceptada-list' %}">{% trans 'Soluciones Pendientes de Notificaci&oacute;n' %}</a>
+                                            </li>
+                                        </ul> -->
+                        </li>
+                        <li class="
+                                    {% if active_tab == 'tab46' %} active{% endif %}
+                                    {% if active_tab == 'tab47' %} active{% endif %}
+                                    {% if active_tab == 'tab48' %} active{% endif %}
+                                    {% if active_tab == 'tab49' %} active{% endif %}
+                                    {% if active_tab == 'tab50' %} active{% endif %}
+                                    {% if active_tab == 'tab51' %} active{% endif %}
+                                    {% if active_tab == 'tab52' %} active{% endif %}">
+                            <a href="{% url 'inventario-index' %}">{% trans 'Inventario' %}</a>
+                        </li>
+                        <li class="{% if active_tab == 'tab53' %} active{% endif %}">
+                            <a href="{% url 'budget-index' %}">{% trans 'Presupuesto' %} </a>
+                        </li>
+                        <li class="{% if active_tab == 'tab54' %} active{% endif %}">
+                            <a href="ingresos">{% trans 'Ingresos' %} </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="has_sub">
+                    <a href="#"
+                       class="waves-effect waves-primary {% if active_tab == 'tab55' %} active{% endif %}
+                                {% if active_tab == 'tab56' %} active{% endif %}"><i
+                            class="glyphicon glyphicon-user"></i><span> {% trans 'Pacientes' %} </span></a>
+                    <ul class="list-unstyled">
+                        <li class="{% if active_tab == 'tab55' %} active{% endif %}">
+                            <a href="{% url 'persona-index' %}">
+                                {% trans 'Ver Pacientes' %}
+                            </a>
+                        </li>
+                        <li class="{% if active_tab == 'tab56' %} active{% endif %}">
+                            <a href="{% url 'persona-create' %}">{% trans 'Agregar Paciente' %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'persona-duplicate-clean' %}">{% trans 'Unir Duplicados' %}</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="{% url 'admin:index' %}"
+                       class="waves-effect waves-primary"><i
+                            class="md md-settings"></i><span> {% trans 'Administraci&oacute;n' %} </span></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<!-- Left Sidebar MENU End -->

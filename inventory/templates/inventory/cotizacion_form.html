@@ -1,13 +1,25 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab49' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="col-md-9 main-content">
-            {% crispy form %}
-        </section>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Agregar Cotización</h4>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <section class="col-md-6 panel panel-border">
+                <div class="main-content col-md-12">
+                    {% crispy form %}
+                </div>
+            </section>
+        </div>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">

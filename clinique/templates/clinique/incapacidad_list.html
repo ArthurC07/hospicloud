@@ -1,9 +1,15 @@
 {% extends 'base.html' %}
 {% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab7' %}
+{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h1>Incapacidades</h1>
+        <section class="page-title-box">
+            <h4 class="page-title">Incapacidades
+            </h4>
+        </section>
     </div>
 </div>
 <div class="row">

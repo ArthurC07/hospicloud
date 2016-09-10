@@ -1,16 +1,21 @@
 {% extends 'base.html' %}
 {% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab8' %}
+{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h1>{{ paciente }}
-            <small>{{ paciente.consultorio }}</small>
-        </h1>
+        <section class="page-title-box">
+            <h4 class="page-title">{{ paciente }}
+                <small>{{ paciente.consultorio }}</small>
+            </h4>
+        </section>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-9">
-        <div class="main-content col-md-12">‏
+    <div class="col-md-9 panel panel-cardbox">
+        <div class="main-content col-md-12 m-t-10">‏
             <a class="btn btn-primary" href="{% url 'consultorio-nota-agregar' paciente.id %}">Agregar Nota de Enfermeria</a>
             <table class="table table-striped">
                 <caption>Notas de Enfermeria</caption>
@@ -32,7 +37,7 @@
         </div>
     </div>
     <aside class="col-md-3">
-        <div class="toolbox col-md-12">
+        <div class="toolbox col-md-12 panel panel-cardbox">
             {% include 'snippets/paciente_aside.html' %}
         </div>
     </aside>

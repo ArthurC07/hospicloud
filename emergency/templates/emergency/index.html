@@ -2,23 +2,24 @@
 {% load staticfiles %}
 {% block header %}
 {% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab12' %}
+{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <div class="main-content col-md-12">‏
-            <div class="page-header">
-                <h1>Emergencias <small>Admisi&oacute;n</small></h1>
-            </div>
+        <div class="page-title-box">‏
+                <h4 class="page-title">Emergencias <small>Admisi&oacute;n</small></h4>
         </div>
     </div>
 </div>
-<div class="row">
-  <section class="col-md-9">
-      <div class="main-content col-md-12">‏
+<div class="col-md-12 panel panel-border">
+  <section class="col-md-12">
+      <!-- <div class="main-content col-md-12 ">‏ -->
           {% include 'emergency/snippets/emergencia_list.html' with emergencias=emergencias %}
-      </div>
+      <!-- </div> -->
   </section>
-    <aside class="col-md-3">
+    <!-- <aside class="col-md-3">
         <div class="toolbox col-md-12">
             <nav class="sidebar-nav">
                 <ul class="nav nav-tabs nav-stacked">
@@ -28,6 +29,6 @@
                 </ul>
             </nav>
         </div>
-    </aside>
+    </aside> -->
 </div>
 {% endblock %}

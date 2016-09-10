@@ -41,7 +41,6 @@
                             <thead>
                             <tr>
                                 <th>Recibo</th>
-                                <th>Nombre</th>
                                 <th>Fecha y Hora</th>
                                 <th>M&eacute;todo</th>
                                 <th>Monto</th>
@@ -52,8 +51,7 @@
                             <tbody>
                             {% for pago in pagos.all %}
                                 <tr>
-                                    <td><a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo.numero }}</td>    
-                                    <td>{{ pago.recibo }}</a></td>
+                                    <td><a href="{% url 'invoice-view-id' pago.recibo.id %}">{{ pago.recibo }}</a></td>
                                     <td>{{ pago.created }}</td>
                                     <td>{{ pago.tipo }}</td>
                                     <td>{{ pago.monto }}</td>

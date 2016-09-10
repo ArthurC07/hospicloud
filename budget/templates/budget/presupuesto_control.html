@@ -1,45 +1,42 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load i18n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab53' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
-        <div class="main-content col-md-12">
-            <section class="page-header col-md-10 col-xs-10">
-                <h1>{{ presupuesto }}</h1>
-            </section>
-            <div class="col-md-2 col-xs-2">
-                <a class="btn btn-block btn-primary" href="{% url 'budget-index' %}">
-                    {% trans 'Volver a Presupuesto' %}
-                </a>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <ul class="breadcrumb pull-right">
+                    <a class="btn btn-block btn-primary" href="{% url 'budget-index' %}">
+                        {% trans 'Volver a Presupuesto' %}
+                    </a>
+                </ul>
+                <h4 class="page-title">{{ presupuesto }}</h4>
             </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-12 main-content">
+        <section class="col-md-12 main-content panel">
             <div class="row">
                 <div class="col-md-4">
-                    <div class="page-header">
-                        <h2>
+                        <h5>
                             {% trans 'Total Presupuestado:' %}
                             {{ presupuesto.total_presupuestado }}
-                        </h2>
-                    </div>
+                        </h5>
                 </div>
                 <div class="col-md-4">
-                    <div class="page-header">
-                        <h2>
+                        <h5>
                             {% trans 'Total Ejecutado:' %}
                             {{ presupuesto.total_gastos_mes_actual }}
-                        </h2>
-                    </div>
+                        </h5>
                 </div>
                 <div class="col-md-4">
-                    <div class="page-header">
-                        <h2>
+                        <h5>
                             {% trans 'Total Facturado Mes Anterior:' %}
                             {{ presupuesto.ingresos_mes_anterior }}
-                        </h2>
-                    </div>
+                        </h5>
                 </div>
             </div>
             <div class="row">
@@ -58,10 +55,11 @@
     </div>
     <div class="row">
         <section class="col-md-12 main-content">
-            <div class="page-header">
-                <h2>{% trans 'Detalle de Gastos' %}</h2>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title">{% trans 'Detalle de Gastos' %}</h2>
             </div>
-            <div class="row">
+            <div class="panel-body">
                 {% for cuenta in presupuesto.cuenta_set.all %}
                 <div class="col-md-3 col-xs-3">
                     <a class="btn btn-block btn-primary" href="#cuenta-{{ cuenta.id }}">
@@ -72,9 +70,14 @@
                 </div>
                 {% endfor %}
             </div>
+          </div>
             {% for cuenta in presupuesto.cuenta_set.all %}
-                <div class="panel panel-primary" id="cuenta-{{ cuenta.id }}">
-                    <div class="panel-heading">{{ cuenta.nombre }}</div>
+                <div class="panel panel-color panel-green" id="cuenta-{{ cuenta.id }}">
+                    <div class="panel-heading-green">
+                      <h4 class="panel-title">
+                        {{ cuenta.nombre }}
+                      </h4>
+                    </div>
                     <div class="panel-body no-more-tables">
                         <div class="progress">
                             {% with cuenta.porcentaje_ejecutado_mes_actual as ejecutado %}

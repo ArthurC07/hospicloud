@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load i18n %}{% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab53' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
-        <div class="main-content col-md-12">
-            <section class="page-header">
-                <h1>{% trans 'Proveedores' %}</h1>
-            </section>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans 'Proveedores' %}</h4>
+            </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row panel panel-border">
         <section class="col-md-12 main-content">
-            <table class="table table-striped">
+            <table class="table table-striped m-t-15">
                 {% for proveedor in proveedores.all %}
                     <tr>
                         <td>

@@ -1,23 +1,31 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab17' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Abrir Turno</h4>
+            </div>
+        </div>
         <section class="col-md-6">
-            <div class="main-content col-md-12">‏
+            <div class="row main-content col-md-12 card-box m-t-0">‏
                 {% crispy form %}
             </div>
         </section>
-        <aside class="col-md-3">
+        <!-- <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="well sidebar-nav">
                     <ul class="nav nav-list">
                     </ul>
                 </nav>
             </div>
-        </aside>
+        </aside> -->
     </div>
 {% endblock %}
 {% block scripts %}

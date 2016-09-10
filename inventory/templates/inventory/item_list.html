@@ -1,24 +1,27 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab46' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
-            <section class="page-header">
-                <h1>{{ inventario.lugar }}
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{{ inventario.lugar }}
                     <small>Inventario</small>
-                </h1>
-            </section>
+                </h4>
+            </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9">
+        <section class="col-md-9 panel">
             <div class="main-content col-md-12">
                 <div class="row">
-                    <section class="col-md-12">
+                    <section class="col-md-12 panel-default">
                         <table class="table table-striped table-bordered no-more-tables">
-                            <caption>
-                                Productos en Inventario
-                            </caption>
+                            <div class="panel-heading m-0" style="margin-bottom: 15px !important;">
+                                <h4 class="panel-title">Productos en Inventario</h4>
+                            </div>
                             <thead>
                             <tr>
                                 <th>C&oacute;digo</th>
@@ -53,7 +56,7 @@
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
+                <nav class="sidebar-nav panel panel-border">
                     <ul class="nav nav-stacked nav-tabs">
                         <li>
                             <a href="{% url 'item-create' inventario.id %}">Agregar

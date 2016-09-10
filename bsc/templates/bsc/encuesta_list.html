@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load i18n %}{% load crispy_forms_tags %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab40' %}
+{% endblock %}
 {% block header %}
     <style type="text/css">
         .bar-legend li {
@@ -18,74 +21,97 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="main-content col-md-12">
-            <section class="page-header">
-                <h1>{% trans 'Encuestas' %}</h1>
-            </section>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Encuestas</h4>
+            </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9 main-content">
-            <table class="table">
-                <tr>
-                    <td>&nbsp;</td>
-                    {% for mes in meses %}
-                        <td class="text-right">{{ mes.inicio|date:"N" }}</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>{% trans 'Atenciones' %}</td>
-                    {% for mes in meses %}
-                        <td class="text-right">{{ mes.consultas }}</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>{% trans 'Encuestas Realizadas' %}</td>
-                    {% for mes in meses %}
-                        <td class="text-right">{{ mes.encuestada }}</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>{% trans 'Contactabilidad' %}</td>
-                    {% for mes in meses %}
-                        <td class="text-right">{{ mes.contactabilidad }}%</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>{% trans 'Porcentaje de Satisfacci&oacute;n' %}</td>
-                    {% for mes in meses %}
-                        <td class="text-right">{{ mes.satisfaccion|floatformat }}%</td>
-                    {% endfor %}
-                </tr>
-            </table>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>{% trans 'Usuario' %}</th>
-                        <th>{% trans 'Mes' %}</th>
-                        <th>{% trans 'Detalle Encuestas' %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for respuesta in respuestas %}
+        <section class="col-md-12 main-content">
+          <div class="col-md-12 m-b-20">
+            {% for encuesta in object_list.all %}
+                <a class="btn btn-primary {% if active_tab == 'tab40' %} active{% endif %}" href="{{ encuesta.get_absolute_url }}">{{ encuesta }}</a>
+                {% empty %}
+                <li class="btn btn-primary  {% if active_tab == 'tab40' %} active{% endif %}">{% trans 'No hay Encuestas Disponibles' %}</li>
+            {% endfor %}
+        </div>
+            <div class="panel panel-border col-lg-12">
+                <div class="m-t-15 m-b-15">
+                    <table class="table table-striped">
+                        <thead>
                         <tr>
-                            <td>{{ respuesta.usuario__first_name }} {{ respuesta.last_name }}</td>
-                            <td>{{ respuesta.month|date:"N" }}</td>
-                            <td>{{ respuesta.count }}</td>
+                            <th>&nbsp;</th>
+                            {% for mes in meses %}
+                                <th class="text-right">{{ mes.inicio|date:"N" }}</th>
+                            {% endfor %}
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="row">
-                <canvas id="chart" class="col-md-12 col-xs-12 graph"
-                        height="100"></canvas>
-                <div id="legend" class="graph col-md-12 col-xs-12"></div>
+                        </thead>
+                        <tr>
+                            <td>{% trans 'Atenciones' %}</td>
+                            {% for mes in meses %}
+                                <td class="text-right">{{ mes.consultas }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>{% trans 'Encuestas Realizadas' %}</td>
+                            {% for mes in meses %}
+                                <td class="text-right">{{ mes.encuestada }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>{% trans 'Contactabilidad' %}</td>
+                            {% for mes in meses %}
+                                <td class="text-right">{{ mes.contactabilidad }}%</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>{% trans 'Porcentaje de Satisfacci&oacute;n' %}</td>
+                            {% for mes in meses %}
+                                <td class="text-right">{{ mes.satisfaccion|floatformat }}%</td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-border col-lg-12">
+                <div class="m-t-15 m-b-15">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>{% trans 'Usuario' %}</th>
+                                <th>{% trans 'Mes' %}</th>
+                                <th>{% trans 'Detalle Encuestas' %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for respuesta in respuestas %}
+                                <tr>
+                                    <td>{{ respuesta.usuario__first_name }} {{ respuesta.last_name }}</td>
+                                    <td>{{ respuesta.month|date:"N" }}</td>
+                                    <td>{{ respuesta.count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-border col-lg-12">
+              <div class="panel-body">
+                  <canvas id="chart" class="col-md-12 col-xs-12 graph"
+                          height="100"></canvas>
+                  <div id="legend" class="graph col-md-12 col-xs-12"></div>
+              </div>
             </div>
         </section>
-        {% include 'bsc/snippets/encuesta_menu.html' %}
+        <!-- {% include 'bsc/snippets/encuesta_menu.html' %} -->
     </div>
 {% endblock %}
 {% block scripts %}
+    <script>
+        var resizefunc = [];
+    </script>
+
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
     <script type="text/javascript">

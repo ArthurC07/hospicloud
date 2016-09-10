@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load i18n %}{% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab25' %}
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <section class="page-header">
-                    <h1>{{ empleador }}</h1>
-                </section>
+            <div class="page-title-box">
+                <h4 class="page-title">{{ empleador }}</h4>
             </div>
         </div>
     </div>
@@ -62,7 +63,7 @@
             </div>
         </div>
         <aside class="col-md-3">
-            <div class="col-md-12 toolbox">
+            <div class="col-md-12 toolbox panel panel-border">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked">
                         <li>

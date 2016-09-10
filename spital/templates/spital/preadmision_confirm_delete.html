@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab2' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
-        <section class="page-header">
-            <h1>Eliminar PreAdmisi&oacute;n</h1>
-        </section>
+          <div class="col-md-12 main-content">
+              <section class="page-header page-title-box">
+                <h4 class="page-title">Eliminar PreAdmisi&oacute;n</h4>
+              </section>
+          </div>
     </div>
     <div class="row">
         <section class="col-md-9">

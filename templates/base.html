@@ -17,25 +17,31 @@
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
 </head>
 <body>
-{% include 'snippets/navbar.html' %}
-{% block heading %}{% endblock %}
-{% include 'javascript.html' %}
-{% block scripts %}{% endblock scripts %}
-<div id="content" class="container">
-    {% if messages %}
-        <div id="system-message" class="row">
-            <div class="col-md-12">
-                {% for message in messages %}
-                    <div class="alert alert-warning alert-dismissible {% if message.tags %} {{ message.tags }} {% endif %} " role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        {{ message }}
+<div id="wrapper">
+    {% block menu %}{% endblock %}
+    {% block heading %}{% endblock %}
+    {% include 'javascript.html' %}
+    {% block scripts %}{% endblock scripts %}
+    <div id="content" class="content-page">
+        <div class="content">
+            <div class="container">
+                {% if messages %}
+                    <div id="system-message" class="row">
+                        <div class="col-md-12">
+                            {% for message in messages %}
+                                <div class="alert alert-warning alert-dismissible {% if message.tags %} {{ message.tags }} {% endif %} " role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                {% endfor %}
+                {% endif %}
+                {% block content %}{% endblock %}
             </div>
         </div>
-    {% endif %}
-    {% block content %}{% endblock %}
-</div>
-{% include 'snippets/footer.html' %}
+    </div>
+    {% include 'snippets/footer.html' %}
+</div> 
 </body>
 </html>
