@@ -339,6 +339,30 @@ class Consulta(TimeStampedModel):
 
         else:
             return (self.created - self.final).seconds / 60
+            
+    def current_time(self):
+        """
+        Calculates the total time a :class:`Consulta` has spent between
+        :class`Consulta` start and Now.
+        """
+        time = timezone.now() - self.created
+        total_seconds = time.total_seconds()
+
+        minutes = (total_seconds % 3600) // 60
+        hours = total_seconds // 3600 
+        seconds = int(total_seconds)
+        delta = {"hours":0,"minutes":0,"seconds":seconds}
+        if total_seconds > 60:
+            seconds = int(total_seconds % 60)  
+            minutes = int(minutes)
+            delta = {"hours":0,"minutes":minutes,"seconds":seconds}
+        if total_seconds > 3600:
+            hours = int(hours)
+            minutes = int(minutes % 60)
+            seconds = int(total_seconds % 60)
+            delta = {"hours":hours,"minutes":minutes,"seconds":seconds}
+            
+        return delta
 
     def save(self, **kwargs):
 
