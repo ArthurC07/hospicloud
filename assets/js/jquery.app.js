@@ -2,76 +2,78 @@
     "use strict";
 
     var Sidemenu = function () {
-        this.$body = $("body"),
-            this.$openLeftBtn = $(".open-left"),
-            this.$menuItem = $("#sidebar-menu a")
+        this.body = $("body");
+        this.$openLeftBtn = $(".open-left");
+        this.$menuItem = $("#sidebar-menu").find("a");
+        this.wrapper = $("#wrapper");
     };
     Sidemenu.prototype.openLeftBar = function () {
-        $("#wrapper").toggleClass("enlarged");
-        $("#wrapper").addClass("forced");
 
-        if ($("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left")) {
+        this.wrapper.toggleClass("enlarged").addClass("forced");
+
+        if (this.wrapper.hasClass("enlarged") && this.body.hasClass("fixed-left")) {
             $("body").removeClass("fixed-left").addClass("fixed-left-void");
-        } else if (!$("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left-void")) {
+        } else if (!this.wrapper.hasClass("enlarged") && $("body").hasClass("fixed-left-void")) {
             $("body").removeClass("fixed-left-void").addClass("fixed-left");
         }
 
-        if ($("#wrapper").hasClass("enlarged")) {
+        if (this.wrapper.hasClass("enlarged")) {
             $(".left ul").removeAttr("style");
         } else {
             $(".subdrop").siblings("ul:first").show();
         }
 
         toggle_slimscroll(".slimscrollleft");
-        $("body").trigger("resize");
-    },
-        //menu item click
-        Sidemenu.prototype.menuItemClick = function (e) {
-            if (!$("#wrapper").hasClass("enlarged")) {
-                if ($(this).parent().hasClass("has_sub")) {
+        this.body.trigger("resize");
+    };
+    //menu item click
+    Sidemenu.prototype.menuItemClick = function (e) {
+        if (!this.wrapper.hasClass("enlarged")) {
+            if ($(this).parent().hasClass("has_sub")) {
 
-                }
-                if (!$(this).hasClass("subdrop")) {
-                    // hide any open menus and remove all other classes
-                    $("ul", $(this).parents("ul:first")).slideUp(350);
-                    $("a", $(this).parents("ul:first")).removeClass("subdrop");
-                    $("#sidebar-menu .pull-right i").removeClass("md-remove").addClass("md-add");
-
-                    // open our new menu and add the open class
-                    $(this).next("ul").slideDown(350);
-                    $(this).addClass("subdrop");
-                    $(".pull-right i", $(this).parents(".has_sub:last")).removeClass("md-add").addClass("md-remove");
-                    $(".pull-right i", $(this).siblings("ul")).removeClass("md-remove").addClass("md-add");
-                } else if ($(this).hasClass("subdrop")) {
-                    $(this).removeClass("subdrop");
-                    $(this).next("ul").slideUp(350);
-                    $(".pull-right i", $(this).parent()).removeClass("md-remove").addClass("md-add");
-                }
             }
-        },
+            if (!$(this).hasClass("subdrop")) {
+                // hide any open menus and remove all other classes
+                $("ul", $(this).parents("ul:first")).slideUp(350);
+                $("a", $(this).parents("ul:first")).removeClass("subdrop");
+                $("#sidebar-menu").find(".pull-right i").removeClass("md-remove").addClass("md-add");
 
-        //init sidemenu
-        Sidemenu.prototype.init = function () {
-            var $this = this;
+                // open our new menu and add the open class
+                $(this).next("ul").slideDown(350);
+                $(this).addClass("subdrop");
+                $(".pull-right i", $(this).parents(".has_sub:last")).removeClass("md-add").addClass("md-remove");
+                $(".pull-right i", $(this).siblings("ul")).removeClass("md-remove").addClass("md-add");
+            } else if ($(this).hasClass("subdrop")) {
+                $(this).removeClass("subdrop");
+                $(this).next("ul").slideUp(350);
+                $(".pull-right i", $(this).parent()).removeClass("md-remove").addClass("md-add");
+            }
+        }
+    };
 
-            var ua = navigator.userAgent,
-                event = (ua.match(/iP/i)) ? "touchstart" : "click";
+    //init sidemenu
+    Sidemenu.prototype.init = function () {
+        var $this = this;
 
-            //bind on click
-            this.$openLeftBtn.on(event, function (e) {
-                e.stopPropagation();
-                $this.openLeftBar();
-            });
+        var ua = navigator.userAgent,
+            event = (ua.match(/iP/i)) ? "touchstart" : "click";
 
-            // LEFT SIDE MAIN NAVIGATION
-            $this.$menuItem.on(event, $this.menuItemClick);
+        //bind on click
+        this.$openLeftBtn.on(event, function (e) {
+            e.stopPropagation();
+            $this.openLeftBar();
+        });
 
-            // NAVIGATION HIGHLIGHT & OPEN PARENT
-            $("#sidebar-menu ul li.has_sub a.active").parents("li:last").children("a:first").addClass("active").trigger("click");
-        },
+        // LEFT SIDE MAIN NAVIGATION
+        $this.$menuItem.on(event, $this.menuItemClick);
 
-        //init Sidemenu
-        $.Sidemenu = new Sidemenu, $.Sidemenu.Constructor = Sidemenu
+        // NAVIGATION HIGHLIGHT & OPEN PARENT
+        $("#sidebar-menu").find("ul li.has_sub a.active").parents("li:last").children("a:first").addClass("active").trigger("click");
+    };
+
+    //init Sidemenu
+    $.Sidemenu = new Sidemenu;
+    $.Sidemenu.Constructor = Sidemenu;
 
 }(window.jQuery),
 
@@ -162,23 +164,22 @@
             // right side-bar toggle
             $('.right-bar-toggle').on('click', function (e) {
 
-                $('#wrapper').toggleClass('right-bar-enabled');
+                this.wrapper.toggleClass('right-bar-enabled');
             });
+        };
+        //initilizing
+        App.prototype.init = function () {
+            var $this = this;
+            //document load initialization
+            $(document).ready($this.onDocReady);
+            //init side bar - left
+            $.Sidemenu.init();
+            //init fullscreen
+            $.FullScreen.init();
+        };
 
-
-        },
-            //initilizing
-            App.prototype.init = function () {
-                var $this = this;
-                //document load initialization
-                $(document).ready($this.onDocReady);
-                //init side bar - left
-                $.Sidemenu.init();
-                //init fullscreen
-                $.FullScreen.init();
-            },
-
-            $.App = new App, $.App.Constructor = App
+        $.App = new App;
+        $.App.Constructor = App;
 
     }(window.jQuery),
 
@@ -249,7 +250,7 @@ var debounce = function (func, wait, immediate) {
         if (callNow) result = func.apply(context, args);
         return result;
     };
-};
+}
 
 function resizeitems() {
     if ($.isArray(resizefunc)) {
@@ -295,3 +296,4 @@ var wow = new WOW(
     }
 );
 wow.init();
+

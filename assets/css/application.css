@@ -96,3 +96,6 @@
 #main-navigation a {
     color: #fff !important;
 }
+#main-navigation .dropdown-menu a {
+    color: #000000 !important;
+}
