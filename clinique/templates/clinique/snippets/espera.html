@@ -1,9 +1,9 @@
 {% load staticfiles %}{% load thumbnail %}{% load i18n %}{% load l10n %}
-<div class="row">
-  <div class="col-md-12">
+<div class="col-md-6">
     <div class="card-box widget-user">
         <div>
-            <img src="{% static 'images/face.jpg' %}" class="img-responsive img-circle m-t-10"/>
+            <img src="{% static 'images/face.jpg' %}"
+                 class="img-responsive img-circle m-t-10"/>
         </div>
         <div class="wid-u-info">
             <h6 class="m-t-0 m-b-5">
@@ -12,19 +12,20 @@
                 </a>
             </h6>
             <p class="text-muted m-b-5 font-13">{{ espera.persona.obtener_edad }}
-                    {% trans 'a&ntilde;os' %}
+                {% trans 'a&ntilde;os' %}
             <p>
-                {{ espera.persona.get_sexo_display }}
-                {% trans 'Programado para el' %} {{ espera.fecha }}
+                {{ espera.persona.get_sexo_display }}<br>
+                {% trans 'Programado para el' %}<br>{{ espera.fecha }}<br>
                 {% trans 'Tiempo total de espera:' %} {{ espera.tiempo|floatformat:2 }}
-                {% trans 'minutos' %}
+                {% trans 'minutos' %}<br>
                 {% trans 'Tiempo de espera actual:' %} {{ actual|floatformat:2 }}
-                {% trans 'minutos' %}
-                {{ espera.consultorio }}
+                {% trans 'minutos' %}<br>
+                {{ espera.consultorio }}<br>
                 {% for historia_espera in espera.historiafisicaespera_set.all %}
                     {% with historia_espera.historia_fisica as historia %}
-                        {% trans 'Presion:' %} {{ historia.presion_sistolica }} / {{ historia.presion_diastolica }}
-                    {% trans 'Temperatura:' %} {{ historia.temperatura }}°
+                        {% trans 'Presion:' %} {{ historia.presion_sistolica }}
+                        / {{ historia.presion_diastolica }}
+                        {% trans 'Temperatura:' %} {{ historia.temperatura }}°
                     {% endwith %}
                 {% endfor %}
             </p>
@@ -41,22 +42,22 @@
                     </a>
                 {% else %}
                     <a class="btn btn-primary"
-                        href="{% url 'clinique-espera-editar' espera.id %}">
+                       href="{% url 'clinique-espera-editar' espera.id %}">
                         {% trans 'Cambiar Consultorio' %}
                     </a>
                     {% if not espera.datos %}
                         <a class="btn btn-success"
-                            href="{% url 'persona-historia-agregar-espera' persona=espera.persona.id espera=espera.id %}">
+                           href="{% url 'persona-historia-agregar-espera' persona=espera.persona.id espera=espera.id %}">
                             {% trans 'Agregar Historia Fisiológica' %}
                         </a>
                     {% endif %}
                     <a class="btn btn-success"
-                        href="{% url 'clinique-espera-ausente' espera.id %}">
+                       href="{% url 'clinique-espera-ausente' espera.id %}">
                         {% trans 'No se Present&oacute;' %}
                     </a>
                     {% if espera.datos %}
                         <a class="btn btn-danger"
-                            href="{% url 'clinique-espera-consulta' espera.id %}">
+                           href="{% url 'clinique-espera-consulta' espera.id %}">
                             {% trans 'A Consulta' %}
                         </a>
                     {% endif %}
@@ -64,5 +65,4 @@
             </div>
         </div>
     </div>
-  </div>
 </div>

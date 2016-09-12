@@ -193,17 +193,7 @@
 
             </ul>
             <!-- END NAVBAR MENU -->
-            <form class="navbar-left app-search pull-left hidden-xs"
-                  method="get"
-                  action="{% url 'persona-search' %}">
-                <div class="form-group">
-                    <input type="text" name="query"
-                           class="form-control app-search-input"
-                           placeholder="{% trans 'Buscar Persona' %}">
-                    {% csrf_token %}
-                </div>
-                <a href=""><i class="fa fa-search"></i></a>
-            </form>
+
             <div class="pull-right">
 
 
