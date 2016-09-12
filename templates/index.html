@@ -28,7 +28,8 @@
                     <div class="wid-icon-info">
                         <p class="text-muted m-b-5 font-13">{% trans 'Total de pacientes del Mes' %}</p>
                         <h4 class="m-t-0 m-b-5 counter">1452</h4>
-                        <small class="text-success"><b>39% {% trans 'nuevos' %}</b></small>
+                        <small class="text-success">
+                            <b>39% {% trans 'nuevos' %}</b></small>
                     </div>
                 </div>
             </div>
@@ -148,10 +149,12 @@
                 <div>
                     <i class="md md-assignment-turned-in text-primary"></i>
                     <div class="wid-icon-info">
-                        <p class="text-muted m-b-5 font-13">Tareas generadas del
-                            mes</p>
+                        <p class="text-muted m-b-5 font-13">
+                            {% trans 'Tareas generadas del mes' %}
+                        </p>
                         <h4 class="m-t-0 m-b-5 counter">638</h4>
-                        <small class="text-success"><b>28% nuevos</b></small>
+                        <small class="text-success">
+                            <b>28% {% trans 'nuevos' %}</b></small>
                     </div>
                 </div>
             </div>
@@ -273,26 +276,52 @@
     <script>
         var resizefunc = [];
     </script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js" integrity="sha256-jDnOKIOq2KNsQZTcBTEnsp76FnfMEttF6AV2DF2fFNE=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js" integrity="sha256-JtQPj/3xub8oapVMaIijPNoM0DHoAtgh/gwFYuN5rik=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js" integrity="sha256-egVvxkq6UBCQyKzRBrDHu8miZ5FOaVrjSqQqauKglKc=" crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"
+            integrity="sha256-jDnOKIOq2KNsQZTcBTEnsp76FnfMEttF6AV2DF2fFNE="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"
+            integrity="sha256-JtQPj/3xub8oapVMaIijPNoM0DHoAtgh/gwFYuN5rik="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"
+            integrity="sha256-egVvxkq6UBCQyKzRBrDHu8miZ5FOaVrjSqQqauKglKc="
+            crossorigin="anonymous"></script>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js" integrity="sha256-LMe2LItsvOs1WDRhgNXulB8wFpq885Pib0bnrjETvfI=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/circliful/1.0.2/js/jquery.circliful.min.js" integrity="sha256-miYqLLtjt0ebMfVWpkCKQgbfdx4ppjim+JYZPewRTZk=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js" integrity="sha256-BuAkLaFyq4WYXbN3TFSsG1M5GltEeFehAMURi4KBpUM=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/skycons/1396634940/skycons.min.js" integrity="sha256-tZNzlXmrMrO9BLT6Gv4Y0LfAN8HdbZ7+LIuNf6WkFC0=" crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js"
+            integrity="sha256-LMe2LItsvOs1WDRhgNXulB8wFpq885Pib0bnrjETvfI="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/circliful/1.0.2/js/jquery.circliful.min.js"
+            integrity="sha256-miYqLLtjt0ebMfVWpkCKQgbfdx4ppjim+JYZPewRTZk="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"
+            integrity="sha256-BuAkLaFyq4WYXbN3TFSsG1M5GltEeFehAMURi4KBpUM="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/skycons/1396634940/skycons.min.js"
+            integrity="sha256-tZNzlXmrMrO9BLT6Gv4Y0LfAN8HdbZ7+LIuNf6WkFC0="
+            crossorigin="anonymous"></script>
 
     <!-- Todos app  -->
-    <script type="text/javascript"src="{% static 'pages/jquery.todo.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'pages/jquery.todo.js' %}"></script>
 
     <!-- Chat App  -->
-    <script type="text/javascript"src="{% static 'pages/jquery.chat.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'pages/jquery.chat.js' %}"></script>
 
     <!-- Page js  -->
-    <script type="text/javascript"src="{% static 'pages/jquery.dashboard.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'pages/jquery.dashboard.js' %}"></script>
 
-    <script type="text/javascript"src="{% static 'pages/jquery.widgets.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'pages/jquery.widgets.js' %}"></script>
 
     <script type="text/javascript">
         jQuery(document).ready(function ($) {
