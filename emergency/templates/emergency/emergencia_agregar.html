@@ -1,43 +1,41 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
-{% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab13' %}
-{% endblock %}
+{% load staticfiles %}{% load i18n %}
 {% block content %}
     {% load crispy_forms_tags %}
-        <section class="row">
-            <div class="col-md-12">
-                <div class="page-title-box">‏
-                        <h4 class="page-title">Emergencias <small>Admitir paciente</small></h4>
-                </div>
+    <section class="row">
+        <div class="col-md-12">
+            <div class="page-title-box">‏
+                <h4 class="page-title">{% trans 'Emergencias' %}
+                    <small>{% trans 'Admitir paciente' %}</small>
+                </h4>
             </div>
-            <section class="col-md-12">
-                <div class="col-md-12 panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            Buscar un Paciente
-                        </h3>
-                    </div>
-                        <form id="persona-form" class="col-md-12 m-l-10 m-t-15 m-b-15">
-                            <fieldset>
-                                <label>Nombre o Identidad:</label>
-                                <input id="persona-search"/>
-                                <button type="submit" class="btn btn-primary">
-                                    Buscar
-                                </button>
-                            </fieldset>
-                        </form>
-                </div>
-                <section id="resultados"></section>
-            </section>
+        </div>
+    </section>
+    <section class="row">
+        <div class="col-md-12 panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    {% trans 'Buscar un Paciente' %}
+                </h3>
+            </div>
+            <form id="persona-form" class="col-md-12 m-l-10 m-t-15 m-b-15">
+                <fieldset>
+                    <label for="persona-search">{% trans 'Nombre o Identidad:' %}</label>
+                    <input id="persona-search" class="form-control" />
+                    <button type="submit" class="btn btn-primary">
+                        {% trans 'Buscar' %}
+                    </button>
+                </fieldset>
+            </form>
+        </div>
+        <section id="resultados"></section>
+    </section>
+    </section>
+    <section class="row">
+        <section class="col-md-12 panel panel-default panel-border">
+            {% crispy persona_form %}
         </section>
-        <section class="">
-            <section class="col-md-12 panel panel-default panel-border">
-                <!-- <div class="panel panel-default"> -->
-                    {% crispy persona_form %}
-                <!-- </div> -->
-            </section>
-        </section>
+    </section>
 {% endblock %}
 {% block scripts %}
     <script type="text/javascript" src="{% static 'js/persona.js' %}"></script>

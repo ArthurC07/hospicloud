@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
-{% block title %} Admisiones{% endblock %}
-{% load staticfiles %}{% load thumbnail %}
+{% load tz %}{% load i18n %}{% load l10n %}{% load staticfiles %}{% load thumbnail %}
+{% block title %} {% trans 'Admisiones' %} {% endblock %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab2' %}
+    <li class="active">
+        <a class="waves-effect" href="{% url 'admision-index' %}">
+            {% trans 'Remitidos por Emergencia' %}
+        </a>
+    </li>
+    <li>
+        <a class="waves-effect" href="{% url 'admision-iniciar' %}">
+            {% trans 'Admitir Paciente' %}
+        </a>
+    </li>
 {% endblock %}
 {% block content %}
     <div class="row title round-corners">
         <div class="col-md-12 main-content">
             <section class="page-header page-title-box">
-              <h4 class="page-title">Admisiones</h4>
+                <h4 class="page-title">{% trans 'Admisiones' %}</h4>
             </section>
         </div>
     </div>
@@ -16,67 +25,57 @@
         <section class="col-md-6">
             <div class="main-content col-md-12 panel panel-default">
                 <section class="panel-heading">
-                    <h3 class="panel-title">Remitidos por Emergencias</h3>
+                    <h3 class="panel-title">{% trans 'Remitidos por Emergencias' %}</h3>
                 </section>
                 {% for preadmision in preadmisiones %}
                     <div class="card-box widget-user">
                         <!-- <div class="row"> -->
-                            <div>
-                                {% with photo=preadmision.emergencia.persona.fotografia|thumbnailer %}
-                                    {% if photo %}
-                                        <img src="{{ photo.small.url }}"
-                                             class="img-responsive img-circle m-t-10">
-                                    {% else %}
-                                        <img src="{% static 'images/face.jpg' %}"
-                                             class="img-responsive img-circle m-t-10"/>
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
-                            <div class="wid-u-info">
-                                <h6>{{ preadmision.emergencia.persona }}</h6>
-                                <p>{{ preadmision.emergencia.persona.obtener_edad }}
-                                    a&ntilde;os</p>
-                                <p><b>
-                                    {{ preadmision.emergencia.persona.get_sexo_display }}</b>
-                                </p>
-                            </div>
-                            <div>
-                                <a class="btn btn-primary waves-effect w-md waves-light m-b-5"
-                                   href="{% url 'admitir-preadmision' preadmision.id %}">
-                                   <i class="glyphicon glyphicon-log-in m-r-10"></i>
-                                    Iniciar Admisi&oacute;n
-                                </a>
-                                <a class="btn btn-danger waves-effect w-md waves-light m-b-5"
-                                   href="{% url 'preadmision-delete' preadmision.id %}">
-                                    <i class="fa fa-trash-o fa-lg m-r-10"></i> Eliminar
-                                </a>
-                            </div>
+                        <div>
+                            {% with photo=preadmision.emergencia.persona.fotografia|thumbnailer %}
+                                {% if photo %}
+                                    <img src="{{ photo.small.url }}"
+                                         class="img-responsive img-circle m-t-10">
+                                {% else %}
+                                    <img src="{% static 'images/face.jpg' %}"
+                                         class="img-responsive img-circle m-t-10"/>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        <div class="wid-u-info">
+                            <h6>{{ preadmision.emergencia.persona }}</h6>
+                            <p>{{ preadmision.emergencia.persona.obtener_edad }}
+                                {% trans 'a&ntilde;os' %}</p>
+                            <p><b>
+                                {{ preadmision.emergencia.persona.get_sexo_display }}</b>
+                            </p>
+                        </div>
+                        <div>
+                            <a class="btn btn-primary waves-effect w-md waves-light m-b-5"
+                               href="{% url 'admitir-preadmision' preadmision.id %}">
+                                <i class="glyphicon glyphicon-log-in m-r-10"></i>
+                                {% trans 'Iniciar Admisi&oacute;n' %}
+                            </a>
+                            <a class="btn btn-danger waves-effect w-md waves-light m-b-5"
+                               href="{% url 'preadmision-delete' preadmision.id %}">
+                                <i class="fa fa-trash-o fa-lg m-r-10"></i>
+                                {% trans 'Eliminar' %}
+                            </a>
+                        </div>
                         <!-- </div> -->
                     </div>
                 {% endfor %}
             </div>
         </section>
-        <!-- <article class="col-md-6">
-            <div class="main-content col-md-12 panel panel-default">
-                <section class="panel-heading">
-                    <h3 class="panel-title">Pacientes en Proceso de Admisi&oacute;n</h3>
-                </section>
-                    <div class="card-box widget-user">
-                        <nav class="navbar navbar-default" role="navigation">
-                            <div class="navbar-inner">
-                                <a href="#" class="navbar-brand">Acciones</a>
-                                <ul class="nav navbar-nav">
-                                    <li>
-                                        <a href="{% url 'admision-iniciar' %}">Admitir
-                                            Paciente</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </nav>
-                    </div>
-                {% include 'snippets/admision_list.html' with admisiones=admisiones eliminar=True %}
+        <article class="col-md-6">
+            <div class="row">
+                <div class="main-content col-md-12 panel panel-default">
+                    <section class="panel-heading">
+                        <h3 class="panel-title">{% trans 'Pacientes en Proceso de Admisi&oacute;n' %}</h3>
+                    </section>
+                    {% include 'snippets/admision_list.html' with admisiones=admisiones eliminar=True %}
+                </div>
             </div>
-        </article> -->
+        </article>
     </section>
 {% endblock %}
 {% block scripts %}
@@ -92,7 +91,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $.jqplot('grafico', [
-                [{{ puntos }} ]
+                [{{ puntos }}]
             ]);
         });
     </script>

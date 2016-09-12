@@ -8,7 +8,7 @@
         this.wrapper = $("#wrapper");
     };
     Sidemenu.prototype.openLeftBar = function () {
-
+        this.wrapper = $("#wrapper");
         this.wrapper.toggleClass("enlarged").addClass("forced");
 
         if (this.wrapper.hasClass("enlarged") && this.body.hasClass("fixed-left")) {
@@ -28,6 +28,7 @@
     };
     //menu item click
     Sidemenu.prototype.menuItemClick = function (e) {
+        this.wrapper = $("#wrapper");
         if (!this.wrapper.hasClass("enlarged")) {
             if ($(this).parent().hasClass("has_sub")) {
 

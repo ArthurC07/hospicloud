@@ -1,45 +1,38 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab10' %}
+    <li class="active">
+        <a href="{% url 'examen-index' %}">{% trans 'Estudios programados' %}</a>
+    </li>
+    <li>
+        <a href="{% url 'examen-nuevo' %}">
+            {% trans 'Programar Estudio Nuevo' %}
+        </a>
+    </li>
 {% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-12">
             <div class="page-title-box">
-                <h4 class="page-title">Centro de Im&aacute;genes</h4>
+                <h4 class="page-title">{% trans 'Centro de Im&aacute;genes' %}</h4>
             </div>
         </div>
     </div>
-    <!-- <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <nav class="navbar navbar-default" role="navigation">
-                    <div class="navbar-inner">
-                        <a class="navbar-brand" href="#">Acciones</a>
-                        <ul class="nav navbar-nav">
-                            <li><a href="{% url 'examen-nuevo' %}">Programar un Estudio Nuevo</a></li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-        </div>
-    </div> -->
     <div class="row">
         <div class="col-md-12">
             <div class="row panel panel-default">‏
                 <div class="panel-heading">
-                    <h3 class="panel-title">Estudios Programados</h3>
+                    <h3 class="panel-title">{% trans 'Estudios Programados' %}</h3>
                 </div>
                 <div class="col-md-12 m-t-15">
                     <table class="table table-striped no-more-tables">
                         <thead>
                         <tr>
-                            <th>Fecha</th>
-                            <th>Paciente</th>
-                            <th>Examen</th>
-                            <th>Remiti&oacute;</th>
-                            <th>Acciones</th>
+                            <th>{% trans 'Fecha' %}</th>
+                            <th>{% trans 'Paciente' %}</th>
+                            <th>{% trans 'Examen' %}</th>
+                            <th>{% trans 'Remiti&oacute;' %}</th>
+                            <th>{% trans 'Acciones' %}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -51,13 +44,23 @@
                                 <td>{{ estudio.remitio }}</td>
                                 <td>
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Acciones <span class="caret"></span>
+                                        <button type="button"
+                                                class="btn btn-info dropdown-toggle"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false">
+                                             {% trans 'Acciones' %}
+                                            <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <li><a href="{% url 'examen-efectuar' estudio.id %}">Efectuar</a></li>
-                                            <li role="separator" class="divider"></li>
-                                            <li><a href="{% url 'examen-cancelar' estudio.id %}">Cancelar</a></li>
+                                            <li>
+                                                <a href="{% url 'examen-efectuar' estudio.id %}">{% trans 'Efectuar' %}</a>
+                                            </li>
+                                            <li role="separator"
+                                                class="divider"></li>
+                                            <li>
+                                                <a href="{% url 'examen-cancelar' estudio.id %}">{% trans 'Cancelar' %}</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </td>
@@ -73,7 +76,7 @@
         <div class="col-md-12">
             <div class="row panel panel-default">‏
                 <div class="panel-heading">
-                    <h3 class="panel-title">Estudios Efectuados</h3>
+                    <h3 class="panel-title">{% trans 'Estudios Efectuados' %}</h3>
                 </div>
                 <div class="col-md-12 m-t-15">
                     {% include 'snippets/examen_list.html' with examenes=examenes %}

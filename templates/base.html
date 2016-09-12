@@ -9,16 +9,159 @@
     {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
     {% include 'styles.html' %}
     {% block header %}{% endblock %}
-    <!--[if lt IE 9]>
-      <script type="text/javascript" src="{% static 'js/html5shiv.min.js' %}"></script>
-      <script type="text/javascript" src="{% static 'js/respond.min.js' %}"></script>
-    <![endif]-->
     <!-- Fav and touch icons -->
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
 </head>
 <body>
+<nav class="navbar navbar-default navbar-static-top" id="main-navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand open-left" href="#">
+                <img src="{% static 'assets/images/logo.png' %}" alt="Hospinet">
+            </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                {% block menu %}{% endblock %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle profile"
+                       data-toggle="dropdown"
+                       role="button" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{ user.profile.get_mugshot_url }}"
+                             alt="user-img" class="img-circle">
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" id="user-actions">
+                        <li>
+                            <a href="{% url 'userena_profile_detail' user.username %}">
+                                <i class="md md-face-unlock"></i>
+                                {% trans 'View profile' %}
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href="{% url 'userena_signout' %}">
+                                <i class="md md-settings-power"></i>
+                                {% trans 'Cerrar Sesi&oacute;n' %}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <div id="wrapper">
-    {% block menu %}{% endblock %}
+    <div class="left side-menu">
+        <div class="sidebar-inner slimscrollleft">
+            <div id="sidebar-menu">
+                <ul class="tab-menu">
+                    <li class="text-muted menu-title">{% trans 'Menu' %}</li>
+                    <li>
+                        <a href="{% url 'home' %}"
+                           class="waves-effect waves-primary {% if active_tab == 'tab1' %} active{% endif %}"><i
+                                class="md md-dashboard"></i><span>{% trans 'Dashboard' %}</span></a>
+                    </li>
+                    <li class="has_sub">
+                        <a href="#" class="waves-effect waves-primary"
+                           id="clinical">
+                            <i class="fa fa-stethoscope"></i>
+                            <span> {% trans 'Clínico' %} </span>
+                        </a>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="{% url 'admision-index' %}">{% trans 'Admisiones' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'consultorio-index' %}">{% trans 'Consulta' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab9' %} active{% endif %}">
+                                <a href="{% url 'lab-index' %}">{% trans 'Laboratorio' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'examen-index' %}">{% trans 'Centro de Im&aacute;genes' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'emergency-index' %}">{% trans 'Emergencias' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'nightingale-index' %}">{% trans 'Hospitalizaci&oacute;n' %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="has_sub">
+                        <a href="#"
+                           class="waves-effect waves-primary">
+                            <i class="oin ion-folder "></i>
+                            <span>{% trans 'Administrativo' %}</span>
+                        </a>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="{% url 'invoice-index' %}">{% trans 'Caja' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab24' %} active{% endif %}">
+                                <a href="{% url 'invoice-pago-list' %}">{% trans 'Cuentas por Cobrar' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'contrato-index' %}">{% trans 'Contratos' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab39' %} active{% endif %}">
+                                <a href="{% url 'scorecard-index' %}">{% trans 'BSC' %} </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'encuesta-list' %}">{% trans 'Encuestas' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'inventario-index' %}">{% trans 'Inventario' %}</a>
+                            </li>
+                            <li class="{% if active_tab == 'tab53' %} active{% endif %}">
+                                <a href="{% url 'budget-index' %}">{% trans 'Presupuesto' %} </a>
+                            </li>
+                            <li class="{% if active_tab == 'tab54' %} active{% endif %}">
+                                <a href="{% url 'income-index' %}">{% trans 'Ingresos' %} </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="has_sub">
+                        <a href="#" class="waves-effect waves-primary">
+                            <i class="glyphicon glyphicon-user"></i>
+                            <span> {% trans 'Pacientes' %} </span>
+                        </a>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="{% url 'persona-index' %}">
+                                    {% trans 'Ver Pacientes' %}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'persona-create' %}">{% trans 'Agregar Paciente' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'persona-duplicate-clean' %}">{% trans 'Unir Duplicados' %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:index' %}" class="waves-effect waves-primary">
+                            <i class="md md-settings"></i>
+                            <span> {% trans 'Administraci&oacute;n' %} </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     {% block heading %}{% endblock %}
     {% include 'javascript.html' %}
     {% block scripts %}{% endblock scripts %}
@@ -29,8 +172,13 @@
                     <div id="system-message" class="row">
                         <div class="col-md-12">
                             {% for message in messages %}
-                                <div class="alert alert-warning alert-dismissible {% if message.tags %} {{ message.tags }} {% endif %} " role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <div class="alert alert-warning alert-dismissible {% if message.tags %} {{ message.tags }} {% endif %} "
+                                     role="alert">
+                                    <button type="button" class="close"
+                                            data-dismiss="alert"
+                                            aria-label="Close"><span
+                                            aria-hidden="true">&times;</span>
+                                    </button>
                                     {{ message }}
                                 </div>
                             {% endfor %}
@@ -42,6 +190,6 @@
         </div>
     </div>
     {% include 'snippets/footer.html' %}
-</div> 
+</div>
 </body>
 </html>

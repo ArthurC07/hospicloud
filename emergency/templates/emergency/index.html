@@ -1,34 +1,33 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
-{% block header %}
-{% endblock %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab12' %}
+    <li class="active">
+        <a href="{% url 'emergency-index' %}">
+            {% trans 'Admisiones' %}
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'emergency-ingresar' %}">
+            {% trans 'Admitir Paciente' %}
+        </a>
+    </li>
 {% endblock %}
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="page-title-box">‏
-                <h4 class="page-title">Emergencias <small>Admisi&oacute;n</small></h4>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-title-box">‏
+                <h4 class="page-title">{% trans 'Emergencias' %}
+                    <small>{% trans 'Admisi&oacute;n' %}</small>
+                </h4>
+            </div>
         </div>
     </div>
-</div>
-<div class="col-md-12 panel panel-border">
-  <section class="col-md-12">
-      <!-- <div class="main-content col-md-12 ">‏ -->
-          {% include 'emergency/snippets/emergencia_list.html' with emergencias=emergencias %}
-      <!-- </div> -->
-  </section>
-    <!-- <aside class="col-md-3">
-        <div class="toolbox col-md-12">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked">
-                    <li>
-                        <a href="{% url 'emergency-ingresar' %}">Admitir Paciente</a>
-                    </li>
-                </ul>
-            </nav>
+    <div class="row">
+        <div class="col-md-12 panel panel-border">
+
+            <section class="col-md-12">
+                {% include 'emergency/snippets/emergencia_list.html' with emergencias=emergencias %}
+            </section>
         </div>
-    </aside> -->
-</div>
+    </div>
 {% endblock %}
