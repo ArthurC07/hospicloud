@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load i18n %}{% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab41' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
-        <div class="main-content col-md-12">
-            <section class="page-header">
-                <h1>{% trans 'Respuesta de' %} {{ respuesta.consulta.persona }}</h1>
-            </section>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans 'Respuesta de' %} {{ respuesta.consulta.persona }}</h4>
+            </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9 main-content">
+        <section class="col-md-9 main-content panel panel-border">
+          <div class="panel-body">
             <div class="row">
-                <div class="col-md-12 bg-success lead">
+                <div class="col-md-12">
                     <p>
                     {% trans 'Puntuaci&oacute;n Adquirida' %}:
                     {{ respuesta.puntuacion }}
@@ -41,7 +45,7 @@
                     </ul>
                 {% else %}
                     {% crispy formset helper %}
-                    <h2>{% trans 'En caso de Existir una queja usar el formulario siguiente' %}</h2>
+                    <h4>{% trans 'En caso de Existir una queja usar el formulario siguiente' %}</h4>
                     {% if respuesta.queja_set.count > 0 %}
                         <p>{% trans 'Quejas registradas' %}:</p>
                         <ul>
@@ -53,10 +57,11 @@
                     {% crispy queja %}
                 {% endif %}
             </div>
+          </div>
         </section>
         <section class="col-md-3">
             <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
+                <nav class="sidebar-nav panel panel-border">
                     <ul class="nav nav-stacked nav-tabs">
                         <li>
                             <a href="{% url 'encuesta' respuesta.encuesta.id %}">

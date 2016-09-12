@@ -1,23 +1,38 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab3' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="col-md-6">
-            <div class="main-content col-md-12">‏
+        <div class="col-md-12">
+            <section class="page-header page-title-box">
+                <ol class="breadcrumb pull-right">
+                    <li><a href="#">EPS Medical</a></li>
+                    <li><a href="#">Clinico</a></li>
+                    <li><a href="#">Admisiones</a></li>
+                    <li><a href="#">Remitidos por emergencia</a></li>
+                    <li class="active">Iniciar Admisión</li>
+                </ol>
+                <h4 class="page-title">Admitir Paciente</h4>
+            </section>
+        </div>
+        <section class="col-md-6 panel panel-default">
+            <div class="m-t-10 col-md-12">‏
                 {% crispy form %}
             </div>
         </section>
-        <aside class="col-md-3">
+        <!-- <aside class="col-md-3">
             <div class="toolbox col-md-12">
                 <nav class="sidebar-nav">
                     <ul class="nav nav-stacked nav-tabs">
                     </ul>
                 </nav>
             </div>
-        </aside>
+        </aside> -->
     </div>
 {% endblock %}
 {% block scripts %}

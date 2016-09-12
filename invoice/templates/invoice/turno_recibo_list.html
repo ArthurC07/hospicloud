@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 {% block title %} Turno de Caja {% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab17' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 main-content">
-            <section class="page-header">
-                <h1>Reporte {{ turno.id }} de Cajero {{ turno.usuario }}
-                    <small>del {{ turno.inicio }} al {{ turno.fin }}</small>
-                </h1>
-            </section>
-        </div>
+        <div class="col-md-12">
+           <div class="page-title-box">
+               <h4 class="page-title">Reporte {{ turno.id }} de Cajero {{ turno.usuario }}
+                 <small>del {{ turno.inicio }} al {{ turno.fin }}</small>
+               </h4>
+           </div>
+       </div>
     </div>
     <section class="row">
-        <div class="main-content col-md-12 table-responsive">‏
+        <div class="main-content col-md-12 table-responsive panel panel-border">‏
             <table class="table table-striped">
                 <thead>
                 <tr>

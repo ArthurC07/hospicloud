@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}{% load i18n %}{% load l10n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab8' %}
+{% endblock %}
 {% block content %}
     <div class="row">
         <section class="col-md-12 main-header">
-            <section class="page-header">
+            <section class="page-title-box">
                 {% if persona.consultas_activas and perms.persona.persona %}
                     {% for consulta in persona.consultas_activas %}
                         <h3><small> {{ consulta.poliza.aseguradora }} {% if consulta.titularDependiente %} | {% endif %} {{ consulta.titularDependiente }} </small></h3>
                     {% endfor %}
                 {% endif %}
-                <h1> {{ persona.nombre_completo }}
+                <h4 class="page-title"> {{ persona.nombre_completo }}
                     <small>{% trans 'Informaci&oacute;n' %}</small>
-                </h1>
+                </h4>
                 {% if persona.consultas_activas and perms.persona.persona %}
                     <h3><small>Cargo: {{ persona.cargo }}  |  Edad: {{ persona.obtener_edad }} años</small></h3>
                 {% endif %}
@@ -28,66 +31,66 @@
                 {% endfor %}
             {% endif %}
             <div class="row">
-                <div class="col-md-12">‏
+                <div class="col-md-12 panel panel-default">‏
                     <section class="tabbable">
                         <ul class="nav nav-tabs">
-                            <li>
-                                <a class="active" href="#paciente"
+                            <li class="active tab">
+                                <a href="#paciente"
                                    data-toggle="tab">
                                     {% trans 'Datos Personales' %}
                                 </a>
                             </li>
                             {% if modules.consulta %}
-                                <li>
+                                <li class="tab">
                                     <a href="#consulta_inicio"
                                        data-toggle="tab">{% trans 'Consultas' %}</a>
                                 </li>
                             {% endif %}
-                            <li>
+                            <li class="tab">
                                 <a href="#clinico" data-toggle="tab">
                                     {% trans 'Datos Cl&iacute;nicos' %}</a>
                             </li>
-                            <li>
+                            <li class="tab">
                                 <a href="#vida" data-toggle="tab">
                                     {% trans 'Estilo de Vida' %}
                                 </a>
                             </li>
                             {% if modules.emergencia %}
-                                <li>
+                                <li class="tab">
                                     <a href="#emergencias" data-toggle="tab">
                                         {% trans 'Emergencias' %}
                                     </a>
                                 </li>
                             {% endif %}
                             {% if modules.hospitalizacion %}
-                                <li>
+                                <li class="tab">
                                     <a href="#admisiones" data-toggle="tab">
                                         {% trans 'Hospitalizaciones' %}
                                     </a>
                                 </li>
                             {% endif %}
                             {% if modules.imagenes %}
-                                <li>
+                                <li class="tab">
                                     <a href="#examenes" data-toggle="tab">
                                         {% trans 'Im&aacute;genes' %}
                                     </a>
                                 </li>
                             {% endif %}
                             {% if modules.contratos %}
-                                <li>
+                                <li class="tab">
                                     <a href="#contratos" data-toggle="tab">
                                         {% trans 'Contratos' %}</a>
                                 </li>
                             {% endif %}
                             {% if modules.caja %}
-                                <li>
+                                <li class="tab">
                                     <a href="#recibos" data-toggle="tab">
                                         {% trans 'Recibos' %}
                                     </a>
                                 </li>
                             {% endif %}
                             {% if modules.laboratorio %}
-                                <li>
+                                <li class="tab">
                                     <a href="#laboratorio" data-toggle="tab">
                                         {% trans 'Laboratorio' %}
                                     </a>
@@ -97,7 +100,7 @@
                         <div class="tab-content">
                             <article id="paciente" class="tab-pane active">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 m-b-15">
                                         {% include 'snippets/persona_fotografia.html'  with persona=persona %}
                                         {% include 'snippets/persona.html' with persona=persona %}
                                         <a href="{% url 'persona-editar' persona.id %}"
@@ -117,7 +120,9 @@
                                         </p>
                                     {% endfor %}
                                 {% endif %}
-                                {% include 'bsc/snippets/respuestas.html' with respuestas=persona.respuesta_set %}
+                                <div class="m-t-30">
+                                  {% include 'bsc/snippets/respuestas.html' with respuestas=persona.respuesta_set %}
+                                </div>
                             </article>
                             <article id="clinico" class="tab-pane">
                                 {% include 'persona/antecedentes.html' %}

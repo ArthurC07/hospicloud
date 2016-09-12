@@ -1,36 +1,42 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load i18n %}{% load crispy_forms_tags %}
 {% block title %} {% trans 'Aseguradora' %} {{ aseguradora }}{% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab25' %}
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-12 col-xs-12 main-header">
-            <div class="page-header">
-                <h1>
-                    {% trans 'Aseguradora' %} {{ aseguradora }}
-                    <small>{{ inicio }} {% trans 'al' %} {{ fin }}</small>
-                </h1>
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans 'Aseguradora' %} {{ aseguradora }}
+                   <small>{{ inicio }} {% trans 'al' %} {{ fin }}</small>
+                </h4>
             </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-6 col-xs-6 main-content">
-            <h2>{% trans 'Estadísticas de Consulta' %}</h2>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{% trans 'Tipo de Insumo Facturado' %}</th>
-                    <th>{% trans 'Cantidad Facturada' %}</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {% for tipo in ventas %}
-                        <tr>
-                            <td>{{ tipo.item__item_type__nombre }}</td>
-                            <td>{{ tipo.count }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <section class="col-md-6 col-xs-6 main-content panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{% trans 'Estadísticas de Consulta' %}</h3>
+            </div>
+            <div class="col-xs-12">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>{% trans 'Tipo de Insumo Facturado' %}</th>
+                        <th>{% trans 'Cantidad Facturada' %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for tipo in ventas %}
+                            <tr>
+                                <td>{{ tipo.item__item_type__nombre }}</td>
+                                <td>{{ tipo.count }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             <div class="row">
                 {% for form in forms %}
                     <div class="col-md-2">

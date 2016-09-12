@@ -121,11 +121,15 @@ class IndexView(InvoicePermissionMixin, TemplateView):
 
         context['tipoform'] = PeriodoCiudadForm(prefix='tipo')
         context['tipoform'].set_action('invoice-tipo')
-        context['tipoform'].helper.layout.legend = _('Productos por Ciudad y Periodo')
+        context['tipoform'].helper.layout.legend = _(
+            'Productos por Ciudad y Periodo')
 
-        context['estadisticasciudadform'] = PeriodoCiudadForm(prefix='estadisticasciudad')
-        context['estadisticasciudadform'].set_action('invoice-estadisticas-ciudad-periodo')
-        context['estadisticasciudadform'].helper.layout.legend = _('Estadísticas por Ciudad y periodo')
+        context['estadisticasciudadform'] = PeriodoCiudadForm(
+            prefix='estadisticasciudad')
+        context['estadisticasciudadform'].set_action(
+            'invoice-estadisticas-ciudad-periodo')
+        context['estadisticasciudadform'].helper.layout.legend = _(
+            'Estadísticas por Ciudad y periodo')
 
         context['corteform'] = CorteForm(prefix='corte')
         context['corteform'].set_action('invoice-corte')
@@ -234,9 +238,9 @@ class EstadisticasView(LoginRequiredMixin, TemplateView):
             context['tipos'][tipo] = pagado
 
         for n in range(1, 13):
-            inicio = make_day_start(date(now.year, n, 1))
+            inicio = make_day_start(now.replace(month=n, day=1))
             fin = make_end_day(
-                date(now.year, n, calendar.monthrange(now.year, n)[1])
+                now.replace(month=n, day=calendar.monthrange(now.year, n)[1])
             )
 
             total = recibos.filter(
@@ -312,6 +316,7 @@ class EstadisticasPeriodoView(LoginRequiredMixin, TemplateView):
         context['fin'] = self.fin
         return context
 
+
 class EstadisticasPeriodoCiudadView(LoginRequiredMixin, TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
@@ -329,8 +334,9 @@ class EstadisticasPeriodoCiudadView(LoginRequiredMixin, TemplateView):
             self.fin = self.form.cleaned_data['fin']
             self.ciudad = self.form.cleaned_data['ciudad']
 
-        return super(EstadisticasPeriodoCiudadView, self).dispatch(request, *args,
-                                                             **kwargs)
+        return super(EstadisticasPeriodoCiudadView, self).dispatch(request,
+                                                                   *args,
+                                                                   **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(EstadisticasPeriodoCiudadView, self).get_context_data(
@@ -341,12 +347,13 @@ class EstadisticasPeriodoCiudadView(LoginRequiredMixin, TemplateView):
         total = Recibo.objects.annotate(sold=Coalesce(
             Sum('ventas__total'), Decimal())
         ).filter(
-            created__range=(self.inicio, self.fin),ciudad=self.ciudad
+            created__range=(self.inicio, self.fin), ciudad=self.ciudad
         ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
 
         ventas = Venta.objects.filter(
-            recibo__created__range=(self.inicio, self.fin),recibo__ciudad=self.ciudad
-            )
+            recibo__created__range=(self.inicio, self.fin),
+            recibo__ciudad=self.ciudad
+        )
         context['ventas'] = ventas.values('item__descripcion').annotate(
             monto=Coalesce(Sum('monto'), Decimal()),
             cantidad=Coalesce(Sum('cantidad'), Decimal())
@@ -356,13 +363,15 @@ class EstadisticasPeriodoCiudadView(LoginRequiredMixin, TemplateView):
 
         for tipo in TipoPago.objects.all():
             pagado = tipo.pagos.filter(
-                recibo__created__range=(self.inicio, self.fin),recibo__ciudad=self.ciudad
+                recibo__created__range=(self.inicio, self.fin),
+                recibo__ciudad=self.ciudad
             ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
             context['pagos'].append((tipo, pagado))
 
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context
+
 
 class ReciboPersonaCreateView(LoginRequiredMixin, CreateView, PersonaFormMixin):
     """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
@@ -963,7 +972,7 @@ class ReporteTipoView(ReciboPeriodoView):
     """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
     durante el periodo especificado
     """
-    
+
     template_name = 'invoice/tipo_list.html'
     prefix = 'tipo'
 
@@ -975,7 +984,8 @@ class ReporteTipoView(ReciboPeriodoView):
             self.ciudad = self.form.cleaned_data['ciudad']
 
         return super(ReporteTipoView, self).dispatch(request, *args,
-                                                           **kwargs)
+                                                     **kwargs)
+
     def get_queryset(self):
         return Recibo.objects.filter(
             created__range=(self.inicio, self.fin),

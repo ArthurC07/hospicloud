@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 {% block title %} Turno de Caja {% endblock %}
 {% load l10n %}{% load i18n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab17' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 main-content">
-            <section class="page-header">
-                <h1>{% trans 'Reporte' %} {{ turno.id }} {% trans 'de Cajero' %} {{ turno.usuario }}
-                    <small>{% trans 'del' %} {{ turno.inicio }} {% trans 'al' %} {{ turno.fin }}</small>
-                </h1>
-            </section>
+         <div class="col-md-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans 'Reporte' %} {{ turno.id }} {% trans 'de Cajero' %} {{ turno.usuario }}
+                    <small>{% trans 'del' %} {{ turno.inicio }} {% trans 'al' %} {{ turno.fin }}</small></h4>
+            </div>
         </div>
     </div>
     {% if turno.finalizado %}
@@ -38,114 +40,119 @@
     {% endif %}
     <section class="row">
         {% ifnotequal turno.finalizado True %}
-            <div class="col-md-3 no-print">
-                <div class="toolbox col-md-12">
-                    <nav class="sidebar-nav">
-                        <ul class="nav nav-stacked nav-tabs">
-                            <li>
-                                <a href="{% url 'invoice-new' %}">
-                                    {% trans 'Crear Recibo' %}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'invoice-cierre-nuevo' turno.id %}">
-                                    {% trans 'Agregar Pago de Cierre' %}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'invoice-turno-edit' turno.id %}">
-                                    {% trans 'Editar Turno' %}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'invoice-turno-cerrar' turno.id %}">
-                                    {% trans 'Cerrar Turno' %}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'invoice-index' %}">
-                                    {% trans 'Regresar a Caja' %}
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
             <div class="col-md-9 main-content">
             {% else %}
             <div class="col-md-12 main-content">
         {% endifnotequal %}
-        <dl class="dl-horizontal">
-            <dt>{% trans 'Total de Ventas' %}</dt>
-            <dd>{{ turno.venta }}</dd>
-            <dt>{% trans 'Recibos nulos' %}</dt>
-            <dd>{{ turno.nulos.count }}</dd>
-        </dl>
-        <table class="table table-striped table-bordered table-condensed">
-            <caption>{% trans 'Reporte de Facturaci&oacute;n' %}</caption>
-            <thead>
-            <tr>
-                <th>{% trans 'Tipo de Pago' %}</th>
-                <th>{% trans 'Monto' %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>{% trans 'Apertura' %}</td>
-                <td>{{ turno.apertura }}</td>
-            </tr>
-            {% for pago in turno.pagos %}
-                <tr>
-                    <td>{{ pago.tipo__nombre }} {% trans 'Facturado' %}</td>
-                    <td>{{ pago.monto }}</td>
-                </tr>
-            {% endfor %}
-            <tr>
-                <th>{% trans 'Total de Ingresos' %}</th>
-                <th>{{ turno.ingresos }}</th>
-            </tr>
-            {% for cierre in turno.cierres.all %}
-                <tr>
-                    <td>
-                        {% ifnotequal turno.finalizado True %}
-                        <a href="{% url 'cierre-delete' cierre.id %}" class="btn btn-danger">
-                            <i class="glyphicon glyphicon-trash"></i>
-                        </a>
-                        {% endifnotequal %}
-                        {% trans 'En Caja' %} {{ cierre.pago }}
-                    </td>
-                    <td>{{ cierre.monto }}</td>
-                </tr>
-            {% endfor %}
-            <tr>
-                <th>{% trans 'Total en Caja' %}</th>
-                <th>{{ turno.total_cierres }}</th>
-            </tr>
-            {% for diferencia, monto in turno.diferencia %}
-                <tr>
-                    <td>{% trans 'Diferencia' %} {{ diferencia }}</td>
-                    <td>{{ monto }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-            <tfoot>
-            <tr>
-                <td>{% trans 'Menos Apertura' %}</td>
-                <td>{{ turno.apertura }}</td>
-            </tr>
-            <tr>
-                <th>{% trans 'Diferencia Total de Cierre' %}</th>
-                <th>{{ turno.diferencia_total }}</th>
-            </tr>
-            <tr>
-                <th>{% trans 'Dep&oacute;sitos de Admisiones' %}</th>
-                <th>{{ turno.depositado }}</th>
-            </tr>
-            </tfoot>
-        </table>
-        <a href="{% url 'invoice-turno-recibos' turno.id %}" class="btn btn-info">
-            {% trans 'Ver Recibos' %}
-        </a>
+              <div class="panel panel-border">
+                  <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>{% trans 'Total de Ventas' %}</dt>
+                        <dd>{{ turno.venta }}</dd>
+                        <dt>{% trans 'Recibos nulos' %}</dt>
+                        <dd>{{ turno.nulos.count }}</dd>
+                    </dl>
+                    <table class="table table-striped table-bordered table-condensed">
+                        <caption>{% trans 'Reporte de Facturaci&oacute;n' %}</caption>
+                        <thead>
+                        <tr>
+                            <th>{% trans 'Tipo de Pago' %}</th>
+                            <th>{% trans 'Monto' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{% trans 'Apertura' %}</td>
+                            <td>{{ turno.apertura }}</td>
+                        </tr>
+                        {% for pago in turno.pagos %}
+                            <tr>
+                                <td>{{ pago.tipo__nombre }} {% trans 'Facturado' %}</td>
+                                <td>{{ pago.monto }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <th>{% trans 'Total de Ingresos' %}</th>
+                            <th>{{ turno.ingresos }}</th>
+                        </tr>
+                        {% for cierre in turno.cierres.all %}
+                            <tr>
+                                <td>
+                                    {% ifnotequal turno.finalizado True %}
+                                    <a href="{% url 'cierre-delete' cierre.id %}" class="btn btn-danger">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </a>
+                                    {% endifnotequal %}
+                                    {% trans 'En Caja' %} {{ cierre.pago }}
+                                </td>
+                                <td>{{ cierre.monto }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <th>{% trans 'Total en Caja' %}</th>
+                            <th>{{ turno.total_cierres }}</th>
+                        </tr>
+                        {% for diferencia, monto in turno.diferencia %}
+                            <tr>
+                                <td>{% trans 'Diferencia' %} {{ diferencia }}</td>
+                                <td>{{ monto }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td>{% trans 'Menos Apertura' %}</td>
+                            <td>{{ turno.apertura }}</td>
+                        </tr>
+                        <tr>
+                            <th>{% trans 'Diferencia Total de Cierre' %}</th>
+                            <th>{{ turno.diferencia_total }}</th>
+                        </tr>
+                        <tr>
+                            <th>{% trans 'Dep&oacute;sitos de Admisiones' %}</th>
+                            <th>{{ turno.depositado }}</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                    <a href="{% url 'invoice-turno-recibos' turno.id %}" class="btn btn-info">
+                        {% trans 'Ver Recibos' %}
+                    </a>
+                </div>
+              </div>
+        </div>
+
+        <div class="col-md-3 no-print">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav panel panel-border">
+                    <ul class="nav nav-stacked nav-tabs">
+                        <li>
+                            <a href="{% url 'invoice-new' %}">
+                                {% trans 'Crear Recibo' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-cierre-nuevo' turno.id %}">
+                                {% trans 'Agregar Pago de Cierre' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-turno-edit' turno.id %}">
+                                {% trans 'Editar Turno' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-turno-cerrar' turno.id %}">
+                                {% trans 'Cerrar Turno' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'invoice-index' %}">
+                                {% trans 'Regresar a Caja' %}
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </section>
 {% endblock %}

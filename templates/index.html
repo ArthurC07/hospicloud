@@ -1,170 +1,342 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>HospiNet</title>
-    <meta name="viewport" content="width=device-width"/>
-    <meta name="description" content="">
-    <meta name="author" content="">
-    {% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
-    {% include 'styles.html' %}
-    <link href="{% static 'css/login.css' %}" rel="stylesheet"/>
-    <link href="{% static 'css/index.css' %}" rel="stylesheet"/>
-    <!--[if lt IE 9]>
-      <script type="text/javascript" src="{% static 'js/html5shiv.min.js' %}"></script>
-      <script type="text/javascript" src="{% static 'js/respond.min.js' %}"></script>
-    <![endif]-->
-    {% block header %}{% endblock %}
-    <!-- Fav and touch icons -->
-    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
-</head>
-<body>
-{% include 'javascript.html' %}
-<div id="logo">
-    <img src="{% static 'images/hospinet.svg' %}" width="107" height="149"/>
-</div>
-    <aside id="navigation">
-        <a href="{% url 'userena_profile_detail' user.username %}">
-            <div class="image-holder flex-container">
-                <i class="fa fa-user"></i>
-            </div>
-            <div class="flex-container">
-                <div>{{ user }}</div>
-            </div>
-        </a>
-        {% if user.is_staff %}
-            <a href="{% url 'persona-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon4.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Pacientes' %}</div>
-                </div>
-            </a>
-            {% if modules.hospitalizacion %}
-            <a href="{% url 'admision-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon3.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Admisiones' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.laboratorio %}
-            <a href="{% url 'lab-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon6.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Laboratorio' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.imagenes %}
-            <a href="{% url 'examen-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon6.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Centro de Im&aacute;genes' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.hospitalizacion %}
-            <a href="{% url 'nightingale-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon5.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Hospitalizaci&oacute;n' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.inventario %}
-            <a href="{% url 'inventario-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon7.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Inventario' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.emergencia %}
-            <a href="{% url 'emergency-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon2.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Emergencia' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.consulta %}
-            <a href="{% url 'consultorio-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon8.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Consultorios' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.caja %}
-            <a href="{% url 'invoice-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon9.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Caja' %}</div>
-                </div>
-            </a>
-            {% endif %}
-            {% if modules.contratos %}
-            <a href="{% url 'contrato-index' %}">
-                <div class="image-holder flex-container">
-                    <img src="{% static 'images/icon1.png' %}">
-                </div>
-                <div class="flex-container">
-                    <div>{% trans 'Contratos' %}</div>
-                </div>
-            </a>
-            {% endif %}
-    </aside>
-{% endif %}
-<div class="container fill">
-    <div class="flex-container">
-        <div class="row">
-            <div class="col-md-4 col-md-offset-8">
-
+{% extends 'base.html' %}
+{% load staticfiles %}{% load tz %}{% load l10n %}{% load i18n %}
+{% block title %} {% trans 'Inicio' %} {% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans '¡Bienvenido!' %}</h4>
             </div>
         </div>
     </div>
-</div>
-<div id="help">
-    <a onclick="if(navigator.userAgent.toLowerCase().indexOf('opera') != -1 &amp;&amp; window.event.preventDefault) window.event.preventDefault();this.newWindow = window.open('{{ online_help }}', 'mibew', 'toolbar=0,scrollbars=0,location=0,status=1,menubar=0,width=640,height=480,resizable=1');this.newWindow.focus();this.newWindow.opener=window;return false;"
-       href="{{ online_help }}" target="_blank">
-        <i class="fa fa-4x fa-question-circle"></i>
-        {% trans 'Ayuda en L&iacute;nea' %}
-    </a>
-</div>
-<script type="text/javascript"
-        src="{% static 'js/jquery.backstretch.min.js' %}"></script>
-<script type="text/javascript"
-        src="{% static 'js/jquery.placeholder.js' %}"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('input, textarea').placeholder();
-        $.backstretch([
-            "{% static 'images/slide2.jpg' %}",
-            "{% static 'images/slide3.jpg' %}",
-            "{% static 'images/slide4.jpg' %}",
-            "{% static 'images/slide5.jpg' %}",
-            "{% static 'images/slide6.jpg' %}",
-            "{% static 'images/slide7.jpg' %}"
-        ], {duration: 10000, fade: 'slow'});
-    });
-</script>
-</body>
-</html>
+
+    <div class="row">
+        <div class="col-sm-6 col-lg-3">
+            <div class="widget-simple-chart text-right panel-box">
+                <div class="circliful-chart" data-dimension="90" data-text="35%"
+                     data-width="5" data-fontsize="14" data-percent="35"
+                     data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
+                <h3 class="text-success counter">2569</h3>
+                <p class="text-muted text-nowrap">{% trans 'Ventas del mes' %}</p>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="panel-box widget-icon">
+                <div>
+                    <i class="md md-account-child text-primary"></i>
+                    <div class="wid-icon-info">
+                        <p class="text-muted m-b-5 font-13">{% trans 'Total de pacientes del Mes' %}</p>
+                        <h4 class="m-t-0 m-b-5 counter">1452</h4>
+                        <small class="text-success">
+                            <b>39% {% trans 'nuevos' %}</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="panel-box widget-user">
+                <img src="{% static 'images/users/avatar-1.jpg' %}"
+                     class="img-responsive img-circle" alt="user">
+                <div class="wid-u-info">
+                    <h4 class="m-t-0 m-b-5">{% trans 'Nombre Gerente' %}</h4>
+                    <p class="text-muted m-b-5 font-13">{% trans 'Gerente General' %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark header-title m-t-0 m-b-30">{% trans 'Total de Encuestas Realizadas' %}</h4>
+
+                <div class="widget-chart text-center">
+                    <div id="sparkline2"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20">{% trans 'Total' %}</h5>
+                            <h4 class="m-b-0">1500</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark header-title m-t-0 m-b-30">
+                    {% trans 'Quejas del Mes' %}
+                </h4>
+                <div class="widget-chart text-center">
+                    <div id="sparkline6"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20">{% trans 'Total' %}</h5>
+                            <h4 class="m-b-0">153</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark  header-title m-t-0 m-b-30">{% trans 'Pacientes del Mes' %}</h4>
+
+                <div class="widget-chart text-center">
+                    <div id="sparkline1"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color: #47b4dc;">{% trans 'Pacientes Totales' %}</h5>
+                            <h4 class="m-b-0">1000</h4>
+                        </li>
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color:#5d9cec;">{% trans 'Pacientes del mes' %}</h5>
+                            <h4 class="m-b-0">523</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark header-title m-t-0 m-b-30">{% trans 'Quejas y Atenciones' %}</h4>
+
+                <div class="widget-chart text-center">
+                    <div id="sparkline3"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color: #33c37d;">{% trans 'Quejas' %}</h5>
+                            <h4 class="m-b-0">20</h4>
+                        </li>
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color:#3bafda;">{% trans 'Atenciones' %}</h5>
+                            <h4 class="m-b-0">80</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="panel-box">
+                <h4 class="text-dark  header-title m-t-0 m-b-30">{% trans 'Ventas por Aseguradora' %}</h4>
+
+                <div class="widget-chart text-center">
+                    <div id="sparkline4"></div>
+                    <ul class="list-inline m-t-15">
+                        <li>
+                            <h5 class="text-muted m-t-20"
+                                style="color:#3bafda;">{% trans 'Total' %}</h5>
+                            <h4 class="m-b-0">1350</h4>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="panel-box widget-icon">
+                <div>
+                    <i class="md md-assignment-turned-in text-primary"></i>
+                    <div class="wid-icon-info">
+                        <p class="text-muted m-b-5 font-13">
+                            {% trans 'Tareas generadas del mes' %}
+                        </p>
+                        <h4 class="m-t-0 m-b-5 counter">638</h4>
+                        <small class="text-success">
+                            <b>28% {% trans 'nuevos' %}</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-4">
+            <div class="panel-box widget-icon">
+                <div>
+                    <i class="md md-question-answer text-primary"></i>
+                    <div class="wid-icon-info">
+                        <p class="text-muted m-b-5 font-13">{% trans 'Encuestas' %}</p>
+                        <h4 class="m-t-0 m-b-5 counter">80</h4>
+                        <small class="text-success"><b>85% contestadas</b>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel-box">
+                <h4 class="text-dark  header-title m-t-0 m-b-30">
+                    Tegucigalpa</h4>
+                <div class="row">
+                    <div class="col-sm-7">
+
+                        <div class="row">
+                            <div class="col-xs-6 text-center">
+                                <canvas id="cloudy" width="100"
+                                        height="100"></canvas>
+                            </div>
+                            <div class="col-xs-6">
+                                <h2 class="m-t-0 text-muted"><b> 23°</b></h2>
+                                <p class="text-muted">Nublado</p>
+                                <p class="text-muted">15km/h - 37%</p>
+                            </div>
+                        </div> <!-- end row -->
+
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">MIE</h4>
+                                <canvas id="sleet" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">30<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">JUE</h4>
+                                <canvas id="fog" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">28<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">VIE</h4>
+                                <canvas id="partly-cloudy-night" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">33<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="panel-box">
+                <h4 class="text-dark  header-title m-t-0 m-b-30">San Pedro
+                    Sula</h4>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="row">
+                            <div class="col-xs-6 text-center">
+                                <canvas id="clear-day" width="100"
+                                        height="100"></canvas>
+                            </div>
+                            <div class="col-xs-6">
+                                <h2 class="m-t-0 text-muted"><b>33°</b></h2>
+                                <p class="text-muted">Soleado</p>
+                                <p class="text-muted">10km/h - 28%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">MIE</h4>
+                                <canvas id="snow" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">30<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">JUE</h4>
+                                <canvas id="wind" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">28<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <h4 class="text-muted m-t-0">VIE</h4>
+                                <canvas id="partly-cloudy-day" width="35"
+                                        height="35"></canvas>
+                                <h4 class="text-muted">33<i
+                                        class="wi-degrees"></i></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"
+            integrity="sha256-jDnOKIOq2KNsQZTcBTEnsp76FnfMEttF6AV2DF2fFNE="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"
+            integrity="sha256-egVvxkq6UBCQyKzRBrDHu8miZ5FOaVrjSqQqauKglKc="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js"
+            integrity="sha256-LMe2LItsvOs1WDRhgNXulB8wFpq885Pib0bnrjETvfI="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/circliful/1.0.2/js/jquery.circliful.min.js"
+            integrity="sha256-miYqLLtjt0ebMfVWpkCKQgbfdx4ppjim+JYZPewRTZk="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"
+            integrity="sha256-BuAkLaFyq4WYXbN3TFSsG1M5GltEeFehAMURi4KBpUM="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/skycons/1396634940/skycons.min.js"
+            integrity="sha256-tZNzlXmrMrO9BLT6Gv4Y0LfAN8HdbZ7+LIuNf6WkFC0="
+            crossorigin="anonymous"></script>
+
+    <!-- Todos app  -->
+    <script type="text/javascript"
+            src="{% static 'pages/jquery.todo.js' %}"></script>
+
+    <!-- Chat App  -->
+    <script type="text/javascript"
+            src="{% static 'pages/jquery.chat.js' %}"></script>
+
+    <!-- Page js  -->
+    <script type="text/javascript"
+            src="{% static 'pages/jquery.dashboard.js' %}"></script>
+
+    <script type="text/javascript"
+            src="{% static 'pages/jquery.widgets.js' %}"></script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".circliful-chart").circliful();
+        });
+
+        /* BEGIN SVG WEATHER ICON */
+        if (typeof Skycons !== 'undefined') {
+            var icons = new Skycons(
+                    {"color": "#00b19d"},
+                    {"resizeClear": true}
+                    ),
+                    list = [
+                        "clear-day", "clear-night", "partly-cloudy-day",
+                        "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
+                        "fog"
+                    ],
+                    i;
+
+            for (i = list.length; i--;)
+                icons.set(list[i], list[i]);
+            icons.play();
+        }
+
+    </script>
+{% endblock %}

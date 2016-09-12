@@ -1,49 +1,53 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab9' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
         <div class="col-md-12">
-            <div class="main-content col-md-12">
-                <section class="page-header">
-                    <h1>Laboratorio</h1>
-                </section>
+            <div class="page-title-box">
+                    <h4 class="page-title">Laboratorio</h4>
             </div>
         </div>
     </div>
-    <div class="row">
-        <section class="col-md-9">
+    <div>
+        <section class="col-md-12 panel panel-default">
+            <div class="panel-heading">
+                    <h3 class="panel-title">Resultados de la busqueda</h3>
+                </div>
             <div class="main-content col-md-12">
                 {% for persona in personas %}
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-2">
-                                {% with photo=persona.fotografia|thumbnailer %}
-                                    {% if photo %}
-                                        <img src="{{ photo.small.url }}"
-                                             width="{{ photo.small.width }}"
-                                             height="{{ photo.small.height }}">
-                                    {% else %}
-                                        <img src="{% static 'images/face.jpg' %}" width="100"
-                                             height="100"/>
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
-                            <div class="col-md-9">
-                                <h3>{{ persona }}
-                                    <small>{{ persona.obtener_edad }} a&ntilde;os
-                                    </small>
-                                </h3>
-                                <p>
-                                    {{ persona.get_sexo_display }}
-                                    Ultima Consulta: {{ persona.ultima_consulta.created }}
-                                </p>
-                                <a class="btn btn-primary"
-                                   href="{% url 'lab-result-add' persona.id %}">Agregar resultado <i
-                                        class="fa fa-arrow-right"></i></a>
-                            </div>
+                    <div class="col-md-12 card-box widget-user m-l-5">
+                        <div class="col-md-1">
+                            {% with photo=persona.fotografia|thumbnailer %}
+                                {% if photo %}
+                                    <img src="{{ photo.small.url }}"
+                                         width="{{ photo.small.width }}"
+                                         height="{{ photo.small.height }}">
+                                {% else %}
+                                    <img src="{% static 'images/face.jpg' %}"
+                                        height="40%"
+                                        class="img-responsive img-circle"/>
+                                {% endif %}
+                            {% endwith %}
                         </div>
-                        <hr>
+                        <div class="col-md-11">
+                            <h6 class="m-t-0 m-b-5">{{ persona }}
+                            </h6>
+                            <a class="btn btn-primary pull-right"
+                               href="{% url 'lab-result-add' persona.id %}"><i class="oin ion-plus-round"></i> Agregar resultado</a>
+                            <p class="text-muted m-b-5 font-13">{{ persona.obtener_edad }} a&ntilde;os
+                            </p>
+                            <p class="text-muted">
+                                <b>{{ persona.get_sexo_display }}</b>
+                            </p>
+                            <p class="text-muted">
+                              <b>Ultima Consulta:</b> {{ persona.ultima_consulta.created }}
+                            </p>
+
+                        </div>
                     </div>
                 {% endfor %}
             </div>

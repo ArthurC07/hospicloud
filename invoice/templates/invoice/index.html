@@ -4,53 +4,74 @@
 {% block header %}
     {{ ventaperiodoform.media.css }}
 {% endblock %}
+{% block menu %}
+    <li>
+        <a href="{% url 'invoice-new' %}">{% trans 'Crear Recibo' %}</a>
+    </li>
+    <li>
+        <a href="{% url 'invoice-aseguradora-list' %}">
+            {% trans 'Contratos' %}
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'invoice-cpc-list' %}">
+            {% trans 'Cuentas Por Cobrar' %}
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'invoice-comprobantededuccion-list' %}">
+            {% trans 'Comprobantes de Retenci&oacute;n' %}
+        </a>
+    </li>
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <section class="page-header">
-                    <h1>{% trans 'Caja' %}</h1>
-                </section>
-            </div>
+        <div class="col-sm-12">
+            <section class="page-title-box">
+                <h4 class="page-title">{% trans 'Caja' %}</h4>
+            </section>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-12 panel panel-border">
             <div class="main-content col-md-12">‏
                 <section class="tabbable">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li class="active tab">
                             <a href="#turno" data-toggle="tab">
                                 {% trans 'Turno' %}
                             </a>
                         </li>
-                        <li>
+                        <li class="tab">
                             <a href="#pendientes" data-toggle="tab">
-                                {% trans 'Recibo Pendiente' %}
+                                {% trans 'Pendientes' %}
                             </a>
                         </li>
-                        <li>
+                        <li class="tab">
                             <a href="#consulta" data-toggle="tab">
                                 {% trans 'Consulta' %}
                             </a>
                         </li>
                         {% if config.HOSPITALIZACION_ENABLED %}
-                            <li>
+                            <li class="tab">
                                 <a href="#admisiones" data-toggle="tab">
                                     {% trans 'Admisiones' %}
                                 </a>
                             </li>
                         {% endif %}
-                        <li>
+                        <li class="tab">
                             <a href="#emergencias" data-toggle="tab">
                                 {% trans 'Emergencias' %}
                             </a>
                         </li>
                         {% if config.IMAGENES_ENABLED %}
-                            <li><a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
+                            <li class="tab">
+                                <a href="#imagenes" data-toggle="tab">
+                                    {% trans 'Im&aacute;genes' %}
+                                </a>
                             </li>
                         {% endif %}
-                        <li>
+                        <li class="tab">
                             <a href="#reporte" data-toggle="tab">
                                 {% trans 'Reportes' %}
                             </a>
@@ -59,9 +80,9 @@
                     <div class="tab-content">
                         <article id="turno" class="tab-pane active">
                             {% for turno in turnos %}
-                                <h1>
+                                <h4>
                                     <a href="{% url 'invoice-turno' turno.id %}">{{ turno }}</a>
-                                </h1>
+                                </h4>
                                 <dl class="dl-horizontal">
                                     <dt>{% trans 'Total de Ventas' %}</dt>
                                     <dd>{{ turno.venta }}</dd>
@@ -127,10 +148,20 @@
                                     </tfoot>
                                 </table>
                             {% endfor %}
+                            {% if not turno %}
+                                <a class="btn btn-primary"
+                                   href="{% url 'invoice-turno-nuevo' %}">
+                                    {% trans 'Abrir Turno' %}
+                                </a>
+                            {% endif %}
+                            <a class="btn btn-primary"
+                               href="{% url 'invoice-turno-activo' %}">
+                                {% trans 'Turnos Activos' %}
+                            </a>
                         </article>
                         <article id="pendientes" class="tab-pane">
                             <table class="table table-striped">
-                                <caption>{% trans 'Recibos Pendientes' %}</caption>
+                                <h3>{% trans 'Recibos Pendientes' %}</h3>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'C&oacute;digo' %}</th>
@@ -170,7 +201,7 @@
                                 </tbody>
                             </table>
                             <table class="table table-striped">
-                                <caption>{% trans 'Cotizaciones Pendientes' %}</caption>
+                                <h3>{% trans 'Cotizaciones Pendientes' %}</h3>
                                 <thead>
                                 <tr>
                                     <th>{% trans 'C&oacute;digo' %}</th>
@@ -237,9 +268,9 @@
                                                 <ul>
                                                     {% for deposito in admision.depositos.all %}
                                                         <li>
-                                                            Dep&oacute;sito {{ deposito.fecha }} {{ deposito.monto }}
+                                                            {% trans 'Dep&oacute;sito' %} {{ deposito.fecha }} {{ deposito.monto }}
                                                             <a class="btn btn-primary"
-                                                               href="{% url 'deposito-invoice' deposito.id %}">Facturar</a>
+                                                               href="{% url 'deposito-invoice' deposito.id %}">{% trans 'Facturar' %}</a>
                                                         </li>
                                                     {% endfor %}
                                                 </ul>
@@ -248,7 +279,7 @@
                                             <td>{{ admision.paciente.get_sexo_display }}</td>
                                             <td>
                                                 <a class="btn btn-block btn-primary"
-                                                   href="{% url 'admision-invoice' admision.id %}">{% trans 'Facturar' %}</a>
+                                                   href="{% url 'admision-invoice' admision.id %}"></a>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -258,7 +289,9 @@
                         {% endif %}
                         <article id="emergencias" class="tab-pane">
                             <table class="table table-striped no-more-tables">
-                                <caption>{% trans 'Emergencias sin Facturar' %}</caption>
+                                <caption>
+                                    <h3>{% trans 'Emergencias sin Facturar' %}</h3>
+                                </caption>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'Identificaci&oacute;n' %}</th>
@@ -292,7 +325,9 @@
                                         <td>
                                             {% if not emergencia.facturada %}
                                                 <a class="btn btn-block btn-primary"
-                                                   href="{% url 'emergency-invoice' emergencia.id %}">Facturar</a>
+                                                   href="{% url 'emergency-invoice' emergencia.id %}">
+                                                    {% trans 'Facturar' %}
+                                                </a>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -302,7 +337,9 @@
                         </article>
                         <article id="consulta" class="tab-pane">
                             <table class="table table-striped no-more-tables">
-                                <caption>{% trans 'Consultas sin Facturar' %}</caption>
+                                <caption>
+                                    <h3>{% trans 'Consultas sin Facturar' %}</h3>
+                                </caption>
                                 <thead class="gradient">
                                 <tr>
                                     <th>{% trans 'Identificaci&oacute;n' %}</th>
@@ -318,7 +355,7 @@
                                 {% for consulta in consultas %}
                                     <tr>
                                         <td>
-                                            <a class="btn btn-info btn-block"
+                                            <a class="btn btn-primary btn-block"
                                                href="{% url 'persona-view-id' consulta.persona.id %}">
                                                 {% if consulta.persona.identificacion %}
                                                     {{ consulta.persona.identificacion }}
@@ -334,7 +371,7 @@
                                         <td>{{ consulta.consultorio }}</td>
                                         <td>
                                             {% if not consulta.facturada %}
-                                                <a class="btn btn-block btn-primary"
+                                                <a class="btn btn-block btn-success"
                                                    href="{% url 'consulta-invoice' consulta.id %}">
                                                     {% trans 'Facturar' %}
                                                 </a>
@@ -421,21 +458,16 @@
                                     {% crispy pagoform %}
                                 </section>
                                 <section class="col-md-4">
-                                    {% crispy estadisticasciudadform %}
+                                    {% crispy estadisticasform %}
                                 </section>
                             </div>
                             <div class="row">
-                                <section class="col-md-4">
-                                    {% crispy estadisticasform %}
-                                </section>
                                 <section class="col-md-4">
                                     {% crispy ciudadform %}
                                 </section>
                                 <section class="col-md-4">
                                     {% crispy turnoform %}
                                 </section>
-                            </div>
-                            <div class="row">
                                 <section class="col-md-4">
                                     {% crispy numero_form %}
                                 </section>
@@ -445,56 +477,6 @@
                 </section>
             </div>
         </div>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-tabs nav-stacked">
-                        <li>
-                            <a href="{% url 'invoice-new' %}">
-                                {% trans 'Crear Recibo' %}
-                            </a>
-                        </li>
-                        {% if not turno %}
-                            <li>
-                                <a href="{% url 'invoice-turno-nuevo' %}">
-                                    {% trans 'Abrir Turno' %}
-                                </a>
-                            </li>
-                        {% endif %}
-                        <li>
-                            <a href="{% url 'invoice-turno-activo' %}">
-                                {% trans 'Turnos Activos' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'invoice-aseguradora-list' %}">
-                                {% trans 'Facturaci&oacute;n de Contratos' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'invoice-estadisticas' %}">
-                                {% trans 'Estad&iacute;sticas' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'invoice-cpc-list' %}">
-                                {% trans 'Cuentas Por Cobrar' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'comprobante-agregar' %}">
-                                {% trans 'Crear un Comprobante de Retenci&oacute;n' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'invoice-comprobantededuccion-list' %}">
-                                {% trans 'Ver Comprobantes de Retenci&oacute;n' %}
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
     </div>
 {% endblock %}
 {% block scripts %}

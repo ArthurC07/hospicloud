@@ -1,24 +1,26 @@
 {% extends 'base.html' %}
 {% load i18n %}{% load l10n %}{% load crispy_forms_tags %}{% load staticfiles %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab53' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-xs-12 col-md-12 main-header">
-            <section class="page-header">
-                <h1>
-                    {% trans 'Estado Financiero del Mes de' %}
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans 'Estado Financiero del Mes de' %}
                     {{ fecha|date:"F" }}
                     {% trans 'del' %}
                     {{ fecha|date:"Y" }}
-                </h1>
-            </section>
+                </h4>
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12 col-xs-12 main-content">
             <div class="row">
                 <div class="col-md-6 col-xs-6" id="meses">
-                    <div class="panel {% if balance > 0 %} panel-success {% else %} panel-danger {% endif %}">
-                        <div class="panel-heading">
+                    <div class="panel panel-color {% if balance > 0 %} panel-green {% else %} panel-danger {% endif %}">
+                        <div class="{% if balance > 0 %} panel-heading-green {% else %} panel-heading {% endif %}m-0" style="padding: 10px 20px;">
                             <h3 class="panel-title">
                                 {% trans 'Resumen de Ingresos y Egresos' %}
                             </h3>
@@ -66,8 +68,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
+                    <div class="panel panel-color panel-green">
+                        <div class="panel-heading-green m-0">
                             <h3 class="panel-title">
                                 {% trans 'Saldo en Cuentas' %}
                             </h3>
@@ -89,8 +91,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
+                    <div class="panel panel-color panel-green">
+                        <div class="panel-heading-green m-0">
                             <h3 class="panel-title">{% trans 'Cheques' %}</h3>
                         </div>
                         <table class="table table-striped">
@@ -115,8 +117,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
+                    <div class="panel panel-color panel-green">
+                        <div class="panel-heading-green m-0">
                             <h3 class="panel-title">{% trans 'Depositos' %}</h3>
                         </div>
                         <table class="table table-striped">
@@ -148,8 +150,8 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-xs-6">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
+                    <div class="panel panel-color panel-green">
+                        <div class="panel-heading-green m-0">
                             <h3 class="panel-title">
                                 {% trans 'Descripción del Presupuesto por Ciudad' %}
                             </h3>
@@ -176,8 +178,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
+                    <div class="panel panel-color panel-green">
+                        <div class="panel-heading-green m-0">
                             <h3 class="panel-title">{% trans 'Facturaci&oacute;n' %}</h3>
                         </div>
                         <table class="table table-striped">
@@ -205,8 +207,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
+                    <div class="panel panel-color panel-green">
+                        <div class="panel-heading-green m-0">
                             <h3 class="panel-title">{% trans 'Tipo de Pago' %}</h3>
                         </div>
                         <table class="table table-striped">
@@ -232,8 +234,8 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
+                    <div class="panel panel-color panel-green">
+                        <div class="panel-heading-green m-0">
                             <h3 class="panel-title">
                                 {% trans 'Cuentas por Cobrar' %}
                             </h3>

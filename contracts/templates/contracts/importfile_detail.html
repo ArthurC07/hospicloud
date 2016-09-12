@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}
 {% block title %} Contrato {{ contrato.numero }}{% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab30' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="page-header">
-            <h1>Archivo para Importaci&oacute;n {{ import_file.created }}</h1>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Archivo para Importaci&oacute;n {{ import_file.created }}</h4>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -17,7 +22,7 @@
         </section>
         <aside class="col-md-3">
             <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
+                <nav class="sidebar-nav panel panel-border">
                     <ul class="nav nav-tabs nav-stacked">
                         <li>
                             <a href="{% url 'contracts-archivo-process' import_file.id %}">Procesar Archivo</a>

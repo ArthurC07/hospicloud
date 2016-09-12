@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
 {% load l10n %}{% load i18n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab8' %}
+{% endblock %}
 {% block content %}
-    <div class="row">
-        <section class="page-header col-md-12 main-header">
-            <h1>
-                {% trans 'Sala de Espera Global' %}
-            </h1>
+<div class="row">
+    <div class="col-md-12">
+        <section class="page-title-box">
+            <h4 class="page-title">{% trans 'Sala de Espera Global' %}
+            </h4>
         </section>
     </div>
-    <div class="row">
-        <div class="col-md-12 table-responsive main-content">
+</div>
+<div class="row panel panel-default">
+    <div class="col-md-12 table-responsive main-content">   
             {% for espera in object_list %}
                 {% include 'clinique/snippets/espera.html' with espera=espera %}
             {% endfor %}
-        </div>
     </div>
+</div>
 {% endblock %}

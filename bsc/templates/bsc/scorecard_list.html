@@ -1,30 +1,40 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab39' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
-            <div class="main-content col-md-12">
-                <section class="page-header">
-                    <h1>Balanced Score Card</h1>
-                </section>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">BSC</h4>
             </div>
-    </div>
-    <div class="row">
-        <section class="col-md-12 main-content">
-            <ul>
-                {% for scorecard in object_list.all %}
-                    <li><a href="{{ scorecard.get_absolute_url }}">{{ scorecard }}</a></li>
-                {% empty %}
-                    <li>No hay BSC definidos</li>
-                {% endfor %}
-            </ul>
-        </section>
-    </div>
-    <div class="row">
-        <div class="col-md-12 main-content">
-        <div class="col-md-6">
-            {% crispy loginperiodo %}
         </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default col-md-12">
+            <div class="panel-heading">
+                <h3 class="panel-title">Balanced Score Card</h3>
+            </div>
+            <section class="col-md-12 main-content m-t-15">
+                <ul>
+                    {% for scorecard in object_list.all %}
+                        <li><a href="{{ scorecard.get_absolute_url }}">{{ scorecard }}</a></li>
+                    {% empty %}
+                        <li>No hay BSC definidos</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default col-md-12">
+            <div class="col-md-12 main-content">
+            <div class="col-md-12 m-t-10">
+                {% crispy loginperiodo %}
+            </div>
+            </div>
         </div>
     </div>
 {% endblock %}

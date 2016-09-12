@@ -1,7 +1,7 @@
 {% load i18n %}{% load l10n %}
 <div class="table-responsive">
     <table class="table table-striped">
-        <caption>{% trans 'Caracter&iacute;sticas F&iacute;sicas' %}</caption>
+        <h4>{% trans 'Caracter&iacute;sticas F&iacute;sicas' %}</h4>
         <tbody>
         <tr>
             <th class="data-label">{% trans 'Color de Ojos:' %}</th>
@@ -21,41 +21,43 @@
         <a href="{% url 'persona-fisico-editar' persona.id %}"
            class="btn btn-primary">{% trans 'Editar F&iacute;sico' %}</a>
     {% endif %}
-    <table class="table table-striped">
-        <caption>{% trans 'Histora F&iacute;sica-Metab&oacute;lica' %}</caption>
-        <thead>
-        <tr>
-            <th>{% trans 'Fecha' %}</th>
-            <th>{% trans 'Altura' %}</th>
-            <th>{% trans 'Peso' %}</th>
-            <th>{% trans 'IMC' %}</th>
-            <th>{% trans 'GEB' %}</th>
-            <th>{% trans 'Pulso' %}</th>
-            <th>{% trans 'Temperatura' %}</th>
-            <th>{% trans 'Presi&oacute;n Sist&oacute;lica' %}</th>
-            <th>{% trans 'Presi&oacute;n Diast&oacute;lica' %}</th>
-            <th>{% trans 'Presi&oacute;n Arterial Media' %}</th>
-            <th>{% trans 'Respiraci&oacute;n' %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for historia in fisico.persona.historiafisica_set.all %}
-            <tr>
-                <td>{{ historia.fecha }}</td>
-                <td>{{ historia.altura }}</td>
-                <td>{{ historia.peso }} {{ historia.get_medida_de_peso_display }}</td>
-                <td>{{ historia.bmi }}</td>
-                <td>{{ historia.bmr }}</td>
-                <td>{{ historia.pulso }}</td>
-                <td>{{ historia.temperatura }}</td>
-                <td>{{ historia.presion_sistolica }}</td>
-                <td>{{ historia.presion_diastolica }}</td>
-                <td>{{ historia.presion_arterial_media }}</td>
-                <td>{{ historia.respiracion }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="m-t-30">
+      <table class="table table-striped">
+          <h4>{% trans 'Histora F&iacute;sica-Metab&oacute;lica' %}</h4>
+          <thead>
+          <tr>
+              <th>{% trans 'Fecha' %}</th>
+              <th>{% trans 'Altura' %}</th>
+              <th>{% trans 'Peso' %}</th>
+              <th>{% trans 'IMC' %}</th>
+              <th>{% trans 'GEB' %}</th>
+              <th>{% trans 'Pulso' %}</th>
+              <th>{% trans 'Temperatura' %}</th>
+              <th>{% trans 'Presi&oacute;n Sist&oacute;lica' %}</th>
+              <th>{% trans 'Presi&oacute;n Diast&oacute;lica' %}</th>
+              <th>{% trans 'Presi&oacute;n Arterial Media' %}</th>
+              <th>{% trans 'Respiraci&oacute;n' %}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for historia in fisico.persona.historiafisica_set.all %}
+              <tr>
+                  <td>{{ historia.fecha }}</td>
+                  <td>{{ historia.altura }}</td>
+                  <td>{{ historia.peso }} {{ historia.get_medida_de_peso_display }}</td>
+                  <td>{{ historia.bmi }}</td>
+                  <td>{{ historia.bmr }}</td>
+                  <td>{{ historia.pulso }}</td>
+                  <td>{{ historia.temperatura }}</td>
+                  <td>{{ historia.presion_sistolica }}</td>
+                  <td>{{ historia.presion_diastolica }}</td>
+                  <td>{{ historia.presion_arterial_media }}</td>
+                  <td>{{ historia.respiracion }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    </div>
     {% if perms.persona.persona %}
         <a class="btn btn-primary"
            href="{% url 'persona-historia-agregar' persona.id %}">

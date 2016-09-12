@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}
 {% block title %} Vendedor {{ vendedor }}{% endblock %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab38' %}
+{% endblock %}
 {% block content %}
     <div class="row">
-        <div class="page-header">
-            <h1>{{ meta.fecha }}
-                <small>Meta</small>
-            </h1>
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{{ meta.fecha }}
+                <small>Meta</small></h4>
+            </div>
         </div>
     </div>
     <div class="row">

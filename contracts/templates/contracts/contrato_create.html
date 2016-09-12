@@ -1,22 +1,32 @@
 {% extends 'base.html' %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab27' %}
+{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="main-content col-md-12">
-            <form method="post" class="form-horizontal">
-                {{ form.management_form }}
-            <div class="col-md-6">
-                {% crispy persona_form %}
+        <div class="col-md-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Crear Contrato Empresarial</h4>
             </div>
-                {% for subform in form %}
-                    <div class="col-md-6">
-                    {% crispy subform %}
-                    </div>
-                {% endfor %}
-            </form>
+        </div>
+        <section class="main-content col-md-12 ">
+            <div class="panel panel-default col-md-12">
+                <form method="post" class="form-horizontal">
+                    {{ form.management_form }}
+                <div class="col-md-6">
+                    {% crispy persona_form %}
+                </div>
+                    {% for subform in form %}
+                        <div class="col-md-6">
+                        {% crispy subform %}
+                        </div>
+                    {% endfor %}
+                </form>
+            </div>
         </section>
     </div>
 {% endblock %}

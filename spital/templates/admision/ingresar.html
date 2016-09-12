@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab3' %}
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-6">
-            <div class="main-content col-md-12">‏
-
+            <div class="main-content col-md-12 panel panel-default">‏
                 {% crispy persona_search_form %}
             </div>
         </div>
         <div class="col-md-6">
-            <div class="main-content col-md-12">‏
+            <div class="main-content col-md-12 panel panel-default">‏
                 {% crispy persona_form %}
             </div>
         </div>
