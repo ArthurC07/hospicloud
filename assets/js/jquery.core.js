@@ -1,9 +1,3 @@
-/**
-* Theme: Minton Admin Template
-* Author: Coderthemes
-* Module/App: Core js
-*/
-
 //portlets
 !function($) {
     "use strict";
@@ -304,7 +298,3 @@ function($) {
     "use strict";
     $.Components.init();
 }(window.jQuery);
-
-
-
-

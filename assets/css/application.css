@@ -96,6 +96,24 @@
 #main-navigation a {
     color: #fff !important;
 }
+
 #main-navigation .dropdown-menu a {
     color: #000000 !important;
+}
+
+.percentage-box {
+    background-color: #f3f3f3;
+    padding: 4px;
+    border-radius: 0 3px 3px 0;
+    border: 1px #e6e7e9 solid;
+    text-align: center;
+    font-weight: bold;
+    font-size: 115%;
+}
+
+.percentage-label {
+    background-color: #33c37d;
+    padding: 6px 10px;
+    border-radius: 3px 0 0 3px;
+    color: #FFF;
 }
