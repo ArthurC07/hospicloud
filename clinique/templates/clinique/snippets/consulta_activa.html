@@ -1,5 +1,5 @@
 {% load i18n %}{% load l10n %}
-<div class="col-md-12">
+<div class="col-md-12 col-xs-12 panel panel-default">
     <section class="page-header">
         <h2>{% trans 'Consulta en Consultorio' %} {{ consulta.consultorio }}
             <small>{{ consulta.created }}</small>
@@ -89,7 +89,6 @@
         {% endfor %}
     </article>
     <article id="diagnostico" class="tab-pane table-responsive">
-        {% load l10n %}
         <table class="table table-striped">
             <caption>{% trans 'Diagn&oacute;stico' %}</caption>
             <thead>
@@ -105,9 +104,11 @@
                     <td>{{ diagnostico.created }}</td>
                     <td>
                         {{ diagnostico.afeccion }}{{ diagnostico.diagnostico }}</td>
-                    <td><a class="btn btn-success"
-                           href="{% url 'clinique-diagnostico-edit' diagnostico.id %}"><i
-                            class="fa fa-edit"></i> {% trans 'Editar' %}</a>
+                    <td>
+                        <a class="btn btn-success"
+                           href="{% url 'clinique-diagnostico-edit' diagnostico.id %}">
+                            <i class="fa fa-edit"></i> {% trans 'Editar' %}
+                        </a>
                     </td>
                 </tr>
             {% endfor %}
@@ -158,8 +159,11 @@
                     <td>{{ incapacidad.created }}</td>
                     <td>{{ incapacidad.descripcion }}</td>
                     <td>{{ incapacidad.dias }}</td>
-                    <td><a class="btn btn-success"
-                           href="{% url 'clinique-incapacidad-edit' incapacidad.id %}">{% trans 'Editar' %}</a>
+                    <td>
+                        <a class="btn btn-success"
+                           href="{% url 'clinique-incapacidad-edit' incapacidad.id %}">
+                            {% trans 'Editar' %}
+                        </a>
                     </td>
                 </tr>
             {% endfor %}
@@ -179,9 +183,10 @@
                 <tr>
                     <td>{{ prescripcion.created }}</td>
                     <td>{{ prescripcion.medicamento }} {{ prescripcion.nota }}</td>
-                    <td><a class="btn btn-success"
-                           href="{% url 'clinique-prescripcion-edit' prescripcion.id %}"><i
-                            class="fa fa-edit"></i> {% trans 'Editar' %}</a>
+                    <td>
+                        <a class="btn btn-success"href="{% url 'clinique-prescripcion-edit' prescripcion.id %}">
+                            <i class="fa fa-edit"></i> {% trans 'Editar' %}
+                        </a>
                     </td>
                 </tr>
             {% endfor %}
@@ -197,11 +202,11 @@
             {% endfor %}
             </tbody>
         </table>
+        <a class="btn btn-primary"
+           href="{% url 'consultorio-lectura-agregar' consulta.persona.id %}">
+            {% trans 'Agregar Lectura de Signos' %}
+        </a>
         <table class="table table-striped">
-            <a class="btn bg-primary"
-               href="{% url 'consultorio-lectura-agregar' consulta.persona.id %}">
-                {% trans 'Agregar Lectura de Signos' %}
-            </a>
             <caption>{% trans 'Signos Vitales' %}</caption>
             <thead>
             <tr>
@@ -225,9 +230,11 @@
                     <td>{{ signos_vitales.presion_diastolica }}</td>
                     <td> {{ signos_vitales.presion_arterial_media }}</td>
                     <td> {{ signos_vitales.respiracion }}</td>
-                    <td><a class="btn btn-success"
-                           href="{% url 'clinique-signos-edit' signos_vitales.id %}"><i
-                            class="fa fa-edit"></i> {% trans 'Editar' %}</a>
+                    <td>
+                        <a class="btn btn-success"
+                           href="{% url 'clinique-signos-edit' signos_vitales.id %}">
+                            <i class="fa fa-edit"></i> {% trans 'Editar' %}
+                        </a>
                     </td>
                 </tr>
             {% endfor %}
@@ -235,10 +242,10 @@
         </table>
     </article>
 </div>
-{% block scripts %}>
+{% block scripts %}
     <script type="text/javascript">
-        $('#terminar-consulta').click(function(){
-             $(this).addClass('disabled');
+        $('#terminar-consulta').click(function () {
+            $(this).addClass('disabled');
         });
     </script>
 {% endblock %}
