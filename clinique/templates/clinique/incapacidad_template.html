@@ -1,0 +1,22 @@
+{% extends "easy_pdf/base.html" %}
+{% block content %}
+    <div id="content">
+        <img style="text-align:center;width:600px;height:150px" src="{{ incapacidad_image }}" />
+        <h1 style="margin-top:50px;color:#07C;font-size:18px;text-align: center">EPS Medical, {{ incapacidad.consulta.consultorio.localidad }}, Pbx 22631111</h1>
+        <h1 style="text-align: center;font-size:35px">Constancia Médica</h1>
+        <p style="padding-top:-35px;font-size:16px">Por medio de la presente se hace constar que el Sr.(a) <span style="font-weight:bold">{{ incapacidad.persona }}</span> de <span style="font-weight:bold">{{ incapacidad.persona.obtener_edad }} años</span> de edad, sexo <span style="font-weight:bold">{{ incapacidad.persona.sexo }}</span> con ID <span style="font-weight:bold">{{ incapacidad.persona.identificacion }}</span>  se presentó el dia <span style="font-weight:bold">{{ incapacidad.created }}</span> con el siguiente diagnostico:</p>  
+        <p style="padding-top:-15px;font-size:16px;font-weight:bold">{{ incapacidad.descripcion }}</p>
+        <p style="font-size:16px">Por lo cual se le extiende una incapacidad médica los dias:</p>
+        <p style="padding-top:-15px;font-size:16px;font-weight:bold">
+        {% for dia in dias %}
+            {% if forloop.last %}
+                {{dia|date:'d F Y'}}
+            {% else %}
+                {{dia|date:'d F Y'}}, 
+            {% endif %}
+        {% endfor %}
+        </p>
+        <p style="margin-top:150px;font-size:16px;text-align:center">________________________________<p>
+        <p style="font-size:16px;text-align:center">Firma y sello del médico<p>
+    </div>
+{% endblock %}

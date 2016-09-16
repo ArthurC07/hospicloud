@@ -57,6 +57,7 @@ class Company(TimeStampedModel):
     receipt_days = models.IntegerField(default=30)
     sac = models.EmailField(blank=True)
     laboratorios = models.EmailField(blank=True)
+    incapacidad_image = models.ImageField(upload_to='logos',blank=True, null=True)
 
     def __str__(self):
         return self.nombre

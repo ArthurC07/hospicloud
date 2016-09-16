@@ -79,7 +79,8 @@ from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
 from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView, \
     HistoriaFisicaCreateView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
-from users.models import Ciudad
+from users.models import Ciudad, Company
+from easy_pdf.views import PDFTemplateView
 
 
 class ConsultorioPermissionMixin(LoginRequiredMixin):
@@ -1175,6 +1176,29 @@ class IncapacidadCreateView(CurrentUserFormMixin, PersonaFormMixin,
     model = Incapacidad
     form_class = IncapacidadForm
 
+    def get_success_url(self):
+        
+        return reverse('clinique-incapacidad-print', kwargs={'pk': self.object.id})
+
+class IncapacidadPDFView(PDFTemplateView):
+    template_name = "clinique/incapacidad_template.html"
+
+    def get_context_data(self, **kwargs):
+        incapacidad = Incapacidad.objects.get(pk=kwargs['pk'])
+        company = Company.objects.get(pk=1)
+        dias = []
+        date = incapacidad.created
+        
+        for i in range(incapacidad.dias):
+            dias.append(date)
+            date = date + timedelta(days=1)
+        
+        return super(IncapacidadPDFView, self).get_context_data(
+            incapacidad = incapacidad,
+            dias = dias,
+            incapacidad_image = company.incapacidad_image.url, 
+            **kwargs
+        )
 
 class IncapacidadUpdateView(LoginRequiredMixin, UpdateView):
     model = Incapacidad

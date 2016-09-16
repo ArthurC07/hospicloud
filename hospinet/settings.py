@@ -178,6 +178,7 @@ INSTALLED_APPS = (
     'storages',
     'debug_toolbar',
     'mail_templated',
+    'easy_pdf',
 )
 
 AUTHENTICATION_BACKENDS = (
