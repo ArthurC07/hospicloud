@@ -22,7 +22,18 @@
                 {% if persona.consultas_activas and perms.persona.persona %}
                     <h3><small>{% if persona.cargo %} Cargo: {{ persona.cargo }}{% endif %}
                         {% if persona.obtener_edad and persona.cargo  %} | {% endif %}
-                        {% if persona.obtener_edad %} Edad: {{ persona.obtener_edad }} años {% endif %}</small></h3>
+                        {% if persona.obtener_edad %} Edad: {{ persona.obtener_edad }} años {% endif %}
+                        {% if persona.obtener_edad or persona.cargo  %} | {% endif %}
+                        {% for consulta in persona.consultas_activas %}
+                            {% for historia_espera in consulta.espera.historiafisicaespera_set.all %}
+                                {% with historia_espera.historia_fisica as historia %}
+                                    {% trans 'Presion:' %} {{ historia.presion_sistolica }}
+                                    / {{ historia.presion_diastolica }}
+                                    {% trans 'Temperatura:' %} {{ historia.temperatura }}°
+                                {% endwith %}
+                            {% endfor %}
+                        {% endfor %} 
+                    </small></h3>
                 {% endif %}
             </section>
         </section>
