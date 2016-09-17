@@ -183,17 +183,15 @@
                                     <a href="{% url 'persona-create' %}">{% trans 'Agregar Paciente' %}</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'persona-duplicate-clean' %}">{% trans 'Unir Duplicados' %}</a>
+                                    <a href="{% url 'persona-duplicate-clean' %}">
+                                        {% trans 'Unir Duplicados' %}</a>
                                 </li>
-                            </ul>
-                            </li>
-                            <li>
-                                <a href="{% url 'admin:index' %}"
-                                   class="waves-effect waves-primary">
-                                    <i class="md md-settings"></i>
-                                    <span> {% trans 'Administraci&oacute;n' %} </span>
-                                </a>
-                            </li>
+                                <li>
+                                    <a href="{% url 'admin:index' %}">
+                                        <i class="md md-settings"></i>
+                                        <span> {% trans 'Administraci&oacute;n' %} </span>
+                                    </a>
+                                </li>
                         </div>
                     </div>
                 </div>
