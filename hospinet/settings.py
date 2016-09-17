@@ -162,7 +162,6 @@ INSTALLED_APPS = (
     'invoice',
     'emergency',
     'inventory',
-    'statistics',
     'contracts',
     'lab',
     'budget',
