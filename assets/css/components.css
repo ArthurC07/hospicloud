@@ -35,7 +35,7 @@
 .btn-group .btn + .btn-group,
 .btn-group .btn-group + .btn,
 .btn-group .btn-group + .btn-group {
-  margin-left: 0px;
+  margin-left: 0;
 }
 .btn-group.open .dropdown-toggle {
   -webkit-box-shadow: 0 0 0 100px rgba(0, 0, 0, 0.1) inset;
@@ -243,18 +243,18 @@
    Panels
  =============*/
 .panel {
-  -moz-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
-  border-radius: 0px;
+  -moz-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 0;
   border: none;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 .panel .panel-body {
   padding: 20px;
 }
 .panel .panel-body p {
-  margin: 0px;
+  margin: 0;
 }
 .panel .panel-body p + p {
   margin-top: 15px;
@@ -262,8 +262,8 @@
 .panel-heading {
   border-radius: 0;
   border: none !important;
-  padding: 10px 0px;
-  margin: 0px 20px;
+  padding: 10px 0;
+  margin: 0 20px;
 }
 
 .panel-heading-green {
@@ -282,7 +282,6 @@
   font-weight: 600;
   margin-bottom: 0;
   margin-top: 0;
-  text-transform: uppercase;
   letter-spacing: 0.03em;
 }
 .panel-sub-title {
@@ -292,7 +291,7 @@
 }
 .panel-footer {
   background: #FFF;
-  border-top: 0px;
+  border-top: 0;
   text-align: center;
 }
 .panel-default .panel-sub-title {
@@ -337,7 +336,7 @@
   background-color: #ffffff;
   border-top: 3px solid #ccc !important;
   border-radius: 3px;
-  padding: 10px 20px 0px;
+  padding: 10px 20px 0;
 }
 .panel-border .panel-body {
   padding: 15px 20px 20px 20px;
@@ -422,13 +421,13 @@
    Portlets
  =============*/
 .portlet {
-  -moz-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   -moz-transition: all 0.4s;
   -o-transition: all 0.4s;
-  -webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   -webkit-transition: all 0.4s;
   background: #ffffff;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   transition: all 0.4s;
 }
@@ -492,7 +491,7 @@
   background: rgba(243, 242, 241, 0.5);
   cursor: progress;
   bottom: 15px;
-  left: 0px;
+  left: 0;
   position: absolute;
   right: -5px;
   top: 0;
@@ -1267,7 +1266,7 @@ table.dataTable td.focus {
  =============*/
 .calendar {
   float: left;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 .none-border .modal-footer {
   border-top: none;
@@ -1301,7 +1300,7 @@ table.dataTable td.focus {
   background: #dddddd;
   font-size: 14px;
   line-height: 20px;
-  padding: 10px 0px;
+  padding: 10px 0;
   text-transform: uppercase;
 }
 .fc-button {
@@ -1386,7 +1385,7 @@ table.dataTable td.focus {
 .conversation-list {
   list-style: none;
   max-height: 330px;
-  padding: 0px 20px;
+  padding: 0 20px;
 }
 .conversation-list li {
   margin-bottom: 24px;
@@ -1423,7 +1422,7 @@ table.dataTable td.focus {
   position: relative;
 }
 .conversation-list .ctext-wrap p {
-  margin: 0px;
+  margin: 0;
   padding-top: 3px;
 }
 .conversation-list .ctext-wrap:after {
@@ -1469,7 +1468,7 @@ table.dataTable td.focus {
   top: 20% !important;
 }
 .chat-send {
-  padding-left: 0px;
+  padding-left: 0;
   padding-right: 30px;
 }
 .chat-send button {
@@ -1482,23 +1481,23 @@ table.dataTable td.focus {
   font-size: 16px;
 }
 .todo-list li {
-  border: 0px;
-  margin: 0px;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
+  border: 0;
+  margin: 0;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   background: transparent !important;
 }
 .todo-list li:last-of-type {
   border-bottom: none;
 }
 .todo-send {
-  padding-left: 0px;
+  padding-left: 0;
 }
 /* Widget-chart */
 .widget-chart ul li {
   width: 38%;
   display: inline-block;
-  padding: 0px;
+  padding: 0;
 }
 .widget-panel {
   padding: 30px 20px;
@@ -1512,9 +1511,9 @@ table.dataTable td.focus {
   padding: 30px;
   background: rgba(255, 255, 255, 0.2);
   position: absolute;
-  right: 0px;
-  bottom: 0px;
-  top: 0px;
+  right: 0;
+  bottom: 0;
+  top: 0;
   line-height: 60px;
 }
 .widget-user {
