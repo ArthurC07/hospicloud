@@ -16,8 +16,7 @@
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-from django.conf.urls import url, patterns 
-from wkhtmltopdf.views import PDFTemplateView
+from django.conf.urls import url
 
 from clinique import views
 
@@ -348,7 +347,7 @@ urlpatterns = [
         name='consultorio-incapacidad-agregar'),
 
     url(r'^incapacidad/(?P<pk>\d+)/imprimir$',
-        views.IncapacidadPDFView.as_view(),
+        views.IncapacidadDetailView.as_view(),
         name='clinique-incapacidad-print'),
 
     url(r'^incapacidad/(?P<pk>\d+)/editar$',
