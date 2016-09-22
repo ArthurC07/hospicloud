@@ -112,6 +112,10 @@ urlpatterns = [
         views.ConsultaMedicoPeriodoView.as_view(),
         name='consulta-medico'),
 
+    url(r'^medico/periodo$',
+        views.ConsultaUserMedicoPeriodoView.as_view(),
+        name='consulta-medico-periodo'),
+
     url(r'^ciudad/(?P<pk>\d+)$',
         views.ConsultaCiudadPeriodoView.as_view(),
         name='consulta-ciudad'),

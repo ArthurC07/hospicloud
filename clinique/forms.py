@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from crispy_forms.layout import Fieldset, Submit
+from crispy_forms.helper import FormHelper
 from dal import autocomplete
 from django import forms
 from django.forms import inlineformset_factory
@@ -35,6 +36,7 @@ from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, FieldSetFormMixin
 from persona.models import Persona
 from users.mixins import HiddenUserForm
+from django.contrib.auth.models import User
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
@@ -49,6 +51,35 @@ class ConsultorioFormMixin(FieldSetModelFormMixin):
             'nombre').all()
     )
 
+class UserFormMixin(forms.Form):
+    """
+    Permite compartir agregar la información de usuarios automáticamente
+    en los formularios que heredan de esta clase
+    """
+    medico = forms.ModelChoiceField(
+        queryset=User.objects.filter(groups__pk= 2)
+    )  
+
+class MedicoPeriodoForm(UserFormMixin):
+    """
+    Builds a form that allows specifying a :class:`Consultorio` and a
+    Date range
+    """
+    
+    inicio = forms.DateTimeField(widget=DateTimeWidget)
+    fin = forms.DateTimeField(widget=DateTimeWidget)
+
+    def __init__(self, *args, **kwargs):
+        super(MedicoPeriodoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.form_method = 'get'
+        self.helper.layout = Fieldset(_('Consultas por Medico por Periodo'),
+                                      *self.field_names)
+
+    def set_action(self, action):
+        self.helper.form_action = action
 
 class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
     consultorio = forms.ModelChoiceField(

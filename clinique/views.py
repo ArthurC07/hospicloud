@@ -55,7 +55,7 @@ from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
     PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm, \
-    OrdenLaboratorioForm, OrdenLaboratorioItemForm, AfeccionSearchForm
+    OrdenLaboratorioForm, OrdenLaboratorioItemForm, AfeccionSearchForm, MedicoPeriodoForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
@@ -119,6 +119,11 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['esperaperiodoform'] = PeriodoForm(prefix='espera-periodo')
         context['esperaperiodoform'].helper.form_action = 'espera-periodo'
         context['esperaperiodoform'].set_legend(_('Esperas por Periodo'))
+
+        med_form = MedicoPeriodoForm()
+        med_form.helper.add_input(Submit('submit', _('Mostrar')))
+        med_form.set_action('consulta-medico-periodo')
+        context['medicoconsultaperiodoform'] = med_form
 
         context['diagnosticoperiodoform'] = PeriodoForm(
             prefix='diagnostico-periodo')
@@ -1527,6 +1532,69 @@ class ConsultaMedicoPeriodoView(ConsultaPeriodoDetailMixin):
         context['consultas'] = self.consultas.filter(
             consultorio__usuario=self.object
         )
+
+        return context
+
+class ConsultaUserMedicoPeriodoView(LoginRequiredMixin, ListView):
+    """
+    Shows a GUI with a list of :class:`Consulta` that have been registered during
+    the period of time and :class:`User` indicated by a
+    :class:`MedicoPeriodoForm`.
+    """
+    model = Consulta
+    context_object_name = 'consultas'
+    redirect_on_invalid = 'consultorio-index'
+    template_name = 'clinique/consulta_list.html'
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Consulta` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = MedicoPeriodoForm(self.request.GET)
+        if form.is_valid():
+            self.inicio = form.cleaned_data['inicio']
+            self.fin = form.cleaned_data['fin']
+            self.medico = form.cleaned_data['medico']
+
+            qs = Consulta.objects.atendidas(
+                self.inicio, self.fin
+            ).select_related(
+                'persona',
+                'tipo',
+                'poliza',
+                'consultorio',
+                'poliza__aseguradora',
+                'consultorio__usuario',
+                'consultorio__localidad',
+                'consultorio__localidad__ciudad',
+            ).prefetch_related(
+                'cargos',
+                'cargos__item',
+                'diagnosticos_clinicos',
+                'diagnosticos_clinicos__afeccion',
+                'persona__contratos',
+                'persona__contratos__master__aseguradora',
+                'persona__contratos__beneficiarios',
+                'persona__beneficiarios',
+                'persona__beneficiarios__contrato',
+            )
+
+            return qs.filter(
+                consultorio__usuario=self.medico,
+            )
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`User` to the context data.
+        """
+        context = super(
+            ConsultaUserMedicoPeriodoView,
+            self
+        ).get_context_data(**kwargs)
+        context['medico'] = self.medico
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
 
         return context
 
