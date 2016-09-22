@@ -70,7 +70,7 @@ from hospinet.utils.forms import MonthYearForm
 from hospinet.utils.views import PeriodoView
 from inventory.models import ItemTemplate, TipoVenta
 from inventory.views import UserInventarioRequiredMixin
-from invoice.forms import PeriodoForm
+from invoice.forms import PeriodoForm, PeriodoCiudadForm
 from persona.forms import FisicoForm, AntecedenteForm, PersonaForm, \
     AntecedenteFamiliarForm, AntecedenteObstetricoForm, EstiloVidaForm, \
     AntecedenteQuirurgicoForm
@@ -120,10 +120,14 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['esperaperiodoform'].helper.form_action = 'espera-periodo'
         context['esperaperiodoform'].set_legend(_('Esperas por Periodo'))
 
-        med_form = MedicoPeriodoForm()
+        med_form = MedicoPeriodoForm(prefix='medico-periodo')
         med_form.helper.add_input(Submit('submit', _('Mostrar')))
         med_form.set_action('consulta-medico-periodo')
         context['medicoconsultaperiodoform'] = med_form
+
+        context['consultaciudadperiodoform'] = PeriodoCiudadForm(prefix='ciudad-periodo')
+        context['consultaciudadperiodoform'].helper.form_action = 'consulta-ciudad-periodo'
+        context['consultaciudadperiodoform'].set_legend(_('Consultas por Ciudad por Periodo'))
 
         context['diagnosticoperiodoform'] = PeriodoForm(
             prefix='diagnostico-periodo')
@@ -1485,6 +1489,67 @@ class ConsultaCiudadPeriodoView(ConsultaPeriodoDetailMixin):
 
         return context
 
+class ConsultaCiudadFormPeriodoView(LoginRequiredMixin, ListView):
+    """
+    Shows a list of :class:`Consulta` that have been related to a
+    :class:`Ciudad`
+    """
+    model = Consulta
+    context_object_name = 'consultas'
+    redirect_on_invalid = 'consultorio-index'
+    template_name = 'clinique/consulta_list.html'
+
+    def get_queryset(self):
+        """
+        Filters the :class:`Consulta` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = PeriodoCiudadForm(self.request.GET,prefix='ciudad-periodo')
+        if form.is_valid():
+            self.inicio = form.cleaned_data['inicio']
+            self.fin = form.cleaned_data['fin']
+            self.ciudad = form.cleaned_data['ciudad']
+
+            qs = Consulta.objects.atendidas(
+                self.inicio, self.fin
+            ).select_related(
+                'persona',
+                'tipo',
+                'poliza',
+                'consultorio',
+                'poliza__aseguradora',
+                'consultorio__usuario',
+                'consultorio__localidad',
+                'consultorio__localidad__ciudad',
+            ).prefetch_related(
+                'cargos',
+                'cargos__item',
+                'diagnosticos_clinicos',
+                'diagnosticos_clinicos__afeccion',
+                'persona__contratos',
+                'persona__contratos__master__aseguradora',
+                'persona__contratos__beneficiarios',
+                'persona__beneficiarios',
+                'persona__beneficiarios__contrato',
+            )
+
+            return qs.filter(
+                consultorio__localidad__ciudad=self.ciudad,
+            )
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`User` to the context data.
+        """
+        context = super(
+            ConsultaCiudadFormPeriodoView,
+            self
+        ).get_context_data(**kwargs)
+        context['ciudad'] = self.ciudad
+        context['inicio'] = self.inicio
+        context['fin'] = self.fin
+
+        return context
 
 class ConsultaEnfermeraPeriodoView(ConsultaPeriodoDetailMixin):
     """
@@ -1551,7 +1616,7 @@ class ConsultaUserMedicoPeriodoView(LoginRequiredMixin, ListView):
         Filters the :class:`Consulta` objects
         :return: a filtered :class:`QuerySet`
         """
-        form = MedicoPeriodoForm(self.request.GET)
+        form = MedicoPeriodoForm(self.request.GET, prefix='medico-periodo')
         if form.is_valid():
             self.inicio = form.cleaned_data['inicio']
             self.fin = form.cleaned_data['fin']

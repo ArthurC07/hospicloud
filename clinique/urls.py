@@ -120,6 +120,10 @@ urlpatterns = [
         views.ConsultaCiudadPeriodoView.as_view(),
         name='consulta-ciudad'),
 
+    url(r'^ciudad/periodo$',
+        views.ConsultaCiudadFormPeriodoView.as_view(),
+        name='consulta-ciudad-periodo'),
+
     url(r'^aseguradora/periodo$',
         views.ConsultaAseguradoraPeriodoListView.as_view(),
         name='consulta-aseguradora-periodo'),
