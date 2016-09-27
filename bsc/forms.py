@@ -17,12 +17,13 @@
 from __future__ import unicode_literals
 
 from crispy_forms.layout import Fieldset, Submit
+from crispy_forms.helper import FormHelper
 from django import forms
 from django.forms import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from bsc.models import Encuesta, Respuesta, Voto, Opcion, Queja, ArchivoNotas, \
-    Solucion, Rellamar
+    Solucion, Rellamar, Departamento
 from clinique.models import Consulta
 from persona.forms import FieldSetModelFormMixin, FieldSetModelFormMixinNoButton
 from users.mixins import HiddenUserForm
@@ -197,3 +198,24 @@ class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
                 _('Rechazar Solución'),
                 css_class='btn-danger btn-block'
             ))
+
+class QuejaDepartamentoForm(forms.Form):
+    """
+    Builds a form that allows specifying a :class:`Departamento`
+    """
+    
+    area = forms.ModelChoiceField(
+        queryset = Departamento.objects.all()
+    )  
+
+    def __init__(self, *args, **kwargs):
+        super(QuejaDepartamentoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.form_method = 'get'
+        self.helper.layout = Fieldset(_('Quejas por Area'),
+                                      *self.field_names)
+
+    def set_action(self, action):
+        self.helper.form_action = action

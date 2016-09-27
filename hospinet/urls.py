@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^lab/', include('lab.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^rrhh/', include('bsc.urls')),
+    url(r'^rrhh/', include('bsc.urls',namespace='bsc')),
     url(r'^budget/', include('budget.urls')),
     url(r'^accounts/(?P<username>[\.\w-]+)/edit/$',
         profile_edit,
