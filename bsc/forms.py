@@ -27,7 +27,7 @@ from bsc.models import Encuesta, Respuesta, Voto, Opcion, Queja, ArchivoNotas, \
 from clinique.models import Consulta
 from persona.forms import FieldSetModelFormMixin, FieldSetModelFormMixinNoButton
 from users.mixins import HiddenUserForm
-
+from users.models import Ciudad
 
 class EncuestaFormMixin(FieldSetModelFormMixin):
     encuesta = forms.ModelChoiceField(queryset=Encuesta.objects.all(),
@@ -199,7 +199,7 @@ class SolucionRechazadaForm(FieldSetModelFormMixinNoButton):
                 css_class='btn-danger btn-block'
             ))
 
-class QuejaDepartamentoForm(forms.Form):
+class DepartamentoForm(forms.Form):
     """
     Builds a form that allows specifying a :class:`Departamento`
     """
@@ -209,12 +209,33 @@ class QuejaDepartamentoForm(forms.Form):
     )  
 
     def __init__(self, *args, **kwargs):
-        super(QuejaDepartamentoForm, self).__init__(*args, **kwargs)
+        super(DepartamentoForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.html5_required = True
         self.field_names = self.fields.keys()
         self.helper.form_method = 'get'
         self.helper.layout = Fieldset(_('Quejas por Area'),
+                                      *self.field_names)
+
+    def set_action(self, action):
+        self.helper.form_action = action
+
+class CiudadForm(forms.Form):
+    """
+    Builds a form that allows specifying a :class:`Ciudad`
+    """
+    
+    ciudad = forms.ModelChoiceField(
+        queryset = Ciudad.objects.all()
+    )  
+
+    def __init__(self, *args, **kwargs):
+        super(CiudadForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.form_method = 'get'
+        self.helper.layout = Fieldset(_('Quejas por Ciudad'),
                                       *self.field_names)
 
     def set_action(self, action):

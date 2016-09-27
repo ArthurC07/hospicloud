@@ -49,7 +49,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
 from bsc.models import Queja
-from bsc.forms import QuejaDepartamentoForm
+from bsc.forms import DepartamentoForm, CiudadForm
 from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     ConsultaForm, SeguimientoForm, LecturaSignosForm, DiagnosticoClinicoForm, \
     ConsultorioForm, CitaPersonaForm, CargoForm, OrdenMedicaForm, \
@@ -130,10 +130,15 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['consultaciudadperiodoform'].helper.form_action = 'consulta-ciudad-periodo'
         context['consultaciudadperiodoform'].set_legend(_('Consultas por Ciudad por Periodo'))
 
-        queja_dep_form = QuejaDepartamentoForm(prefix='queja-departamento')
+        queja_dep_form = DepartamentoForm(prefix='queja-departamento')
         queja_dep_form.helper.add_input(Submit('submit', _('Mostrar')))
-        queja_dep_form.set_action('bsc:quejas-area-periodo') 
-        context['quejadepartamentoform'] = queja_dep_form
+        queja_dep_form.set_action('bsc:quejas-area') 
+        context['quejasdepartamentoform'] = queja_dep_form
+
+        quejas_ciudad_form = CiudadForm(prefix='queja-ciudad')
+        quejas_ciudad_form.helper.add_input(Submit('submit', _('Mostrar')))
+        quejas_ciudad_form.set_action('bsc:quejas-ciudad') 
+        context['quejasciudadform'] = quejas_ciudad_form
 
         context['diagnosticoperiodoform'] = PeriodoForm(
             prefix='diagnostico-periodo')

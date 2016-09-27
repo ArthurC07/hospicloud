@@ -94,7 +94,10 @@ urlpatterns = [
         name='quejas-periodo'),
 
     url(r'^quejas/area$', views.QuejaDepartamentoListView.as_view(),
-    name='quejas-area-periodo'),
+    name='quejas-area'),
+
+    url(r'^quejas/ciudad$', views.QuejaCiudadListView.as_view(),
+    name='quejas-ciudad'),
 
     url(r'^queja/(?P<pk>\d+)$', views.QuejaDetailView.as_view(), name='queja'),
 

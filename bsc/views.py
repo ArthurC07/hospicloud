@@ -38,7 +38,7 @@ from mail_templated.message import EmailMessage
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, \
-    SolucionAceptadaForm, QuejaAseguradoraForm, QuejaDepartamentoForm
+    SolucionAceptadaForm, QuejaAseguradoraForm, DepartamentoForm, CiudadForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, Pregunta, Solucion, Login, Rellamar
 from clinique.models import Consulta
@@ -798,7 +798,7 @@ class QuejaDepartamentoListView(LoginRequiredMixin, ListView):
         Filters the :class:`Queja` objects
         :return: a filtered :class:`QuerySet`
         """
-        form = QuejaDepartamentoForm(self.request.GET, prefix='queja-departamento')
+        form = DepartamentoForm(self.request.GET, prefix='queja-departamento')
         if form.is_valid():
             self.area = form.cleaned_data['area']
             """
@@ -833,5 +833,56 @@ class QuejaDepartamentoListView(LoginRequiredMixin, ListView):
         """
         context = super(QuejaDepartamentoListView,self).get_context_data(**kwargs)
         context['area'] = self.area
+
+        return context
+
+class QuejaCiudadListView(LoginRequiredMixin, ListView):
+    """
+    Shows a list of :class:`Queja` based on a City
+    """
+    model = Queja
+    context_object_name = 'quejas'
+    template_name = 'bsc/queja_list.html'
+    
+    def get_queryset(self):
+        """
+        Filters the :class:`Queja` objects
+        :return: a filtered :class:`QuerySet`
+        """
+        form = CiudadForm(self.request.GET, prefix='queja-ciudad')
+        if form.is_valid():
+            self.ciudad = form.cleaned_data['ciudad']
+            """
+            Builds the queryset that will be used to look for the :class:`Queja`
+            """
+            query = Queja.objects.select_related(
+                'respuesta',
+                'departamento',
+                'respuesta__persona',
+                'respuesta__consulta',
+                'respuesta__consulta__poliza',
+                'respuesta__consulta__contrato',
+                'respuesta__consulta__persona',
+                'respuesta__consulta__poliza__aseguradora',
+                'respuesta__consulta__consultorio__usuario',
+            ).prefetch_related(
+                'solucion_set',
+                'respuesta__consulta__persona__beneficiarios',
+                'respuesta__consulta__persona__beneficiarios',
+                'respuesta__consulta__persona__beneficiarios__contrato',
+                'respuesta__consulta__persona__beneficiarios__contrato__persona',
+                'respuesta__consulta__consultorio__secretaria',
+                'respuesta__consulta__consultorio__usuario__profile',
+                'respuesta__consulta__consultorio__usuario__profile__ciudad',
+            )
+
+            return query.filter(respuesta__consulta__consultorio__usuario__profile__ciudad = self.ciudad)
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Ciudad` to the context data.
+        """
+        context = super(QuejaCiudadListView,self).get_context_data(**kwargs)
+        context['ciudad'] = self.ciudad
 
         return context
