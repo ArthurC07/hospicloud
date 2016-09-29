@@ -11,9 +11,11 @@
     {% block header %}{% endblock %}
     <!-- Fav and touch icons -->
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
+    {% block heading %}{% endblock %}
 </head>
 <body>
-<nav class="navbar navbar-default navbar-static-top" id="main-navigation">
+{% include 'javascript.html' %}
+<nav class="navbar navbar-default navbar-fixed-top" id="main-navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed"
@@ -26,6 +28,9 @@
             </button>
             <a class="navbar-brand open-left" href="#">
                 <img src="{% static 'assets/images/logo.png' %}" alt="Hospinet">
+            </a>
+            <a href="#" class="btn btn-info btn-sm" id="menu-toggle">
+                <span class="glyphicon glyphicon-menu-hamburger"></span>
             </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -75,134 +80,150 @@
     </div>
 </nav>
 <div id="wrapper">
-    <div class="left side-menu">
-        <div class="sidebar-inner slimscrollleft">
-            <div id="sidebar-menu">
-                <ul class="tab-menu">
-                    <li class="text-muted menu-title">{% trans 'Menu' %}</li>
-                    <li>
-                        <a href="{% url 'home' %}"
-                           class="waves-effect waves-primary {% if active_tab == 'tab1' %} active{% endif %}"><i
-                                class="md md-dashboard"></i><span>{% trans 'Dashboard' %}</span></a>
-                    </li>
-                    <li class="has_sub">
-                        <a href="#" class="waves-effect waves-primary"
-                           id="clinical">
-                            <i class="fa fa-stethoscope"></i>
-                            <span> {% trans 'Clínico' %} </span>
-                        </a>
-                        <ul class="list-unstyled">
-                            <li>
-                                <a href="{% url 'admision-index' %}">{% trans 'Admisiones' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'consultorio-index' %}">{% trans 'Consulta' %}</a>
-                            </li>
-                            <li class="{% if active_tab == 'tab9' %} active{% endif %}">
-                                <a href="{% url 'lab-index' %}">{% trans 'Laboratorio' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'examen-index' %}">{% trans 'Centro de Im&aacute;genes' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'emergency-index' %}">{% trans 'Emergencias' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'nightingale-index' %}">{% trans 'Hospitalizaci&oacute;n' %}</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="has_sub">
-                        <a href="#"
-                           class="waves-effect waves-primary">
-                            <i class="oin ion-folder "></i>
-                            <span>{% trans 'Administrativo' %}</span>
-                        </a>
-                        <ul class="list-unstyled">
-                            <li>
-                                <a href="{% url 'invoice-index' %}">{% trans 'Caja' %}</a>
-                            </li>
-                            <li class="{% if active_tab == 'tab24' %} active{% endif %}">
-                                <a href="{% url 'invoice-pago-list' %}">{% trans 'Cuentas por Cobrar' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'contrato-index' %}">{% trans 'Contratos' %}</a>
-                            </li>
-                            <li class="{% if active_tab == 'tab39' %} active{% endif %}">
-                                <a href="{% url 'scorecard-index' %}">{% trans 'BSC' %} </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'encuesta-list' %}">{% trans 'Encuestas' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'inventario-index' %}">{% trans 'Inventario' %}</a>
-                            </li>
-                            <li class="{% if active_tab == 'tab53' %} active{% endif %}">
-                                <a href="{% url 'budget-index' %}">{% trans 'Presupuesto' %} </a>
-                            </li>
-                            <li class="{% if active_tab == 'tab54' %} active{% endif %}">
-                                <a href="{% url 'income-index' %}">{% trans 'Ingresos' %} </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="has_sub">
-                        <a href="#" class="waves-effect waves-primary">
-                            <i class="glyphicon glyphicon-user"></i>
-                            <span> {% trans 'Pacientes' %} </span>
-                        </a>
-                        <ul class="list-unstyled">
-                            <li>
-                                <a href="{% url 'persona-index' %}">
-                                    {% trans 'Ver Pacientes' %}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'persona-create' %}">{% trans 'Agregar Paciente' %}</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'persona-duplicate-clean' %}">{% trans 'Unir Duplicados' %}</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="{% url 'admin:index' %}"
-                           class="waves-effect waves-primary">
-                            <i class="md md-settings"></i>
-                            <span> {% trans 'Administraci&oacute;n' %} </span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    {% block heading %}{% endblock %}
-    {% include 'javascript.html' %}
-    {% block scripts %}{% endblock scripts %}
-    <div id="content" class="content-page">
-        <div class="content">
-            <div class="container">
-                {% if messages %}
-                    <div id="system-message" class="row">
-                        <div class="col-md-12">
-                            {% for message in messages %}
-                                <div class="alert alert-warning alert-dismissible {% if message.tags %} {{ message.tags }} {% endif %} "
-                                     role="alert">
-                                    <button type="button" class="close"
-                                            data-dismiss="alert"
-                                            aria-label="Close"><span
-                                            aria-hidden="true">&times;</span>
-                                    </button>
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <div class="sidebar-nav">
+            <h4>
+                <a href="{% url 'home' %}">
+                    <i class="md md-dashboard"></i><span>{% trans 'Inicio' %}</span>
+                </a>
+            </h4>
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseOne">
+                                <i class="fa fa-stethoscope"></i> {% trans 'Clínico' %}
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="{% url 'admision-index' %}">{% trans 'Admisiones' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'consultorio-index' %}">{% trans 'Consulta' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'lab-index' %}">{% trans 'Laboratorio' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'examen-index' %}">{% trans 'Centro de Im&aacute;genes' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'emergency-index' %}">{% trans 'Emergencias' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'nightingale-index' %}">{% trans 'Hospitalizaci&oacute;n' %}</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                {% endif %}
-                {% block content %}{% endblock %}
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseTwo">{% trans 'Administrar' %}</a>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="{% url 'invoice-index' %}">{% trans 'Caja' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'invoice-pago-list' %}">{% trans 'Cuentas por Cobrar' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'contrato-index' %}">{% trans 'Contratos' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'scorecard-index' %}">{% trans 'BSC' %} </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'encuesta-list' %}">{% trans 'Encuestas' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'inventario-index' %}">{% trans 'Inventario' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'budget-index' %}">{% trans 'Presupuesto' %} </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'income-index' %}">{% trans 'Ingresos' %} </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseThree">
+                                <i class="glyphicon glyphicon-user"></i>
+                                {% trans 'Pacientes' %}
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="{% url 'persona-index' %}">
+                                        {% trans 'Ver Pacientes' %}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'persona-create' %}">{% trans 'Agregar Paciente' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'persona-duplicate-clean' %}">
+                                        {% trans 'Unir Duplicados' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'admin:index' %}">
+                                        <i class="md md-settings"></i>
+                                        <span> {% trans 'Administraci&oacute;n' %} </span>
+                                    </a>
+                                </li>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    {% include 'snippets/footer.html' %}
+    <!-- /#sidebar-wrapper -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            {% if messages %}
+                <div id="system-message" class="row">
+                    <div class="col-md-12">
+                        {% for message in messages %}
+                            <div class="alert alert-warning alert-dismissible {% if message.tags %} {{ message.tags }} {% endif %} "
+                                 role="alert">
+                                <button type="button" class="close"
+                                        data-dismiss="alert"
+                                        aria-label="Close"><span
+                                        aria-hidden="true">&times;</span>
+                                </button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+        <!-- /#page-content-wrapper -->
+        {% block scripts %}{% endblock scripts %}
+        {% include 'snippets/footer.html' %}
+    </div>
 </div>
 </body>
 </html>

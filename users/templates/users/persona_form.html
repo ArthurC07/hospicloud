@@ -1,6 +1,3 @@
-
-
-
 {% extends 'userena/base_userena.html' %}
 {% block content %}
     {% load crispy_forms_tags %}
@@ -14,80 +11,80 @@
     {% endblock %}
     <div class="row">
         <section class="col-md-12">
-            <div class="main-content col-md-12">‏
-                <form class="fill wide" method="post" enctype="multipart/form-data">{% csrf_token %}
-                    <fieldset>
-                        <legend>Informaci&oacute;n Personal</legend>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    {{ form.nombre.errors }}
-                                    {{ form.nombre.label_tag }} {{ form.nombre }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.apellido.errors }}
-                                    {{ form.apellido.label_tag }} {{ form.apellido }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.sexo.errors }}
-                                    {{ form.sexo.label_tag }} {{ form.sexo }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.estado_civil.errors }}
-                                    {{ form.estado_civil.label_tag }} {{ form.estado_civil }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.telefono.errors }}
-                                    {{ form.telefono.label_tag }} {{ form.telefono }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.email.errors }}
-                                    {{ form.email.label_tag }} {{ form.email }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.celular.errors }}
-                                    {{ form.celular.label_tag }} {{ form.celular }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.fax.errors }}
-                                    {{ form.fax.label_tag }} {{ form.fax }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.nacionalidad.errors }}
-                                    {{ form.nacionalidad.label_tag }} {{ form.nacionalidad }}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
+            <form class="fill wide" method="post"
+                  enctype="multipart/form-data">{% csrf_token %}
+                <fieldset>
+                    <legend>Informaci&oacute;n Personal</legend>
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                    {{ form.tipo_identificacion.errors }}
-                                    {{ form.tipo_identificacion.label_tag }} {{ form.tipo_identificacion }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.identificacion.errors }}
-                                    {{ form.identificacion.label_tag }} {{ form.identificacion }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.nacimiento.errors }}
-                                    {{ form.nacimiento.label_tag }} {{ form.nacimiento }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.profesion.errors }}
-                                    {{ form.profesion.label_tag }} {{ form.profesion }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.domicilio.errors }}
-                                    {{ form.domicilio.label_tag }} {{ form.domicilio }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form.fotografia.errors }}
-                                    {{ form.fotografia.label_tag }} {{ form.fotografia }}
-                                </div>
+                                {{ form.nombre.errors }}
+                                {{ form.nombre.label_tag }} {{ form.nombre }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.apellido.errors }}
+                                {{ form.apellido.label_tag }} {{ form.apellido }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.sexo.errors }}
+                                {{ form.sexo.label_tag }} {{ form.sexo }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.estado_civil.errors }}
+                                {{ form.estado_civil.label_tag }} {{ form.estado_civil }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.telefono.errors }}
+                                {{ form.telefono.label_tag }} {{ form.telefono }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.email.errors }}
+                                {{ form.email.label_tag }} {{ form.email }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.celular.errors }}
+                                {{ form.celular.label_tag }} {{ form.celular }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.fax.errors }}
+                                {{ form.fax.label_tag }} {{ form.fax }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.nacionalidad.errors }}
+                                {{ form.nacionalidad.label_tag }} {{ form.nacionalidad }}
                             </div>
                         </div>
-                        <input class="btn btn-primary" type="submit" value="Guardar"/>
-                    </fieldset>
-                </form>
-            </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.tipo_identificacion.errors }}
+                                {{ form.tipo_identificacion.label_tag }} {{ form.tipo_identificacion }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.identificacion.errors }}
+                                {{ form.identificacion.label_tag }} {{ form.identificacion }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.nacimiento.errors }}
+                                {{ form.nacimiento.label_tag }} {{ form.nacimiento }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.profesion.errors }}
+                                {{ form.profesion.label_tag }} {{ form.profesion }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.domicilio.errors }}
+                                {{ form.domicilio.label_tag }} {{ form.domicilio }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.fotografia.errors }}
+                                {{ form.fotografia.label_tag }} {{ form.fotografia }}
+                            </div>
+                        </div>
+                    </div>
+                    <input class="btn btn-primary" type="submit"
+                           value="Guardar"/>
+                </fieldset>
+            </form>
         </section>
     </div>
 {% endblock %}

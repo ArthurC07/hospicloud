@@ -1,81 +1,68 @@
 {% extends 'base.html' %}
 {% load i18n %}{% load l10n %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab25' %}
+    <li>
+        <a href="{% url 'empresa-add' %}">
+            {% trans 'Agregar Otra Empresa' %}
+        </a>
+    </li>
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 col-xs-12">
             <div class="page-title-box">
                 <h4 class="page-title">{{ empleador }}</h4>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-9">
-            <div class="main-content col-md-12">‏
-                {% for plan in empleador.planes.all %}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <section class="page-header">
-                                <h1>{{ plan }}</h1>
-                            </section>
-                        </div>
+        <div class="col-md-12 col-xs-12">
+            {% for plan in empleador.planes.all %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <section class="page-header">
+                            <h1>{{ plan }}</h1>
+                        </section>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-striped table-responsive">
-                                <thead>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <table class="table table-striped table-responsive">
+                            <thead>
+                            <tr>
+                                <th>{% trans 'N&uacute;mero' %}</th>
+                                <th>{% trans 'Titular' %}</th>
+                                <th>{% trans 'Plan' %}</th>
+                                <th>{% trans 'Vendedor' %}</th>
+                                <th>{% trans 'Vencimiento' %}</th>
+                                <th>{% trans 'D&iacute;as en Mora' %}</th>
+                                <th>{% trans 'Mora' %}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for contrato in plan.contratos.all %}
                                 <tr>
-                                    <th>{% trans 'N&uacute;mero' %}</th>
-                                    <th>{% trans 'Titular' %}</th>
-                                    <th>{% trans 'Plan' %}</th>
-                                    <th>{% trans 'Vendedor' %}</th>
-                                    <th>{% trans 'Vencimiento' %}</th>
-                                    <th>{% trans 'D&iacute;as en Mora' %}</th>
-                                    <th>{% trans 'Mora' %}</th>
+                                    <td>
+                                        <a class="btn btn-success"
+                                           href="{{ contrato.get_absolute_url }}">
+                                            {{ contrato.numero }}
+                                        </a>
+                                    </td>
+                                    <td>{{ contrato.persona }}</td>
+                                    <td>{{ contrato.plan }}</td>
+                                    <td>{{ contrato.vendedor }}</td>
+                                    <td>
+                                        {{ contrato.vencimiento|date:"d/m/Y" }}
+                                    </td>
+                                    <td>{{ contrato.dias_mora }}</td>
+                                    <td>{{ contrato.mora }}</td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                {% for contrato in plan.contratos.all %}
-                                    <tr>
-                                        <td>
-                                            <a class="btn btn-success"
-                                               href="{{ contrato.get_absolute_url }}">
-                                                {{ contrato.numero }}
-                                            </a>
-                                        </td>
-                                        <td>{{ contrato.persona }}</td>
-                                        <td>{{ contrato.plan }}</td>
-                                        <td>{{ contrato.vendedor }}</td>
-                                        <td>
-                                            {{ contrato.vencimiento|date:"d/m/Y" }}
-                                        </td>
-                                        <td>{{ contrato.dias_mora }}</td>
-                                        <td>{{ contrato.mora }}</td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
-        <aside class="col-md-3">
-            <div class="col-md-12 toolbox panel panel-border">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-stacked">
-                        <li>
-                            <a href="javascript:back();">{% trans 'Regresar' %}</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'empresa-add' %}">
-                                {% trans 'Agregar Otra Empresa' %}
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
     </div>
 {% endblock %}

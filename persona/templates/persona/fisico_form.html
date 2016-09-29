@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
+{% load i18n %}{% load l10n %}{% load crispy_forms_tags %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab8' %}
+    <li>
+        <a href="javascript:back()">{% trans 'Regresar' %}</a>
+    </li>
 {% endblock %}
 {% block content %}
-    {% load crispy_forms_tags %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <div class="main-content col-md-7 panel panel-border">
+        <section class="col-md-6 col-xs-6 panel panel-border">
             {% crispy form %}
-        </div>
+        </section>
     </div>
 {% endblock %}
 {% block scripts %}

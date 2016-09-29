@@ -1,57 +1,57 @@
 {% load i18n %}{% load l10n %}
 <table class="table table-striped table-responsive">
-	<caption>Estilo de Vida</caption>
+	<caption>{% trans 'Estilo de Vida' %}</caption>
   <tbody>
     <tr>
-      <td class="data-label">Consume Tabaco:</td>
+      <td class="data-label">{% trans 'Consume Tabaco:' %}</td>
       <td class="patient-data">{{ estilo_vida.consume_tabaco|yesno:"Sí,No" }}</td>
     {% if estilo_vida.consume_tabaco %}
-      <td class="data-label">Inicio del Consumo de Tabaco:</td>
+      <td class="data-label">{% trans 'Inicio del Consumo de Tabaco:' %}</td>
       <td class="patient-data">{{ estilo_vida.inicio_consumo_tabaco }}</td>
-      <td class="data-label">Número de Cigarrillos Diarios:</td>
+      <td class="data-label">{% trans 'Número de Cigarrillos Diarios:' %}</td>
       <td class="patient-data">{{ estilo_vida.consumo_diario_tabaco }}</td>
     {% else %}
       <td colspan="4"></td>
     {% endif %}
     </tr>
     <tr>
-    	<td colspan="6">Alcohol</td>
+    	<td colspan="6">{% trans 'Alcohol' %}</td>
     </tr>
     <tr>
-      <td class="data-label">Vino:</td>
+      <td class="data-label">{% trans 'Vino:' %}</td>
       <td class="patient-data">{{ estilo_vida.vino|yesno:"Sí,No" }}</td>
-      <td class="data-label">Cerveza:</td>
+      <td class="data-label">{% trans 'Cerveza:' %}</td>
       <td class="patient-data">{{ estilo_vida.cerveza|yesno:"Sí,No" }}</td>
-      <td class="data-label">Licores</td>
+      <td class="data-label">{% trans 'Licores' %}</td>
       <td class="patient-data">{{ estilo_vida.licor|yesno:"Sí,No" }}</td>
     </tr>
     <tr>
-      <td colspan="6">Nutrición</td>
+      <td colspan="6">{% trans 'Nutrición' %}</td>
     </tr>
     <tr>
-      <td class="data-label">Tipo de Dieta</td>
+      <td class="data-label">{% trans 'Tipo de Dieta' %}</td>
       <td class="patient-data">{{ estilo_vida.dieta }}</td>
-      <td class="data-label">Comidas:</td>
+      <td class="data-label">{% trans 'Comidas:' %}</td>
       <td class="patient-data">{{ estilo_vida.numero_comidas }}</td>
     </tr>
     <tr>
-      <td class="data-label">Tipo de Comidas</td>
+      <td class="data-label">{% trans 'Tipo de Comidas' %}</td>
       <td class="patient-data" colspan="5">{{ estilo_vida.tipo_de_comidas }}</td>
     </tr>
     <tr>
-      <td class="data-label">Consume Drogas</td>
+      <td class="data-label">{% trans 'Consume Drogas' %}</td>
       <td class="patient-data">{{ estilo_vida.consume_drogas|yesno:"Sí,No" }}</td>
-      <td class="data-label">Drogas</td>
+      <td class="data-label">{% trans 'Drogas' %}</td>
       <td class="patient-data" colspan="3">{{ estilo_vida.drogas }}</td>
     </tr>
     <tr>
-        <td>Cafe:</td>
+        <td>{% trans 'Cafe:' %}</td>
         <td>{{ estilo_vida.cafe }}</td>
         <td>{{ estilo_vida.cantidad_cafe }}</td>
         <td></td>
     </tr>
     <tr>
-        <td>Otros</td>
+        <td>{% trans 'Otros' %}</td>
         <td colspan="3">{{ estilo_vida.otros }}</td>
     </tr>
   </tbody>

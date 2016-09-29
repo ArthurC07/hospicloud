@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load thumbnail %}{% load i18n %}{% load l10n %}
-{% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab8' %}
-{% endblock %}
 {% block content %}
     <div class="row">
-        <section class="col-md-12 main-header">
+        <section class="col-md-12 col-xs-12">
             <section class="page-title-box">
                 {% if persona.consultas_activas and perms.persona.persona %}
                     {% for consulta in persona.consultas_activas %}
@@ -39,7 +36,7 @@
         </section>
     </div>
     <div class="row">
-        <section id="informacion" class="col-md-9 main-content">
+        <section id="informacion" class="col-md-9 col-xs-9">
             {% if persona.consultas_activas and perms.persona.persona %}
                 {% for consulta in persona.consultas_activas %}
                     <div class="row">
@@ -59,8 +56,9 @@
                             </li>
                             {% if modules.consulta %}
                                 <li class="tab">
-                                    <a href="#consulta_inicio"
-                                       data-toggle="tab">{% trans 'Consultas' %}</a>
+                                    <a href="#consulta_inicio" data-toggle="tab">
+                                        {% trans 'Consultas' %}
+                                    </a>
                                 </li>
                             {% endif %}
                             <li class="tab">
@@ -138,7 +136,7 @@
                                     {% endfor %}
                                 {% endif %}
                                 <div class="m-t-30">
-                                  {% include 'bsc/snippets/respuestas.html' with respuestas=persona.respuesta_set %}
+                                    {% include 'bsc/snippets/respuestas.html' with respuestas=persona.respuesta_set %}
                                 </div>
                             </article>
                             <article id="clinico" class="tab-pane">

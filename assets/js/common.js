@@ -34,4 +34,8 @@ $(document).ready(function ($) {
         theme: "bootstrap"
     });
     $('.select2-container').css('width', '100%');
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
 });

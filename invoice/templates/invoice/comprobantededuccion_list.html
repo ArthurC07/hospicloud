@@ -9,7 +9,7 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 col-xs-12">
             <div class="page-title-box">
                 <h4 class="page-title">{% trans 'Comprobantes de Retenci&oacute;n' %}
                     <small>{{ inicio }} al {{ fin }}</small>
@@ -18,36 +18,34 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default col-md-12">‏
-                <div class="col-md-12">
-                    <table class="table table-striped table-bordered m-t-20 m-b-20">
-                        <thead>
-                        <tr>
-                            <th>{% trans 'N&uacute;mero' %}</th>
-                            <th>{% trans 'Proveedor' %}</th>
-                            <th>{% trans 'Fecha' %}</th>
-                            <th>{% trans 'Monto' %}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for comprobante in object_list %}
-                            <tr>
-                                <td>
-                                    <a href="{{ comprobante.get_absolute_url }}">
-                                        {{ comprobante.numero }}
-                                    </a>
-                                </td>
-                                <td>{{ comprobante.proveedor }}</td>
-                                <td>{{ comprobante.created }}</td>
-                                <td>{{ comprobante.total }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="panel panel-default col-md-12 col-xs-12">
+            <table class="table table-striped table-bordered m-t-20 m-b-20">
+                <thead>
+                <tr>
+                    <th>{% trans 'N&uacute;mero' %}</th>
+                    <th>{% trans 'Proveedor' %}</th>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Monto' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for comprobante in object_list %}
+                    <tr>
+                        <td>
+                            <a href="{{ comprobante.get_absolute_url }}">
+                                {{ comprobante.numero }}
+                            </a>
+                        </td>
+                        <td>{{ comprobante.proveedor }}</td>
+                        <td>{{ comprobante.created }}</td>
+                        <td>{{ comprobante.total }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
+    <div class="row">
         {% if is_paginated %}
             {% load bootstrap_pagination %}
             {% bootstrap_paginate page_obj range=10 show_prev_next="false" show_first_last='true' %}
