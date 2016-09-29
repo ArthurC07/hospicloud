@@ -31,15 +31,15 @@
             </p>
             <div class="btn-group" role="group">
                 {% if espera.consulta %}
+                    <a class="btn btn-info"
+                       href="{% url 'espera-consulta-iniciar' espera.id %}">
+                        {% trans 'Iniciar Consulta' %}
+                    </a>
                     <a class="btn btn-danger"
                        href="{% url 'clinique-espera-terminada' espera.id %}">
                         {% trans 'Terminar Consulta' %}
                     </a>
                 {% else %}
-                    <a class="btn btn-info"
-                       href="{% url 'espera-consulta-iniciar' espera.id %}">
-                        {% trans 'Iniciar Consulta' %}
-                    </a>
                     <a class="btn btn-primary"
                        href="{% url 'clinique-espera-editar' espera.id %}">
                         {% trans 'Cambiar Consultorio' %}
@@ -58,6 +58,12 @@
                         <a class="btn btn-danger"
                            href="{% url 'clinique-espera-consulta' espera.id %}">
                             {% trans 'A Consulta' %}
+                        </a>
+                    {% endif %}
+                    {% if not espera.datos %}
+                        <a class="btn btn-info"
+                           href="{% url 'consultorio-citapersona-agregar' persona=espera.persona.id %}">
+                            {% trans 'Cita' %}
                         </a>
                     {% endif %}
                 {% endif %}
