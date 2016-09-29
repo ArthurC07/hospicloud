@@ -170,34 +170,40 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
     cabeza = forms.ChoiceField(widget=forms.RadioSelect(),
                                choices=Evaluacion.NORMALIDAD)
     descripcion_cabeza = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
 
     ojos = forms.ChoiceField(widget=forms.RadioSelect(),
                              choices=Evaluacion.NORMALIDAD)
     descripcion_ojos = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
 
     cuello = forms.ChoiceField(widget=forms.RadioSelect(),
                                choices=Evaluacion.NORMALIDAD)
     descripcion_cuello = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
 
     orl = forms.ChoiceField(widget=forms.RadioSelect(),
                             choices=Evaluacion.NORMALIDAD)
     descripcion_orl = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
+    )
+    gastrointestinal = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 5,'class': 'form-control textarea'}), required=False
     )
     hallazgos_genitales = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
     hallazgos_tacto_rectal = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
     hallazgos_extremidades = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
+    )
+    otras = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 5,'class': 'form-control textarea'}), required=False
     )
 
     def __init__(self, *args, **kwargs):

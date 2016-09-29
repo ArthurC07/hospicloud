@@ -566,6 +566,7 @@ class EvaluacionCreateView(CurrentUserFormMixin, ConsultaFormMixin,
                            PersonaFormMixin, CreateView):
     model = Evaluacion
     form_class = EvaluacionForm
+    template_name = 'clinique/evaluacion_form_custom.html'
 
 
 class EvaluacionUpdateView(LoginRequiredMixin, UpdateView):
