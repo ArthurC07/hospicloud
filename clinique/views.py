@@ -224,9 +224,10 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         )
 
         meses = []
+        years = []
         now = timezone.now()
         tipos = {}
-        context['monthly_forms'] = []
+        # context['monthly_forms'] = []
 
         year_start = make_day_start(now.replace(month=1, day=1))
         year_end = make_end_day(now.replace(month=12, day=31))
@@ -241,49 +242,54 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
 
         for tipo in TipoConsulta.objects.filter(habilitado=True):
             tipos[tipo] = []
+        
+        for y in range(2014, 2020):
+            key = 'months_' + str(y)
+            context[key] = []
+            years.append(str(y))
+            for n in range(1, 13):
+                start = now.replace(month=n, day=1, year=y)
+                inicio, fin = make_month_range(start)
 
-        for n in range(1, 13):
-            start = now.replace(month=n, day=1)
-            inicio, fin = make_month_range(start)
+                consultas = Consulta.objects.atendidas(inicio, fin)
+                atenciones = consultas.count()
+                quejas = Queja.objects.filter(created__range=(inicio, fin)).count()
 
-            consultas = Consulta.objects.atendidas(inicio, fin)
-            atenciones = consultas.count()
-            quejas = Queja.objects.filter(created__range=(inicio, fin)).count()
+                for tipo in TipoConsulta.objects.filter(habilitado=True):
+                    tipos[tipo].append(consultas.filter(tipo=tipo).count())
 
-            for tipo in TipoConsulta.objects.filter(habilitado=True):
-                tipos[tipo].append(consultas.filter(tipo=tipo).count())
+                meses.append(
+                    {
+                        'inicio': inicio,
+                        'atenciones': atenciones,
+                        'quejas': quejas,
+                        'nombre': inicio,
+                    }
+                )
 
-            meses.append(
-                {
-                    'inicio': inicio,
-                    'atenciones': atenciones,
-                    'quejas': quejas,
-                    'nombre': inicio,
-                }
-            )
+                form = MonthYearForm(initial={
+                    'year': y,
+                    'mes': n,
+                })
+                form.helper.attrs = {'target': '_blank'}
+                form.set_action('clinique-monthly')
+                form.fields['year'].widget = HiddenInput()
+                form.fields['mes'].widget = HiddenInput()
+                form.helper.form_method = 'get'
+                form.helper.add_input(Submit(
+                    'submit',
+                    _('{0}'.format(calendar.month_name[n])),
+                    css_class='btn-block'
+                ))
 
-            form = MonthYearForm(initial={
-                'year': start.year,
-                'mes': n,
-            })
-            form.helper.attrs = {'target': '_blank'}
-            form.set_action('clinique-monthly')
-            form.fields['year'].widget = HiddenInput()
-            form.fields['mes'].widget = HiddenInput()
-            form.helper.form_method = 'get'
-            form.helper.add_input(Submit(
-                'submit',
-                _('{0}'.format(calendar.month_name[n])),
-                css_class='btn-block'
-            ))
-
-            form.helper.form_class = ''
-            form.helper.label_class = ''
-            form.helper.field_class = ''
-            context['monthly_forms'].append(form)
+                form.helper.form_class = ''
+                form.helper.label_class = ''
+                form.helper.field_class = ''
+                context[key].append(form)
 
         context['tipos'] = tipos
         context['meses'] = meses
+        context['years'] = years
 
         return context
 
