@@ -25,13 +25,16 @@ class Command(BaseCommand):
 
     args = 'csv files'
 
+    def add_arguments(self, parser):
+        parser.add_argument('source')
+
     def handle(self, *args, **options):
 
-        for source in args:
-
-            reader = csv.reader(open(source))
-            for line in reader:
-                Afeccion.objects.create(
-                    codigo=line[0],
-                    nombre=line[1]
-                )
+        source = options['source']
+        
+        reader = csv.reader(open(source))
+        for line in reader:
+            Afeccion.objects.create(
+                codigo=line[0],
+                nombre=line[1]
+            )
