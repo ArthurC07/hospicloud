@@ -817,26 +817,25 @@ class AfeccionAutoComplete(LoginRequiredMixin,
 
         return qs
 
-class AfecionesSearchView(TemplateView):
 
+class AfecionesSearchView(TemplateView):
     """
     Redirect to a form to perform a search
     """
-    template_name="clinique/diagnosticoclinico_cie_form.html"
+    template_name = "clinique/diagnosticoclinico_cie_form.html"
 
     def get_context_data(self, **kwargs):
         context = super(AfecionesSearchView, self).get_context_data(
             **kwargs)
-    
+
         context['consulta'] = self.kwargs['consulta']
 
         return context
 
-class AfeccionListView(LoginRequiredMixin, ListView):
 
+class AfeccionListView(LoginRequiredMixin, ListView):
     context_object_name = 'afecciones'
     model = Afeccion
-    template_name = 'clinique/afeccion_index.html'
     paginate_by = 10
 
     def get_queryset(self):
@@ -849,8 +848,11 @@ class AfeccionListView(LoginRequiredMixin, ListView):
         if form.is_valid():
             query = form.cleaned_data['query']
             queryset = Afeccion.objects.filter(
-                nombre__icontains=query
+                nombre__icontains=query,
+                habilitado=True,
             )
+
+            print(queryset.query)
 
             return queryset.all()
 
@@ -858,28 +860,29 @@ class AfeccionListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(AfeccionListView, self).get_context_data(
-        **kwargs)
+            **kwargs)
 
         context['consulta'] = self.kwargs['consulta']
 
         return context
 
+
 class DiagnosticoRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
-        
         """
         Create a object :class:`Diagnostico`
         """
         consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
         afeccion = get_object_or_404(Afeccion, pk=kwargs['afeccion'])
         usuario = self.request.user
-        diagnostico = DiagnosticoClinico.objects.create(persona = consulta.persona,
-                         usuario = usuario,
-                         afeccion = afeccion,
-                         consulta = consulta,
-                         )
+        diagnostico = DiagnosticoClinico.objects.create(
+            persona=consulta.persona,
+            usuario=usuario,
+            afeccion=afeccion,
+            consulta=consulta,
+            )
 
         messages.info(
             self.request,
@@ -887,7 +890,9 @@ class DiagnosticoRedirectView(LoginRequiredMixin, RedirectView):
         )
         return diagnostico.get_absolute_url()
 
-class DiagnosticoCreateView(CurrentUserFormMixin, PersonaFormMixin, ConsultaFormMixin, CreateView):
+
+class DiagnosticoCreateView(CurrentUserFormMixin, PersonaFormMixin,
+                            ConsultaFormMixin, CreateView):
     model = DiagnosticoClinico
     form_class = DiagnosticoClinicoForm
 
