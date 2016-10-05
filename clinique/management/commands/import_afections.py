@@ -31,7 +31,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         source = options['source']
-        
+
         reader = csv.reader(open(source))
         for line in reader:
             Afeccion.objects.create(

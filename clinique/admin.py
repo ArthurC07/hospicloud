@@ -48,11 +48,12 @@ class ConsultaAdminForm(forms.ModelForm):
         'persona',
         'consultorio',
     ))
-    poliza = forms.ModelChoiceField(queryset=MasterContract.objects.select_related(
-        'aseguradora',
-        'plan',
-        'contratante',
-    ))
+    poliza = forms.ModelChoiceField(
+        queryset=MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante',
+        ))
     contrato = forms.ModelChoiceField(queryset=Contrato.objects.select_related(
         'persona',
     ))
@@ -75,6 +76,12 @@ class ConsultorioAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'activo')
 
 
+class AfeccionAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'codigo', 'habilitado',)
+    ordering = ['nombre', 'codigo', 'habilitado', ]
+    search_fields = ['nombre', 'codigo']
+
+
 admin.site.register(Cita)
 admin.site.register(Consulta, ConsultaAdmin)
 admin.site.register(Incapacidad, IncapacidadAdmin)
@@ -89,4 +96,4 @@ admin.site.register(TipoCargo)
 admin.site.register(Localidad)
 admin.site.register(Especialidad)
 admin.site.register(Espera, EsperaAdmin)
-admin.site.register(Afeccion)
+admin.site.register(Afeccion, AfeccionAdmin)
