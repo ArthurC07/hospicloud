@@ -1285,6 +1285,16 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
 
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+
+        # The appointment does not have a registered diagnostic, so it cannot be
+        # finished yet
+        if consulta.diagnosticos_clinicos.count() == 0:
+            messages.info(
+                self.request,
+                _('La consulta no tiene un Diagnóstico registrado, no se puede terminar')
+            )
+            return consulta.get_absolute_url()
+
         consulta.activa = False
         consulta.final = timezone.now()
         consulta.duracion = consulta.final - consulta.created
