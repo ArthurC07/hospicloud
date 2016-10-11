@@ -53,6 +53,12 @@
                     </tr>
                 {% endfor %}
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th>{% trans 'Total' %}</th>
+                        <th>{{ consultas.count }}</th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
