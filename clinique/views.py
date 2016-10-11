@@ -447,6 +447,12 @@ class DiagnosticoPeriodoView(LoginRequiredMixin, TemplateView):
             self.diagnosticos = DiagnosticoClinico.objects.filter(
                 created__gte=self.inicio,
                 created__lte=self.fin
+            ).select_related(
+                'consulta',
+                'consulta__persona',
+                'consulta__consultorio',
+                'consulta__poliza__aseguradora',
+                'afeccion',
             )
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
