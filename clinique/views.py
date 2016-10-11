@@ -453,6 +453,8 @@ class DiagnosticoPeriodoView(LoginRequiredMixin, TemplateView):
                 'consulta__consultorio',
                 'consulta__poliza__aseguradora',
                 'afeccion',
+            ).order_by(
+                'consulta__created'
             )
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
