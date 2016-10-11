@@ -43,7 +43,8 @@
                         </td>
                         <td>
                             {% for diagnostico in consulta.diagnosticos_clinicos.all %}
-                                {{ diagnostico.diagnostico }}
+                                {{ diagnostico.afeccion|default_if_none:"" }}
+                                {{ diagnostico.diagnostico|default_if_none:"" }}
                             {% endfor %}
                         </td>
                         <td>{{ consulta.poliza.aseguradora }}</td>
