@@ -46,7 +46,7 @@
                         {% for diagnostico in diagnosticos.all %}
                             <tr>
                                 <td>{{ diagnostico.consulta.persona }}</td>
-                                <td>{{ diagnostico.consulta.created }}</td>
+                                <td>{{ diagnostico.consulta.created|date:"SHORT_DATETIME_FORMAT" }}</td>
                                 <td>{{ diagnostico.consulta.consultorio }}</td>
                                 <td>
                                     {{ diagnostico.afeccion|default_if_none:"" }}
