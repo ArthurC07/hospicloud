@@ -223,30 +223,30 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             _('Estad&iacute;sticas de Consulta')
         )
 
+        year_forms = []
         meses = []
         years = []
         now = timezone.now()
         tipos = {}
-        # context['monthly_forms'] = []
-
-        year_start = make_day_start(now.replace(month=1, day=1))
-        year_end = make_end_day(now.replace(month=12, day=31))
-
-        context['consulta_anual'] = Consulta.objects.atendidas(
-            year_start, year_end
-        ).count()
-
-        context['queja_anual'] = Queja.objects.filter(
-            created__range=(year_start, year_end)
-        ).count()
-
-        for tipo in TipoConsulta.objects.filter(habilitado=True):
-            tipos[tipo] = []
         
         for y in range(2014, 2020):
-            key = 'months_' + str(y)
-            context[key] = []
-            years.append(str(y))
+            year_forms = []
+            meses = []
+            tipos = {}
+            for tipo in TipoConsulta.objects.filter(habilitado=True):
+                tipos[tipo] = []
+
+            year_start = make_day_start(now.replace(month=1, day=1, year=y))
+            year_end = make_end_day(now.replace(month=12, day=31, year=y))
+
+            consulta_anual = Consulta.objects.atendidas(
+            year_start, year_end
+            ).count()
+
+            queja_anual = Queja.objects.filter(
+            created__range=(year_start, year_end)
+            ).count()
+
             for n in range(1, 13):
                 start = now.replace(month=n, day=1, year=y)
                 inicio, fin = make_month_range(start)
@@ -285,10 +285,19 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                 form.helper.form_class = ''
                 form.helper.label_class = ''
                 form.helper.field_class = ''
-                context[key].append(form)
+                year_forms.append(form)
+            
+            years.append({
+                    'name': str(y),
+                    'meses': meses,
+                    'year_forms': year_forms,
+                    'tipos': tipos,
+                    'consulta_anual': consulta_anual,
+                    'queja_anual': queja_anual,
+            })
 
-        context['tipos'] = tipos
-        context['meses'] = meses
+        # context['tipos'] = tipos
+        # context['meses'] = meses
         context['years'] = years
 
         return context
