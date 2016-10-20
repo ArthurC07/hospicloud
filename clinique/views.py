@@ -56,7 +56,7 @@ from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     NotaEnfermeriaForm, ExamenForm, EsperaForm, PacienteSearchForm, \
     PrescripcionForm, IncapacidadForm, ReporteForm, RemisionForm, \
     PrescripcionFormSet, NotaMedicaForm, ConsultaEsperaForm, \
-    OrdenLaboratorioForm, OrdenLaboratorioItemForm, AfeccionSearchForm, MedicoPeriodoForm
+    OrdenLaboratorioForm, OrdenLaboratorioItemForm, AfeccionSearchForm, MedicoPeriodoForm, AgregarEsperaForm
 from clinique.models import Cita, Consulta, Evaluacion, Seguimiento, \
     LecturaSignos, Consultorio, DiagnosticoClinico, Cargo, OrdenMedica, \
     NotaEnfermeria, Examen, Espera, Prescripcion, Incapacidad, Reporte, \
@@ -186,7 +186,8 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
 
         context['esperas'] = Espera.objects.pendientes().filter(
             fecha__gte=self.yesterday,
-            consultorio__localidad__ciudad=self.request.user.profile.ciudad,
+            ciudad = self.request.user.profile.ciudad
+            # consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
             'persona',
             'consultorio',
@@ -196,7 +197,7 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
 
         context['esperas_consulta'] = Espera.objects.espera_consulta().filter(
             fecha__gte=self.yesterday,
-            consultorio__localidad__ciudad=self.request.user.profile.ciudad,
+            ciudad = self.request.user.profile.ciudad
         ).select_related(
             'persona',
             'consultorio',
@@ -205,7 +206,7 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         ).all()
 
         context['consultas'] = Espera.objects.en_consulta().filter(
-            consultorio__localidad__ciudad=self.request.user.profile.ciudad,
+            ciudad = self.request.user.profile.ciudad
         ).select_related(
             'persona',
             'consultorio',
@@ -1150,10 +1151,10 @@ class EsperaUpdateView(LoginRequiredMixin, UpdateView):
 class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
     """
     Creates a :class:`Espera` according to the data entered in the
-    :class:`EsperaForm`
+    :class:`AgregarEsperaForm`
     """
     model = Espera
-    form_class = EsperaForm
+    form_class = AgregarEsperaForm
 
     def get_form(self, form_class=None):
         """
@@ -1163,6 +1164,7 @@ class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
         :return: :class:`ConsultaForm` instance
         """
         form = super(EsperaCreateView, self).get_form(form_class)
+        form.fields['ciudad'].initial = self.request.user.profile.ciudad
         queryset = get_active_master_contracts(self.persona)
         if queryset:
             form.fields['poliza'].queryset = queryset

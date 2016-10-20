@@ -37,6 +37,7 @@ from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
 from persona.models import Persona
 from users.mixins import HiddenUserForm
 from django.contrib.auth.models import User
+from users.models import Ciudad
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
@@ -350,7 +351,30 @@ class EsperaForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm,
         self.helper.layout = Fieldset(_('Agregar Persona a la Sala de Espera'),
                                       *self.field_names)
 
+class AgregarEsperaForm(BasePersonaForm, HiddenUserForm,
+                 FieldSetModelFormMixin):
+    class Meta:
+        model = Espera
+        fields = ('persona', 'poliza', 'usuario', 'ciudad')
 
+    poliza = forms.ModelChoiceField(
+        queryset=MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante'
+        ).filter(privado=True)
+    )
+    
+    ciudad = forms.ModelChoiceField(
+        queryset = Ciudad.objects.all(),
+        widget = forms.HiddenInput()
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(AgregarEsperaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Agregar Persona a la Sala de Espera'),
+                                      *self.field_names)
+                                    
 class EsperaConsultorioForm(ConsultorioFormMixin, FieldSetModelFormMixin):
     class Meta:
         model = Espera

@@ -177,6 +177,7 @@ class Espera(TimeStampedModel):
     consulta = models.BooleanField(default=False)
     datos = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+    ciudad = models.ForeignKey(Ciudad, blank=True, null=True)
 
     # Tracking several different moments of the waiting room experience
     tiempo_sap = models.DurationField(default=timedelta)
