@@ -407,6 +407,15 @@ class CitaCreateView(LoginRequiredMixin, CreateView):
 class CitaPersonaCreateView(LoginRequiredMixin, CreateView, PersonaFormMixin):
     model = Cita
     form_class = CitaPersonaForm
+    
+    def get_form(self, form_class=None):
+        """
+        Builds a form that contains :class:`Consultorio` :class:`CitaPersonaCreateView` instance
+        """
+        form = super(CitaPersonaCreateView, self).get_form(form_class)
+        form.fields['consultorio'].queryset = Consultorio.objects.filter(localidad__ciudad = self.request.user.profile.ciudad)
+
+        return form
 
 
 class CitaPeriodoView(LoginRequiredMixin, TemplateView):
@@ -1147,6 +1156,15 @@ class EsperaUpdateView(LoginRequiredMixin, UpdateView):
     model = Espera
     form_class = EsperaConsultorioForm
 
+    def get_form(self, form_class=None):
+        """
+        Builds a form that contains :class:`Consultorio` :class:`EsperaUpdateView` instance
+        """
+        form = super(EsperaUpdateView, self).get_form(form_class)
+        form.fields['consultorio'].queryset = Consultorio.objects.filter(localidad__ciudad = self.request.user.profile.ciudad)
+
+        return form
+
 
 class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
     """
@@ -1158,10 +1176,8 @@ class EsperaCreateView(CurrentUserFormMixin, PersonaFormMixin, CreateView):
 
     def get_form(self, form_class=None):
         """
-        Builds a form that contains all :class:`MasterContract` from the
-        :class:`Persona` that is getting a :class:`Consulta`
-        :param form_class:
-        :return: :class:`ConsultaForm` instance
+        Builds a form that contains :class:`Ciudad` and :class:'MasterContract'
+        :return: :class:`AgregarEsperaForm` instance
         """
         form = super(EsperaCreateView, self).get_form(form_class)
         form.fields['ciudad'].initial = self.request.user.profile.ciudad
