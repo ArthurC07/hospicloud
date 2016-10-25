@@ -4,9 +4,34 @@
     <div class="row">
         <section class="col-md-12 col-xs-12">
             <section class="page-title-box">
+                {% if persona.consultas_activas and perms.persona.persona %}
+                    {% for consulta in persona.consultas_activas %}
+                        <h3><small> {{ consulta.poliza.aseguradora }} {% if consulta.titularDependiente %} | {{ consulta.titularDependiente }} {% endif %}  </small>
+                        <span class="timer" id="time_tag"><time>00:00:00</time></span>
+                        <input type="hidden" id="hours" name="hours" value="{{ consulta.current_time.hours }}">
+                        <input type="hidden" id="minutes" name="minutes" value="{{ consulta.current_time.minutes }}">
+                        <input type="hidden" id="seconds" name="seconds" value="{{ consulta.current_time.seconds }}"></h3> 
+                    {% endfor %}
+                {% endif %}
                 <h4 class="page-title"> {{ persona.nombre_completo }}
                     <small>{% trans 'Informaci&oacute;n' %}</small>
                 </h4>
+                {% if persona.consultas_activas and perms.persona.persona %}
+                    <h3><small>{% if persona.cargo %} Cargo: {{ persona.cargo }}{% endif %}
+                        {% if persona.obtener_edad and persona.cargo  %} | {% endif %}
+                        {% if persona.obtener_edad %} Edad: {{ persona.obtener_edad }} años {% endif %}
+                        {% if persona.obtener_edad or persona.cargo  %} | {% endif %}
+                        {% for consulta in persona.consultas_activas %}
+                            {% for historia_espera in consulta.espera.historiafisicaespera_set.all %}
+                                {% with historia_espera.historia_fisica as historia %}
+                                    {% trans 'Presion:' %} {{ historia.presion_sistolica }}
+                                    / {{ historia.presion_diastolica }}
+                                    {% trans 'Temperatura:' %} {{ historia.temperatura }}°
+                                {% endwith %}
+                            {% endfor %}
+                        {% endfor %} 
+                    </small></h3>
+                {% endif %}
             </section>
         </section>
     </div>
@@ -172,3 +197,36 @@
         {% include 'snippets/persona_aside.html' with persona=persona %}
     </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+window.onload = function(){ 
+    h1 = document.getElementById('time_tag');
+    seconds = document.getElementById('seconds').value,
+    minutes = document.getElementById('minutes').value, 
+    hours = document.getElementById('hours').value;
+    var t;
+    function add() {
+        seconds++;
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes >= 60) {
+                minutes = 0;
+                hours++;
+            }
+        }
+        
+        h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ?minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+        if(hours>0 || minutes >= 15){
+            $('#time_tag').addClass("alert_timer");
+        }
+        timer();
+    }
+    function timer() {
+        t = setTimeout(add, 1000);
+    }
+    timer();
+}
+</script>
+{% endblock %}

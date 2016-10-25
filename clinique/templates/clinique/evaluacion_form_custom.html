@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% block header %}
+        {{ form.media.css }}
+    {% endblock %}
+    <div class="row">
+        <section class="col-md-9 main-content">
+            <legend>Agregar Evaluación</legend>
+            <form class="form-horizontal" method="post">
+                {% csrf_token %}
+                {{ form.persona }}
+                {{ form.usuario }}
+                {{ form.consulta }}
+                <div class="col-md-12 col-md-offset-3">
+                    <legend>Sistema Nervioso Central</legend>
+                    <div class="col-md-12 checkbox">
+                        <div class="check-custom">
+                            {{ form.lucido.errors }}
+                            {{ form.lucido }}
+                            <label for="{{ form.lucido.id_for_label }}">Lucido</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.consciente.errors }}
+                            {{ form.consciente }}
+                            <label for="{{ form.consciente.id_for_label }}">Consciente</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.orientado.errors }}
+                            {{ form.orientado }}
+                            <label for="{{ form.orientado.id_for_label }}">Orientado</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.neurologico_normal.errors }}
+                            {{ form.neurologico_normal }}
+                            <label for="{{ form.neurologico_normal.id_for_label }}">Neurologico Normal</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 checkbox margin-top-15">
+                        <div class="check-custom">
+                            {{ form.focalizaciones.errors }}
+                            {{ form.focalizaciones }}
+                            <label for="{{ form.focalizaciones.id_for_label }}">Focalizaciones</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.atonia.errors }}
+                            {{ form.atonia }}
+                            <label for="{{ form.atonia.id_for_label }}">Atonia</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.disminucion_de_la_fuerza.errors }}
+                            {{ form.disminucion_de_la_fuerza }}
+                            <label for="{{ form.disminucion_de_la_fuerza.id_for_label }}">Disminucion de la fuerza</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.movimientos_involuntarios.errors }}
+                            {{ form.movimientos_involuntarios }}
+                            <label for="{{ form.movimientos_involuntarios.id_for_label }}">Movimientos involuntarios</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 margin-top-30">
+                    <div class="col-md-12">
+                        <div class="col-md-offset-3">
+                            <legend>Cabeza</legend> 
+                        </div>
+                        <div class="col-md-12 {% if form.cabeza.errors %}custom-errors{% endif %}">
+                            <label class="control-label col-md-5 requiredField">
+                                Cabeza<span class="asteriskField">*</span> 
+                            </label>
+                            <div class="radio-custom col-md-7">
+                                {{ form.cabeza.errors }} 
+                                {{ form.cabeza }}       
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.descripcion_cabeza.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.descripcion_cabeza.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.descripcion_cabeza }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 margin-top-30">
+                    <div class="col-md-12">
+                        <div class="col-md-offset-3">
+                            <legend>Ojos</legend> 
+                        </div>
+                        <div class="col-md-12 {% if form.ojos.errors %}custom-errors{% endif %}">
+                            <label class="control-label col-md-5 requiredField">
+                                Ojos<span class="asteriskField">*</span> 
+                            </label>
+                            <div class="radio-custom col-md-7">
+                                {{ form.ojos.errors }} 
+                                {{ form.ojos }}       
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.descripcion_ojos.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.descripcion_ojos.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.descripcion_ojos }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 margin-top-30">
+                    <div class="col-md-12">
+                        <div class="col-md-offset-3">
+                            <legend>Cuello</legend> 
+                        </div>
+                        <div class="col-md-12 {% if form.ojos.errors %}custom-errors{% endif %}">
+                            <label class="control-label col-md-5 requiredField">
+                                Cuello<span class="asteriskField">*</span> 
+                            </label>
+                            <div class="radio-custom col-md-7">
+                                {{ form.cuello.errors }} 
+                                {{ form.cuello }}       
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.descripcion_cuello.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.descripcion_cuello.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.descripcion_cuello }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-md-offset-3 margin-top-30">
+                    <legend>Cardiopulmunar</legend>
+                    <div class="col-md-12 checkbox">
+                        <div class="check-custom">
+                            {{ form.pulmones_ventilados.errors }}
+                            {{ form.pulmones_ventilados }}
+                            <label for="{{ form.pulmones_ventilados.id_for_label }}">Pulmones ventilados</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.pulmones_crepitos.errors }}
+                            {{ form.pulmones_crepitos }}
+                            <label for="{{ form.pulmones_crepitos.id_for_label }}">Pulmones Crepitos</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.pulmones_subcrepitos.errors }}
+                            {{ form.pulmones_subcrepitos }}
+                            <label for="{{ form.pulmones_subcrepitos.id_for_label }}">Pulmones subcrepitos</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.pulmones_roncus.errors }}
+                            {{ form.pulmones_roncus }}
+                            <label for="{{ form.pulmones_roncus.id_for_label }}">Pulmones roncus</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 checkbox margin-top-15">
+                        <div class="check-custom">
+                            {{ form.civilancias.errors }}
+                            {{ form.civilancias }}
+                            <label for="{{ form.civilancias.id_for_label }}">Civilancias</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.matides.errors }}
+                            {{ form.matides }}
+                            <label for="{{ form.matides.id_for_label }}">Matides</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.primer_ruido_cardiaco.errors }}
+                            {{ form.primer_ruido_cardiaco }}
+                            <label for="{{ form.primer_ruido_cardiaco.id_for_label }}">Primer ruido cardiaco</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.segundo_ruido_cardiaco.errors }}
+                            {{ form.segundo_ruido_cardiaco }}
+                            <label for="{{ form.segundo_ruido_cardiaco.id_for_label }}">Segundo ruido cardiaco</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 checkbox margin-top-15">
+                        <div class="check-custom">
+                            {{ form.tercer_ruido_cardiaco.errors }}
+                            {{ form.tercer_ruido_cardiaco }}
+                            <label for="{{ form.tercer_ruido_cardiaco.id_for_label }}">Tercer ruido cardiaco</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.cuarto_ruido_cardiaco.errors }}
+                            {{ form.cuarto_ruido_cardiaco }}
+                            <label for="{{ form.cuarto_ruido_cardiaco.id_for_label }}">Cuarto ruido cardiaco</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.soplo.errors }}
+                            {{ form.soplo }}
+                            <label for="{{ form.soplo.id_for_label }}">Soplo</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.arritmia.errors }}
+                            {{ form.arritmia }}
+                            <label for="{{ form.arritmia.id_for_label }}">Arritmia</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 margin-top-30">
+                    <div class="col-md-12">
+                        <div class="col-md-offset-3">
+                            <legend>Orl</legend> 
+                        </div>
+                        <div class="col-md-12 {% if form.orl.errors %}custom-errors{% endif %}">
+                            
+                            <label class="control-label col-md-5 requiredField">
+                                Orl<span class="asteriskField">*</span> 
+                            </label>
+                            <div class="radio-custom col-md-7">
+                                {{ form.orl.errors }} 
+                                {{ form.orl }}       
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.descripcion_orl.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.descripcion_orl.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.descripcion_orl }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-md-offset-3 margin-top-30">
+                    <legend>Mamas</legend>
+                    <div class="col-md-12 checkbox">
+                        <div class="check-custom">
+                            {{ form.mamas_normales.errors }}
+                            {{ form.mamas_normales }}
+                            <label for="{{ form.mamas_normales.id_for_label }}">Mamas normales</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.nodulos.errors }}
+                            {{ form.nodulos }}
+                            <label for="{{ form.nodulos.id_for_label }}">Nodulos</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.retracciones_mamarias.errors }}
+                            {{ form.retracciones_mamarias }}
+                            <label for="{{ form.retracciones_mamarias.id_for_label }}">Retracciones mamarias</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.nopatias_satelites.errors }}
+                            {{ form.nopatias_satelites }}
+                            <label for="{{ form.nopatias_satelites.id_for_label }}">Nopatias_satelites</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-md-offset-3 margin-top-30">
+                    <legend>Abdomen</legend>
+                    <div class="col-md-12 checkbox">
+                        <div class="check-custom">
+                            {{ form.abdomen_blando.errors }}
+                            {{ form.abdomen_blando }}
+                            <label for="{{ form.abdomen_blando.id_for_label }}">Abdomen blando</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.abdomen_deprecible.errors }}
+                            {{ form.abdomen_deprecible }}
+                            <label for="{{ form.abdomen_deprecible.id_for_label }}">Abdomen deprecible</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.dolor_abdominal.errors }}
+                            {{ form.dolor_abdominal }}
+                            <label for="{{ form.dolor_abdominal.id_for_label }}">Dolor abdominal</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.blumber.errors }}
+                            {{ form.blumber }}
+                            <label for="{{ form.blumber.id_for_label }}">Blumber</label>
+                        </div>
+
+                        <div class="check-custom">
+                            {{ form.rovsig.errors }}
+                            {{ form.rovsig }}
+                            <label for="{{ form.rovsig.id_for_label }}">Rovsig</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 margin-top-30">
+                    <div class="col-md-12">
+                        {{ form.gastrointestinal.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.gastrointestinal.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.gastrointestinal }}
+                        </div>
+                    </div>
+                    <div class="col-md-12 checkbox col-md-offset-5">
+                       <div class="check-custom">
+                            {{ form.tacto_rectal_diferido.errors }}
+                            {{ form.tacto_rectal_diferido }}
+                            <label for="{{ form.tacto_rectal_diferido.id_for_label }}">Tacto rectal diferido</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.hallazgos_tacto_rectal.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.hallazgos_tacto_rectal.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.hallazgos_tacto_rectal }}
+                        </div>
+                    </div>
+                    <div class="col-md-12 checkbox col-md-offset-5">
+                       <div class="check-custom">
+                            {{ form.genitales_normales.errors }}
+                            {{ form.genitales_normales }}
+                            <label for="{{ form.genitales_normales.id_for_label }}">Genitales normales</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.hallazgos_genitales.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.hallazgos_genitales.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.hallazgos_genitales }}
+                        </div>
+                    </div>
+                    <div class="col-md-12 checkbox col-md-offset-5">
+                       <div class="check-custom">
+                            {{ form.extremidades_simetricas.errors }}
+                            {{ form.extremidades_simetricas }}
+                            <label for="{{ form.extremidades_simetricas.id_for_label }}">Extremidades simetricas</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.hallazgos_extremidades.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.hallazgos_extremidades.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.hallazgos_extremidades }}
+                        </div>
+                    </div>
+                    <div class="col-md-12 checkbox col-md-offset-5">
+                       <div class="check-custom">
+                            {{ form.piel_normal.errors }}
+                            {{ form.piel_normal }}
+                            <label for="{{ form.piel_normal.id_for_label }}">Piel normal</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.otras.errors }}
+                        <div class="control-label col-md-5">
+                            {{ form.otras.label_tag }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form.otras }}
+                        </div>
+                    </div>
+                </div>
+                <div class="controls col-md-12 col-md-offset-4 margin-top-30"> 
+                    <input type="submit" name="submit" value="Guardar" class="btn btn-primary"> 
+                </div>
+            </form>
+        </section>
+        <aside class="col-md-3">
+            <div class="toolbox col-md-12">
+                <nav class="sidebar-nav">
+                    <ul class="nav nav-stacked nav-tabs">
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
+{% endblock %}

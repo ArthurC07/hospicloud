@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 
 from crispy_forms.layout import Fieldset, Submit
+from crispy_forms.helper import FormHelper
 from dal import autocomplete
 from django import forms
 from django.forms import inlineformset_factory
@@ -35,6 +36,8 @@ from persona.forms import FieldSetModelFormMixin, DateTimeWidget, \
     BasePersonaForm, FieldSetFormMixin
 from persona.models import Persona
 from users.mixins import HiddenUserForm
+from django.contrib.auth.models import User
+from users.models import Ciudad
 
 
 class ConsultorioFormMixin(FieldSetModelFormMixin):
@@ -49,6 +52,35 @@ class ConsultorioFormMixin(FieldSetModelFormMixin):
             'nombre').all()
     )
 
+class UserFormMixin(forms.Form):
+    """
+    Permite compartir agregar la información de usuarios automáticamente
+    en los formularios que heredan de esta clase
+    """
+    medico = forms.ModelChoiceField(
+        queryset=User.objects.filter(groups__pk= 2)
+    )  
+
+class MedicoPeriodoForm(UserFormMixin):
+    """
+    Builds a form that allows specifying a :class:`Consultorio` and a
+    Date range
+    """
+    
+    inicio = forms.DateTimeField(widget=DateTimeWidget)
+    fin = forms.DateTimeField(widget=DateTimeWidget)
+
+    def __init__(self, *args, **kwargs):
+        super(MedicoPeriodoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.html5_required = True
+        self.field_names = self.fields.keys()
+        self.helper.form_method = 'get'
+        self.helper.layout = Fieldset(_('Consultas por Medico por Periodo'),
+                                      *self.field_names)
+
+    def set_action(self, action):
+        self.helper.form_action = action
 
 class HiddenConsultorioFormMixin(FieldSetModelFormMixin):
     consultorio = forms.ModelChoiceField(
@@ -139,34 +171,40 @@ class EvaluacionForm(HiddenUserForm, BasePersonaForm, HiddenConsultaFormMixin):
     cabeza = forms.ChoiceField(widget=forms.RadioSelect(),
                                choices=Evaluacion.NORMALIDAD)
     descripcion_cabeza = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
 
     ojos = forms.ChoiceField(widget=forms.RadioSelect(),
                              choices=Evaluacion.NORMALIDAD)
     descripcion_ojos = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
 
     cuello = forms.ChoiceField(widget=forms.RadioSelect(),
                                choices=Evaluacion.NORMALIDAD)
     descripcion_cuello = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
 
     orl = forms.ChoiceField(widget=forms.RadioSelect(),
                             choices=Evaluacion.NORMALIDAD)
     descripcion_orl = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
+    )
+    gastrointestinal = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 5,'class': 'form-control textarea'}), required=False
     )
     hallazgos_genitales = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
     hallazgos_tacto_rectal = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
     )
     hallazgos_extremidades = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 2}), required=False
+        widget=forms.Textarea(attrs={'rows': 2,'class': 'form-control textarea'}), required=False
+    )
+    otras = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 5,'class': 'form-control textarea'}), required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -313,7 +351,30 @@ class EsperaForm(BasePersonaForm, ConsultorioFormMixin, HiddenUserForm,
         self.helper.layout = Fieldset(_('Agregar Persona a la Sala de Espera'),
                                       *self.field_names)
 
+class AgregarEsperaForm(BasePersonaForm, HiddenUserForm,
+                 FieldSetModelFormMixin):
+    class Meta:
+        model = Espera
+        fields = ('persona', 'poliza', 'usuario', 'ciudad')
 
+    poliza = forms.ModelChoiceField(
+        queryset=MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante'
+        ).filter(privado=True)
+    )
+    
+    ciudad = forms.ModelChoiceField(
+        queryset = Ciudad.objects.all(),
+        widget = forms.HiddenInput()
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(AgregarEsperaForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Agregar Persona a la Sala de Espera'),
+                                      *self.field_names)
+                                    
 class EsperaConsultorioForm(ConsultorioFormMixin, FieldSetModelFormMixin):
     class Meta:
         model = Espera

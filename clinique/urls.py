@@ -112,9 +112,17 @@ urlpatterns = [
         views.ConsultaMedicoPeriodoView.as_view(),
         name='consulta-medico'),
 
+    url(r'^medico/periodo$',
+        views.ConsultaUserMedicoPeriodoView.as_view(),
+        name='consulta-medico-periodo'),
+
     url(r'^ciudad/(?P<pk>\d+)$',
         views.ConsultaCiudadPeriodoView.as_view(),
         name='consulta-ciudad'),
+
+    url(r'^ciudad/periodo$',
+        views.ConsultaCiudadFormPeriodoView.as_view(),
+        name='consulta-ciudad-periodo'),
 
     url(r'^aseguradora/periodo$',
         views.ConsultaAseguradoraPeriodoListView.as_view(),
@@ -345,6 +353,10 @@ urlpatterns = [
     url(r'^(?P<persona>\d+)/(?P<consulta>\d+)/incapacidad/agregar$',
         views.IncapacidadCreateView.as_view(),
         name='consultorio-incapacidad-agregar'),
+
+    url(r'^incapacidad/(?P<pk>\d+)/imprimir$',
+        views.IncapacidadDetailView.as_view(),
+        name='clinique-incapacidad-print'),
 
     url(r'^incapacidad/(?P<pk>\d+)/editar$',
         views.IncapacidadUpdateView.as_view(),
