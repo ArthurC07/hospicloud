@@ -213,9 +213,7 @@ class Espera(TimeStampedModel):
         return reverse('consultorio-index')
 
     def tiempo(self):
-        delta = timezone.now() - self.created
-
-        return delta.seconds / 60
+        return timezone.now() - self.created
 
 
 class HistoriaFisicaEspera(TimeStampedModel):
@@ -384,17 +382,14 @@ class Consulta(TimeStampedModel):
 
     def titularDependiente(self):
         try:
-            is_beneficiario = None
-            beneficiarios = self.contrato.beneficiarios.all()
-
-            if beneficiarios:
-                for beneficiario in beneficiarios:
-                    if beneficiario.persona == self.persona:
-                        is_beneficiario = True
+            is_beneficiario = False
+            personas = [b.persona for b in self.contrato.beneficiarios.all()]
+            if self.persona in personas:
+                is_beneficiario = True
 
             if self.contrato.persona == self.persona:
                 return 'Titular'
-            elif is_beneficiario is not None:
+            elif is_beneficiario:
                 return 'Dependiente'
             else:
                 return ''
