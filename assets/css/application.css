@@ -5,6 +5,7 @@
 .margin-top-30{margin-top: 30px}
 .check-custom{display:inline-block;margin-right:25px}
 .custom-errors{color:#a94442}
+.table-middle{vertical-align:middle !important}
 /* ============================================================================
  * Tables
  * ============================================================================

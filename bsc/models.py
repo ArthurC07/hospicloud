@@ -560,6 +560,7 @@ class Queja(TimeStampedModel):
     departamento = models.ForeignKey(Departamento, null=True, blank=True)
     queja = models.TextField()
     resuelta = models.BooleanField(default=False)
+    usuario_asignado = models.ForeignKey(User, blank=True, null=True)
 
     class Meta:
         ordering = ['created', ]

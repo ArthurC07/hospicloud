@@ -461,6 +461,56 @@ class QuejaListView(LoginRequiredMixin, ListView):
         context['encuestas'] = Encuesta.objects.filter(activa=True)
         return context
 
+class QuejaUsuarioListView(LoginRequiredMixin, ListView):
+    model = Queja
+    # context_object_name = 'quejas'
+    template_name = 'bsc/queja_usuario_list.html'
+
+    def get_context_data(self, **kwargs):            
+        context = super(QuejaUsuarioListView, self).get_context_data(**kwargs)
+
+        """
+        Adds rejection and aceptance forms to the template
+        """
+        queryset = Queja.objects.filter(resuelta=False,usuario_asignado = self.request.user).select_related(
+        'respuesta',
+        'departamento',
+        'respuesta__persona',
+        'respuesta__consulta',
+        'respuesta__consulta__poliza',
+        'respuesta__consulta__contrato',
+        'respuesta__consulta__persona',
+        'respuesta__consulta__poliza__aseguradora',
+        'respuesta__consulta__consultorio__usuario',
+        ).prefetch_related(            
+        'solucion_set',
+        'respuesta__consulta__persona__beneficiarios',
+        'respuesta__consulta__persona__beneficiarios',
+        'respuesta__consulta__persona__beneficiarios__contrato',
+        'respuesta__consulta__persona__beneficiarios__contrato__persona',
+        'respuesta__consulta__consultorio__secretaria',
+        'respuesta__consulta__consultorio__usuario__profile',
+        'respuesta__consulta__consultorio__usuario__profile__ciudad',
+        ).exclude(
+            solucion__aceptada=True
+        ).all()
+        quejas = []
+        
+        for queja in queryset:
+            submit = False
+            if queja.solucion_set.all():
+                for solucion in queja.solucion_set.all():
+                    if solucion.aceptada == True or solucion.rechazada == True:
+                        submit = True
+                if submit == False:
+                    quejas.append(queja)
+            else:
+                quejas.append(queja)
+                        
+        context['quejas'] = quejas
+        context['encuestas'] = Encuesta.objects.filter(activa=True)
+
+        return context
 
 class QuejaMixin(ContextMixin, View):
     def dispatch(self, *args, **kwargs):

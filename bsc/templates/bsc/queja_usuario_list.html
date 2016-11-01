@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load staticfiles %}{% load l10n %}{% load i18n %}
+{% block menu %}
+    {% include "snippets/navbar.html" with active_tab='tab43' %}
+{% endblock %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <h4 class="page-title">{% trans 'Quejas Pendientes de Soluci&oacute;n' %}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+            <section class="col-md-12 col-xs-9 main-content">
+                <div class="panel panel-border col-lg-12">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>{% trans 'Fecha de Consulta' %}</th>
+                            <th>{% trans 'Fecha de Queja' %}</th>
+                            <th>{% trans 'Nombre' %}</th>
+                            <th>{% trans 'Responsables' %}</th>
+                            <th>{% trans 'Queja' %}</th>
+                            <th>{% trans 'Acciones' %}</th>
+                            <th>{% trans 'Estado' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for queja in quejas %}
+                            <tr>
+                                <td>{{ queja.respuesta.consulta.created }}</td>
+                                <td>{{ queja.created }}</td>
+                                <td>
+                                    {{ queja.respuesta.persona }}, {{ queja.respuesta.persona.obtener_edad }} {% trans 'A&ntilde;os' %}
+                                    {% trans 'Categor&iacute;a' %}
+                                    {% if queja.respuesta.consulta.contrato in consulta.poliza.contratos.all %}
+                                        {% trans 'Titular del Contrato' %}
+                                    {% endif %}
+                                    {% for beneficiario in queja.respuesta.consulta.persona.beneficiarios.all %}
+                                        {% if beneficiario.contrato == consulta.contrato %}
+                                            {% trans 'Beneficiario del Contrato' %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <table class="table">
+                                        <tr>
+                                            <td>{% trans 'Ciudad' %}</td>
+                                            <td>{{ queja.respuesta.consulta.consultorio.usuario.profile.ciudad }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{% trans 'Departamento' %}</td>
+                                            <td>{{ queja.departamento }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{% trans 'Aseguradora' %}</td>
+                                            <td>{{ queja.respuesta.consulta.poliza.aseguradora }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{% trans 'Médico' %}</td>
+                                            <td>{{ queja.respuesta.consulta.consultorio.usuario.get_full_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{% trans 'Enfermera' %}</td>
+                                            <td>{{ queja.respuesta.consulta.consultorio.secretaria.get_full_name }}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>{{ queja.queja }}</td>
+                                <td>
+                                    <a class="btn btn-primary"
+                                    href="{% url 'solucion-lista-agregar' queja.id %}">{% trans 'Solucionar' %}</a>
+                                </td>
+                                <td class="table-middle">
+                                    {% if queja.solucion_set.count %}
+                                        <p class="btn btn-info">{% trans 'En proceso de aprobación' %}</p>
+                                    {% else %}
+                                        <p class="btn btn-danger">{% trans 'En espera de aprobación' %}</p>
+                                    {% endif %}    
+                                </td>
+                                {% empty %}
+                            <tr>
+                                <td colspan="6">{% trans 'No se encontraron Quejas' %}</td>
+                            </tr> 
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        <!-- {% include 'bsc/snippets/encuesta_menu.html' with object_list=encuestas %} -->
+    </div>
+{% endblock %}

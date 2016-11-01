@@ -90,6 +90,8 @@ urlpatterns = [
 
     url(r'^quejas$', views.QuejaListView.as_view(), name='quejas'),
 
+    url(r'^quejas/usuario$', views.QuejaUsuarioListView.as_view(), name='quejas-usuario'),
+
     url(r'^quejas/periodo$', views.QuejaPeriodoListView.as_view(),
         name='quejas-periodo'),
 
