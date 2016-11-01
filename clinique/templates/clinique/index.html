@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
+{% load timedelta_filter %}
 {% block menu %}
     <li class="active">
         <a class="waves-effect" href="{% url 'consultorio-index' %}">
@@ -303,7 +304,7 @@
                 {% endif %}
             {% endfor %}
             setTimeout(function () {
-                
+
             }, 30000);
         });
     </script>
