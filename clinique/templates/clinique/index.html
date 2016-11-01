@@ -86,9 +86,10 @@
                 <section class="tabbable">
                     <ul class="nav nav-tabs">
                         {% for year in years %}
-                            <li data-year="{{ year.name }}" class="{% if year.name == '2014' %} active {% endif %} tab">
+                            <li data-year="{{ year.name }}"
+                                class="{% if year.name == '2014' %} active {% endif %} tab">
                                 <a href="#{{ year.name }}"
-                                    data-toggle="tab">
+                                   data-toggle="tab">
                                     {{ year.name }}
                                 </a>
                             </li>
@@ -96,7 +97,8 @@
                     </ul>
                     <div class="tab-content">
                         {% for year in years %}
-                            <article id="{{ year.name }}" class="tab-pane {% if year.name == '2014' %} active {% endif %}">
+                            <article id="{{ year.name }}"
+                                     class="tab-pane {% if year.name == '2014' %} active {% endif %}">
                                 <p class="panel-sub-title font-13 text-muted">
                                     {% trans 'Seleccionar un mes del' %} {{ year.name }}
                                 </p>
@@ -129,13 +131,13 @@
                                             </tr>
                                         {% endfor %}
                                         <tr>
-                                            <td>{% trans 'Total de Consultas' %} {{year.name}}</td>
+                                            <td>{% trans 'Total de Consultas' %} {{ year.name }}</td>
                                             {% for mes in year.meses %}
                                                 <td>{{ mes.atenciones }}</td>
                                             {% endfor %}
                                         </tr>
                                         <tr>
-                                            <td>{% trans 'Quejas' %} {{year.name}}</td>
+                                            <td>{% trans 'Quejas' %} {{ year.name }}</td>
                                             {% for mes in year.meses %}
                                                 <td>{{ mes.quejas }}</td>
                                             {% endfor %}
@@ -144,7 +146,7 @@
                                     </table>
                                     <div class="row m-t-15">
                                         <div class="col-md-4 col-xs-4">
-                                            <div class="col-md-6 percentage-label">{% trans 'Total Consultas del Año' %} {{ year.name}}</div>
+                                            <div class="col-md-6 percentage-label">{% trans 'Total Consultas del Año' %} {{ year.name }}</div>
                                             <div class="col-md-3 percentage-box">{{ year.consulta_anual }}</div>
                                         </div>
                                         <div class="col-md-4 col-xs-4">
@@ -165,7 +167,7 @@
                         <canvas id="chart" class="col-md-12 col-xs-12 graph"
                                 height="100"></canvas>
                         <div id="legend"
-                            class="graph col-md-12 col-xs-12"></div>
+                             class="graph col-md-12 col-xs-12"></div>
                     </div>
                 </section>
             </div>
@@ -221,49 +223,49 @@
             src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('.tab').click(function(){
+            $('.tab').click(function () {
                 text = $(this).attr('data-year');
-                
+
                 {% for year in years %}
-                    if ( {{ year.name }} == text ) {
-                        console.log(text);
+                    if ({{ year.name }} == text ) {
+                    console.log(text);
 
-                        var canvas = document.getElementById("chart");
-                        canvas.remove();
-                        $( "<canvas id='chart' class='col-md-12 col-xs-12 graph' height='100'></canvas>").prependTo( "#chart_div" );
-                        var new_canvas = document.getElementById("chart");
-                        var ctx = new_canvas.getContext("2d");
-                        var chart = new Chart(ctx);
+                    var canvas = document.getElementById("chart");
+                    canvas.remove();
+                    $("<canvas id='chart' class='col-md-12 col-xs-12 graph' height='100'></canvas>").prependTo("#chart_div");
+                    var new_canvas = document.getElementById("chart");
+                    var ctx = new_canvas.getContext("2d");
+                    var chart = new Chart(ctx);
 
-                        data = {
-                            labels: [0, {% for mes in year.meses %} "{{ mes.nombre|date:"F" }}",  {% endfor %} 0],
-                            datasets: [
-                                {% for tipo, lista in year.tipos.items %}
-                                    {
-                                        label: "{{ tipo }}",
-                                        strokeColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16),
-                                        fillColor: "rgba(220,220,220,0)",
-                                        data: [0, {% for item in lista %} {{ item|escapejs }}, {% endfor %} 0]
-                                    },
-                                {% endfor %}
+                    data = {
+                        labels: [0, {% for mes in year.meses %} "{{ mes.nombre|date:"F" }}",  {% endfor %} 0],
+                        datasets: [
+                            {% for tipo, lista in year.tipos.items %}
                                 {
-                                    label: "{% trans 'Consultas' %} {{year.name}}",
-                                    strokeColor: "blue",
+                                    label: "{{ tipo }}",
+                                    strokeColor: '#' + (Math.random() * 0xFFFFFF << 0).toString(16),
                                     fillColor: "rgba(220,220,220,0)",
-                                    data: [0, {% for mes in year.meses %} {{ mes.atenciones|escapejs }}, {% endfor %} 0]
+                                    data: [0, {% for item in lista %} {{ item|escapejs }}, {% endfor %} 0]
                                 },
-                                {
-                                    label: "{% trans 'Quejas' %} {{year.name}}",
-                                    strokeColor: "red",
-                                    fillColor: "rgba(220,220,220,0)",
-                                    data: [0, {% for mes in year.meses %} {{ mes.quejas|escapejs }}, {% endfor %} 0]
-                                }
-                            ]
-                        };
+                            {% endfor %}
+                            {
+                                label: "{% trans 'Consultas' %} {{year.name}}",
+                                strokeColor: "blue",
+                                fillColor: "rgba(220,220,220,0)",
+                                data: [0, {% for mes in year.meses %} {{ mes.atenciones|escapejs }}, {% endfor %} 0]
+                            },
+                            {
+                                label: "{% trans 'Quejas' %} {{year.name}}",
+                                strokeColor: "red",
+                                fillColor: "rgba(220,220,220,0)",
+                                data: [0, {% for mes in year.meses %} {{ mes.quejas|escapejs }}, {% endfor %} 0]
+                            }
+                        ]
+                    };
 
-                        var myLineChart = chart.Line(data);
-                        document.getElementById('legend').innerHTML = myLineChart.generateLegend();
-                    }
+                    var myLineChart = chart.Line(data);
+                    document.getElementById('legend').innerHTML = myLineChart.generateLegend();
+                }
                 {% endfor %}
             });
             {% for year in years %}
@@ -300,8 +302,8 @@
                     document.getElementById('legend').innerHTML = myLineChart.generateLegend();
                 {% endif %}
             {% endfor %}
-            setTimeout(function(){
-            window.location.reload(1);
+            setTimeout(function () {
+                
             }, 30000);
         });
     </script>
