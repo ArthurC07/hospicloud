@@ -234,7 +234,7 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         now = timezone.now()
         tipos = {}
 
-        for y in range(2014, 2020):
+        for y in range(now.year - 3, now.year + 4):
             year_forms = []
             meses = []
             tipos = {}
