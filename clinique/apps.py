@@ -25,8 +25,6 @@ class CliniqueConfig(AppConfig):
     verbose_name = _('Clínica y Consultorios')
 
     def ready(self):
-
         Consultorio = self.get_model('Consultorio')
         get_user_model().consultorios_activos = property(
             lambda u: Consultorio.objects.filter(usuario=u, activo=True))
-

@@ -48,11 +48,12 @@ class ConsultaAdminForm(forms.ModelForm):
         'persona',
         'consultorio',
     ))
-    poliza = forms.ModelChoiceField(queryset=MasterContract.objects.select_related(
-        'aseguradora',
-        'plan',
-        'contratante',
-    ))
+    poliza = forms.ModelChoiceField(
+        queryset=MasterContract.objects.select_related(
+            'aseguradora',
+            'plan',
+            'contratante',
+        ))
     contrato = forms.ModelChoiceField(queryset=Contrato.objects.select_related(
         'persona',
     ))

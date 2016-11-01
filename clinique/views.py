@@ -922,7 +922,7 @@ class DiagnosticoRedirectView(LoginRequiredMixin, RedirectView):
             usuario=usuario,
             afeccion=afeccion,
             consulta=consulta,
-            )
+        )
 
         messages.info(
             self.request,
