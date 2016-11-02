@@ -75,6 +75,7 @@
             </div>
         </div>
     </div>
+    {% if perms.clinique.clinical_manage %}
     <div class="row">
         <div class="col-md-12 col-xs-12 main-content">
             <div class="col-md-12 panel panel-default">
@@ -218,6 +219,7 @@
             {% crispy quejasciudadform %}
         </div>
     </div>
+    {% endif %}
 {% endblock %}
 {% block scripts %}
     <script type="text/javascript"

@@ -86,6 +86,8 @@ class Consultorio(TimeStampedModel):
              _('Permite que el usuario tenga acceso a los datos clínicos')),
             ('clinical_write',
              _('Permite que el usuario escriba a los datos clínicos')),
+            ('clinical_manage',
+             _('Permite que el usuario escriba a los datos clínicos')),
         )
         ordering = ["nombre", ]
 

@@ -190,8 +190,6 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
 
         context['esperas'] = Espera.objects.pendientes().filter(
             fecha__gte=self.yesterday,
-            ciudad=self.request.user.profile.ciudad
-            # consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
             'persona',
             'consultorio',
@@ -201,7 +199,6 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
 
         context['esperas_consulta'] = Espera.objects.espera_consulta().filter(
             fecha__gte=self.yesterday,
-            ciudad=self.request.user.profile.ciudad
         ).select_related(
             'persona',
             'consultorio',
@@ -209,14 +206,26 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             'consultorio__secretaria',
         ).all()
 
-        context['consultas'] = Espera.objects.en_consulta().filter(
-            ciudad=self.request.user.profile.ciudad
-        ).select_related(
+        context['consultas'] = Espera.objects.en_consulta().select_related(
             'persona',
             'consultorio',
             'consultorio__usuario',
             'consultorio__secretaria',
         ).all()
+
+        user = self.request.user
+
+        if not user.has_perm('clinical_manage'):
+            context['consultas'] = context['consultas'].filter(
+                ciudad=user.profile.ciudad
+            )
+            context['esperas_consulta'] = context['esperas_consulta'].filter(
+                ciudad=user.profile.ciudad
+            )
+
+            context['esperas'] = context['esperas'].filter(
+                ciudad=user.profile.ciudad
+            )
 
         context['consulta_estadistica'] = PeriodoForm(
             prefix='consulta-estadistica'
@@ -234,73 +243,76 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         now = timezone.now()
         tipos = {}
 
-        for y in range(now.year - 3, now.year + 4):
-            year_forms = []
-            meses = []
-            tipos = {}
-            for tipo in TipoConsulta.objects.filter(habilitado=True):
-                tipos[tipo] = []
+        user = self.request.user
 
-            year_start = make_day_start(now.replace(month=1, day=1, year=y))
-            year_end = make_end_day(now.replace(month=12, day=31, year=y))
-
-            consulta_anual = Consulta.objects.atendidas(
-                year_start, year_end
-            ).count()
-
-            queja_anual = Queja.objects.filter(
-                created__range=(year_start, year_end)
-            ).count()
-
-            for n in range(1, 13):
-                start = now.replace(month=n, day=1, year=y)
-                inicio, fin = make_month_range(start)
-
-                consultas = Consulta.objects.atendidas(inicio, fin)
-                atenciones = consultas.count()
-                quejas = Queja.objects.filter(
-                    created__range=(inicio, fin)).count()
-
+        if user.has_perm('clinical_manage'):
+            for y in range(now.year - 3, now.year + 4):
+                year_forms = []
+                meses = []
+                tipos = {}
                 for tipo in TipoConsulta.objects.filter(habilitado=True):
-                    tipos[tipo].append(consultas.filter(tipo=tipo).count())
+                    tipos[tipo] = []
 
-                meses.append(
-                    {
-                        'inicio': inicio,
-                        'atenciones': atenciones,
-                        'quejas': quejas,
-                        'nombre': inicio,
-                    }
-                )
+                year_start = make_day_start(now.replace(month=1, day=1, year=y))
+                year_end = make_end_day(now.replace(month=12, day=31, year=y))
 
-                form = MonthYearForm(initial={
-                    'year': y,
-                    'mes': n,
+                consulta_anual = Consulta.objects.atendidas(
+                    year_start, year_end
+                ).count()
+
+                queja_anual = Queja.objects.filter(
+                    created__range=(year_start, year_end)
+                ).count()
+
+                for n in range(1, 13):
+                    start = now.replace(month=n, day=1, year=y)
+                    inicio, fin = make_month_range(start)
+
+                    consultas = Consulta.objects.atendidas(inicio, fin)
+                    atenciones = consultas.count()
+                    quejas = Queja.objects.filter(
+                        created__range=(inicio, fin)).count()
+
+                    for tipo in TipoConsulta.objects.filter(habilitado=True):
+                        tipos[tipo].append(consultas.filter(tipo=tipo).count())
+
+                    meses.append(
+                        {
+                            'inicio': inicio,
+                            'atenciones': atenciones,
+                            'quejas': quejas,
+                            'nombre': inicio,
+                        }
+                    )
+
+                    form = MonthYearForm(initial={
+                        'year': y,
+                        'mes': n,
+                    })
+                    form.helper.attrs = {'target': '_blank'}
+                    form.set_action('clinique-monthly')
+                    form.fields['year'].widget = HiddenInput()
+                    form.fields['mes'].widget = HiddenInput()
+                    form.helper.form_method = 'get'
+                    form.helper.add_input(Submit(
+                        'submit',
+                        _('{0}'.format(calendar.month_name[n])),
+                        css_class='btn-block'
+                    ))
+
+                    form.helper.form_class = ''
+                    form.helper.label_class = ''
+                    form.helper.field_class = ''
+                    year_forms.append(form)
+
+                years.append({
+                    'name': str(y),
+                    'meses': meses,
+                    'year_forms': year_forms,
+                    'tipos': tipos,
+                    'consulta_anual': consulta_anual,
+                    'queja_anual': queja_anual,
                 })
-                form.helper.attrs = {'target': '_blank'}
-                form.set_action('clinique-monthly')
-                form.fields['year'].widget = HiddenInput()
-                form.fields['mes'].widget = HiddenInput()
-                form.helper.form_method = 'get'
-                form.helper.add_input(Submit(
-                    'submit',
-                    _('{0}'.format(calendar.month_name[n])),
-                    css_class='btn-block'
-                ))
-
-                form.helper.form_class = ''
-                form.helper.label_class = ''
-                form.helper.field_class = ''
-                year_forms.append(form)
-
-            years.append({
-                'name': str(y),
-                'meses': meses,
-                'year_forms': year_forms,
-                'tipos': tipos,
-                'consulta_anual': consulta_anual,
-                'queja_anual': queja_anual,
-            })
 
         # context['tipos'] = tipos
         # context['meses'] = meses
