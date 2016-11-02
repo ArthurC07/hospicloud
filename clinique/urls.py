@@ -31,17 +31,17 @@ urlpatterns = [
 
     url(r'^paciente/(?P<pk>\d+)/resume$',
         views.PacienteDetailView.as_view(
-                template_name='clinique/clinique_detail.html'),
+            template_name='clinique/clinique_detail.html'),
         name='clinique-paciente-resume'),
 
     url(r'^paciente/(?P<pk>\d+)/cargos$',
         views.PacienteDetailView.as_view(
-                template_name='clinique/cargo_list.html'),
+            template_name='clinique/cargo_list.html'),
         name='clinique-cargos'),
 
     url(r'^paciente/(?P<pk>\d+)/signos$',
         views.PacienteDetailView.as_view(
-                template_name='clinique/signos_list.html'),
+            template_name='clinique/signos_list.html'),
         name='clinique-signos'),
 
     url(r'^signos/(?P<pk>\d+)/editar$',
@@ -250,7 +250,7 @@ urlpatterns = [
 
     url(r'^paciente/(?P<pk>\d+)/notas$',
         views.PacienteDetailView.as_view(
-                template_name='clinique/nota_list.html'),
+            template_name='clinique/nota_list.html'),
         name='clinique-notas'),
 
     url(r'^orden/(?P<pk>\d+)$',
@@ -259,7 +259,7 @@ urlpatterns = [
 
     url(r'^orden/(?P<pk>\d+)/impresion$',
         views.OrdenMedicaDetailView.as_view(
-                template_name='clinique/ordenmedica_print.html'),
+            template_name='clinique/ordenmedica_print.html'),
         name='clinique-orden-print'),
 
     url(r'^orden/(?P<pk>\d+)/completar$',

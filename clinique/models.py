@@ -86,6 +86,8 @@ class Consultorio(TimeStampedModel):
              _('Permite que el usuario tenga acceso a los datos clínicos')),
             ('clinical_write',
              _('Permite que el usuario escriba a los datos clínicos')),
+            ('clinical_manage',
+             _('Permite que el usuario escriba a los datos clínicos')),
         )
         ordering = ["nombre", ]
 
@@ -213,9 +215,7 @@ class Espera(TimeStampedModel):
         return reverse('consultorio-index')
 
     def tiempo(self):
-        delta = timezone.now() - self.created
-
-        return delta.seconds / 60
+        return timezone.now() - self.created
 
 
 class HistoriaFisicaEspera(TimeStampedModel):
@@ -340,7 +340,7 @@ class Consulta(TimeStampedModel):
 
         else:
             return (self.created - self.final).seconds / 60
-            
+
     def current_time(self):
         """
         Calculates the total time a :class:`Consulta` has spent between
@@ -350,19 +350,19 @@ class Consulta(TimeStampedModel):
         total_seconds = time.total_seconds()
 
         minutes = (total_seconds % 3600) // 60
-        hours = total_seconds // 3600 
+        hours = total_seconds // 3600
         seconds = int(total_seconds)
-        delta = {"hours":0,"minutes":0,"seconds":seconds}
+        delta = {"hours": 0, "minutes": 0, "seconds": seconds}
         if total_seconds > 60:
-            seconds = int(total_seconds % 60)  
+            seconds = int(total_seconds % 60)
             minutes = int(minutes)
-            delta = {"hours":0,"minutes":minutes,"seconds":seconds}
+            delta = {"hours": 0, "minutes": minutes, "seconds": seconds}
         if total_seconds > 3600:
             hours = int(hours)
             minutes = int(minutes % 60)
             seconds = int(total_seconds % 60)
-            delta = {"hours":hours,"minutes":minutes,"seconds":seconds}
-            
+            delta = {"hours": hours, "minutes": minutes, "seconds": seconds}
+
         return delta
 
     def save(self, **kwargs):
@@ -384,22 +384,20 @@ class Consulta(TimeStampedModel):
 
     def titularDependiente(self):
         try:
-            is_beneficiario = None
-            beneficiarios = self.contrato.beneficiarios.all()
-            
-            if beneficiarios:
-                for beneficiario in beneficiarios:
-                    if beneficiario.persona == self.persona:
-                        is_beneficiario = True
+            is_beneficiario = False
+            personas = [b.persona for b in self.contrato.beneficiarios.all()]
+            if self.persona in personas:
+                is_beneficiario = True
 
             if self.contrato.persona == self.persona:
                 return 'Titular'
-            elif is_beneficiario is not None:
+            elif is_beneficiario:
                 return 'Dependiente'
             else:
                 return ''
         except:
             return ''
+
 
 class LecturaSignos(TimeStampedModel):
     persona = models.ForeignKey(Persona, related_name='lecturas_signos',
