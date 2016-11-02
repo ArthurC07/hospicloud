@@ -1,12 +1,11 @@
 {% load i18n %}{% load l10n %}
 <aside class="col-md-3">
-    <div class="col-md-12 toolbox panel panel-border">
-        <nav class="sidebar-nav">
-            <ul class="nav nav-stacked">
-                {% if modules.consulta %}
+    <nav class="sidebar-nav">
+        <ul class="nav nav-stacked">
+            {% if modules.consulta %}
                 <li>
                     <a href="{% url 'consultorio-espera-u-agregar' persona.id %}">
-                    {% trans 'Agregar Paciente a Sala de Espera' %}</a>
+                        {% trans 'Agregar Paciente a Sala de Espera' %}</a>
                 </li>
                 <li>
                     {% for consultorio in user.consultorios.all %}
@@ -36,42 +35,42 @@
                         {% trans 'Remitir Paciente' %}
                     </a>
                 </li>
-                {% endif %}
-                {% if modules.imagenes %}
+            {% endif %}
+            {% if modules.imagenes %}
                 <li>
                     <a href="{% url 'examen-agregar' persona.id %}">
                         {% trans 'Programar Estudio' %}
                     </a>
                 </li>
-                {% endif %}
-                {% if modules.emergencia %}
+            {% endif %}
+            {% if modules.emergencia %}
                 <li>
                     <a href="{% url 'emergency-create' persona.id %}">
                         {% trans 'Ingresar a Emergencias' %}
                     </a>
                 </li>
-                {% endif %}
-                {% if modules.hospitalizacion %}
+            {% endif %}
+            {% if modules.hospitalizacion %}
                 <li>
                     <a href="{% url 'admision-persona-agregar' persona.id %}">
                         {% trans 'Hospitalizar' %}
                     </a>
                 </li>
-                {% endif %}
+            {% endif %}
 
-                {% if modules.caja %}
-                    <li>
-                        <a href="{% url 'invoice-create' persona.id %}">
-                            {% trans 'Crear un Recibo' %}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'cotizacion-add' persona.id %}">
-                            {% trans 'Crear una Cotizacion' %}
-                        </a>
-                    </li>
-                {% endif %}
-                {% if modules.contratos %}
+            {% if modules.caja %}
+                <li>
+                    <a href="{% url 'invoice-create' persona.id %}">
+                        {% trans 'Crear un Recibo' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'cotizacion-add' persona.id %}">
+                        {% trans 'Crear una Cotizacion' %}
+                    </a>
+                </li>
+            {% endif %}
+            {% if modules.contratos %}
                 <li>
                     <a href="{% url 'contrato-persona-add' persona.id %}">
                         {% trans 'Crear un Contrato' %}
@@ -92,13 +91,12 @@
                         {% trans 'Crear Contrato desde Maestro' %}
                     </a>
                 </li>
-                {% endif %}
-                <li>
-                    <a href="http://www.medicamentosplm.com.pa" target="_blank">
-                        {% trans 'Vademecum' %}
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+            {% endif %}
+            <li>
+                <a href="http://www.medicamentosplm.com.pa" target="_blank">
+                    {% trans 'Vademecum' %}
+                </a>
+            </li>
+        </ul>
+    </nav>
 </aside>

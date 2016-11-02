@@ -50,7 +50,7 @@ urlpatterns = [
     url(r'^lab/', include('lab.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^rrhh/', include('bsc.urls')),
-    url(r'^rrhh/', include('bsc.urls',namespace='bsc')),
+    url(r'^rrhh/', include('bsc.urls', namespace='bsc')),
     url(r'^budget/', include('budget.urls')),
     url(r'^accounts/(?P<username>[\.\w-]+)/edit/$',
         profile_edit,
@@ -66,3 +66,5 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,
                           document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    import debug_toolbar
+    urlpatterns += (url(r'^__debug__/', include(debug_toolbar.urls)),)
