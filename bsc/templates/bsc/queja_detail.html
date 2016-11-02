@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load i18n %}
-{% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab43' %}
-{% endblock %}
+<li>
+    <a href="{% url 'quejas' %}">
+        {% trans 'Quejas' %}
+    </a>
+</li>
 {% block content %}
     {% load crispy_forms_tags %}
     <div class="row">
         <div class="main-content col-md-12 col-xs-12">
-                <p>{{ object }}</p>
+            <p>{{ object }}</p>
         </div>
     </div>
     <div class="row">
