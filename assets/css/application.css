@@ -108,6 +108,10 @@
 #main-navigation .dropdown-menu a {
     color: #000000 !important;
 }
+#main-navigation .nav > li > a {
+    line-height: 70px;
+    padding: 0 15px;
+}
 
 .percentage-box {
     background-color: #f3f3f3;

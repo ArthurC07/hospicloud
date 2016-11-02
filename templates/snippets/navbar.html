@@ -121,20 +121,11 @@
                 </li>
 
                 <!-- SUBMENU ENCUESTAS -->
-                <li class="{% if active_tab == 'tab40' %} active {% else %} hidden {% endif %}">
-                    <a href="{% url 'encuesta-list' %}"
-                       style="color: #fff !important;">{% trans 'Ver Encuestas' %}</a>
-                </li>
+
                 <li class="
                               {% if active_tab == 'tab42' %} active {% else %} hidden {% endif %}">
                     <a href="{% url 'queja-aseguradora-agregar' %}"
                        style="color: #fff !important;">{% trans 'Agregar Queja de Aseguradora' %}</a>
-                </li>
-                <li class="{% if active_tab == 'tab43' %} active {% else %} hidden {% endif %}">
-                    <a href="{% url 'quejas' %}"
-                       style="color: #fff !important;">
-                        {% trans 'Quejas' %}
-                    </a>
                 </li>
                 <li class="dropdown
                               {% if active_tab == 'tab44' %} active {% else %} hidden {% endif %}">
