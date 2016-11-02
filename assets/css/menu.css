@@ -45,13 +45,6 @@
     background-color: rgba(0, 0, 0, 0.06);
 }
 
-.nav > li > a {
-    color: #565b5e !important;
-    line-height: 70px;
-    padding: 0 15px;
-    position: relative;
-}
-
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
     background-color: rgba(0, 0, 0, 0.09);
 }
