@@ -37,7 +37,7 @@ from django.views.generic.edit import FormMixin
 from mail_templated.message import EmailMessage
 
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
-    ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, \
+    ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, QuejaPerfilForm, \
     SolucionAceptadaForm, QuejaAseguradoraForm, DepartamentoForm, CiudadForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, Pregunta, Solucion, Login, Rellamar
@@ -409,6 +409,16 @@ class QuejaCreateView(LoginRequiredMixin, CreateView, RespuestaFormMixin):
 
     def get_success_url(self):
         return self.object.respuesta.get_absolute_url()
+
+class QuejaUpdateView(LoginRequiredMixin, UpdateView):
+    model = Queja
+    form_class = QuejaPerfilForm
+    
+    def get_success_url(self):
+        """
+        Returns the url of the :class:`Solucion` list
+        """
+        return reverse('solucion-list')
 
 
 class QuejaAseguradoraCreateView(LoginRequiredMixin, CreateView):

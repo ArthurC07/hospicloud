@@ -160,6 +160,11 @@
                                 <li>
                                     <a href="{% url 'quejas-usuario' %}">{% trans 'Bandeja de Quejas' %} </a>
                                 </li>
+                                {% if perms.bsc.change_solucion %}
+                                    <li>
+                                        <a href="{% url 'solucion-list' %}">{% trans 'Bandeja de Soluciones' %} </a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>

@@ -84,6 +84,20 @@ class QuejaForm(FieldSetModelFormMixinNoButton):
         self.helper.layout = Fieldset(_('Registrar Queja'), *self.field_names)
         self.helper.add_input(Submit('submit', _('Guardar Solo la Queja')))
 
+class QuejaPerfilForm(FieldSetModelFormMixinNoButton):
+    class Meta:
+        model = Queja
+        exclude = ('resuelta', 'aseguradora', 'departamento', 'queja')
+
+    respuesta = forms.ModelChoiceField(queryset=Respuesta.objects.all(),
+                                       widget=forms.HiddenInput(),
+                                       required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(QuejaPerfilForm, self).__init__(*args, **kwargs)
+        self.helper.layout = Fieldset(_('Cambiar queja de Perfil'), *self.field_names)
+        self.helper.add_input(Submit('submit', _('Guardar Queja')))
+
 
 class QuejaFormMixin(FieldSetModelFormMixin):
     queja = forms.ModelChoiceField(queryset=Queja.objects.all(),
