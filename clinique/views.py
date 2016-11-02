@@ -190,8 +190,6 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
 
         context['esperas'] = Espera.objects.pendientes().filter(
             fecha__gte=self.yesterday,
-            ciudad=self.request.user.profile.ciudad
-            # consultorio__localidad__ciudad=self.request.user.profile.ciudad,
         ).select_related(
             'persona',
             'consultorio',
@@ -201,7 +199,6 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
 
         context['esperas_consulta'] = Espera.objects.espera_consulta().filter(
             fecha__gte=self.yesterday,
-            ciudad=self.request.user.profile.ciudad
         ).select_related(
             'persona',
             'consultorio',
@@ -209,14 +206,26 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
             'consultorio__secretaria',
         ).all()
 
-        context['consultas'] = Espera.objects.en_consulta().filter(
-            ciudad=self.request.user.profile.ciudad
-        ).select_related(
+        context['consultas'] = Espera.objects.en_consulta().select_related(
             'persona',
             'consultorio',
             'consultorio__usuario',
             'consultorio__secretaria',
         ).all()
+
+        user = self.request.user
+
+        if not user.has_perm('clinical_manage'):
+            context['consultas'] = context['consultas'].filter(
+                ciudad=user.profile.ciudad
+            )
+            context['esperas_consulta'] = context['esperas_consulta'].filter(
+                ciudad=user.profile.ciudad
+            )
+
+            context['esperas'] = context['esperas'].filter(
+                ciudad=user.profile.ciudad
+            )
 
         context['consulta_estadistica'] = PeriodoForm(
             prefix='consulta-estadistica'
