@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import simplejson
 from django.contrib import messages
+from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import FormMixin
+
 from hospinet.utils.forms import PeriodoForm
 
 
@@ -44,4 +49,26 @@ class PeriodoView(FormMixin):
         context['inicio'] = self.inicio
         context['fin'] = self.fin
 
+        return context
+
+
+class JSONResponseMixin(object):
+    """
+    A mixin that can be used to render a JSON response.
+    """
+
+    def render_to_json_response(self, context, **response_kwargs):
+        """
+        Returns a JSON response, transforming 'context' to make the payload.
+        """
+        return JsonResponse(
+            serializers.serialize('json', context),
+            safe=False,
+            **response_kwargs
+        )
+
+    def get_data(self, context):
+        """
+        Returns an object that will be serialized as JSON by json.dumps().
+        """
         return context

@@ -118,10 +118,10 @@
     </div>
 {% endblock %}
 {% block scripts %}
-    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#pagos form').submit(function () {
+            $('#pagos').find('form').submit(function () {
                 $(this).ajaxSubmit();
                 $(this).parent().parent().hide('slow');
                 return false;
