@@ -582,7 +582,7 @@ class ReciboCerrarView(LoginRequiredMixin, RedirectView):
         return recibo.get_absolute_url()
 
 
-class ReciboPeriodoView(FormMixin, TemplateView):
+class ReciboPeriodoView(LoginRequiredMixin, FormMixin, TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
     self.form
@@ -1060,7 +1060,7 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
         return context
 
 
-class EmergenciaPeriodoView(TemplateView, LoginRequiredMixin):
+class EmergenciaPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra las opciones disponibles para la aplicación"""
 
     template_name = 'invoice/emergencia_list.html'
