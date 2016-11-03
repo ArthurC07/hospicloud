@@ -33,6 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView, View
 from django.views.generic.base import ContextMixin, TemplateView
+from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import FormMixin
 from mail_templated.message import EmailMessage
 
@@ -45,7 +46,7 @@ from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
 from hospinet.utils.date import make_day_start, make_end_day, make_month_range
 from hospinet.utils.forms import PeriodoForm
-from hospinet.utils.views import PeriodoView
+from hospinet.utils.views import PeriodoView, JSONResponseMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 
 
@@ -176,6 +177,15 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
         context['encuestas'] = Encuesta.objects.filter(activa=True)
 
         return context
+
+
+class EncuestaJSONDetailView(LoginRequiredMixin, JSONResponseMixin,
+                             BaseDetailView):
+    model = Encuesta
+    context_object_name = 'encuesta'
+
+    def render_to_response(self, context, **response_kwargs):
+        return self.render_to_json_response(self.get_queryset(), **response_kwargs)
 
 
 class EncuestaMixin(ContextMixin, View):
@@ -397,7 +407,7 @@ class ConsultaNoEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
         consulta.encuestada = True
         consulta.save()
 
-        return encuesta.get_absolute_url()
+        return reverse('encuesta-json', kwargs={'pk': encuesta.id})
 
 
 class QuejaCreateView(LoginRequiredMixin, CreateView, RespuestaFormMixin):

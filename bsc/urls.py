@@ -72,6 +72,10 @@ urlpatterns = [
         views.RellamarCreateView.as_view(),
         name='encuesta-rellamar'),
 
+    url(r'^encuesta/(?P<pk>\d+)/json',
+        views.EncuestaJSONDetailView.as_view(),
+        name='encuesta-json'),
+
     url(r'^respuesta/(?P<pk>\d+)$', views.RespuestaDetailView.as_view(),
         name='respuesta'),
 

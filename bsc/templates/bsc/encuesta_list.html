@@ -48,7 +48,7 @@
                 <tr>
                     <td>{% trans 'Contactabilidad' %}</td>
                     {% for mes in meses %}
-                        <td class="text-right">{{ mes.contactabilidad }}%</td>
+                        <td class="text-right">{{ mes.contactabilidad|floatformat }}%</td>
                     {% endfor %}
                 </tr>
                 <tr>
