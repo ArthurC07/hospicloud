@@ -860,8 +860,6 @@ class AfeccionListView(LoginRequiredMixin, ListView):
                 habilitado=True,
             )
 
-            print(queryset.query)
-
             return queryset.all()
 
         return Afeccion.objects.none()
