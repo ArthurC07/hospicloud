@@ -158,6 +158,10 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['ordenlperiodoform'].set_legend(
             _('Ordenes de Laboratorio por Periodo'))
 
+        context['ordenperiodoform'] = PeriodoForm(prefix='orden-periodo')
+        context['ordenperiodoform'].helper.form_action = 'orden-periodo'
+        context['ordenperiodoform'].set_legend(_('Ordenes Medicas por Periodo'))
+
         aseg_form = AseguradoraPeriodoForm(prefix='consulta-aseguradora')
         aseg_form.helper.add_input(Submit('submit', _('Mostrar')))
 
@@ -888,7 +892,7 @@ class DiagnosticoRedirectView(LoginRequiredMixin, RedirectView):
             usuario=usuario,
             afeccion=afeccion,
             consulta=consulta,
-            )
+        )
 
         messages.info(
             self.request,
@@ -1053,7 +1057,33 @@ class OrdenMedicaListView(LoginRequiredMixin, ListView):
     context_object_name = 'ordenes'
 
     def get_queryset(self):
-        return OrdenMedica.objects.filter(farmacia=False)
+        return OrdenMedica.objects.filter(farmacia=False).select_related(
+            'consulta',
+            'consulta__persona',
+            'consulta__consultorio',
+            'consulta__consultorio__usuario',
+        ).prefetch_related(
+            'prescripcion_set',
+            'prescripcion_set__medicamento',
+        )
+
+
+class OrdenMedicaPeriodoListView(PeriodoView, OrdenMedicaListView):
+    """
+    Shows all :class:`Consulta` that happened in a Date range that is specified
+    by a :class:`PeriodoForm
+    """
+    prefix = 'orden-periodo'
+    redirect_on_invalid = 'consultorio-index'
+
+    def get_queryset(self):
+        """
+        Builds the :class:`QuerySet` that will be used to show the list of
+        :class:`Consulta` objects
+        """
+        return super(OrdenMedicaPeriodoListView, self).get_queryset().filter(
+            consulta__created__range=(self.inicio, self.fin)
+        )
 
 
 class OrdenCompletarRedirect(LoginRequiredMixin, RedirectView):
@@ -1096,6 +1126,9 @@ class ExamenUpdateView(LoginRequiredMixin, UpdateView):
 
 class ConsultorioEsperaCreateView(CurrentUserFormMixin, PersonaFormMixin,
                                   ConsultorioFormMixin, CreateView):
+    """
+    Builds a new :class:`Espera` object based on given data
+    """
     model = Espera
     form_class = EsperaForm
 
@@ -1297,7 +1330,8 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
         if consulta.diagnosticos_clinicos.count() == 0:
             messages.info(
                 self.request,
-                _('La consulta no tiene un Diagnóstico registrado, no se puede terminar')
+                _(
+                    'La consulta no tiene un Diagnóstico registrado, no se puede terminar')
             )
             return consulta.get_absolute_url()
 
