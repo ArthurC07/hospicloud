@@ -40,13 +40,14 @@ from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, QuejaPerfilForm, \
     SolucionAceptadaForm, QuejaAseguradoraForm, DepartamentoForm, CiudadForm
 from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
-    ArchivoNotas, Pregunta, Solucion, Login, Rellamar
+    ArchivoNotas, Pregunta, Solucion, Login, Rellamar, NoResponde
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
 from hospinet.utils.date import make_day_start, make_end_day, make_month_range
 from hospinet.utils.forms import PeriodoForm
 from hospinet.utils.views import PeriodoView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
+from django.contrib.auth.models import User
 
 
 class ScoreCardListView(LoginRequiredMixin, ListView):
@@ -95,43 +96,51 @@ class EncuestaListView(LoginRequiredMixin, ListView):
         those statistics
         """
         context = super(EncuestaListView, self).get_context_data(**kwargs)
-
-        meses = []
+        years = []
         now = timezone.now()
 
-        for n in range(1, 13):
-            start = now.replace(month=n, day=1)
+        for y in range(now.year - 3, now.year + 4):
+            meses = []
+            for n in range(1, 13):
+                start = now.replace(month=n, day=1, year=y)
 
-            inicio, fin = make_month_range(start)
+                inicio, fin = make_month_range(start)
 
-            consultas = Consulta.objects.atendidas(inicio, fin)
+                consultas = Consulta.objects.atendidas(inicio, fin)
 
-            atenciones = consultas.count()
-            encuestadas = consultas.filter(encuestada=True).count()
+                atenciones = consultas.count()
+                encuestadas = consultas.filter(encuestada=True).count()
 
-            if atenciones == 0:
-                contactabilidad = 0
-            else:
-                contactabilidad = encuestadas * 100 / atenciones
+                if atenciones == 0:
+                    contactabilidad = 0
+                else:
+                    contactabilidad = encuestadas * 100 / atenciones
 
-            satisfaccion = Voto.objects.filter(
-                opcion__isnull=False,
-                created__range=(inicio, fin),
-                pregunta__calificable=True
-            ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
+                satisfaccion = Voto.objects.filter(
+                    opcion__isnull=False,
+                    created__range=(inicio, fin),
+                    pregunta__calificable=True
+                ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
 
-            meses.append(
-                {
-                    'inicio': inicio,
-                    'fin': fin,
-                    'consultas': atenciones,
-                    'encuestada': encuestadas,
-                    'contactabilidad': contactabilidad,
-                    'satisfaccion': satisfaccion,
-                }
-            )
+                meses.append(
+                    {
+                        'inicio': inicio,
+                        'fin': fin,
+                        'consultas': atenciones,
+                        'encuestada': encuestadas,
+                        'contactabilidad': contactabilidad,
+                        'satisfaccion': satisfaccion,
+                    }
+                )
 
-        context['meses'] = meses
+            years.append({
+                'name': str(y),
+                'meses': meses,
+            })
+            if y == now.year:
+                context['meses'] = meses
+
+        context['years'] = years
 
         inicio_year = make_day_start(now.replace(month=1, day=1))
         final_year = make_end_day(now.replace(month=12, day=31))
@@ -154,6 +163,40 @@ class EncuestaListView(LoginRequiredMixin, ListView):
             count=Count('id')
         ).order_by('month', '-count')
 
+        users_day = []
+        users_month = []
+
+        users = User.objects.filter(groups__name__in=['Encuestas de Satisfacion y Seguimiento'])
+
+        #Retrieve today and curent month users Info
+        for user in users:
+            name = user.first_name+" "+user.last_name
+            respuestas_dia = Respuesta.objects.filter(usuario = user, terminada = True, created__year=now.year, created__month=now.month, created__day=now.day).count()
+            rellamar_dia = Rellamar.objects.filter(usuario = user, created__year=now.year, created__month=now.month, created__day=now.day).count()
+            noresponde_dia = NoResponde.objects.filter(usuario = user, created__year=now.year, created__month=now.month, created__day=now.day).count()
+            faltantes_dia = 50 - respuestas_dia - rellamar_dia - noresponde_dia
+            respuestas_mes = Respuesta.objects.filter(usuario = user, terminada = True, created__year=now.year, created__month=now.month).count()
+            rellamar_mes = Rellamar.objects.filter(usuario = user, created__year=now.year, created__month=now.month).count()
+            noresponde_mes = NoResponde.objects.filter(usuario = user, created__year=now.year, created__month=now.month).count()
+            faltantes_mes = (now.day * 50) - respuestas_mes - rellamar_mes - noresponde_mes  
+            users_day.append({
+                'name': name,
+                'respuestas': respuestas_dia,
+                'rellamar': rellamar_dia,
+                'noresponde': noresponde_dia,
+                'faltantes': faltantes_dia
+            })
+            users_month.append({
+                'name': name,
+                'respuestas': respuestas_mes,
+                'rellamar': rellamar_mes,
+                'noresponde': noresponde_mes,
+                'faltantes': faltantes_mes
+            })
+
+        context['users_day'] = users_day
+        context['users_month'] = users_month
+        
         return context
 
 
@@ -393,6 +436,7 @@ class ConsultaNoEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, **kwargs):
         encuesta = get_object_or_404(Encuesta, pk=kwargs['encuesta'])
         consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
+        NoResponde.objects.create(encuesta=encuesta, consulta=consulta, usuario=self.request.user)
 
         consulta.encuestada = True
         consulta.save()
@@ -844,6 +888,13 @@ class RellamarCreateView(LoginRequiredMixin, EncuestaFormMixin,
     """
     model = Rellamar
     form_class = RellamarForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.usuario = self.request.user
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class QuejaDepartamentoListView(LoginRequiredMixin, ListView):
     """

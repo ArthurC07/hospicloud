@@ -605,10 +605,22 @@ class Rellamar(TimeStampedModel):
     consulta = models.ForeignKey(Consulta)
     encuesta = models.ForeignKey(Encuesta)
     hora = models.DateTimeField(default=timezone.now)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     def get_absolute_url(self):
         return self.encuesta.get_absolute_url()
 
+class NoResponde(TimeStampedModel):
+    """
+    Indicates that the :class:`Persona` doesn't answer'
+    """
+    consulta = models.ForeignKey(Consulta)
+    encuesta = models.ForeignKey(Encuesta)
+    hora = models.DateTimeField(default=timezone.now)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
+
+    def get_absolute_url(self):
+        return self.encuesta.get_absolute_url()
 
 class Holiday(TimeStampedModel):
     day = models.DateField()

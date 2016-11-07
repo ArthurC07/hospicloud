@@ -55,57 +55,111 @@
                     </span>
             {% endfor %}
             <div class="panel panel-border col-md-12 col-xs-12 table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        {% for mes in meses %}
-                            <th class="text-right">{{ mes.inicio|date:"N" }}</th>
+                 <section class="tabbable">
+                    <ul class="nav nav-tabs">
+                        {% for year in years %}
+                            <li data-year="{{ year.name }}"
+                                class="{% if year.name == '2014' %} active {% endif %} tab">
+                                <a href="#{{ year.name }}"
+                                   data-toggle="tab">
+                                    {{ year.name }}
+                                </a>
+                            </li>
                         {% endfor %}
-                    </tr>
-                    </thead>
-                    <tr>
-                        <td>{% trans 'Atenciones' %}</td>
-                        {% for mes in meses %}
-                            <td class="text-right">{{ mes.consultas }}</td>
+                    </ul>
+                    <div class="tab-content">
+                        {% for year in years %}
+                            <article id="{{ year.name }}" class="tab-pane {% if year.name == '2014' %} active {% endif %}">
+                                <div class="panel panel-default col-md-12 col-xs-12">
+                                    <h3 class="panel-title">{% trans 'Encuestas' %} {{ year.name }}</h3>
+                                     <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            {% for mes in year.meses %}
+                                                <th class="text-right">{{ mes.inicio|date:"N" }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                        </thead>
+                                        <tr>
+                                            <td>{% trans 'Atenciones' %}</td>
+                                            {% for mes in year.meses %}
+                                                <td class="text-right">{{ mes.consultas }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            <td>{% trans 'Encuestas Realizadas' %}</td>
+                                            {% for mes in year.meses %}
+                                                <td class="text-right">{{ mes.encuestada }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            <td>{% trans 'Contactabilidad' %}</td>
+                                            {% for mes in year.meses %}
+                                                <td class="text-right">{{ mes.contactabilidad|floatformat }}%</td>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            <td>{% trans 'Porcentaje de Satisfacci&oacute;n' %}</td>
+                                            {% for mes in year.meses %}
+                                                <td class="text-right">{{ mes.satisfaccion|floatformat }}%</td>
+                                            {% endfor %}
+                                        </tr>
+                                    </table>
+                                </div>
+                            </article>
                         {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>{% trans 'Encuestas Realizadas' %}</td>
-                        {% for mes in meses %}
-                            <td class="text-right">{{ mes.encuestada }}</td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>{% trans 'Contactabilidad' %}</td>
-                        {% for mes in meses %}
-                            <td class="text-right">{{ mes.contactabilidad|floatformat }}%</td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>{% trans 'Porcentaje de Satisfacci&oacute;n' %}</td>
-                        {% for mes in meses %}
-                            <td class="text-right">{{ mes.satisfaccion|floatformat }}%</td>
-                        {% endfor %}
-                    </tr>
-                </table>
+                    </div>
+                </section>
             </div>
             <div class="panel panel-border col-md-12 col-xs-12">
                 <div class="m-t-15 m-b-15">
+                    <h3 class="panel-title">{% trans 'Actividad del dia' %}</h3>
                     <table class="table table-striped">
                         <thead>
                         <tr>
                             <th>{% trans 'Usuario' %}</th>
-                            <th>{% trans 'Mes' %}</th>
-                            <th>{% trans 'Detalle Encuestas' %}</th>
+                            <th>{% trans 'No. Encuestas Realizadas' %}</th>
+                            <th>{% trans 'No. Encuestas Faltantes' %}</th>
+                            <th>{% trans 'No. de Rellamar' %}</th>
+                            <th>{% trans 'No. de No responde' %}</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for respuesta in respuestas %}
+                        {% for user in users_day %}
                             <tr>
-                                <td>{{ respuesta.usuario__first_name }} {{ respuesta.last_name }}</td>
-                                <td>{{ respuesta.month|date:"N" }}</td>
-                                <td>{{ respuesta.count }}</td>
+                                <td class="text-center">{{ user.name }}</td>
+                                <td class="text-center">{{ user.respuestas }}</td>
+                                <td class="text-center">{{ user.faltantes }}</td> 
+                                <td class="text-center">{{ user.rellamar }}</td>
+                                <td class="text-center">{{ user.noresponde }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-border col-md-12 col-xs-12">
+                <div class="m-t-15 m-b-15">
+                    <h3 class="panel-title">{% trans 'Actividad del Mes' %}</h3>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>{% trans 'Usuario' %}</th>
+                            <th>{% trans 'No. Encuestas Realizadas' %}</th>
+                            <th>{% trans 'No. Encuestas Faltantes' %}</th>
+                            <th>{% trans 'No. de Rellamar' %}</th>
+                            <th>{% trans 'No. de No responde' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users_month %}
+                            <tr>
+                                <td class="text-center">{{ user.name }}</td>
+                                <td class="text-center">{{ user.respuestas }}</td>
+                                <td class="text-center">{{ user.faltantes }}</td> 
+                                <td class="text-center">{{ user.rellamar }}</td>
+                                <td class="text-center">{{ user.noresponde }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

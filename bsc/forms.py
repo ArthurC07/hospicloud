@@ -150,6 +150,7 @@ class RellamarForm(FieldSetModelFormMixin):
     class Meta:
         model = Rellamar
         fields = '__all__'
+        exclude = ('usuario',)
 
     consulta = forms.ModelChoiceField(widget=forms.HiddenInput(),
                                       queryset=Consulta.objects.all())
