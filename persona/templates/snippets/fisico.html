@@ -21,43 +21,78 @@
         <a href="{% url 'persona-fisico-editar' persona.id %}"
            class="btn btn-primary">{% trans 'Editar F&iacute;sico' %}</a>
     {% endif %}
-    <div class="m-t-30">
-      <table class="table table-striped">
-          <h4>{% trans 'Histora F&iacute;sica-Metab&oacute;lica' %}</h4>
-          <thead>
-          <tr>
-              <th>{% trans 'Fecha' %}</th>
-              <th>{% trans 'Altura' %}</th>
-              <th>{% trans 'Peso' %}</th>
-              <th>{% trans 'IMC' %}</th>
-              <th>{% trans 'GEB' %}</th>
-              <th>{% trans 'Pulso' %}</th>
-              <th>{% trans 'Temperatura' %}</th>
-              <th>{% trans 'Presi&oacute;n Sist&oacute;lica' %}</th>
-              <th>{% trans 'Presi&oacute;n Diast&oacute;lica' %}</th>
-              <th>{% trans 'Presi&oacute;n Arterial Media' %}</th>
-              <th>{% trans 'Respiraci&oacute;n' %}</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for historia in fisico.persona.historiafisica_set.all %}
-              <tr>
-                  <td>{{ historia.fecha }}</td>
-                  <td>{{ historia.altura }}</td>
-                  <td>{{ historia.peso }} {{ historia.get_medida_de_peso_display }}</td>
-                  <td>{{ historia.bmi }}</td>
-                  <td>{{ historia.bmr }}</td>
-                  <td>{{ historia.pulso }}</td>
-                  <td>{{ historia.temperatura }}</td>
-                  <td>{{ historia.presion_sistolica }}</td>
-                  <td>{{ historia.presion_diastolica }}</td>
-                  <td>{{ historia.presion_arterial_media }}</td>
-                  <td>{{ historia.respiracion }}</td>
-              </tr>
-          {% endfor %}
-          </tbody>
-      </table>
-    </div>
+    <table class="table table-striped">
+        <caption>{% trans 'Histora F&iacute;sica-Metab&oacute;lica' %}</caption>
+        <thead>
+        <tr>
+            <th>{% trans 'Fecha' %}</th>
+            <th>{% trans 'Altura' %}</th>
+            <th>{% trans 'Peso' %}</th>
+            <th>{% trans 'IMC' %}</th>
+            <th>{% trans 'GEB' %}</th>
+            <th>{% trans 'Pulso' %}</th>
+            <th>{% trans 'Temperatura' %}</th>
+            <th>{% trans 'Presi&oacute;n Sist&oacute;lica' %}</th>
+            <th>{% trans 'Presi&oacute;n Diast&oacute;lica' %}</th>
+            <th>{% trans 'Presi&oacute;n Arterial Media' %}</th>
+            <th>{% trans 'Respiraci&oacute;n' %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for historia in fisico.persona.historiafisica_set.all %}
+            <tr>
+                <td>{{ historia.fecha }}</td>
+                <td>{{ historia.altura }}</td>
+                <td>{{ historia.peso }} {{ historia.get_medida_de_peso_display }}</td>
+                <td>{{ historia.bmi }}</td>
+                <td>{{ historia.bmr }}</td>
+                <td>{{ historia.pulso }}</td>
+                <td>{{ historia.temperatura }}</td>
+                <td>{{ historia.presion_sistolica }}</td>
+                <td>{{ historia.presion_diastolica }}</td>
+                <td>{{ historia.presion_arterial_media }}</td>
+                <td>{{ historia.respiracion }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table class="table table-striped">
+        <caption>
+            {% blocktrans %}
+                Utilice la tabla que se presenta a continuación para ver en qué
+                categoría encaja su IMC
+            {% endblocktrans %}
+        </caption>
+        <thead>
+
+        <tr>
+            <th>{% trans 'Índice de Masa Corporal' %}</th>
+            <th>{% trans 'Categoría' %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{% trans 'Por debajo de 18.5' %}</td>
+            <td>{% trans 'Por debajo del peso' %}</td>
+        </tr>
+        <tr>
+            <td>{% trans '18.5 a 24.9' %}</td>
+            <td>{% trans 'Saludable' %}</td>
+        </tr>
+        <tr>
+            <td>{% trans '25.0 a 29.9' %}</td>
+            <td>{% trans 'Con Sobrepeso' %}</td>
+        </tr>
+        <tr>
+            <td>{% trans '30.0 a 39.9' %}</td>
+            <td>{% trans 'Obeso' %}</td>
+        </tr>
+        <tr>
+            <td>{% trans 'Más de 40' %}</td>
+            <td>{% trans 'Obesidad Extrema o de Alto Riesgo' %}</td>
+        </tr>
+        </tbody>
+    </table>
     {% if perms.persona.persona %}
         <a class="btn btn-primary"
            href="{% url 'persona-historia-agregar' persona.id %}">

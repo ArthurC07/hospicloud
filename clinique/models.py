@@ -50,7 +50,7 @@ class Localidad(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Afeccion(TimeStampedModel):
-    codigo = models.CharField(max_length=50)
+    codigo = models.CharField(max_length=50, blank=True, null=True)
     nombre = models.CharField(max_length=255, blank=True, null=True)
     habilitado = models.BooleanField(default=True)
 

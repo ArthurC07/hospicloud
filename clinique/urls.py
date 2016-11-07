@@ -338,6 +338,10 @@ urlpatterns = [
         views.EvaluacionPeriodoView.as_view(),
         name='evaluacion-periodo'),
 
+    url(r'^ordenes/periodo$',
+        views.OrdenMedicaPeriodoListView.as_view(),
+        name='orden-periodo'),
+
     url(r'^seguimiento/periodo$',
         views.SeguimientoPeriodoView.as_view(),
         name='seguimiento-periodo'),

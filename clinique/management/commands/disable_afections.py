@@ -22,21 +22,11 @@ from clinique.models import DiagnosticoClinico, Afeccion
 
 
 class Command(BaseCommand):
-    help = _('Deletes all afections from the database')
+    help = _('Disables all afections from the database')
 
     def handle(self, *args, **options):
         # First make sure that no Clinical Diagnostic
 
-        print(_('Diagnostics before cleanup {0}'.format(
-            DiagnosticoClinico.objects.count()))
-        )
-
-        DiagnosticoClinico.objects.all().update(
-            afeccion=None
-        )
-
-        Afeccion.objects.all().delete()
-
-        print(_('Diagnostics after cleanup {0}'.format(
-            DiagnosticoClinico.objects.count()))
+        Afeccion.objects.all().update(
+            habilitado=False
         )
