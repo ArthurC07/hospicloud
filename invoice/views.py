@@ -2298,24 +2298,26 @@ class NotaCreditoMixin(ContextMixin, View):
         return context
 
 
-class NotaCreditoFormMixin(FormMixin, ComprobanteDeduccionMixin):
+class NotaCreditoFormMixin(FormMixin, NotaCreditoMixin):
     """
     Agrega la :class:`NotaCredito` a los argumentos iniciales de un formulario
     """
 
     def get_initial(self):
         initial = super(NotaCreditoFormMixin, self).get_initial()
-        initial = initial.copy()
         initial['nota'] = self.nota_credito
         return initial
 
 
 class DetalleCreditoCreateView(LoginRequiredMixin, CreateView,
                                NotaCreditoFormMixin):
+    """
+    Adds a :class:`DetalleCredito` to a :class:`NotaCredito`
+    """
     model = DetalleCredito
 
 
-class ReembolsoCreateView(FormView, LoginRequiredMixin):
+class ReembolsoCreateView(LoginRequiredMixin, FormView):
     form_class = ReembolsoForm
     template_name = 'invoice/reembolso_form.html'
 
