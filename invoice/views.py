@@ -22,7 +22,7 @@ from datetime import datetime, time, date, timedelta
 from decimal import Decimal
 
 from django.contrib import messages
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Sum
@@ -121,11 +121,15 @@ class IndexView(InvoicePermissionMixin, TemplateView):
 
         context['tipoform'] = PeriodoCiudadForm(prefix='tipo')
         context['tipoform'].set_action('invoice-tipo')
-        context['tipoform'].helper.layout.legend = _('Productos por Ciudad y Periodo')
+        context['tipoform'].helper.layout.legend = _(
+            'Productos por Ciudad y Periodo')
 
-        context['estadisticasciudadform'] = PeriodoCiudadForm(prefix='estadisticasciudad')
-        context['estadisticasciudadform'].set_action('invoice-estadisticas-ciudad-periodo')
-        context['estadisticasciudadform'].helper.layout.legend = _('Estadísticas por Ciudad y periodo')
+        context['estadisticasciudadform'] = PeriodoCiudadForm(
+            prefix='estadisticasciudad')
+        context['estadisticasciudadform'].set_action(
+            'invoice-estadisticas-ciudad-periodo')
+        context['estadisticasciudadform'].helper.layout.legend = _(
+            'Estadísticas por Ciudad y periodo')
 
         context['corteform'] = CorteForm(prefix='corte')
         context['corteform'].set_action('invoice-corte')
@@ -312,6 +316,7 @@ class EstadisticasPeriodoView(LoginRequiredMixin, TemplateView):
         context['fin'] = self.fin
         return context
 
+
 class EstadisticasPeriodoCiudadView(LoginRequiredMixin, TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
@@ -329,8 +334,9 @@ class EstadisticasPeriodoCiudadView(LoginRequiredMixin, TemplateView):
             self.fin = self.form.cleaned_data['fin']
             self.ciudad = self.form.cleaned_data['ciudad']
 
-        return super(EstadisticasPeriodoCiudadView, self).dispatch(request, *args,
-                                                             **kwargs)
+        return super(EstadisticasPeriodoCiudadView, self).dispatch(request,
+                                                                   *args,
+                                                                   **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(EstadisticasPeriodoCiudadView, self).get_context_data(
@@ -341,12 +347,13 @@ class EstadisticasPeriodoCiudadView(LoginRequiredMixin, TemplateView):
         total = Recibo.objects.annotate(sold=Coalesce(
             Sum('ventas__total'), Decimal())
         ).filter(
-            created__range=(self.inicio, self.fin),ciudad=self.ciudad
+            created__range=(self.inicio, self.fin), ciudad=self.ciudad
         ).aggregate(total=Coalesce(Sum('sold'), Decimal()))['total']
 
         ventas = Venta.objects.filter(
-            recibo__created__range=(self.inicio, self.fin),recibo__ciudad=self.ciudad
-            )
+            recibo__created__range=(self.inicio, self.fin),
+            recibo__ciudad=self.ciudad
+        )
         context['ventas'] = ventas.values('item__descripcion').annotate(
             monto=Coalesce(Sum('monto'), Decimal()),
             cantidad=Coalesce(Sum('cantidad'), Decimal())
@@ -356,13 +363,15 @@ class EstadisticasPeriodoCiudadView(LoginRequiredMixin, TemplateView):
 
         for tipo in TipoPago.objects.all():
             pagado = tipo.pagos.filter(
-                recibo__created__range=(self.inicio, self.fin),recibo__ciudad=self.ciudad
+                recibo__created__range=(self.inicio, self.fin),
+                recibo__ciudad=self.ciudad
             ).aggregate(total=Coalesce(Sum('monto'), Decimal()))['total']
             context['pagos'].append((tipo, pagado))
 
         context['inicio'] = self.inicio
         context['fin'] = self.fin
         return context
+
 
 class ReciboPersonaCreateView(LoginRequiredMixin, CreateView, PersonaFormMixin):
     """Permite crear un :class:`Recibo` utilizando una :class:`Persona`
@@ -715,14 +724,14 @@ class ReciboFormMixin(ReciboMixin, FormMixin):
         return initial
 
 
-class VentaCreateView(ReciboFormMixin, LoginRequiredMixin, CreateView):
+class VentaCreateView(LoginRequiredMixin, ReciboFormMixin, CreateView):
     """Permite agregar :class:`Venta`s a un :class:`Recibo`"""
 
     model = Venta
     form_class = VentaForm
 
 
-class VentaListView(ListView):
+class VentaListView(LoginRequiredMixin, ListView):
     context_object_name = 'ventas'
 
     def dispatch(self, request, *args, **kwargs):
@@ -758,7 +767,7 @@ class VentaListView(ListView):
         return context
 
 
-class VentaDeleteView(DeleteView, LoginRequiredMixin):
+class VentaDeleteView(LoginRequiredMixin, DeleteView):
     """Permite eliminar una :class:`Venta` que sea incorrecta en el
     :class:`Recibo`"""
     model = Venta
@@ -772,7 +781,7 @@ class VentaDeleteView(DeleteView, LoginRequiredMixin):
         return self.recibo.get_absolute_url()
 
 
-class PagoCreateView(ReciboFormMixin, LoginRequiredMixin, CreateView):
+class PagoCreateView(LoginRequiredMixin, ReciboFormMixin, CreateView):
     """Permite agregar una forma de :class:`Pago` a un :class:`Recibo`
 
     En caso que la :class:`Persona` tenga un :class:`Contrato` vigente, el
@@ -822,7 +831,7 @@ class PagoUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('invoice-pago-status-index')
 
 
-class PagoDeleteView(DeleteView, LoginRequiredMixin):
+class PagoDeleteView(LoginRequiredMixin, DeleteView):
     """
     Deletes a :class:`Pago` instance
     """
@@ -909,7 +918,7 @@ class PagoAseguradoraLisView(PagoListView, AseguradoraMixin):
         )
 
 
-class PagoPeriodoView(TemplateView):
+class PagoPeriodoView(LoginRequiredMixin, TemplateView):
     """Obtiene los :class:`Recibo` de un periodo determinado en base
     a un formulario que las clases derivadas deben proporcionar como
     self.form"""
@@ -944,7 +953,7 @@ class PagoPeriodoView(TemplateView):
         return context
 
 
-class ReporteReciboView(ReciboPeriodoView, LoginRequiredMixin):
+class ReporteReciboView(ReciboPeriodoView):
     """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
     durante el periodo especificado"""
 
@@ -963,7 +972,7 @@ class ReporteTipoView(ReciboPeriodoView):
     """Muestra los ingresos captados mediante :class:`Recibo`s que se captaron
     durante el periodo especificado
     """
-    
+
     template_name = 'invoice/tipo_list.html'
     prefix = 'tipo'
 
@@ -975,7 +984,8 @@ class ReporteTipoView(ReciboPeriodoView):
             self.ciudad = self.form.cleaned_data['ciudad']
 
         return super(ReporteTipoView, self).dispatch(request, *args,
-                                                           **kwargs)
+                                                     **kwargs)
+
     def get_queryset(self):
         return Recibo.objects.filter(
             created__range=(self.inicio, self.fin),
@@ -1012,7 +1022,7 @@ class ReporteTipoView(ReciboPeriodoView):
         return context
 
 
-class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
+class ReporteProductoView(ReciboPeriodoView):
     """Muestra los ingresos captados mediante :class:`Recibo`s, distribuyendo
     los mismos de acuerdo al :class:`Producto` que se facturó, tomando en
     cuenta el periodo especificado"""
@@ -1050,7 +1060,7 @@ class ReporteProductoView(ReciboPeriodoView, LoginRequiredMixin):
         return context
 
 
-class EmergenciaPeriodoView(TemplateView, LoginRequiredMixin):
+class EmergenciaPeriodoView(LoginRequiredMixin, TemplateView):
     """Muestra las opciones disponibles para la aplicación"""
 
     template_name = 'invoice/emergencia_list.html'
@@ -1112,6 +1122,7 @@ class ExamenView(LoginRequiredMixin, ListView):
         return Examen.objects.filter(facturado=False)
 
 
+@login_required
 def crear_ventas(items, recibo, examen=False, tecnico=False):
     """Permite convertir un :class:`dict` de :class:`ItemTemplate` y sus
     cantidades en una las :class:`Venta`s de un :class:`Recibo`
@@ -1133,6 +1144,7 @@ def crear_ventas(items, recibo, examen=False, tecnico=False):
         recibo.ventas.add(venta)
 
 
+@login_required
 def crear_ventas_consulta(items, precios, recibo):
     """Permite convertir un :class:`dict` de :class:`ItemTemplate` y sus
     cantidades en una las :class:`Venta`s de un :class:`Recibo`
@@ -1677,7 +1689,7 @@ class CorteView(ReciboPeriodoView):
         return context
 
 
-class ReciboInventarioView(ReciboPeriodoView, LoginRequiredMixin):
+class ReciboInventarioView(ReciboPeriodoView):
     template_name = 'invoice/recibo_inventario_list.html'
     prefix = 'inventario'
 
@@ -1712,7 +1724,7 @@ class TurnoCajaDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "turno"
 
 
-class TurnoCajaCreateView(CreateView, CurrentUserFormMixin):
+class TurnoCajaCreateView(CurrentUserFormMixin, CreateView):
     model = TurnoCaja
     form_class = TurnoCajaForm
 
@@ -1808,7 +1820,7 @@ class TurnoCierreUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
-class TurnoCajaPeriodoView(FormMixin, TemplateView):
+class TurnoCajaPeriodoView(LoginRequiredMixin, FormMixin, TemplateView):
     """
     Obtiene los :class:`TurnoCaja` que han sido cerrados en un  periodo
     determinado
@@ -1933,7 +1945,7 @@ class DepositoFacturarView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(recibo.get_absolute_url())
 
 
-class VentaAreaListView(ListView):
+class VentaAreaListView(LoginRequiredMixin, ListView):
     context_object_name = 'ventas'
 
     def dispatch(self, request, *args, **kwargs):
@@ -1964,7 +1976,7 @@ class VentaAreaListView(ListView):
         return context
 
 
-class CiudadPeriodoListView(ListView):
+class CiudadPeriodoListView(LoginRequiredMixin, ListView):
     """
     Displays all :class:`Recibo` that have been created in a :class:`Ciudad`
     during a certain date range.
@@ -2049,8 +2061,7 @@ class StatusPagoListView(LoginRequiredMixin, ListView):
         return StatusPago.objects.filter(reportable=True).all()
 
 
-class CuentaPorCobrarCreateView(CreateView, CurrentUserFormMixin,
-                                LoginRequiredMixin):
+class CuentaPorCobrarCreateView(CreateView, CurrentUserFormMixin):
     model = CuentaPorCobrar
     form_class = CuentaPorCobrarForm
 
@@ -2082,8 +2093,8 @@ class PagoSiguienteStatusView(LoginRequiredMixin, RedirectView):
             return reverse('invoice-index')
 
 
-class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
-                                                 LoginRequiredMixin):
+class CuentaPorCobrarSiguienteStatusRedirectView(LoginRequiredMixin,
+                                                 RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -2097,8 +2108,8 @@ class CuentaPorCobrarSiguienteStatusRedirectView(RedirectView,
             return reverse('invoice-index')
 
 
-class CuentaPorCobrarAnteriorStatusRedirectView(RedirectView,
-                                                LoginRequiredMixin):
+class CuentaPorCobrarAnteriorStatusRedirectView(LoginRequiredMixin,
+                                                RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -2132,8 +2143,8 @@ class CuentaPorCobrarFormMixin(CuentaPorCobrarMixin, FormMixin):
         return initial
 
 
-class PagoCuentaCreateView(CuentaPorCobrarFormMixin, CreateView,
-                           LoginRequiredMixin):
+class PagoCuentaCreateView(LoginRequiredMixin, CuentaPorCobrarFormMixin,
+                           CreateView):
     model = PagoCuenta
     form_class = PagoCuentaForm
 
@@ -2185,7 +2196,7 @@ class CotizacionFormMixin(CotizacionMixin, FormMixin):
         return initial
 
 
-class CotizadoCreateView(CotizacionFormMixin, LoginRequiredMixin, CreateView):
+class CotizadoCreateView(LoginRequiredMixin, CotizacionFormMixin, CreateView):
     model = Cotizado
     form_class = CotizadoForm
 
@@ -2195,7 +2206,7 @@ class CotizadoUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CotizadoForm
 
 
-class CotizadoDeleteView(DeleteView, LoginRequiredMixin):
+class CotizadoDeleteView(LoginRequiredMixin, DeleteView):
     model = Cotizado
 
     def get_object(self, queryset=None):
@@ -2261,8 +2272,8 @@ class ComprobanteDeduccionListView(LoginRequiredMixin, ListView):
     paginate_by = 20
 
 
-class ConceptoDeduccionCreateView(ComprobanteDeduccionFormMixin,
-                                  LoginRequiredMixin, CreateView):
+class ConceptoDeduccionCreateView(LoginRequiredMixin,
+                                  ComprobanteDeduccionFormMixin, CreateView):
     model = ConceptoDeduccion
     form_class = ConceptoDeduccionForm
 
@@ -2272,7 +2283,7 @@ class NotaCreditoCreateView(LoginRequiredMixin, CreateView):
     form_class = NotaCreditoForm
 
 
-class NotaCreditoMixin(ContextMixin):
+class NotaCreditoMixin(ContextMixin, View):
     """Agrega una :class:`NotaCredito` en la vista"""
 
     def dispatch(self, *args, **kwargs):
@@ -2299,8 +2310,8 @@ class NotaCreditoFormMixin(FormMixin, ComprobanteDeduccionMixin):
         return initial
 
 
-class DetalleCreditoCreateView(CreateView, NotaCreditoFormMixin,
-                               LoginRequiredMixin):
+class DetalleCreditoCreateView(LoginRequiredMixin, CreateView,
+                               NotaCreditoFormMixin):
     model = DetalleCredito
 
 
