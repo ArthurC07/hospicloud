@@ -268,46 +268,8 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                     created__range=(year_start, year_end)
                 ).count()
 
-                for n in range(1, 13):
-                    start = now.replace(month=n, day=1, year=y)
-                    inicio, fin = make_month_range(start)
-
-                    consultas = Consulta.objects.atendidas(inicio, fin)
-                    atenciones = consultas.count()
-                    quejas = Queja.objects.filter(
-                        created__range=(inicio, fin)).count()
-
-                    for tipo in TipoConsulta.objects.filter(habilitado=True):
-                        tipos[tipo].append(consultas.filter(tipo=tipo).count())
-
-                    meses.append(
-                        {
-                            'inicio': inicio,
-                            'atenciones': atenciones,
-                            'quejas': quejas,
-                            'nombre': inicio,
-                        }
-                    )
-
-                    form = MonthYearForm(initial={
-                        'year': y,
-                        'mes': n,
-                    })
-                    form.helper.attrs = {'target': '_blank'}
-                    form.set_action('clinique-monthly')
-                    form.fields['year'].widget = HiddenInput()
-                    form.fields['mes'].widget = HiddenInput()
-                    form.helper.form_method = 'get'
-                    form.helper.add_input(Submit(
-                        'submit',
-                        _('{0}'.format(calendar.month_name[n])),
-                        css_class='btn-block'
-                    ))
-
-                    form.helper.form_class = ''
-                    form.helper.label_class = ''
-                    form.helper.field_class = ''
-                    year_forms.append(form)
+                [build_statistics(meses, n, now, tipos, y, year_forms) for
+                 n in range(1, 13)]
 
                 years.append({
                     'name': str(y),
@@ -318,11 +280,46 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                     'queja_anual': queja_anual,
                 })
 
-        # context['tipos'] = tipos
-        # context['meses'] = meses
         context['years'] = years
 
         return context
+
+
+def build_statistics(meses, month, day, tipos, year, year_forms):
+    start = day.replace(month=month, day=1, year=year)
+    inicio, fin = make_month_range(start)
+    consultas = Consulta.objects.atendidas(inicio, fin)
+    atenciones = consultas.count()
+    quejas = Queja.objects.filter(
+        created__range=(inicio, fin)).count()
+    for tipo in TipoConsulta.objects.filter(habilitado=True):
+        tipos[tipo].append(consultas.filter(tipo=tipo).count())
+    meses.append(
+        {
+            'inicio': inicio,
+            'atenciones': atenciones,
+            'quejas': quejas,
+            'nombre': inicio,
+        }
+    )
+    form = MonthYearForm(initial={
+        'year': year,
+        'mes': month,
+    })
+    form.helper.attrs = {'target': '_blank'}
+    form.set_action('clinique-monthly')
+    form.fields['year'].widget = HiddenInput()
+    form.fields['mes'].widget = HiddenInput()
+    form.helper.form_method = 'get'
+    form.helper.add_input(Submit(
+        'submit',
+        _('{0}'.format(calendar.month_name[month])),
+        css_class='btn-block'
+    ))
+    form.helper.form_class = ''
+    form.helper.label_class = ''
+    form.helper.field_class = ''
+    year_forms.append(form)
 
 
 class ConsultorioDetailView(LoginRequiredMixin, DateBoundView,
