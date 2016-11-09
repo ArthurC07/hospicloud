@@ -73,7 +73,7 @@ VotoFormSet = modelformset_factory(Voto, form=VotoForm, extra=0)
 class QuejaForm(FieldSetModelFormMixinNoButton):
     class Meta:
         model = Queja
-        exclude = ('resuelta', 'aseguradora')
+        exclude = ('resuelta', 'aseguradora', 'usuario_asignado')
 
     respuesta = forms.ModelChoiceField(queryset=Respuesta.objects.all(),
                                        widget=forms.HiddenInput(),

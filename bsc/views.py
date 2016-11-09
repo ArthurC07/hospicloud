@@ -454,6 +454,13 @@ class QuejaCreateView(LoginRequiredMixin, CreateView, RespuestaFormMixin):
     def get_success_url(self):
         return self.object.respuesta.get_absolute_url()
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.usuario_asignado = self.respuesta.consulta.consultorio.usuario
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
 class QuejaUpdateView(LoginRequiredMixin, UpdateView):
     model = Queja
     form_class = QuejaPerfilForm
