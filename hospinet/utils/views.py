@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import simplejson
 from django.contrib import messages
 from django.core import serializers
 from django.core.urlresolvers import reverse
