@@ -905,16 +905,13 @@ class RellamarCreateView(LoginRequiredMixin, EncuestaFormMixin,
     """
     model = Rellamar
     form_class = RellamarForm
-
-<<<<<<< HEAD
+    
     def form_valid(self, form):
         self.object = form.save()
         self.object.usuario = self.request.user
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
-=======
->>>>>>> e30d200bae8bbac1280214d700b8de03f8bf1f74
 
 class QuejaDepartamentoListView(LoginRequiredMixin, ListView):
     """
