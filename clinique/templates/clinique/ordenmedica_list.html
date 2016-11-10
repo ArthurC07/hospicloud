@@ -1,35 +1,31 @@
 {% extends 'base.html' %}
-{% load staticfiles %}{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
-{% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab6' %}
-{% endblock %}
+<<<<<<< HEAD
+{% load l10n %}{% load i18n %}
 {% block content %}
     <div class="row">
         <div class="col-md-12 main-content">
-            <section class="page-title-box">
-                <h4 class="page-title">Ordenes Médicas
-                </h4>
-            </section>
+            <h1>{% trans 'Ordenes M&eacute;dicas' %}</h1>
         </div>
     </div>
     <div class="row">
         <div class="main-content col-md-12">‏
             <table class="table table-striped">
-                <caption>Ordenes M&eacute;dicas</caption>
+                <caption>{% trans 'Ordenes M&eacute;dicas' %}</caption>
                 <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Paciente</th>
-                    <th>Ordenes</th>
-                    <th>Medicamentos</th>
-                    <th>Acciones</th>
+                    <th>{% trans 'Fecha' %}</th>
+                    <th>{% trans 'Paciente' %}</th>
+                    <th>{% trans 'Ordenes' %}</th>
+                    <th>{% trans 'Usuario' %}</th>
+                    <th>{% trans 'Medicamentos' %}</th>
+                    <th>{% trans 'Acciones' %}</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for orden in ordenes.all %}
                     <tr>
-                        <td>{{ orden.created }}</td>
-                        <td>{{ orden.consulta.consultorio.persona }}</td>
+                        <td>{{ orden.consulta.created }}</td>
+                        <td>{{ orden.consulta.persona }}</td>
                         <td>{{ orden.orden }}</td>
                         <td>{{ orden.consulta.consultorio.usuario.get_full_name }}</td>
                         <td>

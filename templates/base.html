@@ -16,8 +16,14 @@
 <body>
 {% include 'javascript.html' %}
 <nav class="navbar navbar-default navbar-fixed-top" id="main-navigation">
-    <div class="container">
+    <div class="container-fluid">
         <div class="navbar-header">
+            <div class="pull-left">
+                <button class="button-menu-mobile" id="menu-toggle">
+                    <i class="md md-menu"></i>
+                </button>
+                <span class="clearfix"></span>
+            </div>
             <button type="button" class="navbar-toggle collapsed"
                     data-toggle="collapse" data-target="#navbar"
                     aria-expanded="false" aria-controls="navbar">
@@ -26,15 +32,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand open-left" href="{% url 'home' %}">
+            <a class="navbar-brand button-menu-mobile" href="{% url 'home' %}">
                 {% if user.profile.ciudad.company.incapacidad_image %}
-                    <img src="{{ user.profile.ciudad.company.incapacidad_image.url }}" alt="Hospinet">
+                    <img src="{{ user.profile.ciudad.company.incapacidad_image.url }}"
+                         alt="Hospinet">
                 {% else %}
                     Hospinet
                 {% endif %}
-            </a>
-            <a href="#" class="btn btn-info btn-sm" id="menu-toggle">
-                <span class="glyphicon glyphicon-menu-hamburger"></span>
             </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">

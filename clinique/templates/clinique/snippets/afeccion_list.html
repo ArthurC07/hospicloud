@@ -1,7 +1,7 @@
 {% load i18n %}{% load l10n %}
 {% if afecciones %}
     <ul>
-        {% for afeccion in afecciones %}  
+        {% for afeccion in afecciones %}
         <li><a href="{% url 'diagnostico-agregar' consulta=consulta afeccion=afeccion.id %}">{{ afeccion.nombre }}</a></li>
         {% endfor %}
     </ul>

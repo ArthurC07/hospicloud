@@ -182,6 +182,10 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
         context['ordenlperiodoform'].set_legend(
             _('Ordenes de Laboratorio por Periodo'))
 
+        context['ordenperiodoform'] = PeriodoForm(prefix='orden-periodo')
+        context['ordenperiodoform'].helper.form_action = 'orden-periodo'
+        context['ordenperiodoform'].set_legend(_('Ordenes Medicas por Periodo'))
+
         aseg_form = AseguradoraPeriodoForm(prefix='consulta-aseguradora')
         aseg_form.helper.add_input(Submit('submit', _('Mostrar')))
 
@@ -264,46 +268,8 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                     created__range=(year_start, year_end)
                 ).count()
 
-                for n in range(1, 13):
-                    start = now.replace(month=n, day=1, year=y)
-                    inicio, fin = make_month_range(start)
-
-                    consultas = Consulta.objects.atendidas(inicio, fin)
-                    atenciones = consultas.count()
-                    quejas = Queja.objects.filter(
-                        created__range=(inicio, fin)).count()
-
-                    for tipo in TipoConsulta.objects.filter(habilitado=True):
-                        tipos[tipo].append(consultas.filter(tipo=tipo).count())
-
-                    meses.append(
-                        {
-                            'inicio': inicio,
-                            'atenciones': atenciones,
-                            'quejas': quejas,
-                            'nombre': inicio,
-                        }
-                    )
-
-                    form = MonthYearForm(initial={
-                        'year': y,
-                        'mes': n,
-                    })
-                    form.helper.attrs = {'target': '_blank'}
-                    form.set_action('clinique-monthly')
-                    form.fields['year'].widget = HiddenInput()
-                    form.fields['mes'].widget = HiddenInput()
-                    form.helper.form_method = 'get'
-                    form.helper.add_input(Submit(
-                        'submit',
-                        _('{0}'.format(calendar.month_name[n])),
-                        css_class='btn-block'
-                    ))
-
-                    form.helper.form_class = ''
-                    form.helper.label_class = ''
-                    form.helper.field_class = ''
-                    year_forms.append(form)
+                [build_statistics(meses, n, now, tipos, y, year_forms) for
+                 n in range(1, 13)]
 
                 years.append({
                     'name': str(y),
@@ -314,11 +280,46 @@ class ConsultorioIndexView(ConsultorioPermissionMixin, DateBoundView, ListView):
                     'queja_anual': queja_anual,
                 })
 
-        # context['tipos'] = tipos
-        # context['meses'] = meses
         context['years'] = years
 
         return context
+
+
+def build_statistics(meses, month, day, tipos, year, year_forms):
+    start = day.replace(month=month, day=1, year=year)
+    inicio, fin = make_month_range(start)
+    consultas = Consulta.objects.atendidas(inicio, fin)
+    atenciones = consultas.count()
+    quejas = Queja.objects.filter(
+        created__range=(inicio, fin)).count()
+    for tipo in TipoConsulta.objects.filter(habilitado=True):
+        tipos[tipo].append(consultas.filter(tipo=tipo).count())
+    meses.append(
+        {
+            'inicio': inicio,
+            'atenciones': atenciones,
+            'quejas': quejas,
+            'nombre': inicio,
+        }
+    )
+    form = MonthYearForm(initial={
+        'year': year,
+        'mes': month,
+    })
+    form.helper.attrs = {'target': '_blank'}
+    form.set_action('clinique-monthly')
+    form.fields['year'].widget = HiddenInput()
+    form.fields['mes'].widget = HiddenInput()
+    form.helper.form_method = 'get'
+    form.helper.add_input(Submit(
+        'submit',
+        _('{0}'.format(calendar.month_name[month])),
+        css_class='btn-block'
+    ))
+    form.helper.form_class = ''
+    form.helper.label_class = ''
+    form.helper.field_class = ''
+    year_forms.append(form)
 
 
 class ConsultorioDetailView(LoginRequiredMixin, DateBoundView,
@@ -509,6 +510,14 @@ class DiagnosticoPeriodoView(LoginRequiredMixin, TemplateView):
             self.diagnosticos = DiagnosticoClinico.objects.filter(
                 created__gte=self.inicio,
                 created__lte=self.fin
+            ).select_related(
+                'consulta',
+                'consulta__persona',
+                'consulta__consultorio',
+                'consulta__poliza__aseguradora',
+                'afeccion',
+            ).order_by(
+                'consulta__created'
             )
         return super(DiagnosticoPeriodoView, self).dispatch(request, *args,
                                                             **kwargs)
@@ -903,7 +912,6 @@ class AfecionesSearchView(TemplateView):
 class AfeccionListView(LoginRequiredMixin, ListView):
     context_object_name = 'afecciones'
     model = Afeccion
-    template_name = 'clinique/afeccion_index.html'
     paginate_by = 10
 
     def get_queryset(self):
@@ -916,7 +924,8 @@ class AfeccionListView(LoginRequiredMixin, ListView):
         if form.is_valid():
             query = form.cleaned_data['query']
             queryset = Afeccion.objects.filter(
-                nombre__icontains=query
+                nombre__icontains=query,
+                habilitado=True,
             )
 
             return queryset.all()
@@ -1112,7 +1121,33 @@ class OrdenMedicaListView(LoginRequiredMixin, ListView):
     context_object_name = 'ordenes'
 
     def get_queryset(self):
-        return OrdenMedica.objects.filter(farmacia=False)
+        return OrdenMedica.objects.filter(farmacia=False).select_related(
+            'consulta',
+            'consulta__persona',
+            'consulta__consultorio',
+            'consulta__consultorio__usuario',
+        ).prefetch_related(
+            'prescripcion_set',
+            'prescripcion_set__medicamento',
+        )
+
+
+class OrdenMedicaPeriodoListView(PeriodoView, OrdenMedicaListView):
+    """
+    Shows all :class:`Consulta` that happened in a Date range that is specified
+    by a :class:`PeriodoForm
+    """
+    prefix = 'orden-periodo'
+    redirect_on_invalid = 'consultorio-index'
+
+    def get_queryset(self):
+        """
+        Builds the :class:`QuerySet` that will be used to show the list of
+        :class:`Consulta` objects
+        """
+        return super(OrdenMedicaPeriodoListView, self).get_queryset().filter(
+            consulta__created__range=(self.inicio, self.fin)
+        )
 
 
 class OrdenCompletarRedirect(LoginRequiredMixin, RedirectView):
@@ -1155,6 +1190,9 @@ class ExamenUpdateView(LoginRequiredMixin, UpdateView):
 
 class ConsultorioEsperaCreateView(CurrentUserFormMixin, PersonaFormMixin,
                                   ConsultorioFormMixin, CreateView):
+    """
+    Builds a new :class:`Espera` object based on given data
+    """
     model = Espera
     form_class = EsperaForm
 
@@ -1384,6 +1422,17 @@ class ConsultaTerminadaRedirectView(LoginRequiredMixin, DateBoundView,
 
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+
+        # The appointment does not have a registered diagnostic, so it cannot be
+        # finished yet
+        if consulta.diagnosticos_clinicos.count() == 0:
+            messages.info(
+                self.request,
+                _(
+                    'La consulta no tiene un Diagnóstico registrado, no se puede terminar')
+            )
+            return consulta.get_absolute_url()
+
         consulta.activa = False
         consulta.final = timezone.now()
         consulta.duracion = consulta.final - consulta.created

@@ -33,6 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView, View
 from django.views.generic.base import ContextMixin, TemplateView
+from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import FormMixin
 from mail_templated.message import EmailMessage
 
@@ -45,7 +46,7 @@ from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
 from hospinet.utils.date import make_day_start, make_end_day, make_month_range
 from hospinet.utils.forms import PeriodoForm
-from hospinet.utils.views import PeriodoView
+from hospinet.utils.views import PeriodoView, JSONResponseMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
 from django.contrib.auth.models import User
 
@@ -219,6 +220,15 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
         context['encuestas'] = Encuesta.objects.filter(activa=True)
 
         return context
+
+
+class EncuestaJSONDetailView(LoginRequiredMixin, JSONResponseMixin,
+                             BaseDetailView):
+    model = Encuesta
+    context_object_name = 'encuesta'
+
+    def render_to_response(self, context, **response_kwargs):
+        return self.render_to_json_response(self.get_queryset(), **response_kwargs)
 
 
 class EncuestaMixin(ContextMixin, View):
@@ -441,7 +451,7 @@ class ConsultaNoEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
         consulta.encuestada = True
         consulta.save()
 
-        return encuesta.get_absolute_url()
+        return reverse('encuesta-json', kwargs={'pk': encuesta.id})
 
 
 class QuejaCreateView(LoginRequiredMixin, CreateView, RespuestaFormMixin):
@@ -896,12 +906,15 @@ class RellamarCreateView(LoginRequiredMixin, EncuestaFormMixin,
     model = Rellamar
     form_class = RellamarForm
 
+<<<<<<< HEAD
     def form_valid(self, form):
         self.object = form.save()
         self.object.usuario = self.request.user
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
+=======
+>>>>>>> e30d200bae8bbac1280214d700b8de03f8bf1f74
 
 class QuejaDepartamentoListView(LoginRequiredMixin, ListView):
     """
@@ -910,7 +923,7 @@ class QuejaDepartamentoListView(LoginRequiredMixin, ListView):
     model = Queja
     context_object_name = 'quejas'
     template_name = 'bsc/queja_list.html'
-    
+
     def get_queryset(self):
         """
         Filters the :class:`Queja` objects
@@ -943,16 +956,18 @@ class QuejaDepartamentoListView(LoginRequiredMixin, ListView):
                 'respuesta__consulta__consultorio__usuario__profile__ciudad',
             )
 
-            return query.filter(departamento = self.area)
+            return query.filter(departamento=self.area)
 
     def get_context_data(self, **kwargs):
         """
         Adds the :class:`Departamento` to the context data.
         """
-        context = super(QuejaDepartamentoListView,self).get_context_data(**kwargs)
+        context = super(QuejaDepartamentoListView, self).get_context_data(
+            **kwargs)
         context['area'] = self.area
 
         return context
+
 
 class QuejaCiudadListView(LoginRequiredMixin, ListView):
     """
@@ -961,7 +976,7 @@ class QuejaCiudadListView(LoginRequiredMixin, ListView):
     model = Queja
     context_object_name = 'quejas'
     template_name = 'bsc/queja_list.html'
-    
+
     def get_queryset(self):
         """
         Filters the :class:`Queja` objects
@@ -994,13 +1009,14 @@ class QuejaCiudadListView(LoginRequiredMixin, ListView):
                 'respuesta__consulta__consultorio__usuario__profile__ciudad',
             )
 
-            return query.filter(respuesta__consulta__consultorio__usuario__profile__ciudad = self.ciudad)
+            return query.filter(
+                respuesta__consulta__consultorio__usuario__profile__ciudad=self.ciudad)
 
     def get_context_data(self, **kwargs):
         """
         Adds the :class:`Ciudad` to the context data.
         """
-        context = super(QuejaCiudadListView,self).get_context_data(**kwargs)
+        context = super(QuejaCiudadListView, self).get_context_data(**kwargs)
         context['ciudad'] = self.ciudad
 
         return context

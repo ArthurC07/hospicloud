@@ -72,6 +72,10 @@ urlpatterns = [
         views.RellamarCreateView.as_view(),
         name='encuesta-rellamar'),
 
+    url(r'^encuesta/(?P<pk>\d+)/json',
+        views.EncuestaJSONDetailView.as_view(),
+        name='encuesta-json'),
+
     url(r'^respuesta/(?P<pk>\d+)$', views.RespuestaDetailView.as_view(),
         name='respuesta'),
 
@@ -99,10 +103,10 @@ urlpatterns = [
         name='quejas-periodo'),
 
     url(r'^quejas/area$', views.QuejaDepartamentoListView.as_view(),
-    name='quejas-area'),
+        name='quejas-area'),
 
     url(r'^quejas/ciudad$', views.QuejaCiudadListView.as_view(),
-    name='quejas-ciudad'),
+        name='quejas-ciudad'),
 
     url(r'^queja/(?P<pk>\d+)$', views.QuejaDetailView.as_view(), name='queja'),
 

@@ -1,38 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load l10n %}{% load i18n %}{% load crispy_forms_tags %}
 {% block menu %}
-    <li>
-        <a href="{% url 'encuesta-list' %}">{% trans 'Ver Encuestas' %}</a>
-    </li>
-    <li>
-        <a href="{% url 'queja-aseguradora-agregar' %}">
-            {% trans 'Agregar Queja de Aseguradora' %}
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'quejas' %}">
-            {% trans 'Quejas' %}
-        </a>
-    </li>
-    <li>
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-           aria-haspopup="true" aria-expanded="false">
-            {% trans 'Soluciones' %}
-            <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-            <li>
-                <a href="{% url 'solucion-list' %}">
-                    {% trans 'Pendientes de Aprobaci&oacute;n' %}
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'solucion-aceptada-list' %}">
-                    {% trans 'Pendientes de Notificaci&oacute;n' %}
-                </a>
-            </li>
-        </ul>
-    </li>
+    {% include "bsc/snippets/encuesta_menu.html" %}
 {% endblock %}
 {% block content %}
     <div class="row">

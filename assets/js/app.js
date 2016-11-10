@@ -80,18 +80,20 @@
             if ($(this).parent().hasClass('has_sub')) {
                 e.preventDefault();
             }
-            if (!$(this).hasClass('subdrop')) {
+            if ($(this).hasClass('subdrop')) {
+                if ($(this).hasClass('subdrop')) {
+                    $(this).removeClass('subdrop');
+                    $(this).next('ul').slideUp(350);
+                    $('.pull-right i', $(this).parent()).removeClass('md-remove').addClass('md-add');
+                }
+            } else {
                 $('ul', $(this).parents('ul:first')).slideUp(350);
                 $('a', $(this).parents('ul:first')).removeClass('subdrop');
-                $('#sidebar-menu .pull-right i').removeClass('md-remove').addClass('md-add');
+                $('#sidebar-menu').find('.pull-right i').removeClass('md-remove').addClass('md-add');
                 $(this).next('ul').slideDown(350);
                 $(this).addClass('subdrop');
                 $('.pull-right i', $(this).parents('.has_sub:last')).removeClass('md-add').addClass('md-remove');
                 $('.pull-right i', $(this).siblings('ul')).removeClass('md-remove').addClass('md-add');
-            } else if ($(this).hasClass('subdrop')) {
-                $(this).removeClass('subdrop');
-                $(this).next('ul').slideUp(350);
-                $('.pull-right i', $(this).parent()).removeClass('md-remove').addClass('md-add');
             }
         }
     }, Sidemenu.prototype.init = function () {
@@ -263,16 +265,17 @@
         if (jQuery.browser.mobile === true) {
             $('body').addClass('mobile').removeClass('fixed-left');
         }
-        if (!$('#wrapper').hasClass('forced')) {
+        var wrapper = $('#wrapper');
+        if (!wrapper.hasClass('forced')) {
             if (w > 990) {
                 $('body').removeClass('smallscreen').addClass('widescreen');
-                $('#wrapper').removeClass('enlarged');
+                wrapper.removeClass('enlarged');
             } else {
                 $('body').removeClass('widescreen').addClass('smallscreen');
-                $('#wrapper').addClass('enlarged');
+                wrapper.addClass('enlarged');
                 $('.left ul').removeAttr('style');
             }
-            if ($('#wrapper').hasClass('enlarged') && $('body').hasClass('fixed-left')) {
+            if (wrapper.hasClass('enlarged') && $('body').hasClass('fixed-left')) {
                 $('body').removeClass('fixed-left').addClass('fixed-left-void');
             } else if (!$('#wrapper').hasClass('enlarged') && $('body').hasClass('fixed-left-void')) {
                 $('body').removeClass('fixed-left-void').addClass('fixed-left');

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2016 Carlos Flores <cafg10@gmail.com>
+# Copyright (C) 2011-2016 Carlos Flores <cafg10@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,27 +14,19 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
-
-import unicodecsv as csv
+from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
+from django.utils.translation import ugettext_lazy as _
 
-from clinique.models import Afeccion
+from clinique.models import DiagnosticoClinico, Afeccion
 
 
 class Command(BaseCommand):
-
-    args = 'csv files'
-
-    def add_arguments(self, parser):
-        parser.add_argument('source')
+    help = _('Disables all afections from the database')
 
     def handle(self, *args, **options):
+        # First make sure that no Clinical Diagnostic
 
-        source = options['source']
-
-        reader = csv.reader(open(source))
-        for line in reader:
-            Afeccion.objects.create(
-                codigo=line[0],
-                nombre=line[1]
-            )
+        Afeccion.objects.all().update(
+            habilitado=True
+        )

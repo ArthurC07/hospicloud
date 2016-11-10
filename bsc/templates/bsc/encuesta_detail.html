@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}{% load i18n %}{% load l10n %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab40' %}
+    {% include "bsc/snippets/encuesta_menu.html" %}
 {% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
@@ -55,7 +55,7 @@
                                        href="{% url 'encuesta-responder' encuesta.id consulta.id %}">
                                         {% trans 'Responder' %}
                                     </a>
-                                    <a class="btn btn-block btn-success"
+                                    <a class="btn btn-block btn-success negada"
                                        href="{% url 'encuesta-no-respondida' encuesta.id consulta.id %}">
                                         {% trans 'No Contesta' %}
                                     </a>
@@ -63,13 +63,13 @@
                                        href="{% url 'encuesta-rellamar' encuesta.id consulta.id %}">
                                         {% trans 'Rellamar' %}
                                     </a>
-                                    <a class="btn btn-block btn-danger"
+                                    <a class="btn btn-block btn-danger negada"
                                        href="{% url 'encuesta-no-respondida' encuesta.id consulta.id %}">
                                         {% trans 'No Desea Responder' %}
                                     </a>
                                 </td>
                             </tr>
-                            {% empty %}
+                        {% empty %}
                             <tr>
                                 <td>{% trans 'No hay preguntas agregadas' %}</td>
                             </tr>
@@ -78,6 +78,21 @@
                 </div>
             </div>
         </div>
-    <!-- {% include 'bsc/snippets/encuesta_menu.html' with object_list=encuestas %} -->
     </div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.negada').click(function (e) {
+                e.preventDefault();
+                var button = $(this);
+                var uri = button.attr('href');
+                $.get(uri, function (data) {
+                    console.log("Worked");
+                    console.log(data);
+                    button.parent().parent().hide('slow');
+                })
+            });
+        });
+    </script>
 {% endblock %}

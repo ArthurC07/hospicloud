@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% load staticfiles %}{% load thumbnail %}{% load l10n %}{% load humanize %}
-{% block title %} Contratos{% endblock %}
+{% load staticfiles %}{% load thumbnail %}{% load l10n %}{% load humanize %}{% load i18n %}
+{% block title %} {% trans 'Consultorio' %}{% endblock %}
 {% block content %}
     <div class="row">
         <div class="page-header">
-            <h1>Diagn&oacute;sticos
+            <h1>{% trans 'Diagn&oacute;sticos' %}
                 <small>de {{ inicio }} al {{ fin }}</small>
             </h1>
         </div>
@@ -14,10 +14,10 @@
             <div class="main-content col-md-12">
                 <table class="table table-stripped">
                     <tbody>
-                    {% for consultorio, cantidad in consultorios %}
+                    {% for consultorio in consultorios %}
                         <tr>
-                            <td>{{ consultorio }}</td>
-                            <td>{{ cantidad }}</td>
+                            <td>{{ consultorio.consulta__consultorio__nombre }}</td>
+                            <td>{{ consultorio.consultorio_count }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -34,29 +34,34 @@
                 <div class="main-content col-md-12">
                     <table class="table table-stripped">
                         <thead>
-                            <tr>
-                                <th>Paciente</th>
-                                <th>Fecha</th>
-                                <th>Consultorio</th>
-                                <th>Diagn&oacute;stico</th>
-                            </tr>
+                        <tr>
+                            <th>{% trans 'Paciente' %}</th>
+                            <th>{% trans 'Fecha' %}</th>
+                            <th>{% trans 'Consultorio' %}</th>
+                            <th>{% trans 'Diagn&oacute;stico' %}</th>
+                            <th>{% trans 'Aseguradora' %}</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {% for diagnostico in diagnosticos.all %}
+                        {% for diagnostico in diagnosticos.all %}
                             <tr>
-                                <td>{{ diagnostico.paciente.persona }}</td>
-                                <td>{{ diagnostico.created }}</td>
-                                <td>{{ diagnostico.paciente.consultorio }}</td>
-                                <td>{{ diagnostico.diagnostico }} {{ cita.persona.celular }}</td>
+                                <td>{{ diagnostico.consulta.persona }}</td>
+                                <td>{{ diagnostico.consulta.created|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                <td>{{ diagnostico.consulta.consultorio }}</td>
+                                <td>
+                                    {{ diagnostico.afeccion|default_if_none:"" }}
+                                    {{ diagnostico.diagnostico|default_if_none:"" }}
+                                </td>
+                                <td>{{ diagnostico.consulta.poliza.aseguradora }}</td>
                             </tr>
-                            {% endfor %}
+                        {% endfor %}
                         </tbody>
-                    <tfoot>
+                        <tfoot>
                         <tr>
-                            <th colspan="2">Total</th>
+                            <th colspan="4">{% trans 'Total' %}</th>
                             <th>{{ total }}</th>
                         </tr>
-                    </tfoot>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -65,9 +70,10 @@
 {% endblock %}
 {% block scripts %}
     {% localize off %}
-        <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+        <script type="text/javascript"
+                src="{% static 'js/Chart.min.js' %}"></script>
         <script type="text/javascript">
-            $(document).ready(function() {
+            $(document).ready(function () {
                 var data = {
                     labels: [
                         {% for consultorio, cantidad in consultorio_graph2 %} '{{ consultorio }}', {% endfor %} ],
