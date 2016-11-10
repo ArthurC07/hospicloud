@@ -41,6 +41,7 @@ from hospinet.utils import get_current_month_range
 from invoice.models import Recibo
 from persona.models import Persona
 from users.models import UserProfile, Turno
+from django.contrib.auth.signals import user_logged_out
 
 
 @python_2_unicode_compatible
@@ -641,8 +642,18 @@ def register_login(sender, user, request, **kwargs):
 
     login.save()
 
+    #Add user Turno
+    turno = Turno.objects.create(nombre='Turno de '+user.first_name+' '+user.last_name ,usuario=user, ciudad=user.profile.ciudad)
+
+def register_logout(sender, user, request, **kwargs):
+    #End user Turno
+    turno = Turno.objects.filter(usuario=user, terminado=False).first()
+    if turno:
+        turno.terminado = True
+        turno.save()
 
 user_logged_in.connect(register_login)
+user_logged_out.connect(register_logout)
 
 Persona.cantidad_encuestas = property(lambda p: p.respuesta_set.count())
 
