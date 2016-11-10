@@ -66,6 +66,14 @@
                                             <td>{% trans 'Enfermera' %}</td>
                                             <td>{{ queja.respuesta.consulta.consultorio.secretaria.get_full_name }}</td>
                                         </tr>
+                                        <tr>
+                                            <td>{% trans 'SAP' %}</td>
+                                            <td>{{ queja.respuesta.consulta.espera.usuario }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{% trans 'Call Center' %}</td>
+                                            <td>{{ queja.respuesta.consulta.call_center }}</td>
+                                        </tr>
                                     </table>
                                 </td>
                                 <td>{{ queja.queja }}</td>

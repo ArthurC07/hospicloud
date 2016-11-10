@@ -81,7 +81,7 @@ from persona.models import Fisico, Antecedente, AntecedenteFamiliar, \
 from persona.views import PersonaFormMixin, AntecedenteObstetricoCreateView, \
     HistoriaFisicaCreateView
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
-from users.models import Ciudad, Company
+from users.models import Ciudad, Company, Turno
 
 
 class ConsultorioPermissionMixin(LoginRequiredMixin):
@@ -679,7 +679,11 @@ class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
         :return:
         """
         self.object = form.save(commit=True)
-
+        now = timezone.now()
+        call_center = Turno.objects.filter(usuario__groups__name__in=['Call Center'], terminado = False, created__year=now.year, created__month=now.month, created__day=now.day).first()
+        if call_center:
+            self.object.call_center = call_center.usuario
+            self.object.save()
         self.espera.fin = timezone.now()
 
         # Calculate doctor waiting time

@@ -280,6 +280,7 @@ class Consulta(TimeStampedModel):
     duracion = models.DurationField(default=timedelta)
 
     objects = ConsultaQuerySet.as_manager()
+    call_center = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 
     class Meta:
         ordering = ['created', ]
