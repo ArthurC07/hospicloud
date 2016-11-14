@@ -42,11 +42,76 @@ class InventarioManager(models.Manager):
             ),
             total_items=Count('item__id'),
             total_inventory=Coalesce(Sum('item__cantidad'), Decimal()),
+        ).prefetch_related(
+            'item_set',
+            'item_set__plantilla',
+        ).prefetch_related(
+            'ciudad',
+        )
+
+
+class ItemTemplateManager(models.Manager):
+    def get_queryset(self):
+        return super(ItemTemplateManager, self).get_queryset().select_related(
+            'item_type',
+        )
+
+
+class ItemManager(models.Manager):
+    def get_queryset(self):
+        return super(ItemManager, self).get_queryset().select_related(
+            'plantilla',
+        )
+
+
+class ItemRequisicionManager(models.Manager):
+    def get_queryset(self):
+        return super(ItemRequisicionManager,
+                     self).get_queryset().select_related(
+            'item',
         )
 
 
 class RequisicionManager(models.Manager):
-    pass
+    def get_queryset(self):
+        return super(RequisicionManager, self).get_queryset().prefetch_related(
+            'items',
+            'transferencias',
+        ).select_related(
+            'usuario',
+            'inventario',
+        )
+
+
+class TransferenciaManager(models.Manager):
+    def get_queryset(self):
+        return super(TransferenciaManager,
+                     self).get_queryset().prefetch_related(
+            'transferidos',
+        ).select_related(
+            'usuario',
+            'destino',
+            'destino__ciudad',
+            'origen',
+            'origen__ciudad',
+        )
+
+
+class HistorialManager(models.Manager):
+    def get_queryset(self):
+        return super(HistorialManager, self).get_queryset().prefetch_related(
+            'items',
+        ).select_related(
+            'inventario',
+        )
+
+
+class ItemHistorialManager(models.Manager):
+    def get_queryset(self):
+        return super(ItemHistorialManager,
+                     self).get_queryset().prefetch_related(
+            'item',
+        )
 
 
 class CotizacionQuerySet(models.QuerySet):

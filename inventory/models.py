@@ -129,6 +129,8 @@ class ItemTemplate(TimeStampedModel):
     item_type = models.ManyToManyField(ItemType, related_name='items',
                                        blank=True)
 
+    objects = managers.ItemTemplateManager()
+
     def __str__(self):
         return self.descripcion
 
@@ -173,6 +175,7 @@ class Item(TimeStampedModel):
     inventario = models.ForeignKey(Inventario)
     vencimiento = models.DateTimeField(default=timezone.now)
     cantidad = models.IntegerField(default=0)
+    objects = managers.ItemManager()
 
     def disminuir(self, cantidad, user=None):
         self.cantidad -= cantidad
@@ -226,6 +229,7 @@ class Requisicion(TimeStampedModel):
     denegada = models.BooleanField(default=False)
     entregada = models.BooleanField(default=False)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    objects = managers.RequisicionManager()
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -250,6 +254,7 @@ class ItemRequisicion(TimeStampedModel):
     cantidad = models.IntegerField()
     entregada = models.BooleanField(default=False)
     pendiente = models.IntegerField(default=0)
+    objects = managers.ItemRequisicionManager()
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""
@@ -280,6 +285,7 @@ class Transferencia(TimeStampedModel):
     aplicada = models.NullBooleanField(default=False)
     usuario = models.ForeignKey(User, related_name="transferencias",
                                 null=True, blank=True)
+    objects = managers.TransferenciaManager()
 
     def __str__(self):
         origen = destino = ''
@@ -477,6 +483,7 @@ class TipoVenta(TimeStampedModel):
 @python_2_unicode_compatible
 class Historial(TimeStampedModel):
     inventario = models.ForeignKey(Inventario, related_name='historiales')
+    objects = managers.HistorialManager()
 
     def __str__(self):
         return _('{0} el {1}').format(self.inventario.lugar,
@@ -493,6 +500,7 @@ class ItemHistorial(TimeStampedModel):
     historial = models.ForeignKey(Historial, related_name='items')
     item = models.ForeignKey(ItemTemplate, related_name='historicos')
     cantidad = models.IntegerField(default=0)
+    objects = managers.ItemHistorialManager()
 
     def __str__(self):
         return _('{0} {1} el {2}').format(self.item.descripcion,
