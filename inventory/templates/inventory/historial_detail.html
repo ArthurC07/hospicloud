@@ -1,55 +1,44 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab46' %}
+
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-xs-12 col-md-12">
             <div class="page-title-box">
-                <h4 class="page-title">Histórico de {{ historial.inventario.lugar }}
-                    <small>{{ historial. }}</small>
+                <h4 class="page-title">{% trans 'Histórico de' %}
+                    {{ historial.inventario.lugar }}
+                    <small>{{ historial.created }}</small>
                 </h4>
             </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9 panel">
-            <div class="main-content col-md-12">
-                <div class="row">
-                    <section class="col-md-12 panel-default">
-                        <table class="table table-striped table-bordered no-more-tables">
-                            <div class="panel-heading m-0" style="margin-bottom: 10px !important;">
-                                <h3 class="panel-title">Productos en Inventario</h3>
-                            </div>
-                            <thead>
-                            <tr>
-                                <th>C&oacute;digo</th>
-                                <th>Descripci&oacute;n</th>
-                                <th>Cantidad</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for item in page_obj %}
-                                <tr>
-                                    <td>{{ item.item.id }}</td>
-                                    <td>{{ item.item.descripcion }}</td>
-                                    <td>{{ item.cantidad }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </section>
+        <section class="col-md-12 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {% trans 'Productos en Inventario' %}
                 </div>
+                <table class="table table-striped table-hover no-more-tables">
+                    <thead>
+                    <tr>
+                        <th>{% trans 'C&oacute;digo' %}</th>
+                        <th>{% trans 'Descripci&oacute;n' %}</th>
+                        <th>{% trans 'Cantidad' %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in page_obj %}
+                        <tr>
+                            <td>{{ item.item.id }}</td>
+                            <td>{{ item.item.descripcion }}</td>
+                            <td>{{ item.cantidad }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </section>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-stacked nav-tabs">
-                    </ul>
-                </nav>
-            </div>
-        </aside>
     </div>
 {% endblock %}

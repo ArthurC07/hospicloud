@@ -97,12 +97,6 @@ class IndexView(InvoicePermissionMixin, TemplateView):
                             'Detalle de Recibos de un Periodo',
                             'invoice-periodo-detail')
 
-        """
-        create_periodo_form(context, 'tipoform', 'tipo',
-                            'Productos por Área y Periodo',
-                            'invoice-tipo')
-        """
-
         create_periodo_form(context, 'productoperiodoform', 'producto',
                             'Productos Facturados en un Periodo',
                             'invoice-periodo-producto')
