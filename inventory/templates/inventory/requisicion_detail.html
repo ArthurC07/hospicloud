@@ -36,66 +36,64 @@
     </div>
     <div class="row">
         <div class="main-content col-md-12 col-xs-12">
-            <div class="row panel panel-border">
-                <section class="col-md-12">
-                    <table class="table table-striped table-hover no-more-tables">
-                        <caption>
-                            {% trans 'Productos en Pedidos' %}
-                        </caption>
-                        <thead>
+            <div class="panel panel-border">
+                <div class="panel-heading">
+                    {% trans 'Productos en Pedidos' %}
+                </div>
+                <table class="table table-striped table-hover no-more-tables">
+                    <thead>
+                    <tr>
+                        <th>{% trans 'C&oacute;digo' %}</th>
+                        <th>{% trans 'Descripci&oacute;n' %}</th>
+                        <th>{% trans 'Cantidad' %}</th>
+                        <th>{% trans 'Pendiente' %}</th>
+                        <th>{% trans 'Entregado' %}</th>
+                        <th>{% trans 'Acciones' %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in page_obj %}
                         <tr>
-                            <th>{% trans 'C&oacute;digo' %}</th>
-                            <th>{% trans 'Descripci&oacute;n' %}</th>
-                            <th>{% trans 'Cantidad' %}</th>
-                            <th>{% trans 'Pendiente' %}</th>
-                            <th>{% trans 'Entregado' %}</th>
-                            <th>{% trans 'Acciones' %}</th>
+                            <td>{{ item.item.id }}</td>
+                            <td>{{ item.item.descripcion }}</td>
+                            <td>{{ item.cantidad }}</td>
+                            <td>{{ item.pediente }}</td>
+                            <td>{{ item.entregada|yesno }}</td>
+                            <td>
+                                <a href="{% url 'itemrequisicion-delete' item.id %}"
+                                   class="btn btn-danger btn-block">
+                                    <i class="fa fa-trash-o"> </i>
+                                    {% trans 'Eliminar' %}</a>
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        {% for item in page_obj %}
-                            <tr>
-                                <td>{{ item.item.id }}</td>
-                                <td>{{ item.item.descripcion }}</td>
-                                <td>{{ item.cantidad }}</td>
-                                <td>{{ item.pediente }}</td>
-                                <td>{{ item.entregada|yesno }}</td>
-                                <td>
-                                    <a href="{% url 'itemrequisicion-delete' item.id %}"
-                                       class="btn btn-danger btn-block">
-                                        <i class="fa fa-trash-o"> </i>
-                                        {% trans 'Eliminar' %}</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </section>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div class="row panel panel-border">
-                <section class="col-md-12">
-                    <table class="table table-striped table-hover no-more-tables">
-                        <caption>
-                            {% trans 'Transferencias' %}
-                        </caption>
-                        <thead>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="panel panel-border">
+                <div class="panel-heading">{% trans 'Transferencias' %}</div>
+                <table class="table table-striped table-hover no-more-tables">
+                    <thead>
+                    <tr>
+                        <th>{% trans 'Usuario' %}</th>
+                        <th>{% trans 'Nombre' %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for transferencia in requisicion.transferencias.all %}
                         <tr>
-                            <th>{% trans 'Usuario' %}</th>
-                            <th>{% trans 'Nombre' %}</th>
+                            <td>
+                                <a href="{{ transferencia.get_absolute_url }}">{{ transferencia.usuario }}</a>
+                            </td>
+                            <td>{{ transferencia }} {{ transferencia.created }}</td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        {% for transferencia in requisicion.transferencias.all %}
-                            <tr>
-                                <td>
-                                    <a href="{{ transferencia.get_absolute_url }}">{{ transferencia.usuario }}</a>
-                                </td>
-                                <td>{{ transferencia }} {{ transferencia.created }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </section>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
