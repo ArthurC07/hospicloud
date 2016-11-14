@@ -744,9 +744,3 @@ body.fixed-left .side-menu.left {
     padding-right: 15px;
     padding-left: 15px;
 }
-
-@media (min-width: 992px) {
-    .col-md-4 {
-        width: 30%;
-    }
-}

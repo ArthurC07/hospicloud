@@ -1,24 +1,13 @@
 {% extends 'base.html' %}
-{% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab46' %}
-{% endblock %}
 {% block content %}
     {% load crispy_forms_tags %}
     {% block header %}
         {{ form.media.css }}
     {% endblock %}
     <div class="row">
-        <section class="col-md-9 main-content panel panel-border">
+        <section class="col-md-12 col-xs-12 card-box1">
             {% crispy form %}
         </section>
-        <aside class="col-md-3">
-            <div class="main-content col-md-12">
-            <nav class="sidebar-nav">
-                <ul class="nav nav-stacked nav-tabs">
-                </ul>
-            </nav>
-                </div>
-        </aside>
     </div>
 {% endblock %}
 {% block scripts %}
