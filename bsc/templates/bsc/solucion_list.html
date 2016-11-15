@@ -58,6 +58,12 @@
                                             {% trans 'Notificar Cliente' %}
                                         </a>
                                     </div>
+                                    <div class="margin-top-15 col-md-6 col-xs-6">
+                                        <a class="btn btn-block btn-info"
+                                           href="{% url 'solucion-email-gerencia-preview' solucion.id %}">
+                                            {% trans 'Notificar Gerencia' %}
+                                        </a>
+                                    </div>
                                 </div>
                                 {% endif %}
                             </td>

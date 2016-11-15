@@ -44,7 +44,7 @@ from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, Pregunta, Solucion, Login, Rellamar, NoResponde
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
-from hospinet.utils.date import make_day_start, make_end_day, make_month_range
+from hospinet.utils.date import make_day_start, make_end_day, make_month_range, datetime
 from hospinet.utils.forms import PeriodoForm
 from hospinet.utils.views import PeriodoView, JSONResponseMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
@@ -728,6 +728,7 @@ class SolucionAceptadaListView(SolucionListView):
         return self.queryset.filter(
             aceptada=True,
             notificada=False,
+            created__gte = datetime(2016, 10, 1)
         )
 
 
@@ -811,6 +812,8 @@ class SolucionEmailView(LoginRequiredMixin, RedirectView):
                 from_email=settings.EMAIL_HOST_USER
             )
             message.send()
+            solucion.notificada = True
+            solucion.save()
 
         return reverse('solucion-list')
 
@@ -860,6 +863,59 @@ class SolucionAseguradoraEmailView(LoginRequiredMixin, RedirectView):
             solucion.save()
 
         return reverse('solucion-list')
+
+class SolucionGerenciaEmailPreView(LoginRequiredMixin, DetailView):
+    """
+    Previews the email before the user can send it.
+    """
+    model = Solucion
+    template_name = 'bsc/solucion_gerencia_email.html'
+    queryset = Solucion.objects.select_related(
+        'queja__respuesta__consulta',
+        'queja__respuesta__consulta__persona',
+        'queja__respuesta__consulta__poliza',
+        'queja__respuesta__consulta__poliza__aseguradora',
+        'queja__respuesta__consulta__contrato',
+        'queja__respuesta__consulta__espera',
+    ).prefetch_related(
+        'queja__respuesta__consulta__ordenes_medicas',
+    )
+
+    def get_context_data(self, **kwargs):
+        context = super(SolucionGerenciaEmailPreView, self).get_context_data(**kwargs)
+        context['preview'] = True
+        context['persona'] = self.object.queja.respuesta.consulta.persona
+
+        return context
+
+
+class SolucionGerenciaEmailView(LoginRequiredMixin, RedirectView):
+    """
+    Sends a notification email to the :class:`Persona` that made the complaint
+    """
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        solucion = get_object_or_404(Solucion, pk=kwargs['solucion'])
+        gerencia = User.objects.filter(groups__name__in=['Gerencia'])
+
+        for user in gerencia:
+            if user.email:
+                message = EmailMessage(
+                    str('bsc/solucion_email.tpl'),
+                    {
+                        'persona': solucion.queja.respuesta.persona,
+                        'fecha': timezone.now().date(),
+                        'company': solucion.queja.respuesta.consulta.consultorio.localidad.ciudad.company,
+                    },
+                    to=[user.email],
+                    from_email=settings.EMAIL_HOST_USER
+                )
+                message.send()
+        solucion.notificada = True
+        solucion.save()
+
+        return reverse('solucion-list')        
 
 
 class ArchivoNotasCreateView(LoginRequiredMixin, CreateView):
