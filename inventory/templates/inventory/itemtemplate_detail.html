@@ -1,56 +1,41 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load staticfiles %}{% load i18n %}{% load l10n %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab46' %}
+    <li>
+        <a href="{% url 'itemtemplate-edit' item_template.id %}">{% trans 'Editar' %} {{ item_template.descripcion }}</a>
+    </li>
+    <li>
+        <a href="{% url 'inventario-index' %}">{% trans 'Regresar a Inventario' %}</a>
+    </li>
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-md-12 col-xs-12">
             <div class="page-title-box">
                 <h4 class="page-title">{{ item_template.descripcion }}
-                    <small>Producto</small>
+                    <small>{% trans 'Producto' %}</small>
                 </h4>
             </div>
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9 panel panel-border">
-            <div class="main-content col-md-12 m-t-10">
-                <div class="row">
-                    <section class="col-md-6">
-                        <ul>
-                            <li>Marca: {{ item_template.marca }}</li>
-                            <li>Modelo: {{ item_template.modelo }}</li>
-                            <li>Notas: {{ item_template.notas }}</li>
-                            <li>Precio de venta: {{ item_template.precio_de_venta }}</li>
-                            <li>Precio de Costo: {{ item_template.costo }}</li>
-                            <li>Impuestos: {{ item_template.impuestos }}</li>
-                            <li>Activo: {{ item_template.activo|yesno }}</li>
-                            <li>Grupos:
-                                <ul>
-                                    {% for grupo in item_template.item_type.all %}
-                                        <li>{{ grupo }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                        </ul>
-                    </section>
-                </div>
-            </div>
-        </section>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav panel panel-border">
-                    <ul class="nav nav-stacked nav-tabs">
-                        <li>
-                            <a href="{% url 'itemtemplate-edit' item_template.id %}">Editar {{ item_template.descripcion }}</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'inventario-index' %}">Regresar a Inventario</a>
-                        </li>
+        <section class="col-md-12 col-xs-12">
+            <ul>
+                <li>{% trans 'Marca:' %} {{ item_template.marca }}</li>
+                <li>{% trans 'Modelo:' %} {{ item_template.modelo }}</li>
+                <li>{% trans 'Notas:' %} {{ item_template.notas }}</li>
+                <li>{% trans 'Precio de venta:' %} {{ item_template.precio_de_venta }}</li>
+                <li>{% trans 'Precio de Costo:' %} {{ item_template.costo }}</li>
+                <li>{% trans 'Impuestos:' %} {{ item_template.impuestos }}</li>
+                <li>{% trans 'Activo:' %} {{ item_template.activo|yesno }}</li>
+                <li>{% trans 'Grupos:' %}
+                    <ul>
+                        {% for grupo in item_template.item_type.all %}
+                            <li>{{ grupo }}</li>
+                        {% endfor %}
                     </ul>
-                </nav>
-            </div>
-        </aside>
+                </li>
+            </ul>
+        </section>
     </div>
 {% endblock %}

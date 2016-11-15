@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block header %}
+    {{ form.media.css }}
+{% endblock %}
 {% block content %}
-    {% load crispy_forms_tags %}
-    {% block header %}
-        {{ form.media.css }}
-    {% endblock %}
     <div class="row">
         <section class="col-md-12 col-xs-12 card-box1">
             {% crispy form %}
