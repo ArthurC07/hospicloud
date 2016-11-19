@@ -11,144 +11,143 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <aside class="col-md-3">
-            <nav class="sidebar-nav">
-                {% block profile_navigation %}
-
-                {% endblock %}
-            </nav>
-        </aside>
-        <section class="col-md-9">
-            <div class="col-md-12 main-content">
-                <div class="col-md-12">
-                    <section class="page-header">
-                        <h1>{{ profile.user.get_full_name }}
-                            <small>{{ profile.user.username }}</small>
-                        </h1>
-                    </section>
-                </div>
-                <section class="tabbable">
-                    <div class="tab-content">
-                        <ul class="nav nav-tabs">
-                            <li><a class="active" href="#profile"
-                                   data-toggle="tab">{% trans 'Perfil de Usuario' %}</a></li>
-                            <li><a href="#turno" data-toggle="tab">{% trans 'Turnos' %}</a>
-                            </li>
-                        </ul>
-                        <article id="profile" class="tab-pane active">
-                            <div class="row">
-                                <div class="col-md-12 table-responsive">
-                                    {% block profile_details %}
-                                        <img class="mugshot pull-right"
-                                             src="{{ profile.get_mugshot_url }}"
-                                             alt="{% trans 'Your mugshot' %}"/>
-                                        <dl>
-                                            {% block profile_definition_list %}
-                                                {% if profile.user.get_full_name %}
-                                                    <dt>{% trans 'Name' %}</dt>
-                                                    <dd>{{ profile.user.get_full_name }}</dd>
-                                                {% endif %}
-                                                {% if profile.user.email and not hide_email %}
-                                                    <dt>{% trans 'Email' %}</dt>
-                                                    <dd>{{ profile.user.email }}</dd>
-                                                {% endif %}
-                                                {% if profile.age %}
-                                                    <dt>{% trans 'Age' %}</dt>
-                                                    <dd>{{ profile.age }}</dd>
-                                                {% endif %}
-                                                {% if profile.website %}
-                                                    <dt>{% trans 'Website' %}</dt>
-                                                    <dd>{{ profile.website|urlize }}</dd>
-                                                {% endif %}
-                                                {% if profile.location %}
-                                                    <dt>{% trans 'Location' %}</dt>
-                                                    <dd>{{ profile.location }}</dd>
-                                                {% endif %}
-                                                {% if profile.about_me %}
-                                                    <dt>{% trans 'About me' %}</dt>
-                                                    <dd>{{ profile.about_me }}</dd>
-                                                {% endif %}
-                                            {% endblock %}
-                                            {% if user.is_staff %}
-                                                {% if profile.inventario %}
-                                                    <dt>{% trans 'Inventario' %}</dt>
-                                                    <dd>{{ profile.inventario }}</dd>
-                                                {% endif %}
+        <div class="col-md-12">
+            <section class="page-header">
+                <h1>{{ profile.user.get_full_name }}
+                    <small>{{ profile.user.username }}</small>
+                </h1>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <section class="col-md-12">
+            <section class="tabbable">
+                <div class="tab-content">
+                    <ul class="nav nav-tabs">
+                        <li>
+                            <a class="active" href="#profile" data-toggle="tab">
+                                {% trans 'Perfil de Usuario' %}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#turno" data-toggle="tab">
+                                {% trans 'Turnos' %}
+                            </a>
+                        </li>
+                    </ul>
+                    <article id="profile" class="tab-pane active">
+                        <div class="row">
+                            <div class="col-md-12 table-responsive">
+                                {% block profile_details %}
+                                    <img class="mugshot pull-right"
+                                         src="{{ profile.get_mugshot_url }}"
+                                         alt="{% trans 'Your mugshot' %}"/>
+                                    <dl>
+                                        {% block profile_definition_list %}
+                                            {% if profile.user.get_full_name %}
+                                                <dt>{% trans 'Name' %}</dt>
+                                                <dd>{{ profile.user.get_full_name }}</dd>
                                             {% endif %}
-                                        </dl>
-                                        {% include 'userena/bsc.html' with goal=profile.get_metas bsc=profile.bsc %}
-                                        {% include 'userena/bsc.html' with goal=profile.get_metas2 bsc=profile.bsc2 %}
-                                        <h3>{% trans 'Inicios de Sesi&oacute;n' %}</h3>
-                                        {% with profile.get_current_month_logins as logins %}
-                                            {% trans 'D&iacute;as Normales:' %}
-                                            {{ logins.normal }}
-                                            {% trans 'D&iacute;as Festivos:' %}
-                                            {{ logins.festivos }}
-                                        {% endwith %}
-                                        </div>
-                                        </div>
-                                    {% endblock %}
-                            <div class="row">
-                                <div class="col-md-12">
-                                    {% if user.username == profile.user.username %}
-                                        {% ifnotequal profile.persona None %}
-                                            {% include 'snippets/persona_fotografia.html'  with persona=profile.persona %}
-                                            {% include 'snippets/persona.html' with persona=profile.persona %}
-                                            <a href="{% url 'user-persona-edit' profile.persona.id %}"
-                                               class="btn btn-primary">
-                                                {% trans 'Editar Datos' %}
-                                            </a>
-                                        {% else %}
-                                            <a class="btn btn-lg btn-primary"
-                                               href="{% url 'user-persona-create' %}">{% trans 'Agregar Mis Datos Personales' %}</a>
-                                        {% endifnotequal %}
-                                    {% endif %}
-                                </div>
+                                            {% if profile.user.email and not hide_email %}
+                                                <dt>{% trans 'Email' %}</dt>
+                                                <dd>{{ profile.user.email }}</dd>
+                                            {% endif %}
+                                            {% if profile.age %}
+                                                <dt>{% trans 'Age' %}</dt>
+                                                <dd>{{ profile.age }}</dd>
+                                            {% endif %}
+                                            {% if profile.website %}
+                                                <dt>{% trans 'Website' %}</dt>
+                                                <dd>{{ profile.website|urlize }}</dd>
+                                            {% endif %}
+                                            {% if profile.location %}
+                                                <dt>{% trans 'Location' %}</dt>
+                                                <dd>{{ profile.location }}</dd>
+                                            {% endif %}
+                                            {% if profile.about_me %}
+                                                <dt>{% trans 'About me' %}</dt>
+                                                <dd>{{ profile.about_me }}</dd>
+                                            {% endif %}
+                                        {% endblock %}
+                                        {% if user.is_staff %}
+                                            {% if profile.inventario %}
+                                                <dt>{% trans 'Inventario' %}</dt>
+                                                <dd>{{ profile.inventario }}</dd>
+                                            {% endif %}
+                                        {% endif %}
+                                    </dl>
+                                    {% include 'userena/bsc.html' with goal=profile.get_metas bsc=profile.bsc %}
+                                    {% include 'userena/bsc.html' with goal=profile.get_metas2 bsc=profile.bsc2 %}
+                                    <h3>{% trans 'Inicios de Sesi&oacute;n' %}</h3>
+                                    {% with profile.get_current_month_logins as logins %}
+                                        {% trans 'D&iacute;as Normales:' %}
+                                        {{ logins.normal }}
+                                        {% trans 'D&iacute;as Festivos:' %}
+                                        {{ logins.festivos }}
+                                    {% endwith %}
+                                    </div>
+                                    </div>
+                                {% endblock %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% if user.username == profile.user.username %}
+                                    {% ifnotequal profile.persona None %}
+                                        {% include 'snippets/persona_fotografia.html'  with persona=profile.persona %}
+                                        {% include 'snippets/persona.html' with persona=profile.persona %}
+                                        <a href="{% url 'user-persona-edit' profile.persona.id %}"
+                                           class="btn btn-primary">
+                                            {% trans 'Editar Datos' %}
+                                        </a>
+                                    {% else %}
+                                        <a class="btn btn-lg btn-primary"
+                                           href="{% url 'user-persona-create' %}">{% trans 'Agregar Mis Datos Personales' %}</a>
+                                    {% endifnotequal %}
+                                {% endif %}
                             </div>
-                        </article>
-                        <article id="turno" class="tab-pane">
-                            <div class="row">
-                                <div class="col-md-12 table-responsive">
-                                    <table class="table table-striped">
-                                        <caption>{% trans 'Turnos del Mes Actual' %}</caption>
-                                        <thead>
+                        </div>
+                    </article>
+                    <article id="turno" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-12 table-responsive">
+                                <table class="table table-striped">
+                                    <caption>{% trans 'Turnos del Mes Actual' %}</caption>
+                                    <thead>
+                                    <tr>
+                                        <th>{% trans 'Inicio' %}</th>
+                                        <th>{% trans 'Fin' %}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for turno in profile.current_month_turns %}
                                         <tr>
-                                            <th>{% trans 'Inicio' %}</th>
-                                            <th>{% trans 'Fin' %}</th>
+                                            <td>{{ turno.inicio }}</td>
+                                            <td>{{ turno.fin }}</td>
                                         </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for turno in profile.current_month_turns %}
-                                            <tr>
-                                                <td>{{ turno.inicio }}</td>
-                                                <td>{{ turno.fin }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                    <table class="table table-striped">
-                                        <caption>{% trans 'Inicios de Sesi&oacute;n' %}
-                                        </caption>
-                                        <thead>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <table class="table table-striped">
+                                    <caption>{% trans 'Inicios de Sesi&oacute;n' %}
+                                    </caption>
+                                    <thead>
+                                    <tr>
+                                        <th>{% trans 'Creaci&oacute;n' %}</th>
+                                        <th>{% trans 'Fin' %}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for login in profile.get_current_month_logins_list %}
                                         <tr>
-                                            <th>{% trans 'Creaci&oacute;n' %}</th>
-                                            <th>{% trans 'Fin' %}</th>
+                                            <td>{{ login.created }}</td>
                                         </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for login in profile.get_current_month_logins_list %}
-                                            <tr>
-                                                <td>{{ login.created }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                        </article>
-                    </div>
-                </section>
-            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
         </section>
     </div>
 {% endblock %}
