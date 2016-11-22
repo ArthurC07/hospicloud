@@ -347,6 +347,18 @@ def save_votes(request, respuesta):
             formset.save()
             respuesta.terminada = True
             respuesta.save()
+            email = respuesta.consulta.consultorio.usuario.email
+            if email:
+                message = EmailMessage(
+                    str('bsc/encuesta_email.tpl'),
+                    {
+                        'persona': respuesta.consulta.consultorio.usuario,
+                        'fecha': timezone.now().date(),
+                    },
+                    to=[email],
+                    from_email=settings.EMAIL_HOST_USER
+                )
+                message.send()
         else:
             messages.info(request, _('La respuesta está incompleta'))
             return redirect(respuesta)
