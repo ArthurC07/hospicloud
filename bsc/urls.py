@@ -41,6 +41,9 @@ urlpatterns = [
     url(r'^encuesta/(?P<pk>\d+)$', views.EncuestaDetailView.as_view(),
         name='encuesta'),
 
+    url(r'^encuesta/medico/(?P<pk>\d+)$', views.EncuestaMedicoDetailView.as_view(),
+        name='encuesta-medico'),
+
     url(r'^encuesta/(?P<encuesta>\d+)/(?P<consulta>\d+)/responder$',
         views.RespuestaRedirectView.as_view(), name='encuesta-responder'),
 

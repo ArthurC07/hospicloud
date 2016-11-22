@@ -435,6 +435,7 @@ def procesar_notas(linea, fecha, meta, usuario, puntaje):
 class Encuesta(TimeStampedModel):
     nombre = models.CharField(max_length=255)
     activa = models.BooleanField(default=True)
+    relconsultas = models.ManyToManyField(Consulta)
 
     def get_absolute_url(self):
         """Obtiene la URL absoluta"""

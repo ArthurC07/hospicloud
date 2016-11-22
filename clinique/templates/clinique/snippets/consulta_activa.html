@@ -62,6 +62,10 @@
            href="{% url 'consulta-emergencia' consulta.id %}">
             {% trans 'Enviar a Emergencia' %}
         </a>
+        <a class="btn btn-success"
+           href="{% url 'consulta-seguimiento' consulta.id %}">
+            {% trans 'Dar Seguimiento' %}
+        </a>
     </div>
     <table class="table table-striped">
         <caption>{% trans 'Cargos y Honorarios' %}</caption>

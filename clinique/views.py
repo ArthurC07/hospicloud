@@ -48,7 +48,7 @@ from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin
 
-from bsc.models import Queja
+from bsc.models import Queja, Encuesta
 from bsc.forms import DepartamentoForm, CiudadForm
 from clinique.forms import CitaForm, EvaluacionForm, EsperaConsultorioForm, \
     ConsultaForm, SeguimientoForm, LecturaSignosForm, DiagnosticoClinicoForm, \
@@ -689,6 +689,8 @@ class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
         """
         self.object = form.save(commit=True)
         now = timezone.now()
+        encuesta = get_object_or_404(Encuesta, pk=1)
+        encuesta.relconsultas.add(self.object)
         call_center = Turno.objects.filter(usuario__groups__name__in=['Call Center'], terminado = False, created__year=now.year, created__month=now.month, created__day=now.day).first()
         if call_center:
             self.object.call_center = call_center.usuario
@@ -801,6 +803,22 @@ class ConsultaCreateView(CurrentUserFormMixin, ConsultorioFormMixin,
         if queryset:
             form.fields['poliza'].queryset = queryset
         return form
+
+class ConsultaSeguimientoRedirectView(LoginRequiredMixin, RedirectView):
+
+    def get_redirect_url(self, **kwargs):
+        """
+        Create a object :class:`Diagnostico`
+        """
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+        encuesta = get_object_or_404(Encuesta, pk=3)
+        encuesta.relconsultas.add(consulta)
+
+        messages.info(
+            self.request,
+            _('¡Se agregó a seguimiento!')
+        )
+        return consulta.get_absolute_url()
 
 
 class ConsultaDetailView(LoginRequiredMixin, DetailView):
@@ -1938,6 +1956,26 @@ class ConsultaRevisarView(RedirectView):
         messages.info(self.request, _('¡La Consulta ha sido revisada!'))
         return consulta.get_absolute_url()
 
+class ConsultaSeguimientoView(RedirectView):
+
+    def get_redirect_url(self, **kwargs):
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+        consulta.encuestada_seguimiento = False
+        consulta.save()
+
+        messages.info(self.request, _('¡Se ha agregado a seguimiento!'))
+        return reverse('encuesta-medico', args=[3])
+
+class ConsultaNoSeguimientoView(RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
+        encuesta = get_object_or_404(Encuesta, pk=3)
+        encuesta.consultas.remove(consulta)
+
+        messages.info(self.request, _('¡Se ha dejado de dar seguimiento!'))
+        return reverse('encuesta-medico', args=[3])
 
 class ConsultaEmergenciaRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False

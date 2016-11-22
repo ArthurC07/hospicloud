@@ -215,12 +215,36 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
         the :class:`Encuesta` that are still active.
         """
         context = super(EncuestaDetailView, self).get_context_data(**kwargs)
+        encuesta = get_object_or_404(Encuesta, pk=self.kwargs['pk'])
 
-        context['consultas'] = self.object.consultas()
+        if(encuesta.pk == 1):
+            context['consultas'] = self.object.relconsultas.filter(encuestada = False)
+        elif(encuesta.pk == 3):
+            context['consultas'] = self.object.relconsultas.filter(encuestada_seguimiento = False)
         context['encuestas'] = Encuesta.objects.filter(activa=True)
 
         return context
 
+class EncuestaMedicoDetailView(LoginRequiredMixin, DetailView):
+    """
+    Shows the pending :class:`Consulta` to be polled
+    """
+    model = Encuesta
+    context_object_name = 'encuesta'
+    queryset = Encuesta.objects.prefetch_related('respuesta_set')
+    template_name = 'bsc/encuesta_medico_detail.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the :class:`Consulta`s that are not yet marked as polled and
+        the :class:`Encuesta` that are still active.
+        """
+        context = super(EncuestaMedicoDetailView, self).get_context_data(**kwargs)
+
+        context['consultas'] = self.object.relconsultas.filter(encuestada_seguimiento=True,consultorio__usuario = self.request.user)
+        context['encuestas'] = Encuesta.objects.filter(activa=True)
+
+        return context
 
 class EncuestaJSONDetailView(LoginRequiredMixin, JSONResponseMixin,
                              BaseDetailView):
@@ -413,7 +437,10 @@ class RespuestaRedirectView(LoginRequiredMixin, RedirectView):
         respuesta.encuesta = encuesta
         respuesta.persona = consulta.persona
         respuesta.usuario = self.request.user
-        consulta.encuestada = True
+        if(encuesta.pk == 1):
+            consulta.encuestada = True
+        elif(encuesta.pk == 3):
+            consulta.encuestada_seguimiento = True
         consulta.save()
         respuesta.save()
 

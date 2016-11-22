@@ -136,6 +136,10 @@ urlpatterns = [
         views.ConsultaCreateView.as_view(),
         name='consultorio-consulta-agregar'),
 
+    url(r'^consulta/(?P<pk>\d+)/seguimiento$',
+        views.ConsultaSeguimientoRedirectView.as_view(),
+        name='consulta-seguimiento'),
+
     url(r'^(?P<persona>\d+)/nota/agregar$',
         views.NotaEnfermeriaCreateView.as_view(),
         name='consultorio-nota-agregar'),
@@ -195,6 +199,14 @@ urlpatterns = [
     url(r'^consulta/(?P<pk>\d+)/revisar$',
         views.ConsultaRevisarView.as_view(),
         name='clinique-consulta-revisar'),
+
+    url(r'^consulta/(?P<pk>\d+)/seguimiento/agregar$',
+        views.ConsultaSeguimientoView.as_view(),
+        name='consulta-agregar-seguimiento'),
+
+    url(r'^consulta/(?P<pk>\d+)/seguimiento/dejar$',
+        views.ConsultaNoSeguimientoView.as_view(),
+        name='consulta-dejar-seguimiento'),
 
     url(r'^afecciones$',
         views.AfeccionAutoComplete.as_view(),
