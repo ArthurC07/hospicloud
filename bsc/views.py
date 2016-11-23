@@ -218,7 +218,7 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
         encuesta = get_object_or_404(Encuesta, pk=self.kwargs['pk'])
 
         if(encuesta.pk == 1):
-            context['consultas'] = self.object.relconsultas.filter(encuestada = False)
+            context['consultas'] = self.object.relconsultas.filter(encuestada = False, call_encuesta = self.request.user)
         elif(encuesta.pk == 3):
             context['consultas'] = self.object.relconsultas.filter(encuestada_seguimiento = False)
         context['encuestas'] = Encuesta.objects.filter(activa=True)
@@ -486,8 +486,11 @@ class ConsultaNoEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
         encuesta = get_object_or_404(Encuesta, pk=kwargs['encuesta'])
         consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
         NoResponde.objects.create(encuesta=encuesta, consulta=consulta, usuario=self.request.user)
-
-        consulta.encuestada = True
+        if(encuesta.pk == 1):
+            consulta.encuestada = True
+        elif(encuesta.pk == 3):
+            consulta.encuestada_seguimiento = True
+            
         consulta.save()
 
         return reverse('encuesta-json', kwargs={'pk': encuesta.id})

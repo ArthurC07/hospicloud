@@ -282,6 +282,7 @@ class Consulta(TimeStampedModel):
 
     objects = ConsultaQuerySet.as_manager()
     call_center = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
+    call_encuesta = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='calls')
 
     class Meta:
         ordering = ['created', ]

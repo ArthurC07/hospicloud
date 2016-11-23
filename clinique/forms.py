@@ -126,7 +126,7 @@ class ConsultaEsperaForm(HiddenConsultorioFormMixin, HiddenEsperaForm,
     class Meta:
         model = Consulta
         exclude = ('facturada', 'activa', 'final', 'remitida', 'encuestada',
-                   'revisada', 'contrato', 'duracion', 'no_desea_encuesta','call_center')
+                   'revisada', 'contrato', 'duracion', 'no_desea_encuesta','call_center','call_encuesta','encuestada_seguimiento')
 
     poliza = forms.ModelChoiceField(queryset=MasterContract.objects.all(),
                                     widget=forms.HiddenInput())
