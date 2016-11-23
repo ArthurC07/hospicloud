@@ -402,7 +402,6 @@
 }
 .checkbox input[type="checkbox"] {
   cursor: pointer;
-  opacity: 0;
   z-index: 1;
   outline: none !important;
 }

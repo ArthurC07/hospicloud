@@ -52,9 +52,7 @@ class InventarioManager(models.Manager):
 
 class ItemTemplateManager(models.Manager):
     def get_queryset(self):
-        return super(ItemTemplateManager, self).get_queryset().select_related(
-            'item_type',
-        )
+        return super(ItemTemplateManager, self).get_queryset()
 
 
 class ItemManager(models.Manager):

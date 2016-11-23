@@ -210,10 +210,15 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
+        'logfile': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': SITE_ROOT + "/logfile",
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'logfile'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
     },
@@ -222,8 +227,8 @@ LOGGING = {
 # Django Storage Configuration
 
 DEFAULT_FILE_STORAGE = env.str(
-        'DEFAULT_FILE_STORAGE',
-        default='django.core.files.storage.FileSystemStorage'
+    'DEFAULT_FILE_STORAGE',
+    default='django.core.files.storage.FileSystemStorage'
 )
 AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY', default='')

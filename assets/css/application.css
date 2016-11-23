@@ -92,13 +92,12 @@
 
 .card-box1 {
     background-color: #FFF;
-    border: 2px solid #e6e7e9;
-    padding: 20px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
     -moz-border-radius: 5px;
     background-clip: padding-box;
-    margin: 1.5% 1.5% 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 #main-navigation a {

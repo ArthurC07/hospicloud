@@ -19,7 +19,7 @@ from __future__ import unicode_literals
 from datetime import timedelta, datetime, time
 from decimal import Decimal
 
-import unicodecsv
+import six
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.files.storage import default_storage as storage
@@ -38,6 +38,11 @@ from inventory.models import ItemTemplate, ItemType
 from persona.fields import ColorField
 from persona.models import Persona, Empleador, transfer_object_to_persona, \
     persona_consolidation_functions
+
+if six.PY2:
+    import unicodecsv as csv
+if six.PY3:
+    import csv
 
 server_timezone = timezone.get_current_timezone()
 
@@ -302,7 +307,7 @@ class ImportFile(TimeStampedModel):
         """Creates :class:`Contract`s for existing :class:`Persona`"""
 
         archivo = storage.open(self.archivo.name, 'rU')
-        data = unicodecsv.reader(archivo)
+        data = csv.reader(archivo)
         vencimiento = make_end_day(self.created) + timedelta(days=8)
         masters = MasterContract.objects.select_related(
             'plan',

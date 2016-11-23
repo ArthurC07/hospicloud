@@ -1,29 +1,14 @@
 {% extends 'base.html' %}
-{% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab48' %}
-{% endblock %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
 {% block content %}
-    {% load crispy_forms_tags %}
     <div class="row">
         <div class="col-sm-12">
             <div class="page-title-box">
-                <h4 class="page-title">Agregar Almacen de Inventario</h4>
+                <h4 class="page-title">{% trans 'Agregar Almacen de Inventario' %}</h4>
             </div>
         </div>
-        <div class="col-lg-12">
-            <section class="col-md-6 panel panel-border">
-                <div class="main-content col-md-12">
-                    {% crispy form %}
-                </div>
-            </section>
+        <div class="col-xs-12 col-md-12">
+            {% crispy form %}
         </div>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-stacked nav-tabs">
-                    </ul>
-                </nav>
-            </div>
-        </aside>
     </div>
 {% endblock %}

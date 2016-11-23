@@ -1,15 +1,20 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
+{% block menu %}
+    <li>
+        <a href="#add-product" data-toggle="modal">
+            {% trans 'Agregar Producto' %}
+        </a>
+    </li>
+{% endblock %}
+{% block header %}
+    {{ form.media.css }}
+{% endblock %}
 {% block content %}
-    {% load crispy_forms_tags %}
-    {% block header %}
-        {{ form.media.css }}
-    {% endblock %}
     <div class="row">
-        <section class="col-md-9 main-content">
+        <section class="col-md-12 col-xs-12 main-content">
             <div class="row">
-                <div class="col-md-12">
-                    {% crispy form %}
-                </div>
+                {% crispy form %}
             </div>
             <div class="modal" role="dialog" id="add-product">
                 <div class="modal-dialog">
@@ -24,28 +29,19 @@
                 </div>
             </div>
         </section>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-stacked nav-tabs">
-                        <li><a href="#add-product" data-toggle="modal">Agregar Producto</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
     </div>
 {% endblock %}
 {% block scripts %}
     {{ form.media.js }}
     <script type="text/javascript">
-        jQuery(document).ready(function() {
-            jQuery("#add-item-form").submit(function(e){
+        jQuery(document).ready(function () {
+            jQuery("#add-item-form").submit(function (e) {
                 var form = jQuery(this);
                 jQuery.ajax({
                     url: form.attr('action'),
                     type: form.attr('method'),
                     data: form.serialize(),
-                    success: function(response) {
+                    success: function (response) {
                         location.reload();
                     }
                 });
