@@ -689,8 +689,6 @@ class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
         """
         self.object = form.save(commit=True)
         now = timezone.now()
-        encuesta = get_object_or_404(Encuesta, pk=1)
-        encuesta.relconsultas.add(self.object)
         # Assign call_center user encuesta
         date = None
         call_users = User.objects.filter(groups__name__in=['Call Center'])
@@ -832,8 +830,8 @@ class ConsultaSeguimientoRedirectView(LoginRequiredMixin, RedirectView):
         Create a object :class:`Diagnostico`
         """
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
-        encuesta = get_object_or_404(Encuesta, pk=3)
-        encuesta.relconsultas.add(consulta)
+        consulta.seguimiento = True
+        consulta.save()
 
         messages.info(
             self.request,
@@ -1988,12 +1986,11 @@ class ConsultaSeguimientoView(RedirectView):
         return reverse('encuesta-medico', args=[3])
 
 class ConsultaNoSeguimientoView(RedirectView):
-    permanent = False
 
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
-        encuesta = get_object_or_404(Encuesta, pk=3)
-        encuesta.consultas.remove(consulta)
+        consulta.seguimiento = False
+        consulta.save()
 
         messages.info(self.request, _('¡Se ha dejado de dar seguimiento!'))
         return reverse('encuesta-medico', args=[3])

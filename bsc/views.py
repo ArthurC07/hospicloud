@@ -217,10 +217,10 @@ class EncuestaDetailView(LoginRequiredMixin, DetailView):
         context = super(EncuestaDetailView, self).get_context_data(**kwargs)
         encuesta = get_object_or_404(Encuesta, pk=self.kwargs['pk'])
 
-        if(encuesta.pk == 1):
-            context['consultas'] = self.object.relconsultas.filter(encuestada = False, call_encuesta = self.request.user)
-        elif(encuesta.pk == 3):
-            context['consultas'] = self.object.relconsultas.filter(encuestada_seguimiento = False)
+        if(encuesta.satisfaccion == True):
+            context['consultas'] = Consulta.objects.filter(satisfaccion = True, encuestada = False, call_encuesta = self.request.user)
+        elif(encuesta.seguimiento == True):
+            context['consultas'] = Consulta.objects.filter(seguimiento = True, encuestada_seguimiento = False)
         context['encuestas'] = Encuesta.objects.filter(activa=True)
 
         return context
@@ -241,7 +241,7 @@ class EncuestaMedicoDetailView(LoginRequiredMixin, DetailView):
         """
         context = super(EncuestaMedicoDetailView, self).get_context_data(**kwargs)
 
-        context['consultas'] = self.object.relconsultas.filter(encuestada_seguimiento=True,consultorio__usuario = self.request.user)
+        context['consultas'] = Consulta.objects.filter(seguimiento = True, encuestada_seguimiento=True, consultorio__usuario = self.request.user)
         context['encuestas'] = Encuesta.objects.filter(activa=True)
 
         return context
@@ -449,9 +449,9 @@ class RespuestaRedirectView(LoginRequiredMixin, RedirectView):
         respuesta.encuesta = encuesta
         respuesta.persona = consulta.persona
         respuesta.usuario = self.request.user
-        if(encuesta.pk == 1):
+        if(encuesta.satisfaccion == True):
             consulta.encuestada = True
-        elif(encuesta.pk == 3):
+        elif(encuesta.seguimiento == True):
             consulta.encuestada_seguimiento = True
         consulta.save()
         respuesta.save()
@@ -486,11 +486,11 @@ class ConsultaNoEncuestadaRedirectView(LoginRequiredMixin, RedirectView):
         encuesta = get_object_or_404(Encuesta, pk=kwargs['encuesta'])
         consulta = get_object_or_404(Consulta, pk=kwargs['consulta'])
         NoResponde.objects.create(encuesta=encuesta, consulta=consulta, usuario=self.request.user)
-        if(encuesta.pk == 1):
+        if(encuesta.satifaccion == True):
             consulta.encuestada = True
-        elif(encuesta.pk == 3):
+        elif(encuesta.seguimiento == True):
             consulta.encuestada_seguimiento = True
-            
+
         consulta.save()
 
         return reverse('encuesta-json', kwargs={'pk': encuesta.id})
