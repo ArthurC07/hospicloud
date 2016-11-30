@@ -19,16 +19,20 @@ from __future__ import unicode_literals
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+import calendar
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import connections
+from django.db.models import Count, DurationField
 from django.db.models import Avg, Count
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
+from django.forms import HiddenInput
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
+from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     RedirectView, View
@@ -36,7 +40,6 @@ from django.views.generic.base import ContextMixin, TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.edit import FormMixin
 from mail_templated.message import EmailMessage
-
 from bsc.forms import RespuestaForm, VotoForm, VotoFormSet, QuejaForm, \
     ArchivoNotasForm, SolucionForm, RellamarForm, SolucionRechazadaForm, QuejaPerfilForm, \
     SolucionAceptadaForm, QuejaAseguradoraForm, DepartamentoForm, CiudadForm
@@ -46,8 +49,10 @@ from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
 from hospinet.utils.date import make_day_start, make_end_day, make_month_range, datetime
 from hospinet.utils.forms import PeriodoForm
+from hospinet.utils.forms import MonthYearForm
 from hospinet.utils.views import PeriodoView, JSONResponseMixin
 from users.mixins import LoginRequiredMixin, CurrentUserFormMixin
+from users.models import Ciudad
 from django.contrib.auth.models import User
 
 
@@ -98,10 +103,12 @@ class EncuestaListView(LoginRequiredMixin, ListView):
         """
         context = super(EncuestaListView, self).get_context_data(**kwargs)
         years = []
+        year_forms = []
         now = timezone.now()
 
         for y in range(now.year - 3, now.year + 4):
             meses = []
+            year_forms = []
             for n in range(1, 13):
                 start = now.replace(month=n, day=1, year=y)
 
@@ -123,6 +130,7 @@ class EncuestaListView(LoginRequiredMixin, ListView):
                     pregunta__calificable=True
                 ).aggregate(average=Coalesce(Avg('opcion__valor'), 0))['average']
 
+
                 meses.append(
                     {
                         'inicio': inicio,
@@ -133,9 +141,10 @@ class EncuestaListView(LoginRequiredMixin, ListView):
                         'satisfaccion': satisfaccion,
                     }
                 )
-
+            [build_statistics(meses, n, now, y, year_forms) for n in range(1, 13)]
             years.append({
                 'name': str(y),
+                'year_forms': year_forms,
                 'meses': meses,
             })
             if y == now.year:
@@ -198,6 +207,109 @@ class EncuestaListView(LoginRequiredMixin, ListView):
         context['users_day'] = users_day
         context['users_month'] = users_month
         
+        return context
+
+def build_statistics(meses, month, day, year, year_forms):
+    #Assigns the name of the months to the buttons using the class MonthYearForm
+    form = MonthYearForm(initial={
+    'year': year,
+    'mes': month,
+    })
+    form.helper.attrs = {'target': '_blank'}
+    form.set_action('encuesta-monthly')
+    form.fields['year'].widget = HiddenInput()
+    form.fields['mes'].widget = HiddenInput()
+    form.helper.form_method = 'get'
+    form.helper.add_input(Submit(
+        'submit',
+        _('{0}'.format(calendar.month_name[month])),
+        css_class='btn-block'
+    ))
+    form.helper.form_class = ''
+    form.helper.label_class = ''
+    form.helper.field_class = ''
+    year_forms.append(form)
+
+class EncuestaData(TemplateView, LoginRequiredMixin):
+    """
+    Creates a view that a allows a user to view the statistical data for any
+    given month.
+    """
+    template_name = 'bsc/encuesta_month.html'
+
+    def dispatch(self, request, *args, **kwargs):
+
+        form = MonthYearForm(request.GET)
+
+        if form.is_valid():
+            self.year = form.cleaned_data['year']
+            self.mes = form.cleaned_data['mes']
+        else:
+            messages.info(
+                self.request,
+                _('Los Datos Ingresados en el formulario no son válidos')
+            )
+            return HttpResponseRedirect(reverse('scorecard-index'))
+
+        return super(EncuestaData, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        """
+        Collects the data that will be shown in the statistical data view
+        :param kwargs: The original dictionary with data
+        :return: the final dict that will be used in the view
+        """
+        context = super(EncuestaData, self).get_context_data(**kwargs)
+
+        start = datetime(self.year, self.mes, 1)
+        inicio, fin = make_month_range(start)
+
+        context['fecha'] = inicio
+        quejas = Queja.objects.filter(created__range=(inicio, fin))
+        quejas_filtradas_area = quejas.filter(departamento__nombre__in=['MEDICOS','ENFERMERIA'])
+        quejas_filtradas_otras = quejas.exclude(departamento__nombre__in=['MEDICOS','ENFERMERIA'])
+
+        tipos = quejas.values('respuesta__consulta__tipo__tipo').annotate(
+            count=Count('id')
+        ).order_by()
+
+        ciudades = quejas.values('respuesta__consulta__consultorio__localidad__ciudad__nombre').annotate(
+        count=Count('id')
+        ).order_by()
+
+        departamentos = quejas.values('departamento__nombre').filter(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(
+        count=Count('id')
+        ).order_by()
+
+        departamentos_otros = quejas.values('departamento__nombre').exclude(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(
+        count=Count('id')
+        ).order_by()
+
+        context['tipos'] = tipos
+        context['ciudades'] = ciudades
+        context['departamentos'] = departamentos
+        context['departamentos_otros'] = departamentos_otros
+        context['quejas'] = quejas.count()
+        context['quejas_filtradas_area'] = quejas_filtradas_area.count()
+        context['quejas_filtradas_otras'] = quejas_filtradas_otras.count()
+
+
+        context['periodo_string'] = urlencode(
+            {
+                'inicio': inicio.strftime('%d/%m/%Y %H:%M'),
+                'fin': fin.strftime('%d/%m/%Y %H:%M'),
+                'submit': 'Mostrar'
+            }
+        )
+
+        context['consulta_periodo_string'] = urlencode(
+            {
+                'consulta-inicio': inicio.strftime('%d/%m/%Y %H:%M'),
+                'consulta-fin': fin.strftime('%d/%m/%Y %H:%M'),
+                'submit': 'Mostrar'
+            }
+        )
+
         return context
 
 

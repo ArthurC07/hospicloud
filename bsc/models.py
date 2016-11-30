@@ -549,8 +549,6 @@ class Departamento(TimeStampedModel):
 
     def __str__(self):
         return self.nombre
-
-
 @python_2_unicode_compatible
 class Queja(TimeStampedModel):
     """

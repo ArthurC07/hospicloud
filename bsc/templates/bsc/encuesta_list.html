@@ -39,6 +39,14 @@
                     <div class="tab-content">
                         {% for year in years %}
                             <article id="{{ year.name }}" class="tab-pane {% if year.name == '2014' %} active {% endif %}">
+                            <p class="panel-sub-title font-13 text-muted">
+                                    {% trans 'Seleccionar un mes del' %} {{ year.name }}
+                                </p>
+                                {% for form in year.year_forms %}
+                                    <div class="col-md-1 m-t-10">
+                                        {% crispy form %}
+                                    </div>
+                                {% endfor %}
                                 <div class="panel panel-default col-md-12 col-xs-12">
                                     <h3 class="panel-title">{% trans 'Encuestas' %} {{ year.name }}</h3>
                                      <table class="table table-striped">

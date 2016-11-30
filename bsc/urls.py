@@ -32,6 +32,8 @@ urlpatterns = [
 
     url(r'^encuestas$', views.EncuestaListView.as_view(), name='encuesta-list'),
 
+    url(r'^mensual$', views.EncuestaData.as_view(), name='encuesta-monthly'),
+
     url(r'^soluciones$', views.SolucionListView.as_view(),
         name='solucion-list'),
 
