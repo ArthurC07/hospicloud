@@ -47,6 +47,7 @@ from bsc.models import ScoreCard, Encuesta, Respuesta, Voto, Queja, \
     ArchivoNotas, Pregunta, Solucion, Login, Rellamar, NoResponde
 from clinique.models import Consulta
 from clinique.views import ConsultaFormMixin
+from contracts.models import Aseguradora
 from hospinet.utils.date import make_day_start, make_end_day, make_month_range, datetime
 from hospinet.utils.forms import PeriodoForm
 from hospinet.utils.forms import MonthYearForm
@@ -272,6 +273,7 @@ class EncuestaData(TemplateView, LoginRequiredMixin):
         departamentos = quejas.values('departamento__nombre').filter(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(count=Count('id')).order_by()
         departamentos_otros = quejas.values('departamento__nombre').exclude(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(count=Count('id')).order_by()
         quejas_usuarios = quejas.values('respuesta__consulta__persona__nombre').annotate(count=Count('id'), count_solucion=Count('solucion')).order_by('-count')[:10]
+        quejas_aseguradoras = quejas.values('aseguradora__nombre').annotate(count=Count('id',distinct=True), count_solucion=Count('solucion',distinct=True)).order_by('-count')[:10]
 
         context['tipos'] = tipos
         context['ciudades'] = ciudades
@@ -281,7 +283,7 @@ class EncuestaData(TemplateView, LoginRequiredMixin):
         context['quejas_filtradas_area'] = departamentos.aggregate(Sum('count'))
         context['quejas_filtradas_otras'] = departamentos_otros.aggregate(Sum('count'))
         context['quejas_usuarios'] = quejas_usuarios
-
+        context['quejas_aseguradoras'] = quejas_aseguradoras
 
         context['periodo_string'] = urlencode(
             {

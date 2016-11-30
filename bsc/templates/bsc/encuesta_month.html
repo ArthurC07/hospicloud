@@ -198,38 +198,18 @@
                                     <thead>
                                     <tr>
                                         <th>{% trans 'Aseguradora' %}</th>
-                                        <th>{% trans 'Departamento' %}</th>
-                                        <th>{% trans 'Usuario' %}</th>
                                         <th>{% trans 'Quejas' %}</th>
+                                        <th>{% trans 'Soluciónes' %}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for consultorio in consultorios %}
+                                    {% for aseguradora in quejas_aseguradoras %}
                                         <tr>
-                                            <td>
-                                                <a href="{% url 'consulta-medico' consultorio.consultorio__usuario__id %}?{{ periodo_string }}"
-                                                    target="_blank">
-                                                    {{ consultorio.consultorio__nombre }}
-                                                </a>
-                                            </td>
-                                            <td class="text-right">{{ consultorio.count }}</td>
-                                            <td class="text-right">{{ consultorio.tiempo|timedelta }}</td>
-                                            <td class="text-right">{{ consultorio.quejas }}</td>
-                                            <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="{% url 'consulta-medico' consultorio.consultorio__usuario__id %}?{{ periodo_string }}"
-                                                    target="_blank">
-                                                    {{ consultorio.consultorio__nombre }}
-                                                </a>
-                                            </td>
-                                            <td class="text-right">{{ consultorio.count }}</td>
-                                            <td class="text-right">{{ consultorio.tiempo }}</td>
-                                            <td class="text-right">{{ consultorio.quejas }}</td>
-                                            <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
-                                            </tr>
-                                            {% endfor %}
+                                            <td>{{ aseguradora.aseguradora__nombre }}</td>
+                                            <td>{{ aseguradora.count }}</td>
+                                            <td>{{ aseguradora.count_solucion }}</td>
+                                        </tr>    
+                                    {% endfor %}
                                     </tbody>
                                     <tfoot>
                                     </tfoot>
