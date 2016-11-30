@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-12 col-xs-12 main-header">
+        <div class="col-md-12 col-xs-12">
             <div class="page-header">
                 <h1>
                     {{ transferencia }}
@@ -15,17 +15,9 @@
         </div>
     </div>
     <div class="row">
-        <section class="col-md-9 main-content">
+        <section class="col-md-12 col-xs-12">
             {% crispy form %}
         </section>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav">
-                    <ul class="nav nav-stacked nav-tabs">
-                    </ul>
-                </nav>
-            </div>
-        </aside>
     </div>
 {% endblock %}
 {% block scripts %}

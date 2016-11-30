@@ -96,7 +96,7 @@ class ItemTypeForm(FieldSetModelFormMixin):
 class RequisicionForm(HiddenUserForm):
     class Meta:
         model = Requisicion
-        exclude = ('entregada', 'aprobada')
+        exclude = ('entregada', 'aprobada', 'denegada')
 
     def __init__(self, *args, **kwargs):
         super(RequisicionForm, self).__init__(*args, **kwargs)

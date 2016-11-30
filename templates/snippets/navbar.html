@@ -1,19 +1,5 @@
 {% load l10n %}{% load i18n %}{% load staticfiles %}
 <!-- Top Bar Start -->
-<li class="dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-       role="button" aria-haspopup="true" aria-expanded="false">Dropdown
-        <span class="caret"></span></a>
-    <ul class="dropdown-menu">
-        <li><a href="#">Action</a></li>
-        <li><a href="#">Another action</a></li>
-        <li><a href="#">Something else here</a></li>
-        <li role="separator" class="divider"></li>
-        <li class="dropdown-header">Nav header</li>
-        <li><a href="#">Separated link</a></li>
-        <li><a href="#">One more separated link</a></li>
-    </ul>
-</li>
 <div class="navbar navbar-default" role="navigation">
     <div class="pull-left">
         <button class="button-menu-mobile open-left waves-effect">
@@ -141,45 +127,5 @@
                 </li>
             </ul>
         </li>
-
-        <!-- SUBMENU INVENTARIO -->
-        <li class="{% if active_tab == 'tab46' %} active {% else %} hidden {% endif %}">
-            <a href="{% url 'inventario-index' %}"
-               style="color: #fff !important;">{% trans 'Ver Inventario' %}</a>
-        </li>
-        <li class="
-                              {% if active_tab == 'tab47' or active_tab == 'tab48' or active_tab == 'tab49' %} active {% else %} hidden {% endif %}">
-            <a class="dropdown-toggle waves-effect"
-               data-toggle="dropdown" href="#"
-               style="color: #fff !important;">
-                {% trans 'Agregar' %} <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li class="{% if active_tab == 'tab47' %} active{% endif %}">
-                    <a href="{% url 'itemtemplate-create' %}">{% trans 'Agregar Producto' %}</a>
-                </li>
-                <li class="{% if active_tab == 'tab48' %} active{% endif %}">
-                    <a href="{% url 'inventario-create' %}">{% trans 'Agregar Almacen de Inventario' %}</a>
-                </li>
-                <li class="{% if active_tab == 'tab49' %} active{% endif %}">
-                    <a href="{% url 'cotizacion-create' %}">{% trans 'Agregar Cotizaci&oacute;n' %}</a>
-                </li>
-            </ul>
-        </li>
-        <li class="{% if active_tab == 'tab50' %} active {% else %} hidden {% endif %}">
-            <a href="{% url 'itemtemplate-list' %}"
-               style="color: #fff !important;">{% trans 'Mostrar Lista de Productos' %}</a>
-        </li>
-        <li class="{% if active_tab == 'tab51' %} active {% else %} hidden {% endif %}">
-            <a href="{% url 'itemtype-list' %}"
-               style="color: #fff !important;">{% trans 'Tipos de Producto' %}</a>
-        </li>
-        <li class="waves-effect
-                              {% if active_tab == 'tab52' %} active {% else %} hidden {% endif %}">
-            <a href="{% url 'cotizacion-list' %}"
-               style="color: #fff !important;">{% trans 'Cotizaciones' %}</a>
-        </li>
     </ul>
-    <!-- END NAVBAR MENU -->
-    <!--/.nav-collapse -->
 </div>

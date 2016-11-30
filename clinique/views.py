@@ -689,14 +689,33 @@ class ConsultaEsperaCreateView(CurrentUserFormMixin, EsperaFormMixin,
         """
         self.object = form.save(commit=True)
         now = timezone.now()
-        encuesta = get_object_or_404(Encuesta, pk=1)
-        encuesta.relconsultas.add(self.object)
+        # Assign call_center user encuesta
+        date = None
+        call_users = User.objects.filter(groups__name__in=['Call Center'])
+        #if there are users assigned to the group Call_Center
+        if call_users:
+            for user in call_users:
+                # if user has calls to answer assigned before
+                if user.calls.count():
+                    last = user.calls.last()
+                    if date is not None:
+                        if last.created < date:
+                            encuesta_user = last.call_encuesta
+                            date = last.created
+                    else:
+                        encuesta_user = last.call_encuesta
+                        date = last.created
+                else:
+                    encuesta_user = user
+                    break
+            self.object.call_encuesta = encuesta_user
+            self.object.save()
+        # Assign call_center user turn
         call_center = Turno.objects.filter(usuario__groups__name__in=['Call Center'], terminado = False, created__year=now.year, created__month=now.month, created__day=now.day).first()
         if call_center:
             self.object.call_center = call_center.usuario
             self.object.save()
         self.espera.fin = timezone.now()
-
         # Calculate doctor waiting time
         self.espera.fin_consultorio = timezone.now()
         self.espera.tiempo_consultorio = self.espera.fin_consultorio - self.espera.inicio_doctor
@@ -811,8 +830,8 @@ class ConsultaSeguimientoRedirectView(LoginRequiredMixin, RedirectView):
         Create a object :class:`Diagnostico`
         """
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
-        encuesta = get_object_or_404(Encuesta, pk=3)
-        encuesta.relconsultas.add(consulta)
+        consulta.seguimiento = True
+        consulta.save()
 
         messages.info(
             self.request,
@@ -1967,12 +1986,11 @@ class ConsultaSeguimientoView(RedirectView):
         return reverse('encuesta-medico', args=[3])
 
 class ConsultaNoSeguimientoView(RedirectView):
-    permanent = False
 
     def get_redirect_url(self, **kwargs):
         consulta = get_object_or_404(Consulta, pk=kwargs['pk'])
-        encuesta = get_object_or_404(Encuesta, pk=3)
-        encuesta.consultas.remove(consulta)
+        consulta.seguimiento = False
+        consulta.save()
 
         messages.info(self.request, _('¡Se ha dejado de dar seguimiento!'))
         return reverse('encuesta-medico', args=[3])

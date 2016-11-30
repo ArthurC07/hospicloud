@@ -272,6 +272,8 @@ class Consulta(TimeStampedModel):
     remitida = models.BooleanField(default=False)
     encuestada = models.BooleanField(default=False)
     encuestada_seguimiento = models.BooleanField(default=False)
+    satisfaccion = models.BooleanField(default=True)
+    seguimiento = models.BooleanField(default=False)
     no_desea_encuesta = models.BooleanField(default=False)
     revisada = models.BooleanField(default=False)
     espera = models.ForeignKey(Espera, blank=True, null=True,
@@ -282,6 +284,7 @@ class Consulta(TimeStampedModel):
 
     objects = ConsultaQuerySet.as_manager()
     call_center = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
+    call_encuesta = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='calls')
 
     class Meta:
         ordering = ['created', ]

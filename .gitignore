@@ -60,3 +60,4 @@ media
 .idea
 hospinet/.env
 *.db
+logfile

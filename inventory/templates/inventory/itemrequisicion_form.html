@@ -1,54 +1,52 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}{% load i18n %}{% load l10n %}
+{% block header %}
+    {{ form.media.css }}
+{% endblock %}
 {% block menu %}
-    {% include "snippets/navbar.html" with active_tab='tab46' %}
+    <li>
+        <a href="#add-product" data-toggle="modal">
+            {% trans 'Agregar Producto' %}
+        </a>
+    </li>
+    <li>
+        <a href="{{ requisicion.get_absolute_url }}">
+            {% trans 'Regresar a Requisción' %}
+        </a>
+    </li>
 {% endblock %}
 {% block content %}
-    {% load crispy_forms_tags %}
-    {% block header %}
-        {{ form.media.css }}
-    {% endblock %}
     <div class="row">
-        <section class="col-md-9 main-content panel panel-border">
-            <div class="row">
-                <div class="col-md-12">
-                    {% crispy form %}
-                </div>
-            </div>
-            <div class="modal" role="dialog" id="add-product">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <a class="close" data-dismiss="modal">×</a>
-                        </div>
-                        <div class="modal-body">
-                            {% crispy itemTemplateForm %}
-                        </div>
+        <div class="col-md-12 card-box1">
+            {% crispy form %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="modal" role="dialog" id="add-product">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <a class="close" data-dismiss="modal">×</a>
+                    </div>
+                    <div class="modal-body">
+                        {% crispy itemTemplateForm %}
                     </div>
                 </div>
             </div>
-        </section>
-        <aside class="col-md-3">
-            <div class="toolbox col-md-12">
-                <nav class="sidebar-nav panel panel-border">
-                    <ul class="nav nav-stacked nav-tabs">
-                        <li><a href="#add-product" data-toggle="modal">Agregar Producto</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
+        </div>
     </div>
 {% endblock %}
 {% block scripts %}
     {{ form.media.js }}
     <script type="text/javascript">
-        jQuery(document).ready(function() {
-            jQuery("#add-item-form").submit(function(e){
+        jQuery(document).ready(function () {
+            jQuery("#add-item-form").submit(function (e) {
                 var form = jQuery(this);
                 jQuery.ajax({
                     url: form.attr('action'),
                     type: form.attr('method'),
                     data: form.serialize(),
-                    success: function(response) {
+                    success: function (response) {
                         location.reload();
                     }
                 });
