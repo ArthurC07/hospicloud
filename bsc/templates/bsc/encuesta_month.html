@@ -18,135 +18,139 @@
         <div class="col-md-12 col-xs-12 main-content">
             <div class="row">
                 <div class="col-md-12 col-xs-12" id="meses">
-                    <div class="col-md-6">
-                        <div class="panel panel-color panel-green">
-                            <div class="panel-heading-green">
-                                <h3 class="panel-title">
-                                    {% trans 'Forma de quejas por Tipo' %}
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <table class="table table-striped">
-                                    <tbody>
-                                    {% for tipo in tipos %}
+                    <div class=col-md-12>
+                        <div class="col-md-6">
+                            <div class="panel panel-color panel-green">
+                                <div class="panel-heading-green">
+                                    <h3 class="panel-title">
+                                        {% trans 'Forma de quejas por tipo de consulta' %}
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table table-striped">
+                                        <tbody>
+                                        {% for tipo in tipos %}
+                                            <tr>
+                                                <td>{{ tipo.respuesta__consulta__tipo__tipo }}</td>
+                                                <td class="text-right">{{ tipo.count }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                        <tfoot>
                                         <tr>
-                                            <td>{{ tipo.respuesta__consulta__tipo__tipo }}</td>
-                                            <td class="text-right">{{ tipo.count }}</td>
+                                            <th>
+                                                {% trans 'Total de Quejas' %}
+                                            </th>
+                                            <th class="text-right">
+                                                    {{ quejas }}
+                                            </th>
                                         </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <th>
-                                            {% trans 'Total de Quejas' %}
-                                        </th>
-                                        <th class="text-right">
-                                                {{ quejas }}
-                                        </th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="panel panel-color panel-green">
-                            <div class="panel-heading-green">
-                                <h3 class="panel-title">
-                                    {% trans 'Quejas por ciudad' %}
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <table class="table table-hover table-striped">
-                                    <tbody>
-                                    {% for ciudad in ciudades %}
-                                        <tr>
-                                            <td>
-                                                {% if not ciudad.respuesta__consulta__consultorio__localidad__ciudad__nombre == None %}
+                        <div class="col-md-6">
+                            <div class="panel panel-color panel-green">
+                                <div class="panel-heading-green">
+                                    <h3 class="panel-title">
+                                        {% trans 'Quejas por ciudad' %}
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table table-hover table-striped">
+                                        <tbody>
+                                        {% for ciudad in ciudades %}
+                                            <tr>
+                                                <td>
+                                                    {% if not ciudad.respuesta__consulta__consultorio__localidad__ciudad__nombre == None %}
+                                                            {{ ciudad.respuesta__consulta__consultorio__localidad__ciudad__nombre }}
+                                                    {% else %}
                                                         {{ ciudad.respuesta__consulta__consultorio__localidad__ciudad__nombre }}
-                                                {% else %}
-                                                    {{ ciudad.respuesta__consulta__consultorio__localidad__ciudad__nombre }}
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-right">
-                                                {% if not respuesta__consulta__consultorio__localidad__ciudad__nombre == None %}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-right">
+                                                    {% if not respuesta__consulta__consultorio__localidad__ciudad__nombre == None %}
+                                                            {{ ciudad.count }}
+                                                    {% else %}
                                                         {{ ciudad.count }}
-                                                {% else %}
-                                                    {{ ciudad.count }}
-                                                {% endif %}
-                                            </td>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <th>{% trans 'Total de Quejas' %}</th>
+                                            <th class="text-right">{{ quejas }}</th>
                                         </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <th>{% trans 'Total de Quejas' %}</th>
-                                        <th class="text-right">{{ quejas }}</th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="panel panel-color panel-green">
-                            <div class="panel-heading-green">
-                                <h3 class="panel-title">
-                                    {% trans 'Quejas por Área' %}
-                                </h3>
-                            </div>
-                            <div class="panel-body">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="panel panel-color panel-green">
+                                <div class="panel-heading-green">
+                                    <h3 class="panel-title">
+                                        {% trans 'Quejas por Área' %}
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table table-striped">
+                                        <tbody>
+                                        {% for departamento in departamentos %}
+                                            <tr>
+                                                <td>{{ departamento.departamento__nombre }}</td>
+                                                <td class="text-right">{{ departamento.count }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <th>
+                                                {% trans 'Total de Quejas' %}
+                                            </th>
+                                            <th class="text-right">
+                                                {{ quejas_filtradas_area.count__sum }}
+                                            </th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>                       
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel panel-color panel-green">
+                                <div class="panel-heading-green">
+                                    <h3 class="panel-title">
+                                        {% trans 'Otras Quejas' %}
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
                                 <table class="table table-striped">
-                                    <tbody>
-                                    {% for departamento in departamentos %}
+                                        <tbody>
+                                        {% for departamento_otro in departamentos_otros %}
+                                            <tr>
+                                                <td>{{ departamento_otro.departamento__nombre }}</td>
+                                                <td class="text-right">{{ departamento_otro.count }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                        <tfoot>
                                         <tr>
-                                            <td>{{ departamento.departamento__nombre }}</td>
-                                            <td class="text-right">{{ departamento.count }}</td>
+                                            <th>
+                                                {% trans 'Total de Quejas' %}
+                                            </th>
+                                            <th class="text-right">
+                                                    {{ quejas_filtradas_otras.count__sum }}
+                                            </th>
                                         </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <th>
-                                            {% trans 'Total de Quejas' %}
-                                        </th>
-                                        <th class="text-right">
-                                            {{ quejas_filtradas_area }}
-                                        </th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>                       
-                    </div>
-                    <div class="col-md-6">
-                        <div class="panel panel-color panel-green">
-                            <div class="panel-heading-green">
-                                <h3 class="panel-title">
-                                    {% trans 'Otras Quejas' %}
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                               <table class="table table-striped">
-                                    <tbody>
-                                    {% for departamento_otro in departamentos_otros %}
-                                        <tr>
-                                            <td>{{ departamento_otro.departamento__nombre }}</td>
-                                            <td class="text-right">{{ departamento_otro.count }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <th>
-                                            {% trans 'Total de Quejas' %}
-                                        </th>
-                                        <th class="text-right">
-                                                {{ quejas_filtradas_otras }}
-                                        </th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -167,24 +171,12 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for usuarios in quejas_usuarios %}
+                                {% for usuario in quejas_usuarios %}
                                     <tr>
-                                        <td>
-                                            {{ usuarios.solucion }}
-                                        </td>
-                                        <td class="text-right">{{ consultorio.count }}</td>
-                                        <td class="text-right">{{ consultorio.tiempo|timedelta }}</td>
-                                        <td class="text-right">{{ consultorio.quejas }}</td>
-                                        <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            {{ usuarios.solucion }}
-                                        </td>
-                                        <td class="text-right">{{ consultorio.count }}</td>
-                                        <td class="text-right">{{ consultorio.tiempo }}</td>
-                                        <td class="text-right">{{ consultorio.quejas }}</td>
-                                        <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
+                                        <td class="text-right">{{ usuario.respuesta__consulta__persona__nombre }}</td>
+                                        <td class="text-right">{{ usuario.count }}</td>
+                                        <td class="text-right">{{ usuario.count_solucion }}</td>
+                                 
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -193,56 +185,6 @@
                             </table>
                         </div>
                     </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="panel panel-color panel-green">
-                            <div class="panel-heading-green">
-                                <h3 class="panel-title">
-                                    {% trans 'Quejas por Departamentos' %}
-                                </h3>
-                            </div>
-                            <div class="panel-body">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>{% trans 'Departamento' %}</th>
-                                        <th>{% trans 'Quejas' %}</th>
-                                        <th>{% trans 'Soluciónes' %}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for consultorio in consultorios %}
-                                        <tr>
-                                            <td>
-                                                <a href="{% url 'consulta-medico' consultorio.consultorio__usuario__id %}?{{ periodo_string }}"
-                                                    target="_blank">
-                                                    {{ consultorio.consultorio__nombre }}
-                                                </a>
-                                            </td>
-                                            <td class="text-right">{{ consultorio.count }}</td>
-                                            <td class="text-right">{{ consultorio.tiempo|timedelta }}</td>
-                                            <td class="text-right">{{ consultorio.quejas }}</td>
-                                            <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="{% url 'consulta-medico' consultorio.consultorio__usuario__id %}?{{ periodo_string }}"
-                                                    target="_blank">
-                                                    {{ consultorio.consultorio__nombre }}
-                                                </a>
-                                            </td>
-                                            <td class="text-right">{{ consultorio.count }}</td>
-                                            <td class="text-right">{{ consultorio.tiempo }}</td>
-                                            <td class="text-right">{{ consultorio.quejas }}</td>
-                                            <td class="text-right">{{ consultorio.consultorio__localidad__nombre }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                    <tfoot>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                     <div class="col-md-12">
                         <div class="panel panel-color panel-green">

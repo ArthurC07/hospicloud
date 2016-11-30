@@ -26,7 +26,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import connections
 from django.db.models import Count, DurationField
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Sum
 from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect
 from django.forms import HiddenInput
@@ -266,32 +266,21 @@ class EncuestaData(TemplateView, LoginRequiredMixin):
 
         context['fecha'] = inicio
         quejas = Queja.objects.filter(created__range=(inicio, fin))
-        quejas_filtradas_area = quejas.filter(departamento__nombre__in=['MEDICOS','ENFERMERIA'])
-        quejas_filtradas_otras = quejas.exclude(departamento__nombre__in=['MEDICOS','ENFERMERIA'])
-
-        tipos = quejas.values('respuesta__consulta__tipo__tipo').annotate(
-            count=Count('id')
-        ).order_by()
-
-        ciudades = quejas.values('respuesta__consulta__consultorio__localidad__ciudad__nombre').annotate(
-        count=Count('id')
-        ).order_by()
-
-        departamentos = quejas.values('departamento__nombre').filter(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(
-        count=Count('id')
-        ).order_by()
-
-        departamentos_otros = quejas.values('departamento__nombre').exclude(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(
-        count=Count('id')
-        ).order_by()
+    
+        tipos = quejas.values('respuesta__consulta__tipo__tipo').annotate(count=Count('id')).order_by()
+        ciudades = quejas.values('respuesta__consulta__consultorio__localidad__ciudad__nombre').annotate(count=Count('id')).order_by()
+        departamentos = quejas.values('departamento__nombre').filter(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(count=Count('id')).order_by()
+        departamentos_otros = quejas.values('departamento__nombre').exclude(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(count=Count('id')).order_by()
+        quejas_usuarios = quejas.values('respuesta__consulta__persona__nombre').annotate(count=Count('id'), count_solucion=Count('solucion')).order_by('-count')[:10]
 
         context['tipos'] = tipos
         context['ciudades'] = ciudades
         context['departamentos'] = departamentos
         context['departamentos_otros'] = departamentos_otros
         context['quejas'] = quejas.count()
-        context['quejas_filtradas_area'] = quejas_filtradas_area.count()
-        context['quejas_filtradas_otras'] = quejas_filtradas_otras.count()
+        context['quejas_filtradas_area'] = departamentos.aggregate(Sum('count'))
+        context['quejas_filtradas_otras'] = departamentos_otros.aggregate(Sum('count'))
+        context['quejas_usuarios'] = quejas_usuarios
 
 
         context['periodo_string'] = urlencode(
