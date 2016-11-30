@@ -271,7 +271,7 @@ class EncuestaData(TemplateView, LoginRequiredMixin):
         ciudades = quejas.values('respuesta__consulta__consultorio__localidad__ciudad__nombre').annotate(count=Count('id')).order_by()
         departamentos = quejas.values('departamento__nombre').filter(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(count=Count('id')).order_by()
         departamentos_otros = quejas.values('departamento__nombre').exclude(departamento__nombre__in=['MEDICOS','ENFERMERIA']).annotate(count=Count('id')).order_by()
-        quejas_usuarios = quejas.values('respuesta__consulta__persona__nombre').annotate(count=Count('id'), count_solucion=Count('solucion')).order_by('-count')[:10]
+        quejas_usuarios = quejas.values('respuesta__consulta__persona__nombre').annotate(count=Count('id', distinct=True), count_solucion=Count('solucion', distinct=True)).order_by('-count')[:10]
 
         context['tipos'] = tipos
         context['ciudades'] = ciudades
